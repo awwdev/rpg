@@ -10,7 +10,6 @@ namespace mini::mem
         std::byte* end; 
         inline std::size_t Size() const { return end - begin; }
     };
-    template<class T> struct Block : IBlock { T* const ptr; };
     
     extern std::byte* base;
     extern container::Array<IBlock, 1024> freeBlocks;
@@ -64,6 +63,14 @@ namespace mini::mem
     template<class T>
     void Free(T* const ptr)
     {
-        //loop all used blocks and see where ptr==begin
+        FOR_ARRAY(usedBlocks, i)
+        {
+            if (usedBlocks[i].begin == (std::byte* const)ptr) {
+                ptr->~T();
+                freeBlocks.EmplaceBack(usedBlocks[i]);
+                usedBlocks.RemoveUnordered(i); 
+                return;
+            }
+        }
     }
 }
