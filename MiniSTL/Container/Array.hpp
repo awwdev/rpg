@@ -1,7 +1,7 @@
 #pragma once
 #include "MiniSTL/Types.hpp"
-#include "MiniSTL/Assert.hpp"
-#include "MiniSTL/Profiler.hpp"
+#include "MiniSTL/Debug/Assert.hpp"
+#include "MiniSTL/Debug/Profiler.hpp"
 #include <vector>
 
 #define FOR_ARRAY(arr, i) for(std::decay_t<decltype(arr)>::COUNT_TYPE i=0; i<arr.Count(); ++i)
@@ -38,16 +38,22 @@ namespace mini::container
 
         void Clear() { while (count > 0) bufferPtr[--count].~T(); }
 
-        
         template<class... Args> 
-        T& EmplaceBack(Args&&... args)
+        void Append(Args&&... args)
         {
             CHECK_CAPACITY(count+1, CAPACITY);
             new(&bufferPtr[count++]) T{ std::forward<Args>(args)... };
-            return bufferPtr[count-1];
         }
 
-        void RemoveUnordered(const C i) //O(1)
+        template<class... Args>
+        [[nodiscard]] T& AppendRtn(Args&&... args)
+        {
+            CHECK_CAPACITY(count + 1, CAPACITY);
+            new(&bufferPtr[count++]) T{ std::forward<Args>(args)... };
+            return bufferPtr[count - 1];
+        }
+
+        void Remove(const C i) //O(1)
         {   
             CHECK_INDEX(i, count);
             bufferPtr[i].~T();
@@ -137,12 +143,3 @@ namespace mini::container
 #undef ANY_SIZE
 #undef CHECK_INDEX(i, c)
 #undef CHECK_CAPACITY(c, cap)
-
-//issue with compile time size array:
-//you cannot create an array where size is defined at runtime (as parameter like:)
-//initArray(size) does not work
-
-//new IDEA for mem allocator, this thing manages mem
-//now, you can request mem and then have a manager which has functionality like an array
-//so array does not has own mem but manages from allocator
-//mem alloc is on heap (?)

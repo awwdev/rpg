@@ -1,5 +1,5 @@
-#include "MiniSTL/Profiler.hpp"
-#include "MiniSTL/Array.hpp"
+#include "MiniSTL/Debug/Profiler.hpp"
+#include "MiniSTL/Container/Array.hpp"
 
 namespace mini::profile {
 
@@ -20,7 +20,7 @@ namespace mini::profile {
     template<Mode MODE>
     void ScopeProfile<MODE>::StoreProfileData(const double ms)
     {
-        history->EmplaceBack(ms);
+        history->Append(ms);
     }
     template void ScopeProfile<Mode::Print>::StoreProfileData(const double);
     template void ScopeProfile<Mode::Store>::StoreProfileData(const double);

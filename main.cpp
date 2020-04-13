@@ -1,5 +1,6 @@
-#include "MiniSTL/Array.hpp"
-#include "MiniSTL/Allocator.hpp"
+#include "MiniSTL/Container/Array.hpp"
+#include "MiniSTL/Memory/Allocator.hpp"
+#include "MiniSTL/Memory/AllocatorPrint.hpp"
 #include <iostream>
 
 struct Foo
@@ -22,27 +23,14 @@ void PrintFooArray(const char*, const mini::container::IArray<Foo>&); //can cons
 int main()
 {
     mini::mem::Allocate(1'000'000);
-    auto ptr = mini::mem::Claim<Foo>(42);
-    *(ptr->num) = 42;
-    std::cout << *(ptr->num) << '\n';
-    mini::mem::Free(ptr);
-    
-    //mini::profile::AllocateProfileHistory(); //when the user actually wants to use it
-    //
-    //mini::container::Array<Foo, 128> arr1;
-    //for (auto i = 0; i < arr1.CAPACITY; ++i) {
-    //    arr1.EmplaceBack(i);
-    //}
-    //auto arr2 { arr1 };
-    //
-    //arr1.RemoveOrdered(0);
-    //arr1.RemoveOrdered(1);
-    //arr1.RemoveOrdered(2);
-    //arr1.RemoveOrdered(3);
-    //system("CLS");
-    //
-    //mini::profile::PrintProfileHistory();
-    //PrintFooArray("arr1", arr1);
+    auto ptr1 = mini::mem::Claim<char>(42);
+    auto ptr2 = mini::mem::Claim<std::size_t>(42);
+    auto ptr3 = mini::mem::Claim<char>(42);
+    auto ptr4 = mini::mem::Claim<short>(42);
+
+    ptr3.~Owner();
+
+    mini::mem::PrintHTML();
 
     std::cin.get();
     return 0;
