@@ -19,4 +19,5 @@ namespace mini
     using f32 = float;
 
     constexpr auto u16max = std::numeric_limits<u16>::max();
+    constexpr auto u32max = std::numeric_limits<u32>::max();
 }

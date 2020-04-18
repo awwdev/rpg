@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 #include "MiniSTL/Types.hpp"
 #include "MiniSTL/Debug/Assert.hpp"
 #include "MiniSTL/Debug/Profiler.hpp"
-#include <vector>
+#include <compare>
 
 #define FOR_ARRAY(arr, i) for(std::decay_t<decltype(arr)>::COUNT_TYPE i=0; i<arr.Count(); ++i)
 
@@ -39,18 +39,10 @@ namespace mini::container
         void Clear() { while (count > 0) bufferPtr[--count].~T(); }
 
         template<class... Args> 
-        void Append(Args&&... args)
+        T& Append(Args&&... args)
         {
             CHECK_CAPACITY(count+1, CAPACITY);
-            new(&bufferPtr[count++]) T{ std::forward<Args>(args)... };
-        }
-
-        template<class... Args>
-        [[nodiscard]] T& AppendRtn(Args&&... args)
-        {
-            CHECK_CAPACITY(count + 1, CAPACITY);
-            new(&bufferPtr[count++]) T{ std::forward<Args>(args)... };
-            return bufferPtr[count - 1];
+            return *(new(&bufferPtr[count++]) T{ std::forward<Args>(args)... });
         }
 
         void Remove(const C i) //O(1)
@@ -65,7 +57,6 @@ namespace mini::container
 
         void RemoveOrdered(C i) //O(n)
         {
-            STORE_PROFILE_FUNCTION();
             CHECK_INDEX(i, count);
             bufferPtr[i].~T();
             for (; i < count - 1; ++i) {
@@ -82,12 +73,62 @@ namespace mini::container
             return nullptr;
         }
 
+        inline void Swap(T& lhs, T& rhs)
+        {
+            const auto tmp = std::move(lhs);
+            lhs = std::move(rhs);
+            rhs = std::move(tmp);
+        }
+
         void Reverse()
         {
-            for (C i = 0; i < (C)(count * 0.5f); ++i) { //swap
-                const auto tmp = std::move(bufferPtr[i]);
-                bufferPtr[i] = std::move(bufferPtr[count - 1 - i]);
-                bufferPtr[count - 1 - i] = std::move(tmp);
+            for (C i = 0; i < (C)(count * 0.5f); ++i) {
+                Swap(bufferPtr[i], bufferPtr[count - 1 - i]);
+            }
+        }
+        
+        auto FindInsertionPoint(const T& toInsert, std::strong_ordering(*fn)(const T& lhs, const T& rhs))
+        {   
+            auto L = 0;
+            auto R = count - 1;
+            int m = 0;
+
+            while (L <= R) {
+                m = (L + R) / 2;
+                if (fn(bufferPtr[m], toInsert) == std::strong_ordering::less) {
+                    L = m + 1;
+                }
+                else if (fn(bufferPtr[m], toInsert) == std::strong_ordering::greater) {
+                    R = m - 1;
+                }
+                else {
+                    return m;
+                }
+            }
+            return m;
+        }
+
+        template<class... Args>
+        T& Insert(const C insertIdx, Args&&... args)
+        {
+            if (count == 0)
+                return Append(std::forward<Args>(args)...);
+
+            new(&bufferPtr[count]) T(std::move(bufferPtr[count - 1]));
+            for (C i = 1; i < (count - insertIdx); ++i) {
+                bufferPtr[count - i] = std::move(bufferPtr[count - i - 1]);
+            }
+            ++count;
+            return bufferPtr[insertIdx] = { args... };
+            //return bufferPtr[insertIdx];
+        }
+
+        void Sort(bool(*fn)(const T& lhs, const T& rhs))
+        {
+            for (C i = 0; i < count; ++i) { 
+                if (fn(bufferPtr[i], bufferPtr[i + 1])) {
+                    Swap(bufferPtr[i], bufferPtr[i + 1]);
+                }
             }
         }
 
@@ -141,5 +182,5 @@ namespace mini::container
 }//ns
 
 #undef ANY_SIZE
-#undef CHECK_INDEX(i, c)
-#undef CHECK_CAPACITY(c, cap)
+#undef CHECK_INDEX
+#undef CHECK_CAPACITY
