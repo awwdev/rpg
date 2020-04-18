@@ -31,27 +31,41 @@ namespace mini::mem
 #define ALLOC_BLOCK_POOL(bytes) blocks_##bytes.base = HeapAlloc(heap, 0, blocks_##bytes.ALLOC_SIZE);
     
     ///DEFINE BLOCK POOLS ----------------------------------------------
-    BLOCK_POOL(8, 1000)
-    BLOCK_POOL(512, 1000)
-    BLOCK_POOL(20000, 1000)
+    BLOCK_POOL(8, 1000);
+    BLOCK_POOL(128, 1000);
+    BLOCK_POOL(256, 1000);
+    BLOCK_POOL(512, 1000);
+    BLOCK_POOL(20000, 1000);
+    BLOCK_POOL(112008, 1);
     
     template<class T> constexpr auto& GetBlockPoolFromObjectSize() {
              BLOCK_POOL_FROM_SIZE(T, 8)
+        else BLOCK_POOL_FROM_SIZE(T, 128)
+        else BLOCK_POOL_FROM_SIZE(T, 256)
         else BLOCK_POOL_FROM_SIZE(T, 512)
         else BLOCK_POOL_FROM_SIZE(T, 20000)
+        else BLOCK_POOL_FROM_SIZE(T, 112008)
+        else static_assert(0, "No Block Pool found for Size");
     };
     template<class T> constexpr auto& GetBlockPoolFromOwner() {
              BLOCK_POOL_FROM_OWNER(T, 8)
+        else BLOCK_POOL_FROM_OWNER(T, 128)
+        else BLOCK_POOL_FROM_OWNER(T, 256)
         else BLOCK_POOL_FROM_OWNER(T, 512)
         else BLOCK_POOL_FROM_OWNER(T, 20000)
+        else BLOCK_POOL_FROM_OWNER(T, 112008)
+        else static_assert(0, "No Block Pool found for Owner");
     };
 
     inline void Allocate()
     {
         auto heap = GetProcessHeap();
-        ALLOC_BLOCK_POOL(8)
-        ALLOC_BLOCK_POOL(512)
-        ALLOC_BLOCK_POOL(20000)
+        ALLOC_BLOCK_POOL(8);
+        ALLOC_BLOCK_POOL(128);
+        ALLOC_BLOCK_POOL(256);
+        ALLOC_BLOCK_POOL(512);
+        ALLOC_BLOCK_POOL(20000);
+        ALLOC_BLOCK_POOL(112008);
     }
     ///-----------------------------------------------------------------
 
@@ -62,14 +76,14 @@ namespace mini::mem
 
 
     template<class T>
-    void Free(const T& owner)
+    void FreeBlock(const T& owner)
     {
         constexpr auto& blocks = GetBlockPoolFromOwner<T>();
 
         const auto blockDist = (u8*)owner.ptr - (u8*)blocks.base; //in bytes
         const auto blockNum  = blockDist / blocks.BLOCK_SIZE;
 
-        blocks.used.Flip(blockNum);
+        blocks.used.Flip(blockNum); //dtor done is inside MemOwner
     }
 
 
@@ -80,6 +94,7 @@ namespace mini::mem
 
         T* ptr;
         T* operator->() { return ptr; }
+        T& operator* () { return *ptr;}
 
         MemOwner() = delete;
         MemOwner(T* pPtr) : ptr { pPtr } {;}
@@ -90,31 +105,33 @@ namespace mini::mem
         MemOwner(MemOwner&& other) : ptr { other.ptr }  { other.ptr = nullptr; }
         MemOwner& operator=(MemOwner&& other)           { ptr = other.ptr; other.ptr = nullptr; return *this; }
 
-        ~MemOwner() { if (ptr != nullptr) { ptr->~T(); Free(*this); } }
+        ~MemOwner() { if (ptr != nullptr) { ptr->~T(); FreeBlock(*this); } }
     };
 
     template<class T>
-    using BlocksType = std::decay_t<decltype(GetBlockPoolFromObjectSize<T>())>;
+    using BlockPoolType = std::decay_t<decltype(GetBlockPoolFromObjectSize<T>())>;
 
     template<class T>
-    using MemOwnerX = MemOwner<T, BlocksType<T>>;
+    using MemOwner_T = MemOwner<T, BlockPoolType<T>>;
 
     
     template<class T, class... Args>
-    auto Claim(Args&&... args)
+    auto ClaimBlock(Args&&... args)
     {
         constexpr auto& blocks  = GetBlockPoolFromObjectSize<T>();
         const auto freeBitIndex = blocks.used.FindFirstFreeBit(); // ==block
 
         if (freeBitIndex == u32max) 
-            return MemOwnerX<T> { nullptr }; //error
+            return MemOwner_T<T> { nullptr }; //error
 
         blocks.used.Flip(freeBitIndex);
 
         auto* const blockPtr = (u8*) blocks.base + (freeBitIndex * blocks.BLOCK_SIZE);
         auto* const objPtr   = new(blockPtr) T(std::forward<Args>(args)...);
 
-        return MemOwnerX<T> { objPtr };
+        DLOG("Claim Block", blocks.BLOCK_SIZE, sizeof(T), (void*)blockPtr);
+
+        return MemOwner_T<T> { objPtr };
     }
 
 }//ns

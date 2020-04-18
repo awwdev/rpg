@@ -3,13 +3,17 @@
 #include "MiniSTL/Memory/AllocatorPrint.hpp"
 #include "MiniSTL/Debug/Logger.hpp"
 
-struct Foo {
-    char arr[127] = "Hello World";
+struct Component
+{
+    std::size_t num1 = 42;
+    std::size_t num2 = 333;
+    float num3 = 777;
+    char desc[100] = "Some description text.";
 };
 
-void WorkOnFoo(mini::mem::MemOwnerX<Foo>& foo)
+void ProcessComponent(const Component& component)
 {
-    std::cout << foo->arr << "\n";
+    std::cout << component.desc << "\n";
 }
 
 ///TEST
@@ -17,15 +21,21 @@ int main()
 {
     mini::mem::Allocate();
 
-    mini::container::Array<mini::mem::MemOwnerX<Foo>, 20> objs;
-    for (auto i = 0; i < objs.CAPACITY; ++i)
+    ///component array
+    using ComponentArray = mini::container::Array<Component, 1000>;
+    constexpr auto COMPONENT_SIZE = sizeof(Component);
+    constexpr auto SIZE = sizeof(ComponentArray);
+
+    auto componentArray = mini::mem::ClaimBlock<ComponentArray>();
+    for (auto i = 0; i < componentArray->CAPACITY; ++i)
     {
-        objs.Append(mini::mem::Claim<Foo>());
+        componentArray->Append();
     }
 
+
+    ProcessComponent((*componentArray)[0]);
     mini::mem::PrintAllocationHTML();
 
-    //WorkOnFoo(objs[0]);
 
     std::cin.get();
     return 0;

@@ -142,11 +142,13 @@ namespace mini::container
     };
 
 
-    template<class T, std::size_t CAPACITY, typename C = u16>
+    template<class T, std::size_t CAPACITY_T, typename C = u16>
     class Array final : public IArray<T, C>
     {
     public:
-        Array() : IArray<T, C> { reinterpret_cast<T* const>(buffer), CAPACITY } { ; }
+        static constexpr auto SIZE = CAPACITY_T * sizeof(T);
+
+        Array() : IArray<T, C> { reinterpret_cast<T* const>(buffer), CAPACITY_T } { ; }
 
         template<class... Args, typename = std::enable_if_t<std::is_same_v<T, std::common_type_t<Args...>>>>
         Array(Args&&... elements) : Array() //no forwarding ctor values but T elements (cause tmp creation)
@@ -161,14 +163,14 @@ namespace mini::container
         ANY_SIZE Array(const A& other) : Array() { this->operator=<A>(other); }
         ANY_SIZE void operator=(const A& other)
         {
-            this->count = (CAPACITY >= other.Count()) ? other.Count() : CAPACITY;
+            this->count = (CAPACITY_T >= other.Count()) ? other.Count() : CAPACITY_T;
             for (C i = 0; i < this->count; ++i) ctor(i, other[i]);
         }
 
         ANY_SIZE Array(A&& other) : Array() { this->operator=<A>(std::move(other)); }
         ANY_SIZE void operator=(A&& other)
         {
-            this->count = (CAPACITY >= other.Count()) ? other.Count() : CAPACITY;
+            this->count = (CAPACITY_T >= other.Count()) ? other.Count() : CAPACITY_T;
             for (C i = 0; i < this->count; ++i) ctor(i, std::move(other[i]));
         }
 
@@ -176,7 +178,7 @@ namespace mini::container
         inline void ctor(const std::size_t& i, T&& t)       { new(&buffer[i * sizeof(T)]) T{ std::move(t) }; }
         inline void ctor(const std::size_t& i, const T& t)  { new(&buffer[i * sizeof(T)]) T{ t }; }
 
-        alignas(T) std::byte buffer[sizeof(T[CAPACITY])]; //avoid ctor calls
+        alignas(T) std::byte buffer[sizeof(T[CAPACITY_T])]; //avoid ctor calls
    };
 
 }//ns
