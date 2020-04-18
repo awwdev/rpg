@@ -26,25 +26,24 @@ namespace mini::mem
 
     
 #define BLOCK_POOL(bytes, count) inline Allocation<bytes, count> blocks_##bytes;
-#define BLOCK_POOL_FROM_SIZE(bytes) if constexpr (sizeof(T) <= blocks_##bytes.BLOCK_SIZE) return blocks_##bytes;
-#define BLOCK_POOL_FROM_TYPE(bytes) if constexpr (std::is_same_v<T::BLOCK_TYPE, std::decay_t<decltype(blocks_##bytes)>>) return blocks_##bytes;
+#define BLOCK_POOL_FROM_SIZE(obj, bytes) if constexpr (sizeof(obj) <= blocks_##bytes.BLOCK_SIZE) return blocks_##bytes;
+#define BLOCK_POOL_FROM_OWNER(blk, bytes) if constexpr (std::is_same_v<blk::BLOCK_TYPE, std::decay_t<decltype(blocks_##bytes)>>) return blocks_##bytes;
 #define ALLOC_BLOCK_POOL(bytes) blocks_##bytes.base = HeapAlloc(heap, 0, blocks_##bytes.ALLOC_SIZE);
     
-
     ///DEFINE BLOCK POOLS ----------------------------------------------
     BLOCK_POOL(8, 1000)
     BLOCK_POOL(512, 1000)
     BLOCK_POOL(20000, 1000)
     
     template<class T> constexpr auto& GetBlockPoolFromObjectSize() {
-        BLOCK_POOL_FROM_SIZE(8)
-        else BLOCK_POOL_FROM_SIZE(512)
-        else BLOCK_POOL_FROM_SIZE(20000)
+             BLOCK_POOL_FROM_SIZE(T, 8)
+        else BLOCK_POOL_FROM_SIZE(T, 512)
+        else BLOCK_POOL_FROM_SIZE(T, 20000)
     };
-    template<class T> constexpr auto& GetBlockPoolFromBlock() {
-        BLOCK_POOL_FROM_TYPE(8)
-        else BLOCK_POOL_FROM_TYPE(512)
-        else BLOCK_POOL_FROM_TYPE(20000)
+    template<class T> constexpr auto& GetBlockPoolFromOwner() {
+             BLOCK_POOL_FROM_OWNER(T, 8)
+        else BLOCK_POOL_FROM_OWNER(T, 512)
+        else BLOCK_POOL_FROM_OWNER(T, 20000)
     };
 
     inline void Allocate()
@@ -65,7 +64,7 @@ namespace mini::mem
     template<class T>
     void Free(const T& owner)
     {
-        constexpr auto& blocks = GetBlockPoolFromBlock<T>();
+        constexpr auto& blocks = GetBlockPoolFromOwner<T>();
 
         const auto blockDist = (u8*)owner.ptr - (u8*)blocks.base; //in bytes
         const auto blockNum  = blockDist / blocks.BLOCK_SIZE;
