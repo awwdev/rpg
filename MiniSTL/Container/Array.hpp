@@ -87,26 +87,26 @@ namespace mini::container
             }
         }
         
-        auto FindInsertionPoint(const T& toInsert, std::strong_ordering(*fn)(const T& lhs, const T& rhs))
-        {   
-            auto L = 0;
-            auto R = count - 1;
-            int m = 0;
-
-            while (L <= R) {
-                m = (L + R) / 2;
-                if (fn(bufferPtr[m], toInsert) == std::strong_ordering::less) {
-                    L = m + 1;
-                }
-                else if (fn(bufferPtr[m], toInsert) == std::strong_ordering::greater) {
-                    R = m - 1;
-                }
-                else {
-                    return m;
-                }
-            }
-            return m;
-        }
+        //auto FindInsertionPoint(const T& toInsert, std::strong_ordering(*fn)(const T& lhs, const T& rhs))
+        //{   
+        //    auto L = 0;
+        //    auto R = count - 1;
+        //    int m = 0;
+        //
+        //    while (L <= R) {
+        //        m = (L + R) / 2;
+        //        if (fn(bufferPtr[m], toInsert) == std::strong_ordering::less) {
+        //            L = m + 1;
+        //        }
+        //        else if (fn(bufferPtr[m], toInsert) == std::strong_ordering::greater) {
+        //            R = m - 1;
+        //        }
+        //        else {
+        //            return m;
+        //        }
+        //    }
+        //    return m;
+        //}
 
         template<class... Args>
         T& Insert(const C insertIdx, Args&&... args)

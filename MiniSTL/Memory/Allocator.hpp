@@ -24,53 +24,51 @@ namespace mini::mem
         void* base = nullptr;
     };
 
+    
+#define BLOCK_POOL(bytes, count) inline Allocation<bytes, count> blocks_##bytes;
+#define BLOCK_POOL_FROM_SIZE(bytes) if constexpr (sizeof(T) <= blocks_##bytes.BLOCK_SIZE) return blocks_##bytes;
+#define BLOCK_POOL_FROM_TYPE(bytes) if constexpr (std::is_same_v<T::BLOCK_TYPE, std::decay_t<decltype(blocks_##bytes)>>) return blocks_##bytes;
+#define ALLOC_BLOCK_POOL(bytes) blocks_##bytes.base = HeapAlloc(heap, 0, blocks_##bytes.ALLOC_SIZE);
+    
 
-    inline Allocation<4,   1'000'000> blocks_4;
-    inline Allocation<8,   1'000'000> blocks_8;
-    inline Allocation<16,  1'000'000> blocks_16;
-    inline Allocation<32,  1'000'000> blocks_32;
-    inline Allocation<64,  1'000'000> blocks_64;
-    inline Allocation<128, 200> blocks_128;
-    inline Allocation<256, 1'000'000> blocks_256;
-    inline Allocation<512, 1'000'000> blocks_512;
-
+    ///DEFINE BLOCK POOLS ----------------------------------------------
+    BLOCK_POOL(8, 1000)
+    BLOCK_POOL(512, 1000)
+    BLOCK_POOL(20000, 1000)
+    
+    template<class T> constexpr auto& GetBlockPoolFromObjectSize() {
+        BLOCK_POOL_FROM_SIZE(8)
+        else BLOCK_POOL_FROM_SIZE(512)
+        else BLOCK_POOL_FROM_SIZE(20000)
+    };
+    template<class T> constexpr auto& GetBlockPoolFromBlock() {
+        BLOCK_POOL_FROM_TYPE(8)
+        else BLOCK_POOL_FROM_TYPE(512)
+        else BLOCK_POOL_FROM_TYPE(20000)
+    };
 
     inline void Allocate()
     {
         auto heap = GetProcessHeap();
-
-        blocks_4.base   = HeapAlloc(heap, 0, blocks_4.ALLOC_SIZE);
-        blocks_8.base   = HeapAlloc(heap, 0, blocks_8.ALLOC_SIZE);
-        blocks_16.base  = HeapAlloc(heap, 0, blocks_16.ALLOC_SIZE);
-        blocks_32.base  = HeapAlloc(heap, 0, blocks_32.ALLOC_SIZE);
-        blocks_64.base  = HeapAlloc(heap, 0, blocks_64.ALLOC_SIZE);
-        blocks_128.base = HeapAlloc(heap, 0, blocks_128.ALLOC_SIZE);
-        blocks_256.base = HeapAlloc(heap, 0, blocks_256.ALLOC_SIZE);
-        blocks_512.base = HeapAlloc(heap, 0, blocks_512.ALLOC_SIZE);
-
-        DLOG("Allocation addresses", blocks_4.base, blocks_8.base, blocks_16.base, blocks_32.base, blocks_64.base, blocks_128.base, blocks_256.base, blocks_512.base);
-        DLOG("Allocation sizes", blocks_4.ALLOC_SIZE, blocks_8.ALLOC_SIZE, blocks_16.ALLOC_SIZE, blocks_32.ALLOC_SIZE, blocks_64.ALLOC_SIZE, blocks_128.ALLOC_SIZE, blocks_256.ALLOC_SIZE, blocks_512.ALLOC_SIZE);
+        ALLOC_BLOCK_POOL(8)
+        ALLOC_BLOCK_POOL(512)
+        ALLOC_BLOCK_POOL(20000)
     }
+    ///-----------------------------------------------------------------
+
+#undef BLOCK_POOL
+#undef BLOCK_POOL_FROM_SIZE
+#undef BLOCK_POOL_FROM_TYPE
+#undef ALLOC_BLOCK_POOL
 
 
     template<class T>
     void Free(const T& owner)
     {
-        constexpr auto& blocks = []() constexpr -> auto& {
-            if      constexpr (std::is_same_v<T::BLOCK_TYPE, std::decay_t<decltype(blocks_4)>>)   return blocks_4;
-            else if constexpr (std::is_same_v<T::BLOCK_TYPE, std::decay_t<decltype(blocks_8)>>)   return blocks_8;
-            else if constexpr (std::is_same_v<T::BLOCK_TYPE, std::decay_t<decltype(blocks_16)>>)  return blocks_16;
-            else if constexpr (std::is_same_v<T::BLOCK_TYPE, std::decay_t<decltype(blocks_32)>>)  return blocks_32;
-            else if constexpr (std::is_same_v<T::BLOCK_TYPE, std::decay_t<decltype(blocks_64)>>)  return blocks_64;
-            else if constexpr (std::is_same_v<T::BLOCK_TYPE, std::decay_t<decltype(blocks_128)>>) return blocks_128;
-            else if constexpr (std::is_same_v<T::BLOCK_TYPE, std::decay_t<decltype(blocks_256)>>) return blocks_256;
-            else if constexpr (std::is_same_v<T::BLOCK_TYPE, std::decay_t<decltype(blocks_512)>>) return blocks_512;
-        }();
+        constexpr auto& blocks = GetBlockPoolFromBlock<T>();
 
         const auto blockDist = (u8*)owner.ptr - (u8*)blocks.base; //in bytes
         const auto blockNum  = blockDist / blocks.BLOCK_SIZE;
-
-        DLOG("Freeing", blocks.BLOCK_SIZE, blockNum)
 
         blocks.used.Flip(blockNum);
     }
@@ -96,30 +94,17 @@ namespace mini::mem
         ~MemOwner() { if (ptr != nullptr) { ptr->~T(); Free(*this); } }
     };
 
-
     template<class T>
-    constexpr auto& GetBlocksFromType() {
-        if      constexpr (sizeof(T) <= 4)   return blocks_4;
-        else if constexpr (sizeof(T) <= 8)   return blocks_8;
-        else if constexpr (sizeof(T) <= 16)  return blocks_16;
-        else if constexpr (sizeof(T) <= 32)  return blocks_32;
-        else if constexpr (sizeof(T) <= 64)  return blocks_64;
-        else if constexpr (sizeof(T) <= 128) return blocks_128;
-        else if constexpr (sizeof(T) <= 256) return blocks_256;
-        else if constexpr (sizeof(T) <= 512) return blocks_512;
-    };
-
-    template<class T>
-    using BlocksType = std::decay_t<decltype(GetBlocksFromType<T>())>;
+    using BlocksType = std::decay_t<decltype(GetBlockPoolFromObjectSize<T>())>;
 
     template<class T>
     using MemOwnerX = MemOwner<T, BlocksType<T>>;
 
-
+    
     template<class T, class... Args>
     auto Claim(Args&&... args)
     {
-        constexpr auto& blocks  = GetBlocksFromType<T>();
+        constexpr auto& blocks  = GetBlockPoolFromObjectSize<T>();
         const auto freeBitIndex = blocks.used.FindFirstFreeBit(); // ==block
 
         if (freeBitIndex == u32max) 
@@ -130,7 +115,6 @@ namespace mini::mem
         auto* const blockPtr = (u8*) blocks.base + (freeBitIndex * blocks.BLOCK_SIZE);
         auto* const objPtr   = new(blockPtr) T(std::forward<Args>(args)...);
 
-        DLOG("Claim", sizeof(T), alignof(T), blocks.BLOCK_SIZE, (void*)blockPtr);
         return MemOwnerX<T> { objPtr };
     }
 

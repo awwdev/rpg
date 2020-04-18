@@ -22,12 +22,10 @@ int main()
     {
         objs.Append(mini::mem::Claim<Foo>());
     }
-    
-
 
     mini::mem::PrintAllocationHTML();
 
-    WorkOnFoo(objs[0]);
+    //WorkOnFoo(objs[0]);
 
     std::cin.get();
     return 0;
