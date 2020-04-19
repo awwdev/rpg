@@ -27,6 +27,13 @@ namespace mini::container
                 : data[i / 8] & ~(1ul << (i % 8));
         }
 
+        template<bool B>
+        void Set(const u32 i)
+        {
+            if constexpr (B)  data[i / 8] | (1ul << (i % 8));
+            if constexpr (!B) data[i / 8] & ~(1ul << (i % 8));
+        }
+
         void Flip(const u32 i)
         {
             data[i / 8] ^= 1ul << i % 8;

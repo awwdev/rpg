@@ -4,31 +4,23 @@
 #include "MiniSTL/Debug/Logger.hpp"
 
 #include "MiniSTL/Math/Vector.hpp"
+#include "MiniSTL/Math/Matrix.hpp"
 
 int main()
 {
-    mini::math::Vec3<float> v1 { 0, 1, 0 };
-    mini::math::Vec3<int>   v2 { 1, 0, 0 };
-    mini::math::NormalizeThis(v1);
-    auto v2f = mini::math::Normalize(v2);
+    using namespace mini::math;
 
-    auto v3 = mini::math::Dot(v1, v2f);
+    Vec4f vec{ 1, 2, 3, 0 };
+    vec *= 2;
+    DLOG(vec);
 
-    auto v4 = mini::math::Cross(v1, v2);
+    const auto mat = Identity4<float>();
 
-    DLOG(v3);
+    auto m2 = mat * vec;
+    DLOG(m2);
 
     std::cin.get();
 }
-
-
-
-
-
-
-
-
-
 
 
 

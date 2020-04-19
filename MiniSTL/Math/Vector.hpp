@@ -4,15 +4,13 @@
 
 namespace mini::math
 {
-    template<class T>
-    using IsArithmetic = std::enable_if_t<std::is_arithmetic_v<T>>;
-
-    template<class T>
-    using IsFloating = std::enable_if_t<std::is_floating_point_v<T>>;
-
     template<class T, typename = IsArithmetic<T>> struct Vec2 { T x, y; };
     template<class T, typename = IsArithmetic<T>> struct Vec3 { T x, y, z; };
     template<class T, typename = IsArithmetic<T>> struct Vec4 { T x, y, z, w; };
+
+    using Vec2f = Vec2<float>;
+    using Vec3f = Vec3<float>;
+    using Vec4f = Vec4<float>;
 
     ///+
 
@@ -106,8 +104,101 @@ namespace mini::math
         a.w -= b.w;
     }
 
+    ///*
+
+    template<class T, class S>
+    auto operator*(const Vec2<T>& vec, const S scalar) -> Vec2<decltype(vec.x * scalar)>
+    {
+        return { vec.x * scalar, vec.y * scalar };
+    }
+
+    template<class T, class S>
+    auto operator*(const Vec3<T>& vec, const S scalar) -> Vec3<decltype(vec.x * scalar)>
+    {
+        return { vec.x * scalar, vec.y * scalar, vec.z * scalar };
+    }
+
+    template<class T, class S>
+    auto operator*(const Vec4<T>& vec, const S scalar) -> Vec4<decltype(vec.x * scalar)>
+    {
+        return { vec.x * scalar, vec.y * scalar, vec.z * scalar, vec.w * scalar };
+    }
+
+    ///*=
+
+    template<class T, class S>
+    void operator*=(Vec2<T>& vec, const S scalar)
+    {
+        vec.x *= scalar;
+        vec.y *= scalar;
+    }
+
+    template<class T, class S>
+    void operator*=(Vec3<T>& vec, const S scalar)
+    {
+        vec.x *= scalar;
+        vec.y *= scalar;
+        vec.z *= scalar;
+    }
+
+    template<class T, class S>
+    void operator*=(Vec4<T>& vec, const S scalar)
+    {
+        vec.x *= scalar;
+        vec.y *= scalar;
+        vec.z *= scalar;
+        vec.w *= scalar;
+    }
+
+    ///div
+
+    template<class T, class S>
+    auto operator/(const Vec2<T>& vec, const S scalar) -> Vec2<decltype(vec.x / scalar)>
+    {
+        return { vec.x / scalar, vec.y / scalar };
+    }
+
+    template<class T, class S>
+    auto operator/(const Vec3<T>& vec, const S scalar) -> Vec3<decltype(vec.x / scalar)>
+    {
+        return { vec.x / scalar, vec.y / scalar, vec.z / scalar };
+    }
+
+    template<class T, class S>
+    auto operator/(const Vec4<T>& vec, const S scalar) -> Vec4<decltype(vec.x / scalar)>
+    {
+        return { vec.x / scalar, vec.y / scalar, vec.z / scalar, vec.w / scalar };
+    }
+
+    ///div=
+
+    template<class T, class S>
+    void operator/=(Vec2<T>& vec, const S scalar)
+    {
+        vec.x /= scalar;
+        vec.y /= scalar;
+    }
+
+    template<class T, class S>
+    void operator/=(Vec3<T>& vec, const S scalar)
+    {
+        vec.x /= scalar;
+        vec.y /= scalar;
+        vec.z /= scalar;
+    }
+
+    template<class T, class S>
+    void operator/=(Vec4<T>& vec, const S scalar)
+    {
+        vec.x /= scalar;
+        vec.y /= scalar;
+        vec.z /= scalar;
+        vec.w /= scalar;
+    }
+
     ///magnitude
     //todo: faster sqrt method like quake sqrt
+
     template<class T> 
     [[nodiscard]] auto Magnitude(const Vec2<T>& vec)
     {
@@ -155,27 +246,33 @@ namespace mini::math
     void NormalizeThis(Vec2<T>& vec)
     {
         const auto mag = Magnitude(vec);
-        vec = { vec.x / mag, vec.y / mag };
+        vec.x /= mag;
+        vec.y /= mag;
     }
 
     template<class T, typename = IsFloating<T>>
     void NormalizeThis(Vec3<T>& vec)
     {
         const auto mag = Magnitude(vec);
-        vec = { vec.x / mag, vec.y / mag, vec.z / mag };
+        vec.x /= mag;
+        vec.y /= mag;
+        vec.z /= mag;
     }
 
     template<class T, typename = IsFloating<T>>
     void NormalizeThis(Vec4<T>& vec)
     {
         const auto mag = Magnitude(vec);
-        vec = { vec.x / mag, vec.y / mag, vec.z / mag, vec.w / mag };
+        vec.x /= mag;
+        vec.y /= mag;
+        vec.z /= mag;
+        vec.w /= mag;
     }
 
     ///dot
 
     template<class A, class B> 
-    [[nodiscard]] float Dot(const Vec3<A>& a, const Vec3<B>& b)
+    [[nodiscard]] auto Dot(const Vec3<A>& a, const Vec3<B>& b)
     {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
