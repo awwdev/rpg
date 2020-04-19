@@ -83,7 +83,7 @@ namespace mini::mem
         const auto blockDist = (u8*)owner.ptr - (u8*)blocks.base; //in bytes
         const auto blockNum  = blockDist / blocks.BLOCK_SIZE;
 
-        blocks.used.Flip(blockNum); //dtor done is inside MemOwner
+        blocks.used.Flip(blockNum); //dtor is done inside MemOwner
     }
 
 
