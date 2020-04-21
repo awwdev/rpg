@@ -18,9 +18,9 @@ namespace mini::debug
     template<u8 Y, u8 X, class T>
     std::ostream& operator<<(std::ostream& os, const mini::math::Mat<T, Y, X>& mat)
     {
-        for (u8 y = 0; y < Y; ++y) 
+        for (u8 y = 0; y < Y; ++y)
         {
-            for (u8 x = 0; x < X; ++x) 
+            for (u8 x = 0; x < X; ++x)
             {
                 os << mat[y][x] << '|';
             }
@@ -29,4 +29,4 @@ namespace mini::debug
         return os;
     }
 
-}
+}//ns

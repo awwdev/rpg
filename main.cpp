@@ -5,12 +5,14 @@ int main()
 {
     using namespace mini::math;
 
-    Vec2f v1 = { 1, 2 };
-    Vec2f v2 = { 2, 3 };
-    Vec2f v3 = { 4, 5 };
-    Vec2f v4 = v1 + v2;
+    auto m1 = Identity4x4<float>();
+    auto m2 = Identity4x4<float>();
 
-    DLOG(v4[X0]);
+    m1 = { 0, 1, 2, 3 };
+
+    std::cout << std::boolalpha;
+    DLOG(m1 == m2);
+
 
     std::cin.get();
 }
