@@ -5,13 +5,16 @@ int main()
 {
     using namespace mini::math;
 
-    auto m1 = Identity4x4<float>();
+    auto m1 = Identity4x4<int>();
+    m1[0][0] = 42;
     auto m2 = Identity4x4<float>();
+    m2[0][0] = 0.123f;
 
-    m1 = { 0, 1, 2, 3 };
+    auto m3 = m1 + m2;
 
-    std::cout << std::boolalpha;
-    DLOG(m1 == m2);
+    DLOG(m1);
+    DLOG(m2);
+    DLOG(m3);
 
 
     std::cin.get();

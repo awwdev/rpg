@@ -28,4 +28,5 @@ namespace mini
 
     template<class T>
     using IsFloating = std::enable_if_t<std::is_floating_point_v<T>>;
+
 }
