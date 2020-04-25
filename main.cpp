@@ -1,21 +1,29 @@
-#include "MiniSTL/Debug/Logger.hpp"
-#include "MiniSTL/Math/Matrix.hpp"
+#include "MiniSTL/Window/Window.hpp"
 
-int main()
+int WINAPI wWinMain(
+    _In_        HINSTANCE hInstance,
+    _In_opt_    HINSTANCE hPrevInstance,
+    _In_        PWSTR pCmdLine,
+    _In_        int nCmdShow
+)
 {
-    using namespace mini::math;
+    ///setup
+    auto wnd = mini::wnd::mini_CreateWindow(hInstance, 800, 600);
 
-    auto m1 = Identity4x4<int>();
-    m1[0][0] = 42;
-    auto m2 = Identity4x4<float>();
-    m2[0][0] = 0.123f;
+    ///main loop
+    while (wnd.isOpen) {
 
-    auto m3 = m1 + m2;
+        for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE); ) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
 
-    DLOG(m1);
-    DLOG(m2);
-    DLOG(m3);
+        SwapBuffers(wnd.hDc);
+    }
 
+    ///clean-up
+    DestroyWindow(wnd.hWnd);
+    UnregisterClass(L"className", hInstance);
 
-    std::cin.get();
+    return 0;
 }

@@ -5,6 +5,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
+#undef max
 
 namespace mini::mem
 {
@@ -20,7 +21,8 @@ namespace mini::mem
         static constexpr auto BLOCK_COUNT = BLOCK_COUNT_T;
         static constexpr auto ALLOC_SIZE  = BLOCK_SIZE_T * BLOCK_COUNT_T;
 
-        container::Bitset<BLOCK_COUNT_T> used { 0 };
+        container::Bitset<BLOCK_COUNT_T> used { 0 }; 
+        //or free and used array (unordered, overhead of swap, more memory)
         void* base = nullptr;
     };
 
