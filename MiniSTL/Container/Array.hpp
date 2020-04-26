@@ -65,10 +65,11 @@ namespace mini::container
             bufferPtr[--count].~T();
         }
 
-        auto Contains(const T& t) -> T*
+        template<class T2> //allows for custom operator==
+        auto Contains(const T2& element) -> T*
         {
             for (C i = 0; i < count; ++i) {
-                if (bufferPtr[i] == t) return &bufferPtr[i];
+                if (bufferPtr[i] == element) return &bufferPtr[i];
             }
             return nullptr;
         }

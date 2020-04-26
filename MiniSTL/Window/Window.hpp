@@ -1,23 +1,23 @@
+#include "MiniSTL/Debug/Logger.hpp"
+#include "MiniSTL/Container/Array.hpp"
+#include "MiniSTL/Window/AppEvent.h"
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #undef max
 
-#include "MiniSTL/Debug/Logger.hpp"
-
-inline bool isOpen = false;
-
-inline LRESULT WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-struct Window
-{
-    WNDCLASSEX  wndClass    = {};
-    HWND        hWnd        = NULL;
-    HDC         hDc         = NULL;
-    bool        isOpen      = false;
-};
-
 namespace mini::wnd
 {
+    inline LRESULT WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+    struct Window
+    {
+        WNDCLASSEX  wndClass = {};
+        HWND        hWnd = NULL;
+        HDC         hDc = NULL;
+    };
+
+
     inline Window mini_CreateWindow(HINSTANCE hInst, u16 width, u16 height, const wchar_t* className = L"miniClass", const wchar_t* wndName = L"miniWnd")
     {
         Window window;
@@ -62,39 +62,34 @@ namespace mini::wnd
 
         window.hDc = GetDC(window.hWnd);
         ShowWindow(window.hWnd, SW_SHOWDEFAULT);
-        UpdateWindow(window.hWnd);
-
-        window.isOpen = true;
+        //UpdateWindow(window.hWnd);
 
         return window;
     }
 
-}//ns
 
-
-inline LRESULT WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    switch (uMsg) {
-
-    case WM_CLOSE:
+    inline LRESULT WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
-        //isOpen = false;
-        break;
-    }
-        
-    case WM_KEYDOWN:
-    {
-        if (wParam == VK_ESCAPE) {
-            //isOpen = false;
+        switch (uMsg) {
+
+            case WM_CLOSE:
+            {
+                appEvents.Append(AppEvent::CLOSE);
+                break;
+            }
+
+            case WM_KEYDOWN:
+            {
+                if (wParam == VK_ESCAPE) { //fast close
+                    appEvents.Append(AppEvent::CLOSE);
+                }
+                break;
+            }
+
+            default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
         }
-        break;
+
+        return 0;
     }
 
-    default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
-    }
-
-    return 0;
-}
-
-//todo: global wnd ptr somehow necessary 
-//todo: os agnostic events
+}//ns

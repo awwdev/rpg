@@ -1,29 +1,27 @@
 #include "MiniSTL/Window/Window.hpp"
+#include "MiniSTL/Container/Array.hpp"
 
 int WINAPI wWinMain(
     _In_        HINSTANCE hInstance,
     _In_opt_    HINSTANCE hPrevInstance,
     _In_        PWSTR pCmdLine,
-    _In_        int nCmdShow
-)
+    _In_        int nCmdShow)
 {
-    ///setup
     auto wnd = mini::wnd::mini_CreateWindow(hInstance, 800, 600);
 
-    ///main loop
-    while (wnd.isOpen) {
-
-        for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE); ) {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-
-        SwapBuffers(wnd.hDc);
+    while (!mini::wnd::appEvents.Contains(mini::wnd::AppEvent::CLOSE)) 
+    {
+        mini::wnd::PollEvents();
+        //update current scene
+        //draw current scene
     }
 
-    ///clean-up
     DestroyWindow(wnd.hWnd);
     UnregisterClass(L"className", hInstance);
-
-    return 0;
 }
+
+//todo: variant class
+//todo: scene queue (transition)
+//todo: string class
+//todo: review array once again
+//todo: review profiling once again
