@@ -1,6 +1,6 @@
 #pragma once
 
-namespace mini::container
+namespace mini::box
 {
     struct String
     {

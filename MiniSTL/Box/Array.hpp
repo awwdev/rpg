@@ -13,7 +13,7 @@
 #define ANY_SIZE template<typename A, typename = std::enable_if_t<std::is_same_v<T, typename A::DATA_TYPE>>>
 
 
-namespace mini::container
+namespace mini::box
 {   
     //used for passing only
     template<class T, typename C = u16> class IArray
@@ -21,7 +21,7 @@ namespace mini::container
     protected:
         IArray(T* const buffer, const C capacity)
             : bufferPtr { buffer }
-            , CAPACITY  { capacity }
+            , COUNT_MAX  { capacity }
             , count     { 0 }
         {}
         ~IArray()
@@ -41,7 +41,7 @@ namespace mini::container
         template<class... Args> 
         T& Append(Args&&... args)
         {
-            CHECK_CAPACITY(count+1, CAPACITY);
+            CHECK_CAPACITY(count+1, COUNT_MAX);
             return *(new(&bufferPtr[count++]) T{ std::forward<Args>(args)... });
         }
 
@@ -133,11 +133,12 @@ namespace mini::container
             }
         }
 
-    protected:
+    //protected:
+        using ELEMENT_TYPE = T;
         T* const bufferPtr;
         C  count;
     public:
-        const C CAPACITY;
+        const C COUNT_MAX;
         using DATA_TYPE  = T;
         using COUNT_TYPE = C;
     };
@@ -180,7 +181,17 @@ namespace mini::container
         inline void ctor(const std::size_t& i, const T& t)  { new(&buffer[i * sizeof(T)]) T{ t }; }
 
         alignas(T) std::byte buffer[sizeof(T[CAPACITY_T])]; //avoid ctor calls
-   };
+    };
+    
+
+    template<class Arr>
+    Arr InitCompleteArray()
+    {
+        Arr arr;
+        for(auto i=0; i< arr.COUNT_MAX; ++i) //could be done more efficient?
+            arr.Append();
+        return arr;
+    }
 
 }//ns
 

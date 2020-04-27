@@ -29,4 +29,7 @@ namespace mini
     template<class T>
     using IsFloating = std::enable_if_t<std::is_floating_point_v<T>>;
 
+    template<class T>
+    using IsIntegral = std::enable_if_t<std::is_integral_v<T> || std::is_enum_v<T>>;
+    
 }

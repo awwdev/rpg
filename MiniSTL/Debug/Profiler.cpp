@@ -1,13 +1,13 @@
 #include "MiniSTL/Debug/Profiler.hpp"
-#include "MiniSTL/Container/Array.hpp"
+#include "MiniSTL/Box/Array.hpp"
 
 namespace mini::profile {
 
-    mini::container::Array<double, 1024>* history = nullptr;
+    mini::box::Array<double, 1024>* history = nullptr;
 
     void AllocateProfileHistory()
     {
-        history = new mini::container::Array<double, 1024>; //todo: unique ptr
+        history = new mini::box::Array<double, 1024>; //todo: unique ptr
     }
 
     void PrintProfileHistory()
