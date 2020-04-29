@@ -55,6 +55,22 @@ namespace mini::box
             }
         }
 
+        template<auto T, bool B = true, typename = IsIntegral<decltype(T)>>
+        void Set() //is this actually worth it??
+        {
+            if constexpr (std::is_enum_v<decltype(T)>)
+            {
+                using ET = std::underlying_type_t<decltype(T)>;
+                if constexpr ( B) data[(ET)T / 8] |=  (1ul << ((ET)T % 8));
+                if constexpr (!B) data[(ET)T / 8] &= ~(1ul << ((ET)T % 8));
+            }
+            else
+            {
+                if constexpr ( B) data[T / 8] |=  (1ul << (T % 8));
+                if constexpr (!B) data[T / 8] &= ~(1ul << (T % 8));
+            }
+        }
+
         template<typename T, typename = IsIntegral<T>>
         void Flip(const T i)
         {

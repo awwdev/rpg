@@ -11,14 +11,14 @@ int WINAPI wWinMain(
 {
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
 
-    while (!app::IsPressed(app::EvKeyboard::Pressed_Escape) && !app::CheckEvent(app::EvWindow::Close))
+    while (!app::CheckEvent(Event::Type::Window_Close) && !app::IsPressed(Event::Type::Keyboard_Escape))
     {
-        if (app::CheckEvent(app::EvKeyboard::Pressed_W))  DLOG("w pressed");
-        if (app::CheckEvent(app::EvKeyboard::Released_W)) DLOG("w released");
-        if (app::IsPressed (app::EvKeyboard::Pressed_W))  DLOG("w held down");
-
-        app::ClearEvents();
         wnd::PollEvents();
+
+        if (app::CheckEvent(Event::Type::Keyboard_W, Event::State::Released)) {
+            DLOG("released w");
+        }
+
         //update current scene
         //draw current scene
     }

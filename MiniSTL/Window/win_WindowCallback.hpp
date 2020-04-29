@@ -1,86 +1,71 @@
 #pragma once
-#include "MiniSTL/Window/AppEvents.h"
+#include "MiniSTL/Window/AppEvents.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #undef max
 #include <windowsx.h>
 
+using namespace mini::app;
+
 
 namespace mini::wnd
 {
-    using namespace mini::app;
-
     inline void PollEvents()
     {
-        for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);) {
-            //translate?
+        events.Clear();
+        for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);) { //probably define a limit per frame
+            TranslateMessage(&msg); //virtual to char?
             DispatchMessage(&msg);
         }
     }
 
 
-    static LRESULT WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+    static LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         switch (uMsg) {
 
+        #define PRESSED(t, ...)  events.Append(t, Event::Pressed, __VA_ARGS__);  pressed.Set<t, true>();
+        #define RELEASED(t, ...) events.Append(t, Event::Released, __VA_ARGS__); pressed.Set<t, false>();
+
         ///mouse
 
-        case WM_LBUTTONDOWN:
-            mouseEvents.Append(EvMouse::Pressed_LEft, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            break;
-
-        case WM_LBUTTONUP:
-            mouseEvents.Append(EvMouse::Released_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            break;
-
-        case WM_RBUTTONDOWN:
-            mouseEvents.Append(EvMouse::Pressed_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            break;
-
-        case WM_RBUTTONUP:
-            mouseEvents.Append(EvMouse::Released_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            break;
+        case WM_LBUTTONDOWN:    PRESSED (Event::Type::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        case WM_RBUTTONDOWN:    PRESSED (Event::Type::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        case WM_LBUTTONUP:      RELEASED(Event::Type::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        case WM_RBUTTONUP:      RELEASED(Event::Type::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
 
         ///keyboard
 
         case WM_KEYDOWN:
-            switch (wParam) {
-            case VK_ESCAPE:
-                keyboardEvents.Append(EvKeyboard::Pressed_Escape);
-                keyboardDown.Set<true>(EvKeyboard::Pressed_Escape);
-                break;
-            case 'W':
-                keyboardEvents.Append(EvKeyboard::Pressed_W);
-                keyboardDown.Set<true>(EvKeyboard::Pressed_W);
-                break;
+            switch (wParam) 
+            {
+                case VK_ESCAPE: PRESSED(Event::Type::Keyboard_Escape); break;
+                case 'W':       PRESSED(Event::Type::Keyboard_W); break;
             }
-            break;
+        break;
 
         case WM_KEYUP:
-            switch (wParam) {
-            case VK_ESCAPE:
-                keyboardEvents.Append(EvKeyboard::Released_Escape);
-                keyboardDown.Set<false>(EvKeyboard::Pressed_Escape);
-                break;
-            case 'W':
-                keyboardEvents.Append(EvKeyboard::Released_W);
-                keyboardDown.Set<false>(EvKeyboard::Pressed_W);
-                break;
+            switch (wParam) 
+            {
+                case VK_ESCAPE: RELEASED(Event::Type::Keyboard_Escape); break;
+                case 'W':       RELEASED(Event::Type::Keyboard_W); break;
             }
-            break;
+        break;
 
         ///window
 
-        case WM_CLOSE:
-            windowEvents.Append(wnd::EvWindow::Close);
-            break;
+        case WM_CLOSE: events.Append(Event::Type::Window_Close); break;
+        
+        ///default
 
-            ///
         default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
+
+        #undef PRESSED
+        #undef RELEASED
         }
 
-        return 0;
+        return 0;    
     }
 
 }//ns

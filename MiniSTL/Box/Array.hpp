@@ -2,6 +2,7 @@
 #include "MiniSTL/Types.hpp"
 #include "MiniSTL/Debug/Assert.hpp"
 #include "MiniSTL/Debug/Profiler.hpp"
+#include "MiniSTL/Debug/Logger.hpp"
 #include <compare>
 
 #define FOR_ARRAY(arr, i) for(std::decay_t<decltype(arr)>::COUNT_TYPE i=0; i<arr.Count(); ++i)
