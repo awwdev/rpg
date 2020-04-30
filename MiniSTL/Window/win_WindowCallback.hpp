@@ -25,37 +25,37 @@ namespace mini::wnd
     {
         switch (uMsg) {
 
-        #define PRESSED(t, ...)  events.Append(t, Event::Pressed, __VA_ARGS__);  pressed.Set<t, true>();
-        #define RELEASED(t, ...) events.Append(t, Event::Released, __VA_ARGS__); pressed.Set<t, false>();
+        #define PRESSED(t, ...)  events.Append(t, EventState::Pressed, __VA_ARGS__);  pressed.Set<t, true>();
+        #define RELEASED(t, ...) events.Append(t, EventState::Released, __VA_ARGS__); pressed.Set<t, false>();
 
         ///mouse
 
-        case WM_LBUTTONDOWN:    PRESSED (Event::Type::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
-        case WM_RBUTTONDOWN:    PRESSED (Event::Type::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
-        case WM_LBUTTONUP:      RELEASED(Event::Type::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
-        case WM_RBUTTONUP:      RELEASED(Event::Type::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        case WM_LBUTTONDOWN:    PRESSED (EventType::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        case WM_RBUTTONDOWN:    PRESSED (EventType::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        case WM_LBUTTONUP:      RELEASED(EventType::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        case WM_RBUTTONUP:      RELEASED(EventType::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
 
         ///keyboard
 
         case WM_KEYDOWN:
             switch (wParam) 
             {
-                case VK_ESCAPE: PRESSED(Event::Type::Keyboard_Escape); break;
-                case 'W':       PRESSED(Event::Type::Keyboard_W); break;
+                case VK_ESCAPE: PRESSED(EventType::Keyboard_Escape); break;
+                case 'W':       PRESSED(EventType::Keyboard_W); break;
             }
         break;
 
         case WM_KEYUP:
             switch (wParam) 
             {
-                case VK_ESCAPE: RELEASED(Event::Type::Keyboard_Escape); break;
-                case 'W':       RELEASED(Event::Type::Keyboard_W); break;
+                case VK_ESCAPE: RELEASED(EventType::Keyboard_Escape); break;
+                case 'W':       RELEASED(EventType::Keyboard_W); break;
             }
         break;
 
         ///window
 
-        case WM_CLOSE: events.Append(Event::Type::Window_Close); break;
+        case WM_CLOSE: events.Append(EventType::Window_Close); break;
         
         ///default
 

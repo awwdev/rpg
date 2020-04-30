@@ -5,24 +5,29 @@
 
 namespace mini::app
 {
+    enum class EventType : u8
+    {
+        Mouse_Left,
+        Mouse_Right,
+
+        Keyboard_Escape,
+        Keyboard_W,
+
+        PRESSABLE_END,
+
+        Window_Close,
+    };
+
+    enum class EventState : u8
+    {
+        None, Released, Pressed
+    };
+
+
     struct Event 
     {
-        enum Type : u8
-        {
-            Mouse_Left,
-            Mouse_Right,
-
-            Keyboard_Escape,
-            Keyboard_W,
-
-            PRESSABLE_END,
-
-            Window_Close,
-        } 
-        type;
-
-        enum State : u8 { None, Released, Pressed } state;
-
+        EventType  type;
+        EventState state;
         union {
             struct { int x, y; } pos;
         };
@@ -31,10 +36,10 @@ namespace mini::app
 
     ///global arrays for wnd proc
     inline box::Array <Event, 10> events; //per frame max
-    inline box::Bitset<Event::Type::PRESSABLE_END> pressed;
+    inline box::Bitset<EventType::PRESSABLE_END> pressed;
 
 
-    inline Event* CheckEvent(const Event::Type type, const Event::State state = Event::State::None)
+    inline Event* CheckEvent(const EventType type, const EventState state = EventState::None)
     {
         FOR_ARRAY(events, i)
         {
@@ -45,7 +50,7 @@ namespace mini::app
     }
 
 
-    inline bool IsPressed(const Event::Type type)
+    inline bool IsPressed(const EventType type)
     {
         return pressed.Test(type);
     }

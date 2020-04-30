@@ -22,7 +22,6 @@ namespace mini
     constexpr auto u16max = std::numeric_limits<u16>::max();
     constexpr auto u32max = std::numeric_limits<u32>::max();
 
-
     template<class T>
     using IsArithmetic = std::enable_if_t<std::is_arithmetic_v<T>>;
 
@@ -30,6 +29,27 @@ namespace mini
     using IsFloating = std::enable_if_t<std::is_floating_point_v<T>>;
 
     template<class T>
-    using IsIntegral = std::enable_if_t<std::is_integral_v<T> || std::is_enum_v<T>>;
-    
-}
+    using IsIntegralOrEnum = std::enable_if_t<std::is_integral_v<T> || std::is_enum_v<T>>;
+
+    template<class T>
+    constexpr auto GetIntegralFromEnum() //transform enum to integral
+    {
+        if      constexpr (std::is_integral_v<T>) return T{};
+        else if constexpr (std::is_enum_v<T>)     return std::underlying_type_t<T>{};
+        else    static_assert(0, "STATIC ASSERT type must be integral or enum");
+    }
+
+    template<auto N>
+    using IntegralTypeEnum = decltype(GetIntegralFromEnum<decltype(N)>()); //shorthand
+
+    template<auto N> //allow signed but not minus 
+    using IsArrayIndex = std::enable_if_t<( 
+        (std::is_integral_v<decltype(N)> || std::is_enum_v<decltype(N)>) && N >= (decltype(N))0 
+    )>;
+
+    template<auto N> //allow signed but not minus or zero 
+    using IsArraySize = std::enable_if_t<(
+        (std::is_integral_v<decltype(N)> || std::is_enum_v<decltype(N)>) && N > (decltype(N))0 
+    )>;
+
+}//ns

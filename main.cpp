@@ -1,6 +1,7 @@
 #include "MiniSTL/Window/win_Window.hpp"
 #include "MiniSTL/Window/win_WindowCallback.hpp"
 #include "MiniSTL/Debug/Logger.hpp"
+#include "MiniSTL/Debug/Console.hpp"
 using namespace mini;
 
 int WINAPI wWinMain(
@@ -9,13 +10,17 @@ int WINAPI wWinMain(
     _In_        PWSTR pCmdLine,
     _In_        int nCmdShow)
 {
+    mini::dbg::SetupConsole();
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
 
-    while (!app::CheckEvent(Event::Type::Window_Close) && !app::IsPressed(Event::Type::Keyboard_Escape))
+    box::Bitset<8> b { 0b1111 };
+    DLOG(b.Decimal());
+
+    while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
     {
         wnd::PollEvents();
 
-        if (app::CheckEvent(Event::Type::Keyboard_W, Event::State::Released)) {
+        if (app::CheckEvent(EventType::Keyboard_W, EventState::Released)) {
             DLOG("released w");
         }
 

@@ -1,108 +1,107 @@
 #pragma once
+#include "MiniSTL/Debug/Assert.hpp"
 #include "MiniSTL/Types.hpp"
+#include <iostream>
 
 namespace mini::box 
 {
-    template<auto BIT_COUNT_T>
+    //allows passing integrals and enum (no outer cast needed)(may violate bounds)
+    //no use of proxy class that is returned by operator[], just methods are used
+    //constexpr used
+
+    #define BOUNDS_CHECK(T, i, size) mini::Assert((T)i >= (T)0 && (T)i < size, "Bitset idx out of bounds");
+    #define BOUNDS_CHECK_STATIC(T, n, size) static_assert((T)n >= (T)0 && (T)n < size, "STATIC ASSERT: Bitset idx out of bounds");
+
+    template<auto BITS_T, typename = IsArraySize<BITS_T>>
     struct Bitset
     {
-        static constexpr auto BIT_COUNT  = (u32)(BIT_COUNT_T);
-        static constexpr auto BYTE_COUNT = (u32)(BIT_COUNT_T) % 8u ? (u32)BIT_COUNT_T / 8u + 1u : (u32)BIT_COUNT_T / 8u;
+        using CT = IntegralTypeEnum<BITS_T>; //count type
+
+        static constexpr CT BITS  = (CT)BITS_T;
+        static constexpr CT BYTES = (CT)BITS_T / (CT)8 + ((CT)BITS_T % (CT)8 ? (CT)1 : (CT)0); //ceil
+
+        u8 data [BYTES] = { 0 };
+
+
+        constexpr Bitset(const std::size_t num = 0) //todo: test for large numbers
+        {
+            for (auto i = 0; i < BYTES; ++i)
+            {
+                const auto bits = ((BYTES - 1 - i) * 8);
+                data[BYTES-1-i] = static_cast<u8>((num >> bits) & 0xFF); //wrapping?
+            }
+        }
+
+        template<typename T>
+        inline constexpr CT Bit(const T& i) const  { return (CT)i % (CT)8; } //get bit index of byte index
         
-        u8 data [BYTE_COUNT] = { 0 };
+        template<typename T>
+        inline constexpr CT Byte(const T& i) const { return (CT)i / (CT)8; } //get byte index of a bit index
 
+        ///SET
 
-        Bitset(const std::size_t num = 0)
+        template<typename T, typename = IsIntegralOrEnum<T>> //out of bounds check?
+        void Set(const T i, const bool b)
         {
-            for (auto i = 0; i < BYTE_COUNT; ++i)
-            {
-                const auto bits = ((BYTE_COUNT - 1 - i) * 8);
-                data[BYTE_COUNT-1-i] = static_cast<u8>((num >> bits) & 0xFFFF); //maybe increase
-            }
+            BOUNDS_CHECK(CT, i, BITS);
+            data[Byte(i)] = b
+                ? data[Byte(i)] |  (1 << Bit(i))
+                : data[Byte(i)] & ~(1 << Bit(i));
         }
 
-        template<typename T, typename = IsIntegral<T>> //allowing enum class
-        void Set(const T i, const bool b = true)
+        template<bool B, typename T, typename = IsIntegralOrEnum<T>>
+        void Set(const T i) 
         {
-            if constexpr (std::is_enum_v<T>)
-            {
-                const auto j = static_cast<std::underlying_type_t<T>>(i);
-                data[j / 8] = b
-                    ? data[j / 8] | (1ul << (j % 8))
-                    : data[j / 8] & ~(1ul << (j % 8));
-            }
-            else
-            {
-                data[i / 8] = b
-                    ? data[i / 8] | (1ul << (i % 8))
-                    : data[i / 8] & ~(1ul << (i % 8));
-            }
+            BOUNDS_CHECK(CT, i, BITS);
+            if constexpr (B) data[Byte(i)] |=  (1 << Bit(i));
+            else             data[Byte(i)] &= ~(1 << Bit(i));
         }
 
-        template<bool B, typename T, typename = IsIntegral<T>>
-        void Set(const T i)
+        template<auto N, bool B, typename = IsArrayIndex<N>>
+        void Set()
         {
-            if constexpr (std::is_enum_v<T>)
-            {
-                const auto j = static_cast<std::underlying_type_t<T>>(i);
-                if constexpr ( B) data[j / 8] |=  (1ul << (j % 8));
-                if constexpr (!B) data[j / 8] &= ~(1ul << (j % 8));
-            }
-            else
-            {
-                if constexpr ( B) data[i / 8] |=  (1ul << (i % 8));
-                if constexpr (!B) data[i / 8] &= ~(1ul << (i % 8));
-            }
+            BOUNDS_CHECK_STATIC(CT, N, BITS);
+            if constexpr (B) data[Byte(N)] |=  (1 << Bit(N));
+            else             data[Byte(N)] &= ~(1 << Bit(N));
         }
 
-        template<auto T, bool B = true, typename = IsIntegral<decltype(T)>>
-        void Set() //is this actually worth it??
-        {
-            if constexpr (std::is_enum_v<decltype(T)>)
-            {
-                using ET = std::underlying_type_t<decltype(T)>;
-                if constexpr ( B) data[(ET)T / 8] |=  (1ul << ((ET)T % 8));
-                if constexpr (!B) data[(ET)T / 8] &= ~(1ul << ((ET)T % 8));
-            }
-            else
-            {
-                if constexpr ( B) data[T / 8] |=  (1ul << (T % 8));
-                if constexpr (!B) data[T / 8] &= ~(1ul << (T % 8));
-            }
-        }
+        ///FLIP
 
-        template<typename T, typename = IsIntegral<T>>
+        template<typename T, typename = IsIntegralOrEnum<T>>
         void Flip(const T i)
         {
-            if constexpr (std::is_enum_v<T>)
-            {
-                const auto j = static_cast<std::underlying_type_t<T>>(i);
-                data[j / 8] ^= 1ul << j % 8;
-            }
-            else
-            {
-                data[i / 8] ^= 1ul << i % 8;
-            }
+            BOUNDS_CHECK(CT, i, BITS);
+            data[Byte(i)] ^= 1 << Bit(i);
         }
 
-        template<typename T, typename = IsIntegral<T>>
+        template<auto N, typename = IsArrayIndex<N>>
+        void Flip()
+        {
+            BOUNDS_CHECK_STATIC(CT, N, BITS);
+            data[Byte(N)] ^= 1 << Bit(N);
+        }
+
+        ///Test
+
+        template<typename T, typename = IsIntegralOrEnum<T>>
         bool Test(const T i) const
         {
-            if constexpr (std::is_enum_v<T>) 
-            {
-                const auto j = static_cast<std::underlying_type_t<T>>(i);
-                return (data[j / 8] & (1 << (j % 8))) > 0;
-            }
-            else
-            {
-                return (data[i / 8] & (1 << (i % 8))) > 0;
-            }
-            return true;
+            BOUNDS_CHECK(CT, i, BITS);
+            return data[Byte(i)] & (1ul << Bit(i));
         }
 
-        u32 FindFirstFreeBit() const
+        template<auto N, typename = IsArrayIndex<N>>
+        constexpr bool Test() const
         {
-            for (u32 i = 0; i < BIT_COUNT; ++i)
+            BOUNDS_CHECK_STATIC(CT, N, BITS);
+            return data[Byte(N)] & (1 << Bit(N));
+        }
+
+        ///other
+
+        constexpr CT FindFirstFreeBit() const
+        {
+            for (CT i = 0; i < BITS; ++i)
             {
                 if (Test(i) == false)
                     return i;
@@ -110,6 +109,21 @@ namespace mini::box
             return u32max;
         }
 
+        ///get number
+
+        std::size_t Decimal() const
+        {
+            return 42; //todo: 
+        }
+
     };
 
+#undef BOUNDS_CHECK
+#undef BOUNDS_CHECK_STATIC
+
 }//ns
+
+
+
+//todo: get number of bitset (decimal)
+//todo: check ctor

@@ -8,8 +8,10 @@
 
 namespace mini::wnd
 {
-    struct Window
+    class Window
     {
+    public:
+
         const wchar_t* className = {};
         HWND        hWnd         = NULL;
         HDC         hDc          = NULL;
