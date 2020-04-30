@@ -1,6 +1,4 @@
 #pragma once
-#include "MiniSTL/Math/Matrix.hpp"
-#include "MiniSTL/Box/Bitset.hpp"
 #include "MiniSTL/Debug/Console.hpp" //win 
 #include <iostream>
 
@@ -23,22 +21,5 @@ namespace mini::dbg
         ((std::cout << args << " "), ...);
         std::cout << '\n';
     }
-
-    ///mat
-
-    template<u8 Y, u8 X, class T>
-    std::ostream& operator<<(std::ostream& os, const mini::math::Mat<T, Y, X>& mat)
-    {
-        for (u8 y = 0; y < Y; ++y)
-        {
-            for (u8 x = 0; x < X; ++x)
-            {
-                os << mat[y][x] << '|';
-            }
-            os << '\n';
-        }
-        return os;
-    }
-
 
 }//ns

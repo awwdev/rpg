@@ -265,6 +265,25 @@ namespace mini::math
         ref = ref * other;
     }
 
+    ///stringify
+
+    //todo: string class (cannot copy char* due to local dtor and char[] not possible)
+
+    //template<class T, u8 Y, u8 X>
+    //mini::String ToString(const Mat<T, Y, X>& m)
+    //{
+    //    const char* out = "Hello Matrix";
+    //    for (u8 y = 0; y < Y; ++y)
+    //    {
+    //        for (u8 x = 0; x < X; ++x)
+    //        {
+    //            //os << mat[y][x] << '|';
+    //        }
+    //        //out << '\n';
+    //    }
+    //    return out;
+    //}
+
 }
 
 #undef ND

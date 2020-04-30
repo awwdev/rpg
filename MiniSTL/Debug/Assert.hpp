@@ -1,5 +1,5 @@
 #pragma once
-//#include "MiniSTL/Debug/Logger.hpp"
+#include "MiniSTL/Debug/Logger.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -11,7 +11,7 @@ namespace mini {
     { 
         if (!b) { 
             BringWindowToTop(GetConsoleWindow()); //win only
-            std::cout << msg << '\n';
+            ErrLOG(msg);
             system("pause"); //win only
         } 
     } 
