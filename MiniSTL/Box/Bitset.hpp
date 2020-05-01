@@ -1,68 +1,65 @@
 #pragma once
 #include "MiniSTL/Debug/Assert.hpp"
 #include "MiniSTL/Types.hpp"
-#include <iostream>
 
 namespace mini::box 
 {
-    //allows passing integrals and enum (no outer cast needed)(may violate bounds)
-    //no use of proxy class that is returned by operator[], just methods are used
-    //constexpr used
+#define BOUNDS_CHECK(T, i, size)    mini::Assert((T)i >= (T)0 && (T)i < size, "Bitset access out of bounds");
+#define BOUNDS_CHECK_S(T, i, size) static_assert((T)i >= (T)0 && (T)i < size, "Bitset access out of bounds");
+#define DC [[nodiscard]]
 
-    #define BOUNDS_CHECK(T, i, size) mini::Assert((T)i >= (T)0 && (T)i < size, "Bitset idx out of bounds");
-    #define BOUNDS_CHECK_STATIC(T, n, size) static_assert((T)n >= (T)0 && (T)n < size, "STATIC ASSERT: Bitset idx out of bounds");
+    //biset can operate with integrals and enums (no outer cast needed)
+    //some constexpr methods
+    //no exceptions, checks can be toggled
 
     template<auto BITS_T, typename = IsArraySize<BITS_T>>
     struct Bitset
     {
-        using CT = IntegralTypeEnum<BITS_T>; //count type
+        using COUNT_T = IntegralTypeEnum<BITS_T>; //count type
 
-        static constexpr CT BITS  = (CT)BITS_T;
-        static constexpr CT BYTES = (CT)BITS_T / (CT)8 + ((CT)BITS_T % (CT)8 ? (CT)1 : (CT)0); //ceil
+        static constexpr COUNT_T BITS  = (COUNT_T)BITS_T;
+        static constexpr COUNT_T BYTES = (COUNT_T)BITS_T / (COUNT_T)8 + ((COUNT_T)BITS_T % (COUNT_T)8 ? (COUNT_T)1 : (COUNT_T)0); //ceil
 
         u8 data [BYTES] = { 0 };
 
 
-        constexpr Bitset(const std::size_t num = 0) //todo: test for large numbers
+        constexpr Bitset(const std::size_t num = 0)
         {
-            for (auto i = 0; i < BYTES; ++i)
+            for (auto i = BYTES - 1; i >= 0 ; --i)
             {
-                const auto bits = ((BYTES - 1 - i) * 8);
-                data[BYTES-1-i] = static_cast<u8>((num >> bits) & 0xFF); //wrapping?
+                const auto bits = (i * 8);
+                data[i] = static_cast<u8>((num >> bits) & 0xFF); //0xFF prevents wrapping?
             }
         }
 
-        template<typename T>
-        inline constexpr CT Bit(const T& i) const  { return (CT)i % (CT)8; } //get bit index of byte index
-        
-        template<typename T>
-        inline constexpr CT Byte(const T& i) const { return (CT)i / (CT)8; } //get byte index of a bit index
+        #define BIT(i)  (COUNT_T)i % (COUNT_T)8
+        #define BYTE(i) (COUNT_T)i / (COUNT_T)8
 
         ///SET
 
-        template<typename T, typename = IsIntegralOrEnum<T>> //out of bounds check?
+        template<typename T, typename = IsIntegralOrEnum<T>>
         void Set(const T i, const bool b)
         {
-            BOUNDS_CHECK(CT, i, BITS);
-            data[Byte(i)] = b
-                ? data[Byte(i)] |  (1 << Bit(i))
-                : data[Byte(i)] & ~(1 << Bit(i));
+            BOUNDS_CHECK(COUNT_T, i, BITS);
+            data[BYTE(i)] = b
+                ? data[BYTE(i)] |  (1 << BIT(i))
+                : data[BYTE(i)] & ~(1 << BIT(i));
         }
 
         template<bool B, typename T, typename = IsIntegralOrEnum<T>>
-        void Set(const T i) 
+        void Set(const T i)
         {
-            BOUNDS_CHECK(CT, i, BITS);
-            if constexpr (B) data[Byte(i)] |=  (1 << Bit(i));
-            else             data[Byte(i)] &= ~(1 << Bit(i));
+            BOUNDS_CHECK(COUNT_T, i, BITS);
+            if constexpr (B) data[BYTE(i)] |=  (1 << BIT(i));
+            else             data[BYTE(i)] &= ~(1 << BIT(i));
         }
 
         template<auto N, bool B, typename = IsArrayIndex<N>>
         void Set()
         {
-            BOUNDS_CHECK_STATIC(CT, N, BITS);
-            if constexpr (B) data[Byte(N)] |=  (1 << Bit(N));
-            else             data[Byte(N)] &= ~(1 << Bit(N));
+            BOUNDS_CHECK_S(COUNT_T, N, BITS);
+            if constexpr (B) data[BYTE(N)] |=  (1 << BIT(N));
+            else             data[BYTE(N)] &= ~(1 << BIT(N));
         }
 
         ///FLIP
@@ -70,60 +67,63 @@ namespace mini::box
         template<typename T, typename = IsIntegralOrEnum<T>>
         void Flip(const T i)
         {
-            BOUNDS_CHECK(CT, i, BITS);
-            data[Byte(i)] ^= 1 << Bit(i);
+            BOUNDS_CHECK(COUNT_T, i, BITS);
+            data[BYTE(i)] ^= 1 << BIT(i);
         }
 
         template<auto N, typename = IsArrayIndex<N>>
         void Flip()
         {
-            BOUNDS_CHECK_STATIC(CT, N, BITS);
-            data[Byte(N)] ^= 1 << Bit(N);
+            BOUNDS_CHECK_S(COUNT_T, N, BITS);
+            data[BYTE(N)] ^= 1 << BIT(N);
         }
 
         ///Test
 
-        template<typename T, typename = IsIntegralOrEnum<T>>
+        template<typename T, typename = IsIntegralOrEnum<T>> DC
         bool Test(const T i) const
         {
-            BOUNDS_CHECK(CT, i, BITS);
-            return data[Byte(i)] & (1ul << Bit(i));
+            BOUNDS_CHECK(COUNT_T, i, BITS);
+            return data[BYTE(i)] & (1 << BIT(i));
         }
 
-        template<auto N, typename = IsArrayIndex<N>>
+        template<auto N, typename = IsArrayIndex<N>> DC
         constexpr bool Test() const
         {
-            BOUNDS_CHECK_STATIC(CT, N, BITS);
-            return data[Byte(N)] & (1 << Bit(N));
+            BOUNDS_CHECK_S(COUNT_T, N, BITS);
+            return data[BYTE(N)] & (1 << BIT(N));
         }
 
         ///other
 
-        constexpr CT FindFirstFreeBit() const
+        DC constexpr COUNT_T FindFirstFreeBit() const
         {
-            for (CT i = 0; i < BITS; ++i)
+            for (COUNT_T i = 0; i < BITS; ++i)
             {
-                if (Test(i) == false)
-                    return i;
+                const auto a = data[BYTE(i)] & (1 << BIT(i)); //Test() is due to Assert not constexpr
+                if (a == 0) return i;
             }
-            return u32max;
+            return std::numeric_limits<COUNT_T>::max();
         }
 
         ///get number
 
-        std::size_t Decimal() const
+        DC constexpr std::size_t Decimal() const
         {
-            return 42; //todo: 
+            std::size_t num = 0;
+            for (auto i = 0; i < BYTES; ++i)
+            {
+                num += (((std::size_t)data[i]) << (i*8));
+            }            
+            return num;
         }
 
     };
 
 #undef BOUNDS_CHECK
-#undef BOUNDS_CHECK_STATIC
+#undef BOUNDS_CHECK_S
+#undef BIT
+#undef BYTE
+#undef DC
 
 }//ns
-
-
-
-//todo: get number of bitset (decimal)
-//todo: check ctor

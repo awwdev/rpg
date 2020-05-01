@@ -3,16 +3,18 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#undef max
 
-#include <iostream>
-
-namespace mini {
-    inline auto Assert(const bool b, const char* msg = "") 
+namespace mini 
+{
+    inline void Assert(const bool b, const char* msg = "") 
     { 
-        if (!b) { 
+        if (!b)
+        {
             BringWindowToTop(GetConsoleWindow()); //win only
             ErrLOG(msg);
             system("pause"); //win only
-        } 
+        }
     } 
-}
+
+}//ns
