@@ -19,7 +19,7 @@ namespace mini::dbg
     {
         std::cout << CONSOLE_RED;
         ((std::cout << args << " "), ...);
-        std::cout << '\n';
+        std::cout << CONSOLE_DEFAULT"\n";
     }
 
 }//ns

@@ -26,21 +26,24 @@ int WINAPI wWinMain(
         bool operator==(const float f) { return n == f; }
     };
 
-    enum class ArrTestE { A, B = 3 };
-    box2::Array<Foo, ArrTestE::B> arr1;
+    enum class ArrTestE { A = -1, B = 3, C= 1000 };
+    box2::Array<Foo, ArrTestE::B> arr1 { Foo{32.f}, Foo{12.f} };
 
-    arr1.Append(1.f);
-    arr1.Append(2.f);
-    arr1.Append(3.f);
-    arr1.Remove(0);
+   //arr1.Append(1.f);
+   //arr1.Append(2.f);
+   //arr1.Append(3.f);
+   //arr1.RemoveOrdered(0);
+   //arr1.Insert(ArrTestE::C, 42.f);
 
     DLOG(arr1.Contains(2.f) ? "found" : "not found");
 
     FOR_ARRAY(arr1, i)
     {
-        DLOG(i, arr1[i].n);
+        DLOG(i, arr1[i]->n);
     }
 
+    //DLOG(arr1.Last()->n);
+    //DLOG(arr1[10]);
     //math::Mat<int, 4, 3> M { 1, 2, 3, 4 };
     //DLOG(math::ToString(M));
     //TODO: STRING CLASS

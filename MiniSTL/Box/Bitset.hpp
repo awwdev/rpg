@@ -4,8 +4,8 @@
 
 namespace mini::box 
 {
-#define BOUNDS_CHECK(T, i, size)    mini::Assert((T)i >= (T)0 && (T)i < size, "Bitset access out of bounds");
-#define BOUNDS_CHECK_S(T, i, size) static_assert((T)i >= (T)0 && (T)i < size, "Bitset access out of bounds");
+#define BOUNDS_CHECK(t, i, size)    mini::Assert((t)i >= 0 && (t)i < size, "Bitset access out of bounds");
+#define BOUNDS_CHECK_S(t, i, size) static_assert((t)i >= 0 && (t)i < size, "Bitset access out of bounds");
 #define DC [[nodiscard]]
 
     //biset can operate with integrals and enums (no outer cast needed)

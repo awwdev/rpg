@@ -6,9 +6,10 @@
 namespace mini::dbg
 {
     //win codes
-    #define CONSOLE_RED    "\x1b[91m"
-    #define CONSOLE_GREEN  "\x1b[92m"
-    #define CONSOLE_YELLOW "\x1b[103m"
+    #define CONSOLE_DEFAULT "\x1b[0m"
+    #define CONSOLE_RED     "\x1b[91m"
+    #define CONSOLE_GREEN   "\x1b[92m"
+    #define CONSOLE_YELLOW  "\x1b[103m"
 
     struct Console
     {
