@@ -52,4 +52,11 @@ namespace mini
         (std::is_integral_v<decltype(N)> || std::is_enum_v<decltype(N)>) && N > (decltype(N))0 
     )>;
 
+    template<class T>
+    using IsPrintable = std::enable_if_t<(
+        std::is_arithmetic_v<T> ||
+        std::is_pointer_v<T>
+    )>;
+
+
 }//ns

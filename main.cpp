@@ -12,7 +12,7 @@ struct Foo {
     ~Foo() { DLOG("dtor"); }
 };
 
-inline void PrintArray(mini::box::IArray<Foo>& foos) {
+inline void PrintFooArray(mini::box::IArray<Foo>& foos) {
     FOR_ARRAY(foos, i)
     {
         DLOG(foos[i].num);
@@ -29,31 +29,28 @@ int WINAPI wWinMain(
 {
     const auto con = dbg::SetupConsole();
 
-    box::Array<int, 3> arr1 { 0.f };
-    box::Array<Foo, 3> arr2 { Foo{1.f}};
-    arr1.Append(3.f);
-    arr2.Append(2.f);
+    box::Array<int, 10> arr1;
+    arr1.InitCompleteArray();
+    box::PrintArray(arr1, "arr1");
 
-    box::Array<int, 5> arr3 = arr1;
-    box::Array<Foo, 5> arr4 = std::move(arr2);
+    box::Array<Foo, 3> arr2 { Foo{1.f}};
+    arr1.AppendReturn(3) = 4;
+    arr2.Append(2.f);
+    
+    box::Array<int, 5u> arr3 = arr1;
+    box::Array<Foo, 5u> arr4 = std::move(arr2);
 
     const auto arrx = std::move(arr1);
 
-    FOR_ARRAY(arr3, i)
-    {
-        DLOG(arr3[i]);
-    }
-    DLOG("---")
-
-    PrintArray(arr4);
-
+    
+    PrintFooArray(arr4);
+    
     DLOG(arr1.Count());
     DLOG(arr2.Count());
 
     system("pause");
 }
 
-//TODO: print methods for arrays
 
 
 

@@ -24,7 +24,7 @@ namespace mini::box
     template<class T, typename CT = u32> 
     class IArray //array size agnostic (used for passing)
     {
-    protected:
+    protected: //user shall not create an IArray but Array
         CT count;
         T* dataPtr;
 
@@ -38,6 +38,7 @@ namespace mini::box
 
     public:
         using COUNT_T = CT;
+        using DATA_T  = T;
         const CT COUNT_MAX;
 
         void Clear() { while (count > 0) dataPtr[--count].~T(); }
@@ -47,52 +48,44 @@ namespace mini::box
         template<typename IDX, typename = IsIntegralOrEnum<IDX>> DC
         T& operator[](const IDX i) 
         { 
-            CheckBounds(i, count);
-            return dataPtr[(CT)i];
+            Check_PositiveAndLess(i, count);
+            return dataPtr[static_cast<CT>(i)];
         }
 
         template<typename IDX, typename = IsIntegralOrEnum<IDX>> DC
         const T& operator[](const IDX i) const
         { 
-            CheckBounds(i, count);
-            return dataPtr[(CT)i];
+            Check_PositiveAndLess(i, count);
+            return dataPtr[static_cast<CT>(i)];
         }
 
-        DC T&       Last()        { CheckBounds(count - 1, count); return dataPtr[count - 1]; }
-        DC const T& Last()  const { CheckBounds(count - 1, count); return dataPtr[count - 1]; }
+        DC T&       Last()        { Check_PositiveAndLess(count - 1, count); return dataPtr[count - 1]; }
+        DC const T& Last()  const { Check_PositiveAndLess(count - 1, count); return dataPtr[count - 1]; }
         DC CT       Count() const { return count; }
         DC bool     Empty() const { return count == 0; }
 
         ///APPEND
 
         template<class... CtorArgs>
-        void Append(CtorArgs&&... args)
+        void Append(CtorArgs&&... args) 
         {
-            CheckBounds(count, COUNT_MAX);
+            Check_PositiveAndLess(count, COUNT_MAX + 1); 
 
             if constexpr (std::is_aggregate_v<T>)
             {
-                new(&dataPtr[count++]) T { std::forward<CtorArgs>(args)... };
+                new(&dataPtr[count++]) T{ std::forward<CtorArgs>(args)... }; //struct init possible
             }
-            else
+            else 
             {
-                new(&dataPtr[count++]) T (args...); //pod
+                new(&dataPtr[count++]) T(args...); //pod (will implicit cast if possible) no unfold needed (single param)
             }
         }
 
-        template<class... CtorArgs>
+        template<class... CtorArgs> DC
         T& AppendReturn(CtorArgs&&... args)
         {
-            CheckBounds(count, COUNT_MAX);
-
-            if constexpr (std::is_aggregate_v<T>)
-            {
-                return *(new(&dataPtr[count++]) T{ std::forward<CtorArgs>(args)... });
-            }
-            else
-            {
-                return *(new(&dataPtr[count++]) T(args...)); //pod
-            }
+            Append(args...);
+            return Last();
         }
 
         ///REMOVE
@@ -100,24 +93,23 @@ namespace mini::box
         template<typename IDX, typename = IsIntegralOrEnum<IDX>>
         void RemoveOrdered(const IDX i) //O(n)
         {
-            CheckBounds(i, count);
+            Check_PositiveAndLess(i, count);
 
             dataPtr[i].~T();
-            for (CT j = i; j < count - 1; ++j) { //shift em all
+            for (CT j = i; j < count - 1; ++j) { //shift to left
                 dataPtr[j] = std::move(dataPtr[j + 1]);
             }
-            dataPtr[count].~T();
-            --count;
+            dataPtr[count--].~T();
         }
 
         template<typename IDX, typename = IsIntegralOrEnum<IDX>>
         void Remove(const IDX i) //O(1)
         {
-            CheckBounds(i, count);
+            Check_PositiveAndLess(i, count);
 
             dataPtr[i].~T();
             --count;
-            if (count != i) //now construct last element in this very spot (if we had not removed the last)
+            if (count != i) //now move last element in this very spot (if we had not removed the last)
             { 
                 new(&dataPtr[i]) T{ std::move(dataPtr[count]) };
                 dataPtr[count].~T();
@@ -126,7 +118,7 @@ namespace mini::box
 
         ///FIND
 
-        template<class T2> //allows for custom operator==
+        template<class T2> DC //allows for custom operator==
         T* Contains(const T2& element) 
         {
             FOR_ARRAY((*this), i)
@@ -140,25 +132,30 @@ namespace mini::box
         ///INSERT
 
         template<typename IDX, class... CtorArgs, typename = IsIntegralOrEnum<IDX>>
-        T& Insert(const IDX insertIdx, CtorArgs&&... args)
+        void Insert(const IDX insertIdx, CtorArgs&&... args)
         {
-            CheckBounds(insertIdx, count);
+            Check_PositiveAndLess(insertIdx, count);
 
-            //move elements to the right
+            //move elements to the right (copy below into ahead)
             new(&dataPtr[count]) T(std::move(dataPtr[count - 1])); //out of bounds, needs "new"
-            for (CT i = count - 1; i >= count - 1 - (CT)insertIdx; --i) { //cast dangerous
+            for (CT i = count - 1; i >= count - 1 - (CT)insertIdx; --i) { 
                 dataPtr[i] = std::move(dataPtr[i-1]);
             }
 
             ++count;
-            return dataPtr[(CT)insertIdx] = { args... };
         }
 
-        ///CHECK
+        template<typename IDX, class... CtorArgs, typename = IsIntegralOrEnum<IDX>> DC
+        T& InsertReturn(const IDX insertIdx, CtorArgs&&... args)
+        {
+            Insert(insertIdx, args...);
+            return dataPtr[(CT)insertIdx];
+        }
 
     protected:
+
         template<typename IDX>
-        inline bool CheckBounds(const IDX i, const CT size) const 
+        inline bool Check_PositiveAndLess(const IDX i, const CT size) const 
         {
         #if (DO_BOUNDS_CHECK)
             if constexpr (std::is_enum_v<IDX>)
@@ -188,11 +185,11 @@ namespace mini::box
     };
 
 
-    template<class T, auto COUNT_MAX_T, typename = IsArraySize<COUNT_MAX_T>>
-    class Array final : public IArray<T>
+    template<class T, auto COUNT_MAX_T, typename CT = u32, typename = IsArraySize<COUNT_MAX_T>>
+    class Array final : public IArray<T, CT>
     {
     public:
-        using COUNT_T = IntegralTypeEnum<COUNT_MAX_T>;
+        using COUNT_T = CT;
         using DATA_T  = T;
 
         static constexpr auto COUNT_MAX  = (COUNT_T)COUNT_MAX_T;
@@ -210,7 +207,15 @@ namespace mini::box
         {
             ((this->Append(std::forward<Elements>(elements))), ...);
         }
-        ///COPY / MOVE CTOR
+
+        void InitCompleteArray()
+        {
+            for (COUNT_T i = 0; i < COUNT_MAX; ++i) {
+                this->Append();
+            }
+        }
+
+        ///COPY / MOVE CTOR (any size)
 
         Array(const Array& other) : Array()     { CopyMoveArray(other); }
         Array(const IArray<T>& other) : Array() { CopyMoveArray(other); }
@@ -228,18 +233,18 @@ namespace mini::box
             this->Clear();
             this->count = (COUNT_MAX > other.Count()) ? other.Count() : COUNT_MAX; //clamp
 
-            if constexpr (std::is_lvalue_reference_v<Arr>)
+            if constexpr (std::is_lvalue_reference_v<Arr>) //copy
             {
                 FOR_ARRAY((*this), i)
                 {
                     new(&data[i * sizeof(T)]) T { other[i] };
                 }
             }
-            else
+            else //move
             {
                 FOR_ARRAY((*this), i)
                 {
-                    new(&data[i * sizeof(T)]) T{ std::move(other[i]) };
+                    new(&data[i * sizeof(T)]) T { std::move(other[i]) };
                 }
                 other.Clear();
             }
@@ -249,23 +254,19 @@ namespace mini::box
         alignas(T) u8 data[BYTE_COUNT]; //avoids default ctor calls
     };
 
+    template<class Arr, typename = IsPrintable<typename Arr::DATA_T>>
+    void PrintArray(const Arr& arr, const char* name = "")
+    {
+        DLOG(name);
+        FOR_ARRAY(arr, i) {
+            DLOG(arr[i]);
+        }
+        DLOG("---");
+    }
+
 #undef DC
-#undef DO_BOUNDS_CHECK
 
 }//ns
-
-
-
-/*
-template<class Arr>
-Arr InitCompleteArray()
-{
-    Arr arr;
-    for(auto i=0; i< arr.COUNT_MAX; ++i) //could be done more efficient?
-        arr.Append();
-    return arr;
-}
-*/
 
 /*
 void Sort(bool(*fn)(const T& lhs, const T& rhs))
@@ -295,5 +296,3 @@ inline void Swap(T& lhs, T& rhs)
     rhs = std::move(tmp);
 }
 */
-
-//, typename = std::enable_if_t<std::is_same_v<T, std::common_type_t<Elements...>>>>
