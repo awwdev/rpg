@@ -24,6 +24,7 @@ namespace mini::wnd
         }
     };
 
+    [[nodiscard]]
     inline Window mini_CreateWindow(HINSTANCE hInst, u16 width, u16 height, const wchar_t* className = L"miniClass", const wchar_t* wndName = L"miniWnd")
     {
         WNDCLASSEX wndClass {

@@ -6,10 +6,20 @@
 #include "MiniSTL/Box/Array.hpp"
 using namespace mini;
 
-constexpr box::Bitset<9> b { 0b1'1101'1100 };
-constexpr auto bar = b.Test<0>();
-constexpr auto num = b.Decimal();
-constexpr auto fre = b.FindFirstFreeBit();
+struct Foo {
+    float num;
+    //Foo(float n, float x) : num{ n } { ; }
+    ~Foo() { DLOG("dtor"); }
+};
+
+inline void PrintArray(mini::box::IArray<Foo>& foos) {
+    FOR_ARRAY(foos, i)
+    {
+        DLOG(foos[i].num);
+    }
+    DLOG("---")
+}
+
 
 int WINAPI wWinMain(
     _In_        HINSTANCE hInstance,
@@ -18,58 +28,60 @@ int WINAPI wWinMain(
     _In_        int nCmdShow)
 {
     const auto con = dbg::SetupConsole();
-    const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
 
-    box::Bitset<9> b { 0b1'1111'1111 };
-    //b.Set(1000, true);
-    DLOG(b.Decimal()); //CURRENT WORK TEST
+    box::Array<int, 3> arr1 { 0.f };
+    box::Array<Foo, 3> arr2 { Foo{1.f}};
+    arr1.Append(3.f);
+    arr2.Append(2.f);
 
-    struct Foo { float n = 0; 
-        bool operator==(const float f) { return n == f; }
-    };
+    box::Array<int, 5> arr3 = arr1;
+    box::Array<Foo, 5> arr4 = std::move(arr2);
 
-    enum class ArrTestE : i16 { A = -1, B = 3, C= 1000 };
-    //box2::Array<Foo, ArrTestE::B> arr1{ Foo{32.f}, Foo{12.f} };
-    box::Array<float, ArrTestE::B> arr1 { 32.f, 12.f };
-    box::Array<float, 4> arr2 { arr1 };
-    arr2 = arr1;
+    const auto arrx = std::move(arr1);
 
-   //arr1.Append(1.f);
-   //arr1.Append(2.f);
-   //arr1.Append(3.f);
-   //arr1.RemoveOrdered(0);
-   //arr1.Insert(ArrTestE::C, 42.f);
-
-    //DLOG(arr1.Contains(2.f) ? "found" : "not found");
-
-    FOR_ARRAY(arr2, i)
+    FOR_ARRAY(arr3, i)
     {
-        //DLOG(i, arr1[i]->n);
-        DLOG(i, arr2[i]);
+        DLOG(arr3[i]);
     }
+    DLOG("---")
 
-    //DLOG(arr1.Last()->n);
-    //DLOG(arr1[10]);
-    //math::Mat<int, 4, 3> M { 1, 2, 3, 4 };
-    //DLOG(math::ToString(M));
+    PrintArray(arr4);
 
-    while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
-    {
-        wnd::PollEvents();
+    DLOG(arr1.Count());
+    DLOG(arr2.Count());
 
-        if (app::CheckEvent(EventType::Keyboard_W, EventState::Released)) {
-            DLOG("released w");
-        }
-
-        //update current scene
-        //draw current scene
-    }
+    system("pause");
 }
 
-//TODO: same bounds check in bitset as in array!
+//TODO: print methods for arrays
+
+
+
+//TODO: perf check std::array and std::vector vs mini::Array
+//also profiling refresh
+
+
 
 //variant
 //string
-//profiling
 //print input?
 //scene queue
+
+
+/*
+
+const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
+
+while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
+{
+    wnd::PollEvents();
+
+    if (app::CheckEvent(EventType::Keyboard_W, EventState::Released)) {
+        DLOG("released w");
+    }
+
+    //update current scene
+    //draw current scene
+}
+ 
+*/

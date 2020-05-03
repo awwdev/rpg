@@ -1,16 +1,28 @@
 #pragma once
 #include "MiniSTL/Types.hpp"
 #include "MiniSTL/Debug/Assert.hpp"
+#include <array>
 
 namespace mini::box
 {
+    /*
+    DESCRIPTION
+    - Fixed size (auto growth would be problematic for perf and allocators, also invalidation of ptrs)
+    - Arrays can be copied/moved into other sized arrays with compatible type (may result in loss of data)
+    - Inheritance (without virtuality) makes passing around the array convenient (no size in type needed)
+    - Array can handle enums (no outer cast needed)
+    - No exceptions and checks can be toggle via macro
+    - Remove is O(1) and will not preserve order (vs RemoveOrdered which is O(n))
+    - Initialization of the array will not trigger ctors of objects
+    - Simpler to read, debug and probably extend than the STL
+    */
+
 #define DO_BOUNDS_CHECK 1
 #define FOR_ARRAY(arr, i) for(decltype(arr.Count()) i = 0; i < arr.Count(); ++i)
-
 #define DC [[nodiscard]]
 
-    template<class T, typename CT> 
-    class IArray //array size agnostic and type aware (used for passing)
+    template<class T, typename CT = u32> 
+    class IArray //array size agnostic (used for passing)
     {
     protected:
         CT count;
@@ -26,7 +38,7 @@ namespace mini::box
 
     public:
         using COUNT_T = CT;
-        const COUNT_T COUNT_MAX;
+        const CT COUNT_MAX;
 
         void Clear() { while (count > 0) dataPtr[--count].~T(); }
         
@@ -54,10 +66,33 @@ namespace mini::box
         ///APPEND
 
         template<class... CtorArgs>
-        T& Append(CtorArgs&&... args) 
+        void Append(CtorArgs&&... args)
         {
             CheckBounds(count, COUNT_MAX);
-            return *(new(&dataPtr[count++]) T{ std::forward<CtorArgs>(args)... });
+
+            if constexpr (std::is_aggregate_v<T>)
+            {
+                new(&dataPtr[count++]) T { std::forward<CtorArgs>(args)... };
+            }
+            else
+            {
+                new(&dataPtr[count++]) T (args...); //pod
+            }
+        }
+
+        template<class... CtorArgs>
+        T& AppendReturn(CtorArgs&&... args)
+        {
+            CheckBounds(count, COUNT_MAX);
+
+            if constexpr (std::is_aggregate_v<T>)
+            {
+                return *(new(&dataPtr[count++]) T{ std::forward<CtorArgs>(args)... });
+            }
+            else
+            {
+                return *(new(&dataPtr[count++]) T(args...)); //pod
+            }
         }
 
         ///REMOVE
@@ -154,7 +189,7 @@ namespace mini::box
 
 
     template<class T, auto COUNT_MAX_T, typename = IsArraySize<COUNT_MAX_T>>
-    class Array final : public IArray<T, IntegralTypeEnum<COUNT_MAX_T>>
+    class Array final : public IArray<T>
     {
     public:
         using COUNT_T = IntegralTypeEnum<COUNT_MAX_T>;
@@ -165,59 +200,61 @@ namespace mini::box
 
         ///CTOR
 
-        constexpr Array() : IArray<T, COUNT_T> { reinterpret_cast<T*>(data), 0, COUNT_MAX }
+        constexpr Array() : IArray<T> { reinterpret_cast<T*>(data), 0, COUNT_MAX }
         { ; }
 
-        template<class... Elements, typename = ParamTypeMatchesT<T, Elements...>>
-        Array(Elements&&... elements) : Array()
+        //this ctor shall take elements and not arrays 
+        //SFINAE prevents that the compiler uses this as a first class citizen copy ctor
+        template<class... Elements, typename = std::enable_if_t<!std::is_base_of_v<IArray<T>, std::common_type_t<Elements...>>>>
+        Array(Elements&&... elements) : Array() 
         {
-            //unfold
-            ((new(&data[this->count++ * sizeof(T)]) T { std::forward<Elements>(elements) }), ...);
+            ((this->Append(std::forward<Elements>(elements))), ...);
         }
-
         ///COPY / MOVE CTOR
 
-        //same type and same size
-        Array(const Array& other) : Array() { this->operator=<COUNT_T>(other); }
-        Array(Array&& other) : Array()      { this->operator=<COUNT_T>(std::move(other)); }
-        
-        //same type and other size
-        template<typename C> Array(const IArray<T, C>& other) : Array() { this->operator=<C>(other); }
-        template<typename C> Array(IArray<T, C>&& other) : Array()      { this->operator=<C>(std::move(other)); }
+        Array(const Array& other) : Array()     { CopyMoveArray(other); }
+        Array(const IArray<T>& other) : Array() { CopyMoveArray(other); }
+        void operator=(const Array& other)      { CopyMoveArray(other); }
+        void operator=(const IArray<T>& other)  { CopyMoveArray(other); }
 
-        ///COPY / MOVE ASSIGNMENT
-        
-        template<typename C> 
-        Array& operator=(const IArray<T, C>& other)
-        {
-            this->count = (COUNT_MAX > other.Count()) ? other.Count() : COUNT_MAX; //clamp
-            FOR_ARRAY((*this), i)
-            {
-                new(&data[i * sizeof(T)]) T { other[i] };
-            }
-            return *this;
-        }
+        Array(Array&& other) : Array()          { CopyMoveArray(std::move(other)); }
+        Array(IArray<T>&& other) : Array()      { CopyMoveArray(std::move(other)); }
+        void operator=(Array&& other)           { CopyMoveArray(std::move(other)); }
+        void operator=(IArray<T>&& other)       { CopyMoveArray(std::move(other)); }
 
-        template<typename C> 
-        Array& operator=(IArray<T, C>&& other)
+        template<class Arr>
+        void CopyMoveArray(Arr&& other)
         {
+            this->Clear();
             this->count = (COUNT_MAX > other.Count()) ? other.Count() : COUNT_MAX; //clamp
-            FOR_ARRAY((*this), i)
+
+            if constexpr (std::is_lvalue_reference_v<Arr>)
             {
-                new(&data[i * sizeof(T)]) T{ std::move(other[i]) };
+                FOR_ARRAY((*this), i)
+                {
+                    new(&data[i * sizeof(T)]) T { other[i] };
+                }
             }
-            return *this;
+            else
+            {
+                FOR_ARRAY((*this), i)
+                {
+                    new(&data[i * sizeof(T)]) T{ std::move(other[i]) };
+                }
+                other.Clear();
+            }
         }
 
     private:
-        alignas(T) u8 data[BYTE_COUNT];
+        alignas(T) u8 data[BYTE_COUNT]; //avoids default ctor calls
     };
 
 #undef DC
 #undef DO_BOUNDS_CHECK
-#undef ANY_SIZE
 
 }//ns
+
+
 
 /*
 template<class Arr>
@@ -258,3 +295,5 @@ inline void Swap(T& lhs, T& rhs)
     rhs = std::move(tmp);
 }
 */
+
+//, typename = std::enable_if_t<std::is_same_v<T, std::common_type_t<Elements...>>>>
