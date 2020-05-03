@@ -4,8 +4,7 @@
 
 namespace mini::box 
 {
-#define BOUNDS_CHECK(t, i, size)    mini::Assert((t)i >= 0 && (t)i < size, "Bitset access out of bounds");
-#define BOUNDS_CHECK_S(t, i, size) static_assert((t)i >= 0 && (t)i < size, "Bitset access out of bounds");
+#define DO_BOUNDS_CHECK 1
 #define DC [[nodiscard]]
 
     //biset can operate with integrals and enums (no outer cast needed)
@@ -40,7 +39,7 @@ namespace mini::box
         template<typename T, typename = IsIntegralOrEnum<T>>
         void Set(const T i, const bool b)
         {
-            BOUNDS_CHECK(COUNT_T, i, BITS);
+            CheckBounds(i, BITS);
             data[BYTE(i)] = b
                 ? data[BYTE(i)] |  (1 << BIT(i))
                 : data[BYTE(i)] & ~(1 << BIT(i));
@@ -49,7 +48,7 @@ namespace mini::box
         template<bool B, typename T, typename = IsIntegralOrEnum<T>>
         void Set(const T i)
         {
-            BOUNDS_CHECK(COUNT_T, i, BITS);
+            CheckBounds(i, BITS);
             if constexpr (B) data[BYTE(i)] |=  (1 << BIT(i));
             else             data[BYTE(i)] &= ~(1 << BIT(i));
         }
@@ -57,7 +56,7 @@ namespace mini::box
         template<auto N, bool B, typename = IsArrayIndex<N>>
         void Set()
         {
-            BOUNDS_CHECK_S(COUNT_T, N, BITS);
+            CheckBounds(N, BITS);
             if constexpr (B) data[BYTE(N)] |=  (1 << BIT(N));
             else             data[BYTE(N)] &= ~(1 << BIT(N));
         }
@@ -67,14 +66,14 @@ namespace mini::box
         template<typename T, typename = IsIntegralOrEnum<T>>
         void Flip(const T i)
         {
-            BOUNDS_CHECK(COUNT_T, i, BITS);
+            CheckBounds(i, BITS);
             data[BYTE(i)] ^= 1 << BIT(i);
         }
 
         template<auto N, typename = IsArrayIndex<N>>
         void Flip()
         {
-            BOUNDS_CHECK_S(COUNT_T, N, BITS);
+            CheckBounds(N, BITS);
             data[BYTE(N)] ^= 1 << BIT(N);
         }
 
@@ -83,14 +82,14 @@ namespace mini::box
         template<typename T, typename = IsIntegralOrEnum<T>> DC
         bool Test(const T i) const
         {
-            BOUNDS_CHECK(COUNT_T, i, BITS);
+            CheckBounds(i, BITS);
             return data[BYTE(i)] & (1 << BIT(i));
         }
 
         template<auto N, typename = IsArrayIndex<N>> DC
         constexpr bool Test() const
         {
-            BOUNDS_CHECK_S(COUNT_T, N, BITS);
+            CheckBounds(N, BITS);
             return data[BYTE(N)] & (1 << BIT(N));
         }
 
@@ -118,10 +117,37 @@ namespace mini::box
             return num;
         }
 
+    private:
+        template<typename IDX>
+        constexpr bool CheckBounds(const IDX i, const COUNT_T size) const
+        {
+        #if (DO_BOUNDS_CHECK)
+            if constexpr (std::is_enum_v<IDX>)
+            {
+                using UT = std::underlying_type_t<IDX>;
+                if ((UT)i < 0 || (UT)i >= size)
+                {
+                    ErrLOG("Bitset access out of bounds");
+                    __debugbreak();
+                    return false;
+                }
+            }
+            else
+            {
+                if (i < 0 || i >= size)
+                {
+                    ErrLOG("Bitset access out of bounds");
+                    __debugbreak();
+                    return false;
+                }
+            }
+        #endif
+
+            return true;
+        }
     };
 
-#undef BOUNDS_CHECK
-#undef BOUNDS_CHECK_S
+#undef DO_BOUNDS_CHECK
 #undef BIT
 #undef BYTE
 #undef DC

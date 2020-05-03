@@ -1,6 +1,6 @@
 #pragma once
 #include "MiniSTL/Box/Variant.hpp"
-#include "MiniSTL/Box/Array2.hpp"
+#include "MiniSTL/Box/Array.hpp"
 #include "MiniSTL/Box/Bitset.hpp"
 
 namespace mini::app
@@ -35,7 +35,7 @@ namespace mini::app
 
 
     ///global arrays for wnd proc
-    inline box2::Array<Event, 10> events; //per frame max
+    inline box::Array<Event, 10> events; //per frame max
     inline box::Bitset<EventType::PRESSABLE_END> pressed;
 
 
@@ -43,8 +43,8 @@ namespace mini::app
     {
         FOR_ARRAY(events, i)
         {
-            if (events[i]->type == type && events[i]->state == state)
-                return events[i];
+            if (events[i].type == type && events[i].state == state)
+                return &events[i];
         }
         return nullptr;
     }
