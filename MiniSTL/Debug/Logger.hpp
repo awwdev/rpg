@@ -12,6 +12,8 @@ namespace mini::dbg
 #define CONSOLE_GREEN   "\x1b[92m"
 #define CONSOLE_YELLOW  "\x1b[103m"
 
+//macro DLOG has the adventage of getting the line and the file as macro too (add as macro fn?)
+
     enum class ColorMode
     {
         Default, Red, Green, Yellow

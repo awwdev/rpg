@@ -18,7 +18,7 @@ namespace mini::dbg
     };
 
     [[nodiscard]]
-    inline Console SetupConsole() 
+    inline Console CreateConsole() 
     {
         AllocConsole(); //fails if already open?
         freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);

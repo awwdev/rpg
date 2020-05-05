@@ -5,42 +5,35 @@
 namespace mini::box 
 {
 #define DO_BOUNDS_CHECK 1
-#define DC [[nodiscard]]
+#define ND [[nodiscard]]
 
-    //biset can operate with integrals and enums (no outer cast needed)
-    //some constexpr methods
-    //no exceptions, checks can be toggled
-
-    //todo: make bitset u32 internal ? casts might be unnecessary
-    //YES
-
-    template<auto BITS_T, typename = IsArraySize<BITS_T>>
+    template<auto BITS_T, typename CT = u32, typename = IsArraySize<BITS_T>>
     struct Bitset
     {
-        using COUNT_T = IntegralTypeEnum<BITS_T>; //count type
+        using COUNT_T = CT;
 
-        static constexpr COUNT_T BITS  = (COUNT_T)BITS_T;
-        static constexpr COUNT_T BYTES = (COUNT_T)BITS_T / (COUNT_T)8 + ((COUNT_T)BITS_T % (COUNT_T)8 ? (COUNT_T)1 : (COUNT_T)0); //ceil
+        static constexpr CT BITS  = (CT)BITS_T;
+        static constexpr CT BYTES = (CT)BITS_T / (CT)8 + ((CT)BITS_T % (CT)8 ? (CT)1 : (CT)0); //ceil
 
         u8 data [BYTES] = { 0 };
 
 
         constexpr Bitset(const std::size_t num = 0)
         {
-            for (auto i = BYTES - 1; i >= 0 ; --i)
+            for(CT i = 0; i < BYTES - 1; ++i)
             {
-                const auto bits = (i * 8);
-                data[i] = static_cast<u8>((num >> bits) & 0xFF); //0xFF prevents wrapping?
+                const CT bits = (BYTES - 1 - i) * 8;
+                data[BYTES - 1 - i] = static_cast<u8>((num >> bits) & 0xFF); //0xFF prevents wrapping?
             }
         }
 
-        #define BIT(i)  (COUNT_T)i % (COUNT_T)8
-        #define BYTE(i) (COUNT_T)i / (COUNT_T)8
+        #define BIT(i)  (CT)i % (CT)8
+        #define BYTE(i) (CT)i / (CT)8
 
         ///SET
 
-        template<typename T, typename = IsIntegralOrEnum<T>>
-        void Set(const T i, const bool b)
+        template<typename IDX, typename = IsIntegralOrEnum<IDX>>
+        void Set(const IDX i, const bool b)
         {
             CheckBounds(i, BITS);
             data[BYTE(i)] = b
@@ -48,69 +41,69 @@ namespace mini::box
                 : data[BYTE(i)] & ~(1 << BIT(i));
         }
 
-        template<bool B, typename T, typename = IsIntegralOrEnum<T>>
-        void Set(const T i)
+        template<bool B, typename IDX, typename = IsIntegralOrEnum<IDX>>
+        void Set(const IDX i)
         {
             CheckBounds(i, BITS);
             if constexpr (B) data[BYTE(i)] |=  (1 << BIT(i));
             else             data[BYTE(i)] &= ~(1 << BIT(i));
         }
 
-        template<auto N, bool B, typename = IsArrayIndex<N>>
+        template<auto IDX, bool B, typename = IsArrayIndex<IDX>>
         void Set()
         {
-            CheckBounds(N, BITS);
-            if constexpr (B) data[BYTE(N)] |=  (1 << BIT(N));
-            else             data[BYTE(N)] &= ~(1 << BIT(N));
+            CheckBounds(IDX, BITS);
+            if constexpr (B) data[BYTE(IDX)] |=  (1 << BIT(IDX));
+            else             data[BYTE(IDX)] &= ~(1 << BIT(IDX));
         }
 
         ///FLIP
 
-        template<typename T, typename = IsIntegralOrEnum<T>>
-        void Flip(const T i)
+        template<typename IDX, typename = IsIntegralOrEnum<IDX>>
+        void Flip(const IDX i)
         {
             CheckBounds(i, BITS);
             data[BYTE(i)] ^= 1 << BIT(i);
         }
 
-        template<auto N, typename = IsArrayIndex<N>>
+        template<auto IDX, typename = IsArrayIndex<IDX>>
         void Flip()
         {
-            CheckBounds(N, BITS);
-            data[BYTE(N)] ^= 1 << BIT(N);
+            CheckBounds(IDX, BITS);
+            data[BYTE(IDX)] ^= 1 << BIT(IDX);
         }
 
         ///Test
 
-        template<typename T, typename = IsIntegralOrEnum<T>> DC
-        bool Test(const T i) const
+        template<typename IDX, typename = IsIntegralOrEnum<IDX>> ND
+        bool Test(const IDX i) const
         {
             CheckBounds(i, BITS);
             return data[BYTE(i)] & (1 << BIT(i));
         }
 
-        template<auto N, typename = IsArrayIndex<N>> DC
+        template<auto IDX, typename = IsArrayIndex<IDX>> ND
         constexpr bool Test() const
         {
-            CheckBounds(N, BITS);
-            return data[BYTE(N)] & (1 << BIT(N));
+            CheckBounds(IDX, BITS);
+            return data[BYTE(IDX)] & (1 << BIT(IDX));
         }
 
         ///other
 
-        DC constexpr COUNT_T FindFirstFreeBit() const
+        ND constexpr CT FindFirstFreeBit() const
         {
-            for (COUNT_T i = 0; i < BITS; ++i)
+            for (CT i = 0; i < BITS; ++i)
             {
                 const auto a = data[BYTE(i)] & (1 << BIT(i)); //Test() is due to Assert not constexpr
                 if (a == 0) return i;
             }
-            return std::numeric_limits<COUNT_T>::max();
+            return std::numeric_limits<CT>::max();
         }
 
         ///get number
 
-        DC constexpr std::size_t Decimal() const
+        ND constexpr std::size_t Decimal() const
         {
             std::size_t num = 0;
             for (auto i = 0; i < BYTES; ++i)
@@ -122,7 +115,7 @@ namespace mini::box
 
     private:
         template<typename IDX>
-        constexpr bool CheckBounds(const IDX i, const COUNT_T size) const
+        constexpr bool CheckBounds(const IDX i, const CT size) const
         {
         #if (DO_BOUNDS_CHECK)
             if constexpr (std::is_enum_v<IDX>)
@@ -153,6 +146,14 @@ namespace mini::box
 #undef DO_BOUNDS_CHECK
 #undef BIT
 #undef BYTE
-#undef DC
+#undef ND
 
 }//ns
+
+/*
+RATIONALE
+
+biset can operate with integrals and enums (no outer cast needed)
+some constexpr methods
+no exceptions, checks can be toggled
+*/

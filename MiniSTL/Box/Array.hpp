@@ -5,32 +5,16 @@
 
 namespace mini::box
 {
-    /*
-    - fixed size: 
-        - auto growth can be harmful on perf, can lead to ptr invalidation bugs and makes it harder to use with allocators
-        - array can be copied/moved into other sized arrays with convertible type (may result in loss of data)
-        - array can be used the same way on both stack and heap (managed by an allocator)
-        - due to inheritance (virtuality not used though) you can use the size agnostic base for passing around (no Array<T, SIZE>& but Array<T>&)
-        - objects lives completely on either heap or stack (no jumping around like vector)
-        - do not confuse it with std::array which calls ctors and has no concept of capacity (and no erase)
-    - enums can be passed to the array (no outer cast by the user needed)
-    - no exceptions - bound checks can be toggle via macro
-    - array does not assume you want to preserve order, there is Remove (O(1)) and RemoveOrdered (O(n))
-    - array initialization will not trigger ctors of elements
-    - should be more readable, debuggable and extendable than the STL
-    - while I tend not to use much of OOP (I like procedural and DOD), in this specific case accessors (hide "count" for example) and inheritance make perfect sense
-      (because under no imaginable circumstances you would want that the count is set from outside, so there is only a "Getter", also "abstract" IArray shall not be instantiated on its own)
-    */
 
 #define DO_BOUNDS_CHECK 1
 #define FOR_ARRAY(arr, i) for(decltype(arr.Count()) i = 0; i < arr.Count(); ++i)
-#define DC [[nodiscard]]
+#define ND [[nodiscard]]
 
     //type size agnostic - used for passing around the array
     template<class T, typename CT = u32> 
     class IArray 
     {
-    //user shall not create an IArray ("abstract") but Array
+    //user shall not create an ("abstract") IArray but Array
     protected: 
         CT count;
         T* dataPtr;
@@ -52,24 +36,24 @@ namespace mini::box
         
         ///ACCESSORS
 
-        template<typename IDX, typename = IsIntegralOrEnum<IDX>> DC
+        template<typename IDX, typename = IsIntegralOrEnum<IDX>> ND
         T& operator[](const IDX i) 
         { 
             CheckBounds(i, count);
             return dataPtr[static_cast<CT>(i)];
         }
 
-        template<typename IDX, typename = IsIntegralOrEnum<IDX>> DC
+        template<typename IDX, typename = IsIntegralOrEnum<IDX>> ND
         const T& operator[](const IDX i) const
         { 
             CheckBounds(i, count);
             return dataPtr[static_cast<CT>(i)];
         }
 
-        DC T&       Last()        { CheckBounds(count - 1, count); return dataPtr[count - 1]; }
-        DC const T& Last()  const { CheckBounds(count - 1, count); return dataPtr[count - 1]; }
-        DC CT       Count() const { return count; }
-        DC bool     Empty() const { return count == 0; }
+        ND T&       Last()        { CheckBounds(count - 1, count); return dataPtr[count - 1]; }
+        ND const T& Last()  const { CheckBounds(count - 1, count); return dataPtr[count - 1]; }
+        ND CT       Count() const { return count; }
+        ND bool     Empty() const { return count == 0; }
 
         ///APPEND
 
@@ -84,11 +68,11 @@ namespace mini::box
             }
             else 
             {
-                new(&dataPtr[count++]) T(args...); //POD (will also implicit cast)(only on single param)
+                new(&dataPtr[count++]) T(args...); //POD (only on single param)(will also implicit cast)
             }
         }
 
-        template<class... CtorArgs> DC
+        template<class... CtorArgs> ND
         T& AppendReturn(CtorArgs&&... args)
         {
             Append(args...);
@@ -104,7 +88,7 @@ namespace mini::box
 
             if constexpr (std::is_trivially_copyable_v<T>)
             {
-                std::memmove(&dataPtr[static_cast<CT>(i)], &dataPtr[static_cast<CT>(i) + 1], sizeof(T) * (count - i)); //FIX
+                std::memmove(&dataPtr[static_cast<CT>(i)], &dataPtr[static_cast<CT>(i) + 1], sizeof(T) * (count - 1 - i));
             }
             else
             {
@@ -134,7 +118,7 @@ namespace mini::box
 
         ///FIND
 
-        template<class T2> DC //allows for custom operator==
+        template<class T2> ND //allows for custom operator==
         T* Contains(const T2& element) 
         {
             FOR_ARRAY((*this), i)
@@ -161,7 +145,7 @@ namespace mini::box
             ++count;
         }
 
-        template<typename IDX, class... CtorArgs, typename = IsIntegralOrEnum<IDX>> DC
+        template<typename IDX, class... CtorArgs, typename = IsIntegralOrEnum<IDX>> ND
         T& InsertReturn(const IDX insertIdx, CtorArgs&&... args)
         {
             Insert(insertIdx, args...);
@@ -237,6 +221,10 @@ namespace mini::box
 
         ///COPY / MOVE CTOR (any size)
 
+        //todo: should be moved or redirect to base class since this it is the one which is passed
+        //and we want it to have all the functionality and its possible 
+        //actually the size aware derived class should not really have functionality, also InitCompleteArray
+
         Array(const Array& other) : Array()     { CopyOrMoveArray(other); }
         Array(const IArray<T>& other) : Array() { CopyOrMoveArray(other); }
         void operator=(const Array& other)      { CopyOrMoveArray(other); }
@@ -284,9 +272,35 @@ namespace mini::box
         mini::dbg::dlog("---");
     }
 
-#undef DC
+    template<class... ARRAYS>
+    auto FuseArrays()
+    {
+        //ensure same DATA_TYPE
+        //get max size needed
+        //copy
+        //return
+    }
+
+#undef ND
 
 }//ns
+
+/* ratiomale
+    - fixed size:
+        - auto growth can be harmful on perf, can lead to ptr invalidation bugs and makes it harder to use with allocators
+        - array can be copied/moved into other sized arrays with convertible type (may result in loss of data)
+        - array can be used the same way on both stack and heap (managed by an allocator)
+        - due to inheritance (virtuality not used though) you can use the size agnostic base for passing around (no Array<T, SIZE>& but Array<T>&)
+        - objects lives completely on either heap or stack (no jumping around like vector)
+        - do not confuse it with std::array which calls ctors and has no concept of capacity (and no erase)
+    - enums can be passed to the array (no outer cast by the user needed)
+    - no exceptions - bound checks can be toggle via macro
+    - array does not assume you want to preserve order, there is Remove (O(1)) and RemoveOrdered (O(n))
+    - array initialization will not trigger ctors of elements
+    - should be more readable, debuggable and extendable than the STL
+    - while I tend not to use much of OOP (I like procedural and DOD), in this specific case accessors (hide "count" for example) and inheritance make perfect sense
+      (because under no imaginable circumstances you would want that the count is set from outside, so there is only a "Getter", also "abstract" IArray shall not be instantiated on its own)
+*/
 
 /*
 void Sort(bool(*fn)(const T& lhs, const T& rhs))

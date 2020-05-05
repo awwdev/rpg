@@ -11,7 +11,7 @@ namespace mini::math
     enum V : u8 { Vx = 0, Vy = 1, Vz = 2, Vw = 3 };
 
 
-    template<class T, u8 Y, u8 X, typename = IsArithmetic<T>>
+    template<class T, u8 Y, u8 X, typename = IsArithmetic<T>> //enums? probably bad idea
     struct Mat
     {
         T cells[Y][X];
