@@ -12,7 +12,7 @@ namespace mini
         if (!b)
         {
             BringWindowToTop(GetConsoleWindow()); //win only
-            ErrLOG(msg);
+            mini::dbg::dlog<mini::dbg::ColorMode::Red>(msg);
             system("pause"); //win only
         }
     } 

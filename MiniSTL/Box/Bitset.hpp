@@ -11,6 +11,9 @@ namespace mini::box
     //some constexpr methods
     //no exceptions, checks can be toggled
 
+    //todo: make bitset u32 internal ? casts might be unnecessary
+    //YES
+
     template<auto BITS_T, typename = IsArraySize<BITS_T>>
     struct Bitset
     {
@@ -127,7 +130,7 @@ namespace mini::box
                 using UT = std::underlying_type_t<IDX>;
                 if ((UT)i < 0 || (UT)i >= size)
                 {
-                    ErrLOG("Bitset access out of bounds");
+                    mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
                     __debugbreak();
                     return false;
                 }
@@ -136,7 +139,7 @@ namespace mini::box
             {
                 if (i < 0 || i >= size)
                 {
-                    ErrLOG("Bitset access out of bounds");
+                    mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
                     __debugbreak();
                     return false;
                 }

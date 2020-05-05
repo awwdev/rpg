@@ -1,25 +1,50 @@
 #pragma once
-#include "MiniSTL/Debug/Console.hpp" //win 
 #include <iostream>
-
-#define DLOG(...) mini::dbg::log(__VA_ARGS__); 
-#define ErrLOG(...) mini::dbg::err(__VA_ARGS__); //todo: colored output (os specific)
 
 namespace mini::dbg
 {
-    template<class... Args>
-    void log(Args... args) //todo fmt log
+#define DO_DLOG 1
+
+//os specfic colors
+//windows
+#define CONSOLE_DEFAULT "\x1b[0m"
+#define CONSOLE_RED     "\x1b[91m"
+#define CONSOLE_GREEN   "\x1b[92m"
+#define CONSOLE_YELLOW  "\x1b[103m"
+
+    enum class ColorMode
     {
+        Default, Red, Green, Yellow
+    };
+
+    template<ColorMode CM = ColorMode::Default, class... Args>
+    void dlog(Args... args) 
+    {
+    #if (DO_DLOG == 1)
+        []() constexpr {
+            switch (CM)
+            {
+            case ColorMode::Default: std::cout << CONSOLE_DEFAULT; break;
+            case ColorMode::Red:     std::cout << CONSOLE_RED; break;
+            case ColorMode::Green:   std::cout << CONSOLE_GREEN; break;
+            case ColorMode::Yellow:  std::cout << CONSOLE_YELLOW; break;
+            }
+        }();
+
         ((std::cout << args << " " ), ...);
-        std::cout << '\n';
+        std::cout << CONSOLE_DEFAULT"\n";
+    #endif
     }
 
-    template<class... Args>
-    void err(Args... args) //todo fmt log
-    {
-        std::cout << CONSOLE_RED;
-        ((std::cout << args << " "), ...);
-        std::cout << CONSOLE_DEFAULT"\n";
-    }
+
+#undef CONSOLE_DEFAULT
+#undef CONSOLE_RED
+#undef CONSOLE_GREEN
+#undef CONSOLE_YELLOW
+
+#undef DO_DLOG
 
 }//ns
+
+//todo: more advanced fmt logging?
+//todo: store logs external

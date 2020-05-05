@@ -4,20 +4,25 @@
 #include "MiniSTL/MAth/Matrix.hpp"
 #include "MiniSTL/Debug/Console.hpp"
 #include "MiniSTL/Box/Array.hpp"
+#include "MiniSTL/Debug/Profiler.hpp"
+
+#include <vector>
+
 using namespace mini;
+
 
 struct Foo {
     float num;
     //Foo(float n, float x) : num{ n } { ; }
-    ~Foo() { DLOG("dtor"); }
+    //~Foo() { mini::dbg::dlog("dtor"); }
 };
 
 inline void PrintFooArray(mini::box::IArray<Foo>& foos) {
     FOR_ARRAY(foos, i)
     {
-        DLOG(foos[i].num);
+        mini::dbg::dlog(foos[i].num);
     }
-    DLOG("---")
+    mini::dbg::dlog("---");
 }
 
 
@@ -29,24 +34,38 @@ int WINAPI wWinMain(
 {
     const auto con = dbg::SetupConsole();
 
-    box::Array<int, 10> arr1;
-    arr1.InitCompleteArray();
-    box::PrintArray(arr1, "arr1");
+    {
+        PRINT_PROFILE_SCOPE("mini array");
+        box::Array<int, 1000> foos;
 
-    box::Array<Foo, 3> arr2 { Foo{1.f}};
-    arr1.AppendReturn(3) = 4;
-    arr2.Append(2.f);
-    
-    box::Array<int, 5u> arr3 = arr1;
-    box::Array<Foo, 5u> arr4 = std::move(arr2);
+        for (auto i = 0; i < 100; ++i)
+        {
+            foos.Append(i);
+        }
+        FOR_ARRAY(foos, i)
+        {
+            foos[i] = 10;
+        }
+    }
 
-    const auto arrx = std::move(arr1);
+
+    {
+        PRINT_PROFILE_SCOPE("STL vector");
+        std::vector<int> foos;
+        foos.reserve(1000);
+
+        for (auto i = 0; i < 100; ++i)
+        {
+            foos.emplace_back(i);
+        }
+        for (auto& e : foos)
+        {
+            e = 10;
+        }
+    }
 
     
-    PrintFooArray(arr4);
-    
-    DLOG(arr1.Count());
-    DLOG(arr2.Count());
+
 
     system("pause");
 }
@@ -54,8 +73,7 @@ int WINAPI wWinMain(
 
 
 
-//TODO: perf check std::array and std::vector vs mini::Array
-//also profiling refresh
+
 
 
 
