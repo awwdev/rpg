@@ -5,6 +5,9 @@
 
 namespace mini::app
 {
+    //TODO: think about consuming (removing) events, so they are not passed const
+    //usage of layers ?
+
     enum class EventType : u8
     {
         Mouse_Left,

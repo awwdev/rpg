@@ -1,7 +1,7 @@
 # MiniSTL
 Minimal basic library - simple, readable and extendable.
 
-- Containers (Array, Bitset, String, Variant)
+- Containers (Array, Bitset, String, Variant, Optional?)
 - Allocator
 - Logger
 - Math (Matrix, Quaternion)
@@ -12,6 +12,7 @@ Minimal basic library - simple, readable and extendable.
 
 This is Work In Progress!
 
+# Rationale
 
 ## mini::Array
 - fixed size: 
@@ -19,7 +20,7 @@ This is Work In Progress!
 	- array can be copied/moved into other sized arrays with convertible type (may result in loss of data)
 	- array can be used the same way on both stack and heap (managed by an allocator)
 	- due to inheritance (virtuality not used though) you can use the size agnostic base for passing around (no Array<T, SIZE>& but Array<T>&)
-	- objects lives completely on either heap or stack (no jumping around like vector)
+	- whole wrapper and elements live together either on heap or stack
 	- do not confuse it with std::array which calls ctors and has no concept of capacity (and no erase)
 - enums can be passed to the array (no outer cast by the user needed)
 - no exceptions - bound checks can be toggle via macro
@@ -30,8 +31,38 @@ This is Work In Progress!
       (because under no imaginable circumstances you would want that the count is set from outside, so there is only a "Getter", also "abstract" IArray shall not be instantiated on its own)
 
 ## mini::Bitset
+- some constexpr methods
+- no proxies (no use of operator[])
+- should be more readable, debuggable and extendable than the STL
+- no exceptions - bound checks can be toggle via macro
 
 ## mini::Allocator
 - global and pure functions
 - block pools (defined at compile time)
-- no use of new or malloc (possible os calls)
+- no use of new or malloc (possible os calls) and overhead by malloc (which may increase by long term fragmentation)
+
+## mini::String
+
+## mini::Variant
+
+## mini::Optional (tbd)
+
+## mini::Logger (tbd)
+- can be toggle via macro (no print)
+- store logs in buffer or external
+
+## mini::Profiler
+- based on RAII (object lifetime, ctor and dtor call now())
+
+## mini::Window
+- os specific events abstracted into os agnostic events
+- effective event pipeline
+
+## mini::Renderer
+
+## mini::Math
+- vector is also a matrix
+- so much more readable than glm
+
+## Misc
+- typedefs and concepts (or rather SFINAE)
