@@ -12,6 +12,7 @@ namespace mini::box
         - array can be used the same way on both stack and heap (managed by an allocator)
         - due to inheritance (virtuality not used though) you can use the size agnostic base for passing around (no Array<T, SIZE>& but Array<T>&)
         - objects lives completely on either heap or stack (no jumping around like vector)
+        - do not confuse it with std::array which calls ctors and has no concept of capacity (and no erase)
     - enums can be passed to the array (no outer cast by the user needed)
     - no exceptions - bound checks can be toggle via macro
     - array does not assume you want to preserve order, there is Remove (O(1)) and RemoveOrdered (O(n))

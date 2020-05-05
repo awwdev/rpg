@@ -7,6 +7,7 @@
 #include "MiniSTL/Debug/Profiler.hpp"
 
 #include <vector>
+#include <array>
 
 using namespace mini;
 
@@ -33,38 +34,6 @@ int WINAPI wWinMain(
     _In_        int nCmdShow)
 {
     const auto con = dbg::SetupConsole();
-
-    {
-        PRINT_PROFILE_SCOPE("mini array");
-        box::Array<int, 1000> foos;
-
-        for (auto i = 0; i < 100; ++i)
-        {
-            foos.Append(i);
-        }
-        FOR_ARRAY(foos, i)
-        {
-            foos[i] = 10;
-        }
-    }
-
-
-    {
-        PRINT_PROFILE_SCOPE("STL vector");
-        std::vector<int> foos;
-        foos.reserve(1000);
-
-        for (auto i = 0; i < 100; ++i)
-        {
-            foos.emplace_back(i);
-        }
-        for (auto& e : foos)
-        {
-            e = 10;
-        }
-    }
-
-    
 
 
     system("pause");
