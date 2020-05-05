@@ -15,10 +15,10 @@ This is Work In Progress!
 
 ## mini::Array
 - fixed size: 
-        - auto growth can be harmful on perf, can lead to ptr invalidation bugs and makes it harder to use with allocators
-        - array can be copied/moved into other sized arrays with convertible type (may result in loss of data)
-        - array can be used the same way on both stack and heap (managed by an allocator)
-        - due to inheritance (virtuality not used though) you can use the size agnostic base for passing around (no Array<T, SIZE>& but Array<T>&)
+	- auto growth can be harmful on perf, can lead to ptr invalidation bugs and makes it harder to use with allocators
+	- array can be copied/moved into other sized arrays with convertible type (may result in loss of data)
+	- array can be used the same way on both stack and heap (managed by an allocator)
+	- due to inheritance (virtuality not used though) you can use the size agnostic base for passing around (no Array<T, SIZE>& but Array<T>&)
 	- objects lives completely on either heap or stack (no jumping around like vector)
 	- do not confuse it with std::array which calls ctors and has no concept of capacity (and no erase)
 - enums can be passed to the array (no outer cast by the user needed)
