@@ -10,8 +10,8 @@
 */
 
 #pragma once
-#include "MiniSTL/Debug/Assert.hpp"
 #include "MiniSTL/Types.hpp"
+#include "MiniSTL/Debug/Assert.hpp"
 
 
 namespace mini::box 
@@ -33,7 +33,12 @@ namespace mini::box
 
         constexpr Bitset(const std::size_t num = 0)
         {
-            for(IDX_T i = 0; i < BYTES - 1; ++i)
+            if (BytesNeeded(num) > BYTES) { //will result in "expression did not evaluate to a constant"(msvc) when constexpr fails
+                mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
+                __debugbreak();
+            }
+
+            for(IDX_T i = 0; i < BYTES; ++i)
             {
                 const IDX_T bits = i * 8;
                 data[i] = static_cast<u8>((num >> bits) & 0xFF); //0xFF prevents wrapping?
@@ -124,6 +129,13 @@ namespace mini::box
                 num += (((std::size_t)data[i]) << (i*8));
             }            
             return num;
+        }
+
+        constexpr static auto BytesNeeded(std::size_t num)
+        {
+            int n = 0;
+            do { num >>= 8; n++; } while (num);
+            return n;
         }
 
     private:

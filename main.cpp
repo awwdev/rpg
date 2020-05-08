@@ -1,8 +1,8 @@
 #include "MiniSTL/Window/win_Window.hpp"
 #include "MiniSTL/Window/win_WindowCallback.hpp"
 #include "MiniSTL/Debug/Logger.hpp"
-#include "MiniSTL/Debug/Console.hpp"
 #include "MiniSTL/Math/Matrix.hpp"
+#include "MiniSTL/Debug/Console.hpp"
 #include "MiniSTL/Box/Array.hpp"
 #include "MiniSTL/Box/Bitset.hpp"
 #include "MiniSTL/Box/String.hpp"
@@ -10,6 +10,9 @@
 
 using namespace mini;
 
+constexpr mini::box::Bitset<8> bitset { 256 };
+constexpr auto d = bitset.Decimal();
+constexpr auto ffree = bitset.FindFirstFreeBit();
 
 int WINAPI wWinMain(
     _In_        HINSTANCE hInstance,
