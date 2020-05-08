@@ -1,19 +1,19 @@
 //https://github.com/awwdev
 
 /* 
-    ## mini::box::Array
+## mini::box::Array
 
-    - fixed size (capacity-based with internal count)
-        - auto growth can be harmful on perf (reallocations), can lead to ptr invalidation and makes it harder to use with custom allocators
-        - simple inheritance (without vtable) is used so the (abstract) base can be passed around without the need of writing Array<T, N> everywhere
-        - wrapper and elements are not seperated in memory and the whole object can simply be passed to an allocator
-        - AppendArray() can be used to resize or convert an array 
-    - no ctor calls when initializing the array (underlying byte array)
-    - array is usable with enums (no cast by the user needed)
-    - bounds checking is toggleable via macro, no exceptions are used
-    - removal of elements can be done fast (swapping) or slow while preserving order
-    - avoidance of cpy/mv ctor and assignment boilerplate - instead use generic AppendArray
-    - overall more readable and extendible than the STL
+- fixed size (capacity-based with internal count)
+    - auto growth can be harmful on perf (reallocations), can lead to ptr invalidation and makes it harder to use with custom allocators
+    - simple inheritance (without vtable) is used so the (abstract) base can be passed around without the need of writing Array<T, N> everywhere
+    - wrapper and elements are not seperated in memory and the whole object can simply be passed to an allocator
+    - AppendArray() can be used to resize or convert an array 
+- no ctor calls when initializing the array (underlying byte array)
+- array is usable with enums (no cast by the user needed)
+- bounds checking is toggleable via macro, no exceptions are used
+- removal of elements can be done fast (swapping) or slow while preserving order
+- avoidance of cpy/mv ctor and assignment boilerplate - instead use generic AppendArray
+- overall more readable and extendible than the STL
 */
 
 #pragma once
@@ -128,7 +128,6 @@ namespace mini::box
         template<class... CtorArgs>
         void SetCompleteArray(CtorArgs&&... args)
         {
-            this->Clear();
             for (; count < COUNT_MAX; ++count) {
                 PlacementNew(count, std::forward<CtorArgs>(args)...);
             }
@@ -181,7 +180,7 @@ namespace mini::box
         void InsertArray(const IDX pos, const IArray<T2>& other)
         {
             CheckBounds(count + other.Count(), COUNT_MAX + 1);
-            static_assert(false, "Shift is not yet implemented.");
+            static_assert(false, "Not yet implemented.");
             FOR_ARRAY(other, i) {
                 dataPtr[pos + i] = other[i];
             }
@@ -221,7 +220,7 @@ namespace mini::box
         }
 
         template<typename IDX>
-        constexpr void CheckBounds(const IDX i, const IDX_T size) const
+        void CheckBounds(const IDX i, const IDX_T size) const
         {
         #if (DO_BOUNDS_CHECK)
             if constexpr (std::is_enum_v<IDX>)
@@ -295,9 +294,11 @@ namespace mini::box
     template<class... ARRAYS>
     auto CombineArrays(const ARRAYS&... arrays)
     {
-
+        //calc needed size
+        //get common type
+        //append unfolded
+        static_assert(false, "Not yet implemented.");
     }
-
 
 } //ns
 

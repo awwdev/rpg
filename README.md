@@ -1,20 +1,20 @@
 # MiniSTL
 Minimal basic library - simple, readable and extendable.
 
-- Containers (Array, Bitset, String, Variant, Optional?)
-- Allocator
-- Logger
+- Containers (Array, Bitset, String)
+- Global allocator functions
+- Logger and Profiler
 - Math (Matrix, Quaternion)
-- Profiler
 - Window and window events
-- Renderer
-- Misc (Types)
+- Vulkan Renderer
+- Misc (Types, ...)
 
 This is Work In Progress!
 
+
 # Rationale
 
-## mini::Array
+## mini::box::Array
 - fixed size (capacity-based with internal count)
 	- auto growth can be harmful on perf (reallocations), can lead to ptr invalidation and makes it harder to use with custom allocators
 	- simple inheritance (without vtable) is used so the (abstract) base can be passed around without the need of writing Array<T, N> everywhere
@@ -27,39 +27,10 @@ This is Work In Progress!
 - avoidance of cpy/mv ctor and assignment boilerplate - instead use generic AppendArray
 - overall more readable and extendible than the STL
 
-## mini::Bitset
-- some constexpr methods
-- no proxies (no use of operator[])
-- should be more readable, debuggable and extendable than the STL
-- no exceptions - bound checks can be toggle via macro
+## mini::box::Bitset
+- bitset is usable with enums (no cast by the user needed)
+- bounds checking is toggleable via macro, no exceptions are used
+- some constexpr methods and inlined (templated) methods (like Set<0, true>())
+- overall more readable and extendible than the STL
 
-## mini::Allocator
-- global and pure functions
-- block pools (defined at compile time)
-- no use of new or malloc (possible os calls) and overhead by malloc (which may increase by long term fragmentation)
-
-## mini::String
-
-## mini::Variant
-
-## mini::Optional (tbd)
-
-## mini::Logger (tbd)
-- can be toggle via macro (no print)
-- store logs in buffer or external
-
-## mini::Profiler
-- based on RAII (object lifetime, ctor and dtor call now())
-
-## mini::Window
-- os specific events abstracted into os agnostic events
-- effective event pipeline
-
-## mini::Renderer
-
-## mini::Math
-- vector is also a matrix
-- so much more readable than glm
-
-## Misc
-- typedefs and concepts (or rather SFINAE)
+...

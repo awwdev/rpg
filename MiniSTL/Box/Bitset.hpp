@@ -1,34 +1,47 @@
+//https://github.com/awwdev
+
+/*
+## mini::box::Bitset
+
+- bitset is usable with enums (no cast by the user needed)
+- bounds checking is toggleable via macro, no exceptions are used
+- some constexpr methods and inlined (templated) methods (like Set<0, true>())
+- overall more readable and extendible than the STL
+*/
+
 #pragma once
 #include "MiniSTL/Debug/Assert.hpp"
 #include "MiniSTL/Types.hpp"
+
 
 namespace mini::box 
 {
 #define DO_BOUNDS_CHECK 1
 #define ND [[nodiscard]]
 
-    template<auto BITS_T, typename CT = u32, typename = IsArraySize<BITS_T>>
+    template<auto BITS_T, typename IDX_T = u32, typename = IsArraySize<BITS_T>>
     struct Bitset
     {
-        using COUNT_T = CT;
+        using INDEX_T = IDX_T;
 
-        static constexpr CT BITS  = (CT)BITS_T;
-        static constexpr CT BYTES = (CT)BITS_T / (CT)8 + ((CT)BITS_T % (CT)8 ? (CT)1 : (CT)0); //ceil
+        static constexpr IDX_T BITS  = (IDX_T)BITS_T;
+        static constexpr IDX_T BYTES = (IDX_T)BITS_T / (IDX_T)8 + ((IDX_T)BITS_T % (IDX_T)8 ? (IDX_T)1 : (IDX_T)0); //ceil
 
         u8 data [BYTES] = { 0 };
 
+        ///CTOR
 
         constexpr Bitset(const std::size_t num = 0)
         {
-            for(CT i = 0; i < BYTES - 1; ++i)
+            for(IDX_T i = 0; i < BYTES - 1; ++i)
             {
-                const CT bits = (BYTES - 1 - i) * 8;
-                data[BYTES - 1 - i] = static_cast<u8>((num >> bits) & 0xFF); //0xFF prevents wrapping?
+                const IDX_T bits = i * 8;
+                data[i] = static_cast<u8>((num >> bits) & 0xFF); //0xFF prevents wrapping?
             }
         }
 
-        #define BIT(i)  (CT)i % (CT)8
-        #define BYTE(i) (CT)i / (CT)8
+        #define BIT(i)  (IDX_T)i % (IDX_T)8
+        #define BYTE(i) (IDX_T)i / (IDX_T)8
 
         ///SET
 
@@ -73,7 +86,7 @@ namespace mini::box
             data[BYTE(IDX)] ^= 1 << BIT(IDX);
         }
 
-        ///Test
+        ///TEST
 
         template<typename IDX, typename = IsIntegralOrEnum<IDX>> ND
         bool Test(const IDX i) const
@@ -89,19 +102,19 @@ namespace mini::box
             return data[BYTE(IDX)] & (1 << BIT(IDX));
         }
 
-        ///other
+        ///OTHER
 
-        ND constexpr CT FindFirstFreeBit() const
+        ND constexpr IDX_T FindFirstFreeBit() const
         {
-            for (CT i = 0; i < BITS; ++i)
+            for (IDX_T i = 0; i < BITS; ++i)
             {
                 const auto a = data[BYTE(i)] & (1 << BIT(i)); //Test() is due to Assert not constexpr
                 if (a == 0) return i;
             }
-            return std::numeric_limits<CT>::max();
+            return std::numeric_limits<IDX_T>::max();
         }
 
-        ///get number
+        ///GET NUMBER
 
         ND constexpr std::size_t Decimal() const
         {
@@ -115,7 +128,7 @@ namespace mini::box
 
     private:
         template<typename IDX>
-        constexpr bool CheckBounds(const IDX i, const CT size) const
+        constexpr void CheckBounds(const IDX i, const IDX_T size) const
         {
         #if (DO_BOUNDS_CHECK)
             if constexpr (std::is_enum_v<IDX>)
@@ -125,7 +138,6 @@ namespace mini::box
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
                     __debugbreak();
-                    return false;
                 }
             }
             else
@@ -134,12 +146,9 @@ namespace mini::box
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
                     __debugbreak();
-                    return false;
                 }
             }
         #endif
-
-            return true;
         }
     };
 
@@ -149,11 +158,3 @@ namespace mini::box
 #undef ND
 
 }//ns
-
-/*
-RATIONALE
-
-biset can operate with integrals and enums (no outer cast needed)
-some constexpr methods
-no exceptions, checks can be toggled
-*/
