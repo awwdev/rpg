@@ -140,13 +140,13 @@ namespace mini::box
 
     private:
         template<typename IDX>
-        constexpr void CheckBounds(const IDX i, const IDX_T size) const
+        constexpr void CheckBounds(const IDX i, const IDX_T max) const
         {
         #if (DO_BOUNDS_CHECK)
             if constexpr (std::is_enum_v<IDX>)
             {
                 using UT = std::underlying_type_t<IDX>;
-                if ((UT)i < 0 || (UT)i >= size)
+                if ((UT)i < 0 || (UT)i >= max)
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
                     __debugbreak();
@@ -154,7 +154,7 @@ namespace mini::box
             }
             else
             {
-                if (i < 0 || i >= size)
+                if (i < 0 || i >= max)
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
                     __debugbreak();

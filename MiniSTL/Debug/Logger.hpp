@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <cstdio>
 
 namespace mini::dbg
 {
@@ -20,7 +21,7 @@ namespace mini::dbg
     };
 
     template<ColorMode CM = ColorMode::Default, class... Args>
-    void dlog(Args... args) 
+    void dlog(const Args&... args)
     {
     #if (DO_DLOG == 1)
         []() constexpr {

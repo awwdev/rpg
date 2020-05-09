@@ -220,13 +220,13 @@ namespace mini::box
         }
 
         template<typename IDX>
-        void CheckBounds(const IDX i, const IDX_T size) const
+        void CheckBounds(const IDX i, const IDX_T max) const
         {
         #if (DO_BOUNDS_CHECK)
             if constexpr (std::is_enum_v<IDX>)
             {
                 using UT = std::underlying_type_t<IDX>;
-                if ((UT)i < 0 || (UT)i >= size)
+                if ((UT)i < 0 || (UT)i >= max)
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Array access out of bounds");
                     __debugbreak();
@@ -234,7 +234,7 @@ namespace mini::box
             }
             else
             {
-                if (i < 0 || i >= size)
+                if (i < 0 || i >= max)
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Array access out of bounds");
                     __debugbreak();
@@ -253,7 +253,7 @@ namespace mini::box
 
 
     template<class T, auto COUNT_MAX_T, typename IDX_T = u32, typename = IsArraySize<COUNT_MAX_T>>
-    struct Array : IArray<T, IDX_T>
+    struct Array final : IArray<T, IDX_T>
     {
         using BASE    = IArray<T, IDX_T>;
         using DATA_T  = T;
