@@ -12,6 +12,10 @@
 using namespace mini;
 
 
+using CARRAY = const char[];
+constexpr CARRAY carr = "Hello";
+constexpr bool same = std::is_same_v<char, std::decay_t<decltype(std::declval<CARRAY>()[0])>>;
+
 int WINAPI wWinMain(
     _In_        HINSTANCE hInstance,
     _In_opt_    HINSTANCE hPrevInstance,
@@ -20,9 +24,16 @@ int WINAPI wWinMain(
 {
     const auto con = dbg::CreateConsole();
 
-    const char x[] = "abcdefghijklm";
 
-    mini::box::String<1000> str;
+    const char x[] = "123";
+    const char* y  = "abc";
+
+    mini::box::String<1000> str1 { x };
+    mini::box::String<1000> str2 { y };
+    str1.Append(str2);
+
+    mini::dbg::dlog(str1);
+    mini::dbg::dlog(str2);
 
     system("pause");
 

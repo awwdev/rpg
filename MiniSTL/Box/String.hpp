@@ -7,9 +7,9 @@
     - auto growth can be harmful on perf (reallocations) and makes it harder to use with custom allocators
     - simple inheritance (without vtable) is used so the (abstract) base can be passed around without the need of writing String<N> everywhere
     - wrapper and elements are not seperated in memory and the whole object can simply be passed to an allocator
+- template typename CHAR_ARR allows that the size of a char array is carried over to the method
 - bounds checking is toggleable via macro, no exceptions are used
 - overall more readable and extendible than the STL
-- template typename CHAR_ARR allows that the size of a char array is carried over to the method
 
 */
 
@@ -32,69 +32,83 @@ namespace mini::box
         using DATA_T = CHAR_T;
         const u32 COUNT_MAX;
 
-        CHAR_T* const dataPtr;
-
-
         ///ACCESS
 
-        inline auto&        operator[](const u32 i)       { CheckBounds(i, count); return dataPtr[i]; }
-        inline auto& const  operator[](const u32 i) const { CheckBounds(i, count); return dataPtr[i]; }
+        auto&        operator[](const u32 i)       { CheckBounds(i, count); return dataPtr[i]; }
+        auto& const  operator[](const u32 i) const { CheckBounds(i, count); return dataPtr[i]; }
 
-        ND u32  Count() const { return count; }
-        ND bool Empty() const { return count == 0; }
-           void Clear()       { dataPtr[0] = '\0'; count = 0; }
+        ND u32  Length() const { return count - 1;  } //potential issue when count == 0
+        ND u32  Count()  const { return count;      }
+        ND bool Empty()  const { return count == 0; }
+
+        void Clear() 
+        { 
+            dataPtr[0] = '\0'; 
+            count = 1;
+        }
 
         void GetCharArray(char* const arr) const
         {
-            std::memcpy(arr, dataPtr, (count + 1) * sizeof(CHAR_T));
+            std::memcpy(arr, dataPtr, count * sizeof(CHAR_T));
         }
 
 
-        ///SET COMPLETE
+        ///SET (overwrite)
 
-        template<typename CHAR_ARR, typename = IsArray<CHAR_ARR>>
-        void SetFromArray(const CHAR_ARR& chars)
+        //better perf (no need for strlen)
+        template<std::size_t N> 
+        void Set(const CHAR_T(&arr)[N])
         {
-            SetFromPointer(chars, sizeof(CHAR_ARR));
+            Set(arr, N);
         }
 
-        void SetFromPointer(const CHAR_T* chars)
+        template<class PTR, typename = IsNotArray<PTR>>
+        void Set(const PTR ptr)
         {
-            SetFromPointer(chars, strlen(chars) + 1);
+            Set(ptr, std::strlen(ptr) + 1);
         }
 
-        void SetFromPointer(const CHAR_T* const chars, const u32 len)
+        //arrSize has to be strlen + 1
+        void Set(const CHAR_T* const ptr, const u32 arrCount)
         {
-            CheckBounds(len, COUNT_MAX + 1);
-            std::memcpy(dataPtr, chars, len);
-            count = len - 1;
+            CheckBounds(arrCount, COUNT_MAX + 1);
+            std::memcpy(dataPtr, ptr, arrCount);
+            count = arrCount;
         }
-
-        //------------wip
 
 
         ///APPEND
 
-        template<class CHAR_ARRAY>
-        void AppendChars(const CHAR_ARRAY& chars)
+        template<std::size_t N>
+        void Append(const CHAR_T(&arr)[N])
         {
-            CheckBounds(count + sizeof(CHAR_ARRAY), COUNT_MAX + 1);
-            std::memcpy(dataPtr + count, chars, sizeof(CHAR_ARRAY));
-            count += sizeof(CHAR_ARRAY) - 1;
+            Append(arr, N);
+        }
+        
+        template<class PTR, typename = IsNotArray<PTR>, typename = IsPointer<PTR>>
+        void Append(const PTR ptr)
+        {
+            Append(ptr, strlen(ptr) + 1);
+        }
+        
+        //arrSize has to be strlen + 1
+        void Append(const CHAR_T* const ptr, const u32 arrCount)
+        {
+            //consider the \0 trail
+            CheckBounds(count - 1 + arrCount, COUNT_MAX + 1);
+            std::memcpy(dataPtr + count - 1, ptr, arrCount * sizeof(CHAR_T));
+            count += arrCount - 1;
         }
 
-        void AppendString(const IString& str)
+        void Append(const IString<CHAR_T>& str)
         {
-            CheckBounds(count + str.COUNT_MAX, COUNT_MAX + 1);
-            std::memcpy(dataPtr + count, str.dataPtr, str.COUNT_MAX * sizeof(CHAR_T));
-            count += str.Count() - 1;
+            Append(str.dataPtr, str.count);
         }
-
 
 
         ///REMOVE
 
-        void Remove()
+        void Remove(const u32 i, const u32 len)
         {
             static_assert(false, "Not yet implemented");
         }
@@ -102,14 +116,15 @@ namespace mini::box
 
         ///OTHER
 
-        bool Contains()
+        u32 Find()
         {
             static_assert(false, "Not yet implemented");
-            return true;
+            return 0;
         }
 
     protected:
-        u32 count; //does not include \0
+        CHAR_T* const dataPtr;
+        u32 count; //includes \0
 
         ///CTOR
 
@@ -126,7 +141,7 @@ namespace mini::box
 
         ///INTERNAL
 
-        constexpr void CheckBounds(const u32 i, const u32 max) const
+        constexpr inline void CheckBounds(const u32 i, const u32 max) const
         {
         #if (DO_BOUNDS_CHECK)
             if (i < 0 || i >= max)
@@ -149,10 +164,13 @@ namespace mini::box
 
         ///CTORS
 
-        constexpr String() : BASE(data, COUNT_MAX, 0), data { "\0" } { ; }
+        String() : BASE(data, COUNT_MAX, 1), data { "" } { ; }
 
-        template<class CHAR_ARRAY>
-        constexpr String(const CHAR_ARRAY& chars) : String() { BASE::Set(chars); }
+        template<class PTR, typename = IsNotArray<PTR>>
+        String(const PTR  ptr) : String() { BASE::Set(ptr); }
+
+        template<std::size_t N>
+        String(const CHAR_T (&arr)[N]) : String() { BASE::Set(arr); }
 
     private:
         CHAR_T data[COUNT_MAX];
