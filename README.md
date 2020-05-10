@@ -33,4 +33,13 @@ This is Work In Progress!
 - some constexpr methods and inlined (templated) methods (like Set<0, true>())
 - overall more readable and extendible than the STL
 
-...
+## mini::box::String
+- fixed size (capacity-based with internal count)
+	- auto growth can be harmful on perf (reallocations) and makes it harder to use with custom allocators
+	- simple inheritance (without vtable) is used so the (abstract) base can be passed around without the need of writing String<N> everywhere
+	- wrapper and elements are not seperated in memory and the whole object can simply be passed to an allocator
+- overloads for array, ptrs and the class 
+- bounds checking is toggleable via macro, no exceptions are used
+- overall more readable and extendible than the STL
+
+...wip
