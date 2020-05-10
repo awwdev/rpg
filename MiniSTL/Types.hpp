@@ -61,10 +61,10 @@ namespace mini
     )>;
 
     template<typename T>
-    using IsArray = std::enable_if_t<std::is_array_v<T>>;
+    using IsArray   = std::enable_if_t<std::is_array_v<T>>;
 
     template<typename T>
-    using IsNotArray = std::enable_if_t<!std::is_array_v<T>>;
+    using IsNoArray = std::enable_if_t<!std::is_array_v<T>>;
 
     template<typename T>
     using IsPointer = std::enable_if_t<std::is_pointer_v<T>>;

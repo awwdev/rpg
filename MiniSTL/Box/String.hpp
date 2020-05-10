@@ -62,13 +62,13 @@ namespace mini::box
             Set(arr, N);
         }
 
-        template<class PTR, typename = IsNotArray<PTR>>
+        template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
         void Set(const PTR ptr)
         {
             Set(ptr, std::strlen(ptr) + 1);
         }
 
-        //arrSize has to be strlen + 1
+        //arrCount has to be strlen + 1
         void Set(const CHAR_T* const ptr, const u32 arrCount)
         {
             CheckBounds(arrCount, COUNT_MAX + 1);
@@ -79,19 +79,20 @@ namespace mini::box
 
         ///APPEND
 
+        //better perf (no need for strlen)
         template<std::size_t N>
         void Append(const CHAR_T(&arr)[N])
         {
             Append(arr, N);
         }
         
-        template<class PTR, typename = IsNotArray<PTR>, typename = IsPointer<PTR>>
+        template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
         void Append(const PTR ptr)
         {
             Append(ptr, strlen(ptr) + 1);
         }
         
-        //arrSize has to be strlen + 1
+        //arrCount has to be strlen + 1
         void Append(const CHAR_T* const ptr, const u32 arrCount)
         {
             //consider the \0 trail
@@ -166,7 +167,7 @@ namespace mini::box
 
         String() : BASE(data, COUNT_MAX, 1), data { "" } { ; }
 
-        template<class PTR, typename = IsNotArray<PTR>>
+        template<class PTR, typename = IsNoArray<PTR>>
         String(const PTR  ptr) : String() { BASE::Set(ptr); }
 
         template<std::size_t N>
