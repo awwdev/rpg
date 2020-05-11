@@ -24,7 +24,7 @@
 namespace mini::box
 {
 #define DO_BOUNDS_CHECK 1
-#define FOR_ARRAY(arr, i) for(decltype(arr.Count()) i = 0; i < arr.Count(); ++i)
+#define FOR_ARRAY(arr, i) for(decltype(arr.Count()) i = 0; i < arr.Count(); ++i) //no use of iterator boilerplate
 #define ND [[nodiscard]]
 
     
@@ -38,26 +38,25 @@ namespace mini::box
         const IDX_T         COUNT_MAX;
         const std::size_t   BYTE_SIZE;
 
-
         ///ACCESS
 
         template<typename IDX, typename = IsIntegralOrEnum<IDX>> ND
         T& operator[](const IDX i) 
         { 
-            CheckBounds(i, count);
+            CheckRange(i, count);
             return dataPtr[static_cast<IDX_T>(i)];
         }
 
         template<typename IDX, typename = IsIntegralOrEnum<IDX>> ND
         const T& operator[](const IDX i) const
         { 
-            CheckBounds(i, count);
+            CheckRange(i, count);
             return dataPtr[static_cast<IDX_T>(i)];
         }
 
 
-        ND T&       Last()        { CheckBounds(count - 1, count); return dataPtr[count - 1]; }
-        ND const T& Last()  const { CheckBounds(count - 1, count); return dataPtr[count - 1]; }
+        ND T&       Last()        { CheckRange(count - 1, count); return dataPtr[count - 1]; }
+        ND const T& Last()  const { CheckRange(count - 1, count); return dataPtr[count - 1]; }
         ND IDX_T    Count() const { return count; }
         ND bool     Empty() const { return count == 0; }
 
@@ -69,7 +68,7 @@ namespace mini::box
         template<class... CtorArgs>
         void Append(CtorArgs&&... args)
         {
-            CheckBounds(count, COUNT_MAX + 1);
+            CheckCapacity();
             PlacementNew(count++, std::forward<CtorArgs>(args)...);
         }
 
@@ -77,9 +76,10 @@ namespace mini::box
         template<class... CtorArgs, typename IDX, typename = IsIntegralOrEnum<IDX>>
         void Insert(const IDX pos, CtorArgs&&... args)
         {
-            CheckBounds(pos, count);
+            CheckRange(pos, count);
+            CheckCapacity();
 
-            //move elements to the right (copy below into ahead)
+            //move elements to the right (copy left into right)
             new(&dataPtr[count]) T(std::move(dataPtr[count - 1]));
             for (IDX_T i = count - 1; i > static_cast<IDX_T>(pos); --i) {
                 dataPtr[i] = std::move(dataPtr[i - 1]);
@@ -94,7 +94,7 @@ namespace mini::box
         template<typename IDX, typename = IsIntegralOrEnum<IDX>>
         void RemoveStable(const IDX pos) 
         {
-            CheckBounds(pos, count);
+            CheckRange(pos, count);
 
             if constexpr (std::is_trivially_copyable_v<T>)
             {
@@ -116,7 +116,7 @@ namespace mini::box
         template<typename IDX, typename = IsIntegralOrEnum<IDX>>
         void RemoveFast(const IDX pos) 
         {
-            CheckBounds(pos, count);
+            CheckRange(pos, count);
             dataPtr[static_cast<IDX_T>(pos)] = std::move(dataPtr[count - 1]);
             dataPtr[count - 1].~T();
             --count;
@@ -169,7 +169,7 @@ namespace mini::box
         template<class T2, typename IDX_T_>
         void AppendArray(const IArray<T2, IDX_T_>& other)
         {
-            CheckBounds(count + other.Count(), COUNT_MAX + 1);
+            CheckRange(count + other.Count(), COUNT_MAX + 1);
             FOR_ARRAY(other, i) {
                 PlacementNew(count++, other[i]);
             }
@@ -179,7 +179,7 @@ namespace mini::box
         template<class T2, typename IDX, typename = IsIntegralOrEnum<IDX>>
         void InsertArray(const IDX pos, const IArray<T2>& other)
         {
-            CheckBounds(count + other.Count(), COUNT_MAX + 1);
+            CheckRange(count + other.Count(), COUNT_MAX + 1);
             static_assert(false, "Not yet implemented.");
             FOR_ARRAY(other, i) {
                 dataPtr[pos + i] = other[i];
@@ -198,7 +198,7 @@ namespace mini::box
             , BYTE_SIZE { byteSize }
         {;}
 
-        IArray(const IArray&)            = delete; //avoid boilerplate
+        IArray(const IArray&)            = delete; //avoid boilerplate (copy ctor is probably a bit better for perf when init list though)
         IArray& operator=(const IArray&) = delete;
 
         ~IArray() { Clear(); }
@@ -220,13 +220,13 @@ namespace mini::box
         }
 
         template<typename IDX>
-        void CheckBounds(const IDX i, const IDX_T max) const
+        void CheckRange(const IDX i, const IDX_T max, const IDX_T min = 0) const
         {
         #if (DO_BOUNDS_CHECK)
             if constexpr (std::is_enum_v<IDX>)
             {
                 using UT = std::underlying_type_t<IDX>;
-                if ((UT)i < 0 || (UT)i >= max)
+                if ((UT)i < min || (UT)i >= max)
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Array access out of bounds");
                     __debugbreak();
@@ -234,11 +234,22 @@ namespace mini::box
             }
             else
             {
-                if (i < 0 || i >= max)
+                if (i < min || i >= max)
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Array access out of bounds");
                     __debugbreak();
                 }
+            }
+        #endif
+        }
+
+        inline void CheckCapacity() const
+        {
+        #if (DO_BOUNDS_CHECK)
+            if (count + 1 > COUNT_MAX)
+            {
+                mini::dbg::dlog<mini::dbg::ColorMode::Red>("Array capacity exhausted");
+                __debugbreak();
             }
         #endif
         }
@@ -259,8 +270,8 @@ namespace mini::box
         using DATA_T  = T;
         using INDEX_T = IDX_T;
 
-        static constexpr IDX_T COUNT_MAX = (IDX_T) COUNT_MAX_T;
-        static constexpr std::size_t BYTE_SIZE = sizeof(T[COUNT_MAX]);
+        static constexpr IDX_T COUNT_MAX = (IDX_T) COUNT_MAX_T;         //capacity
+        static constexpr std::size_t BYTE_SIZE = sizeof(T[COUNT_MAX]);  //size (in bytes)
 
         ///CTOR
 
@@ -274,7 +285,9 @@ namespace mini::box
         }
 
     private:
-        alignas(T) u8 data[BYTE_SIZE];
+        alignas(T) u8 data[BYTE_SIZE]; 
+        //the purpose of the derived class is to store the array
+        //using char array prevents ctor calls (introduces the need of cast and placement new)
     };
 
 

@@ -20,6 +20,7 @@ int WINAPI wWinMain(
     while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
     {
         wnd::PollEvents();
+        
     
         if (app::CheckEvent(EventType::Keyboard_W, EventState::Released)) {
             mini::dbg::dlog("released w");
