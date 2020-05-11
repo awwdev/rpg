@@ -129,13 +129,14 @@ namespace mini::box
 
         ///CTOR
 
+        //"abstract" base shall not be instantiated
         constexpr IString(CHAR_T* const data, const u32 countMax, const u32 pCount ) 
             : dataPtr   { data }
             , COUNT_MAX { countMax }
             , count     { pCount } 
         { ; }
         
-        //avoid boilerplate, use generic methods instead
+        //me avoiding boilerplate, use generic methods instead
         IString(const IString&) = delete;
         IString& operator=(const IString&) = delete;
 

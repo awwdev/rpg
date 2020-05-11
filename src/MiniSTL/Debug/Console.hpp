@@ -26,6 +26,7 @@ namespace mini::dbg
         HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
         DWORD dwMode = 0;
         GetConsoleMode(handle, &dwMode);
+
         dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         SetConsoleMode(handle, dwMode);
 

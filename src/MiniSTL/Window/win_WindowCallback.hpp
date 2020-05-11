@@ -3,8 +3,8 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#undef max
 #include <windowsx.h>
+#undef max
 
 using namespace mini::app;
 
@@ -19,9 +19,8 @@ namespace mini::wnd
             DispatchMessage(&msg);
         }
     }
-
-
-    static LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+    
+    static LRESULT __stdcall WndProc1(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         switch (uMsg) {
 

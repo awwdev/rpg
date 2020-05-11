@@ -30,7 +30,7 @@ namespace mini::wnd
         WNDCLASSEX wndClass {
             .cbSize         = sizeof(WNDCLASSEX),
             .style          = 0, //CS_HREDRAW | CS_VREDRAW
-            .lpfnWndProc    = WndProc,
+            .lpfnWndProc    = WndProc1,
             .cbClsExtra     = 0,
             .cbWndExtra     = 0,
             .hInstance      = hInst,

@@ -77,6 +77,8 @@ namespace mini::mem
 #undef ALLOC_BLOCK_POOL
 
 
+    ///TODO: store block num in owner
+
     template<class T>
     void FreeBlock(const T& owner)
     {
@@ -116,7 +118,7 @@ namespace mini::mem
     template<class T>
     using MemOwner_T = MemOwner<T, BlockPoolType<T>>;
 
-    
+    ///call CtorArgs
     template<class T, class... Args>
     auto ClaimBlock(Args&&... args)
     {
