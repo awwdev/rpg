@@ -4,6 +4,7 @@
 #include "MiniSTL/Debug/Console.hpp"
 #include "MiniSTL/Debug/Profiler.hpp"
 #include "MiniSTL/Box/String.hpp"
+#include "MiniSTL/Box/Array.hpp"
 #include "MiniSTL/Memory/Allocator.hpp"
 
 using namespace mini;
@@ -17,14 +18,14 @@ int WINAPI wWinMain(
     const auto con = dbg::CreateConsole();
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
     
-    mini::mem::Allocate();
-    auto o1 = mini::mem::ClaimBlock<mini::box::String<100>>();
-    auto o2 = mini::mem::ClaimBlock<mini::box::String<100>>();
+    mem::Allocate();
+    auto o1 = mem::ClaimBlock<box::String<100>>("Hello ");
+    auto o2 = mem::ClaimBlock<box::Array<float, 100>>(1, 2, 3);
 
-    o1->Set("Hello World");
-    o2->Set("This is great!");
+    o1->Append("World!");
+    o2->Append(42.f);
 
-    LOG(*o1, *o2);
+    LOG(*o2, *o2);
 
 
     while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))

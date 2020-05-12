@@ -21,7 +21,8 @@ namespace mini::mem
     //define blocks at compile time (size and count) 
     //KEEP IT SORTED BY SIZE
     constexpr AllocInfo allocs[] = {
-        { 128, 100 } //used for strings
+        {  128, 100 }, //used for strings
+        { 1000, 100 }
     };
     //!--------------------------------------
 
@@ -107,7 +108,7 @@ namespace mini::mem
             std::size_t allocBitBegin = 0;
             for(std::size_t i=0; i<ALLOC_COUNT; ++i) 
             {
-                if (allocs[i].blockSize >= sizeof(T) + alignof(T)) //assumes sorted
+                if (allocs[i].blockSize >= (sizeof(T) + alignof(T))) //assumes sorted
                     return { i, allocBitBegin };
                 allocBitBegin += allocs[i].blockCount;
             }
@@ -118,7 +119,7 @@ namespace mini::mem
         blocksUsed.Flip(freeBlock); //mark used
 
         constexpr auto blockSize = allocs[FIT.allocIdx].blockSize;
-        auto* ptr = allocPtrs[FIT.allocIdx] + (freeBlock * blockSize);
+        auto* ptr = allocPtrs[FIT.allocIdx] + ((freeBlock - FIT.allocBitBegin) * blockSize);
         auto* aligned = (u8*) (((std::uintptr_t)ptr + (alignof(T) - 1)) & ~(alignof(T) - 1)); //next aligned address
         auto* obj = new (aligned) T (std::forward<CtorArgs>(args) ...);
 

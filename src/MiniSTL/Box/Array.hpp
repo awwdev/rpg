@@ -35,8 +35,8 @@ namespace mini::box
         using DATA_T  = T;
         using INDEX_T = IDX_T; 
 
-        const IDX_T         COUNT_MAX;
         const std::size_t   BYTE_SIZE;
+        const IDX_T         COUNT_MAX;
 
         ///ACCESS
 
@@ -301,6 +301,16 @@ namespace mini::box
             mini::dbg::dlog(arr[i]);
         }
         mini::dbg::dlog("---");
+    }
+
+
+    template<class T, typename = IsPrintable<T>>
+    std::ostream& operator<<(std::ostream& os, const IArray<T>& arr)
+    {
+        FOR_ARRAY(arr, i) {
+            os << arr[i] << '\n';
+        }
+        return os;
     }
 
 

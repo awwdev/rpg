@@ -193,8 +193,8 @@ namespace mini::box
     template<typename CHAR_T>
     std::ostream& operator<<(std::ostream& os, const IString<CHAR_T>& str)
     {
-        //os << &str[0];
-        os.write(str.dataPtr, str.Count()); //should be faster ?
+        os << str.dataPtr << '\n';
+        //os.write(str.dataPtr, str.Count()); //should be faster ?
         return os;
     }
 
