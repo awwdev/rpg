@@ -2,11 +2,13 @@
 #include "mini/Window/win_WindowCallback.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Debug/Console.hpp"
-#include "mini/Debug/Profiler.hpp"
-#include "mini/Box/String.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/Memory/Allocator.hpp"
-#include "rpgcpp/Scene/Scene.hpp"
+
+#include "rpg/Scene/Scene.hpp"
+#include "rpg/DeltaTime.hpp"
+
+#include <thread>
 
 using namespace mini;
 
@@ -20,21 +22,24 @@ int WINAPI wWinMain(
     const auto con = dbg::CreateConsole();
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
     mem::Allocate();
-    
+
     //scenes
-    using SceneStack = mini::box::Array<rpgcpp::scene::Scene, 4>;
+    using SceneStack = mini::box::Array<rpg::scene::Scene, 4>;
     auto sceneStack  = mini::mem::ClaimBlock<SceneStack>();
     sceneStack->SetCompleteArray();
     auto& currentScene = (*sceneStack)[0];
 
+    rpg::dt::StartClock();
+
     while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
     {
         wnd::PollEvents();
-        
-        currentScene.Update();
-        currentScene.Update();
+        rpg::dt::CalcDelta();
+
+        currentScene.Update(rpg::dt::seconds);
+        currentScene.Render(rpg::dt::seconds);
     }
 
-}//main end
+    mem::Free();
 
-//todo: DELTA TIME
+}//main end

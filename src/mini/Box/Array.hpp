@@ -59,7 +59,7 @@ namespace mini::box
         ND const T& Last()  const { CheckRange(count - 1, count); return dataPtr[count - 1]; }
         ND IDX_T    Count() const { return count; }
         ND bool     Empty() const { return count == 0; }
-
+        ND bool     Full()  const { return count == COUNT_MAX; }
         void Clear() { while (count > 0) dataPtr[--count].~T(); }
 
 

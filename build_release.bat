@@ -6,6 +6,7 @@
  /std:c++latest ^
  /nologo ^
  /O2 ^
+ /Oi ^
  /MT ^
  /D _UNICODE /D UNICODE /D _STATIC_CPPLIB /D _HAS_EXCEPTIONS=0 ^
  /Fo: build_release\objs\ ^

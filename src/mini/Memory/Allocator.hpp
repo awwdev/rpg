@@ -29,8 +29,8 @@ namespace mini::mem
 {
     struct AllocInfo
     {
-        u32 blockSize;
-        u32 blockCount;
+        std::size_t blockSize;
+        std::size_t blockCount;
     };
 
     //!--------------------------------------
@@ -38,7 +38,7 @@ namespace mini::mem
     //KEEP IT SORTED BY SIZE
     constexpr AllocInfo ALLOC_INFOS[] = {
         {  128, 100 }, //used for strings
-        { 1000, 100 }
+        { 1000, 100 },
     };
     //!--------------------------------------
 
@@ -46,7 +46,7 @@ namespace mini::mem
     constexpr auto ALLOC_COUNT = sizeof(ALLOC_INFOS) / sizeof(ALLOC_INFOS[0]);
     constexpr auto BLOCK_COUNT = []() constexpr { //total block count
         std::size_t count = 0;
-        for(auto i  =0; i < ALLOC_COUNT; ++i) {
+        for(auto i = 0; i < ALLOC_COUNT; ++i) {
             count += ALLOC_INFOS[i].blockCount;
         }
         return count;
@@ -58,10 +58,18 @@ namespace mini::mem
 
     inline void Allocate()
     {
-        HANDLE const heap = GetProcessHeap();
+        HANDLE heap = GetProcessHeap();
         for(auto i = 0; i < ALLOC_COUNT; ++i) {
-            allocPtrs[i] = (u8*)HeapAlloc(heap, 0, ALLOC_INFOS[i].blockSize); 
+            allocPtrs[i] = (u8*)HeapAlloc(heap, 0, ALLOC_INFOS[i].blockSize * ALLOC_INFOS[i].blockCount); 
+            LOG("Allocated:", ALLOC_INFOS[i].blockSize * ALLOC_INFOS[i].blockCount, (void*)allocPtrs[i]);
         }
+    }
+
+
+    inline void Free()
+    {
+        //todo
+        //HeapFree 
     }
 
 
