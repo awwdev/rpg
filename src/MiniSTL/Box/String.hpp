@@ -30,8 +30,8 @@ namespace mini::box
     struct IString
     {
         using DATA_T = CHAR_T;
-        const u32 COUNT_MAX;
         CHAR_T* const dataPtr;
+        const u32 COUNT_MAX;
 
         //? ACCESS
 

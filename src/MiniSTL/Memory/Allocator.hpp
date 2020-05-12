@@ -1,7 +1,6 @@
 #pragma once
 #include "MiniSTL/Types.hpp"
 #include "MiniSTL/Box/Bitset.hpp"
-#include "MiniSTL/Box/Array.hpp"
 #include "MiniSTL/Debug/Logger.hpp"
 
 #define WIN32_LEAN_AND_MEAN
@@ -22,7 +21,7 @@ namespace mini::mem
     //define blocks at compile time (size and count) 
     //KEEP IT SORTED BY SIZE
     constexpr AllocInfo allocs[] = {
-        {41, 100 }
+        { 128, 100 } //used for strings
     };
     //!--------------------------------------
 
@@ -36,8 +35,8 @@ namespace mini::mem
         return count;
     }();
 
-    inline u8* allocPtrs [ALLOC_COUNT];       //index based
-    inline box::Bitset<BLOCK_COUNT> blockIds; //all blocks
+    inline u8* allocPtrs [ALLOC_COUNT];         //index based
+    inline box::Bitset<BLOCK_COUNT> blocksUsed; //all blocks
 
 
     inline void Allocate()
@@ -89,22 +88,22 @@ namespace mini::mem
             if (ptr != nullptr) 
             { 
                 ptr->~T();
-                blockIds.Flip(blockId); 
+                blocksUsed.Flip(blockId); 
             } 
         }
     };
 
 
-    template<class T>
-    inline auto ClaimBlock()
+    template<class T, class... CtorArgs>
+    auto ClaimBlock(CtorArgs&&... args)
     {
-        struct Fit 
+        struct FittingAlloc 
         { 
             std::size_t allocIdx; 
             std::size_t allocBitBegin;
         };
 
-        constexpr auto FIT = []() constexpr -> Fit {
+        constexpr auto FIT = []() constexpr -> FittingAlloc {
             std::size_t allocBitBegin = 0;
             for(std::size_t i=0; i<ALLOC_COUNT; ++i) 
             {
@@ -115,14 +114,15 @@ namespace mini::mem
             //will not compile when hitting this point
         }();
 
-        const auto freeBlock = blockIds.FindFirstFreeBit(FIT.allocBitBegin); //start search at the alloc
-        blockIds.Flip(freeBlock); //mark used
+        const auto freeBlock = blocksUsed.FindFirstFreeBit(FIT.allocBitBegin); //start search at the alloc
+        blocksUsed.Flip(freeBlock); //mark used
 
         constexpr auto blockSize = allocs[FIT.allocIdx].blockSize;
         auto* ptr = allocPtrs[FIT.allocIdx] + (freeBlock * blockSize);
-        auto* aligned = (T*) (((std::uintptr_t)ptr + (alignof(T) - 1)) & ~(alignof(T) - 1)); //next aligned address
+        auto* aligned = (u8*) (((std::uintptr_t)ptr + (alignof(T) - 1)) & ~(alignof(T) - 1)); //next aligned address
+        auto* obj = new (aligned) T (std::forward<CtorArgs>(args) ...);
 
-        return MemPtr<T> { aligned, freeBlock };
+        return MemPtr<T> { obj, freeBlock };
     }
 
 }//ns
