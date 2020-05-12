@@ -14,9 +14,9 @@
 */
 
 #pragma once
-#include "MiniSTL/Types.hpp"
-#include "MiniSTL/Debug/Logger.hpp"
-#include "MiniSTL/Debug/Profiler.hpp"
+#include "mini/Types.hpp"
+#include "mini/Debug/Logger.hpp"
+#include "mini/Debug/Profiler.hpp"
 
 
 namespace mini::box

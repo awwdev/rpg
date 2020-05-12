@@ -15,9 +15,9 @@
 */
 
 #pragma once
-#include "MiniSTL/Types.hpp"
-#include "MiniSTL/Box/Bitset.hpp"
-#include "MiniSTL/Debug/Logger.hpp"
+#include "mini/Types.hpp"
+#include "mini/Box/Bitset.hpp"
+#include "mini/Debug/Logger.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"

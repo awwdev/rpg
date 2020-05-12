@@ -10,8 +10,8 @@
 */
 
 #pragma once
-#include "MiniSTL/Types.hpp"
-#include "MiniSTL/Debug/Assert.hpp"
+#include "mini/Types.hpp"
+#include "mini/Debug/Assert.hpp"
 
 
 namespace mini::box 

@@ -1,4 +1,4 @@
-#include "MiniSTL/Debug/Profiler.hpp"
+#include "mini/Debug/Profiler.hpp"
 //#include "MiniSTL/Box/Array.hpp"
 
 namespace mini::dbg {

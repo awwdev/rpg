@@ -1,5 +1,5 @@
 #pragma once
-#include "MiniSTL/Debug/Logger.hpp"
+#include "mini/Debug/Logger.hpp"
 #include <chrono>
 #include <iostream>
 //#include <iomanip>

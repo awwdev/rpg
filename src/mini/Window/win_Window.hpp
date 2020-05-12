@@ -1,5 +1,5 @@
 #pragma once
-#include "MiniSTL/Window/win_WindowCallback.hpp"
+#include "mini/Window/win_WindowCallback.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>

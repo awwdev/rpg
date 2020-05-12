@@ -1,5 +1,5 @@
 #pragma once
-#include "MiniSTL/Window/AppEvents.hpp"
+#include "mini/Window/AppEvents.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>

@@ -1,5 +1,5 @@
 #pragma once
-#include "MiniSTL/Types.hpp"
+#include "mini/Types.hpp"
 #include <cmath>
 #include <cstring>
 

@@ -4,7 +4,6 @@
     "rust-client.updateOnStartup": true,
     "rust.all_features": true,
     "window.zoomLevel": 0,
-    "workbench.iconTheme": "vscode-icons",
     "telemetry.enableTelemetry": false,
     "telemetry.enableCrashReporter": false,
     "debug.onTaskErrors": "showErrors",

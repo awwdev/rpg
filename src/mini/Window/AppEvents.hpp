@@ -1,7 +1,6 @@
 #pragma once
-#include "MiniSTL/Box/Variant.hpp"
-#include "MiniSTL/Box/Array.hpp"
-#include "MiniSTL/Box/Bitset.hpp"
+#include "mini/Box/Array.hpp"
+#include "mini/Box/Bitset.hpp"
 
 namespace mini::app
 {

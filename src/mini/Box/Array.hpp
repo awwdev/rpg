@@ -17,9 +17,9 @@
 */
 
 #pragma once
-#include "MiniSTL/Types.hpp"
-#include "MiniSTL/Debug/Assert.hpp"
-#include "MiniSTL/Debug/Logger.hpp"
+#include "mini/Types.hpp"
+#include "mini/Debug/Assert.hpp"
+#include "mini/Debug/Logger.hpp"
 
 namespace mini::box
 {

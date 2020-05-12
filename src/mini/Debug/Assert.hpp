@@ -1,5 +1,5 @@
 #pragma once
-#include "MiniSTL/Debug/Logger.hpp"
+#include "mini/Debug/Logger.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
