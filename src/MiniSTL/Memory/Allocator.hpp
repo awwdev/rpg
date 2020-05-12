@@ -1,3 +1,19 @@
+//https://github.com/awwdev
+
+/*
+## mini::mem
+
+- global functions, simple usage
+- compile time (capacity based system)
+    - user defines blocks at compile time in one place (see array allocs[])
+    - when claiming memory, the appropriate block size will be figured out at compile time
+- MemPtr
+    - is returned when claiming memory
+    - holds data about the used block and will "free" the block when destroyed (RAII)
+- free / used blocks are represented by one bitset
+- printable
+*/
+
 #pragma once
 #include "MiniSTL/Types.hpp"
 #include "MiniSTL/Box/Bitset.hpp"
@@ -119,9 +135,9 @@ namespace mini::mem
         blocksUsed.Flip(freeBlock); //mark used
 
         constexpr auto blockSize = allocs[FIT.allocIdx].blockSize;
-        auto* ptr = allocPtrs[FIT.allocIdx] + ((freeBlock - FIT.allocBitBegin) * blockSize);
+        auto* ptr     = allocPtrs[FIT.allocIdx] + ((freeBlock - FIT.allocBitBegin) * blockSize);
         auto* aligned = (u8*) (((std::uintptr_t)ptr + (alignof(T) - 1)) & ~(alignof(T) - 1)); //next aligned address
-        auto* obj = new (aligned) T (std::forward<CtorArgs>(args) ...);
+        auto* obj     = new (aligned) T (std::forward<CtorArgs>(args) ...);
 
         return MemPtr<T> { obj, freeBlock };
     }

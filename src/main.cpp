@@ -17,16 +17,7 @@ int WINAPI wWinMain(
 {
     const auto con = dbg::CreateConsole();
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
-    
     mem::Allocate();
-    auto o1 = mem::ClaimBlock<box::String<100>>("Hello ");
-    auto o2 = mem::ClaimBlock<box::Array<float, 100>>(1, 2, 3);
-
-    o1->Append("World!");
-    o2->Append(42.f);
-
-    LOG(*o2, *o2);
-
 
     while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
     {
@@ -42,6 +33,4 @@ int WINAPI wWinMain(
     }
 }
 
-//variant
-//print input?
 //scene queue

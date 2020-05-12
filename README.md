@@ -42,4 +42,21 @@ This is Work In Progress!
 - bounds checking is toggleable via macro, no exceptions are used
 - overall more readable and extendible than the STL
 
+## mini::mem alloc functions
+- global functions, simple usage
+- compile time (capacity based system)
+    - user defines blocks at compile time in one place (see array allocs[])
+    - when claiming memory, the appropriate block size will be figured out at compile time
+- MemPtr
+    - is returned when claiming memory
+    - holds data about the used block and will "free" the block when destroyed (RAII)
+- free / used blocks are represented by one bitset
+- printable
+
+## mini::wnd
+- straight forward winapi
+- event abstractions (event contains union)
+- bitset holds state of input (pressed keys and buttons)
+
+
 ...wip
