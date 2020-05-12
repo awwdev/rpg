@@ -42,10 +42,10 @@ This is Work In Progress!
 - bounds checking is toggleable via macro, no exceptions are used
 - overall more readable and extendible than the STL
 
-## mini::mem alloc functions
+## mini::mem::Allocate()
 - global functions, simple usage
 - compile time (capacity based system)
-    - user defines blocks at compile time in one place (see array allocs[])
+    - user defines blocks at compile time in one place (see array ALLOC_INFOS[])
     - when claiming memory, the appropriate block size will be figured out at compile time
 - MemPtr
     - is returned when claiming memory
