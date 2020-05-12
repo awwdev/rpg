@@ -18,8 +18,9 @@ int WINAPI wWinMain(
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
     
     mini::mem2::Allocate();
-    mini::mem2::ClaimBlock<mini::box::String<1000>>();
-    mini::mem2::ClaimBlock<mini::box::String<1000>>();
+    const auto o1 = mini::mem2::ClaimBlock<mini::box::String<1>>();
+    const auto o2 = mini::mem2::ClaimBlock<mini::box::String<1>>();
+
 
     while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
     {

@@ -18,81 +18,115 @@ namespace mini::mem2
         u32 blockCount;
     };
 
-    //!KEEP THIS SORTED BY SIZE
+    //!--------------------------------------
+    //define blocks at compile time (size and count) 
+    //KEEP IT SORTED BY SIZE
     constexpr AllocInfo allocs[] = {
-        { 500, 100 },
-        { 10000, 1 },
+        {41, 100 }
     };
+    //!--------------------------------------
 
 
-    constexpr auto ALLOCS_COUNT = sizeof(allocs) / sizeof(allocs[0]);
-    constexpr auto BIT_COUNT    = []() constexpr {
-        std::size_t bitCount = 0;
-        for(auto i=0; i<ALLOCS_COUNT; ++i) {
-            bitCount += allocs[i].blockCount;
+    constexpr auto ALLOC_COUNT = sizeof(allocs) / sizeof(allocs[0]);
+    constexpr auto BLOCK_COUNT = []() constexpr { //total block count
+        std::size_t count = 0;
+        for(auto i  =0; i < ALLOC_COUNT; ++i) {
+            count += allocs[i].blockCount;
         }
-        return bitCount;
+        return count;
     }();
 
-    inline u8* allocPtrs [ALLOCS_COUNT]; //index based system
-    inline mini::box::Bitset<BIT_COUNT> blocksAsBits; //all blocks together
+    inline u8* allocPtrs [ALLOC_COUNT];       //index based
+    inline box::Bitset<BLOCK_COUNT> blockIds; //all blocks
 
 
     inline void Allocate()
     {
-        auto heap = GetProcessHeap();
-        for(auto i=0; i<ALLOCS_COUNT; ++i) {
-            allocPtrs[i] = (u8*)HeapAlloc(heap, 0, allocs[i].blockSize); //alignment?
+        HANDLE const heap = GetProcessHeap();
+        for(auto i = 0; i < ALLOC_COUNT; ++i) {
+            allocPtrs[i] = (u8*)HeapAlloc(heap, 0, allocs[i].blockSize); 
         }
     }
 
 
     template<class T>
-    struct MemOwner
+    struct MemPtr
     {
         T* ptr;
-        std::size_t blockBitIdx;
+        std::size_t blockId;
 
         T* operator->() { return ptr; }
         T& operator* () { return *ptr;}
 
-        MemOwner() = delete;
-        MemOwner(T* const pPtr, const std::size_t pBlockBitIdx) : ptr { pPtr }, blockBitIdx { pBlockBitIdx } {;}
 
-        MemOwner(const MemOwner&)            = delete;
-        MemOwner& operator=(const MemOwner&) = delete;
+        MemPtr() = delete;
+        MemPtr(T* const pPtr, const std::size_t pBlockId)
+            : ptr     { pPtr }
+            , blockId { pBlockId } 
+        {;}
 
-        MemOwner(MemOwner&& other) : ptr { other.ptr }  { other.ptr = nullptr; }
-        MemOwner& operator=(MemOwner&& other)           { ptr = other.ptr; other.ptr = nullptr; return *this; }
+        MemPtr(const MemPtr&)            = delete;
+        MemPtr& operator=(const MemPtr&) = delete;
 
-        ~MemOwner() { if (ptr != nullptr) { ptr->~T(); blocksAsBits.Flip(blockBitIdx); } }
+
+        MemPtr(MemPtr&& other) 
+            : ptr     { other.ptr }
+            , blockId { other.blockId } 
+        { 
+            other.ptr = nullptr;
+        }
+
+        MemPtr& operator=(MemPtr&& other)           
+        { 
+            ptr         = other.ptr; 
+            blockId     = other.blockId;
+            other.ptr   = nullptr; 
+            return *this; 
+        }
+
+        ~MemPtr()
+        { 
+            if (ptr != nullptr) 
+            { 
+                ptr->~T();
+                blockIds.Flip(blockId); 
+            } 
+        }
     };
 
 
     template<class T>
     inline auto ClaimBlock()
     {
-        struct A { std::size_t allocIdx; std::size_t allocBitBegin; };
+        struct Fit 
+        { 
+            std::size_t allocIdx; 
+            std::size_t allocBitBegin;
+        };
 
-        constexpr auto a = []() constexpr -> A {
+        constexpr auto FIT = []() constexpr -> Fit {
             std::size_t allocBitBegin = 0;
-            for(std::size_t i=0; i<ALLOCS_COUNT; ++i) 
+            for(std::size_t i=0; i<ALLOC_COUNT; ++i) 
             {
-                if (allocs[i].blockSize >= sizeof(T)) //assumes sorted
+                if (allocs[i].blockSize >= sizeof(T) + alignof(T)) //assumes sorted
                     return { i, allocBitBegin };
                 allocBitBegin += allocs[i].blockCount;
             }
+
+            ERR("[Alloc] No appropriate block found that can hold size of", sizeof(T));
+            __debugbreak();
             return {};
         }();
 
-        const auto freeBlock = blocksAsBits.FindFirstFreeBit(a.allocBitBegin);
-        constexpr auto blockSize = allocs[a.allocIdx].blockSize;
-        blocksAsBits.Flip(freeBlock);
-        auto* ptr = allocPtrs[a.allocIdx] + (freeBlock * blockSize);
+        const auto freeBlock = blockIds.FindFirstFreeBit(FIT.allocBitBegin); //start search at the alloc
+        blockIds.Flip(freeBlock); //mark used
 
-        LOG((void*)ptr);
+        constexpr auto blockSize = allocs[FIT.allocIdx].blockSize;
+        auto* ptr = allocPtrs[FIT.allocIdx] + (freeBlock * blockSize);
+        auto* aligned = (T*) (((std::uintptr_t)ptr + (alignof(T) - 1)) & ~(alignof(T) - 1));
+        LOG((void*)ptr, (void*)aligned);
 
-        return MemOwner<T> { (T*)ptr, freeBlock };
+        return MemPtr<T> { aligned, freeBlock };
     }
 
     

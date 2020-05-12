@@ -8,6 +8,7 @@ namespace mini::dbg
 {
 #define DO_DLOG 1
 #define LOG(...) mini::dbg::dlog(__VA_ARGS__)
+#define ERR(...) mini::dbg::dlog<mini::dbg::ColorMode::Red>(__VA_ARGS__)
 
 //os specfic colors
 //windows
