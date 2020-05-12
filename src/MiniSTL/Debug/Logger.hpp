@@ -1,10 +1,13 @@
 #pragma once
+#include "MiniSTL/Box/String.hpp"
 #include <iostream>
 #include <cstdio>
+
 
 namespace mini::dbg
 {
 #define DO_DLOG 1
+#define LOG(...) mini::dbg::dlog(__VA_ARGS__)
 
 //os specfic colors
 //windows

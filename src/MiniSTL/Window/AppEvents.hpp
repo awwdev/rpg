@@ -15,6 +15,7 @@ namespace mini::app
 
         Keyboard_Escape,
         Keyboard_W,
+        Keyboard_E,
 
         PRESSABLE_END,
 

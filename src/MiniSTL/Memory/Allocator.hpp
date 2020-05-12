@@ -1,6 +1,6 @@
 #pragma once
 #include "MiniSTL/Types.hpp"
-#include "MiniSTL/Container/Bitset.hpp"
+#include "MiniSTL/Box/Bitset.hpp"
 #include "MiniSTL/Debug/Logger.hpp"
 
 #define WIN32_LEAN_AND_MEAN

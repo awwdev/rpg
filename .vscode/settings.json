@@ -10,12 +10,13 @@
     "debug.onTaskErrors": "showErrors",
     "workbench.colorTheme": "Gatito Theme",
     
+
     "workbench.colorCustomizations": {
          "[Gatito Theme]": {
-            "editor.background": "#1e1e1e",
-            "sideBar.background": "#000",
-            "editorGutter.background": "#1e1e1e",
-            "terminal.background": "#1e1e1e",
+            "editor.background": "#2a2a2e",
+            "sideBar.background": "#111",
+            "editorGutter.background": "#2a2a2e",
+            "terminal.background": "#2a2a2e",
             "panel.background": "#222",
             "editorLineNumber.foreground": "#333"
         },
@@ -24,7 +25,7 @@
     "editor.renderIndentGuides": false,
     
     "editor.tokenColorCustomizations" : {
-
+        
         "textMateRules": [
 
             //CONTROL
@@ -34,7 +35,7 @@
                     "keyword.operator.logical", 
                     "keyword.control",
                     "keyword.operator",
-                    "punctuation.terminator",
+                    //"punctuation.terminator",
                 ],
                 "settings": {
                     "foreground": "#eb6565",
@@ -51,7 +52,7 @@
             {
                 "scope": "entity.name.type",
                 "settings": {
-                    "foreground": "#ffeb93"
+                    "foreground": "#f0de8e"
                 }
             },
 
@@ -59,7 +60,9 @@
             {
                 "scope": [ 
                     "string", 
-                    "constant.numeric"
+                    "constant.numeric",
+                    "punctuation.definition.string.begin",
+                    "punctuation.definition.string.end",
                 ],
                 "settings": {
                     "foreground": "#77a7ee",
@@ -70,17 +73,11 @@
             {
                 "scope": "entity.name.namespace",
                 "settings": {
-                    "foreground": "#2beb24",
-                    "fontStyle": "bold underline"
+                    "foreground": "#e1e1e1",
+                    //"fontStyle": "bold underline"
                 }
             },
-            {
-                "scope": "comment",
-                "settings": {
-                    "foreground": "#898",
-                    //"fontStyle": ""
-                }
-            },
+            
 
             //STRUCT CLASS USING CONST MACRO
             {
@@ -109,15 +106,23 @@
             {
                 "scope": "meta",
                 "settings": {
-                    "foreground": "#ebebeb",
+                    "foreground": "#e1e1e1",
                 }
             },
             {
-                "scope": "punctuation",
+                "scope": ["punctuation", "comment"],
                 "settings": {
-                    "foreground": "#adadad",
+                    "foreground": "#888",
                 }
             },
+            
+            {
+                "scope": [ "comment.block.documentation" ],
+                "settings": {
+                    "foreground": "#000",
+                }
+            },
+
 
 
 
@@ -131,5 +136,47 @@
     "scm.diffDecorationsGutterWidth": 5,
     "editor.minimap.maxColumn": 50,
     "editor.minimap.enabled": false,
-    "scm.diffDecorations": "gutter"
+    "scm.diffDecorations": "gutter",
+    "files.associations": {
+        "xmemory": "cpp",
+        "chrono": "cpp",
+        "cmath": "cpp",
+        "concepts": "cpp",
+        "cstddef": "cpp",
+        "cstdint": "cpp",
+        "cstdio": "cpp",
+        "cstdlib": "cpp",
+        "cstring": "cpp",
+        "cwchar": "cpp",
+        "exception": "cpp",
+        "fstream": "cpp",
+        "initializer_list": "cpp",
+        "ios": "cpp",
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "istream": "cpp",
+        "iterator": "cpp",
+        "limits": "cpp",
+        "memory": "cpp",
+        "new": "cpp",
+        "numeric": "cpp",
+        "ostream": "cpp",
+        "ratio": "cpp",
+        "stdexcept": "cpp",
+        "streambuf": "cpp",
+        "system_error": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "typeinfo": "cpp",
+        "utility": "cpp",
+        "xfacet": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocinfo": "cpp",
+        "xlocnum": "cpp",
+        "xstddef": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp",
+        "xutility": "cpp"
+    }
 }

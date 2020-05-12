@@ -109,9 +109,9 @@ namespace mini::box
 
         ///OTHER
 
-        ND constexpr IDX_T FindFirstFreeBit() const
+        ND constexpr IDX_T FindFirstFreeBit(const u32 startAt = 0) const
         {
-            for (IDX_T i = 0; i < BITS; ++i)
+            for (IDX_T i = startAt; i < BITS; ++i)
             {
                 const auto a = data[BYTE(i)] & (1 << BIT(i)); //Test() is due to Assert not constexpr
                 if (a == 0) return i;

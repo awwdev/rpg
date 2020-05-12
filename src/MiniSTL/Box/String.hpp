@@ -25,14 +25,15 @@ namespace mini::box
 #define ND [[nodiscard]]
 
 
-    //size agnostic in type - use to pass string around like IString&
+    //size agnostic in type - for passing as ref
     template<typename CHAR_T = char>
     struct IString
     {
         using DATA_T = CHAR_T;
         const u32 COUNT_MAX;
+        CHAR_T* const dataPtr;
 
-        ///ACCESS
+        //? ACCESS
 
         auto&        operator[](const u32 i)       { CheckBounds(i, count); return dataPtr[i]; }
         auto& const  operator[](const u32 i) const { CheckBounds(i, count); return dataPtr[i]; }
@@ -40,6 +41,7 @@ namespace mini::box
         ND u32  Length() const { return count - 1;  } //potential issue when count == 0
         ND u32  Count()  const { return count;      }
         ND bool Empty()  const { return count == 0; }
+
 
         void Clear() 
         { 
@@ -53,13 +55,12 @@ namespace mini::box
         }
 
 
-        ///SET (overwrite)
+        //? SET
 
-        //better perf (no need for strlen)
         template<std::size_t N> 
         void Set(const CHAR_T(&arr)[N])
         {
-            Set(arr, N);
+            Set(arr, N); //no need for strlen
         }
 
         template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
@@ -77,13 +78,12 @@ namespace mini::box
         }
 
 
-        ///APPEND
+        //? APPEND
 
-        //better perf (no need for strlen)
         template<std::size_t N>
         void Append(const CHAR_T(&arr)[N])
         {
-            Append(arr, N);
+            Append(arr, N); //no need for strlen
         }
         
         template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
@@ -107,7 +107,7 @@ namespace mini::box
         }
 
 
-        ///REMOVE
+        //? REMOVE
 
         void Remove(const u32 i, const u32 len)
         {
@@ -115,7 +115,7 @@ namespace mini::box
         }
 
 
-        ///OTHER
+        //? OTHER
 
         u32 Find()
         {
@@ -123,11 +123,11 @@ namespace mini::box
             return 0;
         }
 
+
     protected:
-        CHAR_T* const dataPtr;
         u32 count; //includes \0
 
-        ///CTOR
+        //? CTOR
 
         //"abstract" base shall not be instantiated
         constexpr IString(CHAR_T* const data, const u32 countMax, const u32 pCount ) 
@@ -137,11 +137,11 @@ namespace mini::box
         { ; }
         
         //me avoiding boilerplate, use generic methods instead
-        IString(const IString&) = delete;
-        IString& operator=(const IString&) = delete;
+        IString(const IString&)             = delete;
+        IString& operator=(const IString&)  = delete;
 
 
-        ///INTERNAL
+        //? INTERNAL
 
         constexpr inline void CheckBounds(const u32 i, const u32 max) const
         {
@@ -164,9 +164,10 @@ namespace mini::box
 
         constexpr static u32 COUNT_MAX = COUNT_MAX_T;
 
-        ///CTORS
 
-        String() : BASE(data, COUNT_MAX, 1), data { "" } { ; }
+        //? CTOR
+
+        String() : BASE(data, COUNT_MAX, 1), data { "" } { ; } //is \0
 
         template<class PTR, typename = IsNoArray<PTR>>
         String(const PTR  ptr) : String() { BASE::Set(ptr); }
@@ -180,7 +181,7 @@ namespace mini::box
 
 
 
-    ///OTHER
+    //? HELPER
 
     template<class... STRINGS>
     auto ConcatStrings(const STRINGS&... strs)
@@ -192,7 +193,8 @@ namespace mini::box
     template<typename CHAR_T>
     std::ostream& operator<<(std::ostream& os, const IString<CHAR_T>& str)
     {
-        os << &str[0];
+        //os << &str[0];
+        os.write(str.dataPtr, str.Count()); //should be faster ?
         return os;
     }
 

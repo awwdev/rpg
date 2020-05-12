@@ -41,6 +41,7 @@ namespace mini::wnd
             {
                 case VK_ESCAPE: PRESSED(EventType::Keyboard_Escape); break;
                 case 'W':       PRESSED(EventType::Keyboard_W); break;
+                case 'E':       PRESSED(EventType::Keyboard_E); break;
             }
         break;
 
@@ -49,6 +50,7 @@ namespace mini::wnd
             {
                 case VK_ESCAPE: RELEASED(EventType::Keyboard_Escape); break;
                 case 'W':       RELEASED(EventType::Keyboard_W); break;
+                case 'E':       RELEASED(EventType::Keyboard_E); break;
             }
         break;
 
