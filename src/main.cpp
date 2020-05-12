@@ -4,7 +4,7 @@
 #include "MiniSTL/Debug/Console.hpp"
 #include "MiniSTL/Debug/Profiler.hpp"
 #include "MiniSTL/Box/String.hpp"
-#include "MiniSTL/Memory/Allocator2.hpp"
+#include "MiniSTL/Memory/Allocator.hpp"
 
 using namespace mini;
 
@@ -17,9 +17,9 @@ int WINAPI wWinMain(
     const auto con = dbg::CreateConsole();
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
     
-    mini::mem2::Allocate();
-    const auto o1 = mini::mem2::ClaimBlock<mini::box::String<1>>();
-    const auto o2 = mini::mem2::ClaimBlock<mini::box::String<1>>();
+    mini::mem::Allocate();
+    const auto o1 = mini::mem::ClaimBlock<mini::box::String<1>>();
+    const auto o2 = mini::mem::ClaimBlock<mini::box::String<1>>();
 
 
     while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
@@ -29,14 +29,8 @@ int WINAPI wWinMain(
     
         if (app::CheckEvent(EventType::Keyboard_W, EventState::Released)) {
             mini::dbg::dlog("released w");
-            //mini::mem2::PrintMemoryUsage();
         }
 
-        if (app::CheckEvent(EventType::Keyboard_E, EventState::Released)) {
-            mini::dbg::dlog("released e");
-            mini::mem2::Allocate();
-        }
-    
         //update current scene
         //draw current scene
     }
