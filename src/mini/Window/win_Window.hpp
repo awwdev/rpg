@@ -59,14 +59,14 @@ namespace mini::wnd
             NULL
         );
 
-        const auto hDc = GetDC(hWnd);
+        //const auto hDc = GetDC(hWnd);
         ShowWindow(hWnd, SW_SHOWDEFAULT);
         //UpdateWindow(window.hWnd);
 
         return { //avoid that dtor is called in scope!
             .className  = className,
             .hWnd       = hWnd,
-            .hDc        = hDc,
+            .hDc        = nullptr, //!necessary?
             .hInst      = hInst
         };
     }

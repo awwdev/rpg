@@ -8,7 +8,7 @@
 #include "rpg/Scene/Scene.hpp"
 #include "rpg/DeltaTime.hpp"
 
-#include <thread>
+#include "mini/Vulkan/Context.hpp"
 
 using namespace mini;
 
@@ -23,6 +23,8 @@ int WINAPI wWinMain(
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
     mem::Allocate();
 
+    auto context = vk::CreateContext({wnd.hInst, wnd.hWnd});
+
     //scenes
     using SceneStack = mini::box::Array<rpg::scene::Scene, 4>;
     auto sceneStack  = mini::mem::ClaimBlock<SceneStack>();
@@ -31,7 +33,8 @@ int WINAPI wWinMain(
 
     rpg::dt::StartClock();
 
-    while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
+    while (!app::CheckEvent(EventType::Window_Close) 
+        && !app::IsPressed(EventType::Keyboard_Escape))
     {
         wnd::PollEvents();
         rpg::dt::CalcDelta();

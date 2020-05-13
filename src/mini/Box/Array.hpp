@@ -38,7 +38,7 @@ namespace mini::box
         const std::size_t   BYTE_SIZE;
         const IDX_T         COUNT_MAX;
 
-        ///ACCESS
+        //?ACCESS
 
         template<typename IDX, typename = IsIntegralOrEnum<IDX>> ND
         T& operator[](const IDX i) 
@@ -60,10 +60,11 @@ namespace mini::box
         ND IDX_T    Count() const { return count; }
         ND bool     Empty() const { return count == 0; }
         ND bool     Full()  const { return count == COUNT_MAX; }
+
         void Clear() { while (count > 0) dataPtr[--count].~T(); }
 
 
-        ///ELEMENT OPERATIONS
+        //?ELEMENT OPERATIONS
 
         template<class... CtorArgs>
         void Append(CtorArgs&&... args)
@@ -123,7 +124,7 @@ namespace mini::box
         }
 
         
-        ///ARRAY OPERATION
+        //?ARRAY OPERATION
 
         template<class... CtorArgs>
         void SetCompleteArray(CtorArgs&&... args)
@@ -164,7 +165,7 @@ namespace mini::box
         }
 
 
-        ///ARRAY FUSION
+        //?ARRAY FUSION
 
         template<class T2, typename IDX_T_>
         void AppendArray(const IArray<T2, IDX_T_>& other)

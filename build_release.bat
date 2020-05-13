@@ -12,4 +12,5 @@
  /Fo: build_release\objs\ ^
  /Fe: build_release\main_release.exe ^
  src\*.cpp ^
- user32.lib
+ user32.lib ^
+ third\libs\vulkan-1.lib

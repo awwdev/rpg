@@ -122,6 +122,14 @@
                 }
             },
 
+            {
+                "scope": [ "variable.parameter" ],
+                "settings": {
+                    "foreground": "#e1e1e1",
+                    "fontStyle": "bold"
+                }
+            },
+            
 
 
 

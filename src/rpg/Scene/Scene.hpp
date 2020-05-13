@@ -1,3 +1,4 @@
+#pragma once
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
 
