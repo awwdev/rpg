@@ -23,7 +23,7 @@ int WINAPI wWinMain(
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
     mem::Allocate();
 
-    auto context = vk::CreateContext();
+    auto context = vk::CreateContext({ wnd.hInst, wnd.hWnd });
 
     //scenes
     using SceneStack = mini::box::Array<rpg::scene::Scene, 4>;

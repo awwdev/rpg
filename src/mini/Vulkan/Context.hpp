@@ -3,6 +3,13 @@
 
 namespace mini::vk
 {
+    struct WindowHandle
+    {
+        void* ptr1; //win: hinstance
+        void* ptr2; //win: hwnd
+    };
+
+
     struct Context
     {
         VkInstance                          instance;
@@ -13,10 +20,25 @@ namespace mini::vk
         VkPhysicalDeviceMemoryProperties    physicalMemProps;
 
         uint32_t queueIndex;
+        VkQueue  queue;
+        VkDevice device;
 
+        VkSurfaceKHR surface;
+        VkSurfaceCapabilitiesKHR surfaceCapabilities;
+
+        const VkFormat format = VK_FORMAT_B8G8R8A8_UNORM;
+        const VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+        
+        VkSwapchainKHR swapchain;
+        VkArray<VkImage, 4> images; //struct Image that bundles view and image 
+        VkArray<VkImageView, 4> imageViews;
 
         inline void Destroy()
         {
+            FOR_VK_ARRAY(imageViews, i) vkDestroyImageView(device, imageViews[i], nullptr);
+            vkDestroySwapchainKHR(device, swapchain, nullptr);
+            vkDestroySurfaceKHR(instance, surface, nullptr);
+            vkDestroyDevice(device, nullptr);
             ((PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"))(instance, debugMessenger, nullptr);
             vkDestroyInstance(instance, nullptr);
         }
@@ -144,60 +166,17 @@ namespace mini::vk
 
     inline void CreateLogicalDevice(Context& context)
     {
-
-    }
-
-
-    //? CONTEXT
-
-    inline Context CreateContext()
-    {
-        Context context;
-
-        CreateInstance(context);
-        CreatePhysical(context);
-        CreateLogicalDevice(context);
-
-        return context;
-    }
-
-
-
-
-
-
-
-
-
-
-
-    /*
-
-   
-    struct WindowData
-    {
-        void* data1;
-        void* data2;
-    };
-
-
-
-        
-
-
-        //? LOGICAL DEVICE
-
         float priorities { 1.f };
         const VkDeviceQueueCreateInfo queueInfo {
             .sType             = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
             .pNext             = nullptr,
             .flags             = 0,
-            .queueFamilyIndex  = queueIndex,
+            .queueFamilyIndex  = context.queueIndex,
             .queueCount        = 1,
             .pQueuePriorities  = &priorities
         };
 
-        const char* physicalExtensions[] {
+        chars_t physicalExtensions[] {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
         };
 
@@ -206,7 +185,7 @@ namespace mini::vk
         deviceFeatures.fillModeNonSolid = VK_TRUE;
         deviceFeatures.wideLines = VK_TRUE;
 
-        const VkDeviceCreateInfo deviceInfo{
+        const VkDeviceCreateInfo deviceInfo {
             .sType                      = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
             .pNext                      = nullptr,
             .flags                      = 0,
@@ -219,94 +198,104 @@ namespace mini::vk
             .pEnabledFeatures           = &deviceFeatures
         };
 
-        VkQueue queue;
-        VkDevice device;
-        VK_CHECK(vkCreateDevice(physical, &deviceInfo, nullptr, &device));
-        vkGetDeviceQueue(device, queueIndex, 0, &queue);
+        VK_CHECK(vkCreateDevice(context.physical, &deviceInfo, nullptr, &context.device));
+        vkGetDeviceQueue(context.device, context.queueIndex, 0, &context.queue);
+    }
 
 
-        //? SURFACE
+    //? SURFACE
 
+    inline void CreateSurface(Context& context, const WindowHandle& wndHandle)
+    {
         const VkWin32SurfaceCreateInfoKHR surfInfo {
             .sType      = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
             .pNext      = nullptr,
             .flags      = 0,
-            .hinstance  = (HINSTANCE)wndData.data2,
-            .hwnd       = (HWND)wndData.data1
+            .hinstance  = (HINSTANCE)wndHandle.ptr1,
+            .hwnd       = (HWND)wndHandle.ptr2
         };
-
-        VkSurfaceKHR surface;
-        VK_CHECK(vkCreateWin32SurfaceKHR(instance, &surfInfo, nullptr, &surface));
+ 
+        VK_CHECK(vkCreateWin32SurfaceKHR(context.instance, &surfInfo, nullptr, &context.surface));
 
         VkBool32 supported {}; //todo: check for support
-        VK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(physical, queueIndex, surface, &supported));
-
-        VkSurfaceCapabilitiesKHR surfaceCapabilities;
-        VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
+        VK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(context.physical, context.queueIndex, context.surface, &supported));
+ 
+        VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(context.physical, context.surface, &context.surfaceCapabilities));
         //formats = init::getData<VkSurfaceFormatKHR>(&vkGetPhysicalDeviceSurfaceFormatsKHR, physical, surface);
         //presentModes = init::getData<VkPresentModeKHR>(&vkGetPhysicalDeviceSurfacePresentModesKHR, physical, surface);
-        
+    }
 
-        //? SWAPCHAIN
-        
+
+    //? SWAPCHAIN
+
+    inline void CreateSwapchain(Context& context)
+    {
         const VkSwapchainCreateInfoKHR swapInfo {
             .sType                  = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
             .pNext                  = nullptr,
             .flags                  = 0,
-            .surface                = surface,
-            .minImageCount          = surfaceCapabilities.minImageCount + 1,
-            .imageFormat            = VK_FORMAT_B8G8R8A8_UNORM,
+            .surface                = context.surface,
+            .minImageCount          = context.surfaceCapabilities.minImageCount + 1,
+            .imageFormat            = context.format,
             .imageColorSpace        = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-            .imageExtent            = surfaceCapabilities.currentExtent,
+            .imageExtent            = context.surfaceCapabilities.currentExtent,
             .imageArrayLayers       = 1,
             .imageUsage             = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
             .imageSharingMode       = VK_SHARING_MODE_EXCLUSIVE,
             .queueFamilyIndexCount  = 0,
             .pQueueFamilyIndices    = nullptr,
-            .preTransform           = surfaceCapabilities.currentTransform,
+            .preTransform           = context.surfaceCapabilities.currentTransform,
             .compositeAlpha         = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-            .presentMode            = VK_PRESENT_MODE_IMMEDIATE_KHR,
+            .presentMode            = context.presentMode,
             .clipped                = VK_TRUE,
             .oldSwapchain           = nullptr
         };
 
-        //VkSwapchainKHR swapchain;
-        //VK_CHECK(vkCreateSwapchainKHR(device, &swapInfo, nullptr, &swapchain));
+        VK_CHECK(vkCreateSwapchainKHR(context.device, &swapInfo, nullptr, &context.swapchain));
+        //expected to pass count first and get actual count:
+        VK_CHECK(vkGetSwapchainImagesKHR(context.device, context.swapchain, &context.images.count, nullptr));
+        VK_CHECK(vkGetSwapchainImagesKHR(context.device, context.swapchain, &context.images.count, context.images.data));
 
-       //uint32_t swapchainCount = 0;
-       //VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapchainCount, nullptr));
-       //VkImage images[4];
-       //VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapchainCount, images));
-
-       //VkImageView swapchainImageViews[4];
-       //for (auto i=0; i<swapchainCount; ++i) {
-       //    const VkImageViewCreateInfo viewInfo {
-       //        .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-       //        .pNext      = nullptr,
-       //        .flags      = 0,
-       //        .image      = images[i],
-       //        .viewType   = VK_IMAGE_VIEW_TYPE_2D,
-       //        .format     = VK_FORMAT_B8G8R8A8_UNORM,
-       //        .components = {
-       //            .r = VK_COMPONENT_SWIZZLE_R,
-       //            .g = VK_COMPONENT_SWIZZLE_G,
-       //            .b = VK_COMPONENT_SWIZZLE_B,
-       //            .a = VK_COMPONENT_SWIZZLE_A
-       //        },
-       //        .subresourceRange = {
-       //            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-       //            .baseMipLevel = 0,
-       //            .levelCount = 1,
-       //            .baseArrayLayer = 0,
-       //            .layerCount = 1
-       //        }
-       //    };
-       //    VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &swapchainImageViews[i]));
-       //}
-
-        return { instance, physical, device };
+        for (auto i=0; i<context.images.count; ++i) {
+            const VkImageViewCreateInfo viewInfo {
+                .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+                .pNext      = nullptr,
+                .flags      = 0,
+                .image      = context.images[i],
+                .viewType   = VK_IMAGE_VIEW_TYPE_2D,
+                .format     = context.format,
+                .components = {
+                    .r = VK_COMPONENT_SWIZZLE_R,
+                    .g = VK_COMPONENT_SWIZZLE_G,
+                    .b = VK_COMPONENT_SWIZZLE_B,
+                    .a = VK_COMPONENT_SWIZZLE_A
+                },
+                .subresourceRange = {
+                    .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+                    .baseMipLevel   = 0,
+                    .levelCount     = 1,
+                    .baseArrayLayer = 0,
+                    .layerCount     = 1
+                }
+            };
+            VK_CHECK(vkCreateImageView(context.device, &viewInfo, nullptr, &context.imageViews[i]));
+        }
     }
 
-    */
+
+    //? CONTEXT
+
+    inline Context CreateContext(const WindowHandle& wndHandle)
+    {
+        Context context;
+
+        CreateInstance(context);
+        CreatePhysical(context);
+        CreateLogicalDevice(context);
+        CreateSurface(context, wndHandle);
+        CreateSwapchain(context);
+
+        return context;
+    }
 
 }//ns

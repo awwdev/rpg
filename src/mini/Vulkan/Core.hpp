@@ -23,6 +23,8 @@ if (const auto res = fn; res != VK_SUCCESS) \
 
 namespace mini::vk
 {
+#define FOR_VK_ARRAY(arr, i) for(uint32_t i = 0; i < arr.count; ++i)
+
     template<class T, auto N>
     struct VkArray
     {
