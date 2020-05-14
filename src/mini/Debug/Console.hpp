@@ -10,11 +10,6 @@ namespace mini::dbg
     {
         HANDLE pHandle;
         HWND   wndHandle;
-
-        ~Console()
-        {
-            //CloseWindow(wndHandle);
-        }
     };
 
     [[nodiscard]]

@@ -9,6 +9,7 @@
 #include "rpg/DeltaTime.hpp"
 
 #include "mini/Vulkan/Context.hpp"
+#include "mini/Vulkan/Resources.hpp"
 
 using namespace mini;
 
@@ -23,11 +24,13 @@ int WINAPI wWinMain(
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
     mem::Allocate();
 
-    auto context = vk::CreateContext({ wnd.hInst, wnd.hWnd });
+    //renderer
+    auto vkContext   = vk::CreateContext({ wnd.hInst, wnd.hWnd });
+    auto vkResources = vk::CreateResources(vkContext);
 
     //scenes
-    using SceneStack = mini::box::Array<rpg::scene::Scene, 4>;
-    auto sceneStack  = mini::mem::ClaimBlock<SceneStack>();
+    using SceneStack = box::Array<rpg::scene::Scene, 4>;
+    auto sceneStack  = mem::ClaimBlock<SceneStack>();
     sceneStack->SetCompleteArray();
     auto& currentScene = (*sceneStack)[0];
 
@@ -37,13 +40,13 @@ int WINAPI wWinMain(
         && !app::IsPressed(EventType::Keyboard_Escape))
     {
         wnd::PollEvents();
-        rpg::dt::CalcDelta();
+        rpg::dt::CalcDeltaTime();
 
         currentScene.Update(rpg::dt::seconds);
         currentScene.Render(rpg::dt::seconds);
     }
 
     mem::Free();
-    context.Destroy();
+    vkContext.Destroy();
 
 }//main end

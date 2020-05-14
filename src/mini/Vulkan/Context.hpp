@@ -1,3 +1,5 @@
+//https://github.com/awwdev
+
 #pragma once
 #include "mini/Vulkan/Core.hpp"
 
@@ -30,7 +32,7 @@ namespace mini::vk
         const VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
         
         VkSwapchainKHR swapchain;
-        VkArray<VkImage, 4> images; //struct Image that bundles view and image 
+        VkArray<VkImage, 4> images;
         VkArray<VkImageView, 4> imageViews;
 
         inline void Destroy()
@@ -256,6 +258,7 @@ namespace mini::vk
         VK_CHECK(vkGetSwapchainImagesKHR(context.device, context.swapchain, &context.images.count, nullptr));
         VK_CHECK(vkGetSwapchainImagesKHR(context.device, context.swapchain, &context.images.count, context.images.data));
 
+        context.imageViews.count = context.images.count;
         for (auto i=0; i<context.images.count; ++i) {
             const VkImageViewCreateInfo viewInfo {
                 .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,

@@ -15,7 +15,7 @@ namespace rpg::dt
         previous = Clock::now();
     }
 
-    inline void CalcDelta()
+    inline void CalcDeltaTime()
     {
         const auto now = Clock::now();
         const auto dur = now - previous;
