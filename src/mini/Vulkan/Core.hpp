@@ -9,7 +9,27 @@
 
 
 //#ifdef DEBUG
-#   define VK_CHECK(fn) if (const auto err = fn; err != VK_SUCCESS) LOG("VK ERROR", err);
+#define VK_CHECK(fn) \
+if (const auto res = fn; res != VK_SUCCESS) \
+{ \
+    if (res > 0) \
+        WARN("VK RESULT", res); \
+    else \
+        ERR("VK RESULT", res); \
+} 
 //#else
 //#   define VK_CHECK(fn) fn
 //#endif // DEBUG
+
+namespace mini::vk
+{
+    template<class T, auto N>
+    struct VkArray
+    {
+        uint32_t count = N;
+        T data[N];
+
+        T&       operator[](const uint32_t i)       { return data[i]; }
+        const T& operator[](const uint32_t i) const { return data[i]; }
+    };
+}

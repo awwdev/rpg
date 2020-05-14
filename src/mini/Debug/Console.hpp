@@ -13,7 +13,7 @@ namespace mini::dbg
 
         ~Console()
         {
-            CloseWindow(wndHandle);
+            //CloseWindow(wndHandle);
         }
     };
 
@@ -30,7 +30,7 @@ namespace mini::dbg
         dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         SetConsoleMode(handle, dwMode);
 
-        std::cout.sync_with_stdio(false);//?
+        //std::cout.sync_with_stdio(false);//?
         
         return { handle, GetConsoleWindow() }; //avoid dtor 
     }

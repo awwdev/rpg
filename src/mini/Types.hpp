@@ -71,5 +71,6 @@ namespace mini
     using IsPointer = std::enable_if_t<std::is_pointer_v<T>>;
 
     #define ARRAY_COUNT(arr) sizeof(arr)/sizeof(arr[0])
+    using chars_t = const char* const;
 
 }//ns

@@ -5,64 +5,89 @@ namespace mini::vk
 {
     struct Context
     {
-        VkInstance          instance;
-        VkPhysicalDevice    physical;
-        VkDevice            device;
+        VkInstance                          instance;
+        VkDebugUtilsMessengerEXT            debugMessenger;
+
+        VkPhysicalDevice                    physical;
+        VkPhysicalDeviceProperties          physicalProps;
+        VkPhysicalDeviceMemoryProperties    physicalMemProps;
+
+        uint32_t queueIndex;
+
+
+        inline void Destroy()
+        {
+            ((PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"))(instance, debugMessenger, nullptr);
+            vkDestroyInstance(instance, nullptr);
+        }
     };
 
-    struct WindowData
-    {
-        void* data1;
-        void* data2;
-    };
 
-
-    static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+    static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
         VkDebugUtilsMessageTypeFlagsEXT messageType,
         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-        void* pUserData) {
+        void* pUserData)
+    {
+        if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+            WARN(pCallbackData->pMessage);
 
-        ERR(pCallbackData->pMessage);
+        if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+        {
+            ERR(pCallbackData->pMessage);
+            system("pause");
+        }
 
         return VK_FALSE;
     }
 
 
-    inline Context CreateContext(const WindowData& wndData)
+    //? INSTANCE AND DEBUG
+
+    inline void CreateInstance(Context& context)
     {
-        //? INSTANCE
-
-        const char* layers[] {
-            "VK_LAYER_KHRONOS_validation"
-        };
-
-        const char* extensions[] {
-            VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-            VK_KHR_SURFACE_EXTENSION_NAME,
-            VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
-        };
-
         const VkApplicationInfo appInfo {
             .sType                  = VK_STRUCTURE_TYPE_APPLICATION_INFO,
             .pNext                  = nullptr,
-            .pApplicationName       = "mini",
+            .pApplicationName       = nullptr,
             .applicationVersion     = 0,
-            .pEngineName            = "mini",
+            .pEngineName            = nullptr,
             .engineVersion          = 0,
             .apiVersion             = VK_API_VERSION_1_0
         };
 
-        VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
-        debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-        debugCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-        debugCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-        debugCreateInfo.pfnUserCallback = debugCallback;
-        debugCreateInfo.pUserData = nullptr; // Optional
+        chars_t layers[] {
+            "VK_LAYER_KHRONOS_validation"
+        };
+
+        chars_t extensions[] {
+            VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
+            VK_KHR_SURFACE_EXTENSION_NAME,
+            VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+            VK_EXT_DEBUG_UTILS_EXTENSION_NAME
+        };
+
+
+        const VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo {
+            .sType                  = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+            .pNext                  = nullptr,
+            .flags                  = 0,
+            .messageSeverity        = 
+                VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+                VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+            .messageType            = 
+                VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | 
+                VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | 
+                VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
+            .pfnUserCallback        = DebugCallback,
+            .pUserData              = nullptr
+        };
+
 
         const VkInstanceCreateInfo instInfo {
             .sType                  = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-            .pNext                  = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo,
+            .pNext                  = &debugCreateInfo, //so instance creation messages are handled
             .flags                  = 0,
             .pApplicationInfo       = &appInfo,
             .enabledLayerCount      = ARRAY_COUNT(layers), 
@@ -71,51 +96,93 @@ namespace mini::vk
             .ppEnabledExtensionNames = extensions
         };
 
-        VkInstance instance;
-        VK_CHECK(vkCreateInstance(&instInfo, nullptr, &instance));
+        VK_CHECK(vkCreateInstance(&instInfo, nullptr, &context.instance));
 
-        //? DEBUG
+        ((PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(context.instance, "vkCreateDebugUtilsMessengerEXT"))
+            (context.instance, &debugCreateInfo, nullptr, &context.debugMessenger);
 
-        
+        //VkArray<VkLayerProperties, 4> layerProps;
+        //VK_CHECK(vkEnumerateInstanceLayerProperties(&layerProps.count, layerProps.data));
+        //for(auto i = 0; i < layerProps.count; ++i)
+        //{
+        //    LOG(layerProps.data[i].layerName);
+        //}
+    }
 
-        VkDebugUtilsMessengerEXT debugMessenger;
-        auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-        func(instance, &debugCreateInfo, nullptr, &debugMessenger);
 
-        //? PHYSICAL DEVICE
+    //? PHYSICAL DEVICE
 
-        uint32_t count = 0;
+    inline void CreatePhysical(Context& context)
+    {
+        VkArray<VkPhysicalDevice, 4> physicals;
+        VK_CHECK(vkEnumeratePhysicalDevices(context.instance, &physicals.count, physicals.data));
+        auto& physical = context.physical = physicals[0];
 
-        VkPhysicalDevice physicals[4];
-        VK_CHECK(vkEnumeratePhysicalDevices(instance, &count, nullptr));
-        VK_CHECK(vkEnumeratePhysicalDevices(instance, &count, physicals));
-        VkPhysicalDevice physical = physicals[0];
+        VkArray<VkQueueFamilyProperties, 10> famProps;
+        vkGetPhysicalDeviceQueueFamilyProperties(physical, &famProps.count, famProps.data);
 
-        VkPhysicalDeviceProperties physicalProps;
-        VkPhysicalDeviceMemoryProperties physicalMemProps;
-
-        vkGetPhysicalDeviceProperties(physical, &physicalProps);
-        vkGetPhysicalDeviceMemoryProperties(physical, &physicalMemProps);
-
-        VkQueueFamilyProperties famProps[12];
-        vkGetPhysicalDeviceQueueFamilyProperties(physical, &count, nullptr);
-        vkGetPhysicalDeviceQueueFamilyProperties(physical, &count, famProps);
-
-        uint32_t queueIndex = 0;
-        for (uint32_t i = 0; i < count; ++i) {
+        for (uint32_t i = 0; i < famProps.count; ++i) {
             if (famProps[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-                queueIndex = i;
+                context.queueIndex = i;
                 break;
             }
         }
+        //LOG("queue Index", context.queueIndex);
 
-        VkPhysicalDeviceProperties props;
-        vkGetPhysicalDeviceProperties(physical, &props);
-        std::cout << "physical vulkan ver " 
-            <<        VK_VERSION_MAJOR(props.apiVersion) 
-            << "." << VK_VERSION_MINOR(props.apiVersion) 
-            << "." << VK_VERSION_PATCH(props.apiVersion) 
-            << "\n";
+        vkGetPhysicalDeviceProperties(physical, &context.physicalProps);
+        vkGetPhysicalDeviceMemoryProperties(physical, &context.physicalMemProps);
+   
+        INFO("Vulkan physical API version", 
+            VK_VERSION_MAJOR(context.physicalProps.apiVersion),
+            VK_VERSION_MINOR(context.physicalProps.apiVersion), 
+            VK_VERSION_PATCH(context.physicalProps.apiVersion)
+        );
+    }
+
+
+    //? LOGICAL DEVICE
+
+    inline void CreateLogicalDevice(Context& context)
+    {
+
+    }
+
+
+    //? CONTEXT
+
+    inline Context CreateContext()
+    {
+        Context context;
+
+        CreateInstance(context);
+        CreatePhysical(context);
+        CreateLogicalDevice(context);
+
+        return context;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /*
+
+   
+    struct WindowData
+    {
+        void* data1;
+        void* data2;
+    };
+
+
+
+        
 
 
         //? LOGICAL DEVICE
@@ -239,5 +306,7 @@ namespace mini::vk
 
         return { instance, physical, device };
     }
+
+    */
 
 }//ns
