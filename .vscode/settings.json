@@ -224,6 +224,14 @@
         "xstddef": "cpp",
         "xstring": "cpp",
         "xtr1common": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "algorithm": "cpp",
+        "array": "cpp",
+        "cctype": "cpp",
+        "map": "cpp",
+        "optional": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "xtree": "cpp"
     }
 }
