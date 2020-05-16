@@ -56,15 +56,14 @@ namespace mini::vk::ctor
     }
 
     
-    inline VkPipelineShaderStageCreateInfo CreateShaderStage
-        (VkShaderModule pModule, VkShaderStageFlagBits stage)
+    inline VkPipelineShaderStageCreateInfo CreateShaderStage (const VkShaderStageFlagBits stage)
     {
-        return{
+        return {
             .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             .pNext  = nullptr,
             .flags  = 0,
             .stage  = stage,
-            .module = pModule, //VK_SHADER_STAGE_VERTEX_BIT
+            .module = nullptr, //I am using this very struct to store the handle (gets assigned later on)
             .pName  = "main",
             .pSpecializationInfo = nullptr
         };

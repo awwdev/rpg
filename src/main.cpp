@@ -20,19 +20,18 @@ int WINAPI wWinMain(
     _In_        int nCmdShow)
 {
     //? META
-    const auto con = dbg::CreateConsole();
-    const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
-    mem::Allocate();
+    dbg::Console console {};
+    wnd::Window  window  { hInstance, 800, 600 };
+    mem::GlobalAllocate();
 
     //? RENDERER
-    vk::Context   context   { {wnd.hInst, wnd.hWnd} };
-    vk::Resources resources { context };
+    auto pContext   = mem::ClaimBlock<vk::Context>(vk::WindowHandle{window.hInstance, window.hWnd});
+    auto pResources = mem::ClaimBlock<vk::Resources>(pContext.Get());
 
     //? SCENES
-    using SceneStack = box::Array<rpg::scene::Scene, 4>;
-    auto sceneStack  = mem::ClaimBlock<SceneStack>();
-    sceneStack->SetCompleteArray();
-    auto& currentScene = (*sceneStack)[0];
+    auto pSceneStack = mem::ClaimBlock<box::Array<rpg::scene::Scene, 4>>();
+    pSceneStack->SetCompleteArray();
+    auto& currentScene = (*pSceneStack)[0];
 
     //? PROGRAM LOOP
     rpg::dt::StartClock();

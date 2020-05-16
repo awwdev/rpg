@@ -5,6 +5,8 @@
 #include <Windows.h>
 #undef max
 
+//todo: make a define #ifdef DEBUG otherwise the function is just empty
+
 namespace mini 
 {
     inline void Assert(const bool b, const char* msg = "") 

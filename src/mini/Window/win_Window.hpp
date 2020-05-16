@@ -8,67 +8,59 @@
 
 namespace mini::wnd
 {
-    class Window
+    struct Window
     {
-    public:
+        const wchar_t* className;
+        HWND hWnd;
+        HINSTANCE hInstance;
 
-        const wchar_t* className = {};
-        HWND        hWnd         = NULL;
-        HDC         hDc          = NULL;
-        HINSTANCE   hInst        = NULL;
+
+        Window(HINSTANCE hInst, u16 width, u16 height, const wchar_t* pClassName = L"miniClass", const wchar_t* wndName = L"miniWnd")
+            : className { pClassName }
+            , hInstance { hInst }
+        {
+            WNDCLASSEX wndClass {
+                .cbSize         = sizeof(WNDCLASSEX),
+                .style          = 0, //CS_HREDRAW | CS_VREDRAW
+                .lpfnWndProc    = WndProc1,
+                .cbClsExtra     = 0,
+                .cbWndExtra     = 0,
+                .hInstance      = hInst,
+                .hIcon          = NULL, //LoadIcon
+                .hCursor        = NULL, //LoadCursor
+                .hbrBackground  = 0, //HBRUSH GetStockObject
+                .lpszMenuName   = NULL,
+                .lpszClassName  = className,
+                .hIconSm        = NULL //LoadImage
+            };
+
+            RegisterClassEx(&wndClass);
+
+            hWnd = CreateWindowEx(
+                NULL,
+                className,
+                wndName,
+                WS_OVERLAPPEDWINDOW,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                static_cast<int>(width),
+                static_cast<int>(height),
+                NULL,
+                NULL,
+                hInst,
+                NULL
+            );
+
+            //const auto hDc = GetDC(hWnd);
+            ShowWindow(hWnd, SW_SHOWDEFAULT);
+            //UpdateWindow(window.hWnd);
+        }
 
         ~Window()
         {
             DestroyWindow(hWnd);
-            UnregisterClass(className, hInst);
+            UnregisterClass(className, hInstance);
         }
     };
-
-    [[nodiscard]]
-    inline Window mini_CreateWindow(HINSTANCE hInst, u16 width, u16 height, const wchar_t* className = L"miniClass", const wchar_t* wndName = L"miniWnd")
-    {
-        WNDCLASSEX wndClass {
-            .cbSize         = sizeof(WNDCLASSEX),
-            .style          = 0, //CS_HREDRAW | CS_VREDRAW
-            .lpfnWndProc    = WndProc1,
-            .cbClsExtra     = 0,
-            .cbWndExtra     = 0,
-            .hInstance      = hInst,
-            .hIcon          = NULL, //LoadIcon
-            .hCursor        = NULL, //LoadCursor
-            .hbrBackground  = 0, //HBRUSH GetStockObject
-            .lpszMenuName   = NULL,
-            .lpszClassName  = className,
-            .hIconSm        = NULL //LoadImage
-        };
-
-        RegisterClassEx(&wndClass);
-
-        const auto hWnd = CreateWindowEx(
-            NULL,
-            className,
-            wndName,
-            WS_OVERLAPPEDWINDOW,
-            CW_USEDEFAULT,
-            CW_USEDEFAULT,
-            static_cast<int>(width),
-            static_cast<int>(height),
-            NULL,
-            NULL,
-            hInst,
-            NULL
-        );
-
-        //const auto hDc = GetDC(hWnd);
-        ShowWindow(hWnd, SW_SHOWDEFAULT);
-        //UpdateWindow(window.hWnd);
-
-        return { //avoid that dtor is called in scope!
-            .className  = className,
-            .hWnd       = hWnd,
-            .hDc        = nullptr, //!necessary?
-            .hInst      = hInst
-        };
-    }
 
 }//ns

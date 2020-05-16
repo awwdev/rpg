@@ -37,8 +37,9 @@ namespace mini::mem
     //define blocks at compile time (size and count) 
     //KEEP IT SORTED BY SIZE
     constexpr AllocInfo ALLOC_INFOS[] = {
-        {  128, 100 }, //used for strings
-        { 1000, 100 },
+        {  128, 10 }, //used for strings
+        { 1000, 10 },
+        { 2000, 10 }
     };
     //!--------------------------------------
 
@@ -56,7 +57,7 @@ namespace mini::mem
     inline box::Bitset<BLOCK_COUNT> blocksUsed; //all blocks
 
 
-    inline void Allocate()
+    inline void GlobalAllocate()
     {
         HANDLE heap = GetProcessHeap();
         for(auto i = 0; i < ALLOC_COUNT; ++i) {
@@ -93,35 +94,37 @@ namespace mini::mem
         {;}
 
         MemPtr(const MemPtr&)            = delete;
-        MemPtr& operator=(const MemPtr&) = delete;
+        MemPtr(MemPtr&&)                 = delete;
+        MemPtr& operator=(const MemPtr&) = delete; //probably bad design if needed?
+        MemPtr& operator=(MemPtr&&)      = delete;
 
+        //MemPtr(MemPtr&& other) 
+        //    : ptr     { other.ptr }
+        //    , blockId { other.blockId } 
+        //{ 
+        //    other.ptr = nullptr;
+        //}
 
-        MemPtr(MemPtr&& other) 
-            : ptr     { other.ptr }
-            , blockId { other.blockId } 
-        { 
-            other.ptr = nullptr;
-        }
-
-        MemPtr& operator=(MemPtr&& other)           
-        { 
-            ptr         = other.ptr; 
-            blockId     = other.blockId;
-            other.ptr   = nullptr; 
-            return *this; 
-        }
+        //MemPtr& operator=(MemPtr&& other)           
+        //{ 
+        //    ptr         = other.ptr; 
+        //    blockId     = other.blockId;
+        //    other.ptr   = nullptr; 
+        //    return *this; 
+        //}
 
         ~MemPtr()
         { 
-            if (ptr != nullptr) 
-            { 
+            //if (ptr != nullptr) //if we make memptr non movable we could just drop the if
+            //{ 
                 ptr->~T();
-                blocksUsed.Flip(blockId); 
-            } 
+                blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
+            //} 
         }
     };
 
 
+    //having oop ctor really help here instead of plain c functions
     template<class T, class... CtorArgs>
     auto ClaimBlock(CtorArgs&&... args)
     {
@@ -131,6 +134,7 @@ namespace mini::mem
             std::size_t allocBitBegin;
         };
 
+        //!WHEN YOU GET A COMPILE ERROR HERE, ITS PROBABLY BECAUSE THERE IS NO BLOCK SIZE
         constexpr auto FIT = []() constexpr -> FittingAlloc {
             std::size_t allocBitBegin = 0;
             for(std::size_t i=0; i<ALLOC_COUNT; ++i) 

@@ -11,22 +11,15 @@ namespace mini::vk
 {
     struct Resources
     {
-        Context& context;
-
+        //? DEFAULT
         Shader default_shader;
         //RenderPass  renderPass_default;
         //Pipeline    pipeline_default;
 
-        explicit Resources(Context& pContext)
-             : context          { pContext }
-             , default_shader   { context.device, "res/default.vert.spv", "res/default.frag.spv" }
-        {
-        }
+        explicit Resources(Context& context)
+             : default_shader { context.device, "res/default.vert.spv", "res/default.frag.spv" }
+        { ; }
 
     };
-
-    //raii (dtor/ctor and refs) or dedicated create/destroy functions (passing needed stuff, more pure)
-    //oop seems more convenient here since stuff is coupled anyways?
-    //now it gets hairy when there is a lot of stuff like in Context ...
 
 }//ns
