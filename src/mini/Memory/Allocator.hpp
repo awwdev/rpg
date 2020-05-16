@@ -67,7 +67,7 @@ namespace mini::mem
     }
 
 
-    inline void Free()
+    inline void GlobalFree()
     {
         //todo
         //HeapFree 

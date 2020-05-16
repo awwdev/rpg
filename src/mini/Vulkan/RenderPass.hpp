@@ -12,7 +12,7 @@ namespace mini::vk
         VkDevice device;
 
         VkRenderPass renderPass;
-        VkArray<VkFramebuffer, 4> framebuffers { {}, 0}; //capacity based, real count known won swapchain creation
+        VkArray<VkFramebuffer, 4> framebuffers { {}, 0 }; //capacity based, real count known won swapchain creation
 
         const VkSampleCountFlagBits SAMPLE_COUNT = VK_SAMPLE_COUNT_1_BIT;
         const VkFormat COLOR_FORMAT = VK_FORMAT_B8G8R8A8_UNORM;
@@ -29,7 +29,7 @@ namespace mini::vk
                 .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
                 .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
                 .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
-                .finalLayout    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                .finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
             };
 
             const VkAttachmentReference colorRef {

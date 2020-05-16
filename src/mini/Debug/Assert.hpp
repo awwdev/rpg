@@ -9,7 +9,8 @@
 
 namespace mini 
 {
-    inline void Assert(const bool b, const char* msg = "") 
+    template<class T>
+    inline void Assert(const bool b, const T& msg) 
     { 
         if (!b)
         {

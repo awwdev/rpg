@@ -36,10 +36,10 @@ namespace mini::vk
                 .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
                 .pNext                           = nullptr,
                 .flags                           = 0,
-                .vertexBindingDescriptionCount   = ARRAY_COUNT(shader.BINDING_DESCS),
-                .pVertexBindingDescriptions      = shader.BINDING_DESCS,
-                .vertexAttributeDescriptionCount = ARRAY_COUNT(shader.ATTRIBUTE_DESCS),
-                .pVertexAttributeDescriptions    = shader.ATTRIBUTE_DESCS,
+                .vertexBindingDescriptionCount   = 0, //!ARRAY_COUNT(shader.BINDING_DESCS),
+                .pVertexBindingDescriptions      = 0, //!shader.BINDING_DESCS,
+                .vertexAttributeDescriptionCount = 0, //!ARRAY_COUNT(shader.ATTRIBUTE_DESCS),
+                .pVertexAttributeDescriptions    = 0, //!shader.ATTRIBUTE_DESCS,
             };
 
             const VkViewport viewport {

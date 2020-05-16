@@ -3,6 +3,7 @@
 
 #include "mini/Types.hpp"
 #include "mini/Debug/Logger.hpp"
+#include "mini/Debug/Assert.hpp"
 
 #define VK_USE_PLATFORM_WIN32_KHR
 #include "../third/include/vulkan.h"
@@ -15,7 +16,7 @@ if (const auto res = fn; res != VK_SUCCESS) \
     if (res > 0) \
         WARN("VK RESULT", res); \
     else \
-        ERR("VK ERROR", res); \
+        mini::Assert(false, res); \
 } 
 //#else
 //#   define VK_CHECK(fn) fn
