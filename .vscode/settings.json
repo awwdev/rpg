@@ -147,6 +147,7 @@
     "githubIssues.createIssueTriggers": [
         "TODO",
     ],
+    "githubIssues.issueCompletions.enabled": true,
 
 
     "better-comments.tags": [

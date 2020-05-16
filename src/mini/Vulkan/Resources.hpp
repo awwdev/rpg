@@ -15,7 +15,6 @@ namespace mini::vk
         Shader      default_shader;
         RenderPass  default_renderPass;
 
-        //TODO: #8 render pass
         //TODO: #9 pipeline
 
         explicit Resources(Context& context)
