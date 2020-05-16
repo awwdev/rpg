@@ -54,11 +54,11 @@ namespace mini::vk
     {
         VkDevice device; //needed for dtor
 
-        const VkVertexInputBindingDescription BINDING_DESCS [2] 
+        const VkVertexInputBindingDescription BINDING_DESCS [1] 
         {
             {
                 .binding    = 0,
-                .stride     = sizeof(float), //!fill vertex
+                .stride     = sizeof(float) * 2, //!fill vertex
                 .inputRate  = VK_VERTEX_INPUT_RATE_VERTEX
             },
         };
@@ -69,13 +69,13 @@ namespace mini::vk
                 .location   = 0,
                 .binding    = 0,
                 .format     = VK_FORMAT_R32G32_SFLOAT,
-                .offset     = 0, //!offset
+                .offset     = sizeof(float) * 0, //!offset
             },
             { //? color
                 .location   = 1,
                 .binding    = 0,
                 .format     = VK_FORMAT_R32G32B32A32_SFLOAT,
-                .offset     = sizeof(float), //!offset
+                .offset     = sizeof(float) * 1, //!offset
             }
         };
 

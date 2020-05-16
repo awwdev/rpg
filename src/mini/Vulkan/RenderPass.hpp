@@ -63,6 +63,29 @@ namespace mini::vk
             };
 
             VK_CHECK(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass));
+
+            //? framebuffers
+            framebuffers.count = context.images.count;
+            for (auto i = 0; i < framebuffers.count; ++i)
+            {
+                const VkImageView views [] {
+                    context.imageViews[i],
+                };
+
+                const VkFramebufferCreateInfo framebufferInfo{
+                    .sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+                    .pNext           = nullptr,
+                    .flags           = 0,
+                    .renderPass      = renderPass,
+                    .attachmentCount = ARRAY_COUNT(views),
+                    .pAttachments    = views,
+                    .width           = context.surfaceCapabilities.currentExtent.width,
+                    .height          = context.surfaceCapabilities.currentExtent.height,
+                    .layers          = 1
+                };
+                
+                VK_CHECK(vkCreateFramebuffer(context.device, &framebufferInfo, nullptr, &framebuffers[i]));
+            }
         }
 
         ~Default_RenderPass()

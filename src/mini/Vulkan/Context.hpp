@@ -51,7 +51,7 @@ namespace mini::vk
         const VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
         
         VkSwapchainKHR swapchain;
-        VkArray<VkImage, 4> images;
+        VkArray<VkImage, 4> images; //use this to retrieve "swapchain count"
         VkArray<VkImageView, 4> imageViews;
 
 

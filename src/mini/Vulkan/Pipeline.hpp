@@ -36,10 +36,10 @@ namespace mini::vk
                 .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
                 .pNext                           = nullptr,
                 .flags                           = 0,
-                .vertexBindingDescriptionCount   = 0,//!(uint32_t)bindingDescs.size(),
-                .pVertexBindingDescriptions      = 0,//!bindingDescs.data(),
-                .vertexAttributeDescriptionCount = 0,//!(uint32_t)attributeDescs.size(),
-                .pVertexAttributeDescriptions    = 0,//!attributeDescs.data()
+                .vertexBindingDescriptionCount   = ARRAY_COUNT(shader.BINDING_DESCS),
+                .pVertexBindingDescriptions      = shader.BINDING_DESCS,
+                .vertexAttributeDescriptionCount = ARRAY_COUNT(shader.ATTRIBUTE_DESCS),
+                .pVertexAttributeDescriptions    = shader.ATTRIBUTE_DESCS,
             };
 
             const VkViewport viewport {
@@ -143,10 +143,10 @@ namespace mini::vk
                 .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
                 .pNext                  = nullptr,
                 .flags                  = 0,
-                .setLayoutCount         = 0,//!(uint32_t)descSetLayouts.size(), 
-                .pSetLayouts            = 0,//!descSetLayouts.data(),
-                .pushConstantRangeCount = 0,//!pushConstantRangeCount,
-                .pPushConstantRanges    = 0,//!pushConstantRanges
+                .setLayoutCount         = 0,        //!add uniform data
+                .pSetLayouts            = nullptr,
+                .pushConstantRangeCount = 0,
+                .pPushConstantRanges    = nullptr,
             };
             VK_CHECK(vkCreatePipelineLayout(context.device, &layoutInfo, nullptr, &layout));
 
