@@ -18,7 +18,7 @@ namespace mini::vk
         const VkFormat COLOR_FORMAT = VK_FORMAT_B8G8R8A8_UNORM;
 
 
-        Default_RenderPass(VkDevice pDevice) : device { pDevice }
+        explicit Default_RenderPass(Context& context) : device { context.device }
         {
             const VkAttachmentDescription colorDesc {
                 .flags          = 0 ,

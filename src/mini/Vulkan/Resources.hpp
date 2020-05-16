@@ -6,6 +6,7 @@
 #include "mini/Vulkan/RenderPass.hpp"
 #include "mini/Vulkan/Pipeline.hpp"
 
+//strategy: dedicated structs with dtor (almost "static" resources)(watch multiple dtor call)
 
 namespace mini::vk
 {
@@ -13,10 +14,13 @@ namespace mini::vk
     {
         Default_Shader      default_shader;
         Default_RenderPass  default_renderPass;
+        Default_Pipeline    default_pipeline;
+
 
         explicit Resources(Context& context)
-            : default_shader      { context.device }
-            , default_renderPass  { context.device }
+            : default_shader      { context }
+            , default_renderPass  { context }
+            , default_pipeline    { context, default_shader, default_renderPass }
         { ; }
     };
 

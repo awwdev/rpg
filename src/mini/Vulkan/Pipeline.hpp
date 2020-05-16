@@ -5,22 +5,24 @@
 #include "mini/Vulkan/Shader.hpp"
 #include "mini/Vulkan/RenderPass.hpp"
 
-//issue: to make object customizable the ctor would need lots of params (which can be fine)
-//alternative is to have dedicated functions like CreatePipeline_Default() where stuff is more at compiletime 
-//currently lots of defaults
-//alterantive struct PipelineCreateInfo, passing to the ctor
-/*
 namespace mini::vk
 {
-    struct Pipeline
+
+    //? DEDICATED STRUCTS
+
+    struct Default_Pipeline
     {
         VkDevice device;
 
         VkPipeline pipeline;
         VkPipelineLayout layout;
+        
 
-
-        Pipeline(Context& context, Shader& shader, RenderPass& renderPass) : device { context.device }
+        explicit Default_Pipeline(
+            Context& context, 
+            Default_Shader& shader, 
+            Default_RenderPass& renderPass)
+            : device { context.device }
         {
             const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
                 .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
@@ -88,7 +90,7 @@ namespace mini::vk
                 .sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
                 .pNext                 = nullptr,
                 .flags                 = 0,
-                .rasterizationSamples  = renderPass.sampleCount,
+                .rasterizationSamples  = renderPass.SAMPLE_COUNT,
                 .sampleShadingEnable   = VK_FALSE,
                 .minSampleShading      = 1.f,
                 .pSampleMask           = nullptr,
@@ -174,12 +176,12 @@ namespace mini::vk
             VK_CHECK(vkCreateGraphicsPipelines(context.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline));
         }
 
-        ~Pipeline()
+        ~Default_Pipeline()
         {
             vkDestroyPipelineLayout(device, layout, nullptr);
             vkDestroyPipeline(device, pipeline, nullptr);
         }
+
     };
 
-}//ns
-*/
+} //ns
