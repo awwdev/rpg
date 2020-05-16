@@ -5,25 +5,25 @@
 
 namespace mini::vk
 {
-    //custom render passes? since we have different setups (images)
+    //? DEDICATED STRUCTS
 
-    struct RenderPass
+    struct Default_RenderPass
     {
         VkDevice device;
 
         VkRenderPass renderPass;
-        VkArray<VkFramebuffer, 4> framebuffers { {}, 0 }; // count unknown at compile time (capacity)
-        
-        VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT;
-        VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM;
+        VkArray<VkFramebuffer, 4> framebuffers { {}, 0}; //capacity based, real count known won swapchain creation
+
+        const VkSampleCountFlagBits SAMPLE_COUNT = VK_SAMPLE_COUNT_1_BIT;
+        const VkFormat COLOR_FORMAT = VK_FORMAT_B8G8R8A8_UNORM;
 
 
-        explicit RenderPass(Context& context) : device { context.device }
+        Default_RenderPass(VkDevice pDevice) : device { pDevice }
         {
             const VkAttachmentDescription colorDesc {
                 .flags          = 0 ,
-                .format         = colorFormat, 
-                .samples        = sampleCount,
+                .format         = COLOR_FORMAT, 
+                .samples        = SAMPLE_COUNT,
                 .loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR,
                 .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
                 .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -65,7 +65,7 @@ namespace mini::vk
             VK_CHECK(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass));
         }
 
-        ~RenderPass()
+        ~Default_RenderPass()
         {
             vkDestroyRenderPass(device, renderPass, nullptr);
             FOR_VK_ARRAY(framebuffers, i) 

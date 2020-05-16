@@ -9,6 +9,8 @@
 
 namespace mini::vk
 {
+    //? HELPER
+
     inline VkPipelineShaderStageCreateInfo CreateStageInfo (const VkShaderStageFlagBits stage)
     {
         return {
@@ -48,9 +50,9 @@ namespace mini::vk
 
     //? DEDICATED STRUCTS
 
-    struct Shader_default
+    struct Default_Shader
     {
-        VkDevice device;
+        VkDevice device; //needed for dtor
 
         const VkVertexInputBindingDescription BINDING_DESCS [2] 
         {
@@ -84,15 +86,15 @@ namespace mini::vk
         };
 
 
-        inline void LoadShader()
+
+        explicit Default_Shader(VkDevice pDevice) : device { pDevice }
         {
             stages[0].module = CreateShaderModule(device, "res/default.vert.spv");
             stages[1].module = CreateShaderModule(device, "res/default.frag.spv");
         }
 
-        ~Shader_default()
+        ~Default_Shader()
         {
-            //!make sure device was set
             FOR_CARRAY(stages, i)
                 vkDestroyShaderModule(device, stages[i].module, nullptr);
         }

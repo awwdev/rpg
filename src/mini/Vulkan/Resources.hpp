@@ -11,15 +11,13 @@ namespace mini::vk
 {
     struct Resources
     {
-        Shader_default default_shader;
-
+        Default_Shader      default_shader;
+        Default_RenderPass  default_renderPass;
 
         explicit Resources(Context& context)
-            : default_shader { context.device }
-        { 
-            default_shader.LoadShader();
-        }
-
+            : default_shader      { context.device }
+            , default_renderPass  { context.device }
+        { ; }
     };
 
 }//ns
