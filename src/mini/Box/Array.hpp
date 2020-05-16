@@ -70,7 +70,8 @@ namespace mini::box
         void Append(CtorArgs&&... args)
         {
             CheckCapacity();
-            PlacementNew(count++, std::forward<CtorArgs>(args)...);
+            PlacementNew(count, std::forward<CtorArgs>(args)...);
+            ++count;
         }
 
 
@@ -85,8 +86,8 @@ namespace mini::box
             for (IDX_T i = count - 1; i > static_cast<IDX_T>(pos); --i) {
                 dataPtr[i] = std::move(dataPtr[i - 1]);
             }
-            PlacementNew(pos, std::forward<CtorArgs>(args)...); //ctor only is sufficient too
 
+            PlacementNew(pos, std::forward<CtorArgs>(args)...); //ctor only is sufficient too
             ++count;
         }
 
@@ -172,7 +173,8 @@ namespace mini::box
         {
             CheckRange(count + other.Count(), COUNT_MAX + 1);
             FOR_ARRAY(other, i) {
-                PlacementNew(count++, other[i]);
+                PlacementNew(count, other[i]);
+                ++count;
             }
         }
 

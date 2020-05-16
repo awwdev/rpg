@@ -19,21 +19,22 @@ int WINAPI wWinMain(
     _In_        PWSTR pCmdLine,
     _In_        int nCmdShow)
 {
-    //meta
+    //? META
     const auto con = dbg::CreateConsole();
     const auto wnd = wnd::mini_CreateWindow(hInstance, 800, 600);
     mem::Allocate();
 
-    //renderer
-    auto vkContext   = vk::CreateContext({ wnd.hInst, wnd.hWnd });
-    auto vkResources = vk::CreateResources(vkContext);
+    //? RENDERER
+    vk::Context   context   { {wnd.hInst, wnd.hWnd} };
+    vk::Resources resources { context };
 
-    //scenes
+    //? SCENES
     using SceneStack = box::Array<rpg::scene::Scene, 4>;
     auto sceneStack  = mem::ClaimBlock<SceneStack>();
     sceneStack->SetCompleteArray();
     auto& currentScene = (*sceneStack)[0];
 
+    //? PROGRAM LOOP
     rpg::dt::StartClock();
 
     while (!app::CheckEvent(EventType::Window_Close) 
@@ -45,8 +46,7 @@ int WINAPI wWinMain(
         currentScene.Update(rpg::dt::seconds);
         currentScene.Render(rpg::dt::seconds);
     }
-
+    
     mem::Free();
-    vkContext.Destroy();
 
 }//main end

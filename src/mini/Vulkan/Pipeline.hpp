@@ -1,6 +1,9 @@
 #pragma once
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
+#include "mini/Vulkan/Ctors.hpp"
+#include "mini/Vulkan/Shader.hpp"
+#include "mini/Vulkan/RenderPass.hpp"
 
 
 namespace mini::vk
@@ -9,10 +12,16 @@ namespace mini::vk
     {
         VkPipeline pipeline;
         VkPipelineLayout layout;
+
+        inline void Destroy(VkDevice device)
+        {
+            vkDestroyPipelineLayout(device, layout, nullptr);
+            vkDestroyPipeline(device, pipeline, nullptr);
+        }
     };
 
 
-    inline Pipeline CreatePipeline_Default(Context& context)
+    inline Pipeline CreatePipeline_Default(Context& context, Shader& shader, RenderPass& renderPass)
     {
         Pipeline pipeline;
 
@@ -83,11 +92,52 @@ namespace mini::vk
             .pNext                 = nullptr,
             .flags                 = 0,
             .rasterizationSamples  = VK_SAMPLE_COUNT_1_BIT,//!sampleCount, RENDER PASS SAMPLE COUNT MATCH
-            .sampleShadingEnable   = 0,//!VK_FALSE,
-            .minSampleShading      = 0,//!1.f,
-            .pSampleMask           = 0,//!nullptr,
-            .alphaToCoverageEnable = 0,//!alphaToCoverage,
-            .alphaToOneEnable      = 0,//!alphaToOneEnable,
+            .sampleShadingEnable   = VK_FALSE,
+            .minSampleShading      = 1.f,
+            .pSampleMask           = nullptr,
+            .alphaToCoverageEnable = VK_FALSE,
+            .alphaToOneEnable      = VK_FALSE
+        };
+
+        const VkPipelineDepthStencilStateCreateInfo depthStencil {
+            .sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+            .pNext                 = nullptr,
+            .flags                 = 0,
+            .depthTestEnable       = VK_TRUE,
+            .depthWriteEnable      = VK_TRUE,
+            .depthCompareOp        = VK_COMPARE_OP_LESS,
+            .depthBoundsTestEnable = VK_FALSE,
+            .stencilTestEnable     = VK_FALSE,
+            .front                 = {},
+            .back                  = {},
+            .minDepthBounds        = 0.f,
+            .maxDepthBounds        = 1.f
+        };
+
+        const VkPipelineColorBlendAttachmentState colorBlend {
+            .blendEnable                = VK_TRUE,
+            .srcColorBlendFactor        = VK_BLEND_FACTOR_SRC_ALPHA, //VK_BLEND_FACTOR_ONE,//VK_BLEND_FACTOR_SRC_ALPHA,
+            .dstColorBlendFactor        = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, //VK_BLEND_FACTOR_ZERO,//VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+            .colorBlendOp               = VK_BLEND_OP_ADD,
+            .srcAlphaBlendFactor        = VK_BLEND_FACTOR_ONE,
+            .dstAlphaBlendFactor        = VK_BLEND_FACTOR_ZERO,
+            .alphaBlendOp               = VK_BLEND_OP_ADD,
+            .colorWriteMask             = 
+                VK_COLOR_COMPONENT_R_BIT | 
+                VK_COLOR_COMPONENT_G_BIT | 
+                VK_COLOR_COMPONENT_B_BIT | 
+                VK_COLOR_COMPONENT_A_BIT
+        };
+
+        const VkPipelineColorBlendStateCreateInfo colorBlendState {
+            .sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+            .pNext           = nullptr,
+            .flags           = 0,
+            .logicOpEnable   = VK_FALSE,
+            .logicOp         = VK_LOGIC_OP_COPY,
+            .attachmentCount = 1,
+            .pAttachments    = &colorBlend,
+            .blendConstants  = { 0.f, 0.f, 0.f, 0.f }
         };
 
         const VkPipelineLayoutCreateInfo layoutInfo {
@@ -106,19 +156,19 @@ namespace mini::vk
             .sType                      = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
             .pNext                      = nullptr,
             .flags                      = 0,
-            .stageCount                 = 0,//!(uint32_t)stages.size(),
-            .pStages                    = 0,//!stages.data(),
-            .pVertexInputState          = 0,//!&vertexInput,
-            .pInputAssemblyState        = 0,//!&assembly,
-            .pTessellationState         = 0,//!nullptr,
-            .pViewportState             = 0,//!&viewportState,
-            .pRasterizationState        = 0,//!&rasterization,
-            .pMultisampleState          = 0,//!&multisampling,
-            .pDepthStencilState         = 0,//!&depthStencil,
-            .pColorBlendState           = 0,//!&colorBlendState,
-            .pDynamicState              = 0,//!nullptr,
-            .layout                     = 0,//!pipeline.layout,
-            .renderPass                 = 0,//!renderPassRef->renderPass,
+            .stageCount                 = ARRAY_COUNT(shader.stages),
+            .pStages                    = shader.stages,
+            .pVertexInputState          = &vertexInput,
+            .pInputAssemblyState        = &inputAssembly,
+            .pTessellationState         = nullptr,
+            .pViewportState             = &viewportState,
+            .pRasterizationState        = &rasterization,
+            .pMultisampleState          = &multisampling,
+            .pDepthStencilState         = &depthStencil,
+            .pColorBlendState           = &colorBlendState,
+            .pDynamicState              = nullptr,
+            .layout                     = pipeline.layout,
+            .renderPass                 = renderPass.renderPass,
             .subpass                    = 0,
             .basePipelineHandle         = VK_NULL_HANDLE,
             .basePipelineIndex          = -1

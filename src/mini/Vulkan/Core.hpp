@@ -15,7 +15,7 @@ if (const auto res = fn; res != VK_SUCCESS) \
     if (res > 0) \
         WARN("VK RESULT", res); \
     else \
-        ERR("VK RESULT", res); \
+        ERR("VK ERROR", res); \
 } 
 //#else
 //#   define VK_CHECK(fn) fn
@@ -25,11 +25,11 @@ namespace mini::vk
 {
 #define FOR_VK_ARRAY(arr, i) for(uint32_t i = 0; i < arr.count; ++i)
 
-    template<class T, auto N>
+    template<class T, uint32_t N>
     struct VkArray
     {
-        uint32_t count = N;
         T data[N];
+        uint32_t count = N;
 
         T&       operator[](const uint32_t i)       { return data[i]; }
         const T& operator[](const uint32_t i) const { return data[i]; }

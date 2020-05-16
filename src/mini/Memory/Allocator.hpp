@@ -82,6 +82,9 @@ namespace mini::mem
         T* operator->() { return ptr; }
         T& operator* () { return *ptr;}
 
+        T&       Get()       { return *ptr; }
+        const T& Get() const { return *ptr; }
+
 
         MemPtr() = delete;
         MemPtr(T* const pPtr, const std::size_t pBlockId)
