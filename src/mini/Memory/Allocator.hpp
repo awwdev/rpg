@@ -98,6 +98,7 @@ namespace mini::mem
         MemPtr& operator=(const MemPtr&) = delete; //probably bad design if needed?
         MemPtr& operator=(MemPtr&&)      = delete;
 
+        //TODO: #7 MemPtr move needed?
         //MemPtr(MemPtr&& other) 
         //    : ptr     { other.ptr }
         //    , blockId { other.blockId } 
@@ -159,4 +160,4 @@ namespace mini::mem
 
 }//ns
 
-//todo: print blocks
+//TODO: #6 mem::PrintBlocks()

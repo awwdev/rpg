@@ -138,6 +138,45 @@
         ]
     },
 
+    "githubIssues.queries": [
+        {
+            "label": "Created Issues",
+            "query": "author:${user} state:open repo:${owner}/${repository} sort:updated-desc"
+        }
+    ],
+    "githubIssues.createIssueTriggers": [
+        "TODO",
+    ],
+
+
+    "better-comments.tags": [
+
+        {
+            "tag": "!",
+            "color": "#FF2D00",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "?",
+            "color": "#3498DB",
+            "strikethrough": false,
+            "backgroundColor": "transparent",
+        },
+        {
+            "tag": "*",
+            "color": "#98C379",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "todo",
+            "color": "#FF8C00",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+    ],
+
     "git.decorations.enabled": false,
     "scm.diffDecorationsGutterVisibility": "hover",
     "scm.diffDecorationsGutterWidth": 5,

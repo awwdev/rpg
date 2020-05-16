@@ -12,12 +12,15 @@ namespace mini::vk
     struct Resources
     {
         //? DEFAULT
-        Shader default_shader;
-        //RenderPass  renderPass_default;
-        //Pipeline    pipeline_default;
+        Shader      default_shader;
+        RenderPass  default_renderPass;
+
+        //TODO: #8 render pass
+        //TODO: #9 pipeline
 
         explicit Resources(Context& context)
-             : default_shader { context.device, "res/default.vert.spv", "res/default.frag.spv" }
+             : default_shader       { context, "res/default.vert.spv", "res/default.frag.spv" }
+             , default_renderPass   { context }
         { ; }
 
     };

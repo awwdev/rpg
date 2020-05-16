@@ -14,8 +14,8 @@ namespace mini::vk
         VkPipelineShaderStageCreateInfo stages [2]; //has module handles
 
 
-        Shader(VkDevice pDevice, chars_t vertPath, chars_t fragPath)
-             : device { pDevice }
+        Shader(Context& context, chars_t vertPath, chars_t fragPath)
+             : device { context.device }
              , stages { 
                 vk::ctor::CreateShaderStage(VK_SHADER_STAGE_VERTEX_BIT),
                 vk::ctor::CreateShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT)
