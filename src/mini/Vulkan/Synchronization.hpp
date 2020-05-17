@@ -13,6 +13,7 @@ namespace mini::vk
         mini::vk::VkArray<VkSemaphore, 4> imageAquired; 
         mini::vk::VkArray<VkSemaphore, 4> renderDone; 
         mini::vk::VkArray<VkFence, 4> fences; 
+        mini::vk::VkArray<VkFence, 4> inFlight { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE};
 
 
         Default_Sync(Context& context) : device { context.device }

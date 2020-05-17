@@ -34,6 +34,40 @@ int WINAPI wWinMain(
     auto& currentScene = (*pSceneStack)[0];
 
 
+
+    for(auto i = 0; i < 3; ++i)
+    {
+    auto beginInfo = vk::CreateCmdBeginInfo();
+    VK_CHECK(vkBeginCommandBuffer(pResources->default_commands.cmdBuffers[i], &beginInfo));
+
+    const VkClearValue clears [1] {
+        VkClearValue {.color = { 0.1f, 0.1f, 0.1f, 1.0f }},
+    };
+
+    const VkRenderPassBeginInfo renderPassInfo {
+        .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        .pNext          = nullptr,
+        .renderPass     = pResources->default_renderPass.renderPass,
+        .framebuffer    = pResources->default_renderPass.framebuffers[i],
+        .renderArea     = {
+            .offset     = VkOffset2D {0, 0},
+            .extent     = pContext->surfaceCapabilities.currentExtent
+        },
+        .clearValueCount= ARRAY_COUNT(clears),
+        .pClearValues   = clears
+    };
+
+    vkCmdBeginRenderPass(pResources->default_commands.cmdBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBindPipeline(pResources->default_commands.cmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pResources->default_pipeline.pipeline);
+    vkCmdDraw(pResources->default_commands.cmdBuffers[i], 3, 1, 0, 0);
+    vkCmdEndRenderPass(pResources->default_commands.cmdBuffers[i]);
+
+    VK_CHECK(vkEndCommandBuffer(pResources->default_commands.cmdBuffers[i]));
+    }
+
+
+
+
     //? PROGRAM LOOP
     rpg::dt::StartClock();
     while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
@@ -44,54 +78,34 @@ int WINAPI wWinMain(
 
         currentScene.Update(rpg::dt::seconds);
         currentScene.Render(rpg::dt::seconds); 
-        //TODO: scene.render or render(scene) how is this done
 
 
         //? rendering (tmp)
 
-        uint32_t imageIndex = 0;
+        auto& device    = pContext->device;
+        auto& swapchain = pContext->swapchain;
+        auto& sync      = pResources->default_sync;
+        auto& maxImgs   = pContext->swapImages.count;
+
         static uint32_t currentFrame = 0;
 
-        const auto res = vkAcquireNextImageKHR(
-            pContext->device, 
-            pContext->swapchain, 
-            UINT64_MAX,
-            pResources->default_sync.imageAquired[currentFrame],
+        vkWaitForFences(device, 1, &sync.fences[currentFrame], VK_FALSE, UINT64_MAX);
+
+        uint32_t imageIndex = 0;
+        const auto acquireRes = vkAcquireNextImageKHR(
+            device, 
+            swapchain, 
+            UINT64_MAX, 
+            sync.imageAquired[currentFrame], 
             VK_NULL_HANDLE, 
             &imageIndex
-        ); //! check result
+        );
 
-        //cmd buffer wait
-        VK_CHECK(vkWaitForFences(pContext->device, 1, &pResources->default_sync.fences[currentFrame], VK_TRUE, UINT64_MAX));
-        VK_CHECK(vkResetFences(pContext->device, 1, &pResources->default_sync.fences[currentFrame]));
+        if (sync.inFlight[imageIndex] != VK_NULL_HANDLE) {
+            vkWaitForFences(device, 1, &sync.inFlight[imageIndex], VK_FALSE, UINT64_MAX);
+        }
+        sync.inFlight[imageIndex] = sync.fences[currentFrame];
 
-        auto beginInfo = vk::CreateCmdBeginInfo();
-        VK_CHECK(vkBeginCommandBuffer(pResources->default_commands.cmdBuffers[imageIndex], &beginInfo));
-
-        const VkClearValue clears [1] {
-            VkClearValue {.color = { 0.1f, 0.1f, 0.1f, 1.0f }},
-        };
-
-        const VkRenderPassBeginInfo renderPassInfo {
-            .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            .pNext          = nullptr,
-            .renderPass     = pResources->default_renderPass.renderPass,
-            .framebuffer    = pResources->default_renderPass.framebuffers[imageIndex],
-            .renderArea     = {
-                .offset     = VkOffset2D {0, 0},
-                .extent     = pContext->surfaceCapabilities.currentExtent
-            },
-            .clearValueCount= ARRAY_COUNT(clears),
-            .pClearValues   = clears
-        };
-
-        vkCmdBeginRenderPass(pResources->default_commands.cmdBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-        vkCmdBindPipeline(pResources->default_commands.cmdBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pResources->default_pipeline.pipeline);
-        vkCmdDraw(pResources->default_commands.cmdBuffers[imageIndex], 3, 1, 0, 0);
-        vkCmdEndRenderPass(pResources->default_commands.cmdBuffers[imageIndex]);
-
-        VK_CHECK(vkEndCommandBuffer(pResources->default_commands.cmdBuffers[imageIndex]));
-        
 
         VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         const VkSubmitInfo submitInfo {
@@ -106,10 +120,8 @@ int WINAPI wWinMain(
             .pSignalSemaphores      = &pResources->default_sync.renderDone[currentFrame],
         };
 
+        vkResetFences(device, 1, &sync.fences[currentFrame]);
         VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, pResources->default_sync.fences[currentFrame]));
-
-
-
 
         const VkPresentInfoKHR presentInfo {
             .sType                  = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
@@ -123,9 +135,8 @@ int WINAPI wWinMain(
         };
         VK_CHECK(vkQueuePresentKHR(pContext->queue, &presentInfo));
 
-        //VK_CHECK(vkDeviceWaitIdle(pContext->device));
+        currentFrame = (currentFrame + 1) % (maxImgs - 1);
 
-        currentFrame = (currentFrame + 1) % pContext->swapImages.count;
     }
     
     VK_CHECK(vkDeviceWaitIdle(pContext->device));
