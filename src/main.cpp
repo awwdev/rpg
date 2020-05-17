@@ -34,20 +34,6 @@ int WINAPI wWinMain(
     auto& currentScene = (*pSceneStack)[0];
 
 
-
-
-    mini::vk::VkArray<VkSemaphore, 4> semaphores; 
-    semaphores.count = pContext->images.count;
-    FOR_VK_ARRAY(semaphores, i)
-    {
-        VkSemaphoreCreateInfo semaInfo { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO , nullptr , 0 };
-        vkCreateSemaphore(pContext->device, &semaInfo, nullptr, &semaphores[i]);    
-    }
-
-    
-    
-
-
     //? PROGRAM LOOP
     rpg::dt::StartClock();
     while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
@@ -62,24 +48,24 @@ int WINAPI wWinMain(
         //? rendering (tmp)
     
         uint32_t imageIndex = 0;
-        
-    
+        static uint32_t currentFrame = 0;
+
         const auto res = vkAcquireNextImageKHR(
             pContext->device, 
             pContext->swapchain, 
             UINT64_MAX,
-            semaphores[imageIndex],
+            pResources->default_semaphores.imageAquired[currentFrame],
             VK_NULL_HANDLE, 
             &imageIndex
         );
+        
+        
     
-        const VkCommandBufferBeginInfo beginInfo {
-            .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-            .pNext            = nullptr,
-            .flags            = 0,
-            .pInheritanceInfo = nullptr
-        };
+        LOG("frame", currentFrame);
+        LOG("img index", imageIndex);
 
+
+        auto beginInfo = vk::CreateCmdBeginInfo();
         VK_CHECK(vkBeginCommandBuffer(pResources->default_commands.cmdBuffers[imageIndex], &beginInfo));
 
         const VkClearValue clears [1] {
@@ -105,27 +91,31 @@ int WINAPI wWinMain(
         vkCmdEndRenderPass(pResources->default_commands.cmdBuffers[imageIndex]);
 
         VK_CHECK(vkEndCommandBuffer(pResources->default_commands.cmdBuffers[imageIndex]));
+        
 
         VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         const VkSubmitInfo submitInfo {
             .sType                  = VK_STRUCTURE_TYPE_SUBMIT_INFO,
             .pNext                  = nullptr,
             .waitSemaphoreCount     = 1,
-            .pWaitSemaphores        = &semaphores[imageIndex],
+            .pWaitSemaphores        = &pResources->default_semaphores.imageAquired[currentFrame],
             .pWaitDstStageMask      = &waitStages,
             .commandBufferCount     = 1,
             .pCommandBuffers        = &pResources->default_commands.cmdBuffers[imageIndex],
-            .signalSemaphoreCount   = 0, //! fill out I guess
-            .pSignalSemaphores      = nullptr,
+            .signalSemaphoreCount   = 1,
+            .pSignalSemaphores      = &pResources->default_semaphores.renderDone[currentFrame],
         };
 
         VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, VK_NULL_HANDLE));
 
+
+
+
         const VkPresentInfoKHR presentInfo {
             .sType                  = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
             .pNext                  = nullptr,
-            .waitSemaphoreCount     = 0,
-            .pWaitSemaphores        = nullptr,
+            .waitSemaphoreCount     = 1,
+            .pWaitSemaphores        = &pResources->default_semaphores.renderDone[currentFrame],
             .swapchainCount         = 1,
             .pSwapchains            = &pContext->swapchain,
             .pImageIndices          = &imageIndex,
@@ -133,8 +123,9 @@ int WINAPI wWinMain(
         };
         VK_CHECK(vkQueuePresentKHR(pContext->queue, &presentInfo));
 
-
         VK_CHECK(vkDeviceWaitIdle(pContext->device));
+
+        currentFrame = (currentFrame + 1) % pContext->swapImages.count;
     }
     
     mem::GlobalFree();

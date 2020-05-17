@@ -232,6 +232,7 @@
         "optional": "cpp",
         "string": "cpp",
         "vector": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "xhash": "cpp"
     }
 }

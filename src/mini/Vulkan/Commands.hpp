@@ -5,7 +5,20 @@
 
 namespace mini::vk
 {
+    //? HELPER
 
+    inline VkCommandBufferBeginInfo CreateCmdBeginInfo()
+    {
+        return {
+            .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+            .pNext            = nullptr,
+            .flags            = 0,
+            .pInheritanceInfo = nullptr
+        };
+    }
+    
+
+    //? DEDICATED STRUCTS
 
     struct Default_Commands
     {
@@ -29,7 +42,7 @@ namespace mini::vk
 
             //? CMD BUFFERS
 
-            cmdBuffers.count = context.images.count;
+            cmdBuffers.count = context.swapImages.count;
             const VkCommandBufferAllocateInfo allocInfo{
              .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
              .pNext              = nullptr,

@@ -6,6 +6,7 @@
 #include "mini/Vulkan/RenderPass.hpp"
 #include "mini/Vulkan/Pipeline.hpp"
 #include "mini/Vulkan/Commands.hpp"
+#include "mini/Vulkan/Synchronization.hpp"
 
 //strategy: dedicated structs with dtor (almost "static" resources)(watch multiple dtor call)
 
@@ -17,12 +18,14 @@ namespace mini::vk
         Default_RenderPass  default_renderPass;
         Default_Pipeline    default_pipeline;
         Default_Commands    default_commands;
+        Default_Semaphores  default_semaphores;
 
         explicit Resources(Context& context)
             : default_shader      { context }
             , default_renderPass  { context }
             , default_pipeline    { context, default_shader, default_renderPass }
             , default_commands    { context }
+            , default_semaphores  { context }
         { ; }
     };
 

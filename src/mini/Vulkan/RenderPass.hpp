@@ -65,11 +65,11 @@ namespace mini::vk
             VK_CHECK(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass));
 
             //? framebuffers
-            framebuffers.count = context.images.count;
+            framebuffers.count = context.swapImages.count;
             for (auto i = 0; i < framebuffers.count; ++i)
             {
                 const VkImageView views [] {
-                    context.imageViews[i],
+                    context.swapImageViews[i],
                 };
 
                 const VkFramebufferCreateInfo framebufferInfo{

@@ -18,10 +18,7 @@ namespace mini::vk
         VkPipelineLayout layout;
         
 
-        explicit Default_Pipeline(
-            Context& context, 
-            Default_Shader& shader, 
-            Default_RenderPass& renderPass)
+        explicit Default_Pipeline(Context& context, Default_Shader& shader, Default_RenderPass& renderPass)
             : device { context.device }
         {
             const VkPipelineInputAssemblyStateCreateInfo inputAssembly {

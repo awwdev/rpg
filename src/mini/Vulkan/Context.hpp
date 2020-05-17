@@ -50,8 +50,8 @@ namespace mini::vk
         const VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
         
         VkSwapchainKHR swapchain;
-        VkArray<VkImage, 4> images; //use this to retrieve "swapchain count"
-        VkArray<VkImageView, 4> imageViews;
+        VkArray<VkImage, 4> swapImages; //use this to retrieve "swapchain count"
+        VkArray<VkImageView, 4> swapImageViews;
 
 
         //? CTOR
@@ -250,16 +250,17 @@ namespace mini::vk
 
             VK_CHECK(vkCreateSwapchainKHR(device, &swapInfo, nullptr, &swapchain));
             //expected to pass count first and get actual count:
-            VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &images.count, nullptr));
-            VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &images.count, images.data));
+            VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapImages.count, nullptr));
+            VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapImages.count, swapImages.data));
 
-            imageViews.count = images.count;
-            for (auto i=0; i<images.count; ++i) {
+            swapImageViews.count = swapImages.count;
+            //LOG("swapchain count", images.count);
+            for (auto i=0; i<swapImages.count; ++i) {
                 const VkImageViewCreateInfo viewInfo {
                     .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
                     .pNext      = nullptr,
                     .flags      = 0,
-                    .image      = images[i],
+                    .image      = swapImages[i],
                     .viewType   = VK_IMAGE_VIEW_TYPE_2D,
                     .format     = format,
                     .components = {
@@ -276,13 +277,13 @@ namespace mini::vk
                         .layerCount     = 1
                     }
                 };
-                VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &imageViews[i]));
+                VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &swapImageViews[i]));
             }
         }
 
         ~Context()
         {
-            FOR_VK_ARRAY(imageViews, i) vkDestroyImageView(device, imageViews[i], nullptr);
+            FOR_VK_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
             vkDestroySwapchainKHR(device, swapchain, nullptr);
             vkDestroySurfaceKHR(instance, surface, nullptr);
             vkDestroyDevice(device, nullptr);
