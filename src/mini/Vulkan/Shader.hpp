@@ -2,7 +2,6 @@
 #include "mini/Debug/Assert.hpp"
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Ctors.hpp"
 
 #include <fstream>
 

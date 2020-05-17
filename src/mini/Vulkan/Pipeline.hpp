@@ -1,7 +1,6 @@
 #pragma once
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Ctors.hpp"
 #include "mini/Vulkan/Shader.hpp"
 #include "mini/Vulkan/RenderPass.hpp"
 
@@ -33,6 +32,7 @@ namespace mini::vk
                 .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
                 .pNext                           = nullptr,
                 .flags                           = 0,
+                //needs ckCmdBindVertexBuffer
                 .vertexBindingDescriptionCount   = 0, //!ARRAY_COUNT(shader.BINDING_DESCS),
                 .pVertexBindingDescriptions      = 0, //!shader.BINDING_DESCS,
                 .vertexAttributeDescriptionCount = 0, //!ARRAY_COUNT(shader.ATTRIBUTE_DESCS),

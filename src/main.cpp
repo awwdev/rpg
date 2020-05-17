@@ -42,13 +42,16 @@ int WINAPI wWinMain(
         rpg::dt::CalcDeltaTime();
 
         currentScene.Update(rpg::dt::seconds);
-        currentScene.Render(rpg::dt::seconds);
+        currentScene.Render(rpg::dt::seconds); 
+        //TODO: scene.render or render(scene) how is this done
 
 
         //? rendering (tmp)
     
         uint32_t imageIndex = 0;
         static uint32_t currentFrame = 0;
+
+        VK_CHECK(vkWaitForFences(pContext->device, 1, &pResources->default_semaphores.fences[currentFrame], VK_TRUE, UINT64_MAX));
 
         const auto res = vkAcquireNextImageKHR(
             pContext->device, 
@@ -57,9 +60,11 @@ int WINAPI wWinMain(
             pResources->default_semaphores.imageAquired[currentFrame],
             VK_NULL_HANDLE, 
             &imageIndex
-        );
+        ); //! check result
+
+        VK_CHECK(vkResetFences(pContext->device, 1, &pResources->default_semaphores.fences[currentFrame]));
         
-        
+        //if (res == VK_NOT_READY) continue;
     
         LOG("frame", currentFrame);
         LOG("img index", imageIndex);
@@ -106,7 +111,7 @@ int WINAPI wWinMain(
             .pSignalSemaphores      = &pResources->default_semaphores.renderDone[currentFrame],
         };
 
-        VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, VK_NULL_HANDLE));
+        VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, pResources->default_semaphores.fences[currentFrame]));
 
 
 
@@ -123,7 +128,7 @@ int WINAPI wWinMain(
         };
         VK_CHECK(vkQueuePresentKHR(pContext->queue, &presentInfo));
 
-        VK_CHECK(vkDeviceWaitIdle(pContext->device));
+        //VK_CHECK(vkDeviceWaitIdle(pContext->device));
 
         currentFrame = (currentFrame + 1) % pContext->swapImages.count;
     }
