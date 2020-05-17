@@ -39,7 +39,8 @@ int WINAPI wWinMain(
     while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
     {
         wnd::PollEvents();
-        rpg::dt::CalcDeltaTime();
+        if (const auto fps = rpg::dt::CalcDeltaTimeFPS(); fps > 0)
+            LOG("fps", fps);
 
         currentScene.Update(rpg::dt::seconds);
         currentScene.Render(rpg::dt::seconds); 
@@ -47,28 +48,22 @@ int WINAPI wWinMain(
 
 
         //? rendering (tmp)
-    
+
         uint32_t imageIndex = 0;
         static uint32_t currentFrame = 0;
-
-        VK_CHECK(vkWaitForFences(pContext->device, 1, &pResources->default_semaphores.fences[currentFrame], VK_TRUE, UINT64_MAX));
 
         const auto res = vkAcquireNextImageKHR(
             pContext->device, 
             pContext->swapchain, 
             UINT64_MAX,
-            pResources->default_semaphores.imageAquired[currentFrame],
+            pResources->default_sync.imageAquired[currentFrame],
             VK_NULL_HANDLE, 
             &imageIndex
         ); //! check result
 
-        VK_CHECK(vkResetFences(pContext->device, 1, &pResources->default_semaphores.fences[currentFrame]));
-        
-        //if (res == VK_NOT_READY) continue;
-    
-        LOG("frame", currentFrame);
-        LOG("img index", imageIndex);
-
+        //cmd buffer wait
+        VK_CHECK(vkWaitForFences(pContext->device, 1, &pResources->default_sync.fences[currentFrame], VK_TRUE, UINT64_MAX));
+        VK_CHECK(vkResetFences(pContext->device, 1, &pResources->default_sync.fences[currentFrame]));
 
         auto beginInfo = vk::CreateCmdBeginInfo();
         VK_CHECK(vkBeginCommandBuffer(pResources->default_commands.cmdBuffers[imageIndex], &beginInfo));
@@ -103,15 +98,15 @@ int WINAPI wWinMain(
             .sType                  = VK_STRUCTURE_TYPE_SUBMIT_INFO,
             .pNext                  = nullptr,
             .waitSemaphoreCount     = 1,
-            .pWaitSemaphores        = &pResources->default_semaphores.imageAquired[currentFrame],
+            .pWaitSemaphores        = &pResources->default_sync.imageAquired[currentFrame],
             .pWaitDstStageMask      = &waitStages,
             .commandBufferCount     = 1,
             .pCommandBuffers        = &pResources->default_commands.cmdBuffers[imageIndex],
             .signalSemaphoreCount   = 1,
-            .pSignalSemaphores      = &pResources->default_semaphores.renderDone[currentFrame],
+            .pSignalSemaphores      = &pResources->default_sync.renderDone[currentFrame],
         };
 
-        VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, pResources->default_semaphores.fences[currentFrame]));
+        VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, pResources->default_sync.fences[currentFrame]));
 
 
 
@@ -120,7 +115,7 @@ int WINAPI wWinMain(
             .sType                  = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
             .pNext                  = nullptr,
             .waitSemaphoreCount     = 1,
-            .pWaitSemaphores        = &pResources->default_semaphores.renderDone[currentFrame],
+            .pWaitSemaphores        = &pResources->default_sync.renderDone[currentFrame],
             .swapchainCount         = 1,
             .pSwapchains            = &pContext->swapchain,
             .pImageIndices          = &imageIndex,
@@ -133,6 +128,7 @@ int WINAPI wWinMain(
         currentFrame = (currentFrame + 1) % pContext->swapImages.count;
     }
     
+    VK_CHECK(vkDeviceWaitIdle(pContext->device));
     mem::GlobalFree();
 
 }//main end

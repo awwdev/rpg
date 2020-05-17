@@ -18,14 +18,14 @@ namespace mini::vk
         Default_RenderPass  default_renderPass;
         Default_Pipeline    default_pipeline;
         Default_Commands    default_commands;
-        Default_Semaphores  default_semaphores;
+        Default_Sync        default_sync;
 
         explicit Resources(Context& context)
             : default_shader      { context }
             , default_renderPass  { context }
             , default_pipeline    { context, default_shader, default_renderPass }
             , default_commands    { context }
-            , default_semaphores  { context }
+            , default_sync        { context }
         { ; }
     };
 

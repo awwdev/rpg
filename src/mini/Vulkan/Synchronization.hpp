@@ -6,7 +6,7 @@
 namespace mini::vk
 {
 
-    struct Default_Semaphores
+    struct Default_Sync
     {
         VkDevice device;
 
@@ -15,7 +15,7 @@ namespace mini::vk
         mini::vk::VkArray<VkFence, 4> fences; 
 
 
-        Default_Semaphores(Context& context) : device { context.device }
+        Default_Sync(Context& context) : device { context.device }
         {
             imageAquired.count  = context.swapImages.count;
             renderDone.count    = context.swapImages.count;
@@ -38,7 +38,7 @@ namespace mini::vk
                 vkCreateFence(device, &fenceInfo, nullptr, &fences[i]);
         }
 
-        ~Default_Semaphores()
+        ~Default_Sync()
         {
             FOR_VK_ARRAY(imageAquired, i) vkDestroySemaphore(device, imageAquired[i], nullptr);
             FOR_VK_ARRAY(renderDone, i)   vkDestroySemaphore(device, renderDone[i], nullptr);
