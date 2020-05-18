@@ -13,6 +13,40 @@
 
 using namespace mini;
 
+
+
+inline VkSubmitInfo SubmitInfo(VkSemaphore& aquired, VkSemaphore& rendered, VkCommandBuffer& cmdBuffer)
+{
+    static const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    return {
+        .sType                  = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .pNext                  = nullptr,
+        .waitSemaphoreCount     = 1,
+        .pWaitSemaphores        = &aquired,
+        .pWaitDstStageMask      = &waitStages,
+        .commandBufferCount     = 1,
+        .pCommandBuffers        = &cmdBuffer,
+        .signalSemaphoreCount   = 1,
+        .pSignalSemaphores      = &rendered,
+    };
+}
+
+
+inline VkPresentInfoKHR PresentInfo(VkSemaphore& rendered, VkSwapchainKHR& swapchain, uint32_t& imgIndex)
+{
+    return {
+        .sType                  = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+        .pNext                  = nullptr,
+        .waitSemaphoreCount     = 1,
+        .pWaitSemaphores        = &rendered,
+        .swapchainCount         = 1,
+        .pSwapchains            = &swapchain,
+        .pImageIndices          = &imgIndex,
+        .pResults               = nullptr
+    };
+}
+
+
 int WINAPI wWinMain(
     _In_        HINSTANCE hInstance,
     _In_opt_    HINSTANCE hPrevInstance,
@@ -33,6 +67,15 @@ int WINAPI wWinMain(
     pSceneStack->SetCompleteArray();
     auto& currentScene = (*pSceneStack)[0];
 
+
+
+
+
+    auto& device    = pContext->device;
+    auto& swapchain = pContext->swapchain;
+    auto& sync      = pResources->default_sync;
+    auto& cmds      = pResources->default_commands;
+    auto& maxImgs   = pContext->swapImages.count;
 
 
     for(auto i = 0; i < 3; ++i)
@@ -66,8 +109,6 @@ int WINAPI wWinMain(
     }
 
 
-
-
     //? PROGRAM LOOP
     rpg::dt::StartClock();
     while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
@@ -82,14 +123,11 @@ int WINAPI wWinMain(
 
         //? rendering (tmp)
 
-        auto& device    = pContext->device;
-        auto& swapchain = pContext->swapchain;
-        auto& sync      = pResources->default_sync;
-        auto& maxImgs   = pContext->swapImages.count;
-
         static uint32_t currentFrame = 0;
 
         vkWaitForFences(device, 1, &sync.fences[currentFrame], VK_FALSE, UINT64_MAX);
+
+
 
         uint32_t imageIndex = 0;
         const auto acquireRes = vkAcquireNextImageKHR(
@@ -101,42 +139,23 @@ int WINAPI wWinMain(
             &imageIndex
         );
 
+
+
         if (sync.inFlight[imageIndex] != VK_NULL_HANDLE) {
             vkWaitForFences(device, 1, &sync.inFlight[imageIndex], VK_FALSE, UINT64_MAX);
         }
         sync.inFlight[imageIndex] = sync.fences[currentFrame];
 
-
         VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        const VkSubmitInfo submitInfo {
-            .sType                  = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            .pNext                  = nullptr,
-            .waitSemaphoreCount     = 1,
-            .pWaitSemaphores        = &pResources->default_sync.imageAquired[currentFrame],
-            .pWaitDstStageMask      = &waitStages,
-            .commandBufferCount     = 1,
-            .pCommandBuffers        = &pResources->default_commands.cmdBuffers[imageIndex],
-            .signalSemaphoreCount   = 1,
-            .pSignalSemaphores      = &pResources->default_sync.renderDone[currentFrame],
-        };
+        const auto submitInfo = SubmitInfo(sync.imageAquired[currentFrame], sync.renderDone[currentFrame], cmds.cmdBuffers[imageIndex]);
 
         vkResetFences(device, 1, &sync.fences[currentFrame]);
         VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, pResources->default_sync.fences[currentFrame]));
 
-        const VkPresentInfoKHR presentInfo {
-            .sType                  = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-            .pNext                  = nullptr,
-            .waitSemaphoreCount     = 1,
-            .pWaitSemaphores        = &pResources->default_sync.renderDone[currentFrame],
-            .swapchainCount         = 1,
-            .pSwapchains            = &pContext->swapchain,
-            .pImageIndices          = &imageIndex,
-            .pResults               = nullptr
-        };
+        const auto presentInfo = PresentInfo(sync.renderDone[currentFrame], swapchain, imageIndex);
         VK_CHECK(vkQueuePresentKHR(pContext->queue, &presentInfo));
 
         currentFrame = (currentFrame + 1) % (maxImgs - 1);
-
     }
     
     VK_CHECK(vkDeviceWaitIdle(pContext->device));
