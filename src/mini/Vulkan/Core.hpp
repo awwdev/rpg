@@ -30,7 +30,7 @@ namespace mini::vk
     struct VkArray
     {
         T data[N];
-        uint32_t count;
+        uint32_t count = N;
 
         T&       operator[](const uint32_t i)       { return data[i]; }
         const T& operator[](const uint32_t i) const { return data[i]; }

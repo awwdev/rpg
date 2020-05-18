@@ -11,6 +11,8 @@
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Resources.hpp"
 
+#include <unordered_map>
+
 using namespace mini;
 
 
@@ -123,6 +125,61 @@ int WINAPI wWinMain(
 
         //? rendering (tmp)
 
+        static std::unordered_map<uint32_t, uint32_t> map {};
+        static std::unordered_map<uint32_t, uint32_t> mapNew {};
+        static std::unordered_map<uint32_t, uint32_t> mapAfter {};
+
+        while(map.size() < maxImgs - 1)
+        {
+            auto freeSemaphore = sync.semaphores.Get();
+            uint32_t imageIndex = 0;
+            const auto acquireRes = vkAcquireNextImageKHR(
+                device, 
+                swapchain, 
+                0, 
+                sync.semaphores[freeSemaphore], 
+                VK_NULL_HANDLE, 
+                &imageIndex
+            );
+
+            if (acquireRes == VK_SUCCESS)
+            {
+                if (mapAfter.contains(imageIndex))
+                {
+                    sync.semaphores.Set<false>(mapAfter.at(imageIndex));
+                    mapAfter.erase(imageIndex);
+                }
+
+                sync.semaphores.Set<true>(freeSemaphore);
+                LOG(imageIndex, freeSemaphore);
+                map.emplace(imageIndex, freeSemaphore);
+            }
+        }
+
+        mapNew.clear();
+        for(const auto& [acq, sema] : map)
+        {
+            const auto fenceRes = vkWaitForFences(device, 1, &sync.fences[acq], VK_FALSE, 0);
+            if (fenceRes != VK_SUCCESS) { mapNew.emplace(acq, sema); continue; }
+            vkResetFences(device, 1, &sync.fences[acq]);
+
+            const auto submitInfo = SubmitInfo(sync.semaphores[sema], sync.semaphores2[sema], cmds.cmdBuffers[acq]);
+            VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, sync.fences[acq]));
+
+            auto tmpAcq = acq;
+            const auto presentInfo = PresentInfo(sync.semaphores2[sema], swapchain, tmpAcq);
+            VK_CHECK(vkQueuePresentKHR(pContext->queue, &presentInfo));
+        }
+
+        for(auto& i : map)
+            mapAfter.emplace(i);
+        map.clear();
+        for(auto& i : mapNew)
+            map.emplace(i);
+        
+
+
+        /*
         static uint32_t currentFrame = 0;
 
         vkWaitForFences(device, 1, &sync.fences[currentFrame], VK_FALSE, UINT64_MAX);
@@ -140,6 +197,12 @@ int WINAPI wWinMain(
         );
 
 
+        //acquire all
+        //map semaphores to imgIndx
+
+        //for all acquired
+        //get semaphore via mapping to imgIndx
+
 
         if (sync.inFlight[imageIndex] != VK_NULL_HANDLE) {
             vkWaitForFences(device, 1, &sync.inFlight[imageIndex], VK_FALSE, UINT64_MAX);
@@ -156,6 +219,7 @@ int WINAPI wWinMain(
         VK_CHECK(vkQueuePresentKHR(pContext->queue, &presentInfo));
 
         currentFrame = (currentFrame + 1) % (maxImgs - 1);
+        */
     }
     
     VK_CHECK(vkDeviceWaitIdle(pContext->device));

@@ -116,7 +116,7 @@ namespace mini::box
                 const auto a = data[BYTE(i)] & (1 << BIT(i)); //Test() is due to Assert not constexpr
                 if (a == 0) return i;
             }
-            return std::numeric_limits<IDX_T>::max();
+            return BITS;
         }
 
         ///GET NUMBER
