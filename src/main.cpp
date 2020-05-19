@@ -110,6 +110,9 @@ int WINAPI wWinMain(
     VK_CHECK(vkEndCommandBuffer(pResources->default_commands.cmdBuffers[i]));
     }
 
+    int semaphoreImgMapping[4] = {-1, -1, -1, -1};
+
+
 
     //? PROGRAM LOOP
     rpg::dt::StartClock();
@@ -125,14 +128,12 @@ int WINAPI wWinMain(
 
         //? rendering (tmp)
 
-        static std::unordered_map<uint32_t, uint32_t> map {};
-        static std::unordered_map<uint32_t, uint32_t> mapNew {};
-        static std::unordered_map<uint32_t, uint32_t> mapAfter {};
+        static int acquired = 0;
 
-        while(map.size() < maxImgs - 1)
+        if (acquired < maxImgs - 1)
         {
-            auto freeSemaphore = sync.semaphores.Get();
             uint32_t imageIndex = 0;
+            const auto freeSemaphore = sync.semaphores.Get();
             const auto acquireRes = vkAcquireNextImageKHR(
                 device, 
                 swapchain, 
@@ -144,81 +145,84 @@ int WINAPI wWinMain(
 
             if (acquireRes == VK_SUCCESS)
             {
-                if (mapAfter.contains(imageIndex))
-                {
-                    sync.semaphores.Set<false>(mapAfter.at(imageIndex));
-                    mapAfter.erase(imageIndex);
-                }
-
+                ++acquired;
+     
                 sync.semaphores.Set<true>(freeSemaphore);
-                LOG(imageIndex, freeSemaphore);
-                map.emplace(imageIndex, freeSemaphore);
+                semaphoreImgMapping[imageIndex] = freeSemaphore;
             }
         }
 
-        mapNew.clear();
-        for(const auto& [acq, sema] : map)
+        for(uint32_t i=0; i<ARRAY_COUNT(semaphoreImgMapping); ++i)
         {
-            const auto fenceRes = vkWaitForFences(device, 1, &sync.fences[acq], VK_FALSE, 0);
-            if (fenceRes != VK_SUCCESS) { mapNew.emplace(acq, sema); continue; }
-            vkResetFences(device, 1, &sync.fences[acq]);
+            if (semaphoreImgMapping[i] == -1)
+                continue;
 
-            const auto submitInfo = SubmitInfo(sync.semaphores[sema], sync.semaphores2[sema], cmds.cmdBuffers[acq]);
-            VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, sync.fences[acq]));
+            auto imageIndex = i;
+            const auto freeSemaphore = semaphoreImgMapping[i]; //name?!
 
-            auto tmpAcq = acq;
-            const auto presentInfo = PresentInfo(sync.semaphores2[sema], swapchain, tmpAcq);
+            const auto fenceRes = vkWaitForFences(device, 1, &sync.fences[imageIndex], VK_FALSE, 0);
+            if(fenceRes != VK_SUCCESS) continue;
+            
+            VK_CHECK(vkResetFences(device, 1, &sync.fences[imageIndex]));
+            --acquired;
+            sync.semaphores.Set<false>(semaphoreImgMapping[imageIndex]);
+            semaphoreImgMapping[i] = -1;
+
+            //cmd recording to cmdBuffer[imgIndex]
+
+            const auto submitInfo = SubmitInfo(sync.semaphores[freeSemaphore], sync.semaphores2[freeSemaphore], cmds.cmdBuffers[imageIndex]);
+            VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, sync.fences[imageIndex]));
+
+            const auto presentInfo = PresentInfo(sync.semaphores2[freeSemaphore], swapchain, imageIndex);
             VK_CHECK(vkQueuePresentKHR(pContext->queue, &presentInfo));
         }
+        
 
-        for(auto& i : map)
-            mapAfter.emplace(i);
-        map.clear();
-        for(auto& i : mapNew)
-            map.emplace(i);
         
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         /*
-        static uint32_t currentFrame = 0;
 
-        vkWaitForFences(device, 1, &sync.fences[currentFrame], VK_FALSE, UINT64_MAX);
-
-
+        VK_CHECK(vkWaitForFences(device, 1, &sync.fences[currentFrame], VK_FALSE, UINT64_MAX));
 
         uint32_t imageIndex = 0;
         const auto acquireRes = vkAcquireNextImageKHR(
             device, 
             swapchain, 
             UINT64_MAX, 
-            sync.imageAquired[currentFrame], 
+            sync.imageAcquired[currentFrame], 
             VK_NULL_HANDLE, 
             &imageIndex
-        );
-
-
-        //acquire all
-        //map semaphores to imgIndx
-
-        //for all acquired
-        //get semaphore via mapping to imgIndx
-
+        ); //! check res 
 
         if (sync.inFlight[imageIndex] != VK_NULL_HANDLE) {
-            vkWaitForFences(device, 1, &sync.inFlight[imageIndex], VK_FALSE, UINT64_MAX);
+            VK_CHECK(vkWaitForFences(device, 1, &sync.inFlight[imageIndex], VK_FALSE, UINT64_MAX));
         }
         sync.inFlight[imageIndex] = sync.fences[currentFrame];
-
-        VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        const auto submitInfo = SubmitInfo(sync.imageAquired[currentFrame], sync.renderDone[currentFrame], cmds.cmdBuffers[imageIndex]);
-
         vkResetFences(device, 1, &sync.fences[currentFrame]);
+
+        const auto submitInfo = SubmitInfo(sync.imageAcquired[currentFrame], sync.imageFinished[currentFrame], cmds.cmdBuffers[imageIndex]);
         VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, pResources->default_sync.fences[currentFrame]));
 
-        const auto presentInfo = PresentInfo(sync.renderDone[currentFrame], swapchain, imageIndex);
+        const auto presentInfo = PresentInfo(sync.imageFinished[currentFrame], swapchain, imageIndex);
         VK_CHECK(vkQueuePresentKHR(pContext->queue, &presentInfo));
 
         currentFrame = (currentFrame + 1) % (maxImgs - 1);
+
         */
     }
     
