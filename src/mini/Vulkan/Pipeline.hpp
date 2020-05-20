@@ -136,14 +136,20 @@ namespace mini::vk
                 .blendConstants  = { 0.f, 0.f, 0.f, 0.f }
             };
 
+            const VkPushConstantRange constantRange {
+                .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+                .offset     = 0,
+                .size       = (uint32_t)sizeof(float)
+            };
+
             const VkPipelineLayoutCreateInfo layoutInfo {
                 .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
                 .pNext                  = nullptr,
                 .flags                  = 0,
                 .setLayoutCount         = 0,        //!add uniform data
                 .pSetLayouts            = nullptr,
-                .pushConstantRangeCount = 0,
-                .pPushConstantRanges    = nullptr,
+                .pushConstantRangeCount = 1,
+                .pPushConstantRanges    = &constantRange,
             };
             VK_CHECK(vkCreatePipelineLayout(context.device, &layoutInfo, nullptr, &layout));
 

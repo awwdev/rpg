@@ -47,8 +47,9 @@ namespace mini::vk
         VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
         const VkFormat format = VK_FORMAT_B8G8R8A8_UNORM;
-        //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
-        const VkPresentModeKHR presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
+        const VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+        //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
+        //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
         //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
         
         
