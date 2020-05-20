@@ -17,8 +17,17 @@ namespace mini::vk
         mini::box::Pool<VkSemaphore, 3> semaphores_render;
         mini::box::Pool<VkFence, 3>     fences_submit;
 
+        mini::vk::VkArray<VkSemaphore, 4> imageAcquired; 
+        mini::vk::VkArray<VkSemaphore, 4> imageFinished; 
+        mini::vk::VkArray<VkFence, 4>     inFlight { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE};
+        mini::vk::VkArray<VkFence, 4>     fences; 
+
+
         explicit Default_Sync(Context& context) : device { context.device }
         {
+            imageAcquired.count  = context.swapImages.count;
+            imageFinished.count  = context.swapImages.count;
+
             const VkSemaphoreCreateInfo semaInfo  
             { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO , nullptr , 0 };
             const VkFenceCreateInfo fenceInfo 
@@ -30,13 +39,24 @@ namespace mini::vk
                 vkCreateSemaphore(device, &semaInfo, nullptr, &semaphores_acquire[i]);
             FOR_POOL(semaphores_render, i) 
                 vkCreateSemaphore(device, &semaInfo, nullptr, &semaphores_render[i]);
+
+            FOR_VK_ARRAY(imageAcquired, i) 
+                vkCreateSemaphore(device, &semaInfo, nullptr, &imageAcquired[i]);    
+            FOR_VK_ARRAY(imageFinished, i) 
+                vkCreateSemaphore(device, &semaInfo, nullptr, &imageFinished[i]);  
+            FOR_VK_ARRAY(fences, i) 
+                vkCreateFence(device, &fenceInfo, nullptr, &fences[i]);
         }
 
         ~Default_Sync()
         {
             FOR_POOL(fences_submit, i)      vkDestroyFence(device, fences_submit[i], nullptr);
-            FOR_POOL(semaphores_acquire, i)  vkDestroySemaphore(device, semaphores_acquire[i], nullptr);
-            FOR_POOL(semaphores_render, i) vkDestroySemaphore(device, semaphores_render[i], nullptr);
+            FOR_POOL(semaphores_acquire, i) vkDestroySemaphore(device, semaphores_acquire[i], nullptr);
+            FOR_POOL(semaphores_render, i)  vkDestroySemaphore(device, semaphores_render[i], nullptr);
+
+            FOR_VK_ARRAY(imageAcquired, i) vkDestroySemaphore(device, imageAcquired[i], nullptr);
+            FOR_VK_ARRAY(imageFinished, i) vkDestroySemaphore(device, imageFinished[i], nullptr);
+            FOR_VK_ARRAY(fences, i)        vkDestroyFence(device, fences[i], nullptr);
         }
 
     };
@@ -49,23 +69,13 @@ namespace mini::vk
 
 
 /*
-        mini::vk::VkArray<VkSemaphore, 4> imageAcquired; 
-        mini::vk::VkArray<VkSemaphore, 4> imageFinished; 
+        
 
-        imageAcquired.count  = context.swapImages.count;
-        imageFinished.count  = context.swapImages.count;
+        
 
-        FOR_VK_ARRAY(imageAcquired, i) vkDestroySemaphore(device, imageAcquired[i], nullptr);
-        FOR_VK_ARRAY(imageFinished, i) vkDestroySemaphore(device, imageFinished[i], nullptr);
+        
+        
 
-        FOR_VK_ARRAY(imageAcquired, i) 
-            vkCreateSemaphore(device, &semaInfo, nullptr, &imageAcquired[i]);    
-
-        FOR_VK_ARRAY(imageFinished, i) 
-            vkCreateSemaphore(device, &semaInfo, nullptr, &imageFinished[i]);  
-
-        mini::vk::VkArray<VkFence, 4> inFlight { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE};
-
-        mini::vk::VkArray<VkFence, 4> fences; 
+        
 
 */

@@ -8,6 +8,7 @@ namespace mini::dbg
 {
 #define DO_DLOG 1
 #define LOG(...)  mini::dbg::dlog(__VA_ARGS__)
+#define LOG_VAR(var)  mini::dbg::dlog(#var, var)
 
 #define INFO(...) mini::dbg::dlog<mini::dbg::ColorMode::Cyan>(__VA_ARGS__)
 #define ERR(...)  mini::dbg::dlog<mini::dbg::ColorMode::Red>(__VA_ARGS__)

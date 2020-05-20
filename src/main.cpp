@@ -47,6 +47,7 @@ int WINAPI wWinMain(
         currentScene.Render(rpg::dt::seconds); 
 
         vk::Render(pContext.Get(), pResources.Get(), rpg::dt::seconds); //todo: inject scene data in some way
+        //vk::Render2(pContext.Get(), pResources.Get(), rpg::dt::seconds); //todo: inject scene data in some way
     }
     
     VK_CHECK(vkDeviceWaitIdle(pContext->device));

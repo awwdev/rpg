@@ -7,6 +7,7 @@ namespace mini::vk
 {
     inline const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     inline int acquired = 0;
+    inline uint32_t currentFrame = 0;
     inline int semaphoreImgMapping[3] = {-1, -1, -1}; //triple buffering
 
 
@@ -70,7 +71,7 @@ namespace mini::vk
         static float counter = 0; counter += 1.f * dt; //!testing
         float values = std::sinf(counter) * 0.5f;
         vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float), &values);
-        vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
+        for(auto i=0; i<100000; ++i) vkCmdDraw(cmdBuffer, 3, 1, 0, 0); //!stress test (increase max)
         vkCmdEndRenderPass(cmdBuffer);
 
         VK_CHECK(vkEndCommandBuffer(cmdBuffer));
@@ -101,6 +102,9 @@ namespace mini::vk
                 ++acquired;
                 sync.semaphores_acquire.Set<true>(freeSemaphore); //now flag it as used
                 semaphoreImgMapping[imageIndex] = freeSemaphore;
+
+                //LOG_VAR(freeSemaphore);
+                //LOG_VAR(imageIndex);
             }
             else 
             {
@@ -136,42 +140,42 @@ namespace mini::vk
     }
 
 
-}//ns
+    //better?
+    inline void Render2(Context& context, Resources& resources, const double dt)
+    {
+        auto& sync = resources.default_sync;
 
-
-
-
-/*
-        static uint32_t currentFrame = 0;
-
-        const auto res1 = vkWaitForFences(device, 1, &sync.fences[currentFrame], VK_FALSE, 0);
-        if (res1 != VK_SUCCESS) continue;
+        const auto res1 = vkWaitForFences(context.device, 1, &sync.fences[currentFrame], VK_FALSE, 0);
+        if (res1 != VK_SUCCESS) return;
 
         uint32_t imageIndex = 0;
         const auto acquireRes = vkAcquireNextImageKHR(
-            device, 
-            swapchain, 
+            context.device, 
+            context.swapchain, 
             0, 
             sync.imageAcquired[currentFrame], 
             VK_NULL_HANDLE, 
             &imageIndex
         ); //! check res 
-        if (acquireRes != VK_SUCCESS) continue;
+        if (acquireRes != VK_SUCCESS) return;
 
         if (sync.inFlight[imageIndex] != VK_NULL_HANDLE) {
-            const auto  res2 = vkWaitForFences(device, 1, &sync.inFlight[imageIndex], VK_FALSE, UINT64_MAX);
-            if (res2 != VK_SUCCESS) continue;
+            const auto  res2 = vkWaitForFences(context.device, 1, &sync.inFlight[imageIndex], VK_FALSE, UINT64_MAX);
+            if (res2 != VK_SUCCESS) return;
         }
         sync.inFlight[imageIndex] = sync.fences[currentFrame];
-        vkResetFences(device, 1, &sync.fences[currentFrame]);
+        vkResetFences(context.device, 1, &sync.fences[currentFrame]);
 
-        record(imageIndex);
+        RecordCommands(context,resources, imageIndex, dt);
 
-        const auto submitInfo = SubmitInfo(sync.imageAcquired[currentFrame], sync.imageFinished[currentFrame], cmds.cmdBuffers[imageIndex]);
-        VK_CHECK(vkQueueSubmit(pContext->queue, 1, &submitInfo, pResources->default_sync.fences[currentFrame]));
+        const auto submitInfo = SubmitInfo(sync.imageAcquired[currentFrame], sync.imageFinished[currentFrame], resources.default_commands.cmdBuffers[imageIndex]);
+        VK_CHECK(vkQueueSubmit(context.queue, 1, &submitInfo, sync.fences[currentFrame]));
 
-        const auto presentInfo = PresentInfo(sync.imageFinished[currentFrame], swapchain, imageIndex);
-        VK_CHECK(vkQueuePresentKHR(pContext->queue, &presentInfo));
+        const auto presentInfo = PresentInfo(sync.imageFinished[currentFrame], context.swapchain, imageIndex);
+        VK_CHECK(vkQueuePresentKHR(context.queue, &presentInfo));
 
-        currentFrame = (currentFrame + 1) % (maxImgs - 1);
-        */ 
+        currentFrame = (currentFrame + 1) % (context.swapImages.count - 1);
+    }
+
+
+}//ns
