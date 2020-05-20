@@ -23,6 +23,7 @@ namespace mini::box
             data.SetCompleteArray();
         }
 
+        //this method does not flag the object as used! (use Set then)
         decltype(N) Get() const
         {
             const auto freeBit = bitset.FindFirstFreeBit();

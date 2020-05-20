@@ -5,9 +5,13 @@
 
 namespace mini::vk
 {
+    inline const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    inline int acquired = 0;
+    inline int semaphoreImgMapping[3] = {-1, -1, -1}; //triple buffering
+
+
     inline VkSubmitInfo SubmitInfo(VkSemaphore& aquired, VkSemaphore& rendered, VkCommandBuffer& cmdBuffer)
     {
-        static const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         return {
             .sType                  = VK_STRUCTURE_TYPE_SUBMIT_INFO,
             .pNext                  = nullptr,
@@ -37,7 +41,7 @@ namespace mini::vk
     }
 
 
-    inline void RecordCommands(Context& context, Resources& resources, const uint32_t cmdBufferIdx)
+    inline void RecordCommands(Context& context, Resources& resources, const uint32_t cmdBufferIdx, const double dt)
     {
         auto& cmdBuffer = resources.default_commands.cmdBuffers[cmdBufferIdx];
 
@@ -63,7 +67,7 @@ namespace mini::vk
 
         vkCmdBeginRenderPass(cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
-        static float counter = 0; counter += 0.001f; //!testing
+        static float counter = 0; counter += 1.f * dt; //!testing
         float values = std::sinf(counter) * 0.5f;
         vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float), &values);
         vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
@@ -73,35 +77,35 @@ namespace mini::vk
     }
 
 
-    inline void Render(Context& context, Resources& resources)
+    inline void Render(Context& context, Resources& resources, const double dt)
     {
-        //!todo better not static
-        static int acquired = 0;
-        static int semaphoreImgMapping[4] = {-1, -1, -1, -1};
-
-        const auto maxImgs = context.swapImages.count;
         auto& sync = resources.default_sync;
 
         //for (auto i = acquired; i < maxImgs - 1; ++i)
-        if (acquired < maxImgs - 1)
+        if (acquired < context.swapImages.count - 1)
         {
             uint32_t imageIndex = 0;
-            const auto freeSemaphore = sync.semaphores.Get();
-            const auto acquireRes = vkAcquireNextImageKHR(
+            const auto freeSemaphore = sync.semaphores_acquire.Get(); //this does not flag the semaphore as used!
+
+            const auto res = vkAcquireNextImageKHR(
                 context.device, 
                 context.swapchain, 
                 0, 
-                sync.semaphores[freeSemaphore], 
+                sync.semaphores_acquire[freeSemaphore], 
                 VK_NULL_HANDLE, 
                 &imageIndex
             );
 
-            if (acquireRes == VK_SUCCESS)
+            if (res == VK_SUCCESS)
             {
                 ++acquired;
-     
-                sync.semaphores.Set<true>(freeSemaphore);
+                sync.semaphores_acquire.Set<true>(freeSemaphore); //now flag it as used
                 semaphoreImgMapping[imageIndex] = freeSemaphore;
+            }
+            else 
+            {
+                //!bad surface check (on resize)
+                WARN("vkAcquireNextImageKHR", "no success");
             }
         }
 
@@ -110,29 +114,32 @@ namespace mini::vk
             if (semaphoreImgMapping[i] == -1)
                 continue;
 
-            auto imageIndex = i;
-            const auto freeSemaphore = semaphoreImgMapping[i]; //name?!
-
-            const auto fenceRes = vkWaitForFences(context.device, 1, &sync.fences[imageIndex], VK_FALSE, 0);
-            if(fenceRes != VK_SUCCESS) continue;
+            if(vkWaitForFences(context.device, 1, &sync.fences_submit[i], VK_FALSE, 0) != VK_SUCCESS)
+                continue;
             
-            VK_CHECK(vkResetFences(context.device, 1, &sync.fences[imageIndex]));
-            --acquired;
-            sync.semaphores.Set<false>(semaphoreImgMapping[imageIndex]);
+            VK_CHECK(vkResetFences(context.device, 1, &sync.fences_submit[i]));
+            const auto semaIdx = semaphoreImgMapping[i];
             semaphoreImgMapping[i] = -1;
+            sync.semaphores_acquire.Set<false>(semaIdx);
+            --acquired;
 
-            RecordCommands(context, resources, imageIndex);
+            //!RECORD COMMANDS----------
+            RecordCommands(context, resources, i, dt);
+            //!-------------------------
 
-            const auto submitInfo = SubmitInfo(sync.semaphores[freeSemaphore], sync.semaphores2[freeSemaphore], resources.default_commands.cmdBuffers[imageIndex]);
-            VK_CHECK(vkQueueSubmit(context.queue, 1, &submitInfo, sync.fences[imageIndex]));
+            const auto submitInfo = SubmitInfo(sync.semaphores_acquire[semaIdx], sync.semaphores_render[semaIdx], resources.default_commands.cmdBuffers[i]);
+            VK_CHECK(vkQueueSubmit(context.queue, 1, &submitInfo, sync.fences_submit[i]));
 
-            const auto presentInfo = PresentInfo(sync.semaphores2[freeSemaphore], context.swapchain, imageIndex);
+            const auto presentInfo = PresentInfo(sync.semaphores_render[semaIdx], context.swapchain, i);
             VK_CHECK(vkQueuePresentKHR(context.queue, &presentInfo));
         }
     }
 
 
 }//ns
+
+
+
 
 /*
         static uint32_t currentFrame = 0;
