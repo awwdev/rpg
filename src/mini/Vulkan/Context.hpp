@@ -221,16 +221,16 @@ namespace mini::vk
 
             VkBool32 supported {}; //todo: check for support
             VK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(physical, queueIndex, surface, &supported));
-    
-            VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
-            //formats = init::getData<VkSurfaceFormatKHR>(&vkGetPhysicalDeviceSurfaceFormatsKHR, physical, surface);
-            //presentModes = init::getData<VkPresentModeKHR>(&vkGetPhysicalDeviceSurfacePresentModesKHR, physical, surface);
         }
 
         //? SWAPCHAIN
 
         inline void CreateSwapchain()
         {
+            VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
+            //formats = init::getData<VkSurfaceFormatKHR>(&vkGetPhysicalDeviceSurfaceFormatsKHR, physical, surface);
+            //presentModes = init::getData<VkPresentModeKHR>(&vkGetPhysicalDeviceSurfacePresentModesKHR, physical, surface);
+
             const VkSwapchainCreateInfoKHR swapInfo {
                 .sType                  = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
                 .pNext                  = nullptr,
@@ -283,6 +283,12 @@ namespace mini::vk
                 };
                 VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &swapImageViews[i]));
             }
+        }
+
+        inline void DestroySwapchain()
+        {
+            FOR_VK_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
+            vkDestroySwapchainKHR(device, swapchain, nullptr);
         }
 
         ~Context()

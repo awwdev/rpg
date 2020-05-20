@@ -2,7 +2,7 @@
 #include "mini/Box/Array.hpp"
 #include "mini/Box/Bitset.hpp"
 
-namespace mini::app
+namespace mini::wnd
 {
     //TODO: think about consuming (removing) events, so they are not passed const
     //usage of layers ?
@@ -19,6 +19,8 @@ namespace mini::app
         PRESSABLE_END,
 
         Window_Close,
+        Window_Resize,
+        Window_Minimize,
     };
 
     enum class EventState : u8

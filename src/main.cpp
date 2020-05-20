@@ -5,14 +5,15 @@
 #include "mini/Box/Array.hpp"
 #include "mini/Memory/Allocator.hpp"
 
-#include "rpg/Scene/Scene.hpp"
-#include "rpg/DeltaTime.hpp"
+#include "app/Scene/Scene.hpp"
+#include "app/DeltaTime.hpp"
 
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Resources.hpp"
 #include "mini/Vulkan/Rendering.hpp"
 
 using namespace mini;
+using namespace mini::wnd;
 
 
 int WINAPI wWinMain(
@@ -31,25 +32,27 @@ int WINAPI wWinMain(
     auto pResources = mem::ClaimBlock<vk::Resources>(pContext.Get());
 
     //? SCENES
-    auto pSceneStack = mem::ClaimBlock<box::Array<rpg::scene::Scene, 4>>();
+    auto pSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 4>>();
     pSceneStack->SetCompleteArray();
     auto& currentScene = (*pSceneStack)[0];
 
     //? PROGRAM LOOP
-    rpg::dt::StartClock();
-    while (!app::CheckEvent(EventType::Window_Close) && !app::IsPressed(EventType::Keyboard_Escape))
+    app::dt::StartClock();
+    while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
     {
         wnd::PollEvents();
-        if (const auto fps = rpg::dt::CalcDeltaTimeFPS(); fps > 0)
+        if (const auto fps = app::dt::CalcDeltaTimeFPS(); fps > 0)
             LOG("fps", fps);
 
-        currentScene.Update(rpg::dt::seconds);
-        currentScene.Render(rpg::dt::seconds); 
+        currentScene.Update(app::dt::seconds);
 
-        vk::Render(pContext.Get(), pResources.Get(), rpg::dt::seconds); //todo: inject scene data in some way
-        //vk::Render2(pContext.Get(), pResources.Get(), rpg::dt::seconds); //todo: inject scene data in some way
+        if (wnd::CheckEvent(EventType::Window_Resize))
+            vk::RecreateScwapchain(pContext.Get(), pResources.Get());
+
+        vk::Render(pContext.Get(), pResources.Get(), app::dt::seconds); //todo: inject scene data in some way
     }
     
+    //? THE END
     VK_CHECK(vkDeviceWaitIdle(pContext->device));
     mem::GlobalFree();
 

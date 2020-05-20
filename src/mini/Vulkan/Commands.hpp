@@ -28,8 +28,10 @@ namespace mini::vk
         VkArray<VkCommandBuffer, 4> cmdBuffers { {}, 0 }; //capacity based
 
 
-        Default_Commands(Context& context) : device { context.device }
+        inline void Create(Context& context)
         {
+            device = context.device;
+
             //? CMD POOL
 
             const VkCommandPoolCreateInfo poolInfo{

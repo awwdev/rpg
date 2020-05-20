@@ -86,8 +86,10 @@ namespace mini::vk
 
 
 
-        explicit Default_Shader(Context& context) : device { context.device }
+        inline void Create(Context& context)
         {
+            device = context.device;
+
             stages[0].module = CreateShaderModule(device, "res/default.vert.spv");
             stages[1].module = CreateShaderModule(device, "res/default.frag.spv");
         }

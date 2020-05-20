@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
 
-namespace rpg::dt
+namespace app::dt
 {
     using Clock = std::chrono::high_resolution_clock;
 

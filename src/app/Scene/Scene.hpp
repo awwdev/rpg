@@ -2,7 +2,7 @@
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
 
-namespace rpg::scene
+namespace app::scene
 {
     struct Scene
     {
@@ -12,11 +12,6 @@ namespace rpg::scene
         inline void Update(const double dt)
         {
             //LOG("update ", name);
-        }
-
-        inline void Render(const double dt)
-        {
-
         }
 
     };

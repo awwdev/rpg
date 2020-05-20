@@ -17,9 +17,10 @@ namespace mini::vk
         VkPipelineLayout layout;
         
 
-        explicit Default_Pipeline(Context& context, Default_Shader& shader, Default_RenderPass& renderPass)
-            : device { context.device }
+        inline void Create(Context& context, Default_Shader& shader, Default_RenderPass& renderPass)
         {
+            device = context.device;
+
             const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
                 .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
                 .pNext                  = nullptr,

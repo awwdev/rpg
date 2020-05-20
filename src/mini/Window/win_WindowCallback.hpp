@@ -6,9 +6,6 @@
 #include <windowsx.h>
 #undef max
 
-using namespace mini::app;
-
-
 namespace mini::wnd
 {
     inline void PollEvents()
@@ -57,6 +54,7 @@ namespace mini::wnd
         ///window
 
         case WM_CLOSE: events.Append(EventType::Window_Close); break;
+        case WM_EXITSIZEMOVE: events.Append(EventType::Window_Resize); break; //!todo detail info 
         
         ///default
 

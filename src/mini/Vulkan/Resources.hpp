@@ -21,12 +21,14 @@ namespace mini::vk
         Default_Sync        default_sync;
 
         explicit Resources(Context& context)
-            : default_shader      { context }
-            , default_renderPass  { context }
-            , default_pipeline    { context, default_shader, default_renderPass }
-            , default_commands    { context }
-            , default_sync        { context }
-        { ; }
+        { 
+            default_shader.Create(context);
+            default_renderPass.Create(context);
+            default_pipeline.Create(context, default_shader, default_renderPass);
+            default_commands.Create(context);
+            default_sync.Create(context);
+
+        }
     };
 
 }//ns
