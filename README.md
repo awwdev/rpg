@@ -1,13 +1,13 @@
-# MiniSTL
-Minimal basic library - simple, readable and extendable.
+# Mini
+Minimal library - simple, readable and extendable.
 
 - Containers (Array, Bitset, String)
 - Global allocator functions
 - Logger and Profiler
 - Math (Matrix, Quaternion)
 - Window and window events
-- Vulkan Renderer
-- Misc (Types, ...)
+- Vulkan Renderer and UI (heavy wip)
+- Misc (Types, Utils)
 
 This is Work In Progress!
 
@@ -58,5 +58,12 @@ This is Work In Progress!
 - event abstractions (event contains union)
 - bitset holds state of input (pressed keys and buttons)
 
+## mini::vk
+- Context (Instance, PhysicalDevice, LogicalDevice, Meta, Debug)
+- Resources (Pipeline, Shader, Renderpass, Synchronization)
+- Rendering (Command recording, presentation loop)
+
+## mini::ui
+- wip (immediate gui)
 
 ...wip
