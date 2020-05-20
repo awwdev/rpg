@@ -54,6 +54,20 @@ namespace mini::wnd
         ///window
 
         case WM_CLOSE: events.Append(EventType::Window_Close); break;
+
+        case WM_SIZE: 
+        {
+            switch (wParam) 
+            {
+                case SIZE_MAXIMIZED: events.Append(EventType::Window_Resize); break;
+                case SIZE_MINIMIZED: events.Append(EventType::Window_Resize); break;
+                //case SIZE_RESTORED:  events.Append(EventType::Window_Resize); break;
+                //todo issue from max to restored no event created (and restored event will spam on normal move, thanks win api!)
+                //so probably some flag is better like IsWindowResizing()
+            }
+        }
+        break;
+
         case WM_EXITSIZEMOVE: events.Append(EventType::Window_Resize); break; //!todo detail info 
         
         ///default

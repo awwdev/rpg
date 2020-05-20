@@ -2,6 +2,8 @@
 
 #pragma once
 #include "mini/Vulkan/Core.hpp"
+#include "mini/Utils.hpp"
+
 
 namespace mini::vk
 {
@@ -45,6 +47,8 @@ namespace mini::vk
 
         VkSurfaceKHR surface;
         VkSurfaceCapabilitiesKHR surfaceCapabilities;
+
+        float RATIO = 4 / 3.f; //todo: keep ratio (do not distort)
 
         const VkFormat format = VK_FORMAT_B8G8R8A8_UNORM;
         const VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
@@ -221,16 +225,25 @@ namespace mini::vk
 
             VkBool32 supported {}; //todo: check for support
             VK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(physical, queueIndex, surface, &supported));
+            VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
         }
 
         //? SWAPCHAIN
 
-        inline void CreateSwapchain()
+        inline bool RecreateSwapchain()
         {
             VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
-            //formats = init::getData<VkSurfaceFormatKHR>(&vkGetPhysicalDeviceSurfaceFormatsKHR, physical, surface);
-            //presentModes = init::getData<VkPresentModeKHR>(&vkGetPhysicalDeviceSurfacePresentModesKHR, physical, surface);
+            if (surfaceCapabilities.currentExtent.width == 0 || surfaceCapabilities.currentExtent.height == 0)
+                return false;
 
+            DestroySwapchain();
+            CreateSwapchain();
+
+            return true;
+        }
+
+        inline void CreateSwapchain()
+        {
             const VkSwapchainCreateInfoKHR swapInfo {
                 .sType                  = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
                 .pNext                  = nullptr,

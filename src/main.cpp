@@ -45,11 +45,8 @@ int WINAPI wWinMain(
             LOG("fps", fps);
 
         currentScene.Update(app::dt::seconds);
-
-        if (wnd::CheckEvent(EventType::Window_Resize))
-            vk::RecreateScwapchain(pContext.Get(), pResources.Get());
-
         vk::Render(pContext.Get(), pResources.Get(), app::dt::seconds); //todo: inject scene data in some way
+        //todo: on minimized the cpu runs (no render block)
     }
     
     //? THE END

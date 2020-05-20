@@ -2,6 +2,7 @@
 
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Resources.hpp"
+#include "mini/Window/AppEvents.hpp"
 
 namespace mini::vk
 {
@@ -37,6 +38,24 @@ namespace mini::vk
             .pImageIndices          = &imgIndex,
             .pResults               = nullptr
         };
+    }
+
+
+    inline void RecreateScwapchain(Context& context, Resources& resources)
+    {
+        vkDeviceWaitIdle(context.device);
+
+        if (!context.RecreateSwapchain())
+            return;
+
+        resources.default_renderPass.~Default_RenderPass();
+        resources.default_renderPass.Create(context);
+
+        resources.default_pipeline.~Default_Pipeline();
+        resources.default_pipeline.Create(context, resources.default_shader, resources.default_renderPass);
+
+        resources.default_commands.~Default_Commands();
+        resources.default_commands.Create(context);
     }
 
 
@@ -78,6 +97,16 @@ namespace mini::vk
 
     inline void Render(Context& context, Resources& resources, const double dt)
     {
+        if (wnd::CheckEvent(wnd::EventType::Window_Resize)){
+            RecreateScwapchain(context, resources);
+            return;
+        }
+
+        if (context.surfaceCapabilities.currentExtent.width == 0 || 
+            context.surfaceCapabilities.currentExtent.height == 0)
+            return;
+
+
         auto& sync = resources.default_sync;
 
         if (vkWaitForFences(context.device, 1, &sync.fences[currentFrame], VK_FALSE, 0) != VK_SUCCESS)
@@ -93,7 +122,12 @@ namespace mini::vk
             &imageIndex
         ); 
 
-        if (acquireRes != VK_SUCCESS) return; //!bad surface check
+        switch(acquireRes)
+        {
+            case VK_SUCCESS: break;
+            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(context, resources); return; //when?!
+            default: return;
+        }
 
         if (sync.inFlight[imageIndex] != VK_NULL_HANDLE) {
             vkWaitForFences(context.device, 1, &sync.inFlight[imageIndex], VK_FALSE, UINT64_MAX); //important to wait
@@ -114,26 +148,11 @@ namespace mini::vk
         currentFrame = (currentFrame + 1) % (context.swapImages.count - 1);
     }
 
-
-    inline void RecreateScwapchain(Context& context, Resources& resources)
-    {
-        vkDeviceWaitIdle(context.device);
-
-        context.DestroySwapchain();
-        context.CreateSwapchain();
-
-        resources.default_renderPass.~Default_RenderPass();
-        resources.default_renderPass.Create(context);
-
-        resources.default_pipeline.~Default_Pipeline();
-        resources.default_pipeline.Create(context, resources.default_shader, resources.default_renderPass);
-
-        resources.default_commands.~Default_Commands();
-        resources.default_commands.Create(context);
-    }
-
-
 }//ns
+
+
+
+
 
 
 
