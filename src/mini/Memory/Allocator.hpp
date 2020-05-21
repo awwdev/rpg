@@ -39,7 +39,7 @@ namespace mini::mem
     constexpr AllocInfo ALLOC_INFOS[] = {
         {  128, 10 }, //used for strings
         { 1000, 10 },
-        { 2000, 10 } //vk renderer
+        { 3000, 10 } //vk renderer
     };
     //!--------------------------------------
 

@@ -1,3 +1,5 @@
+//https://github.com/awwdev
+
 #pragma once
 #pragma warning(disable : 26812) //unscoped vk enum
 

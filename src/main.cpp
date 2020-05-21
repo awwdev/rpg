@@ -45,8 +45,13 @@ int WINAPI wWinMain(
         
         //? THE END
         VK_CHECK(vkDeviceWaitIdle(pRenderer->context.device));
-    }
+    }//end scope calls (block) dtors and then dealloc 
     
     mem::GlobalDeallocate();
 
 }//main end
+
+//font rendering -> texture rendering
+//sampler, shader descriptors (texture input), shader tex glsl, pipeline layout -> test texture rendering
+//image loading (bmp) -> image view, vkimage object
+//font png monospace (2d array mapping of texture) -> atlasing (so we can use this in a general case)

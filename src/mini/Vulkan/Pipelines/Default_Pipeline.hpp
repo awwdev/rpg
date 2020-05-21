@@ -1,8 +1,10 @@
+//https://github.com/awwdev
+
 #pragma once
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Shader.hpp"
-#include "mini/Vulkan/RenderPass.hpp"
+#include "mini/Vulkan/Shaders/Default_Shader.hpp"
+#include "mini/Vulkan/RenderPasses/Default_RenderPass.hpp"
 
 namespace mini::vk
 {
@@ -15,7 +17,7 @@ namespace mini::vk
 
         VkPipeline pipeline;
         VkPipelineLayout layout;
-        
+                
 
         inline void Create(Context& context, Default_Shader& shader, Default_RenderPass& renderPass)
         {

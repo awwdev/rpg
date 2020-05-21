@@ -1,3 +1,5 @@
+//https://github.com/awwdev
+
 #pragma once
 #include "mini/Debug/Assert.hpp"
 #include "mini/Vulkan/Core.hpp"
@@ -52,6 +54,9 @@ namespace mini::vk
     struct Default_Shader
     {
         VkDevice device; //needed for dtor
+        
+        VkSampler sampler;
+
 
         const VkVertexInputBindingDescription BINDING_DESCS [1] 
         {
@@ -92,12 +97,36 @@ namespace mini::vk
 
             stages[0].module = CreateShaderModule(device, "res/default.vert.spv");
             stages[1].module = CreateShaderModule(device, "res/default.frag.spv");
+
+            const VkSamplerCreateInfo samplerInfo {
+                .sType                  = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+                .pNext                  = nullptr,
+                .flags                  = 0,
+                .magFilter              = VK_FILTER_LINEAR,
+                .minFilter              = VK_FILTER_LINEAR, 
+                .mipmapMode             = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+                .addressModeU           = VK_SAMPLER_ADDRESS_MODE_REPEAT, 
+                .addressModeV           = VK_SAMPLER_ADDRESS_MODE_REPEAT, 
+                .addressModeW           = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+                .mipLodBias             = 0, 
+                .anisotropyEnable       = VK_TRUE, 
+                .maxAnisotropy          = 16.0f, 
+                .compareEnable          = VK_FALSE,
+                .compareOp              = VK_COMPARE_OP_ALWAYS, 
+                .minLod                 = 0,
+                .maxLod                 = 0, 
+                .borderColor            = VK_BORDER_COLOR_INT_OPAQUE_BLACK, 
+                .unnormalizedCoordinates = VK_FALSE
+            };
+
+            VK_CHECK(vkCreateSampler(device, &samplerInfo, nullptr, &sampler));
         }
 
         ~Default_Shader()
         {
             FOR_CARRAY(stages, i)
                 vkDestroyShaderModule(device, stages[i].module, nullptr);
+            vkDestroySampler(device, sampler, nullptr);
         }
     };
 
