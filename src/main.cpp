@@ -8,9 +8,7 @@
 #include "app/Scene/Scene.hpp"
 #include "app/DeltaTime.hpp"
 
-#include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Resources.hpp"
-#include "mini/Vulkan/Rendering.hpp"
+#include "mini/Vulkan/Renderer.hpp"
 
 using namespace mini;
 using namespace mini::wnd;
@@ -28,8 +26,8 @@ int WINAPI wWinMain(
     mem::GlobalAllocate();
 
     //? RENDERER
-    auto pContext   = mem::ClaimBlock<vk::Context>(vk::WindowHandle{window.hInstance, window.hWnd});
-    auto pResources = mem::ClaimBlock<vk::Resources>(pContext.Get());
+    constexpr auto s = sizeof(vk::Renderer);
+    auto pRenderer = mem::ClaimBlock<vk::Renderer>(vk::WindowHandle{window.hInstance, window.hWnd});
 
     //? SCENES
     auto pSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 4>>();
@@ -45,12 +43,11 @@ int WINAPI wWinMain(
             LOG("fps", fps);
 
         currentScene.Update(app::dt::seconds);
-        vk::Render(pContext.Get(), pResources.Get(), app::dt::seconds); //todo: inject scene data in some way
-        //todo: on minimized the cpu runs (no render block)
+        pRenderer->Render(app::dt::seconds); //todo: scene data input
     }
     
     //? THE END
-    VK_CHECK(vkDeviceWaitIdle(pContext->device));
+    VK_CHECK(vkDeviceWaitIdle(pRenderer->context.device));
     mem::GlobalFree();
 
 }//main end

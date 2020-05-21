@@ -62,6 +62,7 @@ This is Work In Progress!
 - Context (Instance, PhysicalDevice, LogicalDevice, Meta, Debug)
 - Resources (Pipeline, Shader, Renderpass, Synchronization)
 - Rendering (Command recording, presentation loop)
+- Strategy of multiple "dedicated structs" (instead of generic structs): PipelineDefault struct instead of Pipeline univeral struct (hardcoding the properties instead of factories)
 
 ## mini::ui
 - wip (immediate gui)

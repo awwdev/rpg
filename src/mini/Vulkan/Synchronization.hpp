@@ -25,6 +25,7 @@ namespace mini::vk
 
             imageAcquired.count  = context.swapImages.count;
             imageFinished.count  = context.swapImages.count;
+            fences.count         = context.swapImages.count;
 
             const VkSemaphoreCreateInfo semaInfo  
             { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO , nullptr , 0 };
