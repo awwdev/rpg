@@ -7,7 +7,7 @@
 - compile time (capacity based system)
     - user defines blocks at compile time in one place (see array allocs[])
     - when claiming memory, the appropriate block size will be figured out at compile time
-- MemPtr
+- BlockPtr
     - is returned when claiming memory
     - holds data about the used block and will "free" the block when destroyed (RAII)
 - free / used blocks are represented by one bitset
@@ -75,52 +75,36 @@ namespace mini::mem
 
 
     template<class T>
-    struct MemPtr
+    struct BlockPtr
     {
         T* ptr;
         std::size_t blockId;
 
         T* operator->() { return ptr; }
-        T& operator* () { return *ptr;}
+        //T& operator* () { return *ptr;}
 
         T&       Get()       { return *ptr; }
         const T& Get() const { return *ptr; }
 
+        //array access
+        auto&       operator[](const std::size_t i)        { return (*ptr)[i]; };
+        const auto& operator[](const std::size_t i) const  { return (*ptr)[i]; };
 
-        MemPtr() = delete;
-        MemPtr(T* const pPtr, const std::size_t pBlockId)
+        BlockPtr() = delete;
+        BlockPtr(T* const pPtr, const std::size_t pBlockId)
             : ptr     { pPtr }
             , blockId { pBlockId } 
         {;}
 
-        MemPtr(const MemPtr&)            = delete;
-        MemPtr(MemPtr&&)                 = delete;
-        MemPtr& operator=(const MemPtr&) = delete; //probably bad design if needed?
-        MemPtr& operator=(MemPtr&&)      = delete;
+        BlockPtr(const BlockPtr&)            = delete;
+        BlockPtr(BlockPtr&&)                 = delete;
+        BlockPtr& operator=(const BlockPtr&) = delete; //probably bad design if needed?
+        BlockPtr& operator=(BlockPtr&&)      = delete;
 
-        //TODO: #7 MemPtr move needed?
-        //MemPtr(MemPtr&& other) 
-        //    : ptr     { other.ptr }
-        //    , blockId { other.blockId } 
-        //{ 
-        //    other.ptr = nullptr;
-        //}
-
-        //MemPtr& operator=(MemPtr&& other)           
-        //{ 
-        //    ptr         = other.ptr; 
-        //    blockId     = other.blockId;
-        //    other.ptr   = nullptr; 
-        //    return *this; 
-        //}
-
-        ~MemPtr()
+        ~BlockPtr()
         { 
-            //if (ptr != nullptr) //if we make memptr non movable we could just drop the if
-            //{ 
-                ptr->~T();
-                blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
-            //} 
+            ptr->~T();
+            blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
         }
     };
 
@@ -155,9 +139,33 @@ namespace mini::mem
         auto* aligned = (u8*) (((std::uintptr_t)ptr + (alignof(T) - 1)) & ~(alignof(T) - 1)); //next aligned address
         auto* obj     = new (aligned) T (std::forward<CtorArgs>(args) ...);
 
-        return MemPtr<T> { obj, freeBlock };
+        return BlockPtr<T> { obj, freeBlock };
     }
 
 }//ns
 
 //TODO: #6 mem::PrintBlocks()
+
+/*
+//TODO: #7 BlockPtr move needed?
+//BlockPtr(BlockPtr&& other) 
+//    : ptr     { other.ptr }
+//    , blockId { other.blockId } 
+//{ 
+//    other.ptr = nullptr;
+//}
+
+//BlockPtr& operator=(BlockPtr&& other)           
+//{ 
+//    ptr         = other.ptr; 
+//    blockId     = other.blockId;
+//    other.ptr   = nullptr; 
+//    return *this; 
+//}
+
+//if (ptr != nullptr) //if we make memptr non movable we could just drop the if
+//{ 
+    ptr->~T();
+    blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
+//} 
+*/

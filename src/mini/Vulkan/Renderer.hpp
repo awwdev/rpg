@@ -4,6 +4,9 @@
 #include "mini/Vulkan/Resources.hpp"
 #include "mini/Window/AppEvents.hpp"
 
+#include "app/Scene/Scene.hpp"
+
+
 namespace mini::vk
 {
     //? RENDERER
@@ -76,7 +79,7 @@ namespace mini::vk
 
         //? RENDERING AND COMMANDS
 
-        inline void RecordCommands(const uint32_t cmdBufferIdx, const double dt)
+        inline void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::scene::Scene& scene)
         {
             auto& cmdBuffer = resources.default_commands.cmdBuffers[cmdBufferIdx];
 
@@ -112,7 +115,7 @@ namespace mini::vk
         }
 
 
-        inline void Render(const double dt)
+        inline void Render(const double dt, const app::scene::Scene& scene)
         {
             if (wnd::CheckEvent(wnd::EventType::Window_Resize)){
                 RecreateScwapchain();
@@ -153,7 +156,7 @@ namespace mini::vk
             VK_CHECK(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
             //!RECORD COMMANDS----------
-            RecordCommands(imageIndex, dt);
+            RecordCommands(imageIndex, dt, scene);
             //!-------------------------
 
             const auto submitInfo = SubmitInfo(sync.imageAcquired[currentFrame], sync.imageFinished[currentFrame], resources.default_commands.cmdBuffers[imageIndex]);

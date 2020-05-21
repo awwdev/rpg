@@ -26,24 +26,20 @@ int WINAPI wWinMain(
     mem::GlobalAllocate();
 
     //? RENDERER
-    constexpr auto s = sizeof(vk::Renderer);
     auto pRenderer = mem::ClaimBlock<vk::Renderer>(vk::WindowHandle{window.hInstance, window.hWnd});
 
     //? SCENES
-    auto pSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 4>>();
-    pSceneStack->SetCompleteArray();
-    auto& currentScene = (*pSceneStack)[0];
+    auto pSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 2>>();
+    pSceneStack->InitCompleteArray();
+    uint32_t sceneIdx = 0;
 
     //? PROGRAM LOOP
-    app::dt::StartClock();
     while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
     {
         wnd::PollEvents();
-        if (const auto fps = app::dt::CalcDeltaTimeFPS(); fps > 0)
-            LOG("fps", fps);
-
-        currentScene.Update(app::dt::seconds);
-        pRenderer->Render(app::dt::seconds); //todo: scene data input
+        app::dt::CalcDeltaTimeFPS();        
+        pSceneStack[sceneIdx].Update(app::dt::seconds);
+        pRenderer->Render(app::dt::seconds, pSceneStack[sceneIdx]);
     }
     
     //? THE END

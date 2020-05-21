@@ -128,7 +128,7 @@ namespace mini::box
         //?ARRAY OPERATION
 
         template<class... CtorArgs>
-        void SetCompleteArray(CtorArgs&&... args)
+        void InitCompleteArray(CtorArgs&&... args)
         {
             for (; count < COUNT_MAX; ++count) {
                 PlacementNew(count, std::forward<CtorArgs>(args)...);

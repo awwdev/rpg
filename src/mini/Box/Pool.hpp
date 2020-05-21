@@ -20,7 +20,7 @@ namespace mini::box
 
         Pool()
         {
-            data.SetCompleteArray();
+            data.InitCompleteArray();
         }
 
         //this method does not flag the object as used! (use Set then)
