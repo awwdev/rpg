@@ -4,9 +4,9 @@
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
 
-#include "mini/Vulkan/Shaders/Default_Shader.hpp"
-#include "mini/Vulkan/RenderPasses/Default_RenderPass.hpp"
-#include "mini/Vulkan/Pipelines/Default_Pipeline.hpp"
+#include "mini/Vulkan/Default/Default_Shader.hpp"
+#include "mini/Vulkan/Default/Default_RenderPass.hpp"
+#include "mini/Vulkan/Default/Default_Pipeline.hpp"
 #include "mini/Vulkan/Commands.hpp"
 #include "mini/Vulkan/Synchronization.hpp"
 
