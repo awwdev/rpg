@@ -19,16 +19,19 @@ namespace mini::vk
         Default_Shader      default_shader;
         Default_RenderPass  default_renderPass;
         Default_Pipeline    default_pipeline;
-        Default_Commands    default_commands;
-        Default_Sync        default_sync;
+
+        Commands            commands;
+        Synchronization     synchronization;
+
 
         explicit Resources(Context& context)
         { 
             default_shader.Create(context);
             default_renderPass.Create(context);
             default_pipeline.Create(context, default_shader, default_renderPass);
-            default_commands.Create(context);
-            default_sync.Create(context);
+            
+            commands.Create(context);
+            synchronization.Create(context);
 
         }
     };

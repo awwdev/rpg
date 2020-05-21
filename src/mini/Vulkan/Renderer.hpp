@@ -75,15 +75,15 @@ namespace mini::vk
             resources.default_pipeline.~Default_Pipeline();
             resources.default_pipeline.Create(context, resources.default_shader, resources.default_renderPass);
 
-            resources.default_commands.~Default_Commands();
-            resources.default_commands.Create(context);
+            resources.commands.~Commands();
+            resources.commands.Create(context);
         }
 
         //? RENDERING AND COMMANDS
 
         inline void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::scene::Scene& scene)
         {
-            auto& cmdBuffer = resources.default_commands.cmdBuffers[cmdBufferIdx];
+            auto& cmdBuffer = resources.commands.cmdBuffers[cmdBufferIdx];
 
             auto beginInfo = vk::CreateCmdBeginInfo();
             VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
@@ -105,6 +105,7 @@ namespace mini::vk
                 .pClearValues   = clears
             };
 
+            //! stuff from lots of places, so more functions needed
             vkCmdBeginRenderPass(cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
             static float counter = 0; counter += 1.f * dt; //!testing
@@ -129,7 +130,7 @@ namespace mini::vk
                 return;
 
 
-            auto& sync = resources.default_sync;
+            auto& sync = resources.synchronization;
 
             if (vkWaitForFences(context.device, 1, &sync.fences[currentFrame], VK_FALSE, 0) != VK_SUCCESS)
                 return;
@@ -161,7 +162,7 @@ namespace mini::vk
             RecordCommands(imageIndex, dt, scene);
             //!-------------------------
 
-            const auto submitInfo = SubmitInfo(sync.imageAcquired[currentFrame], sync.imageFinished[currentFrame], resources.default_commands.cmdBuffers[imageIndex]);
+            const auto submitInfo = SubmitInfo(sync.imageAcquired[currentFrame], sync.imageFinished[currentFrame], resources.commands.cmdBuffers[imageIndex]);
             VK_CHECK(vkQueueSubmit(context.queue, 1, &submitInfo, sync.fences[currentFrame]));
 
             const auto presentInfo = PresentInfo(sync.imageFinished[currentFrame], context.swapchain, imageIndex);

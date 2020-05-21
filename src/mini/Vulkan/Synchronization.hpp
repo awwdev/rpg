@@ -10,7 +10,7 @@
 namespace mini::vk
 {
 
-    struct Default_Sync
+    struct Synchronization
     {
         VkDevice device;
 
@@ -42,7 +42,7 @@ namespace mini::vk
                 vkCreateFence(device, &fenceInfo, nullptr, &fences[i]);
         }
 
-        ~Default_Sync()
+        ~Synchronization()
         {
             FOR_VK_ARRAY(imageAcquired, i) vkDestroySemaphore(device, imageAcquired[i], nullptr);
             FOR_VK_ARRAY(imageFinished, i) vkDestroySemaphore(device, imageFinished[i], nullptr);

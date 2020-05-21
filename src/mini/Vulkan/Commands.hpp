@@ -22,7 +22,7 @@ namespace mini::vk
 
     //? DEDICATED STRUCTS
 
-    struct Default_Commands
+    struct Commands
     {
         VkDevice device;
 
@@ -57,7 +57,7 @@ namespace mini::vk
             VK_CHECK(vkAllocateCommandBuffers(device, &allocInfo, cmdBuffers.data));
         }
 
-        ~Default_Commands()
+        ~Commands()
         {
             vkFreeCommandBuffers(device, cmdPool, cmdBuffers.count, cmdBuffers.data);
             vkDestroyCommandPool(device, cmdPool, nullptr);
