@@ -44,13 +44,20 @@ namespace mini::mem
     //!--------------------------------------
 
 
-    constexpr auto ALLOC_COUNT = sizeof(ALLOC_INFOS) / sizeof(ALLOC_INFOS[0]);
-    constexpr auto BLOCK_COUNT = []() constexpr { //total block count
+    constexpr auto ALLOC_COUNT = ARRAY_COUNT(ALLOC_INFOS);
+    constexpr auto BLOCK_COUNT = []() constexpr {
         std::size_t count = 0;
         for(auto i = 0; i < ALLOC_COUNT; ++i) {
             count += ALLOC_INFOS[i].blockCount;
         }
         return count;
+    }();
+    constexpr auto ALLOC_SIZE = []() constexpr { 
+        std::size_t size = 0;
+        for(auto i = 0; i < ALLOC_COUNT; ++i) {
+            size += ALLOC_INFOS[i].blockSize * ALLOC_INFOS[i].blockCount;
+        }
+        return size;
     }();
 
     inline u8* allocPtrs [ALLOC_COUNT];         //index based
@@ -59,18 +66,21 @@ namespace mini::mem
 
     inline void GlobalAllocate()
     {
-        HANDLE heap = GetProcessHeap();
-        for(auto i = 0; i < ALLOC_COUNT; ++i) {
-            allocPtrs[i] = (u8*)HeapAlloc(heap, 0, ALLOC_INFOS[i].blockSize * ALLOC_INFOS[i].blockCount); 
-            LOG("Allocated:", ALLOC_INFOS[i].blockSize * ALLOC_INFOS[i].blockCount, (void*)allocPtrs[i]);
+        auto heapPtr = HeapAlloc(GetProcessHeap(), 0, ALLOC_SIZE);
+
+        allocPtrs[0] = (u8*)heapPtr;
+        LOG("allocation:", ALLOC_INFOS[0].blockSize * ALLOC_INFOS[0].blockCount, (void*)allocPtrs[0]);
+
+        for(auto i = 1; i < ALLOC_COUNT; ++i) {
+            allocPtrs[i] = (u8*)heapPtr + ALLOC_INFOS[i-1].blockSize * ALLOC_INFOS[i-1].blockCount; 
+            LOG("allocation:", ALLOC_INFOS[i].blockSize * ALLOC_INFOS[i].blockCount, (void*)allocPtrs[i]);
         }
     }
 
 
-    inline void GlobalFree()
+    inline void GlobalDeallocate()
     {
-        //todo
-        //HeapFree 
+        HeapFree(GetProcessHeap(), 0, allocPtrs[0]);
     }
 
 

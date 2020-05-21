@@ -20,30 +20,33 @@ int WINAPI wWinMain(
     _In_        PWSTR pCmdLine,
     _In_        int nCmdShow)
 {
-    //? META
-    dbg::Console console {};
-    wnd::Window  window  { hInstance, 800, 600 };
-    mem::GlobalAllocate();
-
-    //? RENDERER
-    auto pRenderer = mem::ClaimBlock<vk::Renderer>(vk::WindowHandle{window.hInstance, window.hWnd});
-
-    //? SCENES
-    auto pSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 2>>();
-    pSceneStack->InitCompleteArray();
-    uint32_t sceneIdx = 0;
-
-    //? PROGRAM LOOP
-    while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
     {
-        wnd::PollEvents();
-        app::dt::CalcDeltaTimeFPS();        
-        pSceneStack[sceneIdx].Update(app::dt::seconds);
-        pRenderer->Render(app::dt::seconds, pSceneStack[sceneIdx]);
+        //? META
+        dbg::Console console {};
+        wnd::Window  window  { hInstance, 800, 600 };
+        mem::GlobalAllocate();
+
+        //? RENDERER
+        auto pRenderer = mem::ClaimBlock<vk::Renderer>(vk::WindowHandle{window.hInstance, window.hWnd});
+
+        //? SCENES
+        auto pSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 2>>();
+        pSceneStack->InitCompleteArray();
+        uint32_t sceneIdx = 0;
+
+        //? PROGRAM LOOP
+        while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
+        {
+            wnd::PollEvents();
+            app::dt::CalcDeltaTimeFPS();        
+            pSceneStack[sceneIdx].Update(app::dt::seconds);
+            pRenderer->Render(app::dt::seconds, pSceneStack[sceneIdx]);
+        }
+        
+        //? THE END
+        VK_CHECK(vkDeviceWaitIdle(pRenderer->context.device));
     }
     
-    //? THE END
-    VK_CHECK(vkDeviceWaitIdle(pRenderer->context.device));
-    mem::GlobalFree();
+    mem::GlobalDeallocate();
 
 }//main end

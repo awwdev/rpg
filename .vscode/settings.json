@@ -236,6 +236,7 @@
         "xhash": "cpp",
         "list": "cpp",
         "unordered_map": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "*.rh": "cpp"
     }
 }
