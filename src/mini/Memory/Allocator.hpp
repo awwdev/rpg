@@ -34,12 +34,13 @@ namespace mini::mem
     };
 
     //!--------------------------------------
-    //define blocks at compile time (size and count) 
-    //KEEP IT SORTED BY SIZE
+    //!define blocks at compile time (size and count) 
+    //!KEEP IT SORTED BY SIZE
     constexpr AllocInfo ALLOC_INFOS[] = {
         {  128, 10 }, //used for strings
         { 1000, 10 },
-        { 3000, 10 } //vk renderer
+        { 3000, 10 }, //vk renderer
+        { 8000, 10 }  //32*32*4 bmp = 4096
     };
     //!--------------------------------------
 
@@ -87,11 +88,11 @@ namespace mini::mem
     template<class T>
     struct BlockPtr
     {
-        T* ptr;
-        std::size_t blockId;
+        T* ptr = nullptr;
+        std::size_t blockId = 0;
 
         T* operator->() { return ptr; }
-        //T& operator* () { return *ptr;}
+        T& operator* () { return *ptr;}
 
         T&       Get()       { return *ptr; }
         const T& Get() const { return *ptr; }
@@ -100,26 +101,39 @@ namespace mini::mem
         auto&       operator[](const std::size_t i)        { return (*ptr)[i]; };
         const auto& operator[](const std::size_t i) const  { return (*ptr)[i]; };
 
-        BlockPtr() = delete;
+        BlockPtr() = default;
         BlockPtr(T* const pPtr, const std::size_t pBlockId)
             : ptr     { pPtr }
             , blockId { pBlockId } 
         {;}
 
         BlockPtr(const BlockPtr&)            = delete;
-        BlockPtr(BlockPtr&&)                 = delete;
-        BlockPtr& operator=(const BlockPtr&) = delete; //probably bad design if needed?
-        BlockPtr& operator=(BlockPtr&&)      = delete;
+        BlockPtr& operator=(const BlockPtr&) = delete;
+
+        BlockPtr(BlockPtr&& other) 
+            : ptr     { other.ptr }
+            , blockId { other.blockId } 
+        { 
+            other.ptr = nullptr;
+        }
+
+        BlockPtr& operator=(BlockPtr&& other)           
+        { 
+            ptr         = other.ptr; 
+            blockId     = other.blockId;
+            other.ptr   = nullptr; 
+            return *this; 
+        }
 
         ~BlockPtr()
         { 
+            if (ptr == nullptr) return;
             ptr->~T();
             blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
         }
     };
 
 
-    //having oop ctor really help here instead of plain c functions
     template<class T, class... CtorArgs>
     auto ClaimBlock(CtorArgs&&... args)
     {
@@ -147,35 +161,27 @@ namespace mini::mem
         constexpr auto blockSize = ALLOC_INFOS[FIT.allocIdx].blockSize;
         auto* ptr     = allocPtrs[FIT.allocIdx] + ((freeBlock - FIT.allocBitBegin) * blockSize);
         auto* aligned = (u8*) (((std::uintptr_t)ptr + (alignof(T) - 1)) & ~(alignof(T) - 1)); //next aligned address
-        auto* obj     = new (aligned) T (std::forward<CtorArgs>(args) ...);
+
+        T* obj = nullptr;
+        if constexpr(std::is_array_v<T>)
+        {
+            obj = new (aligned) T[sizeof(T)];
+        }
+        else 
+        {
+            obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
+        }
 
         return BlockPtr<T> { obj, freeBlock };
+    }
+
+
+    template<class T, class... CtorArgs>
+    void ClaimBlock(BlockPtr<T>& blockPtr, CtorArgs&&... args)
+    {
+        blockPtr = ClaimBlock<T>(args...);
     }
 
 }//ns
 
 //TODO: #6 mem::PrintBlocks()
-
-/*
-//TODO: #7 BlockPtr move needed?
-//BlockPtr(BlockPtr&& other) 
-//    : ptr     { other.ptr }
-//    , blockId { other.blockId } 
-//{ 
-//    other.ptr = nullptr;
-//}
-
-//BlockPtr& operator=(BlockPtr&& other)           
-//{ 
-//    ptr         = other.ptr; 
-//    blockId     = other.blockId;
-//    other.ptr   = nullptr; 
-//    return *this; 
-//}
-
-//if (ptr != nullptr) //if we make memptr non movable we could just drop the if
-//{ 
-    ptr->~T();
-    blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
-//} 
-*/

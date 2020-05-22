@@ -237,6 +237,14 @@
         "list": "cpp",
         "unordered_map": "cpp",
         "variant": "cpp",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "ctime": "cpp",
+        "filesystem": "cpp",
+        "iomanip": "cpp",
+        "locale": "cpp",
+        "xlocbuf": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xloctime": "cpp"
     }
 }

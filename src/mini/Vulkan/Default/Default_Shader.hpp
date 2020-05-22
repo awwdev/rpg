@@ -95,8 +95,8 @@ namespace mini::vk
         {
             device = context.device;
 
-            stages[0].module = CreateShaderModule(device, "res/default.vert.spv");
-            stages[1].module = CreateShaderModule(device, "res/default.frag.spv");
+            stages[0].module = CreateShaderModule(device, "res/Shaders/default.vert.spv");
+            stages[1].module = CreateShaderModule(device, "res/Shaders/default.frag.spv");
 
             const VkSamplerCreateInfo samplerInfo {
                 .sType                  = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,

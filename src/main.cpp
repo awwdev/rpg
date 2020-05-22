@@ -30,7 +30,7 @@ int WINAPI wWinMain(
         auto pRenderer = mem::ClaimBlock<vk::Renderer>(vk::WindowHandle{window.hInstance, window.hWnd});
 
         //? SCENES
-        auto pSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 2>>();
+        auto pSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 1>>();
         pSceneStack->InitCompleteArray();
         uint32_t sceneIdx = 0;
 
