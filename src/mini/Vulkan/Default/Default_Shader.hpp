@@ -32,7 +32,7 @@ namespace mini::vk
 
         const uint32_t size = file.tellg();
         char buffer[10000]; //!be aware of capacity, maybe use allocator to not exhaust stack
-        file.seekg(0);
+        file.seekg(std::ios::beg);
         file.read(buffer, size);
 
         const VkShaderModuleCreateInfo moduleInfo {
