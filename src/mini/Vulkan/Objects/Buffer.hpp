@@ -56,12 +56,13 @@ namespace mini::vk
 
 
         inline void Create(
-            Context& context, 
+            VkDevice pDevice, 
             const VkBufferUsageFlags usage, 
             const std::size_t pSize, 
-            const VkMemoryPropertyFlags memProps)
+            const VkMemoryPropertyFlags memProps,
+            const VkPhysicalDeviceMemoryProperties& physicalMemProps)
         {
-            device = context.device;
+            device = pDevice;
             size   = pSize;
 
             //? BUFFER
@@ -85,12 +86,17 @@ namespace mini::vk
             VkMemoryRequirements memReqs;
             vkGetBufferMemoryRequirements(device, buffer, &memReqs);
             
-            const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(context.physicalMemProps, memReqs, memProps));
-            VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &memory));
+            const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(physicalMemProps, memReqs, memProps));
+            VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &memory)); //todo: allocate once for app and reuse memory pool
             VK_CHECK(vkBindBufferMemory(device, buffer, memory, 0));
 
             //if(memProps & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) return;
             Map();
+        }
+
+        inline void Store(const void* const data, const size_t size, const size_t offset = 0)
+        {
+            std::memcpy((unsigned char*)memPtr + offset, data, size);
         }
 
 

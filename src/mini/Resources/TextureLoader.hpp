@@ -14,6 +14,8 @@ namespace mini::res
     template<u32 WIDTH, u32 HEIGHT, u32 CHANNELS = 4>
     struct Texture
     {
+        static auto constexpr SIZE = WIDTH * HEIGHT * CHANNELS;
+
         char  fileData [WIDTH * HEIGHT * CHANNELS]; 
         char* texPtr = nullptr;
 
