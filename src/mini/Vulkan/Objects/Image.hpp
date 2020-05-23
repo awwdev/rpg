@@ -4,112 +4,35 @@
 
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Resources.hpp"
+#include "mini/Vulkan/Commands.hpp"
+#include "mini/Vulkan/Objects/Buffer.hpp"
+
+#include "mini/Resources/TextureLoader.hpp"
 
 namespace mini::vk
 {
-    inline VkMemoryAllocateInfo CreateAllocInfo(
-        const VkDeviceSize& size,
-        const uint32_t memTypeIndex)
-    {
-        return {
-            .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-            .pNext           = nullptr,
-            .allocationSize  = size,
-            .memoryTypeIndex = memTypeIndex
-        };
-    }
-
-    inline uint32_t GetMemoryType(
-        const VkPhysicalDeviceMemoryProperties& physicalMemProps,
-        const VkMemoryRequirements& memReqs,
-        const VkMemoryPropertyFlags neededMemProps) 
-    {
-        for (uint32_t i = 0; i < physicalMemProps.memoryTypeCount; ++i) {
-            if (memReqs.memoryTypeBits & (1 << i) &&
-                (physicalMemProps.memoryTypes[i].propertyFlags & neededMemProps) == neededMemProps) 
-                return i;
-        }
-        ERR("no suitable memory type found!");
-        return {};
-    }
-
-    inline VkCommandBufferBeginInfo bufferBeginInfo(const VkCommandBufferUsageFlags flags = 0)
-    {
-        return {
-            .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-            .pNext            = nullptr,
-            .flags            = flags,
-            .pInheritanceInfo = nullptr
-        };
-    }
-
-    inline VkCommandBufferAllocateInfo cmdBufferAllocateInfo(
-        VkCommandPool pool,
-        const uint32_t cmdBufferCount)
-    {
-        return {
-            .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .pNext              = nullptr,
-            .commandPool        = pool,
-            .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            .commandBufferCount = cmdBufferCount
-        };
-    }
-
-    inline VkCommandBuffer beginSingleTimeCommands(VkDevice device, VkCommandPool cmdPool)
-    {
-        const auto allocInfo = cmdBufferAllocateInfo(cmdPool, 1);
-        VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
-        const auto beginInfo = bufferBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-        vkBeginCommandBuffer(commandBuffer, &beginInfo);
-        return commandBuffer;
-    }
-
-    inline void endSingleTimeCommands(
-        VkDevice device, 
-        VkCommandBuffer cmdBuffer, 
-        VkCommandPool cmdPool,
-        VkQueue queue)
-    {
-        vkEndCommandBuffer(cmdBuffer);
-
-        const VkSubmitInfo submitInfo = {
-            .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            .pNext                = nullptr,
-            .waitSemaphoreCount   = 0,
-            .pWaitSemaphores      = nullptr,
-            .pWaitDstStageMask    = nullptr,
-            .commandBufferCount   = 1,
-            .pCommandBuffers      = &cmdBuffer,
-            .signalSemaphoreCount = 0,
-            .pSignalSemaphores    = nullptr
-        };
-
-        VK_CHECK(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
-        VK_CHECK(vkQueueWaitIdle(queue));
-        vkFreeCommandBuffers(device, cmdPool, 1, &cmdBuffer);
-    }
-
-
-
-
-
     struct Image
     {
+        //refs
         VkDevice device;
+        VkCommandPool cmdPool;
+        VkQueue queue;
 
+        //data
         VkImage image;
         VkDeviceMemory memory;
         VkImageView view;
         uint32_t width, height;
 
 
-        inline void Create(Context& context, const uint32_t pWidth, const uint32_t pHeight)
+        inline void Create(Context& context, Commands& commands, const uint32_t pWidth, const uint32_t pHeight)
         {
-            device = context.device;
-            width  = pWidth;
-            height = pHeight;
+            device  = context.device;
+            queue   = context.queue;
+            cmdPool = commands.cmdPool;
+
+            width   = pWidth;
+            height  = pHeight;
 
             //? IMAGE
 
@@ -124,7 +47,7 @@ namespace mini::vk
                 .arrayLayers            = 1,
                 .samples                = VK_SAMPLE_COUNT_1_BIT,
                 .tiling                 = VK_IMAGE_TILING_OPTIMAL,
-                .usage                  = VK_IMAGE_USAGE_SAMPLED_BIT, //VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                .usage                  = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                 .sharingMode            = VK_SHARING_MODE_EXCLUSIVE,
                 .queueFamilyIndexCount  = 0,
                 .pQueueFamilyIndices    = 0,
@@ -140,7 +63,7 @@ namespace mini::vk
 
             const VkMemoryPropertyFlags memProps { VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT };
             const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(context.physicalMemProps, memReqs, memProps));
-            VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &memory));
+            VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &memory)); //todo: allocate once for the app and use memory pool
             VK_CHECK(vkBindImageMemory(device, image, memory, 0));
 
             //? VIEW
@@ -169,16 +92,25 @@ namespace mini::vk
                 }
             };
 
-            //VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &view));
-
+            VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &view));
         }
 
 
-        inline void CopyBufferToImage(VkCommandPool& cmdPool, VkQueue& queue, VkBuffer& buffer)
+        template<u32 WIDTH, u32 HEIGHT>
+        inline void Load(mini::res::Texture<WIDTH, HEIGHT>& texture)
         {
-            auto cmdBuffer = beginSingleTimeCommands(device, cmdPool);
+            //? TMP BUFFER
 
-            const VkBufferImageCopy region {
+            Buffer buffer;
+
+
+
+            //? COPY FROM BUFFER
+
+            auto cmdBuffer = BeginSingleTimeCommands(device, cmdPool);
+
+            const VkBufferImageCopy region
+            {
                 .bufferOffset       = 0,
                 .bufferRowLength    = 0,
                 .bufferImageHeight  = 0,
@@ -190,11 +122,11 @@ namespace mini::vk
                     .layerCount     = 1
                 },
                 .imageOffset        = { 0, 0, 0 },
-                .imageExtent        = { width, height, 1 }
+                .imageExtent        = { WIDTH, HEIGHT, 1 }
             };
-
-            vkCmdCopyBufferToImage(cmdBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
-            endSingleTimeCommands(device, cmdBuffer, cmdPool, queue);
+        
+            vkCmdCopyBufferToImage(cmdBuffer, buffer.buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+            EndSingleTimeCommands(device, cmdBuffer, cmdPool, queue);
         }
 
 

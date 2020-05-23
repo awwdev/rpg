@@ -7,7 +7,7 @@
 
 namespace mini::vk
 {
-    inline VkMemoryAllocateInfo CreateAllocateInfo(
+    inline VkMemoryAllocateInfo CreateAllocInfo(
         const VkDeviceSize& size,
         const uint32_t memTypeIndex)
     {
@@ -85,7 +85,7 @@ namespace mini::vk
             VkMemoryRequirements memReqs;
             vkGetBufferMemoryRequirements(device, buffer, &memReqs);
             
-            const auto allocInfo = CreateAllocateInfo(memReqs.size, GetMemoryType(context.physicalMemProps, memReqs, memProps));
+            const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(context.physicalMemProps, memReqs, memProps));
             VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &memory));
             VK_CHECK(vkBindBufferMemory(device, buffer, memory, 0));
 

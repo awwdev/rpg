@@ -10,6 +10,7 @@
 #include "mini/Vulkan/Commands.hpp"
 #include "mini/Vulkan/Synchronization.hpp"
 #include "mini/Vulkan/Objects/Image.hpp"
+#include "mini/Memory/Allocator.hpp"
 
 //strategy: dedicated structs with dtor (almost "static" resources)(watch multiple dtor call)
 
@@ -26,6 +27,7 @@ namespace mini::vk
 
         //other
         Image image_font;
+        mem::BlockPtr<res::Texture<32, 32>> pTexture;
 
 
         explicit Resources(Context& context)
@@ -37,8 +39,11 @@ namespace mini::vk
             commands.Create(context);
             synchronization.Create(context);
 
-            image_font.Create(context, 32, 32);
-
+            //todo: need of resouces manager
+            mem::ClaimBlock(pTexture);
+            res::LoadTexture_BMP("res/Textures/Texture.bmp", pTexture.Get());
+            image_font.Create(context, commands, 32, 32);
+            image_font.Load(pTexture.Get());
         }
     };
 

@@ -1,3 +1,7 @@
+//https://github.com/awwdev
+
+#pragma once
+
 #include "mini/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Debug/Assert.hpp"
