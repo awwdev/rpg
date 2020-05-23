@@ -32,12 +32,7 @@ namespace mini::vk
 
         explicit Resources(Context& context)
         { 
-            default_shader.Create(context);
-            default_renderPass.Create(context);
-            default_pipeline.Create(context, default_shader, default_renderPass);
-            
             commands.Create(context);
-            synchronization.Create(context);
 
             //todo: need of resouces manager
             mem::ClaimBlock(pTexture);
@@ -45,7 +40,15 @@ namespace mini::vk
             image_font.Create(context, commands, 32, 32);
             image_font.Load(pTexture.Get());
 
-            system("pause");
+            default_shader.Create(context, image_font);
+            default_renderPass.Create(context);
+            default_pipeline.Create(context, default_shader, default_renderPass);
+            
+            
+            synchronization.Create(context);
+
+            
+
         }
     };
 
