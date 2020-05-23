@@ -35,8 +35,8 @@ namespace mini::box
 
         //? ACCESS
 
-        auto&        operator[](const u32 i)       { CheckBounds(i, count); return dataPtr[i]; }
-        auto& const  operator[](const u32 i) const { CheckBounds(i, count); return dataPtr[i]; }
+        auto&       operator[](const u32 i)       { CheckBounds(i, count); return dataPtr[i]; }
+        const auto& operator[](const u32 i) const { CheckBounds(i, count); return dataPtr[i]; }
 
         ND u32  Length() const { return count - 1;  } //potential issue when count == 0
         ND u32  Count()  const { return count;      }

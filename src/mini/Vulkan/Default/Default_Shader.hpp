@@ -57,7 +57,6 @@ namespace mini::vk
         
         VkSampler sampler;
 
-
         const VkVertexInputBindingDescription BINDING_DESCS [1] 
         {
             {
@@ -95,8 +94,12 @@ namespace mini::vk
         {
             device = context.device;
 
+            //? SHADER MODULES
+
             stages[0].module = CreateShaderModule(device, "res/Shaders/default.vert.spv");
             stages[1].module = CreateShaderModule(device, "res/Shaders/default.frag.spv");
+
+            //? SAMPLER
 
             const VkSamplerCreateInfo samplerInfo {
                 .sType                  = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,

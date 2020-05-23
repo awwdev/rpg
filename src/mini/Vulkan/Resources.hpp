@@ -9,6 +9,7 @@
 #include "mini/Vulkan/Default/Default_Pipeline.hpp"
 #include "mini/Vulkan/Commands.hpp"
 #include "mini/Vulkan/Synchronization.hpp"
+#include "mini/Vulkan/Objects/Image.hpp"
 
 //strategy: dedicated structs with dtor (almost "static" resources)(watch multiple dtor call)
 
@@ -23,6 +24,9 @@ namespace mini::vk
         Commands            commands;
         Synchronization     synchronization;
 
+        //other
+        Image image_font;
+
 
         explicit Resources(Context& context)
         { 
@@ -32,6 +36,8 @@ namespace mini::vk
             
             commands.Create(context);
             synchronization.Create(context);
+
+            image_font.Create(context, 32, 32);
 
         }
     };
