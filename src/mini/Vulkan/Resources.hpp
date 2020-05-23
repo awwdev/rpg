@@ -44,6 +44,8 @@ namespace mini::vk
             res::LoadTexture_BMP("res/Textures/Texture.bmp", pTexture.Get());
             image_font.Create(context, commands, 32, 32);
             image_font.Load(pTexture.Get());
+
+            system("pause");
         }
     };
 

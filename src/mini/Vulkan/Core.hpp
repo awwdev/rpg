@@ -38,3 +38,21 @@ namespace mini::vk
         const T& operator[](const uint32_t i) const { return data[i]; }
     };
 }
+
+
+
+/*
+use this to give a resource a name to view in renderdoc
+
+const VkDebugUtilsObjectNameInfoEXT nameInfo
+{
+    .sType          = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+    .pNext          = nullptr,
+    .objectType     = VK_OBJECT_TYPE_IMAGE,
+    .objectHandle   = (uint64_t)image_font.image,
+    .pObjectName    = "font image"
+};
+((PFN_vkSetDebugUtilsObjectNameEXT) vkGetInstanceProcAddr(context.instance, "vkSetDebugUtilsObjectNameEXT"))
+(context.device, &nameInfo);
+
+*/

@@ -14,4 +14,4 @@
  /Fd: build_debug\ ^
  src\*.cpp ^
  user32.lib ^
- third\libs\vulkan-1.lib
+ third\libs\vulkan-1.lib ^
