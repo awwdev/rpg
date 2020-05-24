@@ -25,8 +25,11 @@ namespace mini::res
 
 
     template<u32 WIDTH, u32 HEIGHT>
-    inline auto LoadTexture_BMP(chars_t path, Texture<WIDTH, HEIGHT>& texture)
+    inline auto LoadTexture_BMP(chars_t path, mem::BlockPtr<Texture<WIDTH, HEIGHT>>& blockPtr)
     {
+        mem::ClaimBlock(blockPtr);
+        auto& texture = *blockPtr;
+
         std::ifstream file(path, std::ios::ate | std::ios::binary);
         mini::Assert(file.is_open(), "cannot open file");
 

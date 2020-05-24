@@ -149,8 +149,8 @@ namespace mini::vk
                 .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
                 .pNext                  = nullptr,
                 .flags                  = 0,
-                .setLayoutCount         = 0,        //!add uniform data
-                .pSetLayouts            = nullptr,
+                .setLayoutCount         = shader.layouts.count,
+                .pSetLayouts            = shader.layouts.data,
                 .pushConstantRangeCount = 1,
                 .pPushConstantRanges    = &constantRange,
             };

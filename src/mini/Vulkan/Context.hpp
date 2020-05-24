@@ -64,7 +64,7 @@ namespace mini::vk
 
         //? CTOR
 
-        explicit Context(const WindowHandle& wndHandle)
+        inline void Create(const WindowHandle& wndHandle)
         {
             CreateInstance();
             CreatePhysical();
@@ -103,6 +103,7 @@ namespace mini::vk
                 .pNext                  = nullptr,
                 .flags                  = 0,
                 .messageSeverity        = 
+                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
                     VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
                     VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
                     VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,

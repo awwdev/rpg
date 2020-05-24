@@ -9,6 +9,7 @@
 #include "app/DeltaTime.hpp"
 
 #include "mini/Vulkan/Renderer.hpp"
+#include "mini/Resources/ResourceManager.hpp"
 
 using namespace mini;
 using namespace mini::wnd;
@@ -25,9 +26,13 @@ int WINAPI wWinMain(
         dbg::Console console {};
         wnd::Window  window  { hInstance, 800, 600 };
         mem::GlobalAllocate();
+        res::ResourceManager resourceManager;
 
         //? RENDERER
-        auto pRenderer = mem::ClaimBlock<vk::Renderer>(vk::WindowHandle{window.hInstance, window.hWnd});
+        auto pRenderer = mem::ClaimBlock<vk::Renderer>(
+            vk::WindowHandle{window.hInstance, window.hWnd},
+            resourceManager
+        );
 
         //? SCENES
         auto pSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 1>>();
@@ -45,13 +50,8 @@ int WINAPI wWinMain(
         
         //? THE END
         VK_CHECK(vkDeviceWaitIdle(pRenderer->context.device));
-    }//end scope calls (block) dtors and then dealloc 
+    }
     
     mem::GlobalDeallocate();
 
 }//main end
-
-//font rendering -> texture rendering
-//sampler, shader descriptors (texture input), shader tex glsl, pipeline layout -> test texture rendering
-//image loading (bmp) -> image view, vkimage object
-//font png monospace (2d array mapping of texture) -> atlasing (so we can use this in a general case)
