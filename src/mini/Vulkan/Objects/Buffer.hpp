@@ -3,7 +3,6 @@
 #pragma once
 
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Resources.hpp"
 
 namespace mini::vk
 {

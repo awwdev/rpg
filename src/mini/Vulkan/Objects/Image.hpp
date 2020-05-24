@@ -3,7 +3,6 @@
 #pragma once
 
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Resources.hpp"
 #include "mini/Vulkan/Commands.hpp"
 #include "mini/Vulkan/Objects/Buffer.hpp"
 
@@ -82,7 +81,7 @@ namespace mini::vk
         //refs
         VkDevice device;
         VkPhysicalDeviceMemoryProperties physicalMemProps; //meh
-        VkCommandPool cmdPool;
+        //VkCommandPool cmdPool;
         VkQueue queue;
 
         //data
@@ -95,12 +94,12 @@ namespace mini::vk
 
         inline void Create(
             Context& pContext, 
-            Commands& commands, 
+            //Commands& commands, 
             const uint32_t pWidth, const uint32_t pHeight)
         {
             device  = pContext.device;
             queue   = pContext.queue;
-            cmdPool = commands.cmdPool;
+            //cmdPool = commands.cmdPool;
             physicalMemProps = pContext.physicalMemProps;
 
             width   = pWidth;
@@ -169,7 +168,7 @@ namespace mini::vk
 
 
         template<u32 WIDTH, u32 HEIGHT>
-        inline void Load(mini::res::Texture<WIDTH, HEIGHT>& texture)
+        inline void Load(mini::res::Texture<WIDTH, HEIGHT>& texture, VkCommandPool cmdPool)
         {
             //? TMP BUFFER
 

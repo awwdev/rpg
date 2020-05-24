@@ -3,7 +3,7 @@
 #pragma once
 
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Resources.hpp"
+#include "mini/Vulkan/Resources/Resources.hpp"
 #include "mini/Window/AppEvents.hpp"
 #include "mini/Resources/ResourceManager.hpp"
 
@@ -17,6 +17,7 @@ namespace mini::vk
     {
         Context context;
         Resources resources;
+        
         uint32_t currentFrame;
         const VkPipelineStageFlags waitStages;
 

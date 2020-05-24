@@ -14,11 +14,6 @@ namespace mini::res
         {
             res::LoadTexture_BMP("res/Textures/Texture.bmp", pTexture);
         }
-
-        ~Textures()
-        {
-
-        }
     };
 
 
@@ -28,15 +23,9 @@ namespace mini::res
     {
         Textures textures;
 
-
         ResourceManager()
         {
             textures.Load();
-        }
-
-        inline void LoadTextures()
-        {
-
         }
     };
 

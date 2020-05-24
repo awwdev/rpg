@@ -4,7 +4,7 @@
 #include "mini/Debug/Assert.hpp"
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Objects/Image.hpp"
+#include "mini/Vulkan/Resources/Images.hpp"
 
 #include <fstream>
 
@@ -96,9 +96,10 @@ namespace mini::vk
 
 
 
-        inline void Create(Context& context, Image& image)
+        inline void Create(Context& context, mini::vk::Images& images)
         {
             device = context.device;
+            auto& image = images.image_font;
 
             //? SHADER MODULES
 

@@ -83,7 +83,8 @@ namespace mini::vk
 
             //? CMD POOL
 
-            const VkCommandPoolCreateInfo poolInfo{
+            const VkCommandPoolCreateInfo poolInfo
+            {
                 .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
                 .pNext = nullptr,
                 .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
@@ -94,7 +95,8 @@ namespace mini::vk
             //? CMD BUFFERS
 
             cmdBuffers.count = context.swapImages.count;
-            const VkCommandBufferAllocateInfo allocInfo{
+            const VkCommandBufferAllocateInfo allocInfo
+            {
              .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
              .pNext              = nullptr,
              .commandPool        = cmdPool,

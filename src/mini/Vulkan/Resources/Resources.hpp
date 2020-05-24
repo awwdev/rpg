@@ -20,27 +20,30 @@ namespace mini::vk
 {
     struct Resources
     {
+        //? meta
+        Commands            commands;
+        Synchronization     synchronization;
+
+        //? pipeline objects
         Default_Shader      default_shader;
         Default_RenderPass  default_renderPass;
         Default_Pipeline    default_pipeline;
 
-        Commands            commands;
-        Synchronization     synchronization;
-
-        //other
-        Image image_font;
-        mem::BlockPtr<res::Texture<32, 32>> pTexture;
-
+        //? resource objects
+        Images images;
+        
 
         inline void Create(Context& context, res::ResourceManager& resManager)
         { 
+            //? meta
             commands.Create(context);
             synchronization.Create(context);
 
-            image_font.Create(context, commands, 32, 32);
-            image_font.Load(resManager.textures.pTexture.Get());
+            //? resource objects
+            images.Load(context, resManager, commands.cmdPool);
 
-            default_shader.Create(context, image_font);
+            //? pipeline objects
+            default_shader.Create(context, images);
             default_renderPass.Create(context);
             default_pipeline.Create(context, default_shader, default_renderPass);
         }
