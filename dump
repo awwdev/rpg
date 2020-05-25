@@ -1,0 +1,68 @@
+/*
+//stutters under workload but better fps since cpu does not stall 
+
+inline int acquired = 0;
+inline int semaphoreImgMapping[3] = {-1, -1, -1}; //triple buffering
+
+
+inline void Render2(Context& context, Resources& resources, const double dt)
+    {
+        auto& synchronization = resources.default_synchronization;
+
+        //for (auto i = acquired; i < maxImgs - 1; ++i)
+        if (acquired < context.swapImages.count - 1)
+        {
+            uint32_t imageIndex = 0;
+            const auto freeSemaphore = synchronization.semaphores_acquire.Get(); //this does not flag the semaphore as used!
+
+            const auto res = vkAcquireNextImageKHR(
+                context.device, 
+                context.swapchain, 
+                0, 
+                synchronization.semaphores_acquire[freeSemaphore], 
+                VK_NULL_HANDLE, 
+                &imageIndex
+            );
+
+            if (res == VK_SUCCESS)
+            {
+                ++acquired;
+                synchronization.semaphores_acquire.Set<true>(freeSemaphore); //now flag it as used
+                semaphoreImgMapping[imageIndex] = freeSemaphore;
+
+                //LOG_VAR(freeSemaphore);
+                //LOG_VAR(imageIndex);
+            }
+            else 
+            {
+                //!bad surface check (on resize)
+                WARN("vkAcquireNextImageKHR", "no success");
+            }
+        }
+
+        for(uint32_t i=0; i<ARRAY_COUNT(semaphoreImgMapping); ++i)
+        {
+            if (semaphoreImgMapping[i] == -1)
+                continue;
+
+            if(vkWaitForFences(context.device, 1, &synchronization.fences_submit[i], VK_FALSE, 0) != VK_SUCCESS)
+                continue;
+            
+            VK_CHECK(vkResetFences(context.device, 1, &synchronization.fences_submit[i]));
+            const auto semaIdx = semaphoreImgMapping[i];
+            semaphoreImgMapping[i] = -1;
+            synchronization.semaphores_acquire.Set<false>(semaIdx);
+            --acquired;
+
+            //!RECORD COMMANDS----------
+            RecordCommands(context, resources, i, dt);
+            //!-------------------------
+
+            const auto submitInfo = SubmitInfo(synchronization.semaphores_acquire[semaIdx], synchronization.semaphores_render[semaIdx], resources.default_commands.cmdBuffers[i]);
+            VK_CHECK(vkQueueSubmit(context.queue, 1, &submitInfo, synchronization.fences_submit[i]));
+
+            const auto presentInfo = PresentInfo(synchronization.semaphores_render[semaIdx], context.swapchain, i);
+            VK_CHECK(vkQueuePresentKHR(context.queue, &presentInfo));
+        }
+    }
+*/

@@ -4,64 +4,20 @@
 #include "mini/Debug/Assert.hpp"
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
+#include "mini/Vulkan/Ctors.hpp"
 #include "mini/Vulkan/Resources/Images.hpp"
-
-#include <fstream>
 
 
 namespace mini::vk
 {
-    //? HELPER
-
-    inline VkPipelineShaderStageCreateInfo CreateStageInfo (const VkShaderStageFlagBits stage)
-    {
-        return {
-            .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-            .pNext  = nullptr,
-            .flags  = 0,
-            .stage  = stage,
-            .module = nullptr, //filled in by CreateShaderModule()
-            .pName  = "main",
-            .pSpecializationInfo = nullptr 
-        };
-    }
-
-    inline VkShaderModule CreateShaderModule(VkDevice device, chars_t path)
-    {
-        std::ifstream file(path, std::ios::ate | std::ios::binary);
-        mini::Assert(file.is_open(), "cannot open shader file");
-
-        const uint32_t size = file.tellg();
-        char buffer[10000]; //!be aware of capacity, maybe use allocator to not exhaust stack
-        file.seekg(std::ios::beg);
-        file.read(buffer, size);
-
-        const VkShaderModuleCreateInfo moduleInfo {
-            .sType      = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-            .pNext      = nullptr,
-            .flags      = 0,
-            .codeSize   = size,
-            .pCode      = reinterpret_cast<const uint32_t*>(buffer)
-        };
-
-        VkShaderModule mod;
-        VK_CHECK(vkCreateShaderModule(device, &moduleInfo, nullptr, &mod));
-        return mod;
-    }
-
-
-    //? DEDICATED STRUCTS
-
     struct Default_Shader
     {
-        VkDevice device; //needed for dtor
+        VkDevice device;
         
         VkSampler sampler;
-
         VkDescriptorPool descPool;
-        VkArray<VkDescriptorSetLayout, 4> layouts { {}, 0 };
-        VkArray<VkDescriptorSet, 4>       sets { {}, 0 };
-
+        VkArray<VkDescriptorSetLayout, 4> layouts { 0 };
+        VkArray<VkDescriptorSet, 4>       sets { 0 };
 
         const VkVertexInputBindingDescription BINDING_DESCS [1] 
         {
@@ -90,8 +46,8 @@ namespace mini::vk
 
         VkPipelineShaderStageCreateInfo stages [2] //module will be filled in (ctor)
         {
-            CreateStageInfo(VK_SHADER_STAGE_VERTEX_BIT),
-            CreateStageInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
+            PipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
+            PipelineShaderStageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
         };
 
 
@@ -166,7 +122,6 @@ namespace mini::vk
                 };
             }
 
-
             const VkDescriptorPoolCreateInfo poolInfo
              {
                 .sType          = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
@@ -191,7 +146,7 @@ namespace mini::vk
             VK_CHECK(vkAllocateDescriptorSets(device, &allocInfo, sets.data));
 
 
-            VkArray<VkWriteDescriptorSet, 4> writes { {}, 0};
+            VkArray<VkWriteDescriptorSet, 4> writes { 0 };
             writes.count = context.swapImages.count;
 
             const VkDescriptorImageInfo imageInfo {

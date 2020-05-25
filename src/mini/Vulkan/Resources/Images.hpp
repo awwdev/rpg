@@ -11,13 +11,33 @@ namespace mini::vk
 {
     struct Images
     {
+        VkDevice device;
+        VkCommandPool cmdPool;
+
         Image image_font;
 
-        //from ram to vram
-        inline void Load(Context& context, res::ResourceManager& resManager, VkCommandPool cmdPool)
+
+        inline void Load(Context& context, res::ResourceManager& resManager)
         {
+            device = context.device;
+
+            const VkCommandPoolCreateInfo poolInfo
+            {
+                .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+                .pNext = nullptr,
+                .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+                .queueFamilyIndex = context.queueIndex
+            };
+            VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &cmdPool));
+
+
             image_font.Create(context, 32, 32);
             image_font.Load(resManager.textures.pTexture.Get(), cmdPool);
+        }
+
+        ~Images()
+        {
+            vkDestroyCommandPool(device, cmdPool, nullptr);
         }
     };
 

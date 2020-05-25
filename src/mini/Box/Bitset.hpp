@@ -10,7 +10,7 @@
 */
 
 #pragma once
-#include "mini/Types.hpp"
+#include "mini/Utils/Types.hpp"
 #include "mini/Debug/Assert.hpp"
 
 

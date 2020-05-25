@@ -2,7 +2,6 @@
 
 #pragma once
 #include "mini/Vulkan/Core.hpp"
-#include "mini/Utils.hpp"
 
 
 namespace mini::vk
@@ -58,8 +57,8 @@ namespace mini::vk
         
         
         VkSwapchainKHR swapchain;
-        VkArray<VkImage, 4> swapImages; //use this to retrieve "swapchain count"
-        VkArray<VkImageView, 4> swapImageViews;
+        VkArray<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
+        VkArray<VkImageView, 4> swapImageViews { 0 };
 
 
         //? CTOR
@@ -144,11 +143,11 @@ namespace mini::vk
 
         inline void CreatePhysical()
         {
-            VkArray<VkPhysicalDevice, 4> physicals;
+            VkArray<VkPhysicalDevice, 4> physicals { 4 };
             VK_CHECK(vkEnumeratePhysicalDevices(instance, &physicals.count, physicals.data));
             physical = physicals[0];
 
-            VkArray<VkQueueFamilyProperties, 10> famProps;
+            VkArray<VkQueueFamilyProperties, 10> famProps { 10 };
             vkGetPhysicalDeviceQueueFamilyProperties(physical, &famProps.count, famProps.data);
 
             for (uint32_t i = 0; i < famProps.count; ++i) {

@@ -4,12 +4,12 @@
 #include "mini/Debug/Console.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/Memory/Allocator.hpp"
-
-#include "app/Scene/Scene.hpp"
-#include "app/DeltaTime.hpp"
-
 #include "mini/Vulkan/Renderer.hpp"
+
+#include "mini/Scene/Scene.hpp"
+#include "mini/Utils/DeltaTime.hpp"
 #include "mini/Resources/ResourceManager.hpp"
+
 
 using namespace mini;
 using namespace mini::wnd;
@@ -26,17 +26,17 @@ int WINAPI wWinMain(
         dbg::Console console {};
         wnd::Window  window  { hInstance, 800, 600 };
         mem::GlobalAllocate();
-        res::ResourceManager resourceManager;
+        res::ResourceManager resourceManager {}; //will load immediately for now
 
         //? RENDERER
-        auto pRenderer = mem::ClaimBlock<vk::Renderer>(
+        auto ptrRenderer = mem::ClaimBlock<vk::Renderer>(
             vk::WindowHandle{window.hInstance, window.hWnd},
             resourceManager
         );
 
         //? SCENES
-        auto pSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 1>>();
-        pSceneStack->InitCompleteArray();
+        auto ptrSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 1>>();
+        ptrSceneStack->InitCompleteArray();
         uint32_t sceneIdx = 0;
 
         //? PROGRAM LOOP
@@ -44,14 +44,15 @@ int WINAPI wWinMain(
         {
             wnd::PollEvents();
             app::dt::CalcDeltaTimeFPS();        
-            pSceneStack[sceneIdx].Update(app::dt::seconds);
-            pRenderer->Render(app::dt::seconds, pSceneStack[sceneIdx]);
+            ptrSceneStack[sceneIdx].Update(app::dt::seconds);
+            ptrRenderer->Render(app::dt::seconds, ptrSceneStack[sceneIdx]);
         }
         
         //? THE END
-        VK_CHECK(vkDeviceWaitIdle(pRenderer->context.device));
+        VK_CHECK(vkDeviceWaitIdle(ptrRenderer->context.device));
     }
     
     mem::GlobalDeallocate();
+    //system("pause");
 
 }//main end

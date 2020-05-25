@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "mini/Types.hpp"
+#include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Debug/Assert.hpp"
 #include "mini/Memory/Allocator.hpp"

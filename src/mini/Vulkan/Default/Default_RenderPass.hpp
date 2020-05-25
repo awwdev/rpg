@@ -14,7 +14,7 @@ namespace mini::vk
         VkDevice device;
 
         VkRenderPass renderPass;
-        VkArray<VkFramebuffer, 4> framebuffers { {}, 0 }; //capacity based, real count known won swapchain creation
+        VkArray<VkFramebuffer, 4> framebuffers { 0 }; //capacity based, real count known won swapchain creation
 
         const VkSampleCountFlagBits SAMPLE_COUNT = VK_SAMPLE_COUNT_1_BIT;
         const VkFormat COLOR_FORMAT = VK_FORMAT_B8G8R8A8_UNORM;

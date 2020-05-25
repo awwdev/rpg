@@ -15,10 +15,10 @@ namespace mini::vk
         VkDevice device;
 
         //triple buffering
-        mini::vk::VkArray<VkSemaphore, 3> imageAcquired; 
-        mini::vk::VkArray<VkSemaphore, 3> imageFinished; 
-        mini::vk::VkArray<VkFence, 3>     inFlight { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE};
-        mini::vk::VkArray<VkFence, 3>     fences; 
+        mini::vk::VkArray<VkSemaphore, 3> imageAcquired { 0 }; 
+        mini::vk::VkArray<VkSemaphore, 3> imageFinished { 0 }; 
+        mini::vk::VkArray<VkFence, 3>     inFlight      { 0 };
+        mini::vk::VkArray<VkFence, 3>     fences        { 0 }; 
 
 
         inline void Create(Context& context)
@@ -28,6 +28,9 @@ namespace mini::vk
             imageAcquired.count  = context.swapImages.count;
             imageFinished.count  = context.swapImages.count;
             fences.count         = context.swapImages.count;
+
+            FOR_VK_ARRAY(inFlight, i)
+                inFlight[i] = VK_NULL_HANDLE;
 
             const VkSemaphoreCreateInfo semaInfo  
             { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO , nullptr , 0 };

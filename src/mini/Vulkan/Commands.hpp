@@ -3,78 +3,17 @@
 #pragma once
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
+#include "mini/Vulkan/Ctors.hpp"
 
 
 namespace mini::vk
 {
-    //? HELPER
-
-    inline VkCommandBufferBeginInfo CreateCmdBeginInfo(const VkCommandBufferUsageFlags flags = 0)
-    {
-        return {
-            .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-            .pNext            = nullptr,
-            .flags            = flags,
-            .pInheritanceInfo = nullptr
-        };
-    }
-
-
-    inline VkCommandBuffer BeginCommands_OneTime(VkDevice device, VkCommandPool cmdPool)
-    {
-        VkCommandBuffer commandBuffer;
-
-        const VkCommandBufferAllocateInfo allocInfo 
-        {
-            .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .pNext              = nullptr,
-            .commandPool        = cmdPool,
-            .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            .commandBufferCount = 1
-        };
-        VK_CHECK(vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer));
-
-        const auto beginInfo = CreateCmdBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-        VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
-        
-        return commandBuffer;
-    }
-
-
-    inline void EndCommands_OneTime(
-        VkDevice device, 
-        VkCommandBuffer cmdBuffer, 
-        VkCommandPool cmdPool,
-        VkQueue queue)
-    {
-        VK_CHECK(vkEndCommandBuffer(cmdBuffer));
-
-        const VkSubmitInfo submitInfo = {
-            .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            .pNext                = nullptr,
-            .waitSemaphoreCount   = 0,
-            .pWaitSemaphores      = nullptr,
-            .pWaitDstStageMask    = nullptr,
-            .commandBufferCount   = 1,
-            .pCommandBuffers      = &cmdBuffer,
-            .signalSemaphoreCount = 0,
-            .pSignalSemaphores    = nullptr
-        };
-
-        VK_CHECK(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
-        VK_CHECK(vkQueueWaitIdle(queue));
-        vkFreeCommandBuffers(device, cmdPool, 1, &cmdBuffer);
-    }
-    
-
-    //? DEDICATED STRUCTS
-
     struct Commands
     {
         VkDevice device;
 
         VkCommandPool cmdPool;
-        VkArray<VkCommandBuffer, 4> cmdBuffers { {}, 0 }; //capacity based
+        VkArray<VkCommandBuffer, 4> cmdBuffers { 0 };
 
 
         inline void Create(Context& context)

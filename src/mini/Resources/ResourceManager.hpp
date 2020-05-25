@@ -1,6 +1,6 @@
 #pragma once
-#include "mini/Resources/TextureLoader.hpp"
 #include "mini/Memory/Allocator.hpp"
+#include "mini/Resources/TextureLoader.hpp"
 
 namespace mini::res
 {

@@ -15,7 +15,7 @@
 */
 
 #pragma once
-#include "mini/Types.hpp"
+#include "mini/Utils/Types.hpp"
 #include "mini/Box/Bitset.hpp"
 #include "mini/Debug/Logger.hpp"
 
@@ -37,10 +37,11 @@ namespace mini::mem
     //!define blocks at compile time (size and count) 
     //!KEEP IT SORTED BY SIZE
     constexpr AllocInfo ALLOC_INFOS[] = {
-        {  128, 10 }, //used for strings
+        {  128, 10 },  //used for strings
         { 1000, 10 },
-        { 3000, 10 }, //vk renderer
-        { 8000, 10 }  //32*32*4 bmp = 4096
+        { 3000, 10 },  //vk renderer
+        { 8000, 10 },  //32*32*4 bmp = 4096
+        { 10001, 10 }  //shader file buffer
     };
     //!--------------------------------------
 

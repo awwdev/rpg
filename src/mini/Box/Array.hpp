@@ -17,7 +17,7 @@
 */
 
 #pragma once
-#include "mini/Types.hpp"
+#include "mini/Utils/Types.hpp"
 #include "mini/Debug/Assert.hpp"
 #include "mini/Debug/Logger.hpp"
 
@@ -60,6 +60,8 @@ namespace mini::box
         ND IDX_T    Count() const { return count; }
         ND bool     Empty() const { return count == 0; }
         ND bool     Full()  const { return count == COUNT_MAX; }
+        ND T*       Data()        { return dataPtr; }
+        ND const T* Data()  const { return dataPtr; }
 
         void Clear() { while (count > 0) dataPtr[--count].~T(); }
 
@@ -190,10 +192,11 @@ namespace mini::box
         }
 
 
-    protected:
+    //protected:
         T* const dataPtr;
         IDX_T    count;
-
+        
+    protected:
         IArray(T* const data, const IDX_T pCount, const IDX_T countMax, const std::size_t byteSize)
             : dataPtr   { data }
             , count     { pCount }

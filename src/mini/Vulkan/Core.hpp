@@ -3,7 +3,7 @@
 #pragma once
 #pragma warning(disable : 26812) //unscoped vk enum
 
-#include "mini/Types.hpp"
+#include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Debug/Assert.hpp"
 
@@ -31,8 +31,10 @@ namespace mini::vk
     template<class T, uint32_t N>
     struct VkArray
     {
+        explicit VkArray(const uint32_t pCount) : count { pCount } { ; }
+
+        uint32_t count;
         T data[N];
-        uint32_t count = N;
 
         T&       operator[](const uint32_t i)       { return data[i]; }
         const T& operator[](const uint32_t i) const { return data[i]; }
