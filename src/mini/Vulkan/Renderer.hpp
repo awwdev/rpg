@@ -113,7 +113,7 @@ namespace mini::vk
             float values = std::sinf(counter) * 0.5f;
             vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float), &values);
             vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, resources.default_shader.sets.data, 0, 0);
-            for(auto i=0; i<100; ++i) vkCmdDraw(cmdBuffer, 3, 1, 0, 0); //!stress test (increase max)
+            for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, 6, 1, 0, 0); //!stress test (increase max)
             vkCmdEndRenderPass(cmdBuffer);
 
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));

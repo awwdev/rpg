@@ -19,7 +19,7 @@ namespace mini::vk
         VkImageLayout newLayout,
         VkImage image)
     {
-        auto cmdBuffer = BeginSingleTimeCommands(device, cmdPool);
+        auto cmdBuffer = BeginCommands_OneTime(device, cmdPool);
 
         //const auto [srcAccess, dstAccess, srcStage, dstStage] = 
         //[&]() -> std::tuple<VkAccessFlags, VkAccessFlags, VkPipelineStageFlags, VkPipelineStageFlags> { 
@@ -38,7 +38,8 @@ namespace mini::vk
         //    return {};
         //}();
 
-        const VkImageMemoryBarrier barrier{
+        const VkImageMemoryBarrier barrier
+        {
             .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
             .pNext               = nullptr,
             .srcAccessMask       = VK_ACCESS_TRANSFER_WRITE_BIT,//srcAccess,
@@ -58,7 +59,7 @@ namespace mini::vk
             }
         };
 
-        //img.layout = newLayout;
+        //image.layout = newLayout;
 
         vkCmdPipelineBarrier(
             cmdBuffer,
@@ -70,7 +71,7 @@ namespace mini::vk
             1, &barrier
         );
 
-        EndSingleTimeCommands(device, cmdBuffer, cmdPool, queue);
+        EndCommands_OneTime(device, cmdBuffer, cmdPool, queue);
     }
 
 
@@ -81,7 +82,6 @@ namespace mini::vk
         //refs
         VkDevice device;
         VkPhysicalDeviceMemoryProperties physicalMemProps; //meh
-        //VkCommandPool cmdPool;
         VkQueue queue;
 
         //data
@@ -92,14 +92,10 @@ namespace mini::vk
         VkImageLayout layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 
-        inline void Create(
-            Context& pContext, 
-            //Commands& commands, 
-            const uint32_t pWidth, const uint32_t pHeight)
+        inline void Create(Context& pContext, const uint32_t pWidth, const uint32_t pHeight)
         {
             device  = pContext.device;
             queue   = pContext.queue;
-            //cmdPool = commands.cmdPool;
             physicalMemProps = pContext.physicalMemProps;
 
             width   = pWidth;
@@ -107,7 +103,8 @@ namespace mini::vk
 
             //? IMAGE
 
-            const VkImageCreateInfo imageInfo {
+            const VkImageCreateInfo imageInfo
+            {
                 .sType                  = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
                 .pNext                  = nullptr,
                 .flags                  = 0,
@@ -139,7 +136,8 @@ namespace mini::vk
 
             //? VIEW
 
-            const VkImageViewCreateInfo viewInfo {
+            const VkImageViewCreateInfo viewInfo 
+            {
                 .sType              = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
                 .pNext              = nullptr,
                 .flags              = 0, 
@@ -170,6 +168,8 @@ namespace mini::vk
         template<u32 WIDTH, u32 HEIGHT>
         inline void Load(mini::res::Texture<WIDTH, HEIGHT>& texture, VkCommandPool cmdPool)
         {
+            TransitionImageLayout(device, cmdPool, queue, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, image);
+
             //? TMP BUFFER
 
             Buffer buffer;
@@ -182,11 +182,10 @@ namespace mini::vk
             );
             buffer.Store(texture.texPtr, texture.SIZE);
             
-            TransitionImageLayout(device, cmdPool, queue, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, image);
             
             //? COPY FROM BUFFER
 
-            auto cmdBuffer = BeginSingleTimeCommands(device, cmdPool);
+            auto cmdBuffer = BeginCommands_OneTime(device, cmdPool);
 
             const VkBufferImageCopy region
             {
@@ -205,7 +204,7 @@ namespace mini::vk
             };
 
             vkCmdCopyBufferToImage(cmdBuffer, buffer.buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
-            EndSingleTimeCommands(device, cmdBuffer, cmdPool, queue);
+            EndCommands_OneTime(device, cmdBuffer, cmdPool, queue);
 
             TransitionImageLayout(device, cmdPool, queue, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, image);
         }

@@ -1,6 +1,8 @@
 @echo off ^
  & mkdir build_debug ^
  & mkdir build_debug\objs ^
+ & mkdir build_debug\res ^
+ & xcopy /s /y /d res\* build_debug\res\* ^
  & call G:\DEV2020\buildtools\msvc\VC\Auxiliary\Build\vcvars64.bat ^
  & cl ^
  /std:c++latest ^

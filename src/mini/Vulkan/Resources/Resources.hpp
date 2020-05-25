@@ -14,7 +14,6 @@
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/ResourceManager.hpp"
 
-//strategy: dedicated structs with dtor (almost "static" resources)(watch multiple dtor call)
 
 namespace mini::vk
 {
@@ -32,7 +31,7 @@ namespace mini::vk
         //? resource objects
         Images images;
         
-
+        //assumption: resource manager has loaded beforehand
         inline void Create(Context& context, res::ResourceManager& resManager)
         { 
             //? meta

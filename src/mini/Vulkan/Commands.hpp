@@ -20,7 +20,7 @@ namespace mini::vk
     }
 
 
-    inline VkCommandBuffer BeginSingleTimeCommands(VkDevice device, VkCommandPool cmdPool)
+    inline VkCommandBuffer BeginCommands_OneTime(VkDevice device, VkCommandPool cmdPool)
     {
         VkCommandBuffer commandBuffer;
 
@@ -41,7 +41,7 @@ namespace mini::vk
     }
 
 
-    inline void EndSingleTimeCommands(
+    inline void EndCommands_OneTime(
         VkDevice device, 
         VkCommandBuffer cmdBuffer, 
         VkCommandPool cmdPool,

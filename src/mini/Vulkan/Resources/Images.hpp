@@ -13,6 +13,7 @@ namespace mini::vk
     {
         Image image_font;
 
+        //from ram to vram
         inline void Load(Context& context, res::ResourceManager& resManager, VkCommandPool cmdPool)
         {
             image_font.Create(context, 32, 32);
