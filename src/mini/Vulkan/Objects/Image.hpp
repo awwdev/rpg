@@ -101,6 +101,8 @@ namespace mini::vk
             width   = pWidth;
             height  = pHeight;
 
+            const auto FORMAT = VK_FORMAT_R8G8B8A8_SRGB;
+
             //? IMAGE
 
             const VkImageCreateInfo imageInfo
@@ -109,7 +111,7 @@ namespace mini::vk
                 .pNext                  = nullptr,
                 .flags                  = 0,
                 .imageType              = VK_IMAGE_TYPE_2D,
-                .format                 = VK_FORMAT_R8G8B8A8_SRGB,
+                .format                 = FORMAT,
                 .extent                 = VkExtent3D { width, height, 1 },
                 .mipLevels              = 1,
                 .arrayLayers            = 1,
@@ -143,12 +145,13 @@ namespace mini::vk
                 .flags              = 0, 
                 .image              = image, 
                 .viewType           = VK_IMAGE_VIEW_TYPE_2D, 
-                .format             = VK_FORMAT_R8G8B8A8_SRGB,
+                .format             = FORMAT,
                 .components         = 
                 {
-                    .r = VK_COMPONENT_SWIZZLE_R,
+                    //note: bmp is bgra (gimp) and not rgba
+                    .r = VK_COMPONENT_SWIZZLE_B,//VK_COMPONENT_SWIZZLE_R,
                     .g = VK_COMPONENT_SWIZZLE_G,
-                    .b = VK_COMPONENT_SWIZZLE_B,
+                    .b = VK_COMPONENT_SWIZZLE_R,//VK_COMPONENT_SWIZZLE_B, 
                     .a = VK_COMPONENT_SWIZZLE_A
                 },
                 .subresourceRange   = 
@@ -165,8 +168,7 @@ namespace mini::vk
         }
 
 
-        template<u32 WIDTH, u32 HEIGHT>
-        inline void Load(mini::res::Texture<WIDTH, HEIGHT>& texture, VkCommandPool cmdPool)
+        inline void Load(mini::res::ITexture& texture, VkCommandPool cmdPool)
         {
             TransitionImageLayout(device, cmdPool, queue, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, image);
 
@@ -200,7 +202,7 @@ namespace mini::vk
                     .layerCount     = 1
                 },
                 .imageOffset        = { 0, 0, 0 },
-                .imageExtent        = { WIDTH, HEIGHT, 1 }
+                .imageExtent        = { texture.WIDTH, texture.HEIGHT, 1 }
             };
 
             vkCmdCopyBufferToImage(cmdBuffer, buffer.buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);

@@ -11,13 +11,30 @@
 
 namespace mini::res
 {
-    template<u32 WIDTH, u32 HEIGHT, u32 CHANNELS = 4>
-    struct Texture
+    struct ITexture
     {
-        static auto constexpr SIZE = WIDTH * HEIGHT * CHANNELS;
+        ITexture(const u32 w, const u32 h, const std::size_t size) 
+            : texPtr { nullptr } 
+            , WIDTH  { w }
+            , HEIGHT { h }
+            , SIZE   { size }
+        {;}
+
+        char* texPtr;
+        const u32 WIDTH, HEIGHT;
+        const std::size_t SIZE;
+    };
+
+    template<u32 WIDTH_T, u32 HEIGHT_T, u32 CHANNELS = 4>
+    struct Texture : ITexture
+    {
+        static auto constexpr WIDTH  = WIDTH_T;
+        static auto constexpr HEIGHT = HEIGHT_T;
+        static auto constexpr SIZE   = WIDTH * HEIGHT * CHANNELS;
 
         char  fileData [WIDTH * HEIGHT * CHANNELS]; 
-        char* texPtr = nullptr;
+
+        Texture() : ITexture(WIDTH, HEIGHT, SIZE) {;} 
 
         char&       operator[](const u32 i)       { return fileData[i]; }
         const char& operator[](const u32 i) const { return fileData[i]; }

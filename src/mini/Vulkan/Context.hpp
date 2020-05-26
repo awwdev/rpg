@@ -49,7 +49,8 @@ namespace mini::vk
 
         float RATIO = 4 / 3.f; //todo: keep ratio (do not distort)
 
-        const VkFormat format = VK_FORMAT_B8G8R8A8_UNORM;
+        const VkFormat format = VK_FORMAT_B8G8R8A8_SRGB;//VK_FORMAT_B8G8R8A8_UNORM;
+        const VkColorSpaceKHR COLOR_SPACE = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
         const VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
         //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
         //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
@@ -160,7 +161,7 @@ namespace mini::vk
 
             vkGetPhysicalDeviceProperties(physical, &physicalProps);
             vkGetPhysicalDeviceMemoryProperties(physical, &physicalMemProps);
-    
+            
             INFO("Vulkan physical API version", 
                 VK_VERSION_MAJOR(physicalProps.apiVersion),
                 VK_VERSION_MINOR(physicalProps.apiVersion), 
@@ -250,7 +251,7 @@ namespace mini::vk
                 .surface                = surface,
                 .minImageCount          = surfaceCapabilities.minImageCount + 1,
                 .imageFormat            = format,
-                .imageColorSpace        = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+                .imageColorSpace        = COLOR_SPACE,
                 .imageExtent            = surfaceCapabilities.currentExtent,
                 .imageArrayLayers       = 1,
                 .imageUsage             = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,

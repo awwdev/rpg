@@ -8,11 +8,11 @@ namespace mini::res
 
     struct Textures
     {
-        mem::BlockPtr<Texture<32, 32>> pTexture;
+        mem::BlockPtr<Texture<32, 32>> pFont;
 
         inline void Load()
         {
-            res::LoadTexture_BMP("res/Textures/Texture.bmp", pTexture);
+            res::LoadTexture_BMP("res/Textures/Texture.bmp", pFont);
         }
     };
 

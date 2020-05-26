@@ -31,8 +31,8 @@ namespace mini::vk
             VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &cmdPool));
 
 
-            image_font.Create(context, 32, 32);
-            image_font.Load(resManager.textures.pTexture.Get(), cmdPool);
+            image_font.Create(context, resManager.textures.pFont->WIDTH, resManager.textures.pFont->HEIGHT);
+            image_font.Load(resManager.textures.pFont.Get(), cmdPool);
         }
 
         ~Images()
