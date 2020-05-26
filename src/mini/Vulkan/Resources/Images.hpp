@@ -9,15 +9,34 @@
 
 namespace mini::vk
 {
+    struct Img 
+    {
+
+    };
+
+
     struct Images
     {
+        Image images [res::ENUM_END];
+
+        //? DEFINE IMAGES AND RESOURCES HERE: -------------------------------------
+        //Image image_font;
+
+        inline void LoadImages(Context& context, res::ResourceManager& resManager) 
+        {
+            FOR_CARRAY(images, i)
+                images[i].Create(context, *resManager.textures.mapping[i], cmdPool);
+            //images[res::Font].Create();
+            //image_font.Create(context, resManager.textures.ptrFont.Get(), cmdPool);
+        }
+        //? -----------------------------------------------------------------------
+
+
+
         VkDevice device;
         VkCommandPool cmdPool;
 
-        Image image_font;
-
-
-        inline void Load(Context& context, res::ResourceManager& resManager)
+        inline void Create(Context& context, res::ResourceManager& resManager)
         {
             device = context.device;
 
@@ -30,9 +49,7 @@ namespace mini::vk
             };
             VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &cmdPool));
 
-
-            image_font.Create(context, resManager.textures.pFont->WIDTH, resManager.textures.pFont->HEIGHT);
-            image_font.Load(resManager.textures.pFont.Get(), cmdPool);
+            LoadImages(context, resManager);
         }
 
         ~Images()

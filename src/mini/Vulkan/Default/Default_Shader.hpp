@@ -55,7 +55,7 @@ namespace mini::vk
         inline void Create(Context& context, mini::vk::Images& images)
         {
             device = context.device;
-            auto& image = images.image_font;
+            auto& image = images.images[res::Font];
 
             //? SHADER MODULES
 

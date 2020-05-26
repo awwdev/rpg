@@ -8,6 +8,9 @@
 
 #include "mini/Resources/TextureLoader.hpp"
 
+//! not only ram->vram image usage but also gpu images like depth img
+//! probably make a struct for either usage?
+
 namespace mini::vk
 {
     //? HELPER
@@ -92,14 +95,14 @@ namespace mini::vk
         VkImageLayout layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 
-        inline void Create(Context& pContext, const uint32_t pWidth, const uint32_t pHeight)
+        inline void Create(Context& pContext, res::ITexture& texture, VkCommandPool cmdPool)
         {
             device  = pContext.device;
             queue   = pContext.queue;
             physicalMemProps = pContext.physicalMemProps;
 
-            width   = pWidth;
-            height  = pHeight;
+            width   = texture.WIDTH;
+            height  = texture.HEIGHT;
 
             const auto FORMAT = VK_FORMAT_R8G8B8A8_SRGB;
 
@@ -165,11 +168,9 @@ namespace mini::vk
             };
 
             VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &view));
-        }
 
+            //? LOAD
 
-        inline void Load(mini::res::ITexture& texture, VkCommandPool cmdPool)
-        {
             TransitionImageLayout(device, cmdPool, queue, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, image);
 
             //? TMP BUFFER

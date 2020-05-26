@@ -27,11 +27,10 @@ namespace mini::vk
         //? resource structs
         Images images;
 
-
         //assumption: resource manager has loaded beforehand
         inline void Create(Context& context, res::ResourceManager& resManager)
         { 
-            images.Load(context, resManager);
+            images.Create(context, resManager);
 
             default_shader.Create(context, images);
             default_renderPass.Create(context);
