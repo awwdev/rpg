@@ -28,6 +28,11 @@ namespace mini::vk
         Default_RenderPass  default_renderPass;
         Default_Pipeline    default_pipeline;
 
+        Shader shader_default;
+
+        explicit Resources(Context& context) 
+            : shader_default { context }
+        {;}
 
         //! resource manager needs to load beforehand
         inline void Create(Context& context, res::ResourceManager& resManager, Commands& commands)
@@ -35,6 +40,8 @@ namespace mini::vk
             //? resources
             FOR_CARRAY(images, i)
                 images[i].Create(context, *resManager.textures.mapping[i], commands.cmdPool);
+
+            CreateShader_Default(context, shader_default);
 
             //? pipeline
             default_shader.Create(context, images);

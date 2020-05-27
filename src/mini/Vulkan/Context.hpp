@@ -64,7 +64,8 @@ namespace mini::vk
 
         //? CTOR
 
-        inline void Create(const WindowHandle& wndHandle)
+        //inline void Create(const WindowHandle& wndHandle)
+        explicit Context(const WindowHandle& wndHandle)
         {
             CreateInstance();
             CreatePhysical();

@@ -31,7 +31,7 @@ namespace mini::vk
     template<class T, uint32_t N>
     struct VkArray
     {
-        explicit VkArray(const uint32_t pCount) : count { pCount } { ; }
+        VkArray(const uint32_t pCount = 0) : count { pCount } { ; }
 
         uint32_t count;
         T data[N];

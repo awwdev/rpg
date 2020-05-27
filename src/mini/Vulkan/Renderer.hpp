@@ -22,8 +22,10 @@ namespace mini::vk
         
 
         Renderer(const vk::WindowHandle& wndHandle, res::ResourceManager& resManager)
+            : context   { wndHandle }
+            , resources { context }
         {
-            context.Create(wndHandle);
+            //context.Create(wndHandle);
             sync.Create(context);
             commands.Create(context);
             resources.Create(context, resManager, commands);

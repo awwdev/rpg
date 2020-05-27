@@ -53,6 +53,6 @@ int WINAPI wWinMain(
     }
     
     mem::GlobalDeallocate();
-    //system("pause");
+    system("pause");
 
 }//main end
