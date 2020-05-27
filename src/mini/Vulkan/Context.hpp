@@ -58,8 +58,8 @@ namespace mini::vk
         
         
         VkSwapchainKHR swapchain;
-        VkArray<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
-        VkArray<VkImageView, 4> swapImageViews { 0 };
+        box::SimpleArray<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
+        box::SimpleArray<VkImageView, 4> swapImageViews { 0 };
 
 
         //? CTOR
@@ -145,11 +145,11 @@ namespace mini::vk
 
         inline void CreatePhysical()
         {
-            VkArray<VkPhysicalDevice, 4> physicals { 4 };
+            box::SimpleArray<VkPhysicalDevice, 4> physicals { 4 };
             VK_CHECK(vkEnumeratePhysicalDevices(instance, &physicals.count, physicals.data));
             physical = physicals[0];
 
-            VkArray<VkQueueFamilyProperties, 10> famProps { 10 };
+            box::SimpleArray<VkQueueFamilyProperties, 10> famProps { 10 };
             vkGetPhysicalDeviceQueueFamilyProperties(physical, &famProps.count, famProps.data);
 
             for (uint32_t i = 0; i < famProps.count; ++i) {
@@ -301,13 +301,13 @@ namespace mini::vk
 
         inline void DestroySwapchain()
         {
-            FOR_VK_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
+            FOR_SIMPLE_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
             vkDestroySwapchainKHR(device, swapchain, nullptr);
         }
 
         ~Context()
         {
-            FOR_VK_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
+            FOR_SIMPLE_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
             vkDestroySwapchainKHR(device, swapchain, nullptr);
             vkDestroySurfaceKHR(instance, surface, nullptr);
             vkDestroyDevice(device, nullptr);

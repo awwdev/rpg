@@ -3,8 +3,8 @@
 /* 
 ## mini::box::Map
 
-- index based (any enum can be used, no cast needed)(no bucket system)
-- fixed size (capacity-based with internal count)
+- index based (enum can be used, no cast needed)(no bucket hash system)
+- fixed size (capacity-based with internal count)(no dynamic allocations)
 - no ctor calls when initializing the map (underlying byte array)
 - bounds checking is toggleable via macro, no exceptions are used
 - overall more readable and extendible than the STL
@@ -26,6 +26,8 @@ namespace mini::box
     if (map.Contains(i) == false) continue; 
     #define FOR_MAP_END }
 
+    template<class T>
+    struct Exist { bool doesExist; T obj; };
 
     //use for passing around
     template<class T>
@@ -64,7 +66,13 @@ namespace mini::box
         void Count()
         {
             //TODO
-            static_assert(0, "no impl yet");
+            static_assert(false, "no impl yet");
+        }
+
+        void Remove()
+        {
+            //TODO
+            static_assert(false, "no impl yet");
         }
 
         void Clear()
@@ -83,7 +91,7 @@ namespace mini::box
         IMap(T* const data, const u32 capacity) : dataPtr { data }, CAPACITY { capacity } {;}
         T* const dataPtr;
         box::Bitset<100> bitset; //!issue !!! 
-        //need of IBitset too 
+        //need of IBitset too (size agnostic)
 
         ~IMap() { Clear(); }
     };

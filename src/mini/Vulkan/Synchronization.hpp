@@ -15,10 +15,10 @@ namespace mini::vk
         VkDevice device;
 
         //triple buffering
-        mini::vk::VkArray<VkSemaphore, 3> imageAcquired { 0 }; 
-        mini::vk::VkArray<VkSemaphore, 3> imageFinished { 0 }; 
-        mini::vk::VkArray<VkFence, 3>     inFlight      { 0 };
-        mini::vk::VkArray<VkFence, 3>     fences        { 0 }; 
+        box::SimpleArray<VkSemaphore, 3> imageAcquired { 0 }; 
+        box::SimpleArray<VkSemaphore, 3> imageFinished { 0 }; 
+        box::SimpleArray<VkFence, 3>     inFlight      { 0 };
+        box::SimpleArray<VkFence, 3>     fences        { 0 }; 
 
 
         inline void Create(Context& context)
@@ -29,7 +29,7 @@ namespace mini::vk
             imageFinished.count  = context.swapImages.count;
             fences.count         = context.swapImages.count;
 
-            FOR_VK_ARRAY(inFlight, i)
+            FOR_SIMPLE_ARRAY(inFlight, i)
                 inFlight[i] = VK_NULL_HANDLE;
 
             const VkSemaphoreCreateInfo semaInfo  
@@ -37,19 +37,19 @@ namespace mini::vk
             const VkFenceCreateInfo fenceInfo 
             { VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, nullptr, VK_FENCE_CREATE_SIGNALED_BIT };
 
-            FOR_VK_ARRAY(imageAcquired, i) 
+            FOR_SIMPLE_ARRAY(imageAcquired, i) 
                 vkCreateSemaphore(device, &semaInfo, nullptr, &imageAcquired[i]);    
-            FOR_VK_ARRAY(imageFinished, i) 
+            FOR_SIMPLE_ARRAY(imageFinished, i) 
                 vkCreateSemaphore(device, &semaInfo, nullptr, &imageFinished[i]);  
-            FOR_VK_ARRAY(fences, i) 
+            FOR_SIMPLE_ARRAY(fences, i) 
                 vkCreateFence(device, &fenceInfo, nullptr, &fences[i]);
         }
 
         ~Synchronization()
         {
-            FOR_VK_ARRAY(imageAcquired, i) vkDestroySemaphore(device, imageAcquired[i], nullptr);
-            FOR_VK_ARRAY(imageFinished, i) vkDestroySemaphore(device, imageFinished[i], nullptr);
-            FOR_VK_ARRAY(fences, i)        vkDestroyFence(device, fences[i], nullptr);
+            FOR_SIMPLE_ARRAY(imageAcquired, i) vkDestroySemaphore(device, imageAcquired[i], nullptr);
+            FOR_SIMPLE_ARRAY(imageFinished, i) vkDestroySemaphore(device, imageFinished[i], nullptr);
+            FOR_SIMPLE_ARRAY(fences, i)        vkDestroyFence(device, fences[i], nullptr);
         }
 
     };

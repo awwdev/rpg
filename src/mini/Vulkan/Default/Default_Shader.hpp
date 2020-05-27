@@ -18,8 +18,8 @@ namespace mini::vk
         
         VkSampler sampler;
         VkDescriptorPool descPool;
-        VkArray<VkDescriptorSetLayout, 4> layouts { 0 };
-        VkArray<VkDescriptorSet, 4>       sets    { 0 };
+        box::SimpleArray<VkDescriptorSetLayout, 4> layouts { 0 };
+        box::SimpleArray<VkDescriptorSet, 4>       sets    { 0 };
 
         const VkVertexInputBindingDescription BINDING_DESCS [1] 
         {
@@ -112,7 +112,7 @@ namespace mini::vk
             };
 
             layouts.count = context.swapImages.count;
-            FOR_VK_ARRAY(layouts, i)
+            FOR_SIMPLE_ARRAY(layouts, i)
                 VK_CHECK(vkCreateDescriptorSetLayout(device, &layoutSetInfo, nullptr, &layouts[i]));
 
             VkDescriptorPoolSize poolSizes [ARRAY_COUNT(bindings)]; 
@@ -148,7 +148,7 @@ namespace mini::vk
             VK_CHECK(vkAllocateDescriptorSets(device, &allocInfo, sets.data));
 
 
-            VkArray<VkWriteDescriptorSet, 4> writes { 0 };
+            box::SimpleArray<VkWriteDescriptorSet, 4> writes { 0 };
             writes.count = context.swapImages.count;
 
             const VkDescriptorImageInfo imageInfo {
@@ -157,7 +157,7 @@ namespace mini::vk
                 .imageLayout    = image.layout
             };            
 
-            FOR_VK_ARRAY(writes, i)
+            FOR_SIMPLE_ARRAY(writes, i)
             {
                 for (uint32_t bindingNum = 0; bindingNum < ARRAY_COUNT(bindings); ++bindingNum)
                 {
@@ -180,7 +180,7 @@ namespace mini::vk
 
         ~Default_Shader()
         {
-            FOR_VK_ARRAY(layouts, i)
+            FOR_SIMPLE_ARRAY(layouts, i)
                 vkDestroyDescriptorSetLayout(device, layouts[i], nullptr);
             vkDestroyDescriptorPool(device, descPool, nullptr);
             FOR_CARRAY(stages, i)

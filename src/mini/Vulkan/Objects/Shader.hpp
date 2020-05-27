@@ -9,9 +9,6 @@
 #include "mini/Memory/Allocator.hpp"
 
 #include <fstream>
-#include <unordered_map>
-
-//TODO: remove VkArray and make it an actual helper class namespace mini::box
 
 namespace mini::vk
 {
@@ -26,22 +23,20 @@ namespace mini::vk
     {
         enum Type { Vertex, Fragment, ENUM_END };
 
-        //VkShaderModule modules [Type::ENUM_END] { nullptr };
-        //std::unordered_map<Type, VkShaderModule> modules;
-        box::Map<VkShaderModule, Type::ENUM_END> modules;
+        box::Map<VkShaderModule, Type::ENUM_END> modules; //map by type
 
         box::Array<VkVertexInputBindingDescription, 10>   vertexBindings;
         box::Array<VkVertexInputAttributeDescription, 10> vertexAttributes;
 
         VkDescriptorPool descPool;
         box::Array<VkDescriptorSetLayoutBinding, 10> descSetLayoutBindings;
-        VkArray<VkDescriptorSetLayout, 4> descSetLayouts;
-        VkArray<VkDescriptorSet, 4> descSets;
+        box::SimpleArray<VkDescriptorSetLayout, 4> descSetLayouts;
+        box::SimpleArray<VkDescriptorSet, 4> descSets;
 
         VkSampler samplers [10] { nullptr };
 
-        std::unordered_map<uint32_t, VkDescriptorImageInfo>  imageInfos;
-        std::unordered_map<uint32_t, VkDescriptorBufferInfo> bufferInfos;
+        box::Map<VkDescriptorImageInfo, 10>  imageInfos;  //map by binding
+        box::Map<VkDescriptorBufferInfo, 10> bufferInfos;
 
 
         inline void AddDescriptor(
@@ -59,7 +54,7 @@ namespace mini::vk
             VkImageView view, 
             VkImageLayout layout)
         {
-            imageInfos.emplace(binding, VkDescriptorImageInfo {sampler, view, layout});
+            imageInfos.Set(binding, VkDescriptorImageInfo {sampler, view, layout});
         }
 
         inline void AddSampler(const uint32_t binding) //add more params if needed
@@ -91,7 +86,7 @@ namespace mini::vk
 
         inline auto CreatePipelineStageInfo() 
         {
-            VkArray<VkPipelineShaderStageCreateInfo, Type::ENUM_END> stages;
+            box::SimpleArray<VkPipelineShaderStageCreateInfo, Type::ENUM_END> stages;
 
             // for(auto& [type, module] : modules)
             FOR_MAP_BEGIN(modules, i)
@@ -174,10 +169,10 @@ namespace mini::vk
             };
 
             descSetLayouts.count = context.swapImages.count;
-            FOR_VK_ARRAY(descSetLayouts, i)
+            FOR_SIMPLE_ARRAY(descSetLayouts, i)
                 VK_CHECK(vkCreateDescriptorSetLayout(device, &layoutSetInfo, nullptr, &descSetLayouts[i]));
 
-            VkArray<VkDescriptorPoolSize, 10> poolSizes;
+            box::SimpleArray<VkDescriptorPoolSize, 10> poolSizes;
             poolSizes.count = descSetLayoutBindings.Count();
             FOR_ARRAY(descSetLayoutBindings, i) {
                 poolSizes[i] = {
@@ -208,7 +203,7 @@ namespace mini::vk
             descSets.count = descSetLayouts.count;
             VK_CHECK(vkAllocateDescriptorSets(device, &allocInfo, descSets.data));
 
-            VkArray<VkWriteDescriptorSet, 4> writes { 0 };
+            box::SimpleArray<VkWriteDescriptorSet, 4> writes { 0 };
             writes.count = context.swapImages.count;
 
             uint32_t idx = 0;
@@ -224,8 +219,8 @@ namespace mini::vk
                         .dstArrayElement    = 0,
                         .descriptorCount    = 1,
                         .descriptorType     = descSetLayoutBindings[bindingNum].descriptorType,
-                        .pImageInfo         = imageInfos.contains(bindingNum)  ? &imageInfos[bindingNum]  : nullptr,
-                        .pBufferInfo        = bufferInfos.contains(bindingNum) ? &bufferInfos[bindingNum] : nullptr,
+                        .pImageInfo         = imageInfos.Contains(bindingNum)  ? &imageInfos.Get(bindingNum)  : nullptr,
+                        .pBufferInfo        = bufferInfos.Contains(bindingNum) ? &bufferInfos.Get(bindingNum) : nullptr,
                         .pTexelBufferView   = nullptr
                     };
                     ++idx;
@@ -249,7 +244,7 @@ namespace mini::vk
                     vkDestroySampler(device, samplers[i], nullptr);
             }       
 
-            FOR_VK_ARRAY(descSetLayouts, i) vkDestroyDescriptorSetLayout(device, descSetLayouts[i], nullptr);
+            FOR_SIMPLE_ARRAY(descSetLayouts, i) vkDestroyDescriptorSetLayout(device, descSetLayouts[i], nullptr);
         }
     };
 

@@ -14,7 +14,7 @@ namespace mini::vk
         VkDevice device;
 
         VkRenderPass renderPass;
-        VkArray<VkFramebuffer, 4> framebuffers { 0 }; //capacity based, real count known won swapchain creation
+        box::SimpleArray<VkFramebuffer, 4> framebuffers { 0 }; //capacity based, real count known won swapchain creation
 
         const VkSampleCountFlagBits SAMPLE_COUNT = VK_SAMPLE_COUNT_1_BIT;
 
@@ -94,7 +94,7 @@ namespace mini::vk
         ~Default_RenderPass()
         {
             vkDestroyRenderPass(device, renderPass, nullptr);
-            FOR_VK_ARRAY(framebuffers, i) 
+            FOR_SIMPLE_ARRAY(framebuffers, i) 
                 vkDestroyFramebuffer(device, framebuffers[i], nullptr);
         }
     };
