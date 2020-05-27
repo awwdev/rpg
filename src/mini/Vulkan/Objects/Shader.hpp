@@ -46,8 +46,8 @@ namespace mini::vk
         inline void AddDescriptor(
             const uint32_t binding, 
             const VkDescriptorType type,
-            const uint32_t descCount,
-            const VkShaderStageFlags stage)
+            const VkShaderStageFlags stage,
+            const uint32_t descCount = 1)
         {
             descSetLayoutBindings.Append(binding, type, descCount, stage, nullptr);
         }
@@ -256,7 +256,7 @@ namespace mini::vk
         shader.AddVertexAttribute(0, 0, VK_FORMAT_R32_SFLOAT, sizeof(float) * 0);
         shader.AddVertexAttribute(0, 1, VK_FORMAT_R32_SFLOAT, sizeof(float) * 1);
         shader.AddSampler(0);
-        shader.AddDescriptor(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);
+        shader.AddDescriptor(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
         shader.AddImage(0, shader.samplers[0], image.view, image.layout);
         shader.WriteDescriptors(context);
         shader.Load(Shader::Type::Vertex,   "res/Shaders/default.vert.spv");

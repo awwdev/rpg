@@ -119,6 +119,11 @@ namespace mini::box
             return BITS;
         }
 
+        void Clear()
+        {
+            std::memset(data, 0, BYTES);
+        }
+
         ///GET NUMBER
 
         ND constexpr std::size_t Decimal() const

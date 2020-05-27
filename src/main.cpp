@@ -3,6 +3,7 @@
 #include "mini/Debug/Logger.hpp"
 #include "mini/Debug/Console.hpp"
 #include "mini/Box/Array.hpp"
+#include "mini/Box/Map.hpp"
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Vulkan/Renderer.hpp"
 
@@ -21,6 +22,15 @@ int WINAPI wWinMain(
     _In_        PWSTR pCmdLine,
     _In_        int nCmdShow)
 {
+    //map test
+    dbg::Console console {};
+    box::Map<float, 10> map;
+    map.Set(0, 42.f);
+    map.Set(0, 43.f);
+    LOG(map.Get(0));
+    system("pause");
+    exit(0);
+
     {
         //? META
         dbg::Console console {};
