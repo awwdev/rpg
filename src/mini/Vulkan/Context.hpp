@@ -12,8 +12,7 @@ namespace mini::vk
         void* ptr2; //win: hwnd
     };
 
-
-     static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
+    static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
         VkDebugUtilsMessageTypeFlagsEXT messageType,
         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -64,8 +63,7 @@ namespace mini::vk
 
         //? CTOR
 
-        //inline void Create(const WindowHandle& wndHandle)
-        explicit Context(const WindowHandle& wndHandle)
+        inline void Create(const WindowHandle& wndHandle)
         {
             CreateInstance();
             CreatePhysical();

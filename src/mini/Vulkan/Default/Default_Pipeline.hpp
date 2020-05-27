@@ -5,7 +5,6 @@
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Default/Default_Shader.hpp"
 #include "mini/Vulkan/Default/Default_RenderPass.hpp"
-#include "mini/Vulkan/Objects/Shader.hpp"
 
 namespace mini::vk
 {
@@ -20,8 +19,7 @@ namespace mini::vk
         VkPipelineLayout layout;
                 
 
-        //inline void Create(Context& context, Default_Shader& shader, Default_RenderPass& renderPass)
-        inline void Create(Context& context, Shader& shader, Default_RenderPass& renderPass)
+        inline void Create(Context& context, Default_Shader& shader, Default_RenderPass& renderPass)
         {
             device = context.device;
 
@@ -151,20 +149,19 @@ namespace mini::vk
                 .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
                 .pNext                  = nullptr,
                 .flags                  = 0,
-                .setLayoutCount         = shader.descSetLayouts.count,//count,
-                .pSetLayouts            = shader.descSetLayouts.data,//shader.layouts.data,
+                .setLayoutCount         = shader.layouts.count,
+                .pSetLayouts            = shader.layouts.data,
                 .pushConstantRangeCount = 1,
                 .pPushConstantRanges    = &constantRange,
             };
             VK_CHECK(vkCreatePipelineLayout(context.device, &layoutInfo, nullptr, &layout));
 
-            const auto stages = shader.CreatePipelineStageInfo();
             const VkGraphicsPipelineCreateInfo pipelineInfo {
                 .sType                      = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
                 .pNext                      = nullptr,
                 .flags                      = 0,
-                .stageCount                 = stages.count,//(shader.stages),
-                .pStages                    = stages.data,
+                .stageCount                 = ARRAY_COUNT(shader.stages),
+                .pStages                    = shader.stages,
                 .pVertexInputState          = &vertexInput,
                 .pInputAssemblyState        = &inputAssembly,
                 .pTessellationState         = nullptr,

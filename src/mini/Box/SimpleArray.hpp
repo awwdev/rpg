@@ -6,6 +6,7 @@
 #include "mini/Debug/Logger.hpp"
 
 //currently used a lot by vk impl
+//super simple wrapper to keep size data around
 
 namespace mini::box
 {

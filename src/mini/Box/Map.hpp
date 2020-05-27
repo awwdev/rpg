@@ -21,7 +21,7 @@
 
 namespace mini::box
 {
-    //todo: limit iteration by count
+    //for iteration keep capacity small
     #define FOR_MAP_BEGIN(map, i) for(auto i = 0; i < map.CAPACITY; ++i) { \
     if (map.Contains(i) == false) continue; 
     #define FOR_MAP_END }
@@ -61,12 +61,6 @@ namespace mini::box
         T& Get(const IDX idx)
         {
             return dataPtr[idx];
-        }
-
-        void Count()
-        {
-            //TODO
-            static_assert(false, "no impl yet");
         }
 
         void Remove()
