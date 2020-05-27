@@ -43,7 +43,8 @@ namespace mini::vk
             resources.default_renderPass.Create(context);
 
             resources.default_pipeline.~Default_Pipeline();
-            resources.default_pipeline.Create(context, resources.default_shader, resources.default_renderPass);
+            //resources.default_pipeline.Create(context, resources.default_shader, resources.default_renderPass);
+            resources.default_pipeline.Create(context, resources.shader_default, resources.default_renderPass);
 
             commands.~Commands();
             commands.Create(context);
@@ -80,7 +81,8 @@ namespace mini::vk
             static float counter = 0; counter += 1.f * dt; //!testing
             float values = 0;//std::sinf(counter) * 0.5f;
             vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float), &values);
-            vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, resources.default_shader.sets.data, 0, 0);
+            //vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, resources.default_shader.sets.data, 0, 0);
+            vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, resources.shader_default.descSets.data, 0, 0);
             for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, 6, 1, 0, 0); //!stress test (increase max)
             vkCmdEndRenderPass(cmdBuffer);
 
