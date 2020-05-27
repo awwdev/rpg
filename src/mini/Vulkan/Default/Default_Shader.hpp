@@ -5,7 +5,9 @@
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Ctors.hpp"
-#include "mini/Vulkan/Resources/Images.hpp"
+#include "mini/Vulkan/Objects/Image.hpp"
+
+#include "mini/Resources/ResourceManager.hpp"
 
 
 namespace mini::vk
@@ -17,7 +19,7 @@ namespace mini::vk
         VkSampler sampler;
         VkDescriptorPool descPool;
         VkArray<VkDescriptorSetLayout, 4> layouts { 0 };
-        VkArray<VkDescriptorSet, 4>       sets { 0 };
+        VkArray<VkDescriptorSet, 4>       sets    { 0 };
 
         const VkVertexInputBindingDescription BINDING_DESCS [1] 
         {
@@ -52,10 +54,10 @@ namespace mini::vk
 
 
 
-        inline void Create(Context& context, mini::vk::Images& images)
+        inline void Create(Context& context, vk::Image images[])
         {
             device = context.device;
-            auto& image = images.images[res::Font];
+            auto& image = images[res::Font];
 
             //? SHADER MODULES
 

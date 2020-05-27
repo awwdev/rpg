@@ -4,7 +4,7 @@
 
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Ctors.hpp"
-#include "mini/Vulkan/Resources/Resources.hpp"
+#include "mini/Vulkan/Resources.hpp"
 
 #include "mini/Resources/ResourceManager.hpp"
 #include "mini/Scene/Scene.hpp"
@@ -26,7 +26,7 @@ namespace mini::vk
             context.Create(wndHandle);
             sync.Create(context);
             commands.Create(context);
-            resources.Create(context, resManager);
+            resources.Create(context, resManager, commands);
         }
 
 
