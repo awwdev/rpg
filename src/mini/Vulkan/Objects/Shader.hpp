@@ -5,6 +5,7 @@
 #include "mini/Vulkan/Context.hpp"
 
 #include "mini/Box/Array.hpp"
+#include "mini/Box/Map.hpp"
 #include "mini/Memory/Allocator.hpp"
 
 #include <fstream>
@@ -26,8 +27,8 @@ namespace mini::vk
         enum Type { Vertex, Fragment, ENUM_END };
 
         //VkShaderModule modules [Type::ENUM_END] { nullptr };
-        std::unordered_map<Type, VkShaderModule> modules;
-        uint32_t stageCount = 0;
+        //std::unordered_map<Type, VkShaderModule> modules;
+        box::Map<VkShaderModule, Type::ENUM_END> modules;
 
         box::Array<VkVertexInputBindingDescription, 10>   vertexBindings;
         box::Array<VkVertexInputAttributeDescription, 10> vertexAttributes;
@@ -92,7 +93,8 @@ namespace mini::vk
         {
             VkArray<VkPipelineShaderStageCreateInfo, Type::ENUM_END> stages;
 
-            for(auto& [type, module] : modules)
+            // for(auto& [type, module] : modules)
+            FOR_MAP_BEGIN(modules, i)
             {
                 stages[stages.count] =
                 {
@@ -101,20 +103,21 @@ namespace mini::vk
                     .flags  = 0,
                     .stage  = [&]()
                     {
-                        switch(type){
+                        switch(i){
                             case Type::Vertex:   return VK_SHADER_STAGE_VERTEX_BIT;
                             case Type::Fragment: return VK_SHADER_STAGE_FRAGMENT_BIT;
 
                             default: return VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
                         }
                     }(),
-                    .module = module,
+                    .module = modules.Get(i),
                     .pName  = "main",
                     .pSpecializationInfo = nullptr 
                 };
 
                 stages.count++;
             }
+            FOR_MAP_END
 
             return stages;
         }
@@ -155,8 +158,8 @@ namespace mini::vk
                 .pCode      = reinterpret_cast<const uint32_t*>(*ptrBuffer)
             };
 
-            VK_CHECK(vkCreateShaderModule(device, &moduleInfo, nullptr, &modules[type]));
-            ++stageCount;
+            modules.Set(type);
+            VK_CHECK(vkCreateShaderModule(device, &moduleInfo, nullptr, &modules.Get(type)));
         }
 
         inline void WriteDescriptors(Context& context)
@@ -236,8 +239,10 @@ namespace mini::vk
         {
             vkDestroyDescriptorPool(device, descPool, nullptr);
 
-            for(auto& [type, module] : modules)
-                vkDestroyShaderModule(device, module, nullptr);
+            //for(auto& [type, module] : modules)
+            FOR_MAP_BEGIN(modules, i)
+                vkDestroyShaderModule(device, modules.Get(i), nullptr);
+            FOR_MAP_END
 
             FOR_CARRAY(samplers, i) {
                 if (samplers[i] != nullptr) 

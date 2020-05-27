@@ -21,6 +21,12 @@
 
 namespace mini::box
 {
+    //todo: limit iteration by count
+    #define FOR_MAP_BEGIN(map, i) for(auto i = 0; i < map.CAPACITY; ++i) { \
+    if (map.Contains(i) == false) continue; 
+    #define FOR_MAP_END }
+
+
     //use for passing around
     template<class T>
     struct IMap
@@ -55,6 +61,12 @@ namespace mini::box
             return dataPtr[idx];
         }
 
+        void Count()
+        {
+            //TODO
+            static_assert(0, "no impl yet");
+        }
+
         void Clear()
         {
             for(u32 i = 0; i < CAPACITY; ++i)
@@ -65,11 +77,13 @@ namespace mini::box
             bitset.Clear();
         }
 
+        const u32 CAPACITY;
+
     protected:
         IMap(T* const data, const u32 capacity) : dataPtr { data }, CAPACITY { capacity } {;}
         T* const dataPtr;
-        const u32 CAPACITY;
         box::Bitset<100> bitset; //!issue !!! 
+        //need of IBitset too 
 
         ~IMap() { Clear(); }
     };
