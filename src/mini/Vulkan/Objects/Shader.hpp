@@ -20,11 +20,13 @@ namespace mini::vk
         Refs(Context& context) : device { context.device } {;}
     };
 
+
     struct Shader : Refs
     {
         enum Type { Vertex, Fragment, ENUM_END };
 
-        VkShaderModule modules [Type::ENUM_END] { nullptr };
+        //VkShaderModule modules [Type::ENUM_END] { nullptr };
+        std::unordered_map<Type, VkShaderModule> modules;
         uint32_t stageCount = 0;
 
         box::Array<VkVertexInputBindingDescription, 10>   vertexBindings;
@@ -35,9 +37,8 @@ namespace mini::vk
         VkArray<VkDescriptorSetLayout, 4> descSetLayouts;
         VkArray<VkDescriptorSet, 4> descSets;
 
-        box::Array<VkSampler, 10> samplers;
+        VkSampler samplers [10] { nullptr };
 
-        //box::Array<VkDescriptorImageInfo, 10> imageInfos;
         std::unordered_map<uint32_t, VkDescriptorImageInfo>  imageInfos;
         std::unordered_map<uint32_t, VkDescriptorBufferInfo> bufferInfos;
 
@@ -60,9 +61,10 @@ namespace mini::vk
             imageInfos.emplace(binding, VkDescriptorImageInfo {sampler, view, layout});
         }
 
-        inline void AddSampler()
+        inline void AddSampler(const uint32_t binding) //add more params if needed
         {
-            const VkSamplerCreateInfo samplerInfo {
+            const VkSamplerCreateInfo samplerInfo 
+            {
                 .sType                  = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
                 .pNext                  = nullptr,
                 .flags                  = 0,
@@ -82,18 +84,16 @@ namespace mini::vk
                 .borderColor            = VK_BORDER_COLOR_INT_OPAQUE_BLACK, 
                 .unnormalizedCoordinates = VK_FALSE
             };
-            samplers.Append();
-            VK_CHECK(vkCreateSampler(device, &samplerInfo, nullptr, &samplers.Last()));
+
+            VK_CHECK(vkCreateSampler(device, &samplerInfo, nullptr, &samplers[binding]));
         }
 
-        inline auto CreatePipelineInfo() 
+        inline auto CreatePipelineStageInfo() 
         {
             VkArray<VkPipelineShaderStageCreateInfo, Type::ENUM_END> stages;
 
-            FOR_CARRAY(modules, i)
+            for(auto& [type, module] : modules)
             {
-                if (modules[i] == nullptr) continue;
-                
                 stages[stages.count] =
                 {
                     .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
@@ -101,14 +101,14 @@ namespace mini::vk
                     .flags  = 0,
                     .stage  = [&]()
                     {
-                        switch(i){
+                        switch(type){
                             case Type::Vertex:   return VK_SHADER_STAGE_VERTEX_BIT;
                             case Type::Fragment: return VK_SHADER_STAGE_FRAGMENT_BIT;
 
                             default: return VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
                         }
                     }(),
-                    .module = modules[i],
+                    .module = module,
                     .pName  = "main",
                     .pSpecializationInfo = nullptr 
                 };
@@ -236,12 +236,14 @@ namespace mini::vk
         {
             vkDestroyDescriptorPool(device, descPool, nullptr);
 
-            FOR_CARRAY(modules, i) {
-                if (modules[i] != nullptr)
-                    vkDestroyShaderModule(device, modules[i], nullptr);
+            for(auto& [type, module] : modules)
+                vkDestroyShaderModule(device, module, nullptr);
+
+            FOR_CARRAY(samplers, i) {
+                if (samplers[i] != nullptr) 
+                    vkDestroySampler(device, samplers[i], nullptr);
             }       
-            
-            FOR_ARRAY(samplers, i)          vkDestroySampler(device, samplers[i], nullptr);
+
             FOR_VK_ARRAY(descSetLayouts, i) vkDestroyDescriptorSetLayout(device, descSetLayouts[i], nullptr);
         }
     };
@@ -253,8 +255,8 @@ namespace mini::vk
         shader.AddVertexBinding(0, sizeof(float) * 2);
         shader.AddVertexAttribute(0, 0, VK_FORMAT_R32_SFLOAT, sizeof(float) * 0);
         shader.AddVertexAttribute(0, 1, VK_FORMAT_R32_SFLOAT, sizeof(float) * 1);
+        shader.AddSampler(0);
         shader.AddDescriptor(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);
-        shader.AddSampler();
         shader.AddImage(0, shader.samplers[0], image.view, image.layout);
         shader.WriteDescriptors(context);
         shader.Load(Shader::Type::Vertex,   "res/Shaders/default.vert.spv");

@@ -158,7 +158,7 @@ namespace mini::vk
             };
             VK_CHECK(vkCreatePipelineLayout(context.device, &layoutInfo, nullptr, &layout));
 
-            const auto stages = shader.CreatePipelineInfo();
+            const auto stages = shader.CreatePipelineStageInfo();
             const VkGraphicsPipelineCreateInfo pipelineInfo {
                 .sType                      = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
                 .pNext                      = nullptr,
