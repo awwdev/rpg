@@ -47,7 +47,7 @@ namespace mini::vk
     };
 
     template<auto BUFFER_SIZE = 10000u>
-    void CreateShaderModule(VkDevice device, VkShaderModule& mod, chars_t path)
+    void CreateShaderModule(Shader& shader, chars_t path, const VkShaderStageFlagBits stage)
     {
         std::ifstream file(path, std::ios::ate | std::ios::binary);
         mini::Assert(file.is_open(), "cannot open shader file");
@@ -65,21 +65,18 @@ namespace mini::vk
             .pCode      = reinterpret_cast<const uint32_t*>(*ptrBuffer)
         };
 
-        VK_CHECK(vkCreateShaderModule(device, &moduleInfo, nullptr, &mod));
-    }
+        auto& mod = shader.modules.AppendReturn();
+        VK_CHECK(vkCreateShaderModule(shader.device, &moduleInfo, nullptr, &mod));
 
-    inline VkPipelineShaderStageCreateInfo CreatePipelineShaderStageInfo
-    (const VkShaderStageFlagBits stage)
-    {
-        return {
+        shader.stageInfos.Append(VkPipelineShaderStageCreateInfo{
             .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             .pNext  = nullptr,
             .flags  = 0,
             .stage  = stage,
-            .module = nullptr,
+            .module = mod,
             .pName  = "main",
             .pSpecializationInfo = nullptr 
-        };
+        });
     }
 
     inline void CreateDescriptors(Context& context, Shader& shader)
@@ -146,15 +143,12 @@ namespace mini::vk
         vkUpdateDescriptorSets(context.device, writes.Count(), writes.Data(), 0, nullptr);   
     }
 
-    inline void CreateShader_Default(Context& context, Shader& shader, Image& image)
+    inline void CreateShader_Default(Context& context, Shader& shader, Image images[])
     {
         shader.device = context.device;
                 
-        CreateShaderModule(shader.device, shader.modules.AppendReturn(), "res/Shaders/default.vert.spv");
-        CreateShaderModule(shader.device, shader.modules.AppendReturn(), "res/Shaders/default.frag.spv");
-
-        shader.stageInfos.Append(CreatePipelineShaderStageInfo(VK_SHADER_STAGE_VERTEX_BIT));
-        shader.stageInfos.Append(CreatePipelineShaderStageInfo(VK_SHADER_STAGE_FRAGMENT_BIT));
+        CreateShaderModule(shader, "res/Shaders/default.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+        CreateShaderModule(shader, "res/Shaders/default.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 
         shader.vertBindings.Append(VkVertexInputBindingDescription{
             .binding    = 0,
@@ -205,9 +199,10 @@ namespace mini::vk
             .pImmutableSamplers = nullptr,
         }); 
 
+        auto& image = images[res::Font];
         shader.imageInfos.Set(0, VkDescriptorImageInfo{
             .sampler        = shader.samplers[0],
-            .imageView      = image.view, //todo: having params for each resource is hard, better just pull in a resource struct (but not Resources itself because header mess)
+            .imageView      = image.view, 
             .imageLayout    = image.layout
         });       
  

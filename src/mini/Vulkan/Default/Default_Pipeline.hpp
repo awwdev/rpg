@@ -3,7 +3,8 @@
 #pragma once
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Default/Default_Shader.hpp"
+//#include "mini/Vulkan/Default/Default_Shader.hpp"
+#include "mini/Vulkan/Objects/Shader.hpp"
 #include "mini/Vulkan/Default/Default_RenderPass.hpp"
 
 namespace mini::vk
@@ -19,7 +20,8 @@ namespace mini::vk
         VkPipelineLayout layout;
                 
 
-        inline void Create(Context& context, Default_Shader& shader, Default_RenderPass& renderPass)
+        //inline void Create(Context& context, Default_Shader& shader, Default_RenderPass& renderPass)
+        inline void Create(Context& context, Shader& shader, Default_RenderPass& renderPass)
         {
             device = context.device;
 
@@ -149,8 +151,8 @@ namespace mini::vk
                 .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
                 .pNext                  = nullptr,
                 .flags                  = 0,
-                .setLayoutCount         = shader.layouts.count,
-                .pSetLayouts            = shader.layouts.data,
+                .setLayoutCount         = shader.setLayouts.Count(),
+                .pSetLayouts            = shader.setLayouts.Data(),
                 .pushConstantRangeCount = 1,
                 .pPushConstantRanges    = &constantRange,
             };
@@ -160,8 +162,8 @@ namespace mini::vk
                 .sType                      = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
                 .pNext                      = nullptr,
                 .flags                      = 0,
-                .stageCount                 = ARRAY_COUNT(shader.stages),
-                .pStages                    = shader.stages,
+                .stageCount                 = shader.stageInfos.Count(),
+                .pStages                    = shader.stageInfos.Data(),
                 .pVertexInputState          = &vertexInput,
                 .pInputAssemblyState        = &inputAssembly,
                 .pTessellationState         = nullptr,
