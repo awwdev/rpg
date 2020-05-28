@@ -8,6 +8,8 @@
 #include "mini/Vulkan/Default/Default_RenderPass.hpp"
 #include "mini/Vulkan/Default/Default_Pipeline.hpp"
 
+#include "mini/Vulkan/Objects/Shader.hpp"
+
 #include "mini/Vulkan/Commands.hpp"
 #include "mini/Vulkan/Synchronization.hpp"
 #include "mini/Memory/Allocator.hpp"
@@ -25,6 +27,8 @@ namespace mini::vk
         Default_Shader      default_shader;
         Default_RenderPass  default_renderPass;
         Default_Pipeline    default_pipeline;
+
+        Shader shader_default;
 
         //! resource manager needs to load beforehand
         inline void Create(Context& context, res::ResourceManager& resManager, Commands& commands)

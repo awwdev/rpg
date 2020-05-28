@@ -76,6 +76,13 @@ namespace mini::box
             ++count;
         }
 
+        template<class... CtorArgs>
+        T& AppendReturn(CtorArgs&&... args)
+        {
+            Append(args...);
+            return Last();
+        }
+
 
         template<class... CtorArgs, typename IDX, typename = IsIntegralOrEnum<IDX>>
         void Insert(const IDX pos, CtorArgs&&... args)

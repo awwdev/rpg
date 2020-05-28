@@ -63,6 +63,12 @@ namespace mini::box
             return dataPtr[idx];
         }
 
+        template<typename IDX, class... CtorArgs, typename = IsIntegralOrEnum<IDX>>
+        T* GetOptional(const IDX idx)
+        {
+            return Contains(idx) ? &dataPtr[idx] : nullptr;
+        }
+
         void Remove()
         {
             //TODO

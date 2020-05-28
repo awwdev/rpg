@@ -76,9 +76,9 @@ namespace mini::vk
             vkCmdBeginRenderPass(cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
             static float counter = 0; counter += 1.f * dt; //!testing
-            float values = 0;//std::sinf(counter) * 0.5f;
+            float values = std::sinf(counter) * 0.5f;
             vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float), &values);
-            vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, resources.default_shader.sets.data, 0, 0);
+            vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 0, 0); 
             for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, 6, 1, 0, 0); //!stress test (increase max)
             vkCmdEndRenderPass(cmdBuffer);
 

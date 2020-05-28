@@ -148,8 +148,7 @@ namespace mini::vk
             VK_CHECK(vkAllocateDescriptorSets(device, &allocInfo, sets.data));
 
 
-            box::SimpleArray<VkWriteDescriptorSet, 4> writes { 0 };
-            writes.count = context.swapImages.count;
+            box::Array<VkWriteDescriptorSet, 10> writes;
 
             const VkDescriptorImageInfo imageInfo {
                 .sampler        = sampler,
@@ -157,25 +156,22 @@ namespace mini::vk
                 .imageLayout    = image.layout
             };            
 
-            FOR_SIMPLE_ARRAY(writes, i)
+            for(auto i = 0; i < context.swapImages.count; ++i)
             {
-                for (uint32_t bindingNum = 0; bindingNum < ARRAY_COUNT(bindings); ++bindingNum)
-                {
-                    writes[i] = {
-                        .sType              = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-                        .pNext              = nullptr,
-                        .dstSet             = sets[i],
-                        .dstBinding         = bindingNum,
-                        .dstArrayElement    = 0,
-                        .descriptorCount    = 1,
-                        .descriptorType     = bindings[bindingNum].descriptorType,
-                        .pImageInfo         = &imageInfo,//images.contains(bindingNum) ? &imageInfos[bindingNum] : nullptr,
-                        .pBufferInfo        = nullptr,//ubos.contains(bindingNum) ? &ubos[bindingNum]->bufferInfos[i] : nullptr,
-                        .pTexelBufferView   = nullptr
-                    };
-                }
+                writes.Append(VkWriteDescriptorSet{
+                    .sType              = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+                    .pNext              = nullptr,
+                    .dstSet             = sets[i],
+                    .dstBinding         = 0,
+                    .dstArrayElement    = 0,
+                    .descriptorCount    = 1,
+                    .descriptorType     = bindings[0].descriptorType,
+                    .pImageInfo         = &imageInfo,
+                    .pBufferInfo        = nullptr,
+                    .pTexelBufferView   = nullptr
+               });
             }
-            vkUpdateDescriptorSets(device, writes.count, writes.data, 0, nullptr);
+            vkUpdateDescriptorSets(device, writes.Count(), writes.Data(), 0, nullptr);
         }
 
         ~Default_Shader()
