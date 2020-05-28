@@ -30,6 +30,8 @@ namespace mini::vk
 
         Shader shader_default;
 
+        explicit Resources(VkDevice pDevice) : shader_default { pDevice } {;}
+
         //! resource manager needs to load beforehand
         inline void Create(Context& context, res::ResourceManager& resManager, Commands& commands)
         { 

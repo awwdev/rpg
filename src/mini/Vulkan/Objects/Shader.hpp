@@ -16,10 +16,15 @@
 
 namespace mini::vk
 {
-    struct Shader
+    struct Refs
     {
         VkDevice device;
+        Refs(VkDevice pDevice) : device { pDevice } {;}
+    };
 
+    struct Shader : Refs
+    {
+        //stages
         box::Array<VkShaderModule, 4> modules;
         box::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
 
@@ -144,9 +149,7 @@ namespace mini::vk
     }
 
     inline void CreateShader_Default(Context& context, Shader& shader, Image images[])
-    {
-        shader.device = context.device;
-                
+    {  
         CreateShaderModule(shader, "res/Shaders/default.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         CreateShaderModule(shader, "res/Shaders/default.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 
