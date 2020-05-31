@@ -163,8 +163,8 @@ namespace mini::box
         }
 
 
-        template<class T2> ND
-        T* Contains(const T2& element) //allows for custom operator==
+        template<class VAL> ND
+        T* Contains(const VAL& element) //allows for custom operator==
         {
             FOR_ARRAY((*this), i)
             {
@@ -177,8 +177,8 @@ namespace mini::box
 
         //?ARRAY FUSION
 
-        template<class T2, typename IDX_T_>
-        void AppendArray(const IArray<T2, IDX_T_>& other)
+        template<class VAL, typename IDX_T_>
+        void AppendArray(const IArray<VAL, IDX_T_>& other)
         {
             CheckRange(count + other.Count(), COUNT_MAX + 1);
             FOR_ARRAY(other, i) {
@@ -188,8 +188,8 @@ namespace mini::box
         }
 
 
-        template<class T2, typename IDX, typename = IsIntegralOrEnum<IDX>>
-        void InsertArray(const IDX pos, const IArray<T2>& other)
+        template<class VAL, typename IDX, typename = IsIntegralOrEnum<IDX>>
+        void InsertArray(const IDX pos, const IArray<VAL>& other)
         {
             CheckRange(count + other.Count(), COUNT_MAX + 1);
             static_assert(false, "Not yet implemented.");

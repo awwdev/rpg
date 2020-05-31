@@ -14,39 +14,19 @@
 #include "mini/Debug/Assert.hpp"
 
 
+
 namespace mini::box 
 {
 #define DO_BOUNDS_CHECK 1
 #define ND [[nodiscard]]
+#define BIT(i)  (IDX_T)i % (IDX_T)8
+#define BYTE(i) (IDX_T)i / (IDX_T)8
 
-    template<auto BITS_T, typename IDX_T = u32, typename = IsArraySize<BITS_T>>
-    struct Bitset
+    template<typename IDX_T = u32>
+    struct IBitset
     {
-        using INDEX_T = IDX_T;
-
-        static constexpr IDX_T BITS  = (IDX_T)BITS_T;
-        static constexpr IDX_T BYTES = (IDX_T)BITS_T / (IDX_T)8 + ((IDX_T)BITS_T % (IDX_T)8 ? (IDX_T)1 : (IDX_T)0); //ceil
-
-        u8 data [BYTES] = { 0 };
-
-        ///CTOR
-
-        constexpr Bitset(const std::size_t num = 0)
-        {
-            if (BytesNeeded(num) > BYTES) { //will result in "expression did not evaluate to a constant"(msvc) when constexpr fails
-                mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
-                __debugbreak();
-            }
-
-            for(IDX_T i = 0; i < BYTES; ++i)
-            {
-                const IDX_T bits = i * 8;
-                data[i] = static_cast<u8>((num >> bits) & 0xFF); //0xFF prevents wrapping?
-            }
-        }
-
-        #define BIT(i)  (IDX_T)i % (IDX_T)8
-        #define BYTE(i) (IDX_T)i / (IDX_T)8
+        const u32 BITS;
+        const u32 BYTES;
 
         ///SET
 
@@ -166,6 +146,43 @@ namespace mini::box
                 }
             }
         #endif
+        }
+
+    protected: 
+        IBitset(const u32 bits, const u32 bytes, u8* const pData)
+            : BITS { bits  }
+            , BYTES{ bytes }
+            , data { pData }
+        {;}
+
+        u8* const data;
+    };
+
+
+    template<auto BITS_T, typename IDX_T = u32, typename = IsArraySize<BITS_T>>
+    struct Bitset : IBitset<IDX_T>
+    {
+        using INDEX_T = IDX_T;
+
+        static constexpr IDX_T BITS  = (IDX_T)BITS_T;
+        static constexpr IDX_T BYTES = (IDX_T)BITS_T / (IDX_T)8 + ((IDX_T)BITS_T % (IDX_T)8 ? (IDX_T)1 : (IDX_T)0); //ceil
+
+        u8 data [BYTES] = { 0 };
+
+        ///CTOR
+
+        constexpr Bitset(const std::size_t num = 0) : IBitset<IDX_T>(BITS, BYTES, data)
+        {
+            if (BytesNeeded(num) > BYTES) { //will result in "expression did not evaluate to a constant"(msvc) when constexpr fails
+                mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
+                __debugbreak();
+            }
+
+            for(IDX_T i = 0; i < BYTES; ++i)
+            {
+                const IDX_T bits = i * 8;
+                data[i] = static_cast<u8>((num >> bits) & 0xFF); //0xFF prevents wrapping?
+            }
         }
     };
 

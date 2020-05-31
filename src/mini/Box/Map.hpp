@@ -21,6 +21,137 @@
 
 namespace mini::box
 {
+    template<class KEY, class VAL, typename = IsIntegralOrEnum<KEY>>
+    struct Pair
+    {
+        KEY key;
+        VAL val;
+    };
+
+
+    template<class VAL>
+    struct INewMap
+    {
+        using Val_t = VAL;
+        const std::size_t CAPACITY;
+
+        //? METHODS
+
+        template<typename KEY, typename = IsIntegralOrEnum<KEY>>
+        VAL& operator[](const KEY key)
+        {
+            //todo: check bounds
+
+            //if (bitsetPtr->Test(key))
+            //    dataPtr[key].~T();
+
+            //bitset.Set<true>(key);
+
+            return dataPtr[key];
+        }
+
+        //! QUESTION: DO INIT COMPLETE MAP ?? 
+        //or init when needed (more checks ...)
+        //maybe let user decide (template<DoInit::YES>)
+
+        template<typename IDX, typename = IsIntegralOrEnum<IDX>>
+        bool Contains(const IDX i)
+        {
+            return bitsetPtr->Test(i);
+        }
+
+        /*
+        template<typename IDX, class... CtorArgs, typename = IsIntegralOrEnum<IDX>>
+        void Set(const IDX idx, CtorArgs&&... args)
+        {
+            if (bitset.Test(idx))
+                dataPtr[idx].~T();
+
+            bitset.Set<true>(idx);
+            
+            if constexpr (std::is_aggregate_v<T>)
+            {
+                new(&dataPtr[idx]) T{ std::forward<CtorArgs>(args)... };
+            }
+            else
+            {
+                new(&dataPtr[idx]) T(args...);
+            }
+        }
+
+        template<typename IDX, class... CtorArgs, typename = IsIntegralOrEnum<IDX>>
+        T& Get(const IDX idx)
+        {
+            return dataPtr[idx];
+        }
+
+        template<typename IDX, class... CtorArgs, typename = IsIntegralOrEnum<IDX>>
+        T* GetOptional(const IDX idx)
+        {
+            return Contains(idx) ? &dataPtr[idx] : nullptr;
+        }
+
+        void Remove()
+        {
+            //TODO
+            static_assert(false, "no impl yet");
+        }
+        */
+
+        void Clear()
+        {
+            //for(u32 i = 0; i < CAPACITY; ++i)
+            //{
+            //    if (bitsetPtr->Test(i))
+            //        dataPtr[i].~T();
+            //}
+            //bitset->Clear();
+        }
+
+    protected:
+        INewMap(VAL* const data, IBitset<u32>* const bitset, const u32 capacity) 
+            : dataPtr   { data }
+            , bitsetPtr { bitset }
+            , CAPACITY  { capacity } 
+        {;}
+
+        VAL* const dataPtr;
+        IBitset<u32>* const bitsetPtr;
+
+        ~INewMap() { Clear(); }
+    };
+
+
+    template<class VAL, auto CAPACITY_T, typename = IsArraySize<CAPACITY_T>>
+    struct NewMap : INewMap<VAL>
+    {
+        constexpr static auto CAPACITY  = CAPACITY_T;
+        constexpr static auto BYTE_SIZE = CAPACITY * sizeof(VAL);
+
+        using Val_t  = VAL;
+        using Base_t = INewMap<VAL>;
+        using Pair_t = Pair<decltype(CAPACITY), VAL>;
+
+        NewMap() : Base_t(reinterpret_cast<VAL*>(data), &bitset, CAPACITY) {;}
+
+        template <class... Elements, typename = DoesTypeMatchParams<Pair_t, Elements...>>
+        NewMap(Elements... elements) : NewMap()
+        {
+
+        }
+
+        private:
+            alignas(VAL) u8 data[BYTE_SIZE];
+            Bitset<CAPACITY_T> bitset;
+    };
+
+
+
+
+
+
+
+
     //for iteration keep capacity small
     #define FOR_MAP_BEGIN(map, i) for(auto i = 0; i < map.CAPACITY; ++i) { \
     if (map.Contains(i) == false) continue; 

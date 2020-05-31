@@ -11,7 +11,6 @@
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Resources/ResourceManager.hpp"
 
-
 using namespace mini;
 using namespace mini::wnd;
 
@@ -22,6 +21,18 @@ int WINAPI wWinMain(
     _In_        PWSTR pCmdLine,
     _In_        int nCmdShow)
 {
+    dbg::Console console {};
+
+    using _Map = box::NewMap<float, 10>;
+    using _P   = _Map::Pair_t;
+
+    _Map newMap 
+    {
+        _P{ 0, 42.f },
+        _P{ 1, 42.f },
+    };
+    std::exit(0);
+
     {
         //? META
         dbg::Console console {};
