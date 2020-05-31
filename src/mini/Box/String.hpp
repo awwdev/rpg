@@ -77,6 +77,8 @@ namespace mini::box
             count = arrCount;
         }
 
+        void operator=(const IString& other) { Clear(); Append(other); }
+
 
         //? APPEND
 
@@ -137,8 +139,8 @@ namespace mini::box
         { ; }
         
         //me avoiding boilerplate, use generic methods instead
-        IString(const IString&)             = delete;
-        IString& operator=(const IString&)  = delete;
+        //IString(const IString&)             = delete;
+        //IString& operator=(const IString&)  = delete;
 
 
         //? INTERNAL

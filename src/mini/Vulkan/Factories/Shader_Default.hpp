@@ -60,7 +60,7 @@ namespace mini::vk
             .pImmutableSamplers = nullptr,
         }); 
 
-        auto& image = images[res::Font];
+        auto& image = images[res::Texture1];
         shader.imageInfos.Set(0, VkDescriptorImageInfo{
             .sampler        = shader.samplers[0],
             .imageView      = image.view, 

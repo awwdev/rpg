@@ -21,7 +21,7 @@ namespace mini::vk
     struct Resources
     {
         //? resources
-        Image images [res::ENUM_END];
+        Image images [res::TextureName::ENUM_END];
 
         //? pipeline
         Default_RenderPass  default_renderPass;
@@ -36,8 +36,9 @@ namespace mini::vk
         { 
             //? resources
             FOR_CARRAY(images, i)
-                images[i].Create(context, *resManager.textures.mapping[i], commands.cmdPool);
+                images[i].Create(context, *resManager.textures.textures[i], commands.cmdPool);
 
+            //? factories
             CreateShader_Default(context, shader_default, images);
 
             default_renderPass.Create(context);

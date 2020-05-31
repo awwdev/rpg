@@ -275,8 +275,9 @@ namespace mini::box
         }
     };
 
+    enum class INIT { Yes, No };
 
-    template<class T, auto COUNT_MAX_T, typename IDX_T = u32, typename = IsArraySize<COUNT_MAX_T>>
+    template<class T, auto COUNT_MAX_T, INIT DoInit = INIT::No, typename IDX_T = u32, typename = IsArraySize<COUNT_MAX_T>>
     struct Array final : IArray<T, IDX_T>
     {
         using BASE    = IArray<T, IDX_T>;
@@ -289,7 +290,10 @@ namespace mini::box
         ///CTOR
 
         Array() : BASE(reinterpret_cast<T*>(data), 0, COUNT_MAX, BYTE_SIZE)
-        {;}
+        {
+            if constexpr(DoInit == INIT::Yes)
+                this->InitCompleteArray();
+        }
 
         template<class... ELEMENTS, typename = std::common_type_t<T, ELEMENTS...>>
         explicit Array(const ELEMENTS&... elements) : Array()

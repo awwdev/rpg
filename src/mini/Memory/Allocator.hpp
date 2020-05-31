@@ -41,7 +41,8 @@ namespace mini::mem
         { 1000, 10 },
         { 3000, 10 },  //vk renderer
         { 8000, 10 },  //32*32*4 bmp = 4096
-        { 10001, 10 }  //shader file buffer
+        { 10001, 10 },  //shader file buffer
+        { 10'000'000, 10 }  //tetxure array?
     };
     //!--------------------------------------
 
@@ -89,6 +90,8 @@ namespace mini::mem
     template<class T>
     struct BlockPtr
     {
+        using DATA_T = T;
+
         T* ptr = nullptr;
         std::size_t blockId = 0;
 

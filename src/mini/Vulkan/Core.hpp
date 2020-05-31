@@ -25,6 +25,16 @@ if (const auto res = fn; res != VK_SUCCESS) \
 //#   define VK_CHECK(fn) fn
 //#endif // DEBUG
 
+namespace mini::vk
+{
+    struct Refs
+    {
+        VkDevice device;
+        Refs(VkDevice pDevice) : device { pDevice } {;}
+    };
+}//ns
+
+
 /*
 use this to give a resource a name to view in renderdoc
 

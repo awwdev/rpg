@@ -101,10 +101,10 @@ namespace mini::vk
             queue   = pContext.queue;
             physicalMemProps = pContext.physicalMemProps;
 
-            width   = texture.WIDTH;
-            height  = texture.HEIGHT;
+            width   = texture.width;
+            height  = texture.height;
 
-            const auto FORMAT = VK_FORMAT_R8G8B8A8_SRGB;
+            const auto FORMAT = VK_FORMAT_R8G8B8A8_SRGB; //!depends on channels!
 
             //? IMAGE
 
@@ -203,7 +203,7 @@ namespace mini::vk
                     .layerCount     = 1
                 },
                 .imageOffset        = { 0, 0, 0 },
-                .imageExtent        = { texture.WIDTH, texture.HEIGHT, 1 }
+                .imageExtent        = { texture.width, texture.height, 1 }
             };
 
             vkCmdCopyBufferToImage(cmdBuffer, buffer.buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);

@@ -13,12 +13,6 @@
 
 namespace mini::vk
 {
-    struct Refs
-    {
-        VkDevice device;
-        Refs(VkDevice pDevice) : device { pDevice } {;}
-    };
-
     struct Shader : Refs
     {
         //stages
