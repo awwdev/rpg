@@ -275,8 +275,6 @@ namespace mini::box
         }
     };
 
-    enum class INIT { Yes, No };
-
     template<class T, auto COUNT_MAX_T, INIT DoInit = INIT::No, typename IDX_T = u32, typename = IsArraySize<COUNT_MAX_T>>
     struct Array final : IArray<T, IDX_T>
     {
