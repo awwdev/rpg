@@ -20,9 +20,9 @@
 //TODO: bound checks
 
   //for iteration keep capacity small
-#define FOR_NMAP_BEGIN(map, i) for(auto i = 0; i < map.CAPACITY; ++i) { \
+#define FOR_MAP_BEGIN(map, i) for(auto i = 0; i < map.CAPACITY; ++i) { \
 if (map.Contains(i) == false) continue; 
-#define FOR_NMAP_END }
+#define FOR_MAP_END }
 
 namespace mini::box
 {
@@ -42,8 +42,8 @@ namespace mini::box
 
         //? SETTERS
 
-        template<typename IDX, class... CtorArgs, typename = IsIntegralOrEnum<IDX>>
-        void Set(const IDX key, CtorArgs&&... args)
+        template<typename KEY, class... CtorArgs, typename = IsIntegralOrEnum<KEY>>
+        void Set(const KEY key, CtorArgs&&... args)
         {
             if (bitsetPtr->Test(key))
                 dataPtr[key].~VAL();
@@ -88,10 +88,10 @@ namespace mini::box
 
         //? OTHER
 
-        template<typename IDX, typename = IsIntegralOrEnum<IDX>>
-        bool Contains(const IDX i)
+        template<typename KEY, typename = IsIntegralOrEnum<KEY>>
+        bool Contains(const KEY key) const
         {
-            return bitsetPtr->Test(i);
+            return bitsetPtr->Test(key);
         }
 
         void Remove()

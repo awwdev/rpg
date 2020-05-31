@@ -1,11 +1,8 @@
 #pragma once
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/TextureLoader.hpp"
-#include "mini/Box/String.hpp"
-
+#include "mini/Box/Map.hpp"
 #include "mini/Debug/Logger.hpp"
-
-#include <unordered_map>
 
 namespace mini::res
 {
@@ -23,10 +20,12 @@ namespace mini::res
         ENUM_END
     };
 
-    const std::unordered_map<TextureName, TextureData> mapping 
+    using TextureMap = box::Map<TextureData, TextureName::ENUM_END>;
+    using P = TextureMap::Pair_t;
+    const TextureMap TEXTURE_MAP
     {
-        { TextureName::Texture1, { "res/Textures/Texture1.bmp",  32, 32 } },
-        { TextureName::Texture2,  { "res/Textures/Texture2.bmp", 48, 48 } },
+        P{ TextureName::Texture1, { "res/Textures/Texture1.bmp", 32, 32 } },
+        P{ TextureName::Texture2, { "res/Textures/Texture2.bmp", 48, 48 } },
     };
     //! ---------------------------------------------------------------------
 
@@ -49,21 +48,24 @@ namespace mini::res
             mem::ClaimBlock(ptrTextures1);
             mem::ClaimBlock(ptrTextures2);
 
-            for(const auto& [name, data] : mapping)
+            FOR_MAP_BEGIN(TEXTURE_MAP, i)
             {
+                auto& data = TEXTURE_MAP.Get(i);
+                
                 //find appropriate texture array
                 if (data.x <= TextureArray1::DATA_T::DATA_T::MAX_WIDTH && data.y <= TextureArray1::DATA_T::DATA_T::MAX_HEIGHT) {
-                    textures[name] = &ptrTextures1.Get().AppendReturn();
+                    textures[i] = &ptrTextures1.Get().AppendReturn();
                 } else
                 if (data.x <= TextureArray2::DATA_T::DATA_T::MAX_WIDTH && data.y <= TextureArray2::DATA_T::DATA_T::MAX_HEIGHT) {
-                    textures[name] = &ptrTextures2.Get().AppendReturn();
+                    textures[i] = &ptrTextures2.Get().AppendReturn();
                 }
                 else {
                     ERR("no texture array found!");
                 }
 
-                textures[name]->LoadFrom_BMP(data.path);
+                textures[i]->LoadFrom_BMP(data.path);
             }
+            FOR_MAP_END
         }
     };
 
