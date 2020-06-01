@@ -80,7 +80,7 @@ namespace mini::mem
     //?GLOBAL ----------------------------------------------
     inline u8* allocPtrs [ALLOC_COUNT];         //index based
     inline box::Bitset<BLOCK_COUNT> blocksUsed; //all blocks
-    inline box::Map<box::String<200>, BLOCK_COUNT> blockTypes; //!watch out stack exhaustion
+    inline box::Map<box::String<200>, BLOCK_COUNT> blockTypes;
     //?-----------------------------------------------------
 
 

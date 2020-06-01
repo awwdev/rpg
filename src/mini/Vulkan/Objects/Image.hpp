@@ -95,7 +95,7 @@ namespace mini::vk
         VkImageLayout layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 
-        inline void Create(Context& pContext, res::ITexture& texture, VkCommandPool cmdPool)
+        inline void Create(Context& pContext, hostRes::ITexture& texture, VkCommandPool cmdPool)
         {
             device  = pContext.device;
             queue   = pContext.queue;

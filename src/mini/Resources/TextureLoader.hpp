@@ -10,7 +10,7 @@
 #include <fstream>
 #include <filesystem>
 
-namespace mini::res
+namespace mini::hostRes
 {
     struct ITexture
     {

@@ -14,29 +14,29 @@
 #include "mini/Vulkan/Synchronization.hpp"
 #include "mini/Memory/Allocator.hpp"
 
-#include "mini/Resources/ResourceManager.hpp"
+#include "mini/Resources/HostResources.hpp"
 
 namespace mini::vk
 {
-    struct Resources
+    struct VkResources
     {
-        //? resources
-        Image images [res::TextureName::ENUM_END];
+        //? gpu resources
+        Image images [hostRes::TextureName::ENUM_END];
 
-        //? pipeline
+        //? pipeline stuff
         Default_RenderPass  default_renderPass;
         Default_Pipeline    default_pipeline;
 
         Shader shader_default;
 
-        explicit Resources(VkDevice pDevice) : shader_default { pDevice } {;}
+        explicit VkResources(VkDevice pDevice) : shader_default { pDevice } {;}
 
         //! resource manager needs to load beforehand
-        inline void Create(Context& context, res::ResourceManager& resManager, Commands& commands)
+        inline void Create(Context& context, hostRes::HostResources& resManager, Commands& commands)
         { 
-            //? resources
+            //? auto host resources load (based on enum)
             FOR_CARRAY(images, i)
-                images[i].Create(context, *resManager.textures.textures[i], commands.cmdPool);
+                images[i].Create(context, *resManager.textures.iTextures[i], commands.cmdPool);
 
             //? factories
             CreateShader_Default(context, shader_default, images);

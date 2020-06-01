@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/Vulkan/Objects/Shader.hpp"
-#include "mini/Resources/ResourceManager.hpp"
+#include "mini/Resources/HostResources.hpp"
 
 namespace mini::vk
 {
@@ -60,7 +60,7 @@ namespace mini::vk
             .pImmutableSamplers = nullptr,
         }); 
 
-        auto& image = images[res::Texture1];
+        auto& image = images[hostRes::Texture1];
         shader.imageInfos.Set(0, VkDescriptorImageInfo{
             .sampler        = shader.samplers[0],
             .imageView      = image.view, 

@@ -11,7 +11,7 @@
 
 #include "mini/Scene/Scene.hpp"
 #include "mini/Utils/DeltaTime.hpp"
-#include "mini/Resources/ResourceManager.hpp"
+#include "mini/Resources/HostResources.hpp"
 
 using namespace mini;
 using namespace mini::wnd;
@@ -28,13 +28,12 @@ int WINAPI wWinMain(
         dbg::Console console {};
         wnd::Window  window  { hInstance, 800, 600 };
         mem::GlobalAllocate();
-        res::ResourceManager resourceManager {}; //will load immediately for now
-        mem::PrintAllocationHTML();
+        hostRes::HostResources hostResources {}; //will load immediately for now
 
         //? RENDERER
         auto ptrRenderer = mem::ClaimBlock<vk::Renderer>(
             vk::WindowHandle{window.hInstance, window.hWnd},
-            resourceManager
+            hostResources
         );
         
         //? SCENES
@@ -61,7 +60,6 @@ int WINAPI wWinMain(
 }//main end
 
 
-//make more obvious texture image connection
 //join shader default and pipeline r+ renderpass under folder dedicated
 //text renderer 
 //vb buffer, texture atlas texture coords

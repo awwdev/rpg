@@ -5,8 +5,7 @@
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Ctors.hpp"
 #include "mini/Vulkan/Resources.hpp"
-
-#include "mini/Resources/ResourceManager.hpp"
+#include "mini/Resources/HostResources.hpp"
 #include "mini/Scene/Scene.hpp"
 
 namespace mini::vk
@@ -14,21 +13,21 @@ namespace mini::vk
     struct Renderer
     {
         Context         context;
-        Resources       resources;
+        VkResources       resources;
         Commands        commands;
         Synchronization sync;
 
         uint32_t currentFrame = 0;
         
 
-        Renderer(const vk::WindowHandle& wndHandle, res::ResourceManager& resManager)
+        Renderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
             : context   { wndHandle }
             , resources { context.device }
         {
             //context.Create(wndHandle);
             sync.Create(context);
             commands.Create(context);
-            resources.Create(context, resManager, commands);
+            resources.Create(context, hostResources, commands);
         }
 
 
