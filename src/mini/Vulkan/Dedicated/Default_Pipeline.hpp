@@ -3,9 +3,8 @@
 #pragma once
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
-//#include "mini/Vulkan/Default/Default_Shader.hpp"
 #include "mini/Vulkan/Objects/Shader.hpp"
-#include "mini/Vulkan/Default/Default_RenderPass.hpp"
+#include "mini/Vulkan/Dedicated/Default_RenderPass.hpp"
 
 namespace mini::vk
 {

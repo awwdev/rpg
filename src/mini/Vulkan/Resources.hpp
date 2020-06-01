@@ -4,15 +4,13 @@
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
 
-#include "mini/Vulkan/Default/Default_RenderPass.hpp"
-#include "mini/Vulkan/Default/Default_Pipeline.hpp"
-
-#include "mini/Vulkan/Objects/Shader.hpp"
-#include "mini/Vulkan/Factories/Shader_Default.hpp"
-
 #include "mini/Vulkan/Commands.hpp"
 #include "mini/Vulkan/Synchronization.hpp"
 #include "mini/Memory/Allocator.hpp"
+
+#include "mini/Vulkan/Dedicated/Default_RenderPass.hpp"
+#include "mini/Vulkan/Dedicated/Default_Pipeline.hpp"
+#include "mini/Vulkan/Dedicated/Default_Shader.hpp"
 
 #include "mini/Resources/HostResources.hpp"
 
@@ -26,10 +24,9 @@ namespace mini::vk
         //? pipeline stuff
         Default_RenderPass  default_renderPass;
         Default_Pipeline    default_pipeline;
+        Shader              default_shader;
 
-        Shader shader_default;
-
-        explicit VkResources(VkDevice pDevice) : shader_default { pDevice } {;}
+        explicit VkResources(VkDevice pDevice) : default_shader { pDevice } {;}
 
         //! resource manager needs to load beforehand
         inline void Create(Context& context, hostRes::HostResources& resManager, Commands& commands)
@@ -39,10 +36,10 @@ namespace mini::vk
                 images[i].Create(context, *resManager.textures.iTextures[i], commands.cmdPool);
 
             //? factories
-            CreateShader_Default(context, shader_default, images);
+            CreateShader_Default(context, default_shader, images);
 
             default_renderPass.Create(context);
-            default_pipeline.Create(context, shader_default, default_renderPass);
+            default_pipeline.Create(context, default_shader, default_renderPass);
         }
         
     };
