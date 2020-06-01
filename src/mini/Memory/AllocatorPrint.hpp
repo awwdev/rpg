@@ -18,8 +18,9 @@ namespace mini::mem
     <meta charset="utf-8">
 
     <style>
-        * { padding:0; margin:0; border:0; font-size: 12px; font-family: monospace; }
-        div { word-break: break-all; width: 400px; height: 100%; font-size: 24px; border: 1px solid gray; }
+        *       { padding:0; margin:0; border:0; font-size: 24px; font-family: monospace; }
+        div     { word-break: break-all; width: 400px; height: 100%; border: 1px solid gray; }
+        a:hover { cursor: pointer; }
     </style>
 </head>
 <body>
@@ -27,9 +28,20 @@ namespace mini::mem
 <div>
 )";
 
+        u32 currAllocIdx = 0;
         FOR_BITSET(blocksUsed, i)
         {
-            out << (blocksUsed.Test(i) ? "&#9639;" : "&#9634;");
+            const auto allocIdx = GetAllocIdxFromBlockId(i);
+            if (currAllocIdx != allocIdx)
+            {
+                currAllocIdx = allocIdx;
+                out << "<br>";
+            }
+            auto* blockType = blockTypes.GetOptional(i);
+            
+            out << "<a title='";
+            out << (blockType == nullptr ? "unused" : *blockType);
+            out << (blocksUsed.Test(i) ? "'>&#9639;</a>" : "'>&#9634;</a>"); //filled and not filled rect
         }
 
         out << "</div></body>";

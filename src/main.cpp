@@ -29,6 +29,7 @@ int WINAPI wWinMain(
         wnd::Window  window  { hInstance, 800, 600 };
         mem::GlobalAllocate();
         res::ResourceManager resourceManager {}; //will load immediately for now
+        mem::PrintAllocationHTML();
 
         //? RENDERER
         auto ptrRenderer = mem::ClaimBlock<vk::Renderer>(
@@ -60,9 +61,7 @@ int WINAPI wWinMain(
 }//main end
 
 
-//write better: texture array stuff inside res mang
 //make more obvious texture image connection
-
 //join shader default and pipeline r+ renderpass under folder dedicated
 //text renderer 
 //vb buffer, texture atlas texture coords

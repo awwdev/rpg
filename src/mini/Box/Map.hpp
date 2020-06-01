@@ -94,10 +94,11 @@ namespace mini::box
             return bitsetPtr->Test(key);
         }
 
-        void Remove()
+        template<typename KEY, typename = IsIntegralOrEnum<KEY>>
+        void Remove(const KEY key)
         {
-            //TODO
-            static_assert(false, "no impl yet");
+            dataPtr[key].~VAL();
+            bitsetPtr->Set<false>(key);
         }  
 
         void Clear()

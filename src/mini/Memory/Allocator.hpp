@@ -17,6 +17,8 @@
 #pragma once
 #include "mini/Utils/Types.hpp"
 #include "mini/Box/Bitset.hpp"
+#include "mini/Box/Map.hpp"
+#include "mini/Box/String.hpp"
 #include "mini/Debug/Logger.hpp"
 
 #define WIN32_LEAN_AND_MEAN
@@ -37,7 +39,7 @@ namespace mini::mem
     //!define blocks at compile time (size and count) 
     //!KEEP IT SORTED BY SIZE
     constexpr AllocInfo ALLOC_INFOS[] = {
-        { 100, 1    },      //scene stack
+        { 100, 1    },     //scene stack
         { 5'000,  1 },     //vk renderer
         { 12'000, 3 },     //shader char buffer + 32*32*4 tex array (containing 2 textures)
         { 10'000'000, 1 }  //1024*1024*4 tex array (containing 2 textures)
@@ -61,10 +63,25 @@ namespace mini::mem
         return size;
     }();
 
+    constexpr inline u32 GetAllocIdxFromBlockId(const u32 blockId)
+    {
+        u32 currBlockCount = 0;
+        for(u32 i = 0; i < ALLOC_COUNT; ++i)
+        {
+            currBlockCount += ALLOC_INFOS[i].blockCount;
+            if (blockId < currBlockCount)
+                return i;
+        }
+        ERR("current block count wrong");
+        return 0;
+    }
 
 
+    //?GLOBAL ----------------------------------------------
     inline u8* allocPtrs [ALLOC_COUNT];         //index based
     inline box::Bitset<BLOCK_COUNT> blocksUsed; //all blocks
+    inline box::Map<box::String<200>, BLOCK_COUNT> blockTypes; //!watch out stack exhaustion
+    //?-----------------------------------------------------
 
 
     inline void GlobalAllocate()
@@ -87,6 +104,13 @@ namespace mini::mem
     }
 
     enum class AutoClaim { Yes, No };
+
+    inline void FreeBlock(const u32 blockId)
+    {
+        //LOG("BLOCK FREE: ", typeid(T).name()); //lookup emplaced names
+        blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
+        blockTypes.Remove(blockId);
+    }
 
 
     template<class T>
@@ -115,9 +139,7 @@ namespace mini::mem
         BlockPtr(T* const pPtr, const std::size_t pBlockId)
             : ptr     { pPtr }
             , blockId { pBlockId } 
-        {
-            LOG("BLOCK CLAIM: ", typeid(T).name());
-        }
+        {}
 
         BlockPtr(const BlockPtr&)            = delete;
         BlockPtr& operator=(const BlockPtr&) = delete;
@@ -141,8 +163,7 @@ namespace mini::mem
         { 
             if (ptr == nullptr) return;
             ptr->~T();
-            blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
-            LOG("BLOCK FREE: ", typeid(T).name());
+            FreeBlock(blockId);
         }
     };
 
@@ -161,7 +182,7 @@ namespace mini::mem
             std::size_t allocBitBegin = 0;
             for(std::size_t i=0; i<ALLOC_COUNT; ++i) 
             {
-                if (ALLOC_INFOS[i].blockSize >= (sizeof(T) + alignof(T))) //assumes sorted
+                if (ALLOC_INFOS[i].blockSize >= (sizeof(T) + alignof(T))) //!assumes sorted
                     return { i, allocBitBegin };
                 allocBitBegin += ALLOC_INFOS[i].blockCount;
             }
@@ -170,6 +191,9 @@ namespace mini::mem
 
         const auto freeBlock = blocksUsed.FindFirstFreeBit(FIT.allocBitBegin); //start search at the alloc
         blocksUsed.Flip(freeBlock); //mark used
+
+        //LOG("BLOCK CLAIM: ", typeid(T).name());
+        blockTypes.Set(freeBlock, typeid(T).name());
 
         constexpr auto blockSize = ALLOC_INFOS[FIT.allocIdx].blockSize;
         auto* ptr     = allocPtrs[FIT.allocIdx] + ((freeBlock - FIT.allocBitBegin) * blockSize);
@@ -198,5 +222,4 @@ namespace mini::mem
 
 }//ns
 
-//TODO: #6 mem::PrintBlocks()
 //TODO: RUNTIME VERSION OF CLAIMBLOCK ?
