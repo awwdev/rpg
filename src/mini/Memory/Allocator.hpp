@@ -37,12 +37,10 @@ namespace mini::mem
     //!define blocks at compile time (size and count) 
     //!KEEP IT SORTED BY SIZE
     constexpr AllocInfo ALLOC_INFOS[] = {
-        {  128, 10 },  //used for strings
-        { 1000, 10 },
-        { 3000, 10 },  //vk renderer
-        { 8000, 10 },  //32*32*4 bmp = 4096
-        { 10001, 10 },  //shader file buffer
-        { 10'000'000, 10 }  //tetxure array?
+        { 100, 1    },      //scene stack
+        { 5'000,  1 },     //vk renderer
+        { 12'000, 3 },     //shader char buffer + 32*32*4 tex array (containing 2 textures)
+        { 10'000'000, 1 }  //1024*1024*4 tex array (containing 2 textures)
     };
     //!--------------------------------------
 
@@ -62,6 +60,8 @@ namespace mini::mem
         }
         return size;
     }();
+
+
 
     inline u8* allocPtrs [ALLOC_COUNT];         //index based
     inline box::Bitset<BLOCK_COUNT> blocksUsed; //all blocks
@@ -86,6 +86,8 @@ namespace mini::mem
         HeapFree(GetProcessHeap(), 0, allocPtrs[0]);
     }
 
+    enum class AutoClaim { Yes, No };
+
 
     template<class T>
     struct BlockPtr
@@ -105,11 +107,17 @@ namespace mini::mem
         auto&       operator[](const std::size_t i)        { return (*ptr)[i]; };
         const auto& operator[](const std::size_t i) const  { return (*ptr)[i]; };
 
-        BlockPtr() = default;
+        explicit BlockPtr(const AutoClaim doAutoClaim = AutoClaim::No)
+        {
+            if (doAutoClaim == AutoClaim::Yes)
+                ClaimBlock(*this);
+        };
         BlockPtr(T* const pPtr, const std::size_t pBlockId)
             : ptr     { pPtr }
             , blockId { pBlockId } 
-        {;}
+        {
+            LOG("BLOCK CLAIM: ", typeid(T).name());
+        }
 
         BlockPtr(const BlockPtr&)            = delete;
         BlockPtr& operator=(const BlockPtr&) = delete;
@@ -134,6 +142,7 @@ namespace mini::mem
             if (ptr == nullptr) return;
             ptr->~T();
             blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
+            LOG("BLOCK FREE: ", typeid(T).name());
         }
     };
 
@@ -190,4 +199,4 @@ namespace mini::mem
 }//ns
 
 //TODO: #6 mem::PrintBlocks()
-//TODO: RUNTIME VERSION OF CLAIMBLOCK
+//TODO: RUNTIME VERSION OF CLAIMBLOCK ?

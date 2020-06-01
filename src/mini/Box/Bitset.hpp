@@ -17,6 +17,7 @@
 
 namespace mini::box 
 {
+#define FOR_BITSET(bitset, i) for(decltype(bitset)::INDEX_T i = 0; i < bitset.BITS; ++i)
 #define DO_BOUNDS_CHECK 1
 #define ND [[nodiscard]]
 #define BIT(i)  (IDX_T)i % (IDX_T)8
@@ -25,6 +26,8 @@ namespace mini::box
     template<typename IDX_T = u32>
     struct IBitset
     {
+        using INDEX_T = IDX_T; 
+
         const u32 BITS;
         const u32 BYTES;
 
@@ -162,8 +165,6 @@ namespace mini::box
     template<auto BITS_T, typename IDX_T = u32, typename = IsArraySize<BITS_T>>
     struct Bitset : IBitset<IDX_T>
     {
-        using INDEX_T = IDX_T;
-
         static constexpr IDX_T BITS  = (IDX_T)BITS_T;
         static constexpr IDX_T BYTES = (IDX_T)BITS_T / (IDX_T)8 + ((IDX_T)BITS_T % (IDX_T)8 ? (IDX_T)1 : (IDX_T)0); //ceil
 

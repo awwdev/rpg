@@ -4,7 +4,9 @@
 #include "mini/Debug/Console.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/Box/Map.hpp"
+#include "mini/Utils/Types.hpp"
 #include "mini/Memory/Allocator.hpp"
+#include "mini/Memory/AllocatorPrint.hpp"
 #include "mini/Vulkan/Renderer.hpp"
 
 #include "mini/Scene/Scene.hpp"
@@ -33,7 +35,7 @@ int WINAPI wWinMain(
             vk::WindowHandle{window.hInstance, window.hWnd},
             resourceManager
         );
-
+        
         //? SCENES
         auto ptrSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 1>>();
         ptrSceneStack->InitCompleteArray();
@@ -51,8 +53,16 @@ int WINAPI wWinMain(
         //? THE END
         VK_CHECK(vkDeviceWaitIdle(ptrRenderer->context.device));
     }
-    
+
     mem::GlobalDeallocate();
     system("pause");
 
 }//main end
+
+
+//write better: texture array stuff inside res mang
+//make more obvious texture image connection
+
+//join shader default and pipeline r+ renderpass under folder dedicated
+//text renderer 
+//vb buffer, texture atlas texture coords

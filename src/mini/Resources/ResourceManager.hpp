@@ -2,6 +2,7 @@
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/TextureLoader.hpp"
 #include "mini/Box/Map.hpp"
+#include "mini/Box/Array.hpp"
 #include "mini/Debug/Logger.hpp"
 
 namespace mini::res
@@ -13,6 +14,7 @@ namespace mini::res
     };
 
     //! ADD RESOURCES HERE---------------------------------------------------
+    //always add both name and map entry
     enum TextureName 
     {
         Texture1, 
@@ -30,41 +32,46 @@ namespace mini::res
     //! ---------------------------------------------------------------------
 
 
+    template<class... T>
+    void AssignTextureToTextureArray(
+        const u32 idx, 
+        ITexture* (&textures) [TextureName::ENUM_END], 
+        T&... arrays)
+    {
+        bool assigned = false;
+
+        const auto fn = [&](auto& arr)
+        {
+            if (assigned) return;
+
+            auto& data = TEXTURE_MAP.Get(idx);
+            if (data.x <= std::decay_t<decltype(arr)>::DATA_T::DATA_T::MAX_WIDTH && 
+                data.y <= std::decay_t<decltype(arr)>::DATA_T::DATA_T::MAX_HEIGHT) {
+                textures[idx] = &arr.Get().AppendReturn();
+                assigned = true;
+            } 
+        };
+
+        ((fn(arrays)), ...);
+
+        if (assigned == false)
+            ERR("not texture array found");
+    }
 
     struct Textures
     {
+        //used to create gpu resources! (vk::Image)
         ITexture* textures[TextureName::ENUM_END]; //size agnostic table
 
         //? ARRAY OF SIZES
-        using TextureArray1 = mem::BlockPtr<box::Array<Texture<  32,   32>, 2>>;
-        using TextureArray2 = mem::BlockPtr<box::Array<Texture<1024, 1024>, 2>>;
-
-        TextureArray1 ptrTextures1;
-        TextureArray2 ptrTextures2;
-
+        mem::BlockPtr<box::Array<Texture<  32,   32>, 2>> ptrTextures1 { mem::AutoClaim::Yes };
+        mem::BlockPtr<box::Array<Texture<1024, 1024>, 2>> ptrTextures2 { mem::AutoClaim::Yes };
 
         inline void Load()
         {
-            mem::ClaimBlock(ptrTextures1);
-            mem::ClaimBlock(ptrTextures2);
-
             FOR_MAP_BEGIN(TEXTURE_MAP, i)
-            {
-                auto& data = TEXTURE_MAP.Get(i);
-                
-                //find appropriate texture array
-                if (data.x <= TextureArray1::DATA_T::DATA_T::MAX_WIDTH && data.y <= TextureArray1::DATA_T::DATA_T::MAX_HEIGHT) {
-                    textures[i] = &ptrTextures1.Get().AppendReturn();
-                } else
-                if (data.x <= TextureArray2::DATA_T::DATA_T::MAX_WIDTH && data.y <= TextureArray2::DATA_T::DATA_T::MAX_HEIGHT) {
-                    textures[i] = &ptrTextures2.Get().AppendReturn();
-                }
-                else {
-                    ERR("no texture array found!");
-                }
-
-                textures[i]->LoadFrom_BMP(data.path);
-            }
+                AssignTextureToTextureArray(i, textures, ptrTextures1, ptrTextures2);
+                textures[i]->LoadFrom_BMP(TEXTURE_MAP.Get(i).path);
             FOR_MAP_END
         }
     };

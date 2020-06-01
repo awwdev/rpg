@@ -23,13 +23,14 @@ namespace mini::mem
     </style>
 </head>
 <body>
+
 <div>
 )";
 
-        //for(u32 i = 0; i < blocks_112008.used.BIT_COUNT; ++i)
-        //{
-        //    //out << (blocks_112008.used.Test(i) ? "&#9639;" : "&#9634;");
-        //}
+        FOR_BITSET(blocksUsed, i)
+        {
+            out << (blocksUsed.Test(i) ? "&#9639;" : "&#9634;");
+        }
 
         out << "</div></body>";
 

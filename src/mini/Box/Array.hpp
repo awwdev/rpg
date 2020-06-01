@@ -27,7 +27,8 @@ namespace mini::box
 #define FOR_ARRAY(arr, i) for(decltype(arr.Count()) i = 0; i < arr.Count(); ++i) //no use of iterator boilerplate
 #define ND [[nodiscard]]
 
-    
+    enum class INIT { Yes, No };
+
     //size agnostic in type - use to pass array around like IArray<T>&
     template<class T, typename IDX_T = u32>
     struct IArray

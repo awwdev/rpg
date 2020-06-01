@@ -10,10 +10,13 @@
  /Zi ^
  /nologo ^
  /MTd ^
+ /GR ^
  /D _UNICODE /D UNICODE /D _STATIC_CPPLIB /D _HAS_EXCEPTIONS=0 ^
  /Fo: build_debug\objs\ ^
  /Fe: build_debug\main_debug.exe ^
  /Fd: build_debug\ ^
+ /I src\ ^
+ src\mini\Utils\*.cpp ^
  src\*.cpp ^
  user32.lib ^
  third\libs\vulkan-1.lib ^

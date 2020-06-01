@@ -77,6 +77,13 @@ namespace mini
     template<class T, class... PARAMS>
     using DoesTypeMatchParams = std::enable_if_t<std::is_same_v<T, std::common_type_t<PARAMS...>>>;
 
-    enum class INIT { Yes, No }; //used by box::Array and box::Map
+    template<typename T>
+    struct StringOfType
+    {
+        static chars_t Get();
+    };
+    
+
+
 
 }//ns
