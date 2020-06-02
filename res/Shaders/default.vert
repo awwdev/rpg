@@ -4,6 +4,7 @@ layout(location = 0) in vec3 inPositions;
 layout(location = 1) in vec4 inColors;
 
 layout (location = 0) out vec2 coord;
+layout (location = 1) out vec4 outColors;
 
 layout(push_constant) uniform Push {
     float value;
@@ -22,6 +23,8 @@ vec2 coords[6] = vec2[](
 
 void main() {
     coord = coords[gl_VertexIndex];
+    outColors = inColors;
+
     float x = inPositions.x + push.value;
     float y = inPositions.y;
     gl_Position = vec4(x, y, 0, 1.0);
