@@ -8,5 +8,5 @@ layout(binding  = 0) uniform sampler2D tex;
 
 void main() {
     vec4 col = texture(tex, coord);
-    outColor = col;
+    outColor = vec4(1, 1, 1, 1);
 }

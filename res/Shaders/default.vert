@@ -1,7 +1,7 @@
 #version 450
 
-//layout(location = 0) in float value1;
-//layout(location = 1) in float value2;
+layout(location = 0) in float value1;
+layout(location = 1) in float value2;
 
 layout (location = 0) out vec2 coord;
 
@@ -33,6 +33,7 @@ vec2 coords[6] = vec2[](
 
 void main() {
     coord = coords[gl_VertexIndex];
-    positions[gl_VertexIndex].x += push.value;
-    gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);
+    float x = positions[gl_VertexIndex].x + push.value;
+    float y = positions[gl_VertexIndex].y + value2;
+    gl_Position = vec4(x, y, 0, 1.0);
 }
