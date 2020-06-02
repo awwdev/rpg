@@ -16,7 +16,7 @@ This is Work In Progress!
 - I am using VS Code (with some C++ extensions) 
 - Batch files are included to fire up the compiler (msvc)
 - Need of C++20 (heavy use of "designated initializers" for vulkan)
-- You probably need to spend some time to setup your IDE / editor to run this code, but everything is included
+- You probably need to spend some a bit of time to setup your IDE / editor to run this code, but everything is included
 
 
 # Rationale

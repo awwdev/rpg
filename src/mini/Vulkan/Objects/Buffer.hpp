@@ -3,6 +3,7 @@
 #pragma once
 
 #include "mini/Vulkan/Context.hpp"
+#include "mini/Utils/Vertex.hpp"
 
 namespace mini::vk
 {
@@ -46,6 +47,7 @@ namespace mini::vk
         inline void Map()
         {
             VK_CHECK(vkMapMemory(device, memory, 0, size, 0, &memPtr));
+            //VK_WHOLE_SIZE
         }
 
         inline void Unmap()
@@ -53,7 +55,7 @@ namespace mini::vk
             vkUnmapMemory(device, memory);
         }
 
-
+ 
         inline void Create(
             VkDevice pDevice, 
             const VkBufferUsageFlags usage, 
@@ -62,7 +64,7 @@ namespace mini::vk
             const VkPhysicalDeviceMemoryProperties& physicalMemProps)
         {
             device = pDevice;
-            size   = pSize;
+            size   = pSize; 
 
             //? BUFFER
 
@@ -84,7 +86,8 @@ namespace mini::vk
 
             VkMemoryRequirements memReqs;
             vkGetBufferMemoryRequirements(device, buffer, &memReqs);
-            
+            size = memReqs.size; //render doc complains but not vulkan ?
+
             const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(physicalMemProps, memReqs, memProps));
             VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &memory)); //todo: allocate once for app and reuse memory pool
             VK_CHECK(vkBindBufferMemory(device, buffer, memory, 0));
@@ -95,9 +98,8 @@ namespace mini::vk
 
         inline void Store(const void* const data, const size_t size, const size_t offset = 0)
         {
-            std::memcpy((unsigned char*)memPtr + offset, data, size);
+            std::memcpy((char*)memPtr + offset, data, size);
         }
-
 
         ~Buffer()
         {
@@ -107,26 +109,25 @@ namespace mini::vk
         }
     };
 
-
-
-    //inline void copyBuffer(
-    //    VkQueue queue, 
-    //    VkDevice device, 
-    //    VkCommandPool cmdPool, 
-    //    VkBuffer src, 
-    //    VkBuffer dst, 
-    //    VkDeviceSize size) 
-    //{
-    //    auto cmdBuffer = utils::beginSingleTimeCommands(device, cmdPool);
-//
-    //    const VkBufferCopy copyRegion {
-    //        .srcOffset = 0,
-    //        .dstOffset = 0,
-    //        .size = size
-    //    };
-    //    vkCmdCopyBuffer(cmdBuffer, src, dst, 1, &copyRegion);
-//
-    //    utils::endSingleTimeCommands(device, cmdBuffer, cmdPool, queue);
-    //}
-
 }//ns
+
+//? static buffer stuff:
+//inline void copyBuffer(
+//    VkQueue queue, 
+//    VkDevice device, 
+//    VkCommandPool cmdPool, 
+//    VkBuffer src, 
+//    VkBuffer dst, 
+//    VkDeviceSize size) 
+//{
+//    auto cmdBuffer = utils::beginSingleTimeCommands(device, cmdPool);
+//
+//    const VkBufferCopy copyRegion {
+//        .srcOffset = 0,
+//        .dstOffset = 0,
+//        .size = size
+//    };
+//    vkCmdCopyBuffer(cmdBuffer, src, dst, 1, &copyRegion);
+//
+//    utils::endSingleTimeCommands(device, cmdBuffer, cmdPool, queue);
+//}

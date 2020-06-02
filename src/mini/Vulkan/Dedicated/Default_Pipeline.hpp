@@ -37,10 +37,11 @@ namespace mini::vk
                 .pNext                           = nullptr,
                 .flags                           = 0,
                 //needs ckCmdBindVertexBuffer
-                .vertexBindingDescriptionCount   = 0, //!ARRAY_COUNT(shader.BINDING_DESCS),
-                .pVertexBindingDescriptions      = 0, //!shader.BINDING_DESCS,
-                .vertexAttributeDescriptionCount = 0, //!ARRAY_COUNT(shader.ATTRIBUTE_DESCS),
-                .pVertexAttributeDescriptions    = 0, //!shader.ATTRIBUTE_DESCS,
+                //TODO: might want to put this inside a VBO struct instead of shader?
+                .vertexBindingDescriptionCount   = shader.vertBindings.Count(),
+                .pVertexBindingDescriptions      = shader.vertBindings.Data(),
+                .vertexAttributeDescriptionCount = shader.vertAttributes.Count(),
+                .pVertexAttributeDescriptions    = shader.vertAttributes.Data()
             };
 
             const VkViewport viewport {

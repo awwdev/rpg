@@ -7,6 +7,7 @@
 #include "mini/Vulkan/Resources.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/Scene/Scene.hpp"
+#include "mini/Utils/Vertex.hpp"
 
 namespace mini::vk
 {
@@ -80,6 +81,21 @@ namespace mini::vk
             float values = std::sinf(counter) * 0.5f;
             vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float), &values);
             vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 0, 0); 
+            VkDeviceSize vboOffsets { 0 };
+            
+            //TODO: find another place where we change host uniforms and host visible stuff
+            const Vertex vertData[] {
+                { .pos { -0.5, -0.5, 0 }, .col { 0, 1, 1, 1 } }, 
+                { .pos {  0.5,  0.5, 0 }, .col { 1, 0, 1, 1 } },
+                { .pos { -0.5,  0.5, 0 }, .col { 1, 1, 0, 1 } },
+ 
+                { .pos { -0.5, -0.5, 0 }, .col { 1, 1, 0, 1 } },
+                { .pos {  0.5, -0.5, 0 }, .col { 1, 0, 1, 1 } },
+                { .pos {  0.5,  0.5, 0 }, .col { 0, 1, 1, 1 } }
+            };
+            resources.default_vbo.Store(vertData);
+
+            vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &resources.default_vbo.buffer.buffer, &vboOffsets);
             for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, 6, 1, 0, 0); //!stress test (increase max)
             vkCmdEndRenderPass(cmdBuffer);
 

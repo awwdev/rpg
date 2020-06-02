@@ -31,14 +31,14 @@ int WINAPI wWinMain(
         hostRes::HostResources hostResources {}; //will load immediately for now
 
         //? RENDERER
+        constexpr auto s = sizeof vk::Renderer;
         auto ptrRenderer = mem::ClaimBlock<vk::Renderer>(
             vk::WindowHandle{window.hInstance, window.hWnd},
             hostResources
         );
         
         //? SCENES
-        auto ptrSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 1>>();
-        ptrSceneStack->InitCompleteArray();
+        auto ptrSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 1, box::INIT::Yes>>();
         uint32_t sceneIdx = 0;
 
         //? PROGRAM LOOP
