@@ -60,6 +60,6 @@ int WINAPI wWinMain(
 }//main end
 
 
-//join shader default and pipeline r+ renderpass under folder dedicated
+
 //text renderer 
 //vb buffer, texture atlas texture coords

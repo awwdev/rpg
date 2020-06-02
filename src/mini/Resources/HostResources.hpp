@@ -19,22 +19,24 @@ namespace mini::hostRes
     {
         Texture1, 
         Texture2,
+        Font,
         ENUM_END
     };
 
     using TextureInfos = box::Map<TextureInfo, TextureName::ENUM_END>;
     using P = TextureInfos::Pair_t;
     const TextureInfos TEXTURE_INFOS //size is used to figure out which memory to claim (texture array)
-    {
-        P{ TextureName::Texture1, { "res/Textures/Texture1.bmp", 32, 32 } },
-        P{ TextureName::Texture2, { "res/Textures/Texture2.bmp", 48, 48 } },
+    { //order does not matter
+        P{ TextureName::Texture1,   { "res/Textures/Texture1.bmp",  32, 32 } },
+        P{ TextureName::Texture2,   { "res/Textures/Texture2.bmp",  48, 48 } },
+        P{ TextureName::Font,       { "res/Textures/Font.bmp",      256, 128 } },
     };
     //! ---------------------------------------------------------------------
 
     struct Textures
     {
         //used to auto create gpu resources! (vk::Image)
-        ITexture* iTextures[TextureName::ENUM_END]; //size agnostic table
+        ITexture* iTextures[TextureName::ENUM_END] { nullptr }; //size agnostic table
 
         //? ARRAY OF SIZES 
         //! add to the Claim/Load method!
@@ -56,6 +58,8 @@ namespace mini::hostRes
         template<class... T>
         void AssignTextureToArray(const u32 idx, T&... arrays)
         {
+            u32 arrayIdx = 0;
+
             const auto fn = [&](auto& arr)
             {
                 using Texture_T = typename std::decay_t<decltype(arr)>::DATA_T::DATA_T;
@@ -63,8 +67,12 @@ namespace mini::hostRes
                 if (iTextures[idx] != nullptr) return;
 
                 const auto& textureInfo = TEXTURE_INFOS.Get(idx);
-                if (textureInfo.w <= Texture_T::MAX_WIDTH && textureInfo.h <= Texture_T::MAX_HEIGHT)
+                if (textureInfo.w <= Texture_T::MAX_WIDTH && textureInfo.h <= Texture_T::MAX_HEIGHT) 
+                {
                     iTextures[idx] = &arr.Get().AppendReturn(); //"assignment"
+                    LOG("assign texture to ", arrayIdx);
+                }
+                ++arrayIdx;    
             };
 
             ((fn(arrays)), ...); //unfold allows to have "iteration" over heterogeneous types

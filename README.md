@@ -1,15 +1,22 @@
 # Mini
-Minimal library - simple, readable and extendable.
+Essential library / framework (for game development and media) - modern, readable and extendable.
 
-- Containers (Array, Bitset, String)
+- Containers (Array, Bitset, String, Map)
 - Global allocator functions
 - Logger and Profiler
 - Math (Matrix, Quaternion)
 - Window and window events
-- Vulkan Renderer and UI (heavy wip)
-- Misc (Types, Utils)
+- Vulkan Renderer and UI
+- Utils (Types)
 
 This is Work In Progress!
+
+
+## How to run?
+- I am using VS Code (with some C++ extensions) 
+- Batch files are included to fire up the compiler (msvc)
+- Need of C++20 (heavy use of "designated initializers" for vulkan)
+- You probably need to spend some time to setup your IDE / editor to run this code, but everything is included
 
 
 # Rationale
@@ -42,16 +49,23 @@ This is Work In Progress!
 - bounds checking is toggleable via macro, no exceptions are used
 - overall more readable and extendible than the STL
 
+## mini::box::Map
+- no bucket hash system, instead intended to be used with plain enums and integers
+- fixed size (capacity-based with internal count)
+- no ctor calls when initializing the array (underlying byte array)
+- bounds checking is toggleable via macro, no exceptions are used
+- using a bitset to check if key exists (unique keys)
+
 ## mini::mem::Allocate()
-- global functions, simple usage
+- global functions
 - compile time (capacity based system)
     - user defines blocks at compile time in one place (see array ALLOC_INFOS[])
     - when claiming memory, the appropriate block size will be figured out at compile time
-- MemPtr
+- BlockPtr
     - is returned when claiming memory
     - holds data about the used block and will "free" the block when destroyed (RAII)
 - free / used blocks are represented by one bitset
-- printable
+- printable as HTML
 
 ## mini::wnd
 - straight forward winapi
@@ -59,10 +73,10 @@ This is Work In Progress!
 - bitset holds state of input (pressed keys and buttons)
 
 ## mini::vk
-- Context (Instance, PhysicalDevice, LogicalDevice, Meta, Debug)
+- Context   (Instance, PhysicalDevice, LogicalDevice, Meta, Debug)
 - Resources (Pipeline, Shader, Renderpass, Synchronization)
 - Rendering (Command recording, presentation loop)
-- Strategy of multiple "dedicated structs" (instead of generic structs): PipelineDefault struct instead of Pipeline univeral struct (hardcoding the properties instead of factories)
+- Dedicated structs and factories like CreateShader_Default() or struct RenderPass_Default
 
 ## mini::ui
 - wip (immediate gui)

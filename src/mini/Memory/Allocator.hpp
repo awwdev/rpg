@@ -42,7 +42,7 @@ namespace mini::mem
         { 100, 1    },     //scene stack
         { 5'000,  1 },     //vk renderer
         { 12'000, 3 },     //shader char buffer + 32*32*4 tex array (containing 2 textures)
-        { 10'000'000, 1 }  //1024*1024*4 tex array (containing 2 textures)
+        { 10'000'000, 2 }  //1024*1024*4 tex array
     };
     //!--------------------------------------
 
@@ -192,12 +192,13 @@ namespace mini::mem
         const auto freeBlock = blocksUsed.FindFirstFreeBit(FIT.allocBitBegin); //start search at the alloc
         blocksUsed.Flip(freeBlock); //mark used
 
-        //LOG("BLOCK CLAIM: ", typeid(T).name());
         blockTypes.Set(freeBlock, typeid(T).name());
 
         constexpr auto blockSize = ALLOC_INFOS[FIT.allocIdx].blockSize;
         auto* ptr     = allocPtrs[FIT.allocIdx] + ((freeBlock - FIT.allocBitBegin) * blockSize);
         auto* aligned = (u8*) (((std::uintptr_t)ptr + (alignof(T) - 1)) & ~(alignof(T) - 1)); //next aligned address
+        
+        LOG("BLOCK CLAIM: ", typeid(T).name(), blockSize, (void*)ptr);
 
         T* obj = nullptr;
         if constexpr(std::is_array_v<T>)
