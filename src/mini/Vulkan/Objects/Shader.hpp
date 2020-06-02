@@ -19,10 +19,6 @@ namespace mini::vk
         box::Array<VkShaderModule, 4> modules;
         box::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
 
-        //vertex
-        box::Array<VkVertexInputBindingDescription, 10>   vertBindings;
-        box::Array<VkVertexInputAttributeDescription, 10> vertAttributes;
-
         //uniform
         VkDescriptorPool descPool;
         box::Array<VkSampler, 4> samplers;

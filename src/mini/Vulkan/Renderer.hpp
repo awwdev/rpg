@@ -43,7 +43,8 @@ namespace mini::vk
             resources.default_renderPass.Create(context);
 
             resources.default_pipeline.~Default_Pipeline();
-            resources.default_pipeline.Create(context, resources.default_shader, resources.default_renderPass);
+            resources.default_pipeline.Create(context, resources.default_shader, resources.default_renderPass, resources.default_vb);
+            //TODO: maybe write Recreate function for pipeline struct (so it would stroe all its refs)
 
             commands.~Commands();
             commands.Create(context);
@@ -93,9 +94,9 @@ namespace mini::vk
                 { .pos {  0.5, -0.5, 0 }, .col { 1, 0, 1, 1 } },
                 { .pos {  0.5,  0.5, 0 }, .col { 0, 1, 1, 1 } }
             };
-            resources.default_vbo.Store(vertData);
+            resources.default_vb.Store(vertData);
 
-            vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &resources.default_vbo.buffer.buffer, &vboOffsets);
+            vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &resources.default_vb.buffer.buffer, &vboOffsets);
             for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, 6, 1, 0, 0); //!stress test (increase max)
             vkCmdEndRenderPass(cmdBuffer);
 

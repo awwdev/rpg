@@ -4,6 +4,7 @@
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Shader.hpp"
+#include "mini/Vulkan/Objects/VertexBuffer.hpp"
 #include "mini/Vulkan/Dedicated/Default_RenderPass.hpp"
 
 namespace mini::vk
@@ -20,7 +21,7 @@ namespace mini::vk
                 
 
         //inline void Create(Context& context, Default_Shader& shader, Default_RenderPass& renderPass)
-        inline void Create(Context& context, Shader& shader, Default_RenderPass& renderPass)
+        inline void Create(Context& context, Shader& shader, Default_RenderPass& renderPass, VertexBuffer& vb)
         {
             device = context.device;
 
@@ -36,12 +37,10 @@ namespace mini::vk
                 .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
                 .pNext                           = nullptr,
                 .flags                           = 0,
-                //needs ckCmdBindVertexBuffer
-                //TODO: might want to put this inside a VBO struct instead of shader?
-                .vertexBindingDescriptionCount   = shader.vertBindings.Count(),
-                .pVertexBindingDescriptions      = shader.vertBindings.Data(),
-                .vertexAttributeDescriptionCount = shader.vertAttributes.Count(),
-                .pVertexAttributeDescriptions    = shader.vertAttributes.Data()
+                .vertexBindingDescriptionCount   = vb.bindings.Count(),
+                .pVertexBindingDescriptions      = vb.bindings.Data(),
+                .vertexAttributeDescriptionCount = vb.attributes.Count(),
+                .pVertexAttributeDescriptions    = vb.attributes.Data()
             };
 
             const VkViewport viewport {
