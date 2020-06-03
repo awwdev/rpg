@@ -13,8 +13,9 @@ namespace mini::res
     using P = M::Pair_t;
     const M MAPPING
     {
-        P { 'H', { 0, 2 } },
-        P { 'E', { 1, 2 } },
+        //!y is from bottom to top
+        P { 'H', { 4, 4 } },
+        P { 'E', { 1, 4 } },
         P { 'Y', { 3, 3 } },
     };  
     const math::Vec2f LETTER_SIZE { 14, 18 };
@@ -23,23 +24,31 @@ namespace mini::res
     struct Quad { Vertex vertices [6]; };
 
     inline Quad CreateQuad(
-        const u32 x,  const u32 y, 
-        const u32 w,  const u32 h,
-        const u32 tx, const u32 ty)
+        const f32 x,  const f32 y, 
+        const f32 w,  const f32 h,
+        const f32 tx, const f32 ty)
     {
-        const float _tx = tx / (float)w;
-        const float _ty = 1.f - (ty / (float)h);
-        const float _tw = _tx + 1 / (float)w;
-        const float _th = 0;//_ty - 1 / (float)h;
+        //letter size
+        const f32 lw = 14;
+        const f32 lh = 18;
+
+        const f32 _tx = tx * (lw/w);
+        const f32 _ty = ty * (lh/h);
+        const f32 _tw = _tx + (lw/w);
+        const f32 _th = _ty - (lh/h);
+
+        const f32 s = 0.25f;
+        const f32 xo = x * s;
+        const f32 yo = 0.f;
 
         return {
-            Vertex{ .pos { -0.5, -0.5, 0 }, .col { 1, 1, 1, 1 }, .tex { _tx, _ty } },
-            Vertex{ .pos {  0.5,  0.5, 0 }, .col { 1, 1, 1, 1 }, .tex { _tw, _th } },
-            Vertex{ .pos { -0.5,  0.5, 0 }, .col { 1, 1, 1, 1 }, .tex { _tx, _th } },
+            Vertex{ .pos { -1 * s + xo, -1 * s + yo, 0 }, .col { 1, 1, 1, 1 }, .tex { _tx, _ty } },
+            Vertex{ .pos {  1 * s + xo,  1 * s + yo, 0 }, .col { 1, 1, 1, 1 }, .tex { _tw, _th } },
+            Vertex{ .pos { -1 * s + xo,  1 * s + yo, 0 }, .col { 1, 1, 1, 1 }, .tex { _tx, _th } },
             
-            Vertex{ .pos { -0.5, -0.5, 0 }, .col { 1, 1, 1, 1 }, .tex { _tx, _ty } },
-            Vertex{ .pos {  0.5, -0.5, 0 }, .col { 1, 1, 1, 1 }, .tex { _tw, _ty } },
-            Vertex{ .pos {  0.5,  0.5, 0 }, .col { 1, 1, 1, 1 }, .tex { _tw, _th } },
+            Vertex{ .pos { -1 * s + xo, -1 * s + yo, 0 }, .col { 1, 1, 1, 1 }, .tex { _tx, _ty } },
+            Vertex{ .pos {  1 * s + xo, -1 * s + yo, 0 }, .col { 1, 1, 1, 1 }, .tex { _tw, _ty } },
+            Vertex{ .pos {  1 * s + xo,  1 * s + yo, 0 }, .col { 1, 1, 1, 1 }, .tex { _tw, _th } },
         };
     }
 
@@ -53,7 +62,7 @@ namespace mini::res
             if (text[i] == '\0') continue;
 
             const auto& coords = MAPPING.GetValue(text[i]);
-            const auto  quad   = CreateQuad(0, 0, 14, 18, coords[math::Vx], coords[math::Vy]);
+            const auto  quad   = CreateQuad(i, 0, 252, 108, coords[math::Vx], coords[math::Vy]);
             //LETTER_SIZE[math::Vx], LETTER_SIZE[math::Vy]
             blockPtr->AppendArray(quad.vertices);
 

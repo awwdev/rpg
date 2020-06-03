@@ -83,19 +83,19 @@ namespace mini::vk
             //! stuff from lots of places, so more functions needed
             vkCmdBeginRenderPass(cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
-            static float counter = 0; counter += 1.f * dt; //!testing
+            static float counter = 0; //counter += 1.f * dt; //!testing
             float values = std::sinf(counter) * 0.5f;
             vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float), &values);
             vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 0, 0); 
             VkDeviceSize vboOffsets { 0 };
             
             //TODO: find another place where we change host uniforms and host visible stuff
-            const auto blockPtr = res::CreateVerticesFromText("H");
+            const auto blockPtr = res::CreateVerticesFromText("HEY");
             const auto& verts   = blockPtr.Get();
             resources.default_vb.Store(verts.Data(), verts.Count());
 
             vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &resources.default_vb.buffer.buffer, &vboOffsets);
-            for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, 6, 1, 0, 0); //!stress test (increase max)
+            for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, verts.Count(), 1, 0, 0); //!stress test (increase max)
             vkCmdEndRenderPass(cmdBuffer);
 
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));

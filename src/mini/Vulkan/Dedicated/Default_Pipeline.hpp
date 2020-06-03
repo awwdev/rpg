@@ -71,7 +71,7 @@ namespace mini::vk
                 .rasterizerDiscardEnable = VK_FALSE,
                 .polygonMode             = VK_POLYGON_MODE_FILL,
                 .cullMode                = VK_CULL_MODE_NONE,//VK_CULL_MODE_BACK_BIT,
-                .frontFace               = VK_FRONT_FACE_CLOCKWISE,
+                .frontFace               = VK_FRONT_FACE_CLOCKWISE, //VK_FRONT_FACE_COUNTER_CLOCKWISE
                 .depthBiasEnable         = VK_FALSE,
                 .depthBiasConstantFactor = 0.f,
                 .depthBiasClamp          = 0.f,
