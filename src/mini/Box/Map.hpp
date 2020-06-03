@@ -63,25 +63,25 @@ namespace mini::box
         //? GETTERS
 
         template<typename KEY, typename = IsIntegralOrEnum<KEY>>
-        VAL& Get(const KEY key)
+        VAL& GetValue(const KEY key)
         {
             return dataPtr[key];
         }
 
         template<typename KEY, typename = IsIntegralOrEnum<KEY>>
-        const VAL& Get(const KEY key) const
+        const VAL& GetValue(const KEY key) const
         {
             return dataPtr[key];
         }
 
         template<typename KEY, typename = IsIntegralOrEnum<KEY>>
-        VAL* GetOptional(const KEY key)
+        VAL* GetValueOptional(const KEY key)
         {
             return Contains(key) ? &dataPtr[key] : nullptr;
         }
 
         template<typename KEY, typename = IsIntegralOrEnum<KEY>>
-        const VAL* GetOptional(const KEY key) const
+        const VAL* GetValueOptional(const KEY key) const
         {
             return Contains(key) ? &dataPtr[key] : nullptr;
         }

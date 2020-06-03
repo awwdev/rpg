@@ -27,6 +27,7 @@ if (const auto res = fn; res != VK_SUCCESS) \
 
 namespace mini::vk
 {
+    //TODO: probably not needed so much, so just remove and type out
     struct Refs
     {
         VkDevice device;

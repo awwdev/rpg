@@ -164,8 +164,8 @@ namespace mini::box
         }
 
 
-        template<class VAL> ND
-        T* Contains(const VAL& element) //allows for custom operator==
+        template<class T> ND
+        T* Contains(const T& element) //allows for custom operator==
         {
             FOR_ARRAY((*this), i)
             {
@@ -178,8 +178,8 @@ namespace mini::box
 
         //?ARRAY FUSION
 
-        template<class VAL, typename IDX_T_>
-        void AppendArray(const IArray<VAL, IDX_T_>& other)
+        template<class T, typename IDX_T_>
+        void AppendArray(const IArray<T, IDX_T_>& other)
         {
             CheckRange(count + other.Count(), COUNT_MAX + 1);
             FOR_ARRAY(other, i) {
@@ -189,13 +189,23 @@ namespace mini::box
         }
 
 
-        template<class VAL, typename IDX, typename = IsIntegralOrEnum<IDX>>
-        void InsertArray(const IDX pos, const IArray<VAL>& other)
+        template<class T, typename IDX, typename = IsIntegralOrEnum<IDX>>
+        void InsertArray(const IDX pos, const IArray<T>& other)
         {
             CheckRange(count + other.Count(), COUNT_MAX + 1);
             static_assert(false, "Not yet implemented.");
             FOR_ARRAY(other, i) {
                 dataPtr[pos + i] = other[i];
+            }
+        }
+
+        template<std::size_t N>
+        void AppendArray(const T (&other)[N])
+        {
+            CheckRange(count + N, COUNT_MAX + 1);
+            FOR_CARRAY(other, i) {
+                PlacementNew(count, other[i]);
+                ++count;
             }
         }
 

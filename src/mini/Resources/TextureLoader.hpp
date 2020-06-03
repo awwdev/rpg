@@ -58,7 +58,7 @@ namespace mini::hostRes
             mini::Assert(bmBitCount <= channels * 8, "bm channels not sufficient");
             
             width    = bmWidth;
-            height   = bmWidth;
+            height   = bmHeight;
             channels = bmBitCount / 8;
             texPtr   = filePtr + bmOffset;
         }

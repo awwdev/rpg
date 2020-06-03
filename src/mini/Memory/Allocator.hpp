@@ -41,7 +41,7 @@ namespace mini::mem
     constexpr AllocInfo ALLOC_INFOS[] = {
         { 100, 1    },     //scene stack
         { 6'000,  1 },     //vk renderer
-        { 12'000, 3 },     //shader char buffer + 32*32*4 tex array (containing 2 textures)
+        { 12'000, 4 },     //shader char buffer + 32*32*4 tex array (containing 2 textures)
         { 10'000'000, 2 }  //1024*1024*4 tex array
     };
     //!--------------------------------------
@@ -198,7 +198,7 @@ namespace mini::mem
         auto* ptr     = allocPtrs[FIT.allocIdx] + ((freeBlock - FIT.allocBitBegin) * blockSize);
         auto* aligned = (u8*) (((std::uintptr_t)ptr + (alignof(T) - 1)) & ~(alignof(T) - 1)); //next aligned address
         
-        LOG("BLOCK CLAIM: ", typeid(T).name(), blockSize, (void*)ptr);
+        //LOG("BLOCK CLAIM: ", typeid(T).name(), blockSize, (void*)ptr);
 
         T* obj = nullptr;
         if constexpr(std::is_array_v<T>)

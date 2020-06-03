@@ -19,9 +19,11 @@ namespace mini::vk
         VkPipeline pipeline;
         VkPipelineLayout layout;
                 
-
-        //inline void Create(Context& context, Default_Shader& shader, Default_RenderPass& renderPass)
-        inline void Create(Context& context, Shader& shader, Default_RenderPass& renderPass, VertexBuffer& vb)
+        inline void Create(
+            Context& context, 
+            Shader& shader, 
+            Default_RenderPass& renderPass, 
+            VkPipelineVertexInputStateCreateInfo vertexInput)
         {
             device = context.device;
 
@@ -31,16 +33,6 @@ namespace mini::vk
                 .flags                  = 0,
                 .topology               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                 .primitiveRestartEnable = VK_FALSE 
-            };
-
-            const VkPipelineVertexInputStateCreateInfo vertexInput {
-                .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-                .pNext                           = nullptr,
-                .flags                           = 0,
-                .vertexBindingDescriptionCount   = vb.bindings.Count(),
-                .pVertexBindingDescriptions      = vb.bindings.Data(),
-                .vertexAttributeDescriptionCount = vb.attributes.Count(),
-                .pVertexAttributeDescriptions    = vb.attributes.Data()
             };
 
             const VkViewport viewport {

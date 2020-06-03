@@ -37,7 +37,7 @@ namespace mini::mem
                 currAllocIdx = allocIdx;
                 out << "<br>";
             }
-            auto* blockType = blockTypes.GetOptional(i);
+            auto* blockType = blockTypes.GetValueOptional(i);
             
             out << "<a title='";
             out << (blockType == nullptr ? "unused" : *blockType);

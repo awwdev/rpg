@@ -126,8 +126,8 @@ namespace mini::vk
                         .dstArrayElement    = 0,
                         .descriptorCount    = 1,
                         .descriptorType     = setLayoutBindings[j].descriptorType,
-                        .pImageInfo         = imageInfos.GetOptional(j),
-                        .pBufferInfo        = bufferInfos.GetOptional(j),
+                        .pImageInfo         = imageInfos.GetValueOptional(j),
+                        .pBufferInfo        = bufferInfos.GetValueOptional(j),
                         .pTexelBufferView   = nullptr
                     });
                 }

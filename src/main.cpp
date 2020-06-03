@@ -60,6 +60,7 @@ int WINAPI wWinMain(
 }//main end
 
 
-
+//TODO: WHERE TO WRITE TEXT WHERE DOES IT PROCESS THE VERTS NEEDED?
+//TODO: ubo
 //text renderer 
-//vb buffer, texture atlas texture coords
+//texture atlas texture coords

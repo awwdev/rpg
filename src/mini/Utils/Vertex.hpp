@@ -9,6 +9,7 @@ namespace mini
     {
         math::Vec3f pos;
         math::Vec4f col;
+        math::Vec2f tex;
     };
 
 }//ns

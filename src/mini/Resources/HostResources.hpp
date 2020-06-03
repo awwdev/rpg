@@ -51,7 +51,7 @@ namespace mini::hostRes
                     ptrTextures1, 
                     ptrTextures2
                 ); 
-                iTextures[i]->LoadFrom_BMP(TEXTURE_INFOS.Get(i).path);
+                iTextures[i]->LoadFrom_BMP(TEXTURE_INFOS.GetValue(i).path);
             FOR_MAP_END
         }
 
@@ -66,7 +66,7 @@ namespace mini::hostRes
 
                 if (iTextures[idx] != nullptr) return;
 
-                const auto& textureInfo = TEXTURE_INFOS.Get(idx);
+                const auto& textureInfo = TEXTURE_INFOS.GetValue(idx);
                 if (textureInfo.w <= Texture_T::MAX_WIDTH && textureInfo.h <= Texture_T::MAX_HEIGHT) 
                 {
                     iTextures[idx] = &arr.Get().AppendReturn(); //"assignment"

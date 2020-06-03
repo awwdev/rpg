@@ -34,6 +34,8 @@ namespace mini::vk
         };
         VK_CHECK(vkCreateSampler(shader.device, &samplerInfo, nullptr, &shader.samplers.AppendReturn()));
 
+        //TODO: when we have ubo we will move this stuff out too ?
+
         shader.setLayoutBindings.Append(VkDescriptorSetLayoutBinding{
             .binding            = 0,
             .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -42,7 +44,7 @@ namespace mini::vk
             .pImmutableSamplers = nullptr,
         }); 
 
-        auto& image = images[hostRes::Texture1];
+        auto& image = images[hostRes::Font];
         shader.imageInfos.Set(0, VkDescriptorImageInfo{
             .sampler        = shader.samplers[0],
             .imageView      = image.view, 

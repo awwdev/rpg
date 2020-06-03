@@ -1,3 +1,5 @@
+//https://github.com/awwdev
+
 #pragma once
 
 #include "mini/Vulkan/Context.hpp"
@@ -43,33 +45,27 @@ namespace mini::vk
         {
             buffer.Store(vertices, sizeof(vertices));
         }
+
+        void Store(const Vertex* const vertices, const std::size_t count)
+        {
+            buffer.Store(vertices, count * sizeof(Vertex));
+        }
+
+        //TODO: StoreGroup / Range 
+        //TODO: when drawing (cmd draw) wwe actually ask the vbo how much verts he has (count, not capacity)
     };
 
-    //TODO: should have own header but for now its fine
-    inline void CreateVertexBuffer_Default(Context& context, VertexBuffer& vb)
+    inline auto CreatePipelineVertexInputInfo(VertexBuffer& vb) -> VkPipelineVertexInputStateCreateInfo
     {
-        vb.CreateDynamic(context);
-
-        vb.bindings.Append(VkVertexInputBindingDescription{
-            .binding    = 0,
-            .stride     = sizeof(Vertex),
-            .inputRate  = VK_VERTEX_INPUT_RATE_VERTEX,
-        });
-
-        vb.attributes.Append(VkVertexInputAttributeDescription{
-            //? positions
-            .location   = 0,
-            .binding    = 0,
-            .format     = VK_FORMAT_R32G32B32_SFLOAT,
-            .offset     = offsetof(Vertex, pos)
-        });
-        vb.attributes.Append(VkVertexInputAttributeDescription{
-            //? color
-            .location   = 1,
-            .binding    = 0,
-            .format     = VK_FORMAT_R32G32B32A32_SFLOAT,
-            .offset     = offsetof(Vertex, col)
-        });
+        return {
+            .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+            .pNext                           = nullptr,
+            .flags                           = 0,
+            .vertexBindingDescriptionCount   = vb.bindings.Count(),
+            .pVertexBindingDescriptions      = vb.bindings.Data(),
+            .vertexAttributeDescriptionCount = vb.attributes.Count(),
+            .pVertexAttributeDescriptions    = vb.attributes.Data()
+        };
     }
 
 }//ns
