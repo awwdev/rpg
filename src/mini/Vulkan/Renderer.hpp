@@ -90,7 +90,7 @@ namespace mini::vk
             VkDeviceSize vboOffsets { 0 };
             
             //TODO: find another place where we change host uniforms and host visible stuff
-            const auto blockPtr = res::CreateVerticesFromText("HEY");
+            const auto blockPtr = res::CreateVerticesFromText("This is text rendering!");
             const auto& verts   = blockPtr.Get();
             resources.default_vb.Store(verts.Data(), verts.Count());
 
