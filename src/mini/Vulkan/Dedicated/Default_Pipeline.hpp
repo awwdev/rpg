@@ -135,7 +135,7 @@ namespace mini::vk
             const VkPushConstantRange constantRange {
                 .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
                 .offset     = 0,
-                .size       = (uint32_t)sizeof(float)
+                .size       = (uint32_t)sizeof(u32[2]) //window size
             };
 
             const VkPipelineLayoutCreateInfo layoutInfo {

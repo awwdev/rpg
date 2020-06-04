@@ -12,4 +12,10 @@ namespace mini
         math::Vec2f tex;
     };
 
+    template<typename T>
+    struct Rect
+    {
+        T x, y, w, h;
+    };
+
 }//ns

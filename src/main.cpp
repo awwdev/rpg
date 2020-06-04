@@ -59,8 +59,5 @@ int WINAPI wWinMain(
 
 }//main end
 
-
-//TODO: WHERE TO WRITE TEXT WHERE DOES IT PROCESS THE VERTS NEEDED?
-//TODO: ubo
-//text renderer 
-//texture atlas texture coords
+//test unnorm tex coords first
+//TODO ,push constant w h, carray, ibo,

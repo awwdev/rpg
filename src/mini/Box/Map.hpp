@@ -152,4 +152,7 @@ namespace mini::box
             Bitset<CAPACITY_T> bitset;
     };
 
+    //TODO a version with actual T array (and not u8) that one can init easy like struct is probably good
+    //also easier to do constexpr 
+
 }//ns
