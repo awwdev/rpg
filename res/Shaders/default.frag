@@ -11,6 +11,9 @@ layout(binding  = 0) uniform sampler2D tex;
 void main() {
     vec2 coords = vec2(inCoords.x / float(textureSize(tex, 0).x), inCoords.y / float(textureSize(tex, 0).y));
     vec4 col = texture(tex, coords);
-    //outColor = vec4(1, 1, 1, 1);
+    col.r *= inColors.r;
+    col.g *= inColors.g;
+    col.b *= inColors.b;
+    col.a = inColors.a;
     outColor = col; 
 }
