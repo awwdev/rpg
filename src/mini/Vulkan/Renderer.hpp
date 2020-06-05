@@ -9,6 +9,7 @@
 #include "mini/Scene/Scene.hpp"
 #include "mini/Utils/Vertex.hpp"
 #include "mini/Resources/Mesh/TextMesh.hpp"
+#include "mini/Box/String.hpp"
 
 namespace mini::vk
 {
@@ -21,7 +22,7 @@ namespace mini::vk
 
         uint32_t currentFrame = 0;
         
-
+        //TODO: ref to current window size
         Renderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
             : context   { wndHandle }
             , resources { context.device }
@@ -83,17 +84,22 @@ namespace mini::vk
             //! stuff from lots of places, so more functions needed
             vkCmdBeginRenderPass(cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
-            //static float counter = 0; //counter += 1.f * dt; //!testing
-            //float values = std::sinf(counter) * 0.5f;
+
             u32 wndSize [] = { 800, 600 }; //TODO: GET ACTUAL WND SIZE
-            //vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float), &values);
             vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(wndSize), &wndSize);
 
             vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 0, 0); 
             VkDeviceSize vboOffsets { 0 };
             
             //TODO: find another place where we change host uniforms and host visible stuff
-            const auto blockPtr = res::CreateVerticesFromText("Hello Text Rendering!");
+
+            box::String<100> fpsStr;
+            fpsStr.Set("fps: ");
+            char buf[20];
+            sprintf_s(buf, "%4.0f", 1/dt);
+            fpsStr.Append(buf);
+
+            const auto blockPtr = res::CreateVerticesFromText(fpsStr.dataPtr);
             const auto& verts   = blockPtr.Get();
             resources.default_vb.Store(verts.Data(), verts.Count());
 

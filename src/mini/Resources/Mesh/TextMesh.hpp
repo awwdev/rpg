@@ -117,54 +117,26 @@ namespace mini::res
         P { '~', {  5,  0 } },
     };  
 
-    struct Quad { Vertex vertices [6]; };
 
-    inline Quad CreateQuad(
-        const f32 pos_x, const f32 pos_y, 
-        const f32 tex_w, const f32 tex_h,
-        const f32 cel_x, const f32 cel_y,
-        const f32 let_w, const f32 let_h, 
-        const f32 wnd_w, const f32 wnd_h,
-        const math::Vec4f col)
+    template<std::size_t LETTER_COUNT_MAX = 100> //could also do a array version so claim block is appropriate
+    auto CreateVerticesFromText(chars_t text)
     {
-        const f32 _tx = cel_x * (let_w/tex_w);
-        const f32 _ty = cel_y * (let_h/tex_h);
-        const f32 _tw = _tx   + (let_w/tex_w);
-        const f32 _th = _ty   - (let_h/tex_h);
+        auto blockPtr = mem::ClaimBlock<box::Array<Vertex, LETTER_COUNT_MAX * 6>>();
 
-        const f32 fs = 20; 
-        const f32 s = fs/wnd_w;
-        const f32 xo = 2*((pos_x*fs)/wnd_w) - 1;
-        const f32 yo = 2*(1/wnd_h) - 1;
-        
-        return {
-            Vertex{ .pos { 0 * s + xo, 0 * s + yo, 0 }, .col { col }, .tex { _tx, _ty } },
-            Vertex{ .pos { 1 * s + xo, 1 * s + yo, 0 }, .col { col }, .tex { _tw, _th } },
-            Vertex{ .pos { 0 * s + xo, 1 * s + yo, 0 }, .col { col }, .tex { _tx, _th } },
-            
-            Vertex{ .pos { 0 * s + xo, 0 * s + yo, 0 }, .col { col }, .tex { _tx, _ty } },
-            Vertex{ .pos { 1 * s + xo, 0 * s + yo, 0 }, .col { col }, .tex { _tw, _ty } },
-            Vertex{ .pos { 1 * s + xo, 1 * s + yo, 0 }, .col { col }, .tex { _tw, _th } },
-        };
-    }
+        for(auto i=0;;++i) {
+            if (text[i] == '\0') 
+            {
+                break;
+            }
 
-
-    template<std::size_t N>
-    auto CreateVerticesFromText(const char (&text)[N])
-    //-> mem::BlockPtr<Vertex[(N-1) * 6]>
-    {
-        auto blockPtr = mem::ClaimBlock<box::Array<Vertex, (N-1) * 6>>();
-
-        FOR_CARRAY(text, i){
-            if (text[i] == '\0') continue; //!this is why N-1
-
-            const auto fw = 14*2;
-            const auto fh = 18*2; 
+            const auto fw = 14;
+            const auto fh = 18; 
+            const auto s  = 1; //scale
 
             const auto& coords = MAPPING.GetValue(text[i]);
             const auto quad = res::CreateRect(
-                Rect<int>{i * fw, 0, fw, fh}, 
-                Rect<int>{coords[math::Vx] * 14, coords[math::Vy] * 18, 14, 18}
+                Rect<int>{i * fw * s, 0, fw * s, fh * s}, 
+                Rect<int>{coords[math::Vx] * fw, coords[math::Vy] * fh, fw, fh}
             );
 
             blockPtr->AppendArray(quad.verts);
@@ -174,7 +146,6 @@ namespace mini::res
         return blockPtr;
     }    
 
-    //? basic idea: do all in px on cpu side and via push constant transfer width and height of wnd an divide all verts
     //TODO: get window size
     //TODO: index buffer
     //TODO: make independent of aspect ratio - no distortion
