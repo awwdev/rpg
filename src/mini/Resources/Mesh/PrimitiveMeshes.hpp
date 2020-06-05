@@ -28,8 +28,8 @@ namespace mini::res
         const Vertex br { .pos { (f32)pos.x + pos.w  , (f32)pos.y + pos.h , 0 }, .col { col }, .tex { (f32)tex.x + tex.w   , (f32)tex.y } };
         const Vertex bl { .pos { (f32)pos.x          , (f32)pos.y + pos.h , 0 }, .col { col }, .tex { (f32)tex.x           , (f32)tex.y } };
 
-        if constexpr (IsIndexed == Indexed::Yes) return Quad4 { tl, tr, br, bl };
-        if constexpr (IsIndexed == Indexed::No)  return Quad6 { tl, br, bl, tl, tr, br };
+        if constexpr (IsIndexed == Indexed::Yes) return Quad4 { tl, tr, br, bl };           //0123
+        if constexpr (IsIndexed == Indexed::No)  return Quad6 { tl, br, bl, tl, tr, br };   //023012
     }
     
 }//ns

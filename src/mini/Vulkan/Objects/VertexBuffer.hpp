@@ -14,6 +14,9 @@ namespace mini::vk
     {
         Buffer buffer;
         u32    count = 0;
+
+        Buffer indexBuffer;
+        u32    indexCount;
         //ranges, groups
         const std::size_t MAX_VERTEX_COUNT;
 
@@ -33,6 +36,14 @@ namespace mini::vk
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                 context.physicalMemProps
             );
+
+            indexBuffer.Create(
+                context.device,
+                VK_BUFFER_USAGE_INDEX_BUFFER_BIT, 
+                sizeof(uint16_t) * MAX_VERTEX_COUNT, 
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                context.physicalMemProps
+            );
         }
 
         inline void CreateStatic(VkDevice device, VkCommandPool cmdPool)
@@ -45,12 +56,14 @@ namespace mini::vk
         {
             buffer.Store(vertices, sizeof(vertices));
             count = N;
+            indexCount = N + (N / 2);
         }
 
         void Store(const Vertex* const vertices, const std::size_t pCount)
         {
             buffer.Store(vertices, pCount * sizeof(Vertex));
             count = pCount;
+            indexCount = pCount + (pCount / 2);
         }
 
         //TODO: StoreGroup / Range 

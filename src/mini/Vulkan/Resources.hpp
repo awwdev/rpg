@@ -25,6 +25,7 @@ namespace mini::vk
         Image images [hostRes::TextureName::ENUM_END];
 
         //? pipeline stuff
+        //TODO: rename to UI (instead of default_)
         Default_RenderPass  default_renderPass;
         Default_Pipeline    default_pipeline;
         Shader              default_shader;

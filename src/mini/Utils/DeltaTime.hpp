@@ -12,7 +12,7 @@ namespace mini::dt
     inline double counter = 0; //to signal fps
     inline std::size_t fps = 0;
 
-    inline void CalcDeltaTimeFPS()
+    inline void UpdateFPS()
     {
         const auto now = Clock::now();
         const auto dur = now - previous;

@@ -45,9 +45,12 @@ int WINAPI wWinMain(
         while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
         {
             wnd::PollEvents();
-            mini::dt::CalcDeltaTimeFPS();      
-            ptrSceneStack[sceneIdx].Update(mini::dt::seconds);
-            ptrRenderer->Render(mini::dt::seconds, ptrSceneStack[sceneIdx]);
+            dt::UpdateFPS();     
+
+            if (wnd::window_h != 0 && wnd::window_w != 0) {
+                ptrSceneStack[sceneIdx].Update(mini::dt::seconds);
+                ptrRenderer->Render(mini::dt::seconds, ptrSceneStack[sceneIdx]);
+            }   
         }
         
         //? THE END
@@ -58,6 +61,3 @@ int WINAPI wWinMain(
     system("pause");
 
 }//main end
-
-//TODO ibo
-//maybe make events internal linkage and pass events vector around (also possible to remove events then)

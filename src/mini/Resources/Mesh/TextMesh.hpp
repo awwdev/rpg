@@ -117,12 +117,11 @@ namespace mini::res
         P { '~', {  5,  0 } },
     };  
 
-
-    template<std::size_t LETTER_COUNT_MAX = 100> //could also do a array version so claim block is appropriate
-    auto CreateVerticesFromText(chars_t text)
+    inline void CreateVerticesFromText(
+        chars_t text, 
+        box::IArray<Vertex>& vertices, 
+        box::IArray<uint32_t>& indices)
     {
-        auto blockPtr = mem::ClaimBlock<box::Array<Vertex, LETTER_COUNT_MAX * 6>>();
-
         for(auto i=0;;++i) {
             if (text[i] == '\0') 
             {
@@ -134,16 +133,15 @@ namespace mini::res
             const auto s  = 1; //scale
 
             const auto& coords = MAPPING.GetValue(text[i]);
-            const auto quad = res::CreateRect(
+            const auto quad = res::CreateRect<Indexed::Yes>(
                 Rect<int>{i * fw * s, 0, fw * s, fh * s}, 
                 Rect<int>{coords[math::Vx] * fw, coords[math::Vy] * fh, fw, fh}
             );
 
-            blockPtr->AppendArray(quad.verts);
-
+            vertices.AppendArray(quad.verts);
+            uint32_t idxs[] {0u + i*4, 1u + i*4, 2u + i*4, 2u + i*4, 3u + i*4, 0u + i*4};
+            indices.AppendArray(idxs);
         }
-        
-        return blockPtr;
     }    
 
     //TODO: get window size

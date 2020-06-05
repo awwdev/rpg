@@ -64,9 +64,13 @@ namespace mini::vk
             sprintf_s(buf, "%4.0f", 1/dt);
             fpsStr.Append(buf);
 
-            const auto blockPtr = res::CreateVerticesFromText(fpsStr.dataPtr);
-            const auto& verts   = blockPtr.Get();
-            resources.default_vb.Store(verts.Data(), verts.Count());
+            const auto LETTER_COUNT_MAX = 100;
+            auto blockPtr1 = mem::ClaimBlock<box::Array<Vertex,   LETTER_COUNT_MAX * 4>>();
+            auto blockPtr2 = mem::ClaimBlock<box::Array<uint32_t, LETTER_COUNT_MAX * 6>>();
+
+            res::CreateVerticesFromText(fpsStr.dataPtr, blockPtr1.Get(), blockPtr2.Get());
+            resources.default_vb.Store(blockPtr1.Get().Data(), blockPtr1.Get().Count());
+            resources.default_vb.indexBuffer.Store(blockPtr2.Get().Data(), blockPtr2.Get().Count() * sizeof(uint32_t));
         }
 
 
@@ -100,7 +104,9 @@ namespace mini::vk
             vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 0, 0); 
             VkDeviceSize vboOffsets { 0 };
             vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &resources.default_vb.buffer.buffer, &vboOffsets);
-            for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, resources.default_vb.count, 1, 0, 0); //!stress test (increase max)
+            vkCmdBindIndexBuffer(cmdBuffer, resources.default_vb.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+            //for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, resources.default_vb.count, 1, 0, 0); //!stress test (increase max)
+            vkCmdDrawIndexed(cmdBuffer, resources.default_vb.indexCount, 1, 0, 0, 0); //!stress test (increase max)
             vkCmdEndRenderPass(cmdBuffer);
 
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
@@ -114,9 +120,9 @@ namespace mini::vk
                 return;
             }
 
-            if (context.surfaceCapabilities.currentExtent.width == 0 || 
-                context.surfaceCapabilities.currentExtent.height == 0)
-                return;
+            //if (context.surfaceCapabilities.currentExtent.width == 0 || 
+            //    context.surfaceCapabilities.currentExtent.height == 0)
+            //    return;
 
             if (vkWaitForFences(context.device, 1, &sync.fences[currentFrame], VK_FALSE, 0) != VK_SUCCESS)
                 return;
