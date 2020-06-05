@@ -30,7 +30,11 @@ namespace mini::vk
         Shader              default_shader;
         VertexBuffer        default_vb;
         //UniformBuffer       default_ub;
-  
+
+        struct PushConstants
+        {
+            u32 wnd_w, wnd_h;
+        } pushConstants;
 
         explicit VkResources(VkDevice pDevice) 
             : default_shader { pDevice } 
@@ -45,8 +49,8 @@ namespace mini::vk
                 images[i].Create(context, *resManager.textures.iTextures[i], commands.cmdPool);
 
             //? factories
-            CreateVertexBuffer_Default(context, default_vb);
             //CreateUniformBuffer_Default(context, default_ub);
+            CreateVertexBuffer_Default(context, default_vb);
             CreateShader_Default(context, default_shader, images);
 
             default_renderPass.Create(context);
@@ -57,7 +61,7 @@ namespace mini::vk
                 CreatePipelineVertexInputInfo(default_vb)
             );
         }
-        
+
     };
 
 }//ns

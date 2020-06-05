@@ -17,7 +17,7 @@ namespace mini::vk
     struct Renderer
     {
         Context         context;
-        VkResources       resources;
+        VkResources     resources;
         Commands        commands;
         Synchronization sync;
 
@@ -46,15 +46,27 @@ namespace mini::vk
             resources.default_renderPass.Create(context);
 
             resources.default_pipeline.~Default_Pipeline();
-            resources.default_pipeline.Create(
-                context, 
-                resources.default_shader, 
-                resources.default_renderPass, 
-                CreatePipelineVertexInputInfo(resources.default_vb));
-            //TODO: maybe write Recreate function for pipeline struct (so it would stroe all its refs)
+            resources.default_pipeline.Recreate(context);
 
             commands.~Commands();
             commands.Create(context);
+        }
+
+
+        inline void UpdateVkResources(const scenes::Scene& scene, const double dt)
+        {
+            resources.pushConstants.wnd_w = wnd::window_w;
+            resources.pushConstants.wnd_h = wnd::window_h;
+
+            box::String<100> fpsStr;
+            fpsStr.Set("fps: ");
+            char buf[20];
+            sprintf_s(buf, "%4.0f", 1/dt);
+            fpsStr.Append(buf);
+
+            const auto blockPtr = res::CreateVerticesFromText(fpsStr.dataPtr);
+            const auto& verts   = blockPtr.Get();
+            resources.default_vb.Store(verts.Data(), verts.Count());
         }
 
 
@@ -82,30 +94,13 @@ namespace mini::vk
                 .pClearValues   = clears
             };
 
-            //! stuff from lots of places, so more functions needed
             vkCmdBeginRenderPass(cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
-
-            u32 wndSize [] = { wnd::window_w, wnd::window_h };
-            vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(wndSize), &wndSize);
-
+            vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.pushConstants), &resources.pushConstants);
             vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 0, 0); 
             VkDeviceSize vboOffsets { 0 };
-            
-            //TODO: find another place where we change host uniforms and host visible stuff
-
-            box::String<100> fpsStr;
-            fpsStr.Set("fps: ");
-            char buf[20];
-            sprintf_s(buf, "%4.0f", 1/dt);
-            fpsStr.Append(buf);
-
-            const auto blockPtr = res::CreateVerticesFromText(fpsStr.dataPtr);
-            const auto& verts   = blockPtr.Get();
-            resources.default_vb.Store(verts.Data(), verts.Count());
-
             vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &resources.default_vb.buffer.buffer, &vboOffsets);
-            for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, verts.Count(), 1, 0, 0); //!stress test (increase max)
+            for(auto i=0; i<1; ++i) vkCmdDraw(cmdBuffer, resources.default_vb.count, 1, 0, 0); //!stress test (increase max)
             vkCmdEndRenderPass(cmdBuffer);
 
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
@@ -149,9 +144,10 @@ namespace mini::vk
             sync.inFlight[imageIndex] = sync.fences[currentFrame];
             VK_CHECK(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
-            //!RECORD COMMANDS----------
+            //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
+            UpdateVkResources(scene, dt);
             RecordCommands(imageIndex, dt, scene);
-            //!-------------------------
+            //!--------------------------------------------------
 
             const auto submitInfo = SubmitInfo(sync.imageAcquired[currentFrame], sync.imageFinished[currentFrame], commands.cmdBuffers[imageIndex]);
             VK_CHECK(vkQueueSubmit(context.queue, 1, &submitInfo, sync.fences[currentFrame]));

@@ -13,7 +13,7 @@ namespace mini::vk
     struct VertexBuffer
     {
         Buffer buffer;
-        //count
+        u32    count = 0;
         //ranges, groups
         const std::size_t MAX_VERTEX_COUNT;
 
@@ -44,11 +44,13 @@ namespace mini::vk
         void Store(const Vertex (&vertices)[N])
         {
             buffer.Store(vertices, sizeof(vertices));
+            count = N;
         }
 
-        void Store(const Vertex* const vertices, const std::size_t count)
+        void Store(const Vertex* const vertices, const std::size_t pCount)
         {
-            buffer.Store(vertices, count * sizeof(Vertex));
+            buffer.Store(vertices, pCount * sizeof(Vertex));
+            count = pCount;
         }
 
         //TODO: StoreGroup / Range 

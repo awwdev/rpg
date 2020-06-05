@@ -14,18 +14,31 @@ namespace mini::vk
 
     struct Default_Pipeline
     {
+        //refs (used for recreate too)
         VkDevice device;
+        Shader*  ptrShader;
+        Default_RenderPass* ptrRenderPass;
+        VkPipelineVertexInputStateCreateInfo vertexInput;
 
         VkPipeline pipeline;
         VkPipelineLayout layout;
                 
+                
+        inline void Recreate(Context& context)
+        {
+            Create(context, *ptrShader, *ptrRenderPass, vertexInput);
+        }
+
         inline void Create(
             Context& context, 
             Shader& shader, 
             Default_RenderPass& renderPass, 
-            VkPipelineVertexInputStateCreateInfo vertexInput)
+            VkPipelineVertexInputStateCreateInfo pVertexInput)
         {
             device = context.device;
+            ptrRenderPass = &renderPass;
+            ptrShader = &shader;
+            vertexInput = pVertexInput;
 
             const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
                 .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
