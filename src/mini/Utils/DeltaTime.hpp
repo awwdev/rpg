@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
 
-namespace app::dt
+namespace mini::dt
 {
     using Clock = std::chrono::high_resolution_clock;
 

@@ -10,6 +10,7 @@
 #include "mini/Utils/Vertex.hpp"
 #include "mini/Resources/Mesh/TextMesh.hpp"
 #include "mini/Box/String.hpp"
+#include "mini/Window/AppEvents.hpp"
 
 namespace mini::vk
 {
@@ -57,7 +58,7 @@ namespace mini::vk
         }
 
 
-        inline void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::scene::Scene& scene)
+        inline void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const scenes::Scene& scene)
         {
             auto& cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
 
@@ -85,7 +86,7 @@ namespace mini::vk
             vkCmdBeginRenderPass(cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
 
-            u32 wndSize [] = { 800, 600 }; //TODO: GET ACTUAL WND SIZE
+            u32 wndSize [] = { wnd::window_w, wnd::window_h };
             vkCmdPushConstants(cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(wndSize), &wndSize);
 
             vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 0, 0); 
@@ -111,7 +112,7 @@ namespace mini::vk
         }
 
 
-        inline void Render(const double dt, const app::scene::Scene& scene)
+        inline void Render(const double dt, const scenes::Scene& scene)
         {
             if (wnd::CheckEvent(wnd::EventType::Window_Resize)){
                 RecreateScwapchain();

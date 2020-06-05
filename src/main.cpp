@@ -38,16 +38,16 @@ int WINAPI wWinMain(
         );
         
         //? SCENES
-        auto ptrSceneStack = mem::ClaimBlock<box::Array<app::scene::Scene, 1, box::INIT::Yes>>();
+        auto ptrSceneStack = mem::ClaimBlock<box::Array<scenes::Scene, 1, box::INIT::Yes>>();
         uint32_t sceneIdx = 0;
 
         //? PROGRAM LOOP
         while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
         {
             wnd::PollEvents();
-            app::dt::CalcDeltaTimeFPS();        
-            ptrSceneStack[sceneIdx].Update(app::dt::seconds);
-            ptrRenderer->Render(app::dt::seconds, ptrSceneStack[sceneIdx]);
+            mini::dt::CalcDeltaTimeFPS();      
+            ptrSceneStack[sceneIdx].Update(mini::dt::seconds);
+            ptrRenderer->Render(mini::dt::seconds, ptrSceneStack[sceneIdx]);
         }
         
         //? THE END
@@ -59,5 +59,5 @@ int WINAPI wWinMain(
 
 }//main end
 
-//test unnorm tex coords first
-//TODO ,push constant w h, carray, ibo,
+//TODO ibo
+//maybe make events internal linkage and pass events vector around (also possible to remove events then)

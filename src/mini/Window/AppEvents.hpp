@@ -34,15 +34,18 @@ namespace mini::wnd
         EventType  type;
         EventState state;
         union {
-            struct { int x, y; } pos;
+            struct { s32 x, y; } pos;
+            struct { u32 w, h; } size;
         };
+
+        bool operator==(const EventType otherType) { return type == otherType; }
     };
 
 
     ///global arrays for wnd proc
     inline box::Array<Event, 10> events; //per frame max
     inline box::Bitset<EventType::PRESSABLE_END> pressed;
-
+    inline u32  window_w = 0, window_h = 0;
 
     inline Event* CheckEvent(const EventType type, const EventState state = EventState::None)
     {

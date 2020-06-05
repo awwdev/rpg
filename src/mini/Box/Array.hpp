@@ -164,8 +164,8 @@ namespace mini::box
         }
 
 
-        template<class T> ND
-        T* Contains(const T& element) //allows for custom operator==
+        template<class E> ND
+        T* Contains(const E& element) //allows for custom operator==
         {
             FOR_ARRAY((*this), i)
             {

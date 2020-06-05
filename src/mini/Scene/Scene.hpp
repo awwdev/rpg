@@ -5,7 +5,7 @@
 
 using namespace mini;
 
-namespace app::scene
+namespace mini::scenes
 {
     struct Scene
     {
