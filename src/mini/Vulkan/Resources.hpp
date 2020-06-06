@@ -30,7 +30,7 @@ namespace mini::vk
         Default_Pipeline    default_pipeline;
         Shader              default_shader;
         VertexBuffer        default_vb;
-        //UniformBuffer       default_ub;
+        UniformBuffer<bool> default_ub;
 
         struct PushConstants
         {
@@ -40,19 +40,22 @@ namespace mini::vk
         explicit VkResources(VkDevice pDevice) 
             : default_shader { pDevice } 
             , default_vb     { 1000 }
+            , default_ub     { 1000 }
+
         {;}
 
         //! resource manager needs to load beforehand
+        //! order matters!
         inline void Create(Context& context, hostRes::HostResources& resManager, Commands& commands)
         { 
             //? auto host resources load (based on enum)
             FOR_CARRAY(images, i)
                 images[i].Create(context, *resManager.textures.iTextures[i], commands.cmdPool);
 
-            //? factories
-            //CreateUniformBuffer_Default(context, default_ub);
+            //? "factories"
+            default_ub.Create(context); //maybe no "factory method" needed
             CreateVertexBuffer_Default(context, default_vb);
-            CreateShader_Default(context, default_shader, images);
+            CreateShader_Default(context, default_shader, images, default_ub); //or pass some upper struct UBOs ?
 
             default_renderPass.Create(context);
             default_pipeline.Create(

@@ -97,7 +97,7 @@ namespace mini::vk
                 .sType          = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
                 .pNext          = nullptr,
                 .flags          = 0,
-                .maxSets        = context.swapImages.count,
+                .maxSets        = context.swapImages.count,// * poolSizes.Count(), //! needed ? 
                 .poolSizeCount  = poolSizes.Count(),
                 .pPoolSizes     = poolSizes.Data()
             };

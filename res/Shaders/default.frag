@@ -11,20 +11,21 @@ layout(binding  = 1) uniform TEXTURE_USAGE {
     bool use;
 } textureUsage;
 
-void main() {
-    vec2 coords = vec2(inCoords.x / float(textureSize(tex, 0).x), inCoords.y / float(textureSize(tex, 0).y));
-    vec4 col = texture(tex, coords);
-
-    if (textureUsage.use == true){
-        col = vec4( 1, 0, 0, 1 );
+void main() 
+{
+    if (textureUsage.use == true)
+    {
+        vec2 texSize = textureSize(tex, 0);
+        vec2 coords  = vec2(inCoords.x / texSize.x, inCoords.y / texSize.y);
+        vec4 col     = texture(tex, coords);
+        col.r *= inColors.r;
+        col.g *= inColors.g;
+        col.b *= inColors.b;
+        col.a *= inColors.a;
+        outColor = col;
     }
-    else {
-        col = vec4( 0, 0, 1, 1 );
+    else 
+    {
+        outColor = inColors; //just vertex colors
     }
-
-    //col.r *= inColors.r;
-    //col.g *= inColors.g;
-    //col.b *= inColors.b;
-    //col.a = inColors.a;
-    outColor = col; 
 }

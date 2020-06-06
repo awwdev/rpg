@@ -27,25 +27,30 @@ namespace mini
             //for complete dynamic buffers
             vertices.Clear();
             indices.Clear();
+            ubo_TextureUsage.Clear();
             vertexGroups.Clear();
         }
 
+        //creates a new "vertex group"
         inline void DrawBox(s32 x, s32 y, s32 w, s32 h)
         {
             auto& meshView = vertexGroups.AppendReturn();
             meshView.v1 = vertices.Count();
             meshView.i1 = indices.Count();
 
-            const auto quad = res::CreateRect<res::Indexed::Yes>({ x, y, w, h }, { 0, 0, 0, 0 }, { 0.f, 0.f, 1.f, 1.f });
+            const auto quad = res::CreateRect<res::Indexed::Yes>({ x, y, w, h }, { 0, 0, 0, 0 }, { .2f, .2f, .2f, 1 });
             const u32 c = vertices.Count();
-            uint32_t arr [] {c + 0u, c + 2u, c + 3u, c + 0u, c + 1u, c + 2u};
+            uint32_t idxs [] {c + 0u, c + 2u, c + 3u, c + 0u, c + 1u, c + 2u};
             vertices.AppendArray(quad.verts);
-            indices.AppendArray(arr);
+            indices.AppendArray(idxs);
+            ubo_TextureUsage.Append(false);
 
             meshView.v2 = vertices.Count() - 1;
             meshView.i2 = indices.Count()  - 1;
+
         }
 
+        //creates a new "vertex group"
         inline void DrawText(chars_t text, u32 x, u32 y)
         {
             auto& meshView = vertexGroups.AppendReturn();
@@ -68,16 +73,21 @@ namespace mini
                 const u32 c = vertices.Count();
                 uint32_t idxs[] {c + 0, c + 1, c + 2, c + 2, c + 3, c + 0};
                 indices.AppendArray(idxs);
+                
             }
 
             meshView.v2 = vertices.Count() - 1;
             meshView.i2 = indices.Count()  - 1;
+            ubo_TextureUsage.Append(true);
         }
 
         //? whole renderer is on heap
         box::Array<Vertex, 1000>        vertices; 
         box::Array<uint32_t, 1500>      indices;
+        box::Array<bool, 10>            ubo_TextureUsage; //could be a more elaborated struct
         box::Array<VertexGroup, 100>    vertexGroups; //outlines vertex and index array
+        
+        
     };
 
 }//ns

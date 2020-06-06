@@ -2,12 +2,13 @@
 
 #pragma once
 #include "mini/Vulkan/Objects/Shader.hpp"
+#include "mini/Vulkan/Objects/UniformBuffer.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/Utils/Vertex.hpp"
 
 namespace mini::vk
 {
-    inline void CreateShader_Default(Context& context, Shader& shader, Image images[])
+    inline void CreateShader_Default(Context& context, Shader& shader, Image images[], UniformBuffer<bool>& ubo) //or pass some upper struct UBOS
     {  
         shader.CreateShaderModule("res/Shaders/default.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         shader.CreateShaderModule("res/Shaders/default.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -43,13 +44,27 @@ namespace mini::vk
             .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
             .pImmutableSamplers = nullptr,
         }); 
+        shader.setLayoutBindings.Append(VkDescriptorSetLayoutBinding{
+            .binding            = 1,
+            .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+            .descriptorCount    = 1,
+            .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+            .pImmutableSamplers = nullptr,
+        }); 
 
         auto& image = images[hostRes::Font];
         shader.imageInfos.Set(0, VkDescriptorImageInfo{
             .sampler        = shader.samplers[0],
             .imageView      = image.view, 
             .imageLayout    = image.layout
-        });       
+        });      
+
+        shader.bufferInfos.Set(1, VkDescriptorBufferInfo{
+            //get infos from the very buffer
+            .buffer = ubo.buffer.buffer,
+            .offset = 0, 
+            .range  = VK_WHOLE_SIZE
+        });   
  
         shader.CreateDescriptors(context);
     }

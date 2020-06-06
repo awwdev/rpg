@@ -14,7 +14,7 @@ namespace mini::scenes
 
         inline void Update(IRenderer& renderer, const double dt)
         {
-            renderer.DrawBox(0, 0, 100, 100);
+            renderer.DrawBox(0, 0, 200, 50);
 
             box::String<100> fpsStr;
             fpsStr.Set("fps: ");

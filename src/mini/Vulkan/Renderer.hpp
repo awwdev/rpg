@@ -63,6 +63,11 @@ namespace mini::vk
 
             resources.default_vb.Store(vertices.Data(), vertices.Count());
             resources.default_vb.indexBuffer.Store(indices.Data(), indices.Count() * sizeof(uint32_t));
+
+            //TODO: store all at once, but then we needed aligned host storage ?
+            //TODO: do not hardcode 256 but gpu ubo min size
+            resources.default_ub.buffer.Store(&ubo_TextureUsage[0], sizeof(decltype(ubo_TextureUsage)::DATA_T), 0);
+            resources.default_ub.buffer.Store(&ubo_TextureUsage[1], sizeof(decltype(ubo_TextureUsage)::DATA_T), 256);
         }
 
 
@@ -70,6 +75,7 @@ namespace mini::vk
         {
             auto& cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
             VkDeviceSize vboOffsets { 0 };
+            uint32_t     uboOffsets { 256 * 0 }; //TODO: do not hardcode 256 but use gpu min ubo size
 
             auto beginInfo = vk::CreateCmdBeginInfo();
             VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
@@ -85,15 +91,18 @@ namespace mini::vk
 
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
             vkCmdPushConstants      (cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.pushConstants), &resources.pushConstants);
+            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default_vb.buffer.buffer, &vboOffsets);
+            vkCmdBindIndexBuffer    (cmdBuffer, resources.default_vb.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+            
             FOR_ARRAY(vertexGroups, i)
             {
                 const auto& group = vertexGroups[i];
-                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 0, 0); 
-                vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default_vb.buffer.buffer, &vboOffsets);
-                vkCmdBindIndexBuffer    (cmdBuffer, resources.default_vb.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+                uboOffsets = 256 * i; //TODO: do not hardcode 256 but use gpu min ubo size
+                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 1, &uboOffsets); 
+                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 1, 1, &resources.default_shader.sets[cmdBufferIdx], 1, &uboOffsets); 
                 vkCmdDrawIndexed        (cmdBuffer, group.IndexCount(), 1, 0, group.v1, 0);
-                break;
             }
+            
             vkCmdEndRenderPass(cmdBuffer);
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }
