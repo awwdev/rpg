@@ -40,8 +40,9 @@ namespace mini::mem
     //!KEEP IT SORTED BY SIZE
     constexpr AllocInfo ALLOC_INFOS[] = {
         { 100, 1    },     //scene stack
-        { 6'000,  1 },     //vk renderer
+        { 6'000,  1 },     
         { 12'000, 4 },     //shader char buffer + 32*32*4 tex array (containing 2 textures)
+        { 60'000, 2 },     //vk renderer
         { 10'000'000, 2 }  //1024*1024*4 tex array
     };
     //!--------------------------------------

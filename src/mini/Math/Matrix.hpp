@@ -5,12 +5,14 @@
 
 #define ND [[nodiscard]]
 
-namespace mini::math
+namespace mini
 {
     //used for vector access (mat[Vx] == mat[0][0])
     enum V : u8 { Vx = 0, Vy = 1, Vz = 2, Vw = 3 };
+}
 
-
+namespace mini::math
+{
     template<class T, u8 Y, u8 X, typename = IsArithmetic<T>> //enums? probably bad idea
     struct Mat
     {

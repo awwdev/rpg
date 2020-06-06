@@ -48,7 +48,8 @@ int WINAPI wWinMain(
             dt::UpdateFPS();     
 
             if (wnd::window_h != 0 && wnd::window_w != 0) {
-                ptrSceneStack[sceneIdx].Update(mini::dt::seconds);
+                ptrRenderer->FrameBegin();
+                ptrSceneStack[sceneIdx].Update(ptrRenderer.Get(), mini::dt::seconds);
                 ptrRenderer->Render(mini::dt::seconds, ptrSceneStack[sceneIdx]);
             }   
         }

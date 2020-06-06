@@ -13,8 +13,6 @@ namespace mini::res
     enum class Indexed  { Yes, No };
     enum class Centered { Yes, No };
 
-    //do all in px on cpu side and via push constant we deliver wnd size and devide vert pos in shader
-    
     //in pixel 
     template<Indexed IsIndexed = Indexed::No>
     inline auto CreateRect(

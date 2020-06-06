@@ -1,12 +1,8 @@
 #pragma once
 
-#include "mini/Box/Array.hpp"
-#include "mini/Box/String.hpp"
 #include "mini/Box/Map.hpp"
 #include "mini/Utils/Vertex.hpp"
-#include "mini/Memory/Allocator.hpp"
 #include "mini/Math/Matrix.hpp"
-#include "mini/Resources/Mesh/PrimitiveMeshes.hpp"
 
 namespace mini::res
 {
@@ -116,36 +112,5 @@ namespace mini::res
         P { '}', {  4,  0 } },
         P { '~', {  5,  0 } },
     };  
-
-    inline void CreateVerticesFromText(
-        chars_t text, 
-        box::IArray<Vertex>& vertices, 
-        box::IArray<uint32_t>& indices)
-    {
-        for(auto i=0;;++i) {
-            if (text[i] == '\0') 
-            {
-                break;
-            }
-
-            const auto fw = 14;
-            const auto fh = 18; 
-            const auto s  = 1; //scale
-
-            const auto& coords = MAPPING.GetValue(text[i]);
-            const auto quad = res::CreateRect<Indexed::Yes>(
-                Rect<int>{i * fw * s, 0, fw * s, fh * s}, 
-                Rect<int>{coords[math::Vx] * fw, coords[math::Vy] * fh, fw, fh}
-            );
-
-            vertices.AppendArray(quad.verts);
-            uint32_t idxs[] {0u + i*4, 1u + i*4, 2u + i*4, 2u + i*4, 3u + i*4, 0u + i*4};
-            indices.AppendArray(idxs);
-        }
-    }    
-
-    //TODO: get window size
-    //TODO: index buffer
-    //TODO: make independent of aspect ratio - no distortion
 
 }//ns

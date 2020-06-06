@@ -4,9 +4,6 @@
 
 namespace mini::mem
 {
-    //! TODO WIP
-    //basic idea: dont use html table or divs but text chars like a rect
-
     inline void PrintAllocationHTML()
     {
         std::ofstream out("AllocationView.html");

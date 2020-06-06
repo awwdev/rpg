@@ -144,4 +144,24 @@ namespace mini::vk
         vkFreeCommandBuffers(device, cmdPool, 1, &cmdBuffer);
     }
 
+    inline VkRenderPassBeginInfo CreateRenderPassBeginInfo(
+        Context& context,
+        VkRenderPass renderPass,
+        VkFramebuffer framebuffer,
+        const VkClearValue* clears)
+    {
+        return {
+            .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            .pNext          = nullptr,
+            .renderPass     = renderPass,
+            .framebuffer    = framebuffer,
+            .renderArea     = {
+                .offset     = VkOffset2D {0, 0},
+                .extent     = context.surfaceCapabilities.currentExtent
+            },
+            .clearValueCount= 1,
+            .pClearValues   = clears
+        };
+    }
+
 }//ns

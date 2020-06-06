@@ -7,7 +7,7 @@ namespace mini::dbg {
 
     void AllocateProfileHistory()
     {
-        //history = new mini::box::Array<double, 1024>; //todo: unique ptr
+        //history = new mini::box::Array<double, 1024>;
     }
 
     void PrintProfileHistory()
