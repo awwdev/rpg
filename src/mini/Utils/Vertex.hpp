@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mini/Math/Matrix.hpp"
+#include <iostream>
 
 namespace mini
 {
@@ -17,5 +18,15 @@ namespace mini
     {
         T x, y, w, h;
     };
+
+
+    std::ostream& operator<<(std::ostream& os, const Vertex& vert)
+    {
+        os << "vertex data\n";
+        os << "pos " << vert.pos << '\n';
+        os << "col " << vert.col << '\n';
+        os << "tex " << vert.tex;
+        return os;
+    }
 
 }//ns

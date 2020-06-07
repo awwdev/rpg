@@ -58,8 +58,8 @@ namespace mini::vk
             resources.default_pc.wnd_w = wnd::window_w;
             resources.default_pc.wnd_h = wnd::window_h;
 
-            resources.default_vb.Store(vertices.Data(), vertices.Count());
-            resources.default_vb.indexBuffer.Store(indices.Data(), indices.Count() * sizeof(uint32_t));
+            resources.default_vb.vertexBuffer.Store(vertices.Data(), vertices.Count()  * sizeof(Vertex));
+            resources.default_vb.indexBuffer.Store (indices.Data(), indices.Count() * sizeof(uint32_t));
 
             resources.default_ub.buffer.Store(uniforms.data, uniforms.CurrentSize());
         }
@@ -85,7 +85,7 @@ namespace mini::vk
 
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
             vkCmdPushConstants      (cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.default_pc), &resources.default_pc);
-            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default_vb.buffer.buffer, &vboOffsets);
+            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default_vb.vertexBuffer.buffer, &vboOffsets);
             vkCmdBindIndexBuffer    (cmdBuffer, resources.default_vb.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
             
             FOR_ARRAY(vertexGroups, i)

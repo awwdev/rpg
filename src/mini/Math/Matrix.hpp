@@ -267,6 +267,22 @@ namespace mini::math
         ref = ref * other;
     }
 
+
+    template<class T, auto Y, auto X>
+    std::ostream& operator<<(std::ostream& os, const Mat<T, Y, X>& mat)
+    {
+        os << "mat\n";
+        for(auto y = 0; y < Y; ++y) {
+        for(auto x = 0; x < X; ++x) {
+            os << mat[y][x] << '|';
+        }
+            os << '\n';
+        }
+        return os;
+    }
+
+
+
     ///stringify
 
     //todo: string class (cannot copy char* due to local dtor and char[] not possible)

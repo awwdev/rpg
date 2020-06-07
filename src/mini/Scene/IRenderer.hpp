@@ -13,7 +13,7 @@ namespace mini
 {
     struct VertexGroup
     {
-        u32 v1, v2; //begin, end
+        u32 v1, v2; //first and last
         u32 i1, i2;
 
         inline u32 VertexCount() const { return (v2 - v1) + 1; }
@@ -25,41 +25,41 @@ namespace mini
     {
         inline void FrameBegin()
         {
-            //for complete dynamic buffers
+            //? for dynamic buffers
             vertices.Clear();
             indices.Clear();
             uniforms.Clear();
             vertexGroups.Clear();
         }
 
-        //creates a new "vertex group"
-        inline void DrawBox(s32 x, s32 y, s32 w, s32 h)
+
+        inline void Add_DrawQuad(s32 x, s32 y, s32 w, s32 h)
         {
-            auto& meshView = vertexGroups.AppendReturn();
-            meshView.v1 = vertices.Count();
-            meshView.i1 = indices.Count();
+            auto& group = vertexGroups.AppendReturn();
+            group.v1 = vertices.Count();
+            group.i1 = indices.Count();
 
             const auto quad = res::CreateRect<res::Indexed::Yes>({ x, y, w, h }, { 0, 0, 0, 0 }, { .2f, .2f, .2f, 1 });
             const u32 c = vertices.Count();
-            uint32_t idxs [] {c + 0u, c + 2u, c + 3u, c + 0u, c + 1u, c + 2u};
             vertices.AppendArray(quad.verts);
+            uint32_t idxs [] {c + 0u, c + 2u, c + 3u, c + 0u, c + 1u, c + 2u};
             indices.AppendArray(idxs);
             uniforms.Append({false});
 
-            meshView.v2 = vertices.Count() - 1;
-            meshView.i2 = indices.Count()  - 1;
+            group.v2 = vertices.Count() - 1;
+            group.i2 = indices.Count()  - 1;
         }
 
-        //creates a new "vertex group"
-        inline void DrawText(chars_t text, u32 x, u32 y)
+
+        inline void Add_DrawText(chars_t text, u32 x, u32 y)
         {
-            auto& meshView = vertexGroups.AppendReturn();
-            meshView.v1 = vertices.Count();
-            meshView.i1 = indices.Count();
+            auto& group = vertexGroups.AppendReturn();
+            group.v1 = vertices.Count();
+            group.i1 = indices.Count();
 
             for(auto i=0; text[i] != '\0'; ++i)
             {
-                const auto fw = 14;
+                const auto fw = 14; //real letter tile size in px
                 const auto fh = 18; 
                 const auto s  = 1; //scale
 
@@ -69,16 +69,15 @@ namespace mini
                     Rect<int>{coords[Vx] * fw, coords[Vy] * fh, fw, fh}
                 );
 
-                vertices.AppendArray(quad.verts);
                 const u32 c = vertices.Count();
+                vertices.AppendArray(quad.verts);
                 uint32_t idxs[] {c + 0, c + 1, c + 2, c + 2, c + 3, c + 0};
                 indices.AppendArray(idxs);
-                
             }
 
-            meshView.v2 = vertices.Count() - 1;
-            meshView.i2 = indices.Count()  - 1;
-             uniforms.Append({true});
+            group.v2 = vertices.Count() - 1;
+            group.i2 = indices.Count()  - 1;
+            uniforms.Append({true});
         }
 
         //? whole renderer is on heap

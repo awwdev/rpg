@@ -12,12 +12,12 @@ namespace mini::vk
 {
     struct VertexBuffer
     {
-        Buffer buffer;
-        u32    count = 0;
+        //! count not actually needed since we can test host vertex buffer
+        //(that we use to collect stuff and then we store it on gpu via this very class)
+        //we could use count for bound checking though, but that is done auto by the host array ...
 
+        Buffer vertexBuffer;
         Buffer indexBuffer;
-        u32    indexCount;
-        //ranges, groups
         const std::size_t MAX_VERTEX_COUNT;
 
         box::Array<VkVertexInputBindingDescription, 10>   bindings;
@@ -29,7 +29,7 @@ namespace mini::vk
 
         inline void CreateDynamic(Context& context)
         {
-            buffer.Create(
+            vertexBuffer.Create(
                 context.device, 
                 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
                 sizeof(Vertex) * MAX_VERTEX_COUNT,
@@ -51,20 +51,20 @@ namespace mini::vk
             //TODO: do
         }
 
-        template<std::size_t N>
-        void Store(const Vertex (&vertices)[N])
-        {
-            buffer.Store(vertices, sizeof(vertices));
-            count = N;
-            indexCount = N + (N / 2);
-        }
-
-        void Store(const Vertex* const vertices, const std::size_t pCount)
-        {
-            buffer.Store(vertices, pCount * sizeof(Vertex));
-            count = pCount;
-            indexCount = pCount + (pCount / 2);
-        }
+        //template<std::size_t N>
+        //void Store(const Vertex (&vertices)[N])
+        //{
+        //    buffer.Store(vertices, sizeof(vertices));
+        //    count = N;
+        //    indexCount = N + (N / 2);
+        //}
+//
+        //void Store(const Vertex* const vertices, const std::size_t pCount)
+        //{
+        //    buffer.Store(vertices, pCount * sizeof(Vertex));
+        //    count = pCount;
+        //    indexCount = pCount + (pCount / 2);
+        //}
 
         //TODO: StoreGroup / Range 
         //TODO: when drawing (cmd draw) wwe actually ask the vbo how much verts he has (count, not capacity)
