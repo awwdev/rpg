@@ -10,35 +10,35 @@
 
 namespace mini::vk
 {
-    template<class ELEMENT>
+    struct UboData_Default
+    {
+        bool useTexture = false;   
+        //! alignment 
+    };
+
     struct UniformBuffer
     {
         Buffer buffer;
         const u32 MAX_COUNT;
+        const VkDeviceSize ALIGNMENT;
 
-        explicit UniformBuffer(const u32 maxCount) : MAX_COUNT { maxCount }
+        explicit UniformBuffer(Context& context, const u32 maxCount) 
+            : MAX_COUNT { maxCount }
+            , ALIGNMENT { context.physicalProps.limits.minUniformBufferOffsetAlignment }
         {;}
 
         inline void Create(Context& context)
         {
-            //TODO: get multiple of 256 (or gpu ubo min size)
             buffer.Create(
                 context.device, 
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                //sizeof(ELEMENT) * MAX_COUNT,
-                256 * 2,
+                ALIGNMENT * 2,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                 context.physicalMemProps
             );
         }
 
-        //whole buffer store intended
-        //void Store(const ELEMENT* content, const std::size_t size)
-        //{
-        //    buffer.Store(&content, sizeof(content));
-        //}
-
+        //TODO: store method, more specific than buffer.Store(raw) ?
     };
-
 
 }//ns

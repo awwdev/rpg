@@ -161,7 +161,7 @@ namespace mini::vk
 
             vkGetPhysicalDeviceProperties(physical, &physicalProps);
             vkGetPhysicalDeviceMemoryProperties(physical, &physicalMemProps);
-            
+
             INFO("Vulkan physical API version", 
                 VK_VERSION_MAJOR(physicalProps.apiVersion),
                 VK_VERSION_MINOR(physicalProps.apiVersion), 

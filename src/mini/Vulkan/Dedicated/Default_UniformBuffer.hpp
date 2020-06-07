@@ -6,9 +6,9 @@
 
 namespace mini::vk
 {
-    inline void CreateUniformBuffer_Default(Context& context, UniformBuffer<bool>& ub)
-    {
-
-    }
+    //inline void CreateUniformBuffer_Default(Context& context, UniformBuffer& ub)
+    //{
+//
+    //}
 
 }//ns

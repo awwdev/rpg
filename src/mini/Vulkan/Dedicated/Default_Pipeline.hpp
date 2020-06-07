@@ -5,6 +5,7 @@
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Shader.hpp"
 #include "mini/Vulkan/Objects/VertexBuffer.hpp"
+#include "mini/Vulkan/Objects/PushConstants.hpp"
 #include "mini/Vulkan/Dedicated/Default_RenderPass.hpp"
 
 namespace mini::vk
@@ -148,7 +149,7 @@ namespace mini::vk
             const VkPushConstantRange constantRange {
                 .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
                 .offset     = 0,
-                .size       = (uint32_t)sizeof(u32[2]) //window size
+                .size       = (uint32_t)sizeof(Default_PushConstants)
             };
 
             const VkPipelineLayoutCreateInfo layoutInfo {

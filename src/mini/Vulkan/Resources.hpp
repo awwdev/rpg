@@ -12,6 +12,7 @@
 #include "mini/Vulkan/Dedicated/Default_Shader.hpp"
 #include "mini/Vulkan/Dedicated/Default_VertexBuffer.hpp"
 #include "mini/Vulkan/Dedicated/Default_UniformBuffer.hpp"
+#include "mini/Vulkan/Objects/PushConstants.hpp"
 
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/HostResources.hpp"
@@ -26,21 +27,18 @@ namespace mini::vk
 
         //? pipeline stuff
         //TODO: rename to UI (instead of default_)
-        Default_RenderPass  default_renderPass;
-        Default_Pipeline    default_pipeline;
-        Shader              default_shader;
-        VertexBuffer        default_vb;
-        UniformBuffer<bool> default_ub;
+        Default_RenderPass      default_renderPass;
+        Default_Pipeline        default_pipeline;
+        Shader                  default_shader;
+        VertexBuffer            default_vb;
+        UniformBuffer           default_ub;
+        Default_PushConstants   default_pc;
 
-        struct PushConstants
-        {
-            u32 wnd_w, wnd_h;
-        } pushConstants;
 
-        explicit VkResources(VkDevice pDevice) 
-            : default_shader { pDevice } 
+        explicit VkResources(Context& context) 
+            : default_shader { context.device } 
             , default_vb     { 1000 }
-            , default_ub     { 1000 }
+            , default_ub     { context, 1000 }
 
         {;}
 

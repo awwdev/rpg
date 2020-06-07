@@ -16,19 +16,17 @@ namespace mini::vk
 {
     struct Renderer : IRenderer
     {
-        Context         context;
+        Context         context; //! must come first
         VkResources     resources;
         Commands        commands;
         Synchronization sync;
 
         uint32_t currentFrame = 0;
         
-        //TODO: ref to current window size
         Renderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
-            : context   { wndHandle }
-            , resources { context.device }
+            : context   { wndHandle } //! must come first
+            , resources { context }
         {
-            //context.Create(wndHandle);
             sync.Create(context);
             commands.Create(context);
             resources.Create(context, hostResources, commands);
@@ -55,19 +53,15 @@ namespace mini::vk
 
         inline void UpdateVkResources(const scenes::Scene& scene, const double dt)
         {
-            //? frame begin (clear stuff) is done before all vk calls
-            //? collecting data in scene update 
-            //? and pushing data to gpu here (sync)
-            resources.pushConstants.wnd_w = wnd::window_w;
-            resources.pushConstants.wnd_h = wnd::window_h;
+            resources.default_pc.wnd_w = wnd::window_w;
+            resources.default_pc.wnd_h = wnd::window_h;
 
             resources.default_vb.Store(vertices.Data(), vertices.Count());
             resources.default_vb.indexBuffer.Store(indices.Data(), indices.Count() * sizeof(uint32_t));
 
-            //TODO: store all at once, but then we needed aligned host storage ?
-            //TODO: do not hardcode 256 but gpu ubo min size
-            resources.default_ub.buffer.Store(&ubo_TextureUsage[0], sizeof(decltype(ubo_TextureUsage)::DATA_T), 0);
-            resources.default_ub.buffer.Store(&ubo_TextureUsage[1], sizeof(decltype(ubo_TextureUsage)::DATA_T), 256);
+            //TODO: instead of multiple store, store once but aligned
+            resources.default_ub.buffer.Store(&ubo_TextureUsage[0], sizeof(UboData_Default), resources.default_ub.ALIGNMENT * 0);
+            resources.default_ub.buffer.Store(&ubo_TextureUsage[1], sizeof(UboData_Default), resources.default_ub.ALIGNMENT * 1);
         }
 
 
@@ -90,7 +84,7 @@ namespace mini::vk
             vkCmdBeginRenderPass (cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
-            vkCmdPushConstants      (cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.pushConstants), &resources.pushConstants);
+            vkCmdPushConstants      (cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.default_pc), &resources.default_pc);
             vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default_vb.buffer.buffer, &vboOffsets);
             vkCmdBindIndexBuffer    (cmdBuffer, resources.default_vb.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
             
