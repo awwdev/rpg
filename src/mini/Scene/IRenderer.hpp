@@ -3,6 +3,7 @@
 #pragma once
 #include "mini/Utils/Types.hpp"
 #include "mini/Box/Array.hpp"
+#include "mini/Box/AlignedStorage.hpp"
 #include "mini/Utils/Vertex.hpp"
 #include "mini/Resources/FontMap.hpp"
 #include "mini/Resources/PrimitiveMeshes.hpp"
@@ -27,7 +28,7 @@ namespace mini
             //for complete dynamic buffers
             vertices.Clear();
             indices.Clear();
-            ubo_TextureUsage.Clear();
+            uniforms.Clear();
             vertexGroups.Clear();
         }
 
@@ -43,11 +44,10 @@ namespace mini
             uint32_t idxs [] {c + 0u, c + 2u, c + 3u, c + 0u, c + 1u, c + 2u};
             vertices.AppendArray(quad.verts);
             indices.AppendArray(idxs);
-            ubo_TextureUsage.Append(false);
+            uniforms.Append({false});
 
             meshView.v2 = vertices.Count() - 1;
             meshView.i2 = indices.Count()  - 1;
-
         }
 
         //creates a new "vertex group"
@@ -78,14 +78,16 @@ namespace mini
 
             meshView.v2 = vertices.Count() - 1;
             meshView.i2 = indices.Count()  - 1;
-            ubo_TextureUsage.Append(true);
+             uniforms.Append({true});
         }
 
         //? whole renderer is on heap
-        box::Array<Vertex, 1000>        vertices; 
-        box::Array<uint32_t, 1500>      indices;
-        box::Array<bool, 10>            ubo_TextureUsage; //could be a more elaborated struct
-        box::Array<VertexGroup, 100>    vertexGroups; //outlines vertex and index array
+        //? gpu api agnostic resources (that will be used in derived class to upload to gpu)
+        box::Array<Vertex, 1000>            vertices; 
+        box::Array<uint32_t, 1500>          indices;
+        box::AlignedStorage<1000, vk::UboData_Default> uniforms;
+        
+        box::Array<VertexGroup, 100>        vertexGroups; //outlines vertex and index array
         
         
     };

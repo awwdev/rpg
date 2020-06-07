@@ -38,7 +38,7 @@ namespace mini::vk
         explicit VkResources(Context& context) 
             : default_shader { context.device } 
             , default_vb     { 1000 }
-            , default_ub     { context, 1000 }
+            , default_ub     { context, 100 } //!size explodes due to min alignment
 
         {;}
 
@@ -51,6 +51,7 @@ namespace mini::vk
                 images[i].Create(context, *resManager.textures.iTextures[i], commands.cmdPool);
 
             //? "factories"
+
             default_ub.Create(context); //maybe no "factory method" needed
             CreateVertexBuffer_Default(context, default_vb);
             CreateShader_Default(context, default_shader, images, default_ub); //or pass some upper struct UBOs ?

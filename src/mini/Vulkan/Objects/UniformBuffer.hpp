@@ -10,11 +10,11 @@
 
 namespace mini::vk
 {
-    struct UboData_Default
+    struct UboData_Default //TODO: move outside, its a gpu api agnostic  struct
     {
         bool useTexture = false;   
-        //! alignment 
     };
+
 
     struct UniformBuffer
     {
@@ -32,7 +32,7 @@ namespace mini::vk
             buffer.Create(
                 context.device, 
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                ALIGNMENT * 2,
+                ALIGNMENT * MAX_COUNT,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                 context.physicalMemProps
             );

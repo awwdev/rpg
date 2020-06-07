@@ -27,6 +27,8 @@ namespace mini::vk
             : context   { wndHandle } //! must come first
             , resources { context }
         {
+            uniforms.alignment = context.physicalProps.limits.minUniformBufferOffsetAlignment;
+
             sync.Create(context);
             commands.Create(context);
             resources.Create(context, hostResources, commands);
@@ -59,9 +61,7 @@ namespace mini::vk
             resources.default_vb.Store(vertices.Data(), vertices.Count());
             resources.default_vb.indexBuffer.Store(indices.Data(), indices.Count() * sizeof(uint32_t));
 
-            //TODO: instead of multiple store, store once but aligned
-            resources.default_ub.buffer.Store(&ubo_TextureUsage[0], sizeof(UboData_Default), resources.default_ub.ALIGNMENT * 0);
-            resources.default_ub.buffer.Store(&ubo_TextureUsage[1], sizeof(UboData_Default), resources.default_ub.ALIGNMENT * 1);
+            resources.default_ub.buffer.Store(uniforms.data, uniforms.CurrentSize());
         }
 
 
@@ -69,7 +69,7 @@ namespace mini::vk
         {
             auto& cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
             VkDeviceSize vboOffsets { 0 };
-            uint32_t     uboOffsets { 256 * 0 }; //TODO: do not hardcode 256 but use gpu min ubo size
+            uint32_t     uboOffsets { 0 };
 
             auto beginInfo = vk::CreateCmdBeginInfo();
             VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
@@ -90,11 +90,11 @@ namespace mini::vk
             
             FOR_ARRAY(vertexGroups, i)
             {
-                const auto& group = vertexGroups[i];
-                uboOffsets = 256 * i; //TODO: do not hardcode 256 but use gpu min ubo size
+                uboOffsets = resources.default_ub.ALIGNMENT * i; 
+                //! still abit unclear to me why we need to call twice (since first one could be called once) and also why both need dynamic
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 1, &uboOffsets); 
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 1, 1, &resources.default_shader.sets[cmdBufferIdx], 1, &uboOffsets); 
-                vkCmdDrawIndexed        (cmdBuffer, group.IndexCount(), 1, 0, group.v1, 0);
+                vkCmdDrawIndexed        (cmdBuffer, vertexGroups[i].IndexCount(), 1, 0, vertexGroups[i].v1, 0);
             }
             
             vkCmdEndRenderPass(cmdBuffer);
