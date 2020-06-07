@@ -62,3 +62,12 @@ int WINAPI wWinMain(
     system("pause");
 
 }//main end
+
+//TODO: pixel collision for UI (Button)
+//TODO: folder name for host stuff like IRenderer ?
+
+//vulkan renderer and agnostic renderer folder name ?
+
+//TODO: decide shader desc place
+//TODO: ecs mockup
+//TODO: wireframe mode

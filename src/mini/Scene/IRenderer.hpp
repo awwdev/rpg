@@ -51,22 +51,32 @@ namespace mini
         }
 
 
-        inline void Add_DrawText(chars_t text, u32 x, u32 y)
+        inline void Add_DrawText(chars_t text, const int x, int y)
         {
             auto& group = vertexGroups.AppendReturn();
             group.v1 = vertices.Count();
             group.i1 = indices.Count();
 
+            //TODO: get the font data from some resource (struct Font) 
+            const auto fw = 14; //real letter tile size in px
+            const auto fh = 18; 
+            const auto s  = 1; //scale
+
+            auto xx = x; 
             for(auto i=0; text[i] != '\0'; ++i)
             {
-                const auto fw = 14; //real letter tile size in px
-                const auto fh = 18; 
-                const auto s  = 1; //scale
+                xx += fw * s + 0; //padding
+                if (text[i] == '\n') 
+                {
+                    y += fh + 4; //+padding
+                    xx = x;
+                    continue;
+                }
 
                 const auto& coords = res::MAPPING.GetValue(text[i]);
                 const auto quad = res::CreateRect<res::Indexed::Yes>(
-                    Rect<int>{i * fw * s, 0, fw * s, fh * s}, 
-                    Rect<int>{coords[Vx] * fw, coords[Vy] * fh, fw, fh}
+                    Rect<int>{ xx, y, fw * s, fh * s}, 
+                    Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh }
                 );
 
                 const u32 c = vertices.Count();
@@ -82,11 +92,11 @@ namespace mini
 
         //? whole renderer is on heap
         //? gpu api agnostic resources (that will be used in derived class to upload to gpu)
-        box::Array<Vertex, 1000>            vertices; 
-        box::Array<uint32_t, 1500>          indices;
-        box::AlignedStorage<1000, vk::UboData_Default> uniforms;
+        box::Array<Vertex, 2000> vertices; 
+        box::Array<uint32_t, 3000> indices;
+        box::AlignedStorage<2000, vk::UboData_Default> uniforms;
         
-        box::Array<VertexGroup, 100>        vertexGroups; //outlines vertex and index array
+        box::Array<VertexGroup, 500> vertexGroups; //outlines vertex and index array (so we know when to change state)
         
         
     };

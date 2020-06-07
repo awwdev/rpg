@@ -29,15 +29,17 @@ namespace mini::vk
         //TODO: rename to UI (instead of default_)
         Default_RenderPass      default_renderPass;
         Default_Pipeline        default_pipeline;
+        Default_PushConstants   default_pc;
+
         Shader                  default_shader;
         VertexBuffer            default_vb;
         UniformBuffer           default_ub;
-        Default_PushConstants   default_pc;
 
-
+        //TODO: instead of bare numbers for each buffer, something like ENTITY_COUNT would be nice
+        //however entities seldom have same vert cound, iterating entities (mehses) and collecting all needed verts and then rough estimate of count ...
         explicit VkResources(Context& context) 
             : default_shader { context.device } 
-            , default_vb     { 1000 }
+            , default_vb     { 10000 }
             , default_ub     { context, 100 } //!size explodes due to min alignment
 
         {;}
@@ -51,7 +53,6 @@ namespace mini::vk
                 images[i].Create(context, *resManager.textures.iTextures[i], commands.cmdPool);
 
             //? "factories"
-
             default_ub.Create(context); //maybe no "factory method" needed
             CreateVertexBuffer_Default(context, default_vb);
             CreateShader_Default(context, default_shader, images, default_ub); //or pass some upper struct UBOs ?

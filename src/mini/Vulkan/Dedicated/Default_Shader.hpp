@@ -36,6 +36,7 @@ namespace mini::vk
         VK_CHECK(vkCreateSampler(shader.device, &samplerInfo, nullptr, &shader.samplers.AppendReturn()));
 
         //TODO: when we have ubo we will move this stuff out too ?
+        
 
         shader.setLayoutBindings.Append(VkDescriptorSetLayoutBinding{
             .binding            = 0,
