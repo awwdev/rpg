@@ -35,19 +35,9 @@ namespace mini::vk
         };
         VK_CHECK(vkCreateSampler(shader.device, &samplerInfo, nullptr, &shader.samplers.AppendReturn()));
 
-        //TODO: when we have ubo we will move this stuff out too ?
-        
-
         shader.setLayoutBindings.Append(VkDescriptorSetLayoutBinding{
             .binding            = 0,
             .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount    = 1,
-            .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .pImmutableSamplers = nullptr,
-        }); 
-        shader.setLayoutBindings.Append(VkDescriptorSetLayoutBinding{
-            .binding            = 1,
-            .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
             .descriptorCount    = 1,
             .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
             .pImmutableSamplers = nullptr,
@@ -60,14 +50,6 @@ namespace mini::vk
             .imageLayout    = image.layout
         });      
 
-        shader.bufferInfos.Set(1, VkDescriptorBufferInfo{
-            //get infos from the very buffer
-            .buffer = ubo.buffer.buffer,
-            .offset = 0, 
-            .range  = VK_WHOLE_SIZE
-        });   
- 
-        shader.CreateDescriptors(context);
     }
 
 }//ns

@@ -6,9 +6,10 @@
 
 namespace mini::vk
 {
-    //inline void CreateUniformBuffer_Default(Context& context, UniformBuffer& ub)
-    //{
-//
-    //}
+    inline void CreateUniformBuffer_Default(Context& context, UniformBuffer& ub)
+    {
+        //not really needed but consistent (and maybe more custom stuff in future?)
+        ub.Create(context);
+    }
 
 }//ns

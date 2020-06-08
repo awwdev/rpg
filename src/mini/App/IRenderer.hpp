@@ -9,7 +9,7 @@
 #include "mini/Resources/PrimitiveMeshes.hpp"
 #undef DrawText
 
-namespace mini
+namespace mini::app
 {
     struct VertexGroup
     {

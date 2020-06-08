@@ -9,7 +9,7 @@
 #include "mini/Memory/AllocatorPrint.hpp"
 #include "mini/Vulkan/Renderer.hpp"
 
-#include "mini/Scene/Scene.hpp"
+#include "mini/App/Scene.hpp"
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Resources/HostResources.hpp"
 
@@ -31,14 +31,14 @@ int WINAPI wWinMain(
         hostRes::HostResources hostResources {}; //will load immediately for now
 
         //? RENDERER
-        constexpr auto s = sizeof vk::Renderer;
-        auto ptrRenderer = mem::ClaimBlock<vk::Renderer>(
+        constexpr auto s = sizeof vk::VkRenderer;
+        auto ptrRenderer = mem::ClaimBlock<vk::VkRenderer>(
             vk::WindowHandle{window.hInstance, window.hWnd},
             hostResources
         );
         
         //? SCENES
-        auto ptrSceneStack = mem::ClaimBlock<box::Array<scenes::Scene, 1, box::INIT::Yes>>();
+        auto ptrSceneStack = mem::ClaimBlock<box::Array<app::Scene, 1, box::INIT::Yes>>();
         uint32_t sceneIdx = 0;
 
         //? PROGRAM LOOP
@@ -64,10 +64,10 @@ int WINAPI wWinMain(
 }//main end
 
 //TODO: pixel collision for UI (Button)
-//TODO: folder name for host stuff like IRenderer ?
-
-//vulkan renderer and agnostic renderer folder name ?
 
 //TODO: decide shader desc place
 //TODO: ecs mockup
-//TODO: wireframe mode
+//TODO: wireframe mode 
+
+//TODO: does folder Resources belong to App folder?
+//later on probably a rpg folder? distinguish generic framework from actual project?

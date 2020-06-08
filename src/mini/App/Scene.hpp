@@ -2,11 +2,11 @@
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
-#include "mini/Scene/IRenderer.hpp"
+#include "mini/App/IRenderer.hpp"
 
 using namespace mini;
 
-namespace mini::scenes
+namespace mini::app
 {
     struct Scene
     {

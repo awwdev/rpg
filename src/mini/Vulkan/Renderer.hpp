@@ -6,15 +6,15 @@
 #include "mini/Vulkan/Ctors.hpp"
 #include "mini/Vulkan/Resources.hpp"
 #include "mini/Resources/HostResources.hpp"
-#include "mini/Scene/Scene.hpp"
+#include "mini/App/Scene.hpp"
+#include "mini/App/IRenderer.hpp"
 #include "mini/Utils/Vertex.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Window/AppEvents.hpp"
-#include "mini/Scene/IRenderer.hpp"
 
 namespace mini::vk
 {
-    struct Renderer : IRenderer
+    struct VkRenderer : app::IRenderer
     {
         Context         context; //! must come first
         VkResources     resources;
@@ -23,7 +23,7 @@ namespace mini::vk
 
         uint32_t currentFrame = 0;
         
-        Renderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
+        VkRenderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
             : context   { wndHandle } //! must come first
             , resources { context }
         {
@@ -45,15 +45,16 @@ namespace mini::vk
             resources.default_renderPass.~Default_RenderPass();
             resources.default_renderPass.Create(context);
 
-            resources.default_pipeline.~Default_Pipeline();
-            resources.default_pipeline.Recreate(context);
+            resources.default_pipeline.~Pipeline();
+            //TODO: find a way to reuse methods from resource create ... collecting refs in pipeline is hard
+            //resources.default_pipeline.Recreate(context);
 
             commands.~Commands();
             commands.Create(context);
         }
 
 
-        inline void UpdateVkResources(const scenes::Scene& scene, const double dt)
+        inline void UpdateVkResources(const app::Scene& scene, const double dt)
         {
             resources.default_pc.wnd_w = wnd::window_w;
             resources.default_pc.wnd_h = wnd::window_h;
@@ -65,7 +66,7 @@ namespace mini::vk
         }
 
 
-        inline void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const scenes::Scene& scene)
+        inline void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
         {
             auto& cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
             VkDeviceSize vboOffsets { 0 };
@@ -92,8 +93,8 @@ namespace mini::vk
             {
                 uboOffsets = resources.default_ub.ALIGNMENT * i; 
                 //! still abit unclear to me why we need to call twice (since first one could be called once) and also why both need dynamic
-                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_shader.sets[cmdBufferIdx], 1, &uboOffsets); 
-                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 1, 1, &resources.default_shader.sets[cmdBufferIdx], 1, &uboOffsets); 
+                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
+                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 1, 1, &resources.default_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
                 vkCmdDrawIndexed        (cmdBuffer, vertexGroups[i].IndexCount(), 1, 0, vertexGroups[i].v1, 0);
             }
             
@@ -102,7 +103,7 @@ namespace mini::vk
         }
 
 
-        inline void Render(const double dt, const scenes::Scene& scene)
+        inline void Render(const double dt, const app::Scene& scene)
         {
             if (wnd::CheckEvent(wnd::EventType::Window_Resize)){
                 RecreateScwapchain();
