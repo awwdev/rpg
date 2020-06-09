@@ -40,7 +40,7 @@ namespace mini::vk
             : default_pipeline  { context.device }
             , default_shader    { context.device } 
             , default_vb        { 10000 }
-            , default_ub        { context, 100, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_FRAGMENT_BIT } 
+            , default_ub        { context, 100 } 
         {;}
 
         //! resource manager needs to load beforehand
@@ -54,7 +54,7 @@ namespace mini::vk
             //? "factories"
             CreateUniformBuffer_Default(context, default_ub); //not really needed but consistent (and maybe future proof)
             CreateVertexBuffer_Default(context, default_vb);
-            CreateShader_Default(context, default_shader, images, default_ub); //or pass some upper struct UBOs ?
+            CreateShader_Default(context, default_shader, images); 
 
             default_renderPass.Create(context);
             CreatePipeline_Default(

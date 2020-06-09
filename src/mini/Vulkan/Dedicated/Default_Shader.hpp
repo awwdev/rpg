@@ -8,7 +8,7 @@
 
 namespace mini::vk
 {
-    inline void CreateShader_Default(Context& context, Shader& shader, Image images[], UniformBuffer& ubo) //or pass some upper struct UBOS
+    inline void CreateShader_Default(Context& context, Shader& shader, Image images[]) //or pass some upper struct UBOS
     {  
         shader.CreateShaderModule("res/Shaders/default.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         shader.CreateShaderModule("res/Shaders/default.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -35,20 +35,23 @@ namespace mini::vk
         };
         VK_CHECK(vkCreateSampler(shader.device, &samplerInfo, nullptr, &shader.samplers.AppendReturn()));
 
-        shader.setLayoutBindings.Append(VkDescriptorSetLayoutBinding{
+        shader.uniformInfo.type = UniformInfo::Image;
+        shader.uniformInfo.layout =
+        {
             .binding            = 0,
             .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
             .descriptorCount    = 1,
             .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
             .pImmutableSamplers = nullptr,
-        }); 
+        };
 
         auto& image = images[hostRes::Font];
-        shader.imageInfos.Set(0, VkDescriptorImageInfo{
+        shader.uniformInfo.imageInfo = 
+        {
             .sampler        = shader.samplers[0],
             .imageView      = image.view, 
             .imageLayout    = image.layout
-        });      
+        };
 
     }
 

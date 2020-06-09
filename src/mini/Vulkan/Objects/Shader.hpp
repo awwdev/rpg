@@ -6,6 +6,7 @@
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Ctors.hpp"
 #include "mini/Vulkan/Objects/Image.hpp"
+#include "mini/Vulkan/Objects/UniformBuffer.hpp"
 
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Box/Array.hpp"
@@ -22,9 +23,9 @@ namespace mini::vk
         box::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
 
         //uniform data
+        UniformInfo uniformInfo; //! probably need array?
         box::Array<VkSampler, 4> samplers;
-        box::Map<VkDescriptorImageInfo, 4>  imageInfos;
-        box::Array<VkDescriptorSetLayoutBinding, 4> setLayoutBindings;
+
         
         explicit Shader(VkDevice pDevice) : device { pDevice } {;}
 

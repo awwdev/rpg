@@ -27,12 +27,13 @@ namespace mini::vk
         auto ptrUbo = &default_ub;
 
         const auto vertexInput = CreatePipelineVertexInputInfo(default_vb);
-        WriteDescriptors(
-            context,
-            pipeline,
-            ptrShader->setLayoutBindings[0], //TODO: somehow retrieve binding index
-            ptrUbo->GetLayoutBinding(1)
-        );
+        UniformInfo* uniformInfos [] = {
+            //! needs correct binding order
+            &shader.uniformInfo,
+            &default_ub.uniformInfo,
+        };
+
+        WriteDescriptors(context, pipeline, uniformInfos);
 
         const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
             .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,

@@ -33,21 +33,24 @@ namespace mini::vk
 
     //TODO: do recreate on user side ... find a way
 
-    //! MOST CONFUSING PART OF BASE VULKAN:
-    template<class... DESCRIPTORS>
+    template<std::size_t N>
     void WriteDescriptors(
         Context& context, 
         Pipeline& pipeline,
-        const DESCRIPTORS&... descs)
+        UniformInfo* (&uniformInfos)[N])
     {
-        const VkDescriptorSetLayoutBinding bindings [] = { descs... };
+        VkDescriptorSetLayoutBinding bindings [N];
+        const uint32_t bindingsCount = N;
+        for(auto i = 0; i < bindingsCount; ++i) {
+            bindings[i] = uniformInfos[i]->layout;
+        }
 
         const VkDescriptorSetLayoutCreateInfo setLayoutInfo
         {
             .sType          = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
             .pNext          = nullptr,
             .flags          = 0,
-            .bindingCount   = sizeof...(DESCRIPTORS),
+            .bindingCount   = N,
             .pBindings      = bindings
         };
 
@@ -55,7 +58,7 @@ namespace mini::vk
             VK_CHECK(vkCreateDescriptorSetLayout(context.device, &setLayoutInfo, nullptr, &pipeline.setLayouts.AppendReturn()));
 
         box::Array<VkDescriptorPoolSize, 10> poolSizes;
-        for(uint32_t i = 0; i < sizeof...(DESCRIPTORS); ++i) {
+        for(uint32_t i = 0; i < bindingsCount; ++i) {
             poolSizes.Append(VkDescriptorPoolSize{
                 .type = bindings[i].descriptorType,
                 .descriptorCount = context.swapImages.count
@@ -85,20 +88,18 @@ namespace mini::vk
         box::Array<VkWriteDescriptorSet, 10> writes;
         for(auto i = 0; i < context.swapImages.count; ++i)
         {
-            FOR_CARRAY(bindings, j)
+            FOR_CARRAY(uniformInfos, j)
             {
                 writes.Append(VkWriteDescriptorSet{
                     .sType              = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
                     .pNext              = nullptr,
                     .dstSet             = pipeline.sets[i],
-                    .dstBinding         = (uint32_t)j,
+                    .dstBinding         = uniformInfos[j]->layout.binding,
                     .dstArrayElement    = 0,
                     .descriptorCount    = 1,
-                    .descriptorType     = bindings[j].descriptorType,
-                    //! HERE MY FUNCTION DOES NOT WORK ANYMORE
-                    //WE NEED MORE ELABORATED PARAMS TO PASS LIKE A MAP
-                    .pImageInfo         = nullptr, //imageInfos.GetValueOptional(j),
-                    .pBufferInfo        = nullptr, //bufferInfos.GetValueOptional(j),
+                    .descriptorType     = uniformInfos[j]->layout.descriptorType,
+                    .pImageInfo         = uniformInfos[j]->type == UniformInfo::Image  ? &uniformInfos[j]->imageInfo  : nullptr,
+                    .pBufferInfo        = uniformInfos[j]->type == UniformInfo::Buffer ? &uniformInfos[j]->bufferInfo : nullptr,
                     .pTexelBufferView   = nullptr
                 });
             }
