@@ -8,15 +8,15 @@
 #include "mini/Vulkan/Objects/UniformBuffer.hpp"
 #include "mini/Vulkan/Objects/PushConstants.hpp"
 #include "mini/Vulkan/Objects/Pipeline.hpp"
-#include "mini/Vulkan/Dedicated/Default_RenderPass.hpp"
+#include "mini/Vulkan/Objects/RenderPass.hpp"
 
 namespace mini::vk
 {
-    inline void CreatePipeline_Default(
+    inline void CreatePipeline_UI(
         Context& context, 
         Pipeline& pipeline,
         Shader& shader, 
-        Default_RenderPass& renderPass, 
+        RenderPass& renderPass, 
         VertexBuffer& default_vb,
         UniformBuffer& default_ub)
     {

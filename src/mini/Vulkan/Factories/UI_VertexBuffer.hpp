@@ -6,7 +6,7 @@
 
 namespace mini::vk
 {
-    inline void CreateVertexBuffer_Default(Context& context, VertexBuffer& vb)
+    inline void CreateVertexBuffer_UI(Context& context, VertexBuffer& vb)
     {
         vb.CreateDynamic(context);
 

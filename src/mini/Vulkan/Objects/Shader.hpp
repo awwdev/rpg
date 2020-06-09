@@ -27,7 +27,7 @@ namespace mini::vk
         box::Array<VkSampler, 4> samplers;
 
         
-        explicit Shader(VkDevice pDevice) : device { pDevice } {;}
+        explicit Shader(Context& context) : device { context.device } {;}
 
         ~Shader()
         {

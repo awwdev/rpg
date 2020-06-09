@@ -19,7 +19,7 @@ namespace mini::vk
         box::Array<VkDescriptorSetLayout, 10> setLayouts;
         box::Array<VkDescriptorSet, 10> sets;
 
-        explicit Pipeline(VkDevice pDevice) : device { pDevice } {;}
+        explicit Pipeline(Context& context) : device { context.device } {;}
 
         ~Pipeline()
         {

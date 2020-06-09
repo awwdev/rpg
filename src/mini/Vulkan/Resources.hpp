@@ -7,11 +7,11 @@
 #include "mini/Vulkan/Commands.hpp"
 #include "mini/Vulkan/Synchronization.hpp"
 
-#include "mini/Vulkan/Dedicated/Default_RenderPass.hpp"
-#include "mini/Vulkan/Dedicated/Default_Pipeline.hpp"
-#include "mini/Vulkan/Dedicated/Default_Shader.hpp"
-#include "mini/Vulkan/Dedicated/Default_VertexBuffer.hpp"
-#include "mini/Vulkan/Dedicated/Default_UniformBuffer.hpp"
+#include "mini/Vulkan/Factories/UI_RenderPass.hpp"
+#include "mini/Vulkan/Factories/UI_Pipeline.hpp"
+#include "mini/Vulkan/Factories/UI_Shader.hpp"
+#include "mini/Vulkan/Factories/UI_VertexBuffer.hpp"
+#include "mini/Vulkan/Factories/UI_UniformBuffer.hpp"
 
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/HostResources.hpp"
@@ -21,26 +21,24 @@ namespace mini::vk
 {
     struct VkResources
     {
-        //? gpu resources
         Image images [hostRes::TextureName::ENUM_END];
 
         //? pipeline stuff
-        //TODO: rename to UI (instead of default_)
-        Default_RenderPass      default_renderPass;
-        Pipeline                default_pipeline;
-        Default_PushConstants   default_pc;
-
-        Shader                  default_shader;
-        VertexBuffer            default_vb;
-        UniformBuffer           default_ub;
+        RenderPass              ui_renderPass;
+        Pipeline                ui_pipeline;
+        Default_PushConstants   ui_pushConst;
+        Shader                  ui_shader;
+        VertexBuffer            ui_vbo;
+        UniformBuffer           ui_ibo;
 
         //TODO: instead of bare numbers for each buffer, something like ENTITY_COUNT would be nice
-        //however entities seldom have same vert cound, iterating entities (mehses) and collecting all needed verts and then rough estimate of count ...
+        //however entities seldom have same vert count, iterating entities (mehses) and collecting all needed verts and then rough estimate of count ...
         explicit VkResources(Context& context) 
-            : default_pipeline  { context.device }
-            , default_shader    { context.device } 
-            , default_vb        { 10000 }
-            , default_ub        { context, 100 } 
+            : ui_pipeline    { context }
+            , ui_renderPass  { context }
+            , ui_shader      { context } 
+            , ui_vbo         { 10000 }
+            , ui_ibo         { context, 100 } 
         {;}
 
         //! resource manager needs to load beforehand
@@ -52,18 +50,18 @@ namespace mini::vk
                 images[i].Create(context, *hostRes.textures.iTextures[i], commands.cmdPool);
 
             //? "factories"
-            CreateUniformBuffer_Default(context, default_ub); //not really needed but consistent (and maybe future proof)
-            CreateVertexBuffer_Default(context, default_vb);
-            CreateShader_Default(context, default_shader, images); 
+            CreateUniformBuffer_UI(context, ui_ibo); //not really needed but consistent (and maybe future proof)
+            CreateVertexBuffer_UI(context, ui_vbo);
+            CreateShader_UI(context, ui_shader, images); 
 
-            default_renderPass.Create(context);
-            CreatePipeline_Default(
+            CreateRenderPass_UI(context, ui_renderPass);
+            CreatePipeline_UI(
                 context, 
-                default_pipeline,
-                default_shader, 
-                default_renderPass, 
-                default_vb, 
-                default_ub
+                ui_pipeline,
+                ui_shader, 
+                ui_renderPass, 
+                ui_vbo, 
+                ui_ibo
             );
         }
 

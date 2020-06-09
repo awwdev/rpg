@@ -8,7 +8,7 @@
 
 namespace mini::vk
 {
-    inline void CreateShader_Default(Context& context, Shader& shader, Image images[]) //or pass some upper struct UBOS
+    inline void CreateShader_UI(Context& context, Shader& shader, Image images[]) //or pass some upper struct UBOS
     {  
         shader.CreateShaderModule("res/Shaders/default.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         shader.CreateShaderModule("res/Shaders/default.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);

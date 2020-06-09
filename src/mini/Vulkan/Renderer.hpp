@@ -42,10 +42,10 @@ namespace mini::vk
             if (!context.RecreateSwapchain())
                 return;
 
-            resources.default_renderPass.~Default_RenderPass();
-            resources.default_renderPass.Create(context);
+            resources.ui_renderPass.~RenderPass();
+            CreateRenderPass_UI(context, resources.ui_renderPass);
 
-            resources.default_pipeline.~Pipeline();
+            resources.ui_pipeline.~Pipeline();
             //TODO: find a way to reuse methods from resource create ... collecting refs in pipeline is hard
             //resources.default_pipeline.Recreate(context);
 
@@ -56,13 +56,13 @@ namespace mini::vk
 
         inline void UpdateVkResources(const app::Scene& scene, const double dt)
         {
-            resources.default_pc.wnd_w = wnd::window_w;
-            resources.default_pc.wnd_h = wnd::window_h;
+            resources.ui_pushConst.wnd_w = wnd::window_w;
+            resources.ui_pushConst.wnd_h = wnd::window_h;
 
-            resources.default_vb.vertexBuffer.Store(vertices.Data(), vertices.Count()  * sizeof(Vertex));
-            resources.default_vb.indexBuffer.Store (indices.Data(), indices.Count() * sizeof(uint32_t));
+            resources.ui_vbo.vertexBuffer.Store(vertices.Data(), vertices.Count()  * sizeof(Vertex));
+            resources.ui_vbo.indexBuffer.Store (indices.Data(), indices.Count() * sizeof(uint32_t));
 
-            resources.default_ub.buffer.Store(uniforms.data, uniforms.CurrentSize());
+            resources.ui_ibo.buffer.Store(uniforms.data, uniforms.CurrentSize());
         }
 
 
@@ -78,23 +78,23 @@ namespace mini::vk
             const VkClearValue clears { .color = { 0.1f, 0.1f, 0.1f, 1.0f } };
             const auto renderPassInfo = CreateRenderPassBeginInfo(
                 context, 
-                resources.default_renderPass.renderPass, 
-                resources.default_renderPass.framebuffers[cmdBufferIdx],
+                resources.ui_renderPass.renderPass, 
+                resources.ui_renderPass.framebuffers[cmdBufferIdx],
                 &clears
             );
             vkCmdBeginRenderPass (cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
-            vkCmdPushConstants      (cmdBuffer, resources.default_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.default_pc), &resources.default_pc);
-            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default_vb.vertexBuffer.buffer, &vboOffsets);
-            vkCmdBindIndexBuffer    (cmdBuffer, resources.default_vb.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.pipeline);
+            vkCmdPushConstants      (cmdBuffer, resources.ui_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.ui_pushConst), &resources.ui_pushConst);
+            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.ui_vbo.vertexBuffer.buffer, &vboOffsets);
+            vkCmdBindIndexBuffer    (cmdBuffer, resources.ui_vbo.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
             
             FOR_ARRAY(vertexGroups, i)
             {
-                uboOffsets = resources.default_ub.ALIGNMENT * i; 
+                uboOffsets = resources.ui_ibo.ALIGNMENT * i; 
                 //! still abit unclear to me why we need to call twice (since first one could be called once) and also why both need dynamic
-                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
-                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 1, 1, &resources.default_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
+                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
+                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 1, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
                 vkCmdDrawIndexed        (cmdBuffer, vertexGroups[i].IndexCount(), 1, 0, vertexGroups[i].v1, 0);
             }
             
