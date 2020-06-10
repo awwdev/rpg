@@ -54,23 +54,21 @@ namespace mini::app
             group.i2 = indices.Count()  - 1;
         }
 
-
+        //TODO: could do lots of customization
         inline void Add_DrawText(chars_t text, const int x, int y, const res::Font& font)
         {
             auto& group = vertexGroups.AppendReturn();
             group.v1 = vertices.Count();
             group.i1 = indices.Count();
 
-            //TODO: get the font data from some resource (struct Font) 
-            const int fw = font.letter_w; //real letter tile size in px
+            const int fw = font.letter_w;
             const int fh = font.letter_h; 
-            const auto s  = 1; //scale
+            const auto s  = 0.5f; //scale
 
             auto xx = x; 
             for(auto i=0; text[i] != '\0'; ++i)
             {
-                xx += fw * s + 0; //padding
-                if (text[i] == '\n') 
+                 if (text[i] == '\n') 
                 {
                     y += fh + 4; //+padding
                     xx = x;
@@ -79,7 +77,7 @@ namespace mini::app
 
                 const auto& coords = font.fontMap.GetValue(text[i]);
                 const auto quad = res::CreateRect<res::Indexed::Yes>(
-                    Rect<int>{ xx, y, fw * s, fh * s}, 
+                    Rect<int>{ xx, y, (int)(fw * s), (int)(fh * s)}, 
                     Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh },
                     { 0, 0, 0, 1}
                 );
@@ -88,6 +86,7 @@ namespace mini::app
                 vertices.AppendArray(quad.verts);
                 uint32_t idxs[] {c + 0, c + 1, c + 2, c + 2, c + 3, c + 0};
                 indices.AppendArray(idxs);
+                xx += fw * s + 0; //padding
             }
 
             group.v2 = vertices.Count() - 1;
@@ -102,8 +101,11 @@ namespace mini::app
             math::Vec4f col = { 1, 1, 1, 1})
         {
             Add_DrawQuad(rect, col);
-            //TODO: find center for text
-            Add_DrawText(text, rect.x, rect.y, hostResources.fonts.default_font);
+            const auto w = hostResources.fonts.default_font.letter_w * std::strlen(text);
+            const auto h = hostResources.fonts.default_font.letter_h;
+            const auto x = rect.x + (rect.w * 0.5f - w * 0.25f);
+            const auto y = rect.y + (rect.h * 0.5f - h * 0.25f);
+            Add_DrawText(text, x, y, hostResources.fonts.default_font);
         }
 
 

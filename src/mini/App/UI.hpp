@@ -44,4 +44,37 @@ namespace mini::app::ui
         return state;
     }
 
+    inline void FPS_Monitor(IRenderer& renderer, const double dt)
+    {
+        static box::String<100> fpsStr; //!hacked
+        static double counter = 0;
+        counter += dt;
+
+        if (counter >= 1)
+        {
+            counter -= 1;
+            fpsStr.Clear();
+            fpsStr.Set("fps: ");
+            char buf[20];
+            sprintf_s(buf, "%4.0f", 1/dt);
+            fpsStr.Append(buf);
+        }
+
+        renderer.Add_DrawQuad({0, 0, 80, 16}, {1, 1, 1, 0.5});
+        renderer.Add_DrawText(fpsStr.dataPtr, 2, 2, renderer.hostResources.fonts.default_font);
+    }
+
 }//ns
+
+/*renderer.Add_DrawText(R"(Lorem ipsum dolor sit amet, 
+consetetur sadipscing elitr,
+sed diam nonumy eirmod tempor invidunt,
+ut labore et dolore magna aliquyam erat,
+sed diam voluptua. At vero eos et accusam et,
+justo duo dolores et ea rebum.Stet clita kasd,
+no sea takimata sanctus est Lorem ipsum dolor,
+Lorem ipsum dolor sit amet, consetetur,
+sed diam nonumy eirmod tempor invidunt ut labore,
+sed diam voluptua. At vero eos et accusam et justo duo,
+)"
+, x, 0);*/
