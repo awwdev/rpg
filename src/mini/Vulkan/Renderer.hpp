@@ -55,6 +55,14 @@ namespace mini::vk
                 resources.ui_vbo, 
                 resources.ui_ibo
             );
+            CreatePipeline_UI_wire(
+                context, 
+                resources.ui_pipeline_wire,
+                resources.ui_shader_wire, 
+                resources.ui_renderPass, 
+                resources.ui_vbo, 
+                resources.ui_ibo
+            );
 
             commands.~Commands();
             commands.Create(context);
@@ -105,6 +113,12 @@ namespace mini::vk
                 vkCmdDrawIndexed        (cmdBuffer, vertexGroups[i].IndexCount(), 1, 0, vertexGroups[i].v1, 0);
             }
             
+            //? wire mode
+            //vkCmdBindPipeline (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline_wire.pipeline);
+            //FOR_ARRAY(vertexGroups, i) {
+            //    vkCmdDrawIndexed(cmdBuffer, vertexGroups[i].IndexCount(), 1, 0, vertexGroups[i].v1, 0);
+            //}
+
             vkCmdEndRenderPass(cmdBuffer);
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }

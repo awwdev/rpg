@@ -26,19 +26,23 @@ namespace mini::vk
         //? pipeline stuff
         RenderPass              ui_renderPass;
         Pipeline                ui_pipeline;
+        Pipeline                ui_pipeline_wire;
         Default_PushConstants   ui_pushConst;
         Shader                  ui_shader;
+        Shader                  ui_shader_wire;
         VertexBuffer            ui_vbo;
         UniformBuffer           ui_ibo;
 
         //TODO: instead of bare numbers for each buffer, something like ENTITY_COUNT would be nice
         //however entities seldom have same vert count, iterating entities (mehses) and collecting all needed verts and then rough estimate of count ...
         explicit VkResources(Context& context) 
-            : ui_pipeline    { context }
-            , ui_renderPass  { context }
-            , ui_shader      { context } 
-            , ui_vbo         { 10000 }
-            , ui_ibo         { context, 100 } 
+            : ui_pipeline       { context }
+            , ui_pipeline_wire  { context }
+            , ui_renderPass     { context }
+            , ui_shader         { context } 
+            , ui_shader_wire    { context } 
+            , ui_vbo            { 10000 }
+            , ui_ibo            { context, 100 } 
         {;}
 
         //! resource manager needs to load beforehand
@@ -53,12 +57,21 @@ namespace mini::vk
             CreateUniformBuffer_UI(context, ui_ibo); //not really needed but consistent (and maybe future proof)
             CreateVertexBuffer_UI(context, ui_vbo);
             CreateShader_UI(context, ui_shader, images); 
+            CreateShader_UI_wire(context, ui_shader_wire, images); 
 
             CreateRenderPass_UI(context, ui_renderPass);
             CreatePipeline_UI(
                 context, 
                 ui_pipeline,
                 ui_shader, 
+                ui_renderPass, 
+                ui_vbo, 
+                ui_ibo
+            );
+            CreatePipeline_UI_wire(
+                context, 
+                ui_pipeline_wire,
+                ui_shader_wire, 
                 ui_renderPass, 
                 ui_vbo, 
                 ui_ibo
