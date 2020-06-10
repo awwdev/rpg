@@ -24,11 +24,15 @@ namespace mini::app
         {
             ui::FPS_Monitor(renderer, dt);
 
-            if (ui::Button(renderer, "Add Entity", {200, 200, 120, 30}) == ui::ButtonState::Released) {
+            if (ui::Button(renderer, "Add Entity", {100, 100, 120, 30}) == ui::ButtonState::Released) {
                 const auto id = ecs.AddEntity();
                 ecs.AddComponent<ecs::C_Transform>(id);
             }
-    
+
+            FOR_ARRAY(ecs.arrays.transforms.dense, i) {
+                renderer.Add_DrawText("entity", 0, 30 + i*16, renderer.hostResources.fonts.default_font);
+            }     
+            
         }
 
     };

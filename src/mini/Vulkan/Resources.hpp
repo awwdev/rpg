@@ -42,7 +42,7 @@ namespace mini::vk
             , ui_shader         { context } 
             , ui_shader_wire    { context } 
             , ui_vbo            { 10000 }
-            , ui_ibo            { context, 100 } 
+            , ui_ibo            { context, 250 } 
         {;}
 
         //! resource manager needs to load beforehand

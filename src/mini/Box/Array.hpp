@@ -64,7 +64,13 @@ namespace mini::box
         ND T*       Data()        { return dataPtr; }
         ND const T* Data()  const { return dataPtr; }
 
-        void Clear() { while (count > 0) dataPtr[--count].~T(); }
+        void Clear() 
+        { 
+            while (count > 0) { 
+                dataPtr[count - 1].~T(); 
+                --count; 
+            }
+        }
 
 
         //?ELEMENT OPERATIONS
@@ -203,7 +209,8 @@ namespace mini::box
         void AppendArray(const T (&other)[N])
         {
             CheckRange(count + N, COUNT_MAX + 1);
-            FOR_CARRAY(other, i) {
+            for(std::size_t i = 0; i < N; ++i) {
+            //FOR_CARRAY(other, i) {
                 PlacementNew(count, other[i]);
                 ++count;
             }

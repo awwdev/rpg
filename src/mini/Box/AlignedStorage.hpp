@@ -17,6 +17,9 @@ namespace mini::box
 
         inline void Append(const UBO_DATA& uboData)
         {
+            if (count * alignment >= BYTE_SIZE)
+                ERR("overflow of aligned storage");
+
             new (&data[alignment * count]) UBO_DATA { uboData };
             ++count;
         }
