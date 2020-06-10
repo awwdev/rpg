@@ -47,8 +47,14 @@ namespace mini::vk
             CreateRenderPass_UI(context, resources.ui_renderPass);
 
             resources.ui_pipeline.~Pipeline();
-            //TODO: find a way to reuse methods from resource create ... collecting refs in pipeline is hard
-            //resources.default_pipeline.Recreate(context);
+            CreatePipeline_UI(
+                context, 
+                resources.ui_pipeline,
+                resources.ui_shader, 
+                resources.ui_renderPass, 
+                resources.ui_vbo, 
+                resources.ui_ibo
+            );
 
             commands.~Commands();
             commands.Create(context);

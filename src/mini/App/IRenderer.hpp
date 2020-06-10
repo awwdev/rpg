@@ -5,7 +5,6 @@
 #include "mini/Box/Array.hpp"
 #include "mini/Box/AlignedStorage.hpp"
 #include "mini/Utils/Vertex.hpp"
-#include "mini/Resources/FontMap.hpp"
 #include "mini/Resources/PrimitiveMeshes.hpp"
 #include "mini/Resources/Font.hpp"
 #include "mini/Resources/HostResources.hpp"
@@ -78,7 +77,7 @@ namespace mini::app
                     continue;
                 }
 
-                const auto& coords = res::MAPPING.GetValue(text[i]);
+                const auto& coords = font.fontMap.GetValue(text[i]);
                 const auto quad = res::CreateRect<res::Indexed::Yes>(
                     Rect<int>{ xx, y, fw * s, fh * s}, 
                     Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh },
