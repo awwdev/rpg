@@ -64,10 +64,6 @@ int WINAPI wWinMain(
 }//main end
 
 //TODO: pixel collision for UI (Button)
-
-//TODO: decide shader desc place
 //TODO: ecs mockup
 //TODO: wireframe mode 
-
-//TODO: does folder Resources belong to App folder?
-//later on probably a rpg folder? distinguish generic framework from actual project?
+//TODO: events hide internal linkage and pass around (allow to be consumed too)

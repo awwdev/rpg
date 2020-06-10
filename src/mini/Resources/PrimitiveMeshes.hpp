@@ -4,6 +4,7 @@
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/Utils/Types.hpp"
+#include "mini/Utils/Utils.hpp"
 
 namespace mini::res
 {

@@ -1,13 +1,17 @@
-# Mini
-Essential library / framework (for game development and media) - modern, readable and extendable.
+# Mini 2020
+This the base code for my ongoing **game / multimedia project**.
+It is intended to **show my experience with programming** in C++ and software engineering.
+It can also be used as framework and reference for your own engine.
+I choose the name "mini" since I like to write elegant and minimal code (as much as possible).
 
+### Contents
 - Containers (Array, Bitset, String, Map)
-- Global allocator functions
+- Global allocator
 - Logger and Profiler
 - Math (Matrix, Quaternion)
-- Window and window events
+- Window and event system
 - Vulkan Renderer and UI
-- Utils (Types)
+- Other utils
 
 This is Work In Progress!
 
@@ -76,7 +80,7 @@ This is Work In Progress!
 - Context   (Instance, PhysicalDevice, LogicalDevice, Meta, Debug)
 - Resources (Pipeline, Shader, Renderpass, Synchronization)
 - Rendering (Command recording, presentation loop)
-- Dedicated structs and factories like CreateShader_Default() or struct RenderPass_Default
+- Objects   (UBO, VBO, Pipeline, Shader, RenderPass, that come with CreateX_Y methods where X is the obj and Y something like UI)
 
 ## mini::ui
 - wip (immediate gui)

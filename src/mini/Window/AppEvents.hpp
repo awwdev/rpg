@@ -5,6 +5,7 @@
 namespace mini::wnd
 {
     //TODO: think about consuming (removing) events, so they are not passed const
+    //TODO: AND ACTUALLY NOT GLOBAL BUT PASSED AROUND
     //usage of layers ?
 
     enum class EventType : u8
@@ -43,9 +44,11 @@ namespace mini::wnd
 
 
     ///global arrays for wnd proc
+    //TODO: hide with internal
     inline box::Array<Event, 10> events; //per frame max
     inline box::Bitset<EventType::PRESSABLE_END> pressed;
-    inline u32  window_w = 0, window_h = 0;
+    inline u32 window_w = 0, window_h = 0;
+    inline u32 mouse_x = 0, mouse_y = 0;
 
     inline Event* CheckEvent(const EventType type, const EventState state = EventState::None)
     {

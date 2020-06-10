@@ -20,7 +20,7 @@ namespace mini::app
         inline u32 IndexCount()  const { return (i2 - i1) + 1; }
     };
 
-    
+    //TODO: maybe in future pass something like a RenderCollector to Scene instead of whole Renderer? (RenderGraph)
     struct IRenderer
     {
         inline void FrameBegin()
@@ -33,13 +33,13 @@ namespace mini::app
         }
 
 
-        inline void Add_DrawQuad(s32 x, s32 y, s32 w, s32 h)
+        inline void Add_DrawQuad(const Rect<int>& rect, math::Vec4f col = { 1, 1, 1, 1})
         {
             auto& group = vertexGroups.AppendReturn();
             group.v1 = vertices.Count();
             group.i1 = indices.Count();
 
-            const auto quad = res::CreateRect<res::Indexed::Yes>({ x, y, w, h }, { 0, 0, 0, 0 }, { .2f, .2f, .2f, 1 });
+            const auto quad = res::CreateRect<res::Indexed::Yes>(rect, { 0, 0, 0, 0 }, col);
             const u32 c = vertices.Count();
             vertices.AppendArray(quad.verts);
             uint32_t idxs [] {c + 0u, c + 2u, c + 3u, c + 0u, c + 1u, c + 2u};
@@ -76,7 +76,8 @@ namespace mini::app
                 const auto& coords = res::MAPPING.GetValue(text[i]);
                 const auto quad = res::CreateRect<res::Indexed::Yes>(
                     Rect<int>{ xx, y, fw * s, fh * s}, 
-                    Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh }
+                    Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh },
+                    { 0, 0, 0, 1}
                 );
 
                 const u32 c = vertices.Count();
@@ -89,6 +90,19 @@ namespace mini::app
             group.i2 = indices.Count()  - 1;
             uniforms.Append({true});
         }
+
+
+        inline void Add_DrawButton(
+            chars_t text, 
+            const Rect<int>& rect, 
+            math::Vec4f col = { 1, 1, 1, 1})
+        {
+            Add_DrawQuad(rect, col);
+            //TODO: find center for text
+            Add_DrawText(text, rect.x, rect.y);
+        }
+
+
 
         //? whole renderer is on heap
         //? gpu api agnostic resources (that will be used in derived class to upload to gpu)

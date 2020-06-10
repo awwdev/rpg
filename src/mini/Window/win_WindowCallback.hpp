@@ -30,6 +30,13 @@ namespace mini::wnd
         case WM_RBUTTONDOWN:    PRESSED (EventType::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
         case WM_LBUTTONUP:      RELEASED(EventType::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
         case WM_RBUTTONUP:      RELEASED(EventType::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        
+        case WM_MOUSEMOVE:      
+        {
+            mouse_x = GET_X_LPARAM(lParam); 
+            mouse_y = GET_Y_LPARAM(lParam);
+        }
+        break;             
 
         ///keyboard
 

@@ -3,6 +3,7 @@
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/App/IRenderer.hpp"
+#include "mini/App/UI.hpp"
 
 using namespace mini;
 
@@ -14,8 +15,10 @@ namespace mini::app
 
         inline void Update(IRenderer& renderer, const double dt)
         {
-            //renderer.Add_DrawQuad(0, 0, 200, 50);
-            //renderer.Add_DrawQuad(0, 100, 200, 50);
+            if (ui::Button(renderer, "Button", {200, 200, 120, 30}) == ui::ButtonState::Released) {
+                LOG("button pressed");
+            }
+     
 
             box::String<100> fpsStr;
             fpsStr.Set("fps: ");
@@ -27,7 +30,7 @@ namespace mini::app
             counter += 1;
             const auto x = std::sin(counter * 0.001f) * 100; //just to move text a bit
 
-            renderer.Add_DrawText(R"(Lorem ipsum dolor sit amet, 
+            /*renderer.Add_DrawText(R"(Lorem ipsum dolor sit amet, 
 consetetur sadipscing elitr,
 sed diam nonumy eirmod tempor invidunt,
 ut labore et dolore magna aliquyam erat,
@@ -38,7 +41,7 @@ Lorem ipsum dolor sit amet, consetetur,
 sed diam nonumy eirmod tempor invidunt ut labore,
 sed diam voluptua. At vero eos et accusam et justo duo,
 )"
-            , x, 0);
+            , x, 0);*/
 
         }
 

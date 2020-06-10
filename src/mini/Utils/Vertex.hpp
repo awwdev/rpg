@@ -13,13 +13,6 @@ namespace mini
         math::Vec2f tex;
     };
 
-    template<typename T>
-    struct Rect
-    {
-        T x, y, w, h;
-    };
-
-
     std::ostream& operator<<(std::ostream& os, const Vertex& vert)
     {
         os << "vertex data\n";
