@@ -24,7 +24,8 @@ namespace mini::vk
         uint32_t currentFrame = 0;
         
         VkRenderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
-            : context   { wndHandle } //! must come first
+            : IRenderer { hostResources }
+            , context   { wndHandle } //! must come first
             , resources { context }
         {
             uniforms.alignment = context.physicalProps.limits.minUniformBufferOffsetAlignment;

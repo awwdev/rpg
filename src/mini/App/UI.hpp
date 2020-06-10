@@ -10,6 +10,11 @@ namespace mini::app::ui
 {
     enum class ButtonState { Idle, Hovered, Hold, Released, Inactive };
 
+    //TODO: colors 
+    //TODO: text position
+    //TODO: border 
+    //TODO: change cursor
+
     inline ButtonState Button(
         IRenderer& renderer,
         chars_t text, 

@@ -4,10 +4,6 @@
 
 namespace mini::wnd
 {
-    //TODO: think about consuming (removing) events, so they are not passed const
-    //TODO: AND ACTUALLY NOT GLOBAL BUT PASSED AROUND
-    //usage of layers ?
-
     enum class EventType : u8
     {
         Mouse_Left,
@@ -43,8 +39,7 @@ namespace mini::wnd
     };
 
 
-    ///global arrays for wnd proc
-    //TODO: hide with internal
+    //!global arrays for wnd proc
     inline box::Array<Event, 10> events; //per frame max
     inline box::Bitset<EventType::PRESSABLE_END> pressed;
     inline u32 window_w = 0, window_h = 0;
@@ -66,5 +61,6 @@ namespace mini::wnd
         return pressed.Test(type);
     }
 
+    //TODO: maybe some ConsumeEvent method
 
 }//ns

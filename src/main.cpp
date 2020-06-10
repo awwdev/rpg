@@ -1,3 +1,5 @@
+//https://github.com/awwdev
+
 #include "mini/Window/win_Window.hpp"
 #include "mini/Window/win_WindowCallback.hpp"
 #include "mini/Debug/Logger.hpp"
@@ -63,7 +65,6 @@ int WINAPI wWinMain(
 
 }//main end
 
-//TODO: pixel collision for UI (Button)
+//TODO: Resource Manager
 //TODO: ecs mockup
 //TODO: wireframe mode 
-//TODO: events hide internal linkage and pass around (allow to be consumed too)

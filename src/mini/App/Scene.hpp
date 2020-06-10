@@ -15,10 +15,10 @@ namespace mini::app
 
         inline void Update(IRenderer& renderer, const double dt)
         {
-            if (ui::Button(renderer, "Button", {200, 200, 120, 30}) == ui::ButtonState::Released) {
-                LOG("button pressed");
+            if (ui::Button(renderer, "Button1", {200, 200, 120, 30}) == ui::ButtonState::Released) {
+                LOG("button1 released");
             }
-     
+    
 
             box::String<100> fpsStr;
             fpsStr.Set("fps: ");

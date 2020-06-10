@@ -7,7 +7,8 @@
 #include "mini/Utils/Vertex.hpp"
 #include "mini/Resources/FontMap.hpp"
 #include "mini/Resources/PrimitiveMeshes.hpp"
-#undef DrawText
+#include "mini/Resources/Font.hpp"
+#include "mini/Resources/HostResources.hpp"
 
 namespace mini::app
 {
@@ -23,6 +24,10 @@ namespace mini::app
     //TODO: maybe in future pass something like a RenderCollector to Scene instead of whole Renderer? (RenderGraph)
     struct IRenderer
     {
+        const hostRes::HostResources& hostResources;
+        explicit IRenderer(const hostRes::HostResources& pHostResources) : hostResources {pHostResources} {;}
+
+
         inline void FrameBegin()
         {
             //? for dynamic buffers
@@ -51,15 +56,15 @@ namespace mini::app
         }
 
 
-        inline void Add_DrawText(chars_t text, const int x, int y)
+        inline void Add_DrawText(chars_t text, const int x, int y, const res::Font& font)
         {
             auto& group = vertexGroups.AppendReturn();
             group.v1 = vertices.Count();
             group.i1 = indices.Count();
 
             //TODO: get the font data from some resource (struct Font) 
-            const auto fw = 14; //real letter tile size in px
-            const auto fh = 18; 
+            const int fw = font.letter_w; //real letter tile size in px
+            const int fh = font.letter_h; 
             const auto s  = 1; //scale
 
             auto xx = x; 
@@ -99,7 +104,7 @@ namespace mini::app
         {
             Add_DrawQuad(rect, col);
             //TODO: find center for text
-            Add_DrawText(text, rect.x, rect.y);
+            Add_DrawText(text, rect.x, rect.y, hostResources.fonts.default_font);
         }
 
 

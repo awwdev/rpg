@@ -1,6 +1,7 @@
 #pragma once
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/TextureLoader.hpp"
+#include "mini/Resources/Font.hpp"
 #include "mini/Box/Map.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/Debug/Logger.hpp"
@@ -85,6 +86,7 @@ namespace mini::hostRes
     struct HostResources
     {
         Textures textures; //host side ram textures (will be loaded to gpu "vk images")
+        res::Fonts fonts;
 
         HostResources() 
         {
