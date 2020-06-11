@@ -136,8 +136,14 @@ namespace mini::box
         {
             CheckRange(pos, count);
             dataPtr[static_cast<IDX_T>(pos)] = std::move(dataPtr[count - 1]);
-            dataPtr[count - 1].~T();
-            --count;
+            dataPtr[--count].~T();
+        }
+
+        T RemoveLast()
+        {
+            const T cpy = Last();
+            dataPtr[--count].~T();
+            return cpy;
         }
 
         

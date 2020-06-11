@@ -66,4 +66,3 @@ int WINAPI wWinMain(
 }//main end
 
 //TODO: Resource Manager
-//TODO: ecs mockup

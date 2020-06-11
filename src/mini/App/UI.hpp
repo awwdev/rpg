@@ -36,9 +36,9 @@ namespace mini::app::ui
         
         switch(state)
         {
-            case ButtonState::Idle:     renderer.Add_DrawButton(text, rect, {0.5, 0.5, 0.5, 1}); break;
-            case ButtonState::Hovered:  renderer.Add_DrawButton(text, rect, {0.7, 0.7, 0.7, 1}); break;
-            case ButtonState::Hold:     renderer.Add_DrawButton(text, rect, {1.0, 1.0, 1.0, 1}); break;
+            case ButtonState::Idle:     renderer.Add_DrawLabel(text, rect, {0.5, 0.5, 0.5, 1}); break;
+            case ButtonState::Hovered:  renderer.Add_DrawLabel(text, rect, {0.7, 0.7, 0.7, 1}); break;
+            case ButtonState::Hold:     renderer.Add_DrawLabel(text, rect, {1.0, 1.0, 1.0, 1}); break;
         }
 
         return state;

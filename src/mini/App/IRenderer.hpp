@@ -95,10 +95,7 @@ namespace mini::app
         }
 
 
-        inline void Add_DrawButton(
-            chars_t text, 
-            const Rect<int>& rect, 
-            math::Vec4f col = { 1, 1, 1, 1})
+        inline void Add_DrawLabel(chars_t text, const Rect<int>& rect, math::Vec4f col = { 1, 1, 1, 1})
         {
             Add_DrawQuad(rect, col);
             const auto w = hostResources.fonts.default_font.letter_w * std::strlen(text);
@@ -114,7 +111,7 @@ namespace mini::app
         //? gpu api agnostic resources (that will be used in derived class to upload to gpu)
         box::Array<Vertex, 2000> vertices; 
         box::Array<uint32_t, 3000> indices;
-        box::AlignedStorage<3000, vk::UboData_Default> uniforms; 
+        box::AlignedStorage<10000, vk::UboData_Default> uniforms; 
         
         box::Array<VertexGroup, 500> vertexGroups; //outlines vertex and index array (so we know when to change state)
         

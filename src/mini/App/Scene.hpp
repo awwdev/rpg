@@ -26,12 +26,31 @@ namespace mini::app
 
             if (ui::Button(renderer, "Add Entity", {100, 100, 120, 30}) == ui::ButtonState::Released) {
                 const auto id = ecs.AddEntity();
-                ecs.AddComponent<ecs::C_Transform>(id);
+                ecs.AddComponent<ecs::C_Transform>(id, math::Vec3f{1, 2, 3});
             }
 
-            FOR_ARRAY(ecs.arrays.transforms.dense, i) {
-                renderer.Add_DrawText("entity", 0, 30 + i*16, renderer.hostResources.fonts.default_font);
-            }     
+            if (ui::Button(renderer, "Rmv Entity", {100, 150, 120, 30}) == ui::ButtonState::Released) {
+                ecs.RemoveComponent<ecs::C_Transform>(0);
+                //ecs.RemoveEntity(0);
+            }
+
+            //? PRINT ECS STUFF
+            FOR_BITSET(ecs.entities, i) 
+            {
+                if (ecs.entities.Test(i))
+                {
+                    char buf[2];
+                    sprintf_s(buf, "%d", i);
+                    renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 0, 32, 32});
+                }
+            }  
+            FOR_ARRAY(ecs.arrays.transforms.dense, i)
+            {
+                const auto eid = ecs.arrays.transforms.reverse[i];
+                char buf[2];
+                sprintf_s(buf, "%d", eid);
+                renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33, 32, 32});
+            }   
             
         }
 
