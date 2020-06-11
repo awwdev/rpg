@@ -1,5 +1,5 @@
 #pragma once
-#include "mini/App/ECS.hpp"
+#include "mini/ECS/ECS.hpp"
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"

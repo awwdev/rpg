@@ -5,7 +5,10 @@
 #include "mini/Box/Array.hpp"
 #include "mini/Math/Matrix.hpp"
 
-namespace mini::app::ecs
+#include "mini/ECS/Components/C_Transform.hpp"
+
+
+namespace mini::ecs
 {
     //!65536
     //! 0 means non-existent component
@@ -13,19 +16,31 @@ namespace mini::app::ecs
     constexpr ID NONE = 9;//std::numeric_limits<ID>::max();
     constexpr ID ENTITY_COUNT_MAX = 10;
 
-    enum ComponentType
-    {
-        Transform,
-        ENUM_END
-    };
 
-    //TODO: move into own header
-    struct C_Transform
-    {
-        math::Vec3f pos;
-        //rotation
-        //scale
-    };
+//?ADD COMPONENTS--------------------------------
+
+enum ComponentType
+{
+    Transform,
+    ENUM_END
+};
+
+#define IT_COMPONENTS0() \
+    ComponentArray<C_Transform> transforms;
+
+#define IT_COMPONENTS() \
+    if constexpr(std::is_same_v<COMPONENT, C_Transform>) return transforms; \
+    else static_assert(0, "component type missing");
+
+#define IT_COMPONENTS2() \
+    if constexpr(std::is_same_v<COMPONENT, C_Transform>) return ComponentType::Transform; \
+    else static_assert(0, "component idx missing");
+
+#define IT_COMPONENTS3() \
+    if (signatures[id].Test(ComponentType::Transform)) RemoveComponent<C_Transform>(id);
+
+//?-----------------------------------------------
+
 
     template<class COMPONENT>
     struct ComponentArray
@@ -40,27 +55,19 @@ namespace mini::app::ecs
 
     struct ComponentArrays
     {
-        ComponentArray<C_Transform> transforms;
-        //...
+        IT_COMPONENTS0()
 
         template<class COMPONENT>
         auto& GetArray(){
-            if constexpr(std::is_same_v<COMPONENT, C_Transform>) return transforms;
-            //...
-            else static_assert(0, "component type missing");
-        }
-
-        template<class COMPONENT>
-        constexpr ComponentType GetComponentType()
-        {
-            if constexpr(std::is_same_v<COMPONENT, C_Transform>) return ComponentType::Transform;
-            //...
-            else static_assert(0, "component idx missing");
+            IT_COMPONENTS()
         }
     };
 
-    
-
+    template<class COMPONENT>
+    constexpr ComponentType GetComponentType()
+    {
+        IT_COMPONENTS2()
+    }
 
     struct ECS
     {
@@ -91,12 +98,7 @@ namespace mini::app::ecs
             entities.Set<false>(id);
             --entityCount;
             
-            
-            for(auto i = 0; i < ComponentType::ENUM_END; ++i)
-            {
-                if (signatures[id].Test(i))
-                    RemoveComponent(id, (ComponentType)i);
-            }
+            IT_COMPONENTS3()
         }
 
         template<class COMPONENT, class... CtorArgs>
@@ -107,7 +109,7 @@ namespace mini::app::ecs
             const auto lastDense = arr.dense.Count() - 1;
             arr.lookup[id] = lastDense;
             arr.reverse[lastDense] = id;
-            signatures[id].Set<true>(arrays.GetComponentType<COMPONENT>());
+            signatures[id].Set<true>(GetComponentType<COMPONENT>());
         }
 
         template<class COMPONENT>
@@ -118,7 +120,7 @@ namespace mini::app::ecs
                 const auto denseId = arr.lookup[id];
                 arr.dense.RemoveFast(denseId);
                 arr.lookup[id] = NONE;
-                signatures[id].Set<false>(arrays.GetComponentType<COMPONENT>());
+                signatures[id].Set<false>(GetComponentType<COMPONENT>());
                 //fix swap
                 arr.lookup[arr.reverse[arr.dense.Count()]] = denseId;
                 arr.reverse[denseId] = arr.reverse[arr.dense.Count()];
@@ -126,15 +128,6 @@ namespace mini::app::ecs
 
             }
         }
-
-        void RemoveComponent(const ID id, const ComponentType type)
-        {
-            switch(type)
-            {
-                case ComponentType::Transform: RemoveComponent<C_Transform>(id); break;
-            }
-        }
-
 
     };
 
