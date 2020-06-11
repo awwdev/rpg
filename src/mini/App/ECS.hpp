@@ -90,7 +90,13 @@ namespace mini::app::ecs
             removedEntities.Append(id); //!currently no check for pool exhaustion
             entities.Set<false>(id);
             --entityCount;
-            //TODO: remove all components
+            
+            
+            for(auto i = 0; i < ComponentType::ENUM_END; ++i)
+            {
+                if (signatures[id].Test(i))
+                    RemoveComponent(id, (ComponentType)i);
+            }
         }
 
         template<class COMPONENT, class... CtorArgs>
@@ -118,6 +124,14 @@ namespace mini::app::ecs
                 arr.reverse[denseId] = arr.reverse[arr.dense.Count()];
                 arr.reverse[arr.dense.Count()] = NONE;
 
+            }
+        }
+
+        void RemoveComponent(const ID id, const ComponentType type)
+        {
+            switch(type)
+            {
+                case ComponentType::Transform: RemoveComponent<C_Transform>(id); break;
             }
         }
 

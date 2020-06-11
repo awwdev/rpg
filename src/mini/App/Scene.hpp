@@ -30,17 +30,18 @@ namespace mini::app
             }
 
             if (ui::Button(renderer, "Rmv Entity", {100, 232, 120, 30}) == ui::ButtonState::Released) {
-                ecs.RemoveComponent<ecs::C_Transform>(0);
-                //ecs.RemoveEntity(0);
+                //ecs.RemoveComponent<ecs::C_Transform>(0);
+                ecs.RemoveEntity(0);
             }
 
             //? PRINT ECS STUFF
-            for(auto i = 0; i < ecs.entityCount; ++i)
+            for(auto i = 0; i < 9; ++i)
             {
-                char buf[2];
+                char buf[2] = "e";
 
                 //? entity id
-                sprintf_s(buf, "%d", i);
+                 if (ecs.entities.Test(i))
+                    sprintf_s(buf, "%d", i);
                 renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33*0, 32, 32});
 
                 //? lookup
