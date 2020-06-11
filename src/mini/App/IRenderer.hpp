@@ -111,7 +111,7 @@ namespace mini::app
         //? gpu api agnostic resources (that will be used in derived class to upload to gpu)
         box::Array<Vertex, 2000> vertices; 
         box::Array<uint32_t, 3000> indices;
-        box::AlignedStorage<10000, vk::UboData_Default> uniforms; 
+        box::AlignedStorage<100000, vk::UboData_Default> uniforms; 
         
         box::Array<VertexGroup, 500> vertexGroups; //outlines vertex and index array (so we know when to change state)
         

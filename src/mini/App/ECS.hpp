@@ -31,8 +31,8 @@ namespace mini::app::ecs
     struct ComponentArray
     {
         box::Array<COMPONENT, ENTITY_COUNT_MAX> dense;
-        ID lookup  [ENTITY_COUNT_MAX] { 0 };
-        ID reverse [ENTITY_COUNT_MAX] { 0 }; //get entity from component (reverse lookup)
+        ID lookup  [ENTITY_COUNT_MAX] { NONE };
+        ID reverse [ENTITY_COUNT_MAX] { NONE }; //get entity from component (reverse lookup)
 
         COMPONENT*       GetComponent(const ID entityID)        { return lookup[entityID] == NONE ? nullptr : &dense[lookup[entityID]]; }    
         const COMPONENT* GetComponent(const ID entityID) const  { return lookup[entityID] == NONE ? nullptr : &dense[lookup[entityID]]; }
@@ -65,6 +65,7 @@ namespace mini::app::ecs
     struct ECS
     {
         box::Bitset<ENTITY_COUNT_MAX> entities;
+        ID entityCount = 0;
         box::Array<ID, 10> removedEntities;
         ComponentArrays arrays;
         box::Bitset<ComponentType::ENUM_END> signatures [ENTITY_COUNT_MAX];
@@ -76,6 +77,7 @@ namespace mini::app::ecs
                 ? entities.FindFirstFreeBit() 
                 : removedEntities.RemoveLast();
             entities.Set<true>(freeId);
+            ++entityCount;
             return freeId;
         }
 
@@ -87,6 +89,7 @@ namespace mini::app::ecs
             }
             removedEntities.Append(id); //!currently no check for pool exhaustion
             entities.Set<false>(id);
+            --entityCount;
             //TODO: remove all components
         }
 
@@ -111,12 +114,13 @@ namespace mini::app::ecs
                 arr.lookup[id] = NONE;
                 signatures[id].Set<false>(arrays.GetComponentType<COMPONENT>());
                 //fix swap
-                const auto swappedId  = arr.reverse[denseId];
-                arr.lookup[swappedId] = denseId;
-                arr.reverse[denseId]  = swappedId;
+                arr.lookup[arr.reverse[arr.dense.Count()]] = denseId;
+                arr.reverse[denseId] = arr.reverse[arr.dense.Count()];
+                arr.reverse[arr.dense.Count()] = NONE;
+
             }
         }
-        
+
 
     };
 
