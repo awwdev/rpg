@@ -10,73 +10,71 @@
 
 namespace mini::ecs
 {
-    //!65536
-    //! 0 means non-existent component
-    using ID = u16; 
-    constexpr ID NONE = 9;//std::numeric_limits<ID>::max();
+    using ID = s16; //!65536 (use unsigned later on, make NONE to max)
+    constexpr ID NONE = -1;//std::numeric_limits<ID>::max();
     constexpr ID ENTITY_COUNT_MAX = 10;
 
 
-//?ADD COMPONENTS--------------------------------
+    //?ADD COMPONENTS--------------------------------
 
-enum ComponentType
-{
-    Transform,
-    ENUM_END
-};
+    enum ComponentType
+    {
+        Transform,
+        ENUM_END
+    };
 
-#define IT_COMPONENTS0() \
-    ComponentArray<C_Transform> transforms;
+    #define DEFINE_COMPONENT_ARRAYS() \
+        ComponentArray<C_Transform> transforms;
 
-#define IT_COMPONENTS() \
-    if constexpr(std::is_same_v<COMPONENT, C_Transform>) return transforms; \
-    else static_assert(0, "component type missing");
+    #define GET_COMPONENT_ARRAY_BY_TYPE() \
+        if constexpr(std::is_same_v<COMPONENT, C_Transform>) return transforms; \
+        else static_assert(0, "component type missing");
 
-#define IT_COMPONENTS2() \
-    if constexpr(std::is_same_v<COMPONENT, C_Transform>) return ComponentType::Transform; \
-    else static_assert(0, "component idx missing");
+    #define GET_COMPONENT_ENUM_BY_TYPE() \
+        if constexpr(std::is_same_v<COMPONENT, C_Transform>) return ComponentType::Transform; \
+        else static_assert(0, "component enum missing");
 
-#define IT_COMPONENTS3() \
-    if (signatures[id].Test(ComponentType::Transform)) RemoveComponent<C_Transform>(id);
+    #define REMOVE_ALL_COMPONENTS() \
+        if (signatures[entityID].Test(ComponentType::Transform)) RemoveComponent<C_Transform>(entityID);
 
-//?-----------------------------------------------
+    //?-----------------------------------------------
 
 
     template<class COMPONENT>
     struct ComponentArray
     {
         box::Array<COMPONENT, ENTITY_COUNT_MAX> dense;
-        ID lookup  [ENTITY_COUNT_MAX] { NONE };
-        ID reverse [ENTITY_COUNT_MAX] { NONE }; //get entity from component (reverse lookup)
+        ID cLookup [ENTITY_COUNT_MAX] { NONE }; //lookup component via entity id
+        ID eLookup [ENTITY_COUNT_MAX] { NONE }; //lookup entity via dense id 
 
-        COMPONENT*       GetComponent(const ID entityID)        { return lookup[entityID] == NONE ? nullptr : &dense[lookup[entityID]]; }    
-        const COMPONENT* GetComponent(const ID entityID) const  { return lookup[entityID] == NONE ? nullptr : &dense[lookup[entityID]]; }
-    };
-
-    struct ComponentArrays
-    {
-        IT_COMPONENTS0()
-
-        template<class COMPONENT>
-        auto& GetArray(){
-            IT_COMPONENTS()
-        }
+        COMPONENT*       GetOptional(const ID entityID)         { return cLookup[entityID] == NONE ? nullptr : &dense[cLookup[entityID]]; }    
+        const COMPONENT* GetOptional(const ID entityID) const   { return cLookup[entityID] == NONE ? nullptr : &dense[cLookup[entityID]]; }
+        COMPONENT&       Get(const ID entityID)                 { return dense[cLookup[entityID]]; }    
+        const COMPONENT& Get(const ID entityID) const           { return dense[cLookup[entityID]]; }
     };
 
     template<class COMPONENT>
-    constexpr ComponentType GetComponentType()
-    {
-        IT_COMPONENTS2()
+    constexpr ComponentType GetComponentType() {
+        GET_COMPONENT_ENUM_BY_TYPE()
     }
+
+    struct ComponentArrays
+    {
+        DEFINE_COMPONENT_ARRAYS() 
+
+        template<class COMPONENT>
+        auto& GetArray(){
+            GET_COMPONENT_ARRAY_BY_TYPE()
+        }
+    };
 
     struct ECS
     {
         box::Bitset<ENTITY_COUNT_MAX> entities;
         ID entityCount = 0;
         box::Array<ID, 10> removedEntities;
-        ComponentArrays arrays;
         box::Bitset<ComponentType::ENUM_END> signatures [ENTITY_COUNT_MAX];
-
+        ComponentArrays arrays;
 
         inline auto AddEntity()
         {
@@ -88,194 +86,58 @@ enum ComponentType
             return freeId;
         }
 
-        inline void RemoveEntity(const ID id)
+        inline void RemoveEntity(const ID entityID)
         {
-            if (entities.Test(id) == false) {
+            if (entities.Test(entityID) == false) {
                 WARN("removing entity that already has been removed");
                 return;
             }
-            removedEntities.Append(id); //!currently no check for pool exhaustion
-            entities.Set<false>(id);
+            removedEntities.Append(entityID); //!currently no check for pool exhaustion
+            entities.Set<false>(entityID);
             --entityCount;
             
-            IT_COMPONENTS3()
+            REMOVE_ALL_COMPONENTS()
         }
 
         template<class COMPONENT, class... CtorArgs>
-        void AddComponent(const ID id, CtorArgs&&... args)
+        void AddComponent(const ID entityID, CtorArgs&&... args)
         {
             auto& arr = arrays.GetArray<COMPONENT>();
+
+            const auto* const component = arr.GetOptional(entityID);
+            if (component != nullptr){
+                WARN("adding component that already exists");
+                return;
+            }
+
             arr.dense.Append(std::forward<CtorArgs>(args)...);
-            const auto lastDense = arr.dense.Count() - 1;
-            arr.lookup[id] = lastDense;
-            arr.reverse[lastDense] = id;
-            signatures[id].Set<true>(GetComponentType<COMPONENT>());
+            const auto lastDenseIdx = arr.dense.Count() - 1;
+            arr.cLookup[entityID] = lastDenseIdx;
+            arr.eLookup[lastDenseIdx] = entityID;
+            signatures[entityID].Set<true>(GetComponentType<COMPONENT>());
         }
 
         template<class COMPONENT>
         void RemoveComponent(const ID id)
         {
             auto& arr = arrays.GetArray<COMPONENT>();
-            if (auto* component = arr.GetComponent(id); component != nullptr){
-                const auto denseId = arr.lookup[id];
-                arr.dense.RemoveFast(denseId);
-                arr.lookup[id] = NONE;
-                signatures[id].Set<false>(GetComponentType<COMPONENT>());
-                //fix swap
-                arr.lookup[arr.reverse[arr.dense.Count()]] = denseId;
-                arr.reverse[denseId] = arr.reverse[arr.dense.Count()];
-                arr.reverse[arr.dense.Count()] = NONE;
 
+            const auto* const component = arr.GetOptional(id);
+            if (component == nullptr){
+                WARN("removing component that does not exist");
+                return;
             }
+
+            const auto denseId = arr.cLookup[id];
+            arr.dense.RemoveSwap(denseId);
+            arr.cLookup[id] = NONE;
+            signatures[id].Set<false>(GetComponentType<COMPONENT>());
+            //fix swap
+            arr.cLookup[arr.eLookup[arr.dense.Count()]] = denseId;
+            arr.eLookup[denseId] = arr.eLookup[arr.dense.Count()]; //swap
+            arr.eLookup[arr.dense.Count()] = NONE;
         }
 
     };
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-    using ID = u32;
-    constexpr ID ENTITY_COUNT_MAX = 1000;
-    
-    //? COMPONENTS
-
-    struct C_Transform
-    {
-        math::Vec3f pos;
-    };
-
-    struct C_RenderData
-    {
-
-    };
-
-    
-
-    //? ECS
-
-    struct ComponentArrays
-    {
-        template<class T>
-        struct ComponentArray
-        {
-            box::Array<T, ENTITY_COUNT_MAX> dense;
-            ID lookup [ENTITY_COUNT_MAX];
-
-            T&       GetComponent(const ID entityID)        { return dense[lookup[entityID]]; }
-            const T& GetComponent(const ID entityID) const  { return dense[lookup[entityID]]; }
-        };
-
-        //? COMPONENT ARRAYS DEFINITION ---------------------------------------------
-        enum class ComponentType //could be useful for prefabs too
-        {
-            Transform,
-            RenderData,
-            ENUM_END
-        };
-
-        box::Bitset<ComponentType::ENUM_END> signatures [ENTITY_COUNT_MAX];
-
-        ComponentArray<C_Transform>  transforms;
-        ComponentArray<C_RenderData> renderData;
-
-        template<class COMPONENT>
-        auto& GetArray(){
-            if constexpr(std::is_same_v<COMPONENT, C_Transform>)  return transforms;
-            if constexpr(std::is_same_v<COMPONENT, C_RenderData>) return renderData;
-        }
-
-        //? COMPONENT ARRAYS DEFINITION ---------------------------------------------
-
-        template<class COMPONENT>
-        void RemoveComponent(const ID entityID)
-        {
-            auto& arr = GetArray<COMPONENT>();
-            const auto cid = arr.lookup[entityID];
-            arr.dense.RemoveFast(cid); 
-            
-            if constexpr(std::is_same_v<COMPONENT, C_Transform>)  
-                signatures[entityID].Set<false>(0);
-            if constexpr(std::is_same_v<COMPONENT, C_RenderData>) 
-                signatures[entityID].Set<false>(1);
-            //TODO: update lookup from elsewhere
-        }
-
-        inline void RemoveAll(const ID entityID)
-        {
-            FOR_CARRAY(signatures, i) {
-                if (signatures[i].Test(entityID)){
-                    switch(i){
-                        case 0: RemoveComponent<C_Transform>(entityID);  break;
-                        case 1: RemoveComponent<C_RenderData>(entityID); break;
-                    }
-                }  
-            }
-        }
-    };
-
-    struct ECS
-    {
-        box::Bitset<ENTITY_COUNT_MAX> entities;
-        ComponentArrays arrays;
-        
-        inline ID AddEntity()
-        {
-            //TODO: using a remove table first
-            const auto freeId = entities.FindFirstFreeBit();
-            entities.Set<true>(freeId);
-            return freeId;
-        }
-
-        inline void RemoveEntity(const ID id)
-        {
-            entities.Set<false>(id);
-            arrays.RemoveAll(id);
-        }
-
-        template<class COMPONENT, class... CtorArgs>
-        void AddComponent(const ID entityID, const CtorArgs&&... args)
-        {
-            auto& arr = arrays.GetArray<COMPONENT>();
-            arr.dense.Append(std::forward<CtorArgs>(args)...); //forward?
-            arr.lookup[entityID] = arr.dense.Count() - 1;
-
-            if constexpr(std::is_same_v<COMPONENT, C_Transform>)  
-                arrays.signatures[entityID].Set<true>(0);
-            if constexpr(std::is_same_v<COMPONENT, C_RenderData>) 
-                arrays.signatures[entityID].Set<true>(1);
-        }
-
-        //TODO: deferred and immediate
-        template<class COMPONENT>
-        void RemoveComponentImmediate(const ID entityID)
-        {
-            auto& arr = arrays.GetArray<COMPONENT>();
-            const auto cid = arr.lookup(entityID);
-            arr.dense.RemoveFast(cid);
-        }   
-
-    };
-    */
-
-
 
 }//ns

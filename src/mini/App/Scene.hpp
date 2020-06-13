@@ -37,7 +37,7 @@ namespace mini::app
             //? PRINT ECS STUFF
             for(auto i = 0; i < 9; ++i)
             {
-                char buf[2] = "e";
+                char buf[3] = "e";
 
                 //? entity id
                  if (ecs.entities.Test(i))
@@ -45,7 +45,7 @@ namespace mini::app
                 renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33*0, 32, 32});
 
                 //? lookup
-                sprintf_s(buf, "%d", ecs.arrays.transforms.lookup[i]);
+                sprintf_s(buf, "%d", ecs.arrays.transforms.cLookup[i]);
                 renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33*1, 32, 32});
 
                 //? dense
@@ -55,7 +55,7 @@ namespace mini::app
                 }
 
                 //? reverse
-                sprintf_s(buf, "%d", ecs.arrays.transforms.reverse[i]);
+                sprintf_s(buf, "%d", ecs.arrays.transforms.eLookup[i]);
                 renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33*3, 32, 32});
             } 
 

@@ -132,7 +132,7 @@ namespace mini::box
 
         //does not preserve order O(1)
         template<typename IDX, typename = IsIntegralOrEnum<IDX>>
-        void RemoveFast(const IDX pos) 
+        void RemoveSwap(const IDX pos) 
         {
             CheckRange(pos, count);
             dataPtr[static_cast<IDX_T>(pos)] = std::move(dataPtr[count - 1]);
