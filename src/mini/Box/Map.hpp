@@ -39,6 +39,7 @@ namespace mini::box
     {
         using Val_t = VAL;
         const std::size_t CAPACITY;
+        using Index_t = u32;
 
         //? SETTERS
 
@@ -52,11 +53,11 @@ namespace mini::box
 
            if constexpr (std::is_aggregate_v<VAL>)
            {
-               new(&dataPtr[key]) VAL{ std::forward<CtorArgs>(args)... };
+               new(&dataPtr[(Index_t)key]) VAL{ std::forward<CtorArgs>(args)... };
            }
            else
            {
-               new(&dataPtr[key]) VAL(args...);
+               new(&dataPtr[(Index_t)key]) VAL(args...);
            }
         }
 

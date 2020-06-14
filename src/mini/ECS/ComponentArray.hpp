@@ -2,7 +2,8 @@
 
 #pragma once
 #include "mini/Box/POD_Array.hpp"
-#include "mini/Box/Map.hpp"
+#include "mini/Box/IndexMap.hpp"
+#include "mini/Box/String.hpp"
 #include "mini/Math/Matrix.hpp"
 
 #include "mini/ECS/Components.hpp"
@@ -17,13 +18,13 @@ namespace mini::ecs
         ENUM_END
     };
 
-    using ComponentTypeToStringMap = box::Map<chars_t, ComponentType::ENUM_END>;
+    using ComponentTypeToStringMap = box::IndexMap<box::String<20>, ComponentType::ENUM_END>;
     using P = ComponentTypeToStringMap::Pair_t;
-    //const ComponentTypeToStringMap ComponentTypeToString 
-    //{
-    //    P{ ComponentType::Transform,  "Transform"  },
-    //    P{ ComponentType::RenderData, "RenderData" },
-    //};
+    const ComponentTypeToStringMap ComponentTypeToString 
+    {
+        P{ ComponentType::Transform,  "Transform"  },
+        P{ ComponentType::RenderData, "RenderData" },
+    };
 
     template<u32 MAX_COUNT, class COMPONENT>
     struct ComponentArray

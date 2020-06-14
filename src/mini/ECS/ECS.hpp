@@ -22,6 +22,10 @@ namespace mini::ecs
 
 
 
+
+
+
+
     /*
 
     //?ADD COMPONENTS--------------------------------
