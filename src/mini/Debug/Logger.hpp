@@ -49,6 +49,17 @@ namespace mini::dbg
     #endif
     }
 
+    void PrintCharRange(chars_t chars, u32 start, u32 end)
+    {
+        if (start >= end) return;
+
+        while(start != end){
+            std::cout << *(chars + start);
+            ++start;
+        }
+        std::cout << '\n';
+    }
+
 
 #undef CONSOLE_DEFAULT
 #undef CONSOLE_RED

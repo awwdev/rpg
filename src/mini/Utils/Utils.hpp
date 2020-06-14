@@ -27,4 +27,15 @@ namespace mini
                 y > rect.y && y < rect.y + rect.h);
     }
 
+    inline int CharsCompare(const char* a, const char* b, const u32 count)
+    {
+        u32 _count = 0;
+        while(*a && *a == *b) 
+        {
+            ++a; ++b; ++_count;
+        }
+        return count == _count;
+        //return (int)(unsigned char)(*a) - (int)(unsigned char)(*b);
+    }
+
 }//ns

@@ -1,5 +1,6 @@
 #pragma once
 #include "mini/ECS/ECS.hpp"
+#include "mini/ECS/Prefabs.hpp"
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
@@ -14,10 +15,11 @@ namespace mini::app
     {
         box::String<10> name { "Scene1" };
         ecs::ECS ecs;
+        ecs::Prefabs prefabs; //TODO: move into Resources
 
         Scene()
         {
-            
+            prefabs.Load("res/prefabs.txt"); //TODO: move into Resources
         }
 
         inline void Update(IRenderer& renderer, const double dt)

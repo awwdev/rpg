@@ -20,6 +20,11 @@
 
 namespace mini::box
 {
+    #define FOR_INDEX_MAP_BEGIN(map, i) for(auto i = 0; i < map.CAPACITY; ++i) { \
+    if (map.Contains(i) == false) continue; 
+    #define FOR_INDEX_MAP_END }
+
+
     template<class KEY, class VAL, typename = IsIntegralOrEnum<KEY>>
     struct IndexMapPair
     {
@@ -43,8 +48,7 @@ namespace mini::box
         void Set(const KEY key, CtorArgs&&... args)
         {
             bitsetPtr->Set<true>(key);
-            //valuesPtr[(Index_t)key] = VAL{ std::forward<CtorArgs>(args)... };
-            //valuesPtr[0] = {};
+            valuesPtr[(Index_t)key] = VAL{ std::forward<CtorArgs>(args)... };
         }
 
         //? GETTERS
@@ -64,13 +68,13 @@ namespace mini::box
         #undef KEY_T
 
     protected:
-        BaseIndexMap(VAL* values, IBitset<Index_t>* const bitset, const Index_t capacity) 
+        BaseIndexMap(VAL* const values, IBitset<Index_t>* const bitset, const Index_t capacity) 
             : valuesPtr { values }
             , bitsetPtr { bitset }
             , CAPACITY  { capacity } 
         {;}
 
-        VAL* valuesPtr;
+        VAL* const valuesPtr;
         IBitset<u32>* const bitsetPtr;
 
         ~BaseIndexMap() { Clear(); }

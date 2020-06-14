@@ -18,13 +18,17 @@ namespace mini::ecs
         ENUM_END
     };
 
-    using ComponentTypeToStringMap = box::IndexMap<box::String<20>, ComponentType::ENUM_END>;
-    using P = ComponentTypeToStringMap::Pair_t;
-    const ComponentTypeToStringMap ComponentTypeToString 
+    namespace ComponentTypeToString
     {
-        P{ ComponentType::Transform,  "Transform"  },
-        P{ ComponentType::RenderData, "RenderData" },
-    };
+        using M = box::IndexMap<box::String<20>, ComponentType::ENUM_END>;
+        using P = M::Pair_t;
+        const M map 
+        {
+            P{ ComponentType::Transform,  "Transform"  },
+            P{ ComponentType::RenderData, "RenderData" },
+        };
+    }
+    
 
     template<u32 MAX_COUNT, class COMPONENT>
     struct ComponentArray
@@ -55,4 +59,3 @@ namespace mini::ecs
 }//ns
 
 //TODO: make 0 the default for non existent lookup value (NONE)
-//TODO: make map without byte array

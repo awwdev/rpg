@@ -80,7 +80,7 @@ namespace mini::box
         }
 
         void operator=(const IString& other) { Clear(); Append(other); }
-
+        
 
         //? APPEND
 
@@ -127,6 +127,10 @@ namespace mini::box
             return 0;
         }
 
+        //bool operator==(const char* const chars) const
+        //{
+        //    return std::strcmp(dataPtr, chars) == 0;
+        //}
 
     protected:
         u32 count; //includes \0
