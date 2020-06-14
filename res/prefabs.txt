@@ -1,0 +1,2 @@
+prefab:FPS
+ui:rect:0,0,150,32

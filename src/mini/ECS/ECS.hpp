@@ -5,15 +5,24 @@
 #include "mini/Box/Array.hpp"
 #include "mini/Math/Matrix.hpp"
 
-#include "mini/ECS/Components/C_Transform.hpp"
+#include "mini/ECS/EntityID.hpp"
+#include "mini/ECS/ComponentArray.hpp"
 
 
 namespace mini::ecs
 {
-    using ID = s16; //!65536 (use unsigned later on, make NONE to max)
-    constexpr ID NONE = -1;//std::numeric_limits<ID>::max();
-    constexpr ID ENTITY_COUNT_MAX = 10;
+    struct ECS
+    {
+        ComponentArrays<MAX_ENTITY_COUNT> arrays;
+        
 
+    };    
+
+
+
+
+
+    /*
 
     //?ADD COMPONENTS--------------------------------
 
@@ -51,6 +60,13 @@ namespace mini::ecs
         const COMPONENT* GetOptional(const ID entityID) const   { return cLookup[entityID] == NONE ? nullptr : &dense[cLookup[entityID]]; }
         COMPONENT&       Get(const ID entityID)                 { return dense[cLookup[entityID]]; }    
         const COMPONENT& Get(const ID entityID) const           { return dense[cLookup[entityID]]; }
+
+        ComponentArray() 
+        { 
+            //! dont init that way ... use 0 as NONE instead
+            FOR_CARRAY(cLookup, i) cLookup[i] = NONE;
+            FOR_CARRAY(eLookup, i) eLookup[i] = NONE;
+        }
     };
 
     template<class COMPONENT>
@@ -139,5 +155,7 @@ namespace mini::ecs
         }
 
     };
+
+    */
 
 }//ns

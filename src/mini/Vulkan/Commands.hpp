@@ -13,7 +13,7 @@ namespace mini::vk
         VkDevice device;
 
         VkCommandPool cmdPool;
-        box::SimpleArray<VkCommandBuffer, 4> cmdBuffers { 0 };
+        box::POD_Array<VkCommandBuffer, 4> cmdBuffers { 0 };
 
 
         inline void Create(Context& context)

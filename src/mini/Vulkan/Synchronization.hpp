@@ -15,10 +15,10 @@ namespace mini::vk
         VkDevice device;
 
         //triple buffering
-        box::SimpleArray<VkSemaphore, 3> imageAcquired { 0 }; 
-        box::SimpleArray<VkSemaphore, 3> imageFinished { 0 }; 
-        box::SimpleArray<VkFence, 3>     inFlight      { 0 };
-        box::SimpleArray<VkFence, 3>     fences        { 0 }; 
+        box::POD_Array<VkSemaphore, 3> imageAcquired { 0 }; 
+        box::POD_Array<VkSemaphore, 3> imageFinished { 0 }; 
+        box::POD_Array<VkFence, 3>     inFlight      { 0 };
+        box::POD_Array<VkFence, 3>     fences        { 0 }; 
 
 
         inline void Create(Context& context)

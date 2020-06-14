@@ -25,19 +25,19 @@ namespace mini::app
             ui::FPS_Monitor(renderer, dt);
 
             if (ui::Button(renderer, "Add Entity", {100, 200, 120, 30}) == ui::ButtonState::Released) {
-                const auto id = ecs.AddEntity();
-                ecs.AddComponent<ecs::C_Transform>(id, math::Vec3f{1, 2, 3});
+                //const auto id = ecs.AddEntity();
+                //ecs.AddComponent<ecs::C_Transform>(id, math::Vec3f{1, 2, 3});
             }
 
             if (ui::Button(renderer, "Rmv Entity", {100, 232, 120, 30}) == ui::ButtonState::Released) {
-                //ecs.RemoveComponent<ecs::C_Transform>(0);
-                ecs.RemoveEntity(0);
+                ////ecs.RemoveComponent<ecs::C_Transform>(0);
+                //ecs.RemoveEntity(0);
             }
 
             //? PRINT ECS STUFF
-            for(auto i = 0; i < 9; ++i)
+            /*for(auto i = 0; i < 9; ++i)
             {
-                char buf[3] = "e";
+                char buf[10] = "e";
 
                 //? entity id
                  if (ecs.entities.Test(i))
@@ -57,7 +57,7 @@ namespace mini::app
                 //? reverse
                 sprintf_s(buf, "%d", ecs.arrays.transforms.eLookup[i]);
                 renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33*3, 32, 32});
-            } 
+            }*/ 
 
 
 

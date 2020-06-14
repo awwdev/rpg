@@ -57,8 +57,8 @@ namespace mini::vk
         
         
         VkSwapchainKHR swapchain;
-        box::SimpleArray<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
-        box::SimpleArray<VkImageView, 4> swapImageViews { 0 };
+        box::POD_Array<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
+        box::POD_Array<VkImageView, 4> swapImageViews { 0 };
 
 
         //? CTOR
@@ -144,11 +144,11 @@ namespace mini::vk
 
         inline void CreatePhysical()
         {
-            box::SimpleArray<VkPhysicalDevice, 4> physicals { 4 };
+            box::POD_Array<VkPhysicalDevice, 4> physicals { 4 };
             VK_CHECK(vkEnumeratePhysicalDevices(instance, &physicals.count, physicals.data));
             physical = physicals[0];
 
-            box::SimpleArray<VkQueueFamilyProperties, 10> famProps { 10 };
+            box::POD_Array<VkQueueFamilyProperties, 10> famProps { 10 };
             vkGetPhysicalDeviceQueueFamilyProperties(physical, &famProps.count, famProps.data);
 
             for (uint32_t i = 0; i < famProps.count; ++i) {

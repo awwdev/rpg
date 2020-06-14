@@ -11,4 +11,10 @@ namespace mini::ecs
         //rotation
         //scale
     };
-}//
+
+    struct C_RenderData
+    {
+
+    };
+    
+}//ns
