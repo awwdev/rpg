@@ -14,7 +14,7 @@ namespace mini::ecs
 {
     enum class PrefabType
     {
-        UI_FpsMonitor,
+        UI_FpsMonitor = 1,
         Foo,
         ENUM_END
     };
@@ -29,6 +29,7 @@ namespace mini::ecs
             P{ PrefabType::Foo,             "Foo"            },
         };
     }
+    
     
 
     struct Prefabs
@@ -45,30 +46,40 @@ namespace mini::ecs
             u32 start = 0;
             FOR_CARRAY((*ptrBuffer), i)
             {
-                //delimiters
-                if (ptrBuffer[i] == '\0' || 
-                    ptrBuffer[i] == ':'  ||
-                    ptrBuffer[i] == '\n')
+                if (ptrBuffer[i] == ':')
                 {
-                    dbg::PrintCharRange(*ptrBuffer, start, i);
-
-                    using namespace PrefabTypeToString;
-                    FOR_INDEX_MAP_BEGIN(map, j)
-                        LOG(map.Get(j).dataPtr);
-                        if (const auto cmp = CharsCompare(map.Get(j).dataPtr, ptrBuffer.Get() + start, i - start))
-                            LOG("found");
-                    FOR_INDEX_MAP_END
-
+                     if (CharsCompare("prefab", ptrBuffer.Get() + start, i - start)) {
+                        LOG("found token", "prefab");
+                        //TODO: now maybe go to another function and get the params
+                        //also increasing i
+                    }
                     start = i + 1;
-
-                    if (ptrBuffer[i] == '\0')
-                        break;
                 }
 
+                if (ptrBuffer[i] == '\n'){
+                    start = i + 1;
+                }
+
+                if (ptrBuffer[i] == '\0'){
+                    break;
+                }
+                    
             }
 
         }
 
-    };    
+    };  
+
+    auto s = sizeof(Prefabs);
 
 }//ns
+
+/*
+FOR_INDEX_MAP_BEGIN(map, prefabID)
+if (CharsCompare("prefab", ptrBuffer.Get() + start, i - start))
+{
+LOG("found token", "prefab");
+break;
+}
+FOR_INDEX_MAP_END
+*/

@@ -47,6 +47,28 @@ namespace mini::ecs
             FOR_CARRAY(componentLookup, i) componentLookup[i] = NONE;
             FOR_CARRAY(entityLookup, i)    entityLookup[i]    = NONE;
         }
+
+        template<class... CtorArgs>
+        void AddComponent(const ID entityID, CtorArgs&&... args)
+        {
+            if (componentLookup[entityID] != NONE) {
+                WARN("adding component that already exists");
+                return;
+            }
+            
+            dense.Append(std::forward<CtorArgs>(args)...);
+            componentLookup[entityID] = dense.count - 1;
+            entityLookup[dense.count - 1] = entityID;
+        }
+
+        void RemoveComponent(const ID entityID)
+        {
+            if (componentLookup[entityID] == NONE) {
+                WARN("removing component that does not exist");
+                return;
+            }
+            //TODO:
+        }
     };
 
     template<u32 MAX_COUNT>

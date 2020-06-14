@@ -23,6 +23,13 @@ namespace mini::box
         T&       operator[](const u32 i)       { return data[i]; }
         const T& operator[](const u32 i) const { return data[i]; }
 
+        template<class... CtorArgs>
+        void Append(CtorArgs&&... args)
+        {
+            //TODO: bounds check?
+            data[count - 1] = { std::forward<CtorArgs>(args)... };
+            ++count;
+        }
 
         void RemoveSwapped(const u32 id)
         {
