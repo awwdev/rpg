@@ -79,6 +79,7 @@ namespace mini::box
             count = arrCount;
         }
 
+        //IString& (const IString& other)      { Clear(); Append(other); }
         void operator=(const IString& other) { Clear(); Append(other); }
         
 
@@ -186,7 +187,7 @@ namespace mini::box
         template<typename COUNT>
         String(chars_t ptr, const COUNT count) : String() { BASE::Set(ptr, count); }
 
-        //! dataPtr of IString is not set to the base String char array 
+        String(const String& other) : String() { BASE::operator=(other); }
 
     private:
         CHAR_T data[COUNT_MAX];
