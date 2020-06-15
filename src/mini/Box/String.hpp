@@ -71,8 +71,8 @@ namespace mini::box
             Set(ptr, std::strlen(ptr) + 1);
         }
 
-        //arrCount has to be strlen + 1
-        void Set(const CHAR_T* const ptr, const u32 arrCount)
+        template<typename COUNT>
+        void Set(const CHAR_T* const ptr, const COUNT arrCount)
         {
             CheckBounds(arrCount, COUNT_MAX + 1);
             std::memcpy(dataPtr, ptr, arrCount);
@@ -138,7 +138,7 @@ namespace mini::box
         //? CTOR
 
         //"abstract" base shall not be instantiated
-        constexpr IString(CHAR_T* const data, const u32 countMax, const u32 pCount ) 
+        constexpr IString(CHAR_T data[], const u32 countMax, const u32 pCount ) 
             : dataPtr   { data }
             , COUNT_MAX { countMax }
             , count     { pCount } 
@@ -178,10 +178,15 @@ namespace mini::box
         String() : BASE(data, COUNT_MAX, 1), data { "" } { ; } //is \0
 
         template<class PTR, typename = IsNoArray<PTR>>
-        String(const PTR  ptr) : String() { BASE::Set(ptr); }
+        String(const PTR ptr) : String() { BASE::Set(ptr); }
 
         template<std::size_t N>
         String(const CHAR_T (&arr)[N]) : String() { BASE::Set(arr); }
+
+        template<typename COUNT>
+        String(chars_t ptr, const COUNT count) : String() { BASE::Set(ptr, count); }
+
+        //! dataPtr of IString is not set to the base String char array 
 
     private:
         CHAR_T data[COUNT_MAX];
