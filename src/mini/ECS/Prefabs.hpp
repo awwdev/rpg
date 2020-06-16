@@ -24,6 +24,7 @@ namespace mini::ecs
     enum class KeyType
     {
         prefab,
+        ui,
         foo,
         ENUM_END
     };
@@ -45,9 +46,11 @@ namespace mini::ecs
         using P = M::Pair_t;
         const M map 
         {
-            P{ KeyType::prefab, "prefab" },
+            P{ KeyType::prefab,     "prefab" },
+            P{ KeyType::ui,         "ui" },
         };
     }
+    
     
     inline KeyType GetKey(const utils::CharsView& view)
     {
@@ -68,6 +71,7 @@ namespace mini::ecs
         FOR_INDEX_MAP_END
         return PrefabType::ENUM_END;
     }
+
 
     struct Prefabs
     {
@@ -94,17 +98,33 @@ namespace mini::ecs
                         valueBegin = i + 1;
                         currentKey = GetKey({ line + 0, i - 0 });
                     }
-                    else if (line[i] == '\0'){
-                        //get value (based on key type)
-                        LOG("value");
-                        dbg::PrintCharRange(line, valueBegin, i);
-                        switch (currentKey)
+                    //? LINE IS PARSED
+                    else if (line[i] == '\0') 
+                    {
+                        if (valueBegin == 0) //key only value
                         {
-                            case KeyType::prefab: 
-                                currentPrefab = GetPrefabType({ line + valueBegin, i - valueBegin }); 
-                                LOG("key type is prefab", (int)currentPrefab);
-                            break;
+                            currentKey = GetKey({ line + 0, i - 0 });
+                            switch (currentKey)
+                            {
+                                case KeyType::ui: 
+                                    LOG("found component ui");
+                                break;
+                            }
                         }
+                        else
+                        {
+                            //get value (based on key type)
+                            LOG("value");
+                            dbg::PrintCharRange(line, valueBegin, i);
+                            switch (currentKey)
+                            {
+                                case KeyType::prefab: 
+                                    currentPrefab = GetPrefabType({ line + valueBegin, i - valueBegin }); 
+                                    LOG("key type is prefab", (int)currentPrefab);
+                                break;
+                            }
+                        }
+                        
                         break;//line end
                     }
                 }

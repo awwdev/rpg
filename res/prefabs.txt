@@ -1,7 +1,5 @@
 prefab:UI_FpsMonitor
-ui:rect:0,0,150,32
-render:foo:42
+ui
 
 prefab:Foo
-ui:rect:0,0,150,32
-render:foo:42
+ui

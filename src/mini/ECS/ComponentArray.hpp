@@ -76,6 +76,8 @@ namespace mini::ecs
     {
         ComponentArray<MAX_COUNT, C_Transform>  transforms;
         ComponentArray<MAX_COUNT, C_RenderData> renderData;
+
+        box::Bitset<ComponentType::ENUM_END> signatures[MAX_ENTITY_COUNT];
     };
 
 }//ns
