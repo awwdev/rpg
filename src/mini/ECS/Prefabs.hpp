@@ -7,6 +7,7 @@
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Utils/Utils.hpp"
 #include "mini/Debug/Logger.hpp"
+#include "mini/Utils/CharsView.hpp"
 
 #include <fstream>
 
@@ -15,8 +16,15 @@ namespace mini::ecs
 {
     enum class PrefabType
     {
-        UI_FpsMonitor = 1,
+        UI_FpsMonitor,
         Foo,
+        ENUM_END
+    };
+
+    enum class KeyType
+    {
+        prefab,
+        foo,
         ENUM_END
     };
 
@@ -27,25 +35,38 @@ namespace mini::ecs
         const M map 
         {
             P{ PrefabType::UI_FpsMonitor,   "UI_FpsMonitor"   },
-            P{ PrefabType::Foo,             "Foo2"            },
+            P{ PrefabType::Foo,             "Foo"             },
+        };
+    }
+
+    namespace KeyTypeToString
+    {
+        using M = box::IndexMap<box::String<20>, KeyType::ENUM_END>;
+        using P = M::Pair_t;
+        const M map 
+        {
+            P{ KeyType::prefab, "prefab" },
         };
     }
     
-    struct Token
+    inline KeyType GetKey(const utils::CharsView& view)
     {
-        box::String<20> str;
-    };
+        using namespace KeyTypeToString;
+        FOR_INDEX_MAP_BEGIN(map, i)
+            if (utils::CharsCompare(view, map.Get(i).dataPtr))
+                return (KeyType)i;
+        FOR_INDEX_MAP_END
+        return KeyType::ENUM_END;
+    }
 
-    inline void Tokenize(chars_t text, box::IArray<Token>& tokens)
+    inline PrefabType GetPrefabType(const utils::CharsView& view)
     {
-        u32 tokenBegin = 0;
-        for(u32 i = 0; text[i] != '\0'; ++i)
-        {
-            if (text[i] == '\n' || text[i] == ':') {
-                tokens.Append(Token { { text + tokenBegin, i - tokenBegin } });
-                tokenBegin = i + 1; //exclude delimiter
-            }
-        }
+        using namespace PrefabTypeToString;
+        FOR_INDEX_MAP_BEGIN(map, i)
+            if (utils::CharsCompare(view, map.Get(i).dataPtr))
+                return (PrefabType)i;
+        FOR_INDEX_MAP_END
+        return PrefabType::ENUM_END;
     }
 
     struct Prefabs
@@ -54,63 +75,43 @@ namespace mini::ecs
 
         inline void Load(chars_t path)
         {
-            std::ifstream file(path);
-            auto ptrBuffer = mem::ClaimBlock<char[1000]>();
-            file.read(*ptrBuffer, 1000);
+            std::ifstream file(path, std::ios::beg);
 
-            box::Array<Token, 20> tokens;
-            Tokenize(*ptrBuffer, tokens);
-
-            FOR_ARRAY(tokens, i) {
-                LOG(tokens[i].str);
-                //! for whatever reasons dataPtr is garbage of IString
+            //! always check if max line count is enough
+            constexpr u32 LINE_CHARS_MAX = 30;
+            char line[LINE_CHARS_MAX];
+            //a line is key:value pair
+            PrefabType currentPrefab = PrefabType::ENUM_END;
+            while (file.getline(line, LINE_CHARS_MAX)) {
+                LOG("line");
+                u32 valueBegin = 0;
+                KeyType currentKey = KeyType::ENUM_END;
+                for(u32 i = 0; i < LINE_CHARS_MAX; ++i){
+                    //delimiter of key value
+                    if (line[i] == ':'){ 
+                        LOG("key");
+                        dbg::PrintCharRange(line, 0, i);
+                        valueBegin = i + 1;
+                        currentKey = GetKey({ line + 0, i - 0 });
+                    }
+                    else if (line[i] == '\0'){
+                        //get value (based on key type)
+                        LOG("value");
+                        dbg::PrintCharRange(line, valueBegin, i);
+                        switch (currentKey)
+                        {
+                            case KeyType::prefab: 
+                                currentPrefab = GetPrefabType({ line + valueBegin, i - valueBegin }); 
+                                LOG("key type is prefab", (int)currentPrefab);
+                            break;
+                        }
+                        break;//line end
+                    }
+                }
             }
                 
         }
 
     };  
 
-
-
 }//ns
-
-/*
-FOR_INDEX_MAP_BEGIN(map, prefabID)
-if (CharsCompare("prefab", ptrBuffer.Get() + start, i - start))
-{
-LOG("found token", "prefab");
-break;
-}
-FOR_INDEX_MAP_END
-*/
-
- /*
-u32 start = 0;
-FOR_CARRAY((*ptrBuffer), i)
-{
-if (ptrBuffer[i] == ':')
-{
-        if (CharsCompare("prefab", ptrBuffer.Get() + start, i - start)) {
-        LOG("found token", "prefab");
-        start = i + 1;
-        for(; ptrBuffer[i] != '\n'; ++i);
-        FOR_INDEX_MAP_BEGIN(PrefabTypeToString::map, prefabIdx)
-            dbg::PrintCharRange(*ptrBuffer, start, i);
-            LOG(PrefabTypeToString::map.Get(prefabIdx).dataPtr);
-            if (CharsCompare(PrefabTypeToString::map.Get(prefabIdx).dataPtr, &ptrBuffer[start], i - start))
-                LOG(prefabIdx);
-        FOR_INDEX_MAP_END
-    }
-    start = i + 1;
-}
-
-if (ptrBuffer[i] == '\n'){
-    start = i + 1;
-}
-
-if (ptrBuffer[i] == '\0'){
-    break;
-}
-    
-}
-*/
