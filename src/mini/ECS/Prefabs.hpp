@@ -59,6 +59,7 @@ namespace mini::ecs
             if (utils::CharsCompare(view, map.Get(i).dataPtr))
                 return (KeyType)i;
         FOR_INDEX_MAP_END
+        WARN("parsing: invalid key type");
         return KeyType::ENUM_END;
     }
 
@@ -69,6 +70,7 @@ namespace mini::ecs
             if (utils::CharsCompare(view, map.Get(i).dataPtr))
                 return (PrefabType)i;
         FOR_INDEX_MAP_END
+        WARN("parsing: invalid prefab type");
         return PrefabType::ENUM_END;
     }
 
@@ -86,50 +88,47 @@ namespace mini::ecs
             char line[LINE_CHARS_MAX];
             //a line is key:value pair
             PrefabType currentPrefab = PrefabType::ENUM_END;
-            while (file.getline(line, LINE_CHARS_MAX)) {
+            while (file.getline(line, LINE_CHARS_MAX)) 
+            {
                 LOG("line");
+                if (line[0] == '\0' || line[0] == ' ') continue;
+                
                 u32 valueBegin = 0;
                 KeyType currentKey = KeyType::ENUM_END;
-                for(u32 i = 0; i < LINE_CHARS_MAX; ++i){
-                    //delimiter of key value
-                    if (line[i] == ':'){ 
-                        LOG("key");
-                        dbg::PrintCharRange(line, 0, i);
-                        valueBegin = i + 1;
-                        currentKey = GetKey({ line + 0, i - 0 });
-                    }
-                    //? LINE IS PARSED
-                    else if (line[i] == '\0') 
+
+                for(u32 i = 0; i < LINE_CHARS_MAX; ++i)
+                {
+                    //GET KEY
+                    if (line[i] == ':' || (line[i] == '\0' && valueBegin == 0))
                     {
-                        if (valueBegin == 0) //key only value
-                        {
-                            currentKey = GetKey({ line + 0, i - 0 });
-                            switch (currentKey)
-                            {
-                                case KeyType::ui: 
-                                    LOG("found component ui");
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            //get value (based on key type)
-                            LOG("value");
-                            dbg::PrintCharRange(line, valueBegin, i);
-                            switch (currentKey)
-                            {
-                                case KeyType::prefab: 
-                                    currentPrefab = GetPrefabType({ line + valueBegin, i - valueBegin }); 
-                                    LOG("key type is prefab", (int)currentPrefab);
-                                break;
-                            }
-                        }
-                        
-                        break;//line end
+                        currentKey = GetKey({ line, i });
+                        LOG("key", (int)currentKey);
+                        valueBegin = i + 1;
                     }
+                    //GET VALUE
+                    else if (line[i] == '\0')
+                    {
+                        //SET CURRENT PREFAB INDEX
+                        if (currentKey == KeyType::prefab)
+                        {
+                            currentPrefab = GetPrefabType({ line + valueBegin, i - valueBegin }); 
+                            LOG("prefab", (int)currentPrefab);
+                        }
+                        //PARSE COMPONENTS
+                        else if (currentPrefab != PrefabType::ENUM_END)
+                        {
+                            switch (currentKey)
+                            {
+                                case KeyType::ui: LOG("parse ui component"); break;
+                                //TODO: more
+                            }
+                        }
+                    }
+                    //END OF LINE PARSING
+                    if (line[i] == '\0')
+                        break;
                 }
-            }
-                
+            } 
         }
 
     };  
