@@ -34,6 +34,7 @@ namespace mini::ecs
     {
         PREFAB,
         COMPONENT,
+        COMPONENT_DATA, //no str (internal use)
         ENUM_END
     };
 
@@ -49,7 +50,6 @@ namespace mini::ecs
         { KeyType::COMPONENT,   "COMPONENT" },
     };
 
-    //? GetComponentType is located in ComponentArray.hpp
 
     inline KeyType GetKey(const utils::CharsView& view)
     {
@@ -57,6 +57,11 @@ namespace mini::ecs
             if (utils::CharsCompare(view, keyTypeToStr.Get(i).dataPtr))
                 return (KeyType)i;
         FOR_INDEX_MAP_END
+
+        //a key can be the component type itself (nesting)
+        if (GetComponentDataType(view) != ComponentData::ENUM_END)
+            return KeyType::COMPONENT_DATA;
+
         WARN("str to enum: invalid key type");
         return KeyType::ENUM_END;
     }
@@ -71,6 +76,18 @@ namespace mini::ecs
         return PrefabType::ENUM_END;
     }
 
+    inline void ParseComponentData(const utils::CharsView& key, const utils::CharsView& value)
+    {
+        const auto type = GetComponentDataType(key);
+        switch(type)
+        {
+            case ComponentData::pos:    LOG("parse component pos");   break;
+            case ComponentData::data1:  LOG("parse component data1"); break;
+            case ComponentData::data2:  LOG("parse component data2"); break;
+        }
+    }
+
+
     struct Prefabs
     {
         ComponentArrays<(u32)PrefabType::ENUM_END> arrays;
@@ -84,16 +101,18 @@ namespace mini::ecs
             constexpr u32 LINE_CHARS_MAX = 30;
             char line[LINE_CHARS_MAX];
 
-            PrefabType      currentPrefab    = PrefabType::ENUM_END;
-            ComponentType   currentComponent = ComponentType::ENUM_END;
-            KeyType         currentKey       = KeyType::ENUM_END;
+            //multiline validity
+            PrefabType currentPrefab = PrefabType::ENUM_END;   
+            ComponentType currentComponent = ComponentType::ENUM_END;
 
             while (file.getline(line, LINE_CHARS_MAX)) 
             {
                 LOG("line");
                 if (line[0] == '\0' || line[0] == ' ') continue;
                 
+                //per line validity (so reset)
                 u32 valueBegin = 0; //there can be lines without values (key only)
+                KeyType currentKey = KeyType::ENUM_END; 
 
                 for(u32 i = 0; i < LINE_CHARS_MAX; ++i)
                 {
@@ -102,11 +121,11 @@ namespace mini::ecs
                     {
                         valueBegin = i + 1;
                     }
-                    //?AT LINE END
+                    //?LINE END
                     else if (line[i] == '\0')
                     {
-                        //TODO: get key vs get component - depends if we are nested in a component key 
-                        currentKey = GetKey({ line, valueBegin == 0 ? i : valueBegin - 1 }); //whole line can be a key
+                        //? GET THE KEY
+                        currentKey = GetKey({ line, valueBegin == 0 ? i : valueBegin - 1 });
                         LOG("key", (int)currentKey);
 
                         if (currentKey == KeyType::PREFAB)
@@ -131,11 +150,15 @@ namespace mini::ecs
                                     break;
                                 }
                                 currentComponent = GetComponentType({ line + valueBegin, i - valueBegin }); 
-                                LOG("component", (int)currentComponent);
                                 arrays.signatures[(u32)currentPrefab].Set<true>(currentComponent);
+                                LOG("component", (int)currentComponent);
+                                break;
                             }
-
-                            //TODO:parse lines
+                            
+                            if (currentKey == KeyType::COMPONENT_DATA)
+                            {
+                                ParseComponentData({ line, valueBegin - 1 }, { line + valueBegin, i - valueBegin });
+                            }
                         }
                         
                         break; //!line finished

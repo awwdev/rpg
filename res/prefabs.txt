@@ -1,9 +1,9 @@
-PREFAB:Foo
+PREFAB:Foo1
 COMPONENT:Transform
 data1:0
 data2:777
 
-PREFAB:Foo1
+PREFAB:Foo2
 COMPONENT:RenderData
 data1:42
 data2:123
