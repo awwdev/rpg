@@ -8,6 +8,7 @@
 
 #include "mini/ECS/Components.hpp"
 #include "mini/ECS/EntityID.hpp"
+#include "mini/Utils/CharsView.hpp"
 
 namespace mini::ecs
 {
@@ -17,18 +18,6 @@ namespace mini::ecs
         RenderData,
         ENUM_END
     };
-
-    namespace ComponentTypeToString
-    {
-        using M = box::IndexMap<box::String<20>, ComponentType::ENUM_END>;
-        using P = M::Pair_t;
-        const M map 
-        {
-            P{ ComponentType::Transform,  "Transform"  },
-            P{ ComponentType::RenderData, "RenderData" },
-        };
-    }
-    
 
     template<u32 MAX_COUNT, class COMPONENT>
     struct ComponentArray

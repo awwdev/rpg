@@ -19,7 +19,7 @@ namespace mini::app
 
         Scene()
         {
-            prefabs.Load("res/prefabs.txt"); //TODO: move into Resources
+            prefabs.Parse("res/prefabs.txt"); //TODO: move into Resources
         }
 
         inline void Update(IRenderer& renderer, const double dt)

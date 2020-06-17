@@ -1,5 +1,5 @@
 prefab:UI_FpsMonitor
-ui:42
+transform:42
 
 prefab:Foo
-ui
+transform

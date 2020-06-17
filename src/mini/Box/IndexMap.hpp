@@ -94,20 +94,31 @@ namespace mini::box
 
         //? CTOR
 
-        IndexMap() 
+        IndexMap()
             : Base_t(values, &bitset, CAPACITY) 
-            , values {}
+            , values {} //initList
             , bitset {}
         {;}
 
+        //ctor allow for out of order input
+        //use first param with int to invoke variadic ctor (that does not use init list)
         template <class... Elements, typename = DoesTypeMatchParams<Pair_t, Elements...>>
-        IndexMap(Elements... elements) : IndexMap()
+        IndexMap(int, Elements... elements) : IndexMap()
         {
             const auto fn = [&](const Pair_t& pair){
                 this->Set(pair.key, pair.val);
                 bitset.Set<true>(pair.key);
             };
             (fn(elements), ...);
+        }
+
+        IndexMap(std::initializer_list<Pair_t> initList)
+            : Base_t(values, &bitset, CAPACITY) 
+            , values {}
+            , bitset {}
+        {
+            for(auto& l : initList)
+                this->Set(l.key, l.val);
         }
 
         //? DATA
