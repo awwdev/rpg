@@ -19,6 +19,23 @@ namespace mini::ecs
         ENUM_END
     };
 
+    const box::IndexMap<box::String<20>, ComponentType::ENUM_END> componentTypeToStr
+    {
+        { ComponentType::Transform,     "Transform"   },
+        { ComponentType::RenderData,    "RenderData"  },
+    };
+
+    inline ComponentType GetComponentType(const utils::CharsView& view)
+    {
+        FOR_INDEX_MAP_BEGIN(componentTypeToStr, i)
+            if (utils::CharsCompare(view, componentTypeToStr.Get(i).dataPtr))
+                return (ComponentType)i;
+        FOR_INDEX_MAP_END
+        WARN("str to enum: invalid component type");
+        return ComponentType::ENUM_END;
+    }
+
+
     template<u32 MAX_COUNT, class COMPONENT>
     struct ComponentArray
     {

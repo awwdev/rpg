@@ -14,45 +14,42 @@
 
 namespace mini::ecs
 {
+    //?text layout:
+    /*
+    PREFAB:Foo
+    COMPONENT:Transform
+    pos:0,0
+    rot:180
+    scale:1,1,2
+    */
+
     enum class PrefabType
     {
-        UI_FpsMonitor,
-        Foo,
+        Foo1,
+        Foo2,
         ENUM_END
     };
 
     enum class KeyType
     {
-        prefab,
+        PREFAB,
+        COMPONENT,
         ENUM_END
     };
 
     const box::IndexMap<box::String<20>, PrefabType::ENUM_END> prefabTypeToStr
     {
-        { PrefabType::UI_FpsMonitor,   "UI_FpsMonitor"   },
-        { PrefabType::Foo,             "Foo"             },
+        { PrefabType::Foo1,   "Foo1"   },
+        { PrefabType::Foo2,   "Foo2"   },
     };
 
     const box::IndexMap<box::String<20>, KeyType::ENUM_END> keyTypeToStr 
     {
-        { KeyType::prefab, "prefab" },
+        { KeyType::PREFAB,      "PREFAB"    },
+        { KeyType::COMPONENT,   "COMPONENT" },
     };
 
-    const box::IndexMap<box::String<20>, ComponentType::ENUM_END> componentTypeToStr
-    {
-        { ComponentType::Transform,  "transform"  },
-    };
-
-
-    inline ComponentType GetComponentType(const utils::CharsView& view)
-    {
-        FOR_INDEX_MAP_BEGIN(componentTypeToStr, i)
-            if (utils::CharsCompare(view, componentTypeToStr.Get(i).dataPtr))
-                return (ComponentType)i;
-        FOR_INDEX_MAP_END
-        WARN("str to enum: invalid component type");
-        return ComponentType::ENUM_END;
-    }
+    //? GetComponentType is located in ComponentArray.hpp
 
     inline KeyType GetKey(const utils::CharsView& view)
     {
@@ -60,8 +57,7 @@ namespace mini::ecs
             if (utils::CharsCompare(view, keyTypeToStr.Get(i).dataPtr))
                 return (KeyType)i;
         FOR_INDEX_MAP_END
-        //ENUM_END key can be a component
-        //WARN("str to enum: invalid key type");
+        WARN("str to enum: invalid key type");
         return KeyType::ENUM_END;
     }
 
@@ -75,7 +71,6 @@ namespace mini::ecs
         return PrefabType::ENUM_END;
     }
 
-
     struct Prefabs
     {
         ComponentArrays<(u32)PrefabType::ENUM_END> arrays;
@@ -84,99 +79,67 @@ namespace mini::ecs
         {
             std::ifstream file(path, std::ios::beg);
 
-            /*
-            #example of the text layout
-
-            prefab:UI_FpsMonitor
-            ui:42
-
-            prefab:Foo
-            ui
-            */
-
             //! always check if max line count is enough
             //a line is key:value pair
             constexpr u32 LINE_CHARS_MAX = 30;
             char line[LINE_CHARS_MAX];
-            PrefabType currentPrefab = PrefabType::ENUM_END;
+
+            PrefabType      currentPrefab    = PrefabType::ENUM_END;
+            ComponentType   currentComponent = ComponentType::ENUM_END;
+            KeyType         currentKey       = KeyType::ENUM_END;
+
             while (file.getline(line, LINE_CHARS_MAX)) 
             {
                 LOG("line");
                 if (line[0] == '\0' || line[0] == ' ') continue;
                 
-                u32 valueBegin = 0;
-                KeyType currentKey = KeyType::ENUM_END;
+                u32 valueBegin = 0; //there can be lines without values (key only)
 
                 for(u32 i = 0; i < LINE_CHARS_MAX; ++i)
                 {
+                    //?VALUE FOUND
                     if (line[i] == ':')
                     {
                         valueBegin = i + 1;
                     }
+                    //?AT LINE END
                     else if (line[i] == '\0')
                     {
-                        currentKey = GetKey({ line, valueBegin == 0 ? i : valueBegin - 1 });
+                        //TODO: get key vs get component - depends if we are nested in a component key 
+                        currentKey = GetKey({ line, valueBegin == 0 ? i : valueBegin - 1 }); //whole line can be a key
                         LOG("key", (int)currentKey);
 
-                        if (currentKey == KeyType::prefab)
+                        if (currentKey == KeyType::PREFAB)
                         {
+                            if (valueBegin == 0) 
+                            {
+                                WARN("key prefab without value!");
+                                break;
+                            }
                             currentPrefab = GetPrefabType({ line + valueBegin, i - valueBegin }); 
                             LOG("prefab", (int)currentPrefab);
                             break;
                         }
-                        else if (currentPrefab != PrefabType::ENUM_END)
+
+                        if (currentPrefab != PrefabType::ENUM_END)
                         {
-                            //key type is ENUM_END for component
-                            const auto componentType = GetComponentType({ line, valueBegin == 0 ? i : valueBegin - 1 });
-                            if (componentType == ComponentType::ENUM_END)
-                                break;
-
-                            arrays.signatures[(u32)currentPrefab].Set<true>(componentType);
-                            if (valueBegin != 0)
+                            if (currentKey == KeyType::COMPONENT)
                             {
-                                switch(componentType)
+                                if (valueBegin == 0) 
                                 {
-                                    case ComponentType::Transform:  LOG("parse component data"); break;
+                                    WARN("key component without value!");
+                                    break;
                                 }
+                                currentComponent = GetComponentType({ line + valueBegin, i - valueBegin }); 
+                                LOG("component", (int)currentComponent);
+                                arrays.signatures[(u32)currentPrefab].Set<true>(currentComponent);
                             }
-                           
+
+                            //TODO:parse lines
                         }
-
-                        break; //line finished
+                        
+                        break; //!line finished
                     }
-
-
-
-                    //GET KEY
-                    //if (line[i] == ':' || (line[i] == '\0' && valueBegin == 0))
-                    //{
-                    //    currentKey = GetKey({ line, i });
-                    //    LOG("key", (int)currentKey);
-                    //    valueBegin = i + 1;
-                    //}
-                    // //GET VALUE
-                    //else if (line[i] == '\0')
-                    //{
-                    //    //SET CURRENT PREFAB INDEX
-                    //    if (currentKey == KeyType::prefab)
-                    //    {
-                    //        currentPrefab = GetPrefabType({ line + valueBegin, i - valueBegin }); 
-                    //        LOG("prefab", (int)currentPrefab);
-                    //    }
-                    //    //PARSE COMPONENT DATA (if value and if valid prefab)
-                    //    else if (currentPrefab != PrefabType::ENUM_END)
-                    //    {
-                    //        switch (currentKey)
-                    //        {
-                    //            case KeyType::ui: LOG("parse ui component"); break;
-                    //            //TODO: more
-                    //            //TODO: write component data parse
-                    //        }
-                    //    }
-                    //}
-                    ////END OF LINE PARSING
-                    //if (line[i] == '\0')
-                    //    break;
                 }
             } 
         }
