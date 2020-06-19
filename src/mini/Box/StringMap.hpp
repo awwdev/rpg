@@ -66,7 +66,11 @@ namespace mini::box
         {
             for(const auto& pair : pairs) {
                 const auto hash = Hash(pair.str);
-                //! there is no uniqueness check 
+                if (GetOptional(pair.str) != nullptr) {
+                    //!on compile time you get this error:
+                    //!error C2131: expression did not evaluate to a constant
+                    WARN("StringMap: key already exists (needs unique key)");
+                }       
                 buckets[hash].Add(pair);
             }
         }

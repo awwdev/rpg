@@ -32,10 +32,10 @@ int WINAPI wWinMain(
         { "foo", 1.f },
         { "abc", 2.f },
         { "123", 3.f },
-        { "123", 3.f },
+        //{ "123", 3.f },
     };
     box::PrintStringMap(map);
-    LOG(*map.GetOptional("foo"));
+    //LOG(*map.GetOptional("foo"));
     system("pause");
     std::exit(0);
 
