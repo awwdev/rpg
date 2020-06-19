@@ -6,6 +6,7 @@
 #include "mini/Debug/Console.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/Box/Map.hpp"
+#include "mini/Box/StringMap.hpp"
 #include "mini/Utils/Types.hpp"
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Memory/AllocatorPrint.hpp"
@@ -25,6 +26,17 @@ int WINAPI wWinMain(
     _In_        PWSTR pCmdLine,
     _In_        int nCmdShow)
 {
+    dbg::Console console {};
+    constexpr box::StringMap<float> map
+    {
+        { "foo", 1.f },
+        { "abc", 2.f },
+        { "123", 3.f },
+    };
+    box::PrintStringMap(map);
+    system("pause");
+    std::exit(0);
+
     {
         //? META
         dbg::Console console {};

@@ -14,13 +14,25 @@
 
 namespace mini::ecs
 {
-    //?text layout:
+    //?text layout: MiniFormat
     /*
-    PREFAB:Foo
+    PREFAB:Foo1
     COMPONENT:Transform
-    pos:0,0
-    rot:180
-    scale:1,1,2
+    data1:0
+    COMPONENT:RenderData
+    data1:42
+    data2
+
+    PREFAB:Foo2
+    COMPONENT:Transform
+    data1
+    data2
+
+    #basically key value pairs PER LINE (delimiter is :)
+    #there can be key only PER LINE
+    #while PREFAB and COMPONENT are named keys, COMPONENT_DATA is implicit (no need to write it everytime)
+    #values can have additional delimiter (,) for arrays/vecs
+    #watch spaces and cases
     */
 
     enum class PrefabType
@@ -30,18 +42,18 @@ namespace mini::ecs
         ENUM_END
     };
 
+    const box::IndexMap<box::String<20>, PrefabType::ENUM_END> prefabTypeToStr
+    {
+        { PrefabType::Foo1,   "Foo1"   },
+        { PrefabType::Foo2,   "Foo2"   },
+    };
+
     enum class KeyType
     {
         PREFAB,
         COMPONENT,
         COMPONENT_DATA, //no str (internal use)
         ENUM_END
-    };
-
-    const box::IndexMap<box::String<20>, PrefabType::ENUM_END> prefabTypeToStr
-    {
-        { PrefabType::Foo1,   "Foo1"   },
-        { PrefabType::Foo2,   "Foo2"   },
     };
 
     const box::IndexMap<box::String<20>, KeyType::ENUM_END> keyTypeToStr 
@@ -58,7 +70,7 @@ namespace mini::ecs
                 return (KeyType)i;
         FOR_INDEX_MAP_END
 
-        //a key can be the component type itself (nesting)
+        //!a key can be the component type itself
         if (GetComponentDataType(view) != ComponentData::ENUM_END)
             return KeyType::COMPONENT_DATA;
 
@@ -105,6 +117,7 @@ namespace mini::ecs
             PrefabType currentPrefab = PrefabType::ENUM_END;   
             ComponentType currentComponent = ComponentType::ENUM_END;
 
+            //? "TOKENIZING"
             while (file.getline(line, LINE_CHARS_MAX)) 
             {
                 LOG("line");
@@ -170,3 +183,19 @@ namespace mini::ecs
     };  
 
 }//ns
+
+//TODO: currently we have string from text, and then we iterate WHOLE map and do matching to eventually get the enum ...
+//it would be better to have the map reversed, where the string is the index
+//this means we need a hashmap (str gets transformed into int), and then we check if index exists
+
+//IDEA: fixed buckets, simple hash function, when you add something to the map it gets hased too
+//and the index is stored in that array
+//when you call contains you hash again, get the bucket (and then iterate the bucket only, could have multiple hashes)
+
+//template<class T> int hash(const T&) -> BUCKET that stores indices
+//sizeof(T) % 10
+
+//USE THIS FOR ADDITIONAL PERFORMANCE ON INDEX MAP 
+// (*str % 10)
+
+//insertion where string is key however would be better but also more intense
