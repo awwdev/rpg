@@ -26,19 +26,6 @@ int WINAPI wWinMain(
     _In_        PWSTR pCmdLine,
     _In_        int nCmdShow)
 {
-    dbg::Console console {};
-    constexpr box::StringMap<float> map
-    {
-        { "foo", 1.f },
-        { "abc", 2.f },
-        { "123", 3.f },
-        //{ "123", 3.f },
-    };
-    box::PrintStringMap(map);
-    //LOG(*map.GetOptional("foo"));
-    system("pause");
-    std::exit(0);
-
     {
         //? META
         dbg::Console console {};

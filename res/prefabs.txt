@@ -1,11 +1,3 @@
 PREFAB:Foo1
 COMPONENT:Transform
 data1:0
-COMPONENT:RenderData
-data1:42
-data2
-
-PREFAB:Foo2
-COMPONENT:Transform
-data1
-data2

@@ -3,6 +3,7 @@
 #pragma once
 #include "mini/ECS/ComponentArray.hpp"
 #include "mini/Box/IndexMap.hpp"
+#include "mini/Box/StringMap.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Utils/Utils.hpp"
@@ -42,10 +43,10 @@ namespace mini::ecs
         ENUM_END
     };
 
-    const box::IndexMap<box::String<20>, PrefabType::ENUM_END> prefabTypeToStr
+    constexpr box::StringMap<PrefabType> prefabTypeToStr
     {
-        { PrefabType::Foo1,   "Foo1"   },
-        { PrefabType::Foo2,   "Foo2"   },
+        { "Foo1",   PrefabType::Foo1 },
+        { "Foo2",   PrefabType::Foo2 },
     };
 
     enum class KeyType
@@ -56,21 +57,18 @@ namespace mini::ecs
         ENUM_END
     };
 
-    const box::IndexMap<box::String<20>, KeyType::ENUM_END> keyTypeToStr 
+    constexpr box::StringMap<KeyType> keyTypeToStr 
     {
-        { KeyType::PREFAB,      "PREFAB"    },
-        { KeyType::COMPONENT,   "COMPONENT" },
+        { "PREFAB",     KeyType::PREFAB     },
+        { "COMPONENT",  KeyType::COMPONENT  },
     };
 
 
     inline KeyType GetKey(const utils::CharsView& view)
     {
-        FOR_INDEX_MAP_BEGIN(keyTypeToStr, i)
-            if (utils::CharsCompare(view, keyTypeToStr.Get(i).dataPtr))
-                return (KeyType)i;
-        FOR_INDEX_MAP_END
+        const auto* const key = keyTypeToStr.GetOptional(view);
+        if (key) return *key;
 
-        //!a key can be the component type itself
         if (GetComponentDataType(view) != ComponentData::ENUM_END)
             return KeyType::COMPONENT_DATA;
 
@@ -80,10 +78,8 @@ namespace mini::ecs
 
     inline PrefabType GetPrefabType(const utils::CharsView& view)
     {
-        FOR_INDEX_MAP_BEGIN(prefabTypeToStr, i)
-            if (utils::CharsCompare(view, prefabTypeToStr.Get(i).dataPtr))
-                return (PrefabType)i;
-        FOR_INDEX_MAP_END
+        const auto* const  value = prefabTypeToStr.GetOptional(view);
+        if (value) return *value;
         WARN("str to enum: invalid prefab type");
         return PrefabType::ENUM_END;
     }

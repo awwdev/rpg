@@ -3,6 +3,7 @@
 #pragma once
 #include "mini/Math/Matrix.hpp"
 #include "mini/Box/IndexMap.hpp"
+#include "mini/Box/StringMap.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Utils/CharsView.hpp"
 
@@ -16,19 +17,17 @@ namespace mini::ecs
         ENUM_END
     };
 
-    const box::IndexMap<box::String<20>, ComponentData::ENUM_END> componentDataToStr
+    constexpr box::StringMap<ComponentData> componentDataToStr
     {
-        { ComponentData::pos ,         "pos"   },
-        { ComponentData::data1 ,       "data1" },
-        { ComponentData::data2 ,       "data2" },
+        { "pos"   , ComponentData::pos    },
+        { "data1" , ComponentData::data1  },
+        { "data2" , ComponentData::data2  },
     };
 
     inline ComponentData GetComponentDataType(const utils::CharsView& view)
     {
-        FOR_INDEX_MAP_BEGIN(componentDataToStr, i)
-            if (utils::CharsCompare(view, componentDataToStr.Get(i).dataPtr))
-                return (ComponentData)i;
-        FOR_INDEX_MAP_END
+        const auto* const  value = componentDataToStr.GetOptional(view);
+        if (value) return *value;
         WARN("str to enum: invalid component data type");
         return ComponentData::ENUM_END;
     }
