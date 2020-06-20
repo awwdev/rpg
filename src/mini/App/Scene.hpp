@@ -15,15 +15,20 @@ namespace mini::app
     {
         box::String<10> name { "Scene1" };
         ecs::ECS ecs;
-        ecs::Prefabs prefabs; //TODO: move into Resources
 
         Scene()
         {
-            prefabs.Parse("res/prefabs.txt"); //TODO: move into Resources
+            ecs.prefabs.Parse("res/prefabs.txt"); //TODO: move somewhere else?
+            ecs.AddEntity(ecs::PrefabType::UI_FpsMonitor);
+            ecs.AddEntity(ecs::PrefabType::UI_FpsMonitor);
+            //TODO: add buttons (button logic where?)
         }
 
         inline void Update(IRenderer& renderer, const double dt)
         {
+            //TODO: just call system functions: draw ui entities
+            
+
             ui::FPS_Monitor(renderer, dt);
 
             if (ui::Button(renderer, "Add Entity", {100, 200, 120, 30}) == ui::ButtonState::Released) {
@@ -37,29 +42,29 @@ namespace mini::app
             }
 
             //? PRINT ECS STUFF
-            /*for(auto i = 0; i < 9; ++i)
+            for(auto i = 0; i < 9; ++i)
             {
                 char buf[10] = "e";
 
                 //? entity id
-                 if (ecs.entities.Test(i))
+                if (ecs.entities.Test(i))
                     sprintf_s(buf, "%d", i);
                 renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33*0, 32, 32});
 
                 //? lookup
-                sprintf_s(buf, "%d", ecs.arrays.transforms.cLookup[i]);
+                sprintf_s(buf, "%d", ecs.arrays.uiData.componentLookup[i]);
                 renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33*1, 32, 32});
 
                 //? dense
-                if (i < ecs.arrays.transforms.dense.Count()) {
+                if (i < ecs.arrays.uiData.dense.Count()) {
                     sprintf_s(buf, "%d", i);
                     renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33*2, 32, 32});
                 }
 
                 //? reverse
-                sprintf_s(buf, "%d", ecs.arrays.transforms.eLookup[i]);
+                sprintf_s(buf, "%d", ecs.arrays.uiData.entityLookup[i]);
                 renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33*3, 32, 32});
-            }*/ 
+            } 
 
 
 

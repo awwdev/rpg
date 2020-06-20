@@ -34,11 +34,26 @@ namespace mini::ecs
         void AddComponent(const ID entityID, CtorArgs&&... args)
         {
             if (componentLookup[entityID] != NONE) {
-                WARN("adding component that already exists");
+                WARN("add component that alread exists");
+                dense[componentLookup[entityID]] = { args... };
                 return;
             }
             
             dense.Append(std::forward<CtorArgs>(args)...);
+            componentLookup[entityID] = dense.count - 1;
+            entityLookup[dense.count - 1] = entityID;
+        }
+
+        void CopyComponentOptional(const ID entityID, const COMPONENT* other)
+        {
+            if (other == nullptr) return; //if nullptr do nothing (the optional part)
+
+            if (componentLookup[entityID] != NONE) {
+                dense[componentLookup[entityID]] = *other; 
+                return;
+            }
+            
+            dense.Append(*other);
             componentLookup[entityID] = dense.count - 1;
             entityLookup[dense.count - 1] = entityID;
         }
@@ -72,6 +87,17 @@ namespace mini::ecs
                 case ComponentType::RenderData: renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);     break;
                 case ComponentType::UI:         uiData.AddComponent(entityID, std::forward<CtorArgs>(args)...);         break;
             }
+        }
+
+        template<u32 OTHER_MAX_COUNT>
+        void CopyComponents(
+            const ID entityID, 
+            const ID otherEntityID, 
+            const ComponentArrays<OTHER_MAX_COUNT>& other)
+        {
+            transforms.CopyComponentOptional (entityID, other.transforms.GetOptional(otherEntityID));
+            renderData.CopyComponentOptional (entityID, other.renderData.GetOptional(otherEntityID));
+            uiData.CopyComponentOptional     (entityID, other.uiData.GetOptional(otherEntityID));
         }
     };
 
