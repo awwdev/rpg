@@ -27,7 +27,7 @@ namespace mini::box
         void Append(CtorArgs&&... args)
         {
             //TODO: bounds check?
-            data[count - 1] = { std::forward<CtorArgs>(args)... };
+            data[count] = { std::forward<CtorArgs>(args)... };
             ++count;
         }
 

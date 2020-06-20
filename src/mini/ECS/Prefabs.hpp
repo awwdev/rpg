@@ -11,6 +11,7 @@
 #include "mini/Utils/CharsView.hpp"
 
 #include <fstream>
+#include <cstdlib>
 
 
 namespace mini::ecs
@@ -38,15 +39,15 @@ namespace mini::ecs
 
     enum class PrefabType
     {
-        Foo1,
+        UI_FpsMonitor,
         Foo2,
         ENUM_END
     };
 
-    constexpr box::StringMap<PrefabType> prefabTypeToStr
+    const box::StringMap<PrefabType> prefabTypeToStr
     {
-        { "Foo1",   PrefabType::Foo1 },
-        { "Foo2",   PrefabType::Foo2 },
+        { "UI_FpsMonitor",   PrefabType::UI_FpsMonitor },
+        { "Foo2",            PrefabType::Foo2 },
     };
 
     enum class KeyType
@@ -57,7 +58,7 @@ namespace mini::ecs
         ENUM_END
     };
 
-    constexpr box::StringMap<KeyType> keyTypeToStr 
+    const box::StringMap<KeyType> keyTypeToStr 
     {
         { "PREFAB",     KeyType::PREFAB     },
         { "COMPONENT",  KeyType::COMPONENT  },
@@ -82,17 +83,6 @@ namespace mini::ecs
         if (value) return *value;
         WARN("str to enum: invalid prefab type");
         return PrefabType::ENUM_END;
-    }
-
-    inline void ParseComponentData(const utils::CharsView& key, const utils::CharsView& value)
-    {
-        const auto type = GetComponentDataType(key);
-        switch(type)
-        {
-            case ComponentData::pos:    LOG("parse component pos");   break;
-            case ComponentData::data1:  LOG("parse component data1"); break;
-            case ComponentData::data2:  LOG("parse component data2"); break;
-        }
     }
 
 
@@ -159,7 +149,7 @@ namespace mini::ecs
                                     break;
                                 }
                                 currentComponent = GetComponentType({ line + valueBegin, i - valueBegin }); 
-                                arrays.signatures[(u32)currentPrefab].Set<true>(currentComponent);
+                                arrays.AddComponent((ID)currentPrefab, currentComponent);
                                 LOG("component", (int)currentComponent);
                                 break;
                             }
@@ -176,22 +166,21 @@ namespace mini::ecs
             } 
         }
 
+        void ParseComponentData(const utils::CharsView& key, const utils::CharsView& value)
+        {
+            const auto type = GetComponentDataType(key);
+            switch(type)
+            {
+                case ComponentData::pos:    
+                    arrays.transforms.dense.Last().pos[0][0] = std::atoi(value.beginPtr);
+                    LOG("parse component pos", arrays.transforms.dense.Last().pos[0][0]);   
+                break;
+
+                case ComponentData::data1:  LOG("parse component data1"); break;
+                case ComponentData::data2:  LOG("parse component data2"); break;
+            }
+        }
+
     };  
 
 }//ns
-
-//TODO: currently we have string from text, and then we iterate WHOLE map and do matching to eventually get the enum ...
-//it would be better to have the map reversed, where the string is the index
-//this means we need a hashmap (str gets transformed into int), and then we check if index exists
-
-//IDEA: fixed buckets, simple hash function, when you add something to the map it gets hased too
-//and the index is stored in that array
-//when you call contains you hash again, get the bucket (and then iterate the bucket only, could have multiple hashes)
-
-//template<class T> int hash(const T&) -> BUCKET that stores indices
-//sizeof(T) % 10
-
-//USE THIS FOR ADDITIONAL PERFORMANCE ON INDEX MAP 
-// (*str % 10)
-
-//insertion where string is key however would be better but also more intense

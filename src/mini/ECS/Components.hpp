@@ -17,7 +17,7 @@ namespace mini::ecs
         ENUM_END
     };
 
-    constexpr box::StringMap<ComponentData> componentDataToStr
+    const box::StringMap<ComponentData> componentDataToStr
     {
         { "pos"   , ComponentData::pos    },
         { "data1" , ComponentData::data1  },
