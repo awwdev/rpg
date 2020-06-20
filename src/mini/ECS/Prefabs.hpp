@@ -18,20 +18,15 @@ namespace mini::ecs
 {
     //?text layout: MiniFormat
     /*
-    PREFAB:Foo1
-    COMPONENT:Transform
-    data1:0
-    COMPONENT:RenderData
-    data1:42
-    data2
-
-    PREFAB:Foo2
-    COMPONENT:Transform
+    PREFAB:UI_FpsMonitor
+    COMPONENT:UI
+    pos:20,20
+    COMPONENT:XYZ
     data1
-    data2
+    data2:123
 
     #basically key value pairs PER LINE (delimiter is :)
-    #there can be key only PER LINE
+    #there can be key only PER LINE (empty component)
     #while PREFAB and COMPONENT are named keys, COMPONENT_DATA is implicit (no need to write it everytime)
     #values can have additional delimiter (,) for arrays/vecs
     #watch spaces and cases
@@ -85,6 +80,14 @@ namespace mini::ecs
         return PrefabType::ENUM_END;
     }
 
+    inline auto ParseVector2(utils::CharsView view)
+    {
+        math::Vec2f vec;
+        vec[V::Vx] = std::atoi(view.beginPtr);
+        while(*view.beginPtr != ',') { ++(view.beginPtr); }
+        vec[V::Vy] = std::atoi(view.beginPtr+1);
+        return vec;
+    }
 
     struct Prefabs
     {
@@ -115,15 +118,14 @@ namespace mini::ecs
 
                 for(u32 i = 0; i < LINE_CHARS_MAX; ++i)
                 {
-                    //?VALUE FOUND
                     if (line[i] == ':')
                     {
-                        valueBegin = i + 1;
+                        valueBegin = i + 1; //value found
                     }
+
                     //?LINE END
                     else if (line[i] == '\0')
                     {
-                        //? GET THE KEY
                         currentKey = GetKey({ line, valueBegin == 0 ? i : valueBegin - 1 });
                         LOG("key", (int)currentKey);
 
@@ -149,12 +151,13 @@ namespace mini::ecs
                                     break;
                                 }
                                 currentComponent = GetComponentType({ line + valueBegin, i - valueBegin }); 
+                                //add default component (and customize it when we actaully have a key see below)
                                 arrays.AddComponent((ID)currentPrefab, currentComponent);
                                 LOG("component", (int)currentComponent);
                                 break;
                             }
                             
-                            if (currentKey == KeyType::COMPONENT_DATA)
+                            if (currentKey == KeyType::COMPONENT_DATA) //implicit key
                             {
                                 ParseComponentData(currentComponent, { line, valueBegin - 1 }, { line + valueBegin, i - valueBegin });
                             }
@@ -168,21 +171,22 @@ namespace mini::ecs
 
         void ParseComponentData(const ComponentType& componentType, const utils::CharsView& key, const utils::CharsView& value)
         {
-            const auto type = GetComponentDataType(key);
-            switch(type)
+            //!the name of a component data could be the same for multiple component types
+            const auto dataType = GetComponentDataType(key);
+            switch(dataType)
             {
-                //!the name of a component data could be the same for multiple component types
                 case ComponentData::pos:   
                 {
                     if (componentType == ComponentType::UI)
                     {
-                        //TODO: chars vector to int vector
-                        arrays.uiData.dense.Last().pos[0][0] = std::atoi(value.beginPtr);
-                        LOG("parse component pos", arrays.uiData.dense.Last().pos[0][0]);  
+                        const auto vec2 = ParseVector2(value);
+                        arrays.uiData.dense.Last().pos = vec2;
+                        LOG("parse component pos", vec2);  
                     }
                 } 
                 break;
-                     
+
+                //TODO: add more 
                 case ComponentData::data1:  LOG("parse component data1"); break;
                 case ComponentData::data2:  LOG("parse component data2"); break;
             }

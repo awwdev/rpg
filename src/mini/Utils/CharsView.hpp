@@ -7,8 +7,8 @@ namespace mini::utils
 {
     struct CharsView
     {
-        chars_t   beginPtr;
-        const u32 count;
+        const char* beginPtr;
+        const u32   count;
     };
 
     inline bool CharsCompare(const CharsView& view, chars_t chars)

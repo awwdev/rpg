@@ -9,6 +9,13 @@
 
 namespace mini::ecs
 {
+    //? WORKFLOW:
+    //1) add enum
+    //2) add string 
+    //3) add struct
+    //4) add to ComponentArrays
+    //5) add parsing (prefabs)
+
     enum ComponentType
     {
         Transform, 
