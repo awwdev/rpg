@@ -85,9 +85,23 @@ namespace mini::ecs
         math::Vec2i vec;
         vec[V::Vx] = std::atoi(view.beginPtr);
         while(*view.beginPtr != ',') { ++(view.beginPtr); }
-        vec[V::Vy] = std::atoi(view.beginPtr+1);
+        vec[V::Vy] = std::atoi(++view.beginPtr);
         return vec;
     }
+
+    inline auto ParseRect(utils::CharsView view)
+    {
+        Rect<int> rect;
+        rect.x = std::atoi(view.beginPtr);
+        while(*view.beginPtr != ',') { ++(view.beginPtr); }
+        rect.y = std::atoi(++view.beginPtr);
+        while(*view.beginPtr != ',') { ++(view.beginPtr); }
+        rect.w = std::atoi(++view.beginPtr);
+        while(*view.beginPtr != ',') { ++(view.beginPtr); }
+        rect.h = std::atoi(++view.beginPtr);
+        return rect;
+    }
+
 
     struct Prefabs
     {
@@ -175,20 +189,20 @@ namespace mini::ecs
             const auto dataType = GetComponentDataType(key);
             switch(dataType)
             {
-                case ComponentData::pos:   
+                case ComponentData::box:   
                 {
-                    if (componentType == ComponentType::UI)
-                    {
-                        const auto vec2 = ParseVector2(value);
-                        arrays.uiData.dense.Last().pos = vec2;
-                        LOG("parse component pos", vec2);  
-                    }
+                    const auto rect = ParseRect(value);
+                    arrays.uiData.dense.Last().rect = rect;
+                    LOG("parse component rect", rect.x, rect.y, rect.w, rect.h);  
                 } 
                 break;
 
-                //TODO: add more 
-                case ComponentData::data1:  LOG("parse component data1"); break;
-                case ComponentData::data2:  LOG("parse component data2"); break;
+                case ComponentData::text:   
+                {
+                    arrays.uiData.dense.Last().text.Set(value.beginPtr);
+                    LOG("parse component text", value.beginPtr);  
+                } 
+                break;
             }
         }
 

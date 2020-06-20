@@ -69,7 +69,11 @@ namespace mini::app::ui
     {
         FOR_ARRAY(uiData, i)
         {
-            renderer.Add_DrawQuad({uiData[i].pos[Vx], uiData[i].pos[Vy], 32, 32});
+            renderer.Add_DrawQuad(uiData[i].rect);
+            renderer.Add_DrawText(uiData[i].text.dataPtr, uiData[i].rect.x, uiData[i].rect.y, renderer.hostResources.fonts.default_font);
+            //shape
+            //text
+            //color
         }
     }
 

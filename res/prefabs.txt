@@ -1,3 +1,4 @@
 PREFAB:UI_FpsMonitor
 COMPONENT:UI
-pos:20,20
+box:20,20,80,16
+text:FPS

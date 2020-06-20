@@ -6,6 +6,7 @@
 #include "mini/Box/StringMap.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Utils/CharsView.hpp"
+#include "mini/Utils/Utils.hpp"
 
 namespace mini::ecs
 {
@@ -34,16 +35,16 @@ namespace mini::ecs
     enum class ComponentData
     {
         pos,
-        data1,
-        data2,
+        text,
+        box,
         ENUM_END
     };
 
     const box::StringMap<ComponentData> componentDataToStr
     {
         { "pos"   , ComponentData::pos    },
-        { "data1" , ComponentData::data1  },
-        { "data2" , ComponentData::data2  },
+        { "box"   , ComponentData::box    },
+        { "text " , ComponentData::text   },
     };
 
 
@@ -81,7 +82,8 @@ namespace mini::ecs
 
     struct C_UI
     {
-        math::Vec2i pos;
+        Rect<int>        rect;
+        box::String<20>  text;
     };
     
 }//ns

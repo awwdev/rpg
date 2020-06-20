@@ -27,10 +27,14 @@ namespace mini::app
         {
             ui::RenderUI(renderer, ecs.arrays.uiData.dense);
 
+            //THE PREFAB ID COULD ALSO BE THE ACTUAL ID (however only works for singletons)
             //TODO: Buttonid (style in text and functionality hardcoded)
             //button enum
 
             ui::FPS_Monitor(renderer, dt);
+
+
+
 
             if (ui::Button(renderer, "Add Entity", {100, 200, 120, 30}) == ui::ButtonState::Released) {
                 //const auto id = ecs.AddEntity();
