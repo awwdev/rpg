@@ -82,7 +82,7 @@ namespace mini::ecs
 
     inline auto ParseVector2(utils::CharsView view)
     {
-        math::Vec2f vec;
+        math::Vec2i vec;
         vec[V::Vx] = std::atoi(view.beginPtr);
         while(*view.beginPtr != ',') { ++(view.beginPtr); }
         vec[V::Vy] = std::atoi(view.beginPtr+1);

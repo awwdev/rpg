@@ -81,7 +81,7 @@ namespace mini::ecs
 
     struct C_UI
     {
-        math::Vec2f pos;
+        math::Vec2i pos;
     };
     
 }//ns

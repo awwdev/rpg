@@ -5,6 +5,7 @@
 #include "mini/Utils/Utils.hpp"
 #include "mini/App/IRenderer.hpp"
 #include "mini/Window/AppEvents.hpp"
+#include "mini/ECS/ComponentArray.hpp"
 
 namespace mini::app::ui
 {
@@ -62,6 +63,14 @@ namespace mini::app::ui
 
         renderer.Add_DrawQuad({0, 0, 80, 16}, {1, 1, 1, 0.5});
         renderer.Add_DrawText(fpsStr.dataPtr, 2, 2, renderer.hostResources.fonts.default_font);
+    }
+
+    inline void RenderUI(IRenderer& renderer, const box::IArray<ecs::C_UI>& uiData)
+    {
+        FOR_ARRAY(uiData, i)
+        {
+            renderer.Add_DrawQuad({uiData[i].pos[Vx], uiData[i].pos[Vy], 32, 32});
+        }
     }
 
 }//ns

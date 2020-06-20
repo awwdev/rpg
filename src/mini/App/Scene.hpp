@@ -20,14 +20,15 @@ namespace mini::app
         {
             ecs.prefabs.Parse("res/prefabs.txt"); //TODO: move somewhere else?
             ecs.AddEntity(ecs::PrefabType::UI_FpsMonitor);
-            ecs.AddEntity(ecs::PrefabType::UI_FpsMonitor);
             //TODO: add buttons (button logic where?)
         }
 
         inline void Update(IRenderer& renderer, const double dt)
         {
-            //TODO: just call system functions: draw ui entities
-            
+            ui::RenderUI(renderer, ecs.arrays.uiData.dense);
+
+            //TODO: Buttonid (style in text and functionality hardcoded)
+            //button enum
 
             ui::FPS_Monitor(renderer, dt);
 
@@ -42,6 +43,7 @@ namespace mini::app
             }
 
             //? PRINT ECS STUFF
+            /*
             for(auto i = 0; i < 9; ++i)
             {
                 char buf[10] = "e";
@@ -65,6 +67,7 @@ namespace mini::app
                 sprintf_s(buf, "%d", ecs.arrays.uiData.entityLookup[i]);
                 renderer.Add_DrawLabel(buf, { 100 + (int)i*33, 33*3, 32, 32});
             } 
+            */
 
 
 
