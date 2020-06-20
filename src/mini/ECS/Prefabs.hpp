@@ -156,7 +156,7 @@ namespace mini::ecs
                             
                             if (currentKey == KeyType::COMPONENT_DATA)
                             {
-                                ParseComponentData({ line, valueBegin - 1 }, { line + valueBegin, i - valueBegin });
+                                ParseComponentData(currentComponent, { line, valueBegin - 1 }, { line + valueBegin, i - valueBegin });
                             }
                         }
                         
@@ -166,16 +166,23 @@ namespace mini::ecs
             } 
         }
 
-        void ParseComponentData(const utils::CharsView& key, const utils::CharsView& value)
+        void ParseComponentData(const ComponentType& componentType, const utils::CharsView& key, const utils::CharsView& value)
         {
             const auto type = GetComponentDataType(key);
             switch(type)
             {
-                case ComponentData::pos:    
-                    arrays.transforms.dense.Last().pos[0][0] = std::atoi(value.beginPtr);
-                    LOG("parse component pos", arrays.transforms.dense.Last().pos[0][0]);   
+                //!the name of a component data could be the same for multiple component types
+                case ComponentData::pos:   
+                {
+                    if (componentType == ComponentType::UI)
+                    {
+                        //TODO: chars vector to int vector
+                        arrays.uiData.dense.Last().pos[0][0] = std::atoi(value.beginPtr);
+                        LOG("parse component pos", arrays.uiData.dense.Last().pos[0][0]);  
+                    }
+                } 
                 break;
-
+                     
                 case ComponentData::data1:  LOG("parse component data1"); break;
                 case ComponentData::data2:  LOG("parse component data2"); break;
             }

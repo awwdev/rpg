@@ -1,3 +1,3 @@
 PREFAB:UI_FpsMonitor
-COMPONENT:Transform
-pos:20
+COMPONENT:UI
+pos:20,20

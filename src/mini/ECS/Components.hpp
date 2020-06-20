@@ -9,6 +9,21 @@
 
 namespace mini::ecs
 {
+    enum ComponentType
+    {
+        Transform, 
+        RenderData,
+        UI,
+        ENUM_END
+    };
+
+    const box::IndexMap<box::String<20>, ComponentType::ENUM_END> componentTypeToStr
+    {
+        { ComponentType::Transform,     "Transform"   },
+        { ComponentType::RenderData,    "RenderData"  },
+        { ComponentType::UI,            "UI"          },
+    };
+
     enum class ComponentData
     {
         pos,
@@ -24,6 +39,17 @@ namespace mini::ecs
         { "data2" , ComponentData::data2  },
     };
 
+
+    inline ComponentType GetComponentType(const utils::CharsView& view)
+    {
+        FOR_INDEX_MAP_BEGIN(componentTypeToStr, i)
+            if (utils::CharsCompare(view, componentTypeToStr.Get(i).dataPtr))
+                return (ComponentType)i;
+        FOR_INDEX_MAP_END
+        WARN("str to enum: invalid component type");
+        return ComponentType::ENUM_END;
+    }
+
     inline ComponentData GetComponentDataType(const utils::CharsView& view)
     {
         const auto* const  value = componentDataToStr.GetOptional(view);
@@ -32,7 +58,7 @@ namespace mini::ecs
         return ComponentData::ENUM_END;
     }
 
-
+    //? COMPONENT STRUCTS
 
     struct C_Transform
     {
@@ -44,6 +70,11 @@ namespace mini::ecs
     struct C_RenderData
     {
 
+    };
+
+    struct C_UI
+    {
+        math::Vec2f pos;
     };
     
 }//ns
