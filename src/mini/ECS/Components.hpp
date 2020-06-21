@@ -37,6 +37,8 @@ namespace mini::ecs
         pos,
         text,
         box,
+        type,
+        state,
         ENUM_END
     };
 
@@ -44,7 +46,9 @@ namespace mini::ecs
     {
         { "pos"   , ComponentData::pos    },
         { "box"   , ComponentData::box    },
-        { "text " , ComponentData::text   },
+        { "text"  , ComponentData::text   },
+        { "type"  , ComponentData::type   },
+        { "state" , ComponentData::state   },
     };
 
 
@@ -84,6 +88,9 @@ namespace mini::ecs
     {
         Rect<int>        rect;
         box::String<20>  text;
+
+        enum Type  { Button, Label } type; 
+        enum State { Idle, Hovered, Hold, Released, Inactive } state;
     };
-    
+
 }//ns

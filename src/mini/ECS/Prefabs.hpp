@@ -35,14 +35,14 @@ namespace mini::ecs
     enum class PrefabType
     {
         UI_FpsMonitor,
-        Foo2,
+        UI_Button,
         ENUM_END
     };
 
     const box::StringMap<PrefabType> prefabTypeToStr
     {
-        { "UI_FpsMonitor",   PrefabType::UI_FpsMonitor },
-        { "Foo2",            PrefabType::Foo2 },
+        { "UI_FpsMonitor",   PrefabType::UI_FpsMonitor  },
+        { "UI_Button",       PrefabType::UI_Button      },
     };
 
     enum class KeyType
@@ -82,6 +82,7 @@ namespace mini::ecs
 
     inline auto ParseVector2(utils::CharsView view)
     {
+        //!atoi could be UB here
         math::Vec2i vec;
         vec[V::Vx] = std::atoi(view.beginPtr);
         while(*view.beginPtr != ',') { ++(view.beginPtr); }
@@ -91,6 +92,7 @@ namespace mini::ecs
 
     inline auto ParseRect(utils::CharsView view)
     {
+        //!atoi could be UB here
         Rect<int> rect;
         rect.x = std::atoi(view.beginPtr);
         while(*view.beginPtr != ',') { ++(view.beginPtr); }
@@ -123,7 +125,7 @@ namespace mini::ecs
             //? "TOKENIZING"
             while (file.getline(line, LINE_CHARS_MAX)) 
             {
-                LOG("line");
+                //LOG("line");
                 if (line[0] == '\0' || line[0] == ' ') continue;
                 
                 //per line validity (so reset)
@@ -141,7 +143,7 @@ namespace mini::ecs
                     else if (line[i] == '\0')
                     {
                         currentKey = GetKey({ line, valueBegin == 0 ? i : valueBegin - 1 });
-                        LOG("key", (int)currentKey);
+                        //LOG("key", (int)currentKey);
 
                         if (currentKey == KeyType::PREFAB)
                         {
@@ -151,7 +153,7 @@ namespace mini::ecs
                                 break;
                             }
                             currentPrefab = GetPrefabType({ line + valueBegin, i - valueBegin }); 
-                            LOG("prefab", (int)currentPrefab);
+                            //LOG("prefab", (int)currentPrefab);
                             break;
                         }
 
@@ -167,7 +169,7 @@ namespace mini::ecs
                                 currentComponent = GetComponentType({ line + valueBegin, i - valueBegin }); 
                                 //add default component (and customize it when we actaully have a key see below)
                                 arrays.AddComponent((ID)currentPrefab, currentComponent);
-                                LOG("component", (int)currentComponent);
+                                //LOG("component", (int)currentComponent);
                                 break;
                             }
                             
@@ -189,18 +191,31 @@ namespace mini::ecs
             const auto dataType = GetComponentDataType(key);
             switch(dataType)
             {
+                //TODO: box or rect? decide!
                 case ComponentData::box:   
                 {
                     const auto rect = ParseRect(value);
                     arrays.uiData.dense.Last().rect = rect;
-                    LOG("parse component rect", rect.x, rect.y, rect.w, rect.h);  
+                    //LOG("parse component rect", rect.x, rect.y, rect.w, rect.h);  
                 } 
                 break;
 
                 case ComponentData::text:   
                 {
                     arrays.uiData.dense.Last().text.Set(value.beginPtr);
-                    LOG("parse component text", value.beginPtr);  
+                    //LOG("parse component text", value.beginPtr);  
+                } 
+                break;
+
+                case ComponentData::type:   
+                {
+                    arrays.uiData.dense.Last().type = [&]
+                    {
+                        if (utils::CharsCompare(value, "Button")) return C_UI::Type::Button;
+                        if (utils::CharsCompare(value, "Label"))  return C_UI::Type::Label;
+                        return C_UI::Type::Label; //not impl yet
+                    }();
+                    //LOG("parse component type", value.beginPtr);  
                 } 
                 break;
             }

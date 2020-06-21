@@ -1,4 +1,11 @@
 PREFAB:UI_FpsMonitor
 COMPONENT:UI
-box:20,20,80,16
+box:0,0,80,16
 text:FPS
+type:Label
+
+PREFAB:UI_Button
+COMPONENT:UI
+box:100,100,100,32
+text:Button
+type:Button
