@@ -3,7 +3,7 @@
 #pragma once
 
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Utils/Vertex.hpp"
+#include "mini/Utils/Structs.hpp"
 #include "mini/Box/Array.hpp"
 
 namespace mini::vk

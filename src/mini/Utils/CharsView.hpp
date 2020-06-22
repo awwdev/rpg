@@ -22,6 +22,6 @@ namespace mini::utils
     }
 
     //TODO: more variants: view view, chars chars, str view, ...
-    //TODO: maybe rename the header to CharUtils.hpp
+    //TODO: maybe rename the header to CharAlgorithms.hpp
 
 }//ns

@@ -4,7 +4,7 @@
 #include "mini/Utils/Types.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/Box/AlignedStorage.hpp"
-#include "mini/Utils/Vertex.hpp"
+#include "mini/Utils/Structs.hpp"
 #include "mini/Resources/PrimitiveMeshes.hpp"
 #include "mini/Resources/Font.hpp"
 #include "mini/Resources/HostResources.hpp"
@@ -37,7 +37,7 @@ namespace mini::app
         }
 
 
-        inline void Add_DrawQuad(const Rect<int>& rect, math::Vec4f col = { 1, 1, 1, 1})
+        inline void Add_DrawQuad(const utils::Rect<int>& rect, math::Vec4f col = { 1, 1, 1, 1})
         {
             auto& group = vertexGroups.AppendReturn();
             group.v1 = vertices.Count();
@@ -77,8 +77,8 @@ namespace mini::app
 
                 const auto& coords = font.fontMap.GetValue(text[i]);
                 const auto quad = res::CreateRect<res::Indexed::Yes>(
-                    Rect<int>{ xx, y, (int)(fw * s), (int)(fh * s)}, 
-                    Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh },
+                    utils::Rect<int>{ xx, y, (int)(fw * s), (int)(fh * s)}, 
+                    utils::Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh },
                     { 0, 0, 0, 1}
                 );
 
@@ -95,7 +95,7 @@ namespace mini::app
         }
 
 
-        inline void Add_DrawLabel(chars_t text, const Rect<int>& rect, math::Vec4f col = { 1, 1, 1, 1})
+        inline void Add_DrawLabel(chars_t text, const utils::Rect<int>& rect, math::Vec4f col = { 1, 1, 1, 1})
         {
             Add_DrawQuad(rect, col);
             const auto w = hostResources.fonts.default_font.letter_w * std::strlen(text);
@@ -109,7 +109,7 @@ namespace mini::app
 
         //? whole renderer is on heap
         //? gpu api agnostic resources (that will be used in derived class to upload to gpu)
-        box::Array<Vertex, 2000> vertices; 
+        box::Array<utils::Vertex, 2000> vertices; 
         box::Array<uint32_t, 3000> indices;
         box::AlignedStorage<100000, vk::UboData_Default> uniforms; 
         

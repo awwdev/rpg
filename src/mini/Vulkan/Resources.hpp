@@ -15,7 +15,7 @@
 
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/HostResources.hpp"
-#include "mini/Utils/Vertex.hpp"
+#include "mini/Utils/Structs.hpp"
 
 namespace mini::vk
 {

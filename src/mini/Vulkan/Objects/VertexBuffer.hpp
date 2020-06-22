@@ -32,7 +32,7 @@ namespace mini::vk
             vertexBuffer.Create(
                 context.device, 
                 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                sizeof(Vertex) * MAX_VERTEX_COUNT,
+                sizeof(utils::Vertex) * MAX_VERTEX_COUNT,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                 context.physicalMemProps
             );
@@ -52,16 +52,16 @@ namespace mini::vk
         }
 
         //template<std::size_t N>
-        //void Store(const Vertex (&vertices)[N])
+        //void Store(const utils::Vertex (&vertices)[N])
         //{
         //    buffer.Store(vertices, sizeof(vertices));
         //    count = N;
         //    indexCount = N + (N / 2);
         //}
 //
-        //void Store(const Vertex* const vertices, const std::size_t pCount)
+        //void Store(const utils::Vertex* const vertices, const std::size_t pCount)
         //{
-        //    buffer.Store(vertices, pCount * sizeof(Vertex));
+        //    buffer.Store(vertices, pCount * sizeof(utils::Vertex));
         //    count = pCount;
         //    indexCount = pCount + (pCount / 2);
         //}

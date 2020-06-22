@@ -3,7 +3,7 @@
 #include "mini/Math/Matrix.hpp"
 #include <iostream>
 
-namespace mini
+namespace mini::utils
 {
     //default vertex struct
     struct Vertex
@@ -13,7 +13,7 @@ namespace mini
         math::Vec2f tex;
     };
 
-    std::ostream& operator<<(std::ostream& os, const Vertex& vert)
+    std::ostream& operator<<(std::ostream& os, const utils::Vertex& vert)
     {
         os << "vertex data\n";
         os << "pos " << vert.pos << '\n';
@@ -21,5 +21,13 @@ namespace mini
         os << "tex " << vert.tex;
         return os;
     }
+
+    using Color4f = math::Vec4f;
+
+    template<typename T>
+    struct Rect
+    {
+        T x, y, w, h;
+    };
 
 }//ns

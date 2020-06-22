@@ -6,7 +6,7 @@
 #include "mini/Box/StringMap.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Memory/Allocator.hpp"
-#include "mini/Utils/Utils.hpp"
+#include "mini/Utils/Algorithms.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Utils/CharsView.hpp"
 
@@ -93,7 +93,7 @@ namespace mini::ecs
     inline auto ParseRect(utils::CharsView view)
     {
         //!atoi could be UB here
-        Rect<int> rect;
+        utils::Rect<int> rect;
         rect.x = std::atoi(view.beginPtr);
         while(*view.beginPtr != ',') { ++(view.beginPtr); }
         rect.y = std::atoi(++view.beginPtr);

@@ -8,7 +8,7 @@
 #include "mini/Resources/HostResources.hpp"
 #include "mini/App/Scene.hpp"
 #include "mini/App/IRenderer.hpp"
-#include "mini/Utils/Vertex.hpp"
+#include "mini/Utils/Structs.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Window/AppEvents.hpp"
 
@@ -74,7 +74,7 @@ namespace mini::vk
             resources.ui_pushConst.wnd_w = wnd::window_w;
             resources.ui_pushConst.wnd_h = wnd::window_h;
 
-            resources.ui_vbo.vertexBuffer.Store(vertices.Data(), vertices.Count()  * sizeof(Vertex));
+            resources.ui_vbo.vertexBuffer.Store(vertices.Data(), vertices.Count()  * sizeof(utils::Vertex));
             resources.ui_vbo.indexBuffer.Store (indices.Data(), indices.Count() * sizeof(uint32_t));
 
             resources.ui_ibo.buffer.Store(uniforms.data, uniforms.CurrentSize());

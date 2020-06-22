@@ -6,7 +6,7 @@
 #include "mini/Box/StringMap.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Utils/CharsView.hpp"
-#include "mini/Utils/Utils.hpp"
+#include "mini/Utils/Structs.hpp"
 
 namespace mini::ecs
 {
@@ -86,7 +86,7 @@ namespace mini::ecs
 
     struct C_UI
     {
-        Rect<int>        rect;
+        utils::Rect<int> rect;
         box::String<20>  text;
 
         enum Type  { Button, Label } type; 

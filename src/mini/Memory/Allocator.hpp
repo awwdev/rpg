@@ -87,7 +87,7 @@ namespace mini::mem
 
     inline void GlobalAllocate()
     {
-        auto heapPtr = HeapAlloc(GetProcessHeap(), 0, ALLOC_SIZE);
+        auto heapPtr = VirtualAlloc(NULL, ALLOC_SIZE, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 
         allocPtrs[0] = (u8*)heapPtr;
         LOG("allocation:", ALLOC_INFOS[0].blockSize * ALLOC_INFOS[0].blockCount, (void*)allocPtrs[0]);
@@ -101,7 +101,7 @@ namespace mini::mem
 
     inline void GlobalDeallocate()
     {
-        HeapFree(GetProcessHeap(), 0, allocPtrs[0]);
+        VirtualFree(allocPtrs[0], 0, MEM_RELEASE);
     }
 
     enum class AutoClaim { Yes, No };

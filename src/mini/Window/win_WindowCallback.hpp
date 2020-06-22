@@ -24,7 +24,7 @@ namespace mini::wnd
         #define PRESSED(t, ...)  events.Append(t, EventState::Pressed, __VA_ARGS__);  pressed.Set<t, true>();
         #define RELEASED(t, ...) events.Append(t, EventState::Released, __VA_ARGS__); pressed.Set<t, false>();
 
-        ///mouse
+        //?mouse
 
         case WM_LBUTTONDOWN:    PRESSED (EventType::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
         case WM_RBUTTONDOWN:    PRESSED (EventType::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
@@ -38,7 +38,7 @@ namespace mini::wnd
         }
         break;             
 
-        ///keyboard
+        //?keyboard
 
         case WM_KEYDOWN:
             switch (wParam) 
@@ -58,7 +58,7 @@ namespace mini::wnd
             }
         break;
 
-        ///window
+        //?window
 
         case WM_CLOSE: events.Append(EventType::Window_Close); break;
 
@@ -84,12 +84,8 @@ namespace mini::wnd
             window_h = HIWORD(lParam);
         }
         break;
-
-        //case WM_EXITSIZEMOVE: 
-        //events.Append(EventType::Window_Resize); 
-        //break;
         
-        ///default
+        //?default
 
         default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
 

@@ -21,17 +21,17 @@ namespace mini::wnd
         {
             WNDCLASSEX wndClass {
                 .cbSize         = sizeof(WNDCLASSEX),
-                .style          = 0, //CS_HREDRAW | CS_VREDRAW
+                .style          = 0,
                 .lpfnWndProc    = WndProc1,
                 .cbClsExtra     = 0,
                 .cbWndExtra     = 0,
                 .hInstance      = hInst,
-                .hIcon          = NULL, //LoadIcon
-                .hCursor        = NULL, //LoadCursor
-                .hbrBackground  = 0, //HBRUSH GetStockObject
+                .hIcon          = NULL,
+                .hCursor        = NULL,
+                .hbrBackground  = 0,
                 .lpszMenuName   = NULL,
                 .lpszClassName  = className,
-                .hIconSm        = NULL //LoadImage
+                .hIconSm        = NULL
             };
 
             RegisterClassEx(&wndClass);
@@ -51,9 +51,7 @@ namespace mini::wnd
                 NULL
             );
 
-            //const auto hDc = GetDC(hWnd);
             ShowWindow(hWnd, SW_SHOWDEFAULT);
-            //UpdateWindow(window.hWnd);
         }
 
         ~Window()

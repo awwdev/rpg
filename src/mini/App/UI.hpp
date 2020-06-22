@@ -2,10 +2,11 @@
 
 #pragma once
 #include "mini/Utils/Types.hpp"
-#include "mini/Utils/Utils.hpp"
+#include "mini/Utils/Algorithms.hpp"
 #include "mini/App/IRenderer.hpp"
 #include "mini/Window/AppEvents.hpp"
 #include "mini/ECS/ComponentArray.hpp"
+#include "mini/Utils/Algorithms.hpp"
 
 namespace mini::app::ui
 {
@@ -40,7 +41,7 @@ namespace mini::app::ui
             
             if (uiData[i].type == ecs::C_UI::Button)
             {
-                if (IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, uiData[i].rect))
+                if (utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, uiData[i].rect))
                 {
                     uiData[i].state = ecs::C_UI::Hovered;
                     if (wnd::IsPressed(wnd::EventType::Mouse_Left)){

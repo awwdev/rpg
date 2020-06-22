@@ -4,7 +4,7 @@
 #include "mini/Vulkan/Objects/Shader.hpp"
 #include "mini/Vulkan/Objects/UniformBuffer.hpp"
 #include "mini/Resources/HostResources.hpp"
-#include "mini/Utils/Vertex.hpp"
+#include "mini/Utils/Structs.hpp"
 
 namespace mini::vk
 {
