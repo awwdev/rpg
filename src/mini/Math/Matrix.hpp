@@ -13,10 +13,14 @@ namespace mini
 
 namespace mini::math
 {
-    template<class T, u8 Y, u8 X, typename = IsArithmetic<T>> //enums? probably bad idea
+    template<class T, u8 Y_T, u8 X_T, typename = IsArithmetic<T>> //enums? probably bad idea
     struct Mat
     {
+        static constexpr auto X = X_T;
+        static constexpr auto Y = Y_T;
+
         T cells[Y][X];
+
 
         //matrix access [][] 
         inline T*       operator[](const u8 y)       { return cells[y]; }
@@ -36,6 +40,7 @@ namespace mini::math
             }}
             return out;
         }
+
     };
 
 
@@ -50,7 +55,6 @@ namespace mini::math
     using Vec4f = Vec<f32, 4>;
 
     using Vec2i = Vec<s32, 2>;
-
 
     ///comparsion
 

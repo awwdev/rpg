@@ -25,6 +25,8 @@ namespace mini::ecs
         ENUM_END
     };
 
+    //?PARSING
+
     const box::IndexMap<box::String<20>, ComponentType::ENUM_END> componentTypeToStr
     {
         { ComponentType::Transform,     "Transform"   },
@@ -36,7 +38,9 @@ namespace mini::ecs
     {
         pos,
         text,
+        text_col,
         box,
+        box_col,
         type,
         state,
         ENUM_END
@@ -44,12 +48,16 @@ namespace mini::ecs
 
     const box::StringMap<ComponentData> componentDataToStr
     {
-        { "pos"   , ComponentData::pos    },
-        { "box"   , ComponentData::box    },
-        { "text"  , ComponentData::text   },
-        { "type"  , ComponentData::type   },
-        { "state" , ComponentData::state   },
+        { "pos"   ,     ComponentData::pos          },
+        { "box"   ,     ComponentData::box          },
+        { "box_col"   , ComponentData::box_col      },
+        { "text"  ,     ComponentData::text         },
+        { "text_col"  , ComponentData::text_col     },
+        { "type"  ,     ComponentData::type         },
+        { "state" ,     ComponentData::state        },
     };
+
+    //TODO: .mini instead of .txt and make vs color coding syntax highlighting 
 
 
     inline ComponentType GetComponentType(const utils::CharsView& view)
@@ -86,8 +94,10 @@ namespace mini::ecs
 
     struct C_UI
     {
-        utils::Rect<int> rect;
+        utils::Rect<int> rect; //or name it box
         box::String<20>  text;
+        utils::Color4u   text_col;
+        utils::Color4u   rect_col;
 
         enum Type  { Button, Label } type; 
         enum State { Idle, Hovered, Hold, Released, Inactive } state;

@@ -37,7 +37,7 @@ namespace mini::app
         }
 
 
-        inline void Add_DrawQuad(const utils::Rect<int>& rect, math::Vec4f col = { 1, 1, 1, 1})
+        inline void Add_DrawQuad(const utils::Rect<int>& rect, const utils::Color4u& col = { 255, 255, 255, 255 })
         {
             auto& group = vertexGroups.AppendReturn();
             group.v1 = vertices.Count();
@@ -55,7 +55,7 @@ namespace mini::app
         }
 
         //TODO: could do lots of customization
-        inline void Add_DrawText(chars_t text, const int x, int y, const res::Font& font)
+        inline void Add_DrawText(chars_t text, const int x, int y, const res::Font& font, const utils::Color4u& col = { 0, 0, 0, 255 })
         {
             auto& group = vertexGroups.AppendReturn();
             group.v1 = vertices.Count();
@@ -78,8 +78,7 @@ namespace mini::app
                 const auto& coords = font.fontMap.GetValue(text[i]);
                 const auto quad = res::CreateRect<res::Indexed::Yes>(
                     utils::Rect<int>{ xx, y, (int)(fw * s), (int)(fh * s)}, 
-                    utils::Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh },
-                    { 0, 0, 0, 1}
+                    utils::Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh }
                 );
 
                 const u32 c = vertices.Count();
@@ -95,14 +94,19 @@ namespace mini::app
         }
 
 
-        inline void Add_DrawLabel(chars_t text, const utils::Rect<int>& rect, math::Vec4f col = { 1, 1, 1, 1})
+        inline void Add_DrawLabel(
+            chars_t text, 
+            const utils::Rect<int>& rect, 
+            const utils::Color4u& quadCol = { 0, 0, 0, 1},
+            const utils::Color4u& textCol = { 1, 1, 1, 1}
+            )
         {
-            Add_DrawQuad(rect, col);
+            Add_DrawQuad(rect, quadCol);
             const auto w = hostResources.fonts.default_font.letter_w * std::strlen(text);
             const auto h = hostResources.fonts.default_font.letter_h;
             const auto x = rect.x + (rect.w * 0.5f - w * 0.25f);
             const auto y = rect.y + (rect.h * 0.5f - h * 0.25f);
-            Add_DrawText(text, x, y, hostResources.fonts.default_font);
+            Add_DrawText(text, x, y, hostResources.fonts.default_font, textCol);
         }
 
 

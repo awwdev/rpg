@@ -80,15 +80,7 @@ namespace mini::ecs
         return PrefabType::ENUM_END;
     }
 
-    inline auto ParseVector2(utils::CharsView view)
-    {
-        //!atoi could be UB here
-        math::Vec2i vec;
-        vec[V::Vx] = std::atoi(view.beginPtr);
-        while(*view.beginPtr != ',') { ++(view.beginPtr); }
-        vec[V::Vy] = std::atoi(++view.beginPtr);
-        return vec;
-    }
+    //? PARSE COMMA SEPERATED DATA
 
     inline auto ParseRect(utils::CharsView view)
     {
@@ -103,6 +95,21 @@ namespace mini::ecs
         rect.h = std::atoi(++view.beginPtr);
         return rect;
     }
+
+    template<class VECTOR>
+    inline VECTOR ParseVector(utils::CharsView view)
+    {
+        VECTOR vec;
+        for(auto x = 0; x < VECTOR::X; ++x)
+        {
+            LOG(std::atoi(view.beginPtr));
+            vec[0][x] = std::atoi(view.beginPtr); //!atoi could be UB here
+            while(*view.beginPtr != ',') { ++(view.beginPtr); }
+            ++view.beginPtr;
+        }
+        return vec;
+    }
+
 
 
     struct Prefabs
@@ -125,7 +132,6 @@ namespace mini::ecs
             //? "TOKENIZING"
             while (file.getline(line, LINE_CHARS_MAX)) 
             {
-                //LOG("line");
                 if (line[0] == '\0' || line[0] == ' ') continue;
                 
                 //per line validity (so reset)
@@ -143,7 +149,6 @@ namespace mini::ecs
                     else if (line[i] == '\0')
                     {
                         currentKey = GetKey({ line, valueBegin == 0 ? i : valueBegin - 1 });
-                        //LOG("key", (int)currentKey);
 
                         if (currentKey == KeyType::PREFAB)
                         {
@@ -153,7 +158,6 @@ namespace mini::ecs
                                 break;
                             }
                             currentPrefab = GetPrefabType({ line + valueBegin, i - valueBegin }); 
-                            //LOG("prefab", (int)currentPrefab);
                             break;
                         }
 
@@ -169,7 +173,6 @@ namespace mini::ecs
                                 currentComponent = GetComponentType({ line + valueBegin, i - valueBegin }); 
                                 //add default component (and customize it when we actaully have a key see below)
                                 arrays.AddComponent((ID)currentPrefab, currentComponent);
-                                //LOG("component", (int)currentComponent);
                                 break;
                             }
                             
@@ -187,35 +190,46 @@ namespace mini::ecs
 
         void ParseComponentData(const ComponentType& componentType, const utils::CharsView& key, const utils::CharsView& value)
         {
-            //!the name of a component data could be the same for multiple component types
+            //the name of a component data could be the same for multiple component types
             const auto dataType = GetComponentDataType(key);
+            auto& uiData = arrays.uiData.dense.Last();
+
             switch(dataType)
             {
                 //TODO: box or rect? decide!
                 case ComponentData::box:   
                 {
                     const auto rect = ParseRect(value);
-                    arrays.uiData.dense.Last().rect = rect;
-                    //LOG("parse component rect", rect.x, rect.y, rect.w, rect.h);  
+                    uiData.rect = rect;
                 } 
                 break;
 
                 case ComponentData::text:   
                 {
-                    arrays.uiData.dense.Last().text.Set(value.beginPtr);
-                    //LOG("parse component text", value.beginPtr);  
+                    uiData.text.Set(value.beginPtr);
                 } 
                 break;
 
                 case ComponentData::type:   
                 {
-                    arrays.uiData.dense.Last().type = [&]
+                    uiData.type = [&]
                     {
                         if (utils::CharsCompare(value, "Button")) return C_UI::Type::Button;
                         if (utils::CharsCompare(value, "Label"))  return C_UI::Type::Label;
                         return C_UI::Type::Label; //not impl yet
                     }();
-                    //LOG("parse component type", value.beginPtr);  
+                } 
+                break;
+
+                case ComponentData::box_col:   
+                {
+                    uiData.rect_col = ParseVector<utils::Color4u>(value);
+                } 
+                break;
+
+                case ComponentData::text_col:   
+                {
+                    uiData.text_col = ParseVector<utils::Color4u>(value);
                 } 
                 break;
             }

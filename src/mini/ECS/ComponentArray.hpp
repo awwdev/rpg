@@ -65,6 +65,7 @@ namespace mini::ecs
                 return;
             }
             //TODO:
+            static_assert(false, "no impl yet");
         }
     };
 

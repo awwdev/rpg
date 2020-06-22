@@ -29,34 +29,37 @@ namespace mini::app::ui
         uiData.text.Set(fpsStr.dataPtr);
     }
 
-    inline void ProcessComponents_UI(IRenderer& renderer, box::IArray<ecs::C_UI>& uiData)
+    inline void ProcessComponents_UI(IRenderer& renderer, box::IArray<ecs::C_UI>& uiDatas)
     {
-        FOR_ARRAY(uiData, i)
+        FOR_ARRAY(uiDatas, i)
         {
-            if (uiData[i].type == ecs::C_UI::Label)
+            auto& uiData = uiDatas[i];
+
+            if (uiData.type == ecs::C_UI::Label)
             {
-                renderer.Add_DrawQuad(uiData[i].rect);
-                renderer.Add_DrawText(uiData[i].text.dataPtr, uiData[i].rect.x, uiData[i].rect.y, renderer.hostResources.fonts.default_font);
+                renderer.Add_DrawLabel(uiData.text.dataPtr, uiData.rect, uiData.rect_col);
+                //renderer.Add_DrawQuad(uiData.rect, uiData.rect_col);
+                //renderer.Add_DrawText(uiData.text.dataPtr, uiData.rect.x, uiData.rect.y, renderer.hostResources.fonts.default_font);
             }
             
-            if (uiData[i].type == ecs::C_UI::Button)
+            if (uiData.type == ecs::C_UI::Button)
             {
-                if (utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, uiData[i].rect))
+                if (utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, uiData.rect))
                 {
-                    uiData[i].state = ecs::C_UI::Hovered;
+                    uiData.state = ecs::C_UI::Hovered;
                     if (wnd::IsPressed(wnd::EventType::Mouse_Left)){
-                        uiData[i].state = ecs::C_UI::Hold;
+                        uiData.state = ecs::C_UI::Hold;
                     }
                     if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released)) {
-                        uiData[i].state = ecs::C_UI::Released;
+                        uiData.state = ecs::C_UI::Released;
                     }
                 }
                 
-                switch(uiData[i].state)
+                switch(uiData.state)
                 {
-                    case ecs::C_UI::Idle:     renderer.Add_DrawLabel(uiData[i].text.dataPtr, uiData[i].rect, {0.5, 0.5, 0.5, 1}); break;
-                    case ecs::C_UI::Hovered:  renderer.Add_DrawLabel(uiData[i].text.dataPtr, uiData[i].rect, {0.7, 0.7, 0.7, 1}); break;
-                    case ecs::C_UI::Hold:     renderer.Add_DrawLabel(uiData[i].text.dataPtr, uiData[i].rect, {1.0, 1.0, 1.0, 1}); break;
+                    case ecs::C_UI::Idle:     renderer.Add_DrawLabel(uiData.text.dataPtr, uiData.rect, utils::HighlightColor(uiData.rect_col, 0), uiData.text_col); break;
+                    case ecs::C_UI::Hovered:  renderer.Add_DrawLabel(uiData.text.dataPtr, uiData.rect, utils::HighlightColor(uiData.rect_col, 20), uiData.text_col); break;
+                    case ecs::C_UI::Hold:     renderer.Add_DrawLabel(uiData.text.dataPtr, uiData.rect, utils::HighlightColor(uiData.rect_col, 40), uiData.text_col); break;
                 }
             }
         }
