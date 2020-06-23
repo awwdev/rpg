@@ -52,6 +52,7 @@ namespace mini::wnd
             );
 
             ShowWindow(hWnd, SW_SHOWDEFAULT);
+            SetCursor(LoadCursor(NULL, IDC_ARROW));
         }
 
         ~Window()

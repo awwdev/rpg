@@ -20,16 +20,22 @@ namespace mini::app
         inline u32 IndexCount()  const { return (i2 - i1) + 1; }
     };
 
-    //TODO: maybe in future pass something like a RenderCollector to Scene instead of whole Renderer? (RenderGraph)
     struct IRenderer
     {
+        //?"CPU" resources that will be used to copy to GPU resources
+        //complete clear of those (dynamic buffers)
+        box::Array<utils::Vertex, 2000> vertices; 
+        box::Array<uint32_t, 3000> indices;
+        box::AlignedStorage<100000, vk::UboData_Default> uniforms; 
+        box::Array<VertexGroup, 500> vertexGroups;
+
+        //!hard dependency not needed 
         const hostRes::HostResources& hostResources;
         explicit IRenderer(const hostRes::HostResources& pHostResources) : hostResources {pHostResources} {;}
 
 
-        inline void FrameBegin()
+        void FrameBegin()
         {
-            //? for dynamic buffers
             vertices.Clear();
             indices.Clear();
             uniforms.Clear();
@@ -37,15 +43,15 @@ namespace mini::app
         }
 
 
-        inline void Add_DrawQuad(const utils::Rect<int>& rect, const utils::Color4u& col = { 255, 255, 255, 255 })
+        void Add_DrawQuad(const utils::Rect<int>& pRect, const utils::RGBAColor4u& col = { 255, 255, 255, 255 })
         {
             auto& group = vertexGroups.AppendReturn();
             group.v1 = vertices.Count();
             group.i1 = indices.Count();
 
-            const auto quad = res::CreateRect<res::Indexed::Yes>(rect, { 0, 0, 0, 0 }, col);
+            const auto rect = mesh::CreateRect<mesh::Indexed::Yes>(pRect, { 0, 0, 0, 0 }, utils::NormaliseColor(col));
             const u32 c = vertices.Count();
-            vertices.AppendArray(quad.verts);
+            vertices.AppendArray(rect.verts);
             uint32_t idxs [] {c + 0u, c + 2u, c + 3u, c + 0u, c + 1u, c + 2u};
             indices.AppendArray(idxs);
             uniforms.Append({false});
@@ -55,7 +61,7 @@ namespace mini::app
         }
 
         //TODO: could do lots of customization
-        inline void Add_DrawText(chars_t text, const int x, int y, const res::Font& font, const utils::Color4u& col = { 0, 0, 0, 255 })
+        void Add_DrawText(chars_t text, const int x, int y, const res::Font& font, const utils::RGBAColor4u& col = { 0, 0, 0, 255 })
         {
             auto& group = vertexGroups.AppendReturn();
             group.v1 = vertices.Count();
@@ -76,7 +82,7 @@ namespace mini::app
                 }
 
                 const auto& coords = font.fontMap.GetValue(text[i]);
-                const auto quad = res::CreateRect<res::Indexed::Yes>(
+                const auto quad = mesh::CreateRect<mesh::Indexed::Yes>(
                     utils::Rect<int>{ xx, y, (int)(fw * s), (int)(fh * s)}, 
                     utils::Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh }
                 );
@@ -94,11 +100,11 @@ namespace mini::app
         }
 
 
-        inline void Add_DrawLabel(
+        void Add_DrawLabel(
             chars_t text, 
             const utils::Rect<int>& rect, 
-            const utils::Color4u& quadCol = { 0, 0, 0, 1},
-            const utils::Color4u& textCol = { 1, 1, 1, 1}
+            const utils::RGBAColor4u& quadCol = { 0, 0, 0, 1},
+            const utils::RGBAColor4u& textCol = { 1, 1, 1, 1}
             )
         {
             Add_DrawQuad(rect, quadCol);
@@ -109,17 +115,6 @@ namespace mini::app
             Add_DrawText(text, x, y, hostResources.fonts.default_font, textCol);
         }
 
-
-
-        //? whole renderer is on heap
-        //? gpu api agnostic resources (that will be used in derived class to upload to gpu)
-        box::Array<utils::Vertex, 2000> vertices; 
-        box::Array<uint32_t, 3000> indices;
-        box::AlignedStorage<100000, vk::UboData_Default> uniforms; 
-        
-        box::Array<VertexGroup, 500> vertexGroups; //outlines vertex and index array (so we know when to change state)
-        
-        
     };
 
 }//ns

@@ -5,12 +5,16 @@
 
 namespace mini::utils
 {
+    using NormColor4f = math::Vec4f;
+    using RGBAColor4u = math::Vec<u8, 4>;
+
     //default vertex struct
     struct Vertex
     {
         math::Vec3f pos;
-        math::Vec4f col;
+        NormColor4f col;
         math::Vec2f tex;
+        //! need of alignment?
     };
 
     std::ostream& operator<<(std::ostream& os, const utils::Vertex& vert)
@@ -22,11 +26,7 @@ namespace mini::utils
         return os;
     }
 
-    using Color4f = math::Vec4f;
-    using Color4u = math::Vec<u8, 4>;
-
-    
-    inline Color4f NormaliseColor(const Color4u& col) { 
+    inline NormColor4f NormaliseColor(const RGBAColor4u& col) { 
         return { 
             col[Vx] / 255.f, 
             col[Vy] / 255.f, 
@@ -35,9 +35,9 @@ namespace mini::utils
         };
     }
 
-    inline Color4u HighlightColor(const Color4u& col, const u8 amount)
+    inline RGBAColor4u HighlightColor(const RGBAColor4u& col, const u8 amount)
     {
-        Color4u out { col };
+        RGBAColor4u out { col };
         out[Vx] += amount;
         out[Vy] += amount;
         out[Vz] += amount;
@@ -48,8 +48,23 @@ namespace mini::utils
     struct Rect
     {
         T x, y, w, h;
+
+        Rect() = default;
+        Rect(const T pX, const T pY, const T pW, const T pH)
+            : x { pX }
+            , y { pY }
+            , w { pW }
+            , h { pH }
+        {;}
+
+        template<class OTHER_T>
+        Rect(const Rect<OTHER_T>& other)
+        {
+            x = (T)other.x;
+            y = (T)other.y;
+            w = (T)other.w;
+            h = (T)other.h;
+        }
     };
-
-
 
 }//ns

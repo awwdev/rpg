@@ -96,8 +96,8 @@ namespace mini::ecs
     {
         utils::Rect<int> rect; //or name it box
         box::String<20>  text;
-        utils::Color4u   text_col;
-        utils::Color4u   rect_col;
+        utils::RGBAColor4u   text_col;
+        utils::RGBAColor4u   rect_col;
 
         enum Type  { Button, Label } type; 
         enum State { Idle, Hovered, Hold, Released, Inactive } state;

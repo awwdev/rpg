@@ -38,8 +38,6 @@ namespace mini::app::ui
             if (uiData.type == ecs::C_UI::Label)
             {
                 renderer.Add_DrawLabel(uiData.text.dataPtr, uiData.rect, uiData.rect_col);
-                //renderer.Add_DrawQuad(uiData.rect, uiData.rect_col);
-                //renderer.Add_DrawText(uiData.text.dataPtr, uiData.rect.x, uiData.rect.y, renderer.hostResources.fonts.default_font);
             }
             
             if (uiData.type == ecs::C_UI::Button)

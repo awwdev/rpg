@@ -32,6 +32,8 @@ namespace mini::ecs
     #watch spaces and cases
     */
 
+   //!atoi could be UB here
+
     enum class PrefabType
     {
         UI_FpsMonitor,
@@ -84,15 +86,16 @@ namespace mini::ecs
 
     inline auto ParseRect(utils::CharsView view)
     {
-        //!atoi could be UB here
         utils::Rect<int> rect;
         rect.x = std::atoi(view.beginPtr);
-        while(*view.beginPtr != ',') { ++(view.beginPtr); }
+        while(*view.beginPtr != '|') { ++(view.beginPtr); }
         rect.y = std::atoi(++view.beginPtr);
-        while(*view.beginPtr != ',') { ++(view.beginPtr); }
+        while(*view.beginPtr != '|') { ++(view.beginPtr); }
         rect.w = std::atoi(++view.beginPtr);
-        while(*view.beginPtr != ',') { ++(view.beginPtr); }
+        while(*view.beginPtr != '|') { ++(view.beginPtr); }
         rect.h = std::atoi(++view.beginPtr);
+        //if access violation you probably increase the ptr to much when there is no delimiter anymore
+        //check for null terminating
         return rect;
     }
 
@@ -102,9 +105,8 @@ namespace mini::ecs
         VECTOR vec;
         for(auto x = 0; x < VECTOR::X; ++x)
         {
-            LOG(std::atoi(view.beginPtr));
-            vec[0][x] = std::atoi(view.beginPtr); //!atoi could be UB here
-            while(*view.beginPtr != ',') { ++(view.beginPtr); }
+            vec[0][x] = std::atoi(view.beginPtr); 
+            while(*view.beginPtr != '|' && *view.beginPtr != '\0') { ++(view.beginPtr); }
             ++view.beginPtr;
         }
         return vec;
@@ -223,13 +225,13 @@ namespace mini::ecs
 
                 case ComponentData::box_col:   
                 {
-                    uiData.rect_col = ParseVector<utils::Color4u>(value);
+                    uiData.rect_col = ParseVector<utils::RGBAColor4u>(value);
                 } 
                 break;
 
                 case ComponentData::text_col:   
                 {
-                    uiData.text_col = ParseVector<utils::Color4u>(value);
+                    uiData.text_col = ParseVector<utils::RGBAColor4u>(value);
                 } 
                 break;
             }
