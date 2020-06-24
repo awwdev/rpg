@@ -3,14 +3,14 @@
 #pragma once
 #include "mini/Utils/Types.hpp"
 #include "mini/Utils/Algorithms.hpp"
-#include "mini/App/IRenderer.hpp"
+#include "mini/RenderGraph/IRenderer.hpp"
 #include "mini/Window/AppEvents.hpp"
 #include "mini/ECS/ComponentArray.hpp"
 #include "mini/Utils/Algorithms.hpp"
 
 namespace mini::app::ui
 {
-    inline void UpdateFpsMonitorText(IRenderer& renderer, const double dt, ecs::C_UI& uiData)
+    inline void UpdateFpsMonitorText(rendergraph::IRenderer& renderer, const double dt, ecs::C_UI& uiData)
     {
         static box::String<100> fpsStr; //!hacked
         static double counter = 0;
@@ -29,7 +29,7 @@ namespace mini::app::ui
         uiData.text.Set(fpsStr.dataPtr);
     }
 
-    inline void ProcessComponents_UI(IRenderer& renderer, box::IArray<ecs::C_UI>& uiDatas)
+    inline void ProcessComponents_UI(rendergraph::IRenderer& renderer, box::IArray<ecs::C_UI>& uiDatas)
     {
         FOR_ARRAY(uiDatas, i)
         {
@@ -42,6 +42,7 @@ namespace mini::app::ui
             
             if (uiData.type == ecs::C_UI::Button)
             {
+                uiData.state = ecs::C_UI::Idle;
                 if (utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, uiData.rect))
                 {
                     uiData.state = ecs::C_UI::Hovered;

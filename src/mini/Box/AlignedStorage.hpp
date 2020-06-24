@@ -8,9 +8,11 @@
 
 namespace mini::box
 {
-    template<u32 BYTE_SIZE, class DATA_T>
+    template<class DATA_T, u32 DATA_COUNT>
     struct AlignedStorage
     {
+        constexpr static auto BYTE_SIZE = DATA_COUNT * sizeof(DATA_T);
+
         u8  data [BYTE_SIZE];
         u32 alignment = 0; //!set this via derived Renderer (eg. Vulkan)
         u32 count = 0;

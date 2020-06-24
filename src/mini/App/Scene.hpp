@@ -4,7 +4,7 @@
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
-#include "mini/App/IRenderer.hpp"
+#include "mini/RenderGraph/IRenderer.hpp"
 #include "mini/App/UI.hpp"
 
 using namespace mini;
@@ -19,6 +19,10 @@ namespace mini::app
         ecs::ID FpsMonitor;
         ecs::ID Button1;
 
+        //TODO: ADDING TO BOTH ECS AND RENDERGRAPH??
+        
+        rendergraph::RenderGraph renderGraph;
+
         Scene()
         {
             ecs.prefabs.Parse("res/prefabs.txt"); //TODO: move somewhere else?
@@ -26,7 +30,7 @@ namespace mini::app
             Button1    = ecs.AddEntity(ecs::PrefabType::UI_Button);
         }
 
-        inline void Update(IRenderer& renderer, const double dt)
+        inline void Update(rendergraph::IRenderer& renderer, const double dt)
         {
             ui::ProcessComponents_UI(renderer, ecs.arrays.uiData.dense);
 

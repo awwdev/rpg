@@ -7,14 +7,15 @@
 #include "mini/Vulkan/Resources.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/App/Scene.hpp"
-#include "mini/App/IRenderer.hpp"
+#include "mini/RenderGraph/IRenderer.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Window/AppEvents.hpp"
 
 namespace mini::vk
 {
-    struct VkRenderer : app::IRenderer
+    //TODO: DO NOT INHERIT BUT PASS THE AGNISTIC RENDERGRAPH
+    struct VkRenderer : rendergraph::IRenderer
     {
         Context         context; //! must come first
         VkResources     resources;

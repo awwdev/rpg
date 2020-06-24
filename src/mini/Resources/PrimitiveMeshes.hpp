@@ -8,16 +8,14 @@
 
 namespace mini::mesh
 {
-    struct Quad4 { utils::Vertex verts [4]; };
-    struct Quad6 { utils::Vertex verts [6]; };
+    struct VerticesQuad4 { utils::Vertex verts [4]; };
+    struct VerticesQuad6 { utils::Vertex verts [6]; };
 
     enum class Indexed  { Yes, No };
-    enum class Centered { Yes, No };
+    enum class Centered { Yes, No }; //TODO: impl
 
-    //in pixel 
-    //!how would world pos look like?
     template<Indexed IsIndexed = Indexed::No>
-    inline auto CreateRect(
+    inline auto CreateVertices_Rect(
         const utils::Rect<f32>& pos,
         const utils::Rect<f32>& tex,
         const utils::NormColor4f& col = { 1, 1, 1, 1 })
@@ -29,8 +27,8 @@ namespace mini::mesh
         const Vertex br { .pos { pos.x + pos.w  , pos.y + pos.h , 0 }, .col { col }, .tex { tex.x + tex.w, tex.y         } };
         const Vertex bl { .pos { pos.x          , pos.y + pos.h , 0 }, .col { col }, .tex { tex.x        , tex.y         } };
 
-        if constexpr (IsIndexed == Indexed::Yes) return Quad4 { tl, tr, br, bl };           //0123
-        if constexpr (IsIndexed == Indexed::No)  return Quad6 { tl, br, bl, tl, tr, br };   //023012
+        if constexpr (IsIndexed == Indexed::Yes) return VerticesQuad4 { tl, tr, br, bl };           //0123
+        if constexpr (IsIndexed == Indexed::No)  return VerticesQuad6 { tl, br, bl, tl, tr, br };   //023012
     }
     
 }//ns

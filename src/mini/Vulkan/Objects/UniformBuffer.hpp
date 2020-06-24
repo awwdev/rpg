@@ -10,11 +10,6 @@
 
 namespace mini::vk
 {
-    struct UboData_Default //TODO: move outside, its a gpu api agnostic  struct
-    {
-        bool useTexture = false;   
-    };
-
     struct UniformInfo
     {
         enum Type { Buffer, Image } type;

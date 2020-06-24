@@ -8,16 +8,25 @@ namespace mini::utils
     using NormColor4f = math::Vec4f;
     using RGBAColor4u = math::Vec<u8, 4>;
 
-    //default vertex struct
+    //! need of alignment?
+    //vertex is not render graph only resource (used by physics, pathfinding...)
+
     struct Vertex
     {
-        math::Vec3f pos;
-        NormColor4f col;
-        math::Vec2f tex;
-        //! need of alignment?
+        math::Vec3f         pos;
+        utils::NormColor4f  col;
+        math::Vec2f         tex;
+        
     };
 
-    std::ostream& operator<<(std::ostream& os, const utils::Vertex& vert)
+    struct VertexUI
+    {
+        math::Vec2f         pos;
+        utils::NormColor4f  col;
+        math::Vec2f         tex;
+    };
+
+    std::ostream& operator<<(std::ostream& os, const Vertex& vert)
     {
         os << "vertex data\n";
         os << "pos " << vert.pos << '\n';
@@ -66,5 +75,6 @@ namespace mini::utils
             h = (T)other.h;
         }
     };
+
 
 }//ns

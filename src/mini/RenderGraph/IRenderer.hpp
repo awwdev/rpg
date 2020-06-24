@@ -5,12 +5,90 @@
 #include "mini/Box/Array.hpp"
 #include "mini/Box/AlignedStorage.hpp"
 #include "mini/Utils/Structs.hpp"
+#include "mini/RenderGraph/UboData.hpp"
 #include "mini/Resources/PrimitiveMeshes.hpp"
 #include "mini/Resources/Font.hpp"
 #include "mini/Resources/HostResources.hpp"
 
-namespace mini::app
+namespace mini::rendergraph
 {
+    //TODO: pass RenderGraph to specific Renderer instead of inheritance
+    /*
+    using RenderID = u32;
+
+    struct RenderGroup_UI 
+    {
+        u32 v1, v2;
+        u32 i1, i2;
+    };
+
+    struct RenderArray_UI
+    {
+        box::Array<RenderGroup_UI, 100>      groups;   //draw entity and ubo are "vertical" 
+        box::AlignedStorage<UboData_UI, 100> uniforms;
+        box::Array<utils::VertexUI, 1000>    vertices;
+        box::Array<uint32_t, 1500>           indices;
+
+        RenderGroup_UI& BeginGroup()
+        {
+            RenderGroup_UI& group = groups.AppendReturn();
+            group.v1 = vertices.Count();
+            group.i1 = indices.Count();
+            return group;
+        }
+
+        void EndGroup(RenderGroup_UI& group)
+        {
+            group.v2 = vertices.Count() - 1;
+            group.i2 = indices.Count()  - 1;
+        }
+    };
+
+
+    struct RenderGraph
+    {
+        RenderArray_UI renderArray_UI;
+
+        void Add_UI(
+            const box::IArray<utils::VertexUI>& vertices,
+            const box::IArray<uint32_t>& indices,
+            const UboData_UI& uniform)
+        {
+            auto& group = renderArray_UI.BeginGroup();
+            renderArray_UI.vertices.AppendArray(vertices);
+            renderArray_UI.indices.AppendArray(indices);
+            renderArray_UI.uniforms.Append(uniform);
+            renderArray_UI.EndGroup(group);
+        }
+    };*/
+
+
+    //TODO: DO INSTANCE TEXT RENDERING FIRST
+    //another vertex buffer to store offset and colors
+    //another binding, and INSTANCE_RATE
+    //add when on vkCmdBind(2) ...
+
+    //TODO: pass RenderGraph struct to specific Renderer instead of inheritance
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     struct VertexGroup
     {
         u32 v1, v2; //first and last
@@ -22,11 +100,11 @@ namespace mini::app
 
     struct IRenderer
     {
-        //?"CPU" resources that will be used to copy to GPU resources
+            //?"CPU" resources that will be used to copy to GPU resources
         //complete clear of those (dynamic buffers)
         box::Array<utils::Vertex, 2000> vertices; 
         box::Array<uint32_t, 3000> indices;
-        box::AlignedStorage<100000, vk::UboData_Default> uniforms; 
+        box::AlignedStorage<UboData_UI, 1000> uniforms; 
         box::Array<VertexGroup, 500> vertexGroups;
 
         //!hard dependency not needed 
@@ -42,14 +120,13 @@ namespace mini::app
             vertexGroups.Clear();
         }
 
-
         void Add_DrawQuad(const utils::Rect<int>& pRect, const utils::RGBAColor4u& col = { 255, 255, 255, 255 })
         {
             auto& group = vertexGroups.AppendReturn();
             group.v1 = vertices.Count();
             group.i1 = indices.Count();
 
-            const auto rect = mesh::CreateRect<mesh::Indexed::Yes>(pRect, { 0, 0, 0, 0 }, utils::NormaliseColor(col));
+            const auto rect = mesh::CreateVertices_Rect<mesh::Indexed::Yes>(pRect, { 0, 0, 0, 0 }, utils::NormaliseColor(col));
             const u32 c = vertices.Count();
             vertices.AppendArray(rect.verts);
             uint32_t idxs [] {c + 0u, c + 2u, c + 3u, c + 0u, c + 1u, c + 2u};
@@ -82,7 +159,7 @@ namespace mini::app
                 }
 
                 const auto& coords = font.fontMap.GetValue(text[i]);
-                const auto quad = mesh::CreateRect<mesh::Indexed::Yes>(
+                const auto quad = mesh::CreateVertices_Rect<mesh::Indexed::Yes>(
                     utils::Rect<int>{ xx, y, (int)(fw * s), (int)(fh * s)}, 
                     utils::Rect<int>{ coords[Vx] * fw, coords[Vy] * fh, fw, fh }
                 );
