@@ -14,8 +14,7 @@
 
 namespace mini::vk
 {
-    //TODO: DO NOT INHERIT BUT PASS THE AGNISTIC RENDERGRAPH
-    struct VkRenderer : rendergraph::IRenderer
+    struct VkRenderer //: rendergraph::IRenderer
     {
         Context         context; //! must come first
         VkResources     resources;
@@ -25,25 +24,25 @@ namespace mini::vk
         uint32_t currentFrame = 0;
         
         VkRenderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
-            : IRenderer { hostResources }
-            , context   { wndHandle } //! must come first
+            //: IRenderer { hostResources }
+            : context   { wndHandle } //! must come first
             , resources { context }
         {
-            uniforms.alignment = context.physicalProps.limits.minUniformBufferOffsetAlignment;
-
+            //uniforms.alignment = context.physicalProps.limits.minUniformBufferOffsetAlignment;
             sync.Create(context);
             commands.Create(context);
             resources.Create(context, hostResources, commands);
         }
 
 
-        inline void RecreateScwapchain()
+        void RecreateScwapchain()
         {
             vkDeviceWaitIdle(context.device);
 
             if (!context.RecreateSwapchain())
                 return;
 
+            /*
             resources.ui_renderPass.~RenderPass();
             CreateRenderPass_UI(context, resources.ui_renderPass);
 
@@ -64,21 +63,43 @@ namespace mini::vk
                 resources.ui_vbo, 
                 resources.ui_ibo
             );
+            */
+
+            resources.text_renderPass.~RenderPass();
+            CreateRenderPass_Text(context, resources.text_renderPass);
+
+            resources.text_pipeline.~Pipeline();
+            CreatePipeline_Text(
+                context, 
+                resources.text_pipeline,
+                resources.text_shader, 
+                resources.text_renderPass, 
+                resources.text_ubo
+            );
 
             commands.~Commands();
             commands.Create(context);
         }
 
 
-        inline void UpdateVkResources(const app::Scene& scene, const double dt)
+        void UpdateVkResources(const app::Scene& scene, const double dt, rendergraph::RenderGraph& renderGraph)
         {
-            resources.ui_pushConst.wnd_w = wnd::window_w;
-            resources.ui_pushConst.wnd_h = wnd::window_h;
+            resources.text_pushConst.wnd_w = wnd::window_w;
+            resources.text_pushConst.wnd_h = wnd::window_h;
 
-            resources.ui_vbo.vertexBuffer.Store(vertices.Data(), vertices.Count()  * sizeof(utils::Vertex));
-            resources.ui_vbo.indexBuffer.Store (indices.Data(), indices.Count() * sizeof(uint32_t));
+            rendergraph::UniformData_Text arr [4] = 
+            {
+                { {32, 32, 0}, 1 },
+                { {32, 32, 0}, 1 },
+                { {32, 32, 0}, 1 },
+                { {32, 32, 0}, 1 },
+            };
+            resources.text_ubo.buffer.Store(arr, sizeof(rendergraph::UniformData_Text) * 4);
 
-            resources.ui_ibo.buffer.Store(uniforms.data, uniforms.CurrentSize());
+            //resources.ui_vbo.vertexBuffer.Store(vertices.Data(), vertices.Count()  * sizeof(utils::Vertex));
+            //resources.ui_vbo.indexBuffer.Store (indices.Data(), indices.Count() * sizeof(uint32_t));
+            //resources.ui_vbo.instanceBuffer.Store(instanceData.Data(), instanceData.Count() * sizeof(InstanceData_UI));
+            //resources.ui_ibo.buffer.Store(uniforms.data, uniforms.CurrentSize());
         }
 
 
@@ -94,24 +115,28 @@ namespace mini::vk
             const VkClearValue clears { .color = { 0.1f, 0.1f, 0.1f, 1.0f } };
             const auto renderPassInfo = CreateRenderPassBeginInfo(
                 context, 
-                resources.ui_renderPass.renderPass, 
-                resources.ui_renderPass.framebuffers[cmdBufferIdx],
+                resources.text_renderPass.renderPass, 
+                resources.text_renderPass.framebuffers[cmdBufferIdx],
                 &clears
             );
             vkCmdBeginRenderPass (cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.pipeline);
-            vkCmdPushConstants      (cmdBuffer, resources.ui_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.ui_pushConst), &resources.ui_pushConst);
-            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.ui_vbo.vertexBuffer.buffer, &vboOffsets);
-            vkCmdBindIndexBuffer    (cmdBuffer, resources.ui_vbo.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.text_pipeline.pipeline);
+            vkCmdPushConstants      (cmdBuffer, resources.text_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.text_pushConst), &resources.text_pushConst);
+            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.text_pipeline.layout, 0, 1, &resources.text_pipeline.sets[cmdBufferIdx], 0, nullptr); 
+            vkCmdDraw               (cmdBuffer, 6, 1, 0, 0);
+
+            //vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.ui_vbo.vertexBuffer.buffer, &vboOffsets);
+            //vkCmdBindVertexBuffers  (cmdBuffer, 1, 1, &resources.ui_vbo.instanceBuffer.buffer, &vboOffsets);
+            //vkCmdBindIndexBuffer    (cmdBuffer, resources.ui_vbo.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
             
-            FOR_ARRAY(vertexGroups, i)
+            //FOR_ARRAY(vertexGroups, i)
             {
-                uboOffsets = resources.ui_ibo.ALIGNMENT * i; 
+                //uboOffsets = resources.ui_ibo.ALIGNMENT * i; 
                 //! still abit unclear to me why we need to call twice (since first one could be called once) and also why both need dynamic
-                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
-                vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 1, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
-                vkCmdDrawIndexed        (cmdBuffer, vertexGroups[i].IndexCount(), 1, 0, vertexGroups[i].v1, 0);
+                //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
+                //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 1, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
+                //vkCmdDrawIndexed        (cmdBuffer, vertexGroups[i].IndexCount(), 3, 0, vertexGroups[i].v1, 0); 
             }
             
             //? wire mode
@@ -125,7 +150,7 @@ namespace mini::vk
         }
 
 
-        inline void Render(const double dt, const app::Scene& scene)
+        inline void Render(const double dt, rendergraph::RenderGraph& renderGraph, app::Scene& scene)
         {
             if (wnd::CheckEvent(wnd::EventType::Window_Resize)){
                 RecreateScwapchain();
@@ -159,7 +184,7 @@ namespace mini::vk
             VK_CHECK(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
             //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-            UpdateVkResources(scene, dt);
+            UpdateVkResources(scene, dt, renderGraph);
             RecordCommands(imageIndex, dt, scene);
             //!--------------------------------------------------
 

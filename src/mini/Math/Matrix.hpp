@@ -55,6 +55,7 @@ namespace mini::math
     using Vec4f = Vec<f32, 4>;
 
     using Vec2i = Vec<s32, 2>;
+    using Vec3i = Vec<s32, 3>;
 
     ///comparsion
 

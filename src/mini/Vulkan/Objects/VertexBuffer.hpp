@@ -4,6 +4,7 @@
 
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Buffer.hpp"
+#include "mini/RenderGraph/InstanceData.hpp"
 
 #include "mini/Box/Array.hpp"
 
@@ -18,13 +19,16 @@ namespace mini::vk
 
         Buffer vertexBuffer;
         Buffer indexBuffer;
+        Buffer instanceBuffer;
         const std::size_t MAX_VERTEX_COUNT;
+        const std::size_t MAX_INSTANCE_COUNT;
 
         box::Array<VkVertexInputBindingDescription, 10>   bindings;
         box::Array<VkVertexInputAttributeDescription, 10> attributes;
 
-        explicit VertexBuffer(const std::size_t maxVertCount)
-            : MAX_VERTEX_COUNT { maxVertCount }
+        explicit VertexBuffer(const std::size_t maxVertCount, const std::size_t maxInstCount)
+            : MAX_VERTEX_COUNT   { maxVertCount }
+            , MAX_INSTANCE_COUNT { maxInstCount }
         {;}
 
         inline void CreateDynamic(Context& context)
@@ -41,6 +45,14 @@ namespace mini::vk
                 context.device,
                 VK_BUFFER_USAGE_INDEX_BUFFER_BIT, 
                 sizeof(uint16_t) * MAX_VERTEX_COUNT, 
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                context.physicalMemProps
+            );
+
+            instanceBuffer.Create(
+                context.device,
+                VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 
+                sizeof(InstanceData_UI) * MAX_INSTANCE_COUNT, 
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                 context.physicalMemProps
             );

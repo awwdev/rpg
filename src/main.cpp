@@ -13,6 +13,7 @@
 #include "mini/Vulkan/Renderer.hpp"
 
 #include "mini/App/Scene.hpp"
+#include "mini/RenderGraph/IRenderer.hpp" //TODO: rename to rendergraph
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Resources/HostResources.hpp"
 
@@ -43,6 +44,7 @@ int WINAPI wWinMain(
         //? SCENES
         auto ptrSceneStack = mem::ClaimBlock<box::Array<app::Scene, 1, box::INIT::Yes>>();
         uint32_t sceneIdx = 0;
+        rendergraph::RenderGraph renderGraph; //TODO: allocate block
 
         //? PROGRAM LOOP
         while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
@@ -51,9 +53,9 @@ int WINAPI wWinMain(
             dt::UpdateFPS();     
 
             if (wnd::window_h != 0 && wnd::window_w != 0) {
-                ptrRenderer->FrameBegin();
-                ptrSceneStack[sceneIdx].Update(ptrRenderer.Get(), mini::dt::seconds);
-                ptrRenderer->Render(mini::dt::seconds, ptrSceneStack[sceneIdx]);
+                //ptrRenderer->FrameBegin();
+                ptrSceneStack[sceneIdx].Update(renderGraph, mini::dt::seconds);
+                ptrRenderer->Render(mini::dt::seconds, renderGraph, ptrSceneStack[sceneIdx]);
             }   
         }
         

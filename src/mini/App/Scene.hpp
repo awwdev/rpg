@@ -19,9 +19,7 @@ namespace mini::app
         ecs::ID FpsMonitor;
         ecs::ID Button1;
 
-        //TODO: ADDING TO BOTH ECS AND RENDERGRAPH??
         
-        rendergraph::RenderGraph renderGraph;
 
         Scene()
         {
@@ -30,14 +28,16 @@ namespace mini::app
             Button1    = ecs.AddEntity(ecs::PrefabType::UI_Button);
         }
 
-        inline void Update(rendergraph::IRenderer& renderer, const double dt)
+        inline void Update(rendergraph::RenderGraph& renderGraph, const double dt)
         {
-            ui::ProcessComponents_UI(renderer, ecs.arrays.uiData.dense);
+            //ui::ProcessComponents_UI(renderer, ecs.arrays.uiData.dense);
 
-            //custom logic
-            ui::UpdateFpsMonitorText(renderer, dt, ecs.arrays.uiData.Get(FpsMonitor));
-            if (ecs.arrays.uiData.Get(Button1).state == ecs::C_UI::Released)
-                LOG("button released");
+            ////custom logic
+            //ui::UpdateFpsMonitorText(renderer, dt, ecs.arrays.uiData.Get(FpsMonitor));
+            //if (ecs.arrays.uiData.Get(Button1).state == ecs::C_UI::Released)
+            //    LOG("button released");
+
+            //renderer.Add_DrawQuad({0, 0, 100, 100}, { 255, 255, 255, 255});
             
         }
 

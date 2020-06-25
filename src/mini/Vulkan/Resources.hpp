@@ -16,6 +16,7 @@
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/Utils/Structs.hpp"
+#include "mini/RenderGraph/IRenderer.hpp"
 
 namespace mini::vk
 {
@@ -24,25 +25,36 @@ namespace mini::vk
         Image images [hostRes::TextureName::ENUM_END];
 
         //? pipeline stuff
-        RenderPass              ui_renderPass;
-        Pipeline                ui_pipeline;
-        Pipeline                ui_pipeline_wire;
-        Default_PushConstants   ui_pushConst;
-        Shader                  ui_shader;
-        Shader                  ui_shader_wire;
-        VertexBuffer            ui_vbo;
-        UniformBuffer           ui_ibo;
+        //RenderPass              ui_renderPass;
+        //Pipeline                ui_pipeline;
+        //Pipeline                ui_pipeline_wire;
+        //Shader                  ui_shader;
+        //Shader                  ui_shader_wire;
+        //VertexBuffer            ui_vbo;
+        //UniformBuffer           ui_ibo;
+        //Default_PushConstants   ui_pushConst;
+
+        Default_PushConstants   text_pushConst;
+        RenderPass              text_renderPass;
+        Shader                  text_shader;
+        Pipeline                text_pipeline;
+        UniformBuffer           text_ubo;
 
         //TODO: instead of bare numbers for each buffer, something like ENTITY_COUNT would be nice
         //however entities seldom have same vert count, iterating entities (mehses) and collecting all needed verts and then rough estimate of count ...
         explicit VkResources(Context& context) 
-            : ui_pipeline       { context }
-            , ui_pipeline_wire  { context }
-            , ui_renderPass     { context }
-            , ui_shader         { context } 
-            , ui_shader_wire    { context } 
-            , ui_vbo            { 10000 }
-            , ui_ibo            { context, 250 } 
+            //: ui_pipeline       { context }
+            //, ui_pipeline_wire  { context }
+            //, ui_renderPass     { context }
+            //, ui_shader         { context } 
+            //, ui_shader_wire    { context } 
+            //, ui_vbo            { 10000, 1000 }
+            //, ui_ibo            { context, 250 } 
+            : text_pushConst    {}
+            , text_pipeline     { context }
+            , text_shader       { context }
+            , text_renderPass   { context }
+            , text_ubo          { context, sizeof(rendergraph::UniformData_Text) * 100 }
         {;}
 
         //! resource manager needs to load beforehand
@@ -54,7 +66,14 @@ namespace mini::vk
                 images[i].Create(context, *hostRes.textures.iTextures[i], commands.cmdPool);
 
             //? "factories"
-            CreateUniformBuffer_UI(context, ui_ibo); //not really needed but consistent (and maybe future proof)
+            CreateUniformBuffer_Text(context, text_ubo); //not really needed but consistent (and maybe future proof)
+            CreateShader_Text(context, text_shader, images);
+            CreateRenderPass_Text(context, text_renderPass); //!same as before
+            CreatePipeline_Text(context, text_pipeline, text_shader, text_renderPass, text_ubo);
+
+
+            /*
+            CreateUniformBuffer_UI(context, ui_ibo);
             CreateVertexBuffer_UI(context, ui_vbo);
             CreateShader_UI(context, ui_shader, images); 
             CreateShader_UI_wire(context, ui_shader_wire, images); 
@@ -76,6 +95,7 @@ namespace mini::vk
                 ui_vbo, 
                 ui_ibo
             );
+            */
         }
 
     };

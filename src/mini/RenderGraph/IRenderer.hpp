@@ -12,6 +12,22 @@
 
 namespace mini::rendergraph
 {
+    struct UniformData_Text
+    {
+        math::Vec3f offset;
+        uint32_t    colorIndex;
+    };
+
+    struct RenderGraph
+    {
+        //static vbo
+        //static ibo
+        //dynamic ubo ...
+        box::Array<UniformData_Text, 100> uboText;
+    };
+
+
+
     //TODO: pass RenderGraph to specific Renderer instead of inheritance
     /*
     using RenderID = u32;
@@ -100,12 +116,13 @@ namespace mini::rendergraph
 
     struct IRenderer
     {
-            //?"CPU" resources that will be used to copy to GPU resources
+        //?"CPU" resources that will be used to copy to GPU resources
         //complete clear of those (dynamic buffers)
         box::Array<utils::Vertex, 2000> vertices; 
         box::Array<uint32_t, 3000> indices;
         box::AlignedStorage<UboData_UI, 1000> uniforms; 
         box::Array<VertexGroup, 500> vertexGroups;
+        box::Array<InstanceData_UI, 1000> instanceData; 
 
         //!hard dependency not needed 
         const hostRes::HostResources& hostResources;
@@ -118,6 +135,7 @@ namespace mini::rendergraph
             indices.Clear();
             uniforms.Clear();
             vertexGroups.Clear();
+            instanceData.Clear();
         }
 
         void Add_DrawQuad(const utils::Rect<int>& pRect, const utils::RGBAColor4u& col = { 255, 255, 255, 255 })
@@ -132,6 +150,20 @@ namespace mini::rendergraph
             uint32_t idxs [] {c + 0u, c + 2u, c + 3u, c + 0u, c + 1u, c + 2u};
             indices.AppendArray(idxs);
             uniforms.Append({false});
+
+            //VBO has only "instance" data (offset, color)(UBO)
+            //but no use of GPU instancing
+            //no vertex buffer used
+            //cmdDraw(totalVertCount)
+            //inside vert shader
+            //1) get "instance data" (int)(vertId / 4) and use it to construct vert 
+            //2) construct the vert of a quad vertId % 4
+            //no need for index buffer then
+            
+
+            instanceData.Append(InstanceData_UI{{ 0,  0}, {0, 1, 0, 1}});
+            instanceData.Append(InstanceData_UI{{32, 32}, {0, 0, 1, 1}});
+            instanceData.Append(InstanceData_UI{{64, 64}, {1, 0, 0, 1}});
 
             group.v2 = vertices.Count() - 1;
             group.i2 = indices.Count()  - 1;

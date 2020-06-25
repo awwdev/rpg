@@ -7,4 +7,5 @@ namespace mini
     {
         bool useTexture = false;   
     };
-}
+
+}//ns

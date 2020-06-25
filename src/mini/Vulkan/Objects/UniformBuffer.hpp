@@ -22,16 +22,20 @@ namespace mini::vk
     struct UniformBuffer
     {
         Buffer buffer;
-        const u32 MAX_COUNT;
-        const VkDeviceSize ALIGNMENT;
+        const u32 MAX_COUNT; //not used
+        const u32 MAX_SIZE;
+        const VkDeviceSize ALIGNMENT; //not used (needed for dynamic)
         UniformInfo uniformInfo; //!set this in a "factory" method
 
 
         explicit UniformBuffer(
             Context& context, 
-            const u32 maxCount) 
-            : MAX_COUNT     { maxCount }
-            , ALIGNMENT     { context.physicalProps.limits.minUniformBufferOffsetAlignment }
+            const u32 maxSize,
+            const u32 alignment = 0, //not used
+            const u32 maxCount = 0)//not used
+            : MAX_COUNT     { maxCount  }
+            , MAX_SIZE      { maxSize   }
+            , ALIGNMENT     { alignment } //context.physicalProps.limits.minUniformBufferOffsetAlignment
         {            
         }
 
@@ -40,7 +44,7 @@ namespace mini::vk
             buffer.Create(
                 context.device, 
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                ALIGNMENT * MAX_COUNT,
+                MAX_SIZE,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                 context.physicalMemProps
             );
