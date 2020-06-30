@@ -89,12 +89,18 @@ namespace mini::vk
 
             rendergraph::UniformData_Text arr [4] = 
             {
-                { {32, 32, 0}, 1 },
-                { {32, 32, 0}, 1 },
-                { {32, 32, 0}, 1 },
-                { {32, 32, 0}, 1 },
+                { { 32*1, 32*1, 0}, 0 },
+                { { 32*2, 32*2, 0}, 1 },
+                { { 32*3, 32*3, 0}, 2 },
+                { { 32*4, 32*4, 0}, 3 },
             };
             resources.text_ubo.buffer.Store(arr, sizeof(rendergraph::UniformData_Text) * 4);
+
+            //TODO: get texture array working
+
+            //#extension GL_EXT_shader_16bit_storage : enable
+            //VK_KHR_8bit_storage and VK_KHR_16bit_storage
+            //VkPhysicalDeviceFeatures::shaderInt16
 
             //resources.ui_vbo.vertexBuffer.Store(vertices.Data(), vertices.Count()  * sizeof(utils::Vertex));
             //resources.ui_vbo.indexBuffer.Store (indices.Data(), indices.Count() * sizeof(uint32_t));
@@ -103,8 +109,11 @@ namespace mini::vk
         }
 
 
+
         inline void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
         {
+
+
             auto& cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
             VkDeviceSize vboOffsets { 0 };
             uint32_t     uboOffsets { 0 };
@@ -124,7 +133,7 @@ namespace mini::vk
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.text_pipeline.pipeline);
             vkCmdPushConstants      (cmdBuffer, resources.text_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.text_pushConst), &resources.text_pushConst);
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.text_pipeline.layout, 0, 1, &resources.text_pipeline.sets[cmdBufferIdx], 0, nullptr); 
-            vkCmdDraw               (cmdBuffer, 6, 1, 0, 0);
+            vkCmdDraw               (cmdBuffer, 6*4, 1, 0, 0);
 
             //vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.ui_vbo.vertexBuffer.buffer, &vboOffsets);
             //vkCmdBindVertexBuffers  (cmdBuffer, 1, 1, &resources.ui_vbo.instanceBuffer.buffer, &vboOffsets);

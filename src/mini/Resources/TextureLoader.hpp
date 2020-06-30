@@ -12,6 +12,43 @@
 
 namespace mini::hostRes
 {
+    
+    //TODO: own raw format RGBA
+    void LoadTexture(chars_t path, char* const data)
+    {
+        //std::ifstream file(path, std::ios::ate | std::ios::binary);
+        //mini::Assert(file.is_open(), "cannot open file");
+
+        ////!in this function we assuem we know the size upfront
+        //const auto size = file.tellg();
+        //file.seekg(std::ios::beg);
+        //file.read(data, size);
+
+        ////? BM HEADER CHECK
+
+        //if (data[0] != 'B' && data[1] == 'M'){
+        //    mini::Assert(false, "unknown bmp format");
+        //}
+
+        //const auto bmSize     = *(mini::u32*)&data[2];
+        //const auto bmOffset   = *(mini::u32*)&data[10];
+        //const auto bmWidth    = *(mini::u32*)&data[18];
+        //const auto bmHeight   = *(mini::u32*)&data[22];
+        //const auto bmBitCount = *(mini::u16*)&data[28];
+
+
+        //mini::Assert(bmWidth <= width && bmHeight <= height, "bm dimensions not sufficient");
+        //mini::Assert(bmBitCount <= channels * 8, "bm channels not sufficient");
+        //
+        //width    = bmWidth;
+        //height   = bmHeight;
+        //channels = bmBitCount / 8;
+        //texPtr   = filePtr + bmOffset;
+    }
+
+
+
+
     struct ITexture
     {
         ITexture(char* const pFilePtr, const u32 w, const u32 h, const u32 channels, const std::size_t size) 
@@ -56,7 +93,7 @@ namespace mini::hostRes
 
             mini::Assert(bmWidth <= width && bmHeight <= height, "bm dimensions not sufficient");
             mini::Assert(bmBitCount <= channels * 8, "bm channels not sufficient");
-            
+
             width    = bmWidth;
             height   = bmHeight;
             channels = bmBitCount / 8;

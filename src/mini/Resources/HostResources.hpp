@@ -8,6 +8,22 @@
 
 namespace mini::hostRes
 {
+    template<u32 N, u32 W, u32 H, u8 D = 4>
+    struct TextureArray
+    {
+        constexpr static auto WIDTH  = W;
+        constexpr static auto HEIGHT = H;
+        constexpr static auto DEPTH  = D;
+
+        char data [N][W*H*DEPTH];
+    };
+
+
+
+
+
+
+
     struct TextureInfo
     {
         chars_t path;
@@ -87,6 +103,8 @@ namespace mini::hostRes
     {
         Textures textures; //host side ram textures (will be loaded to gpu "vk images")
         res::Fonts fonts;
+
+        TextureArray<4, 32, 32> textureArray;
 
         HostResources() 
         {

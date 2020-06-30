@@ -18,4 +18,5 @@
  /I src\ ^
  src\*.cpp ^
  user32.lib ^
+ Shell32.lib ^
  third\libs\vulkan-1.lib ^
