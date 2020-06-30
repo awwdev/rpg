@@ -16,6 +16,7 @@ layout(binding = 1) uniform InstanceData {
 } instanceData;
 
 layout (location = 0) out vec4 outColors;
+layout (location = 1) out vec3 outUV;
 
 const vec2 quad [6] = {
     vec2( 0,  0), //top left
@@ -46,4 +47,5 @@ void main()
     //2 * (inPositions.y / push.wnd_height) - 1;
     gl_Position = vec4(x, y, 0, 1);
     outColors   = colors[instanceData.arr[gl_VertexIndex / 6].colorIndex];
+    outUV       = vec3(quad[gl_VertexIndex / 6], 0);
 }
