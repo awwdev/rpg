@@ -21,7 +21,8 @@ namespace mini::vk
         VkCommandPool cmdPool, 
         VkQueue queue,
         VkImageLayout newLayout,
-        VkImage image)
+        VkImage image, 
+        uint32_t layerCount = 1)
     {
         auto cmdBuffer = BeginCommands_OneTime(device, cmdPool);
 
@@ -59,7 +60,7 @@ namespace mini::vk
                 .baseMipLevel    = 0,
                 .levelCount      = 1,
                 .baseArrayLayer  = 0,
-                .layerCount      = 1
+                .layerCount      = layerCount
             }
         };
 
@@ -317,7 +318,7 @@ namespace mini::vk
 
             //? LOAD
 
-            TransitionImageLayout(device, cmdPool, queue, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, image);
+            TransitionImageLayout(device, cmdPool, queue, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, image, textureArray.COUNT);
 
             //? TMP BUFFER
 
@@ -357,7 +358,7 @@ namespace mini::vk
             vkCmdCopyBufferToImage(cmdBuffer, buffer.buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, textureArray.COUNT, regions);
             EndCommands_OneTime(device, cmdBuffer, cmdPool, queue);
 
-            TransitionImageLayout(device, cmdPool, queue, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, image);
+            TransitionImageLayout(device, cmdPool, queue, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, image, textureArray.COUNT);
         }
 
 

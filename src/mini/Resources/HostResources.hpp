@@ -160,13 +160,15 @@ namespace mini::hostRes
         Textures textures; //host side ram textures (will be loaded to gpu "vk images")
         res::Fonts fonts;
 
-        TextureArray<1, 4, 4> textureArray;
+        TextureArray<3, 4, 4> textureArray;
 
         HostResources() 
         {
             //currently load is instant inside ctor
             textures.Load();
-            textureArray.LoadSingle("res/Textures/rgba/img.rgb");
+            textureArray.LoadSingle("res/Textures/rgba/img1.rgb");
+            textureArray.LoadSingle("res/Textures/rgba/img2.rgb");
+            textureArray.LoadSingle("res/Textures/rgba/img3.rgb");
         }
     };
 

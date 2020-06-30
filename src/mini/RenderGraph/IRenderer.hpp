@@ -12,10 +12,14 @@
 
 namespace mini::rendergraph
 {
+    //TODO: MOVE OUT OF HERE
     struct UniformData_Text
     {
-        math::Vec3f offset;
+        math::Vec4f offset;
         uint32_t    colorIndex;
+        uint32_t    textureIndex; 
+        uint32_t    padding1;
+        uint32_t    padding2;
     };
 
     struct RenderGraph

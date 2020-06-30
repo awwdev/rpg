@@ -7,8 +7,10 @@ layout(push_constant) uniform Push {
 } push;
 
 struct INSTANCE_DATA {
-    vec3 offset;
-    uint colorIndex;
+    vec4  offset;
+    uint  colorIdx;
+    uint  textureIdx;
+    //here is padding involved
 };
 
 layout(binding = 1) uniform InstanceData { 
@@ -45,16 +47,20 @@ const vec4 colors[4] = {
 
 void main() 
 {
+    const uint instID = gl_VertexIndex / 6;
+    const uint vertID = gl_VertexIndex % 6;
+
+    //TODO: size of letter
     const float size = 32;
-    float x = 2 * ((quad[gl_VertexIndex % 6].x * size) / push.wnd_width ) - 1;
-    float y = 2 * ((quad[gl_VertexIndex % 6].y * size) / push.wnd_height) - 1;
 
-    x += 2 * instanceData.arr[gl_VertexIndex / 6].offset.x / push.wnd_width;
-    y += 2 * instanceData.arr[gl_VertexIndex / 6].offset.y / push.wnd_height;
+    //vert position
+    float x = 2 * ((quad[vertID].x * size) / push.wnd_width ) - 1;
+    float y = 2 * ((quad[vertID].y * size) / push.wnd_height) - 1;
+    //quad offest
+    x += 2 * instanceData.arr[instID].offset.x / push.wnd_width;
+    y += 2 * instanceData.arr[instID].offset.y / push.wnd_height;
 
-    //2 * (inPositions.x / push.wnd_width)  - 1;
-    //2 * (inPositions.y / push.wnd_height) - 1;
     gl_Position = vec4(x, y, 0, 1);
-    outColors   = colors[instanceData.arr[gl_VertexIndex / 6].colorIndex];
-    outUV       = vec3(uv[gl_VertexIndex % 6], gl_VertexIndex / 6);
+    outColors   = colors[instanceData.arr[instID].colorIdx]; //color lookup
+    outUV       = vec3(uv[vertID], instanceData.arr[instID].textureIdx); //texture index lookup
 }
