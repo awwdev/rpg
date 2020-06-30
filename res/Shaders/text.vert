@@ -47,5 +47,5 @@ void main()
     //2 * (inPositions.y / push.wnd_height) - 1;
     gl_Position = vec4(x, y, 0, 1);
     outColors   = colors[instanceData.arr[gl_VertexIndex / 6].colorIndex];
-    outUV       = vec3(quad[gl_VertexIndex / 6], 0);
+    outUV       = vec3(quad[gl_VertexIndex % 6], 0);
 }

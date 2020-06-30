@@ -72,7 +72,7 @@ namespace mini::vk
 
             //? "factories"
             CreateUniformBuffer_Text(context, text_ubo); //not really needed but consistent (and maybe future proof)
-            CreateShader_Text(context, text_shader, images);
+            CreateShader_Text(context, text_shader, imageArray);
             CreateRenderPass_Text(context, text_renderPass); //!same as before
             CreatePipeline_Text(context, text_pipeline, text_shader, text_renderPass, text_ubo);
 

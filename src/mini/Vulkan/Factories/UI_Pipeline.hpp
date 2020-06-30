@@ -388,6 +388,7 @@ namespace mini::vk
         };
 
         UniformInfo* uniformInfos [] = {
+            &shader.uniformInfo,
             &uboText.uniformInfo,
         };
         WriteDescriptors(context, pipeline, uniformInfos);

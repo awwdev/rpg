@@ -104,7 +104,7 @@ namespace mini::vk
     }
 
 
-    inline void CreateShader_Text(Context& context, Shader& shader, Image images[]) //or pass some upper struct UBOS
+    inline void CreateShader_Text(Context& context, Shader& shader, ImageArray& imageArray) //or pass some upper struct UBOS
     {  
         shader.CreateShaderModule("res/Shaders/spv/text.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         shader.CreateShaderModule("res/Shaders/spv/text.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -141,12 +141,12 @@ namespace mini::vk
             .pImmutableSamplers = nullptr,
         };
 
-        auto& image = images[hostRes::Font];
+        //auto& image = images[hostRes::Font];
         shader.uniformInfo.imageInfo = 
         {
             .sampler        = shader.samplers[0],
-            .imageView      = image.view, 
-            .imageLayout    = image.layout
+            .imageView      = imageArray.view, 
+            .imageLayout    = imageArray.layout
         };
 
     }
