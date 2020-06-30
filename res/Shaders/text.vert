@@ -27,6 +27,15 @@ const vec2 quad [6] = {
     vec2( 0,  1), //bot left
 };
 
+const vec2 uv [6] = {
+    vec2( 0,  1), //top left
+    vec2( 1,  1), //top right
+    vec2( 0,  0), //bot left
+    vec2( 1,  1), //top right
+    vec2( 1,  0), //bot right
+    vec2( 0,  0), //bot left
+};
+
 const vec4 colors[4] = {
     vec4(1, 1, 1, 1),
     vec4(1, 0, 0, 1),
@@ -47,5 +56,5 @@ void main()
     //2 * (inPositions.y / push.wnd_height) - 1;
     gl_Position = vec4(x, y, 0, 1);
     outColors   = colors[instanceData.arr[gl_VertexIndex / 6].colorIndex];
-    outUV       = vec3(quad[gl_VertexIndex % 6], 0);
+    outUV       = vec3(uv[gl_VertexIndex % 6], gl_VertexIndex / 6);
 }
