@@ -20,9 +20,6 @@ namespace mini::rendergraph
 
     struct RenderGraph
     {
-        //static vbo
-        //static ibo
-        //dynamic ubo ...
         box::Array<UniformData_Text, 100> uboText;
     };
 

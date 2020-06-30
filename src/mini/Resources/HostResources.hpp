@@ -6,17 +6,50 @@
 #include "mini/Box/Array.hpp"
 #include "mini/Debug/Logger.hpp"
 
+#include <fstream>
+
 namespace mini::hostRes
 {
-    template<u32 N, u32 W, u32 H, u8 D = 4>
+    template<u32 N, u32 W, u32 H, u8 C = 4>
     struct TextureArray
     {
-        constexpr static auto WIDTH  = W;
-        constexpr static auto HEIGHT = H;
-        constexpr static auto DEPTH  = D;
+        constexpr static auto WIDTH     = W;
+        constexpr static auto HEIGHT    = H;
+        constexpr static auto CHANNELS  = C;
+        constexpr static auto COUNT     = N;
 
-        char data [N][W*H*DEPTH];
+        constexpr static auto TEX_SIZE   = W*H*C;
+        constexpr static auto TOTAL_SIZE = TEX_SIZE * N;
+
+
+        char data [COUNT][TEX_SIZE];
+        u32 count = 0;
+
+        void LoadSingle(chars_t path)
+        {
+            std::ifstream file(path, std::ios::binary);
+            if (!file) ERR("cannot open file");
+
+            file.read(&(data[count][0]), TEX_SIZE);
+            ++count;
+        }
+
+        //TODO:
+        void LoadComplete(chars_t dir)
+        {
+            //filesystem to get file count and iterate (use LoadSingle)
+            static_assert(false, "no impl yet");
+        }
     };
+
+
+
+
+
+
+
+
+
 
 
 
@@ -104,12 +137,13 @@ namespace mini::hostRes
         Textures textures; //host side ram textures (will be loaded to gpu "vk images")
         res::Fonts fonts;
 
-        TextureArray<4, 32, 32> textureArray;
+        TextureArray<1, 4, 4> textureArray;
 
         HostResources() 
         {
             //currently load is instant inside ctor
             textures.Load();
+            textureArray.LoadSingle("res/Textures/rgba/img.rgb");
         }
     };
 
