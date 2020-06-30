@@ -10,20 +10,43 @@
 
 namespace mini::hostRes
 {
-    template<u32 N, u32 W, u32 H, u8 C = 4>
-    struct TextureArray
+    struct ITextureArray
     {
-        constexpr static auto WIDTH     = W;
-        constexpr static auto HEIGHT    = H;
-        constexpr static auto CHANNELS  = C;
-        constexpr static auto COUNT     = N;
+        const u32 WIDTH;
+        const u32 HEIGHT;
+        const u32 CHANNELS;
+        const u32 COUNT;
+        const u32 TEX_SIZE;
+        const u32 TOTAL_SIZE;
 
+        char* const dataPtr;
+    };
+
+    template<u32 N, u32 W, u32 H, u8 C = 4>
+    struct TextureArray : ITextureArray
+    {
+        constexpr static auto WIDTH      = W;
+        constexpr static auto HEIGHT     = H;
+        constexpr static auto CHANNELS   = C;
+        constexpr static auto COUNT      = N;
         constexpr static auto TEX_SIZE   = W*H*C;
         constexpr static auto TOTAL_SIZE = TEX_SIZE * N;
 
-
         char data [COUNT][TEX_SIZE];
         u32 count = 0;
+
+
+        TextureArray() : ITextureArray
+        {
+            .WIDTH      = WIDTH,
+            .HEIGHT     = HEIGHT,
+            .CHANNELS   = CHANNELS,
+            .COUNT      = COUNT,
+            .TEX_SIZE   = TEX_SIZE,
+            .TOTAL_SIZE = TOTAL_SIZE,
+            .dataPtr    = &(data[0][0])
+        }
+        {;}
 
         void LoadSingle(chars_t path)
         {

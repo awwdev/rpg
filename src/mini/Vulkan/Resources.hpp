@@ -23,6 +23,7 @@ namespace mini::vk
     struct VkResources
     {
         Image images [hostRes::TextureName::ENUM_END];
+        ImageArray imageArray;
 
         //? pipeline stuff
         //RenderPass              ui_renderPass;
@@ -64,6 +65,10 @@ namespace mini::vk
             //? auto host resources load (based on enum)
             FOR_CARRAY(images, i)
                 images[i].Create(context, *hostRes.textures.iTextures[i], commands.cmdPool);
+
+            //font texture atlas
+            imageArray.Create(context, hostRes.textureArray, commands.cmdPool);
+
 
             //? "factories"
             CreateUniformBuffer_Text(context, text_ubo); //not really needed but consistent (and maybe future proof)
