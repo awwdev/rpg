@@ -24,16 +24,12 @@ namespace mini::app
 
         void Update(rendergraph::RenderGraph& renderGraph, const double dt)
         {
-            //add immediate ui
-            if (ui::DrawButton(renderGraph, "Load", {64, 64, 256, 32}))
+            //? UI
+            if (ui::DrawButton(renderGraph, "Button", {64, 64, 128, 24}))
             {
                 LOG("pressed");
             }
 
-            if (ui::DrawButton(renderGraph, "Options", {64, 128, 256, 32}))
-            {
-                LOG("pressed");
-            }
         }
 
     };

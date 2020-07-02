@@ -160,7 +160,8 @@ namespace mini::hostRes
         Textures textures; //host side ram textures (will be loaded to gpu "vk images")
         res::Fonts fonts;
 
-        TextureArray<95, 16, 16, 1> textureArray;
+        TextureArray<96, 16, 16, 1> textureArray;
+        //! added one texture that is all FF which can be used for blank quad
 
         HostResources() 
         {

@@ -32,7 +32,7 @@ namespace mini::vk
         Shader                  text_shader;
         Pipeline                text_pipeline;
 
-        UniformBuffer_Array<rendergraph::UniformData_Text, 100> text_ubo_array;
+        UniformBuffer_Array<rendergraph::UniformData_Text, 1000> text_ubo_array;
 
 
         explicit VkResources(Context& context) 

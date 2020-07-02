@@ -9,7 +9,8 @@ namespace mini::rendergraph
 {
     struct RenderGraph
     {
-        box::Array<UniformData_Text, 100> uboText;
+        //TODO: way to sync count from host to gpu resource (size)
+        box::Array<UniformData_Text, 1000> uboText;
 
         void Clear()
         {
@@ -18,3 +19,6 @@ namespace mini::rendergraph
     };
 
 }//ns
+
+
+            
