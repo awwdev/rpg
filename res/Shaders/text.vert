@@ -7,11 +7,10 @@ layout(push_constant) uniform Push {
 } push;
 
 struct INSTANCE_DATA {
-    vec4  offset;
-    uint  colorIdx;
-    uint  textureIdx;
-    uint  padding1; //to be safe
-    uint  padding2;
+    vec4 offset;
+    vec2 size;
+    uint colorIdx;
+    uint textureIdx;
 };
 
 layout(binding = 1) uniform InstanceData { 
@@ -51,12 +50,9 @@ void main()
     const uint instID = gl_VertexIndex / 6;
     const uint vertID = gl_VertexIndex % 6;
 
-    //TODO: size of letter
-    const float size = 32;
-
     //vert position
-    float x = 2 * ((quad[vertID].x * size) / push.wnd_width ) - 1;
-    float y = 2 * ((quad[vertID].y * size) / push.wnd_height) - 1;
+    float x = 2 * ((quad[vertID].x * instanceData.arr[instID].size.x) / push.wnd_width ) - 1;
+    float y = 2 * ((quad[vertID].y * instanceData.arr[instID].size.y) / push.wnd_height) - 1;
     //quad offest
     x += 2 * instanceData.arr[instID].offset.x / push.wnd_width;
     y += 2 * instanceData.arr[instID].offset.y / push.wnd_height;

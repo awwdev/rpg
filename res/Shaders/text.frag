@@ -9,5 +9,5 @@ layout(location = 1) in vec3 inUV;
 
 void main() 
 {
-    outColor = vec4(1, 1, 1, texture(tex, inUV).b);
+    outColor = vec4(inColors.r, inColors.g, inColors.b, texture(tex, inUV).b);
 }
