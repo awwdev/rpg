@@ -38,11 +38,15 @@ const vec2 uv [6] = {
     vec2( 0,  1), //bot left
 };
 
-const vec4 colors[4] = {
-    vec4(1, 1, 1, 1),
-    vec4(1, 0, 0, 1),
-    vec4(0, 1, 0, 1),
-    vec4(0, 0, 1, 1),
+//alpha does not matter
+const vec4 colors[5] = {
+    //font color
+    vec4(0.9, 0.9, 0.9, 1),
+    vec4(1.0, 0.0, 0.0, 1),
+    //button background
+    vec4(0.20, 0.20, 0.20 ,1),
+    vec4(0.05, 0.05, 0.05 ,1),
+    vec4(0.02, 0.02, 0.02 ,1),
 };
 
 void main() 
