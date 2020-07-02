@@ -10,6 +10,11 @@ namespace mini::rendergraph
     struct RenderGraph
     {
         box::Array<UniformData_Text, 100> uboText;
+
+        void Clear()
+        {
+            uboText.Clear();
+        }
     };
 
 }//ns

@@ -53,7 +53,7 @@ int WINAPI wWinMain(
             dt::UpdateFPS();     
 
             if (wnd::window_h != 0 && wnd::window_w != 0) {
-                //ptrRenderer->FrameBegin();
+                renderGraph.Clear();
                 ptrSceneStack[sceneIdx].Update(renderGraph, mini::dt::seconds);
                 ptrRenderer->Render(mini::dt::seconds, renderGraph, ptrSceneStack[sceneIdx]);
             }   

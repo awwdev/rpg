@@ -11,10 +11,28 @@
 
 namespace mini::app::ui
 {
-    inline bool DrawButton(chars_t text, const utils::Rect<int>& rect)
+    inline bool DrawButton(rendergraph::RenderGraph& renderGraph, chars_t text, const utils::Rect<int>& rect)
     {
+        const bool isMouseInside   = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, rect);
+        const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released) != nullptr; 
+
+        for(auto i = 0; text[i] != '\0'; ++i) {
+            renderGraph.uboText.Append(
+                rendergraph::UniformData_Text{ { rect.x + 32.f*i, (float)rect.y, 0}, 0, (uint32_t)text[i] - 32 }
+            );
+        }
         
-        return false;
+
+        if (isMouseInside)
+        {
+
+        }
+        else
+        {
+
+        }
+
+        return isMouseInside && isMouseReleased;
     }
 
 

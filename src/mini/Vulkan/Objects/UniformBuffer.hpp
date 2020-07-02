@@ -60,6 +60,12 @@ namespace mini::vk
             count = COUNT;
         }
 
+        void Store(const box::IArray<T>& arr)
+        {
+            buffer.Store(arr.dataPtr, arr.Count() * sizeof(T));
+            count = arr.Count();
+        }
+
     };
 
 

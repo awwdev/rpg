@@ -67,14 +67,14 @@ namespace mini::vk
             resources.text_pushConst.wnd_w = wnd::window_w;
             resources.text_pushConst.wnd_h = wnd::window_h;
 
-            using namespace rendergraph;
-            UniformData_Text arr [10]; //same size as str
-            auto fpsStr = std::to_string(dt::fps);
-            for(auto i = 0; i < fpsStr.size(); ++i){
-                arr[i] = UniformData_Text{ { 32 + 32.f*i, 32.f, 0}, 0, (uint32_t)fpsStr[i] - 32 };
-            }
+            //using namespace rendergraph;
+            //UniformData_Text arr [10]; //same size as str
+            //auto fpsStr = std::to_string(dt::fps);
+            //for(auto i = 0; i < fpsStr.size(); ++i){
+            //    arr[i] = UniformData_Text{ { 32 + 32.f*i, 32.f, 0}, 0, (uint32_t)fpsStr[i] - 32 };
+            //}
 
-            resources.text_ubo_array.Store(arr);
+            resources.text_ubo_array.Store(renderGraph.uboText);
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
