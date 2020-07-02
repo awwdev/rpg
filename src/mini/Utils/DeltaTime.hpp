@@ -27,7 +27,7 @@ namespace mini::dt
         if (counter >= 1)
         {
             counter -= 1;
-            //LOG("fps", fps);
+            LOG("fps", fps);
             fps = 0;
         }
     }

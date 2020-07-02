@@ -10,7 +10,8 @@ struct INSTANCE_DATA {
     vec4  offset;
     uint  colorIdx;
     uint  textureIdx;
-    //here is padding involved
+    uint  padding1; //to be safe
+    uint  padding2;
 };
 
 layout(binding = 1) uniform InstanceData { 
@@ -30,12 +31,12 @@ const vec2 quad [6] = {
 };
 
 const vec2 uv [6] = {
-    vec2( 0,  1), //top left
-    vec2( 1,  1), //top right
-    vec2( 0,  0), //bot left
-    vec2( 1,  1), //top right
-    vec2( 1,  0), //bot right
-    vec2( 0,  0), //bot left
+    vec2( 0,  0), //top left
+    vec2( 1,  0), //top right
+    vec2( 0,  1), //bot left
+    vec2( 1,  0), //top right
+    vec2( 1,  1), //bot right
+    vec2( 0,  1), //bot left
 };
 
 const vec4 colors[4] = {

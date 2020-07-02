@@ -7,6 +7,7 @@
 #include "mini/Debug/Logger.hpp"
 
 #include <fstream>
+#include <filesystem>
 
 namespace mini::hostRes
 {
@@ -48,21 +49,20 @@ namespace mini::hostRes
         }
         {;}
 
-        void LoadSingle(chars_t path)
+        void LoadSingle(const std::filesystem::path& path)
         {
             std::ifstream file(path, std::ios::binary);
-            if (!file) ERR("cannot open file");
-
             file.read(&(data[count][0]), TEX_SIZE);
             ++count;
         }
 
-        //TODO:
-        void LoadComplete(chars_t dir)
+        void LoadArray(chars_t dir)
         {
-            //filesystem to get file count and iterate (use LoadSingle)
-            static_assert(false, "no impl yet");
+            for(auto& p: std::filesystem::directory_iterator(dir)) { 
+                LoadSingle(p.path());
+            }
         }
+
     };
 
 
@@ -160,15 +160,13 @@ namespace mini::hostRes
         Textures textures; //host side ram textures (will be loaded to gpu "vk images")
         res::Fonts fonts;
 
-        TextureArray<3, 4, 4> textureArray;
+        TextureArray<95, 16, 16, 1> textureArray;
 
         HostResources() 
         {
             //currently load is instant inside ctor
             textures.Load();
-            textureArray.LoadSingle("res/Textures/rgba/img1.rgb");
-            textureArray.LoadSingle("res/Textures/rgba/img2.rgb");
-            textureArray.LoadSingle("res/Textures/rgba/img3.rgb");
+            textureArray.LoadArray("res/TextureArray"); //RLE would be nice but conversion tools are work
         }
     };
 

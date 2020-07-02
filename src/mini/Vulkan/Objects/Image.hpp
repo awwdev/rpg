@@ -241,8 +241,8 @@ namespace mini::vk
         uint32_t width, height;
         VkImageLayout layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-        template<u32 N, u32 W, u32 H> //assuming rgba only for now
-        void Create(Context& pContext, const hostRes::TextureArray<N, W, H>& textureArray, VkCommandPool cmdPool)
+        template<u32 N, u32 W, u32 H, u32 C> //assuming rgba only for now
+        void Create(Context& pContext, const hostRes::TextureArray<N, W, H, C>& textureArray, VkCommandPool cmdPool)
         {
             device  = pContext.device;
             queue   = pContext.queue;
@@ -252,7 +252,8 @@ namespace mini::vk
             height  = textureArray.HEIGHT;
 
             //TODO: check for channels
-            const auto FORMAT = VK_FORMAT_R8G8B8A8_SRGB; //!depends on channels!
+            //const auto FORMAT = VK_FORMAT_R8G8B8A8_SRGB; //!depends on channels!
+            const auto FORMAT = VK_FORMAT_R8_SRGB; //!depends on channels!
 
             //? IMAGE
 
