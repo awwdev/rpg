@@ -1,13 +1,12 @@
 //https://github.com/awwdev
 
 #pragma once
-
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Ctors.hpp"
 #include "mini/Vulkan/Resources.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/App/Scene.hpp"
-#include "mini/RenderGraph/IRenderer.hpp"
+#include "mini/RenderGraph/RenderGraph.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Window/AppEvents.hpp"
@@ -39,33 +38,10 @@ namespace mini::vk
         void RecreateScwapchain()
         {
             vkDeviceWaitIdle(context.device);
-
             if (!context.RecreateSwapchain())
                 return;
 
-            /*
-            resources.ui_renderPass.~RenderPass();
-            CreateRenderPass_UI(context, resources.ui_renderPass);
-
-            resources.ui_pipeline.~Pipeline();
-            CreatePipeline_UI(
-                context, 
-                resources.ui_pipeline,
-                resources.ui_shader, 
-                resources.ui_renderPass, 
-                resources.ui_vbo, 
-                resources.ui_ibo
-            );
-            CreatePipeline_UI_wire(
-                context, 
-                resources.ui_pipeline_wire,
-                resources.ui_shader_wire, 
-                resources.ui_renderPass, 
-                resources.ui_vbo, 
-                resources.ui_ibo
-            );
-            */
-
+            //? same as when creating stuff but with dtor
             resources.text_renderPass.~RenderPass();
             CreateRenderPass_Text(context, resources.text_renderPass);
 
@@ -75,11 +51,14 @@ namespace mini::vk
                 resources.text_pipeline,
                 resources.text_shader, 
                 resources.text_renderPass, 
-                resources.text_ubo
+                resources.text_ubo_array
             );
 
             commands.~Commands();
             commands.Create(context);
+
+            //TODO: find a way to keep track what was created and then recreate it
+            //maybe a unified method Create() that also can be used OnRecreate (need of checks)
         }
 
 
@@ -89,35 +68,17 @@ namespace mini::vk
             resources.text_pushConst.wnd_h = wnd::window_h;
 
             using namespace rendergraph;
-            //const char* const text = "Hello World";
             UniformData_Text arr [10]; //same size as str
-            
-
             auto fpsStr = std::to_string(dt::fps);
             for(auto i = 0; i < fpsStr.size(); ++i){
                 arr[i] = UniformData_Text{ { 32 + 32.f*i, 32.f, 0}, 0, (uint32_t)fpsStr[i] - 32 };
             }
-            resources.text_ubo.buffer.Store(arr, sizeof(rendergraph::UniformData_Text) * 10);
 
-
-            //TODO: get texture array working
-
-            //#extension GL_EXT_shader_16bit_storage : enable
-            //VK_KHR_8bit_storage and VK_KHR_16bit_storage
-            //VkPhysicalDeviceFeatures::shaderInt16
-
-            //resources.ui_vbo.vertexBuffer.Store(vertices.Data(), vertices.Count()  * sizeof(utils::Vertex));
-            //resources.ui_vbo.indexBuffer.Store (indices.Data(), indices.Count() * sizeof(uint32_t));
-            //resources.ui_vbo.instanceBuffer.Store(instanceData.Data(), instanceData.Count() * sizeof(InstanceData_UI));
-            //resources.ui_ibo.buffer.Store(uniforms.data, uniforms.CurrentSize());
+            resources.text_ubo_array.Store(arr);
         }
 
-
-
-        inline void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
+        void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
         {
-
-
             auto& cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
             VkDeviceSize vboOffsets { 0 };
             uint32_t     uboOffsets { 0 };
@@ -134,36 +95,18 @@ namespace mini::vk
             );
             vkCmdBeginRenderPass (cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
+            //? TEXT
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.text_pipeline.pipeline);
             vkCmdPushConstants      (cmdBuffer, resources.text_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.text_pushConst), &resources.text_pushConst);
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.text_pipeline.layout, 0, 1, &resources.text_pipeline.sets[cmdBufferIdx], 0, nullptr); 
-            vkCmdDraw               (cmdBuffer, 10*6, 1, 0, 0); //TODO: get count somewhere
-
-            //vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.ui_vbo.vertexBuffer.buffer, &vboOffsets);
-            //vkCmdBindVertexBuffers  (cmdBuffer, 1, 1, &resources.ui_vbo.instanceBuffer.buffer, &vboOffsets);
-            //vkCmdBindIndexBuffer    (cmdBuffer, resources.ui_vbo.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-            
-            //FOR_ARRAY(vertexGroups, i)
-            {
-                //uboOffsets = resources.ui_ibo.ALIGNMENT * i; 
-                //! still abit unclear to me why we need to call twice (since first one could be called once) and also why both need dynamic
-                //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
-                //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 1, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
-                //vkCmdDrawIndexed        (cmdBuffer, vertexGroups[i].IndexCount(), 3, 0, vertexGroups[i].v1, 0); 
-            }
-            
-            //? wire mode
-            //vkCmdBindPipeline (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline_wire.pipeline);
-            //FOR_ARRAY(vertexGroups, i) {
-            //    vkCmdDrawIndexed(cmdBuffer, vertexGroups[i].IndexCount(), 1, 0, vertexGroups[i].v1, 0);
-            //}
+            vkCmdDraw               (cmdBuffer, resources.text_ubo_array.count * 6, 1, 0, 0); 
 
             vkCmdEndRenderPass(cmdBuffer);
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }
 
 
-        inline void Render(const double dt, rendergraph::RenderGraph& renderGraph, app::Scene& scene)
+        void Render(const double dt, rendergraph::RenderGraph& renderGraph, app::Scene& scene)
         {
             if (wnd::CheckEvent(wnd::EventType::Window_Resize)){
                 RecreateScwapchain();
@@ -212,3 +155,18 @@ namespace mini::vk
     };
 
 }//ns
+
+
+
+
+/*
+dynamic ubo binding 
+//FOR_ARRAY(vertexGroups, i)
+{
+    //uboOffsets = resources.ui_ibo.ALIGNMENT * i; 
+    //! still abit unclear to me why we need to call twice (since first one could be called once) and also why both need dynamic
+    //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
+    //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 1, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
+    //vkCmdDrawIndexed        (cmdBuffer, vertexGroups[i].IndexCount(), 3, 0, vertexGroups[i].v1, 0); 
+}
+*/

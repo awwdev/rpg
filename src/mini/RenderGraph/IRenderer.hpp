@@ -10,16 +10,11 @@
 #include "mini/Resources/Font.hpp"
 #include "mini/Resources/HostResources.hpp"
 
+//! not used right now, use as ref for vbo based rendering
+
 namespace mini::rendergraph
 {
-    struct RenderGraph
-    {
-        box::Array<UniformData_Text, 100> uboText;
-    };
 
-
-
-    //TODO: pass RenderGraph to specific Renderer instead of inheritance
     /*
     using RenderID = u32;
 
@@ -67,34 +62,7 @@ namespace mini::rendergraph
             renderArray_UI.uniforms.Append(uniform);
             renderArray_UI.EndGroup(group);
         }
-    };*/
-
-
-    //TODO: DO INSTANCE TEXT RENDERING FIRST
-    //another vertex buffer to store offset and colors
-    //another binding, and INSTANCE_RATE
-    //add when on vkCmdBind(2) ...
-
-    //TODO: pass RenderGraph struct to specific Renderer instead of inheritance
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    };
 
     struct VertexGroup
     {
@@ -216,5 +184,6 @@ namespace mini::rendergraph
         }
 
     };
+    */
 
 }//ns

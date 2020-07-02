@@ -7,9 +7,32 @@
 #include "mini/Window/AppEvents.hpp"
 #include "mini/ECS/ComponentArray.hpp"
 #include "mini/Utils/Algorithms.hpp"
+#include "mini/Utils/Structs.hpp"
 
 namespace mini::app::ui
 {
+    inline bool DrawButton(chars_t text, const utils::Rect<int>& rect)
+    {
+        
+        return false;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
     inline void UpdateFpsMonitorText(rendergraph::IRenderer& renderer, const double dt, ecs::C_UI& uiData)
     {
         static box::String<100> fpsStr; //!hacked
@@ -63,5 +86,5 @@ namespace mini::app::ui
             }
         }
     }
-
+    */
 }//ns

@@ -18,13 +18,12 @@ namespace mini::vk
     {
         VkDevice device;
 
-        //stages
         box::Array<VkShaderModule, 4> modules;
         box::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
 
         //uniform data
-        UniformInfo uniformInfo; //! probably need array?
-        box::Array<VkSampler, 4> samplers;
+        UniformInfo info; //! probably need array?
+        box::Array<VkSampler, 4> samplers; //just some capacity
 
         
         explicit Shader(Context& context) : device { context.device } {;}
