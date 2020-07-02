@@ -11,6 +11,7 @@
 #include "mini/Utils/Structs.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Window/AppEvents.hpp"
+#include "mini/Utils/DeltaTime.hpp"
 
 namespace mini::vk
 {
@@ -88,12 +89,15 @@ namespace mini::vk
             resources.text_pushConst.wnd_h = wnd::window_h;
 
             using namespace rendergraph;
-            const char* const text = "Hello World";
-            UniformData_Text arr [11]; //same size as str
-            for(auto i = 0; i < 11; ++i){
-                arr[i] = UniformData_Text{ { 32 + 32.f*i, 32.f, 0}, 0, (uint32_t)text[i] - 32 };
+            //const char* const text = "Hello World";
+            UniformData_Text arr [10]; //same size as str
+            
+
+            auto fpsStr = std::to_string(dt::fps);
+            for(auto i = 0; i < fpsStr.size(); ++i){
+                arr[i] = UniformData_Text{ { 32 + 32.f*i, 32.f, 0}, 0, (uint32_t)fpsStr[i] - 32 };
             }
-            resources.text_ubo.buffer.Store(arr, sizeof(rendergraph::UniformData_Text) * 11);
+            resources.text_ubo.buffer.Store(arr, sizeof(rendergraph::UniformData_Text) * 10);
 
 
             //TODO: get texture array working
@@ -133,7 +137,7 @@ namespace mini::vk
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.text_pipeline.pipeline);
             vkCmdPushConstants      (cmdBuffer, resources.text_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.text_pushConst), &resources.text_pushConst);
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.text_pipeline.layout, 0, 1, &resources.text_pipeline.sets[cmdBufferIdx], 0, nullptr); 
-            vkCmdDraw               (cmdBuffer, 11*6, 1, 0, 0); //TODO: get count somewhere
+            vkCmdDraw               (cmdBuffer, 10*6, 1, 0, 0); //TODO: get count somewhere
 
             //vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.ui_vbo.vertexBuffer.buffer, &vboOffsets);
             //vkCmdBindVertexBuffers  (cmdBuffer, 1, 1, &resources.ui_vbo.instanceBuffer.buffer, &vboOffsets);

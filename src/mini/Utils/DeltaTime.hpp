@@ -10,6 +10,7 @@ namespace mini::dt
     inline Clock::time_point previous = Clock::now();
 
     inline double counter = 0; //to signal fps
+    inline std::size_t frames = 0;
     inline std::size_t fps = 0;
 
     inline void UpdateFPS()
@@ -22,13 +23,14 @@ namespace mini::dt
         previous = now;
 
         counter += seconds;
-        ++fps;
+        ++frames;
 
         if (counter >= 1)
         {
             counter -= 1;
-            LOG("fps", fps);
-            fps = 0;
+            fps = frames;
+            //LOG("fps", fps);
+            frames = 0;
         }
     }
 
