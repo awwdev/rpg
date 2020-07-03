@@ -13,7 +13,6 @@
 #include "mini/Vulkan/Renderer.hpp"
 
 #include "mini/App/Scene.hpp"
-#include "mini/RenderGraph/IRenderer.hpp" //TODO: rename to rendergraph
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Resources/HostResources.hpp"
 

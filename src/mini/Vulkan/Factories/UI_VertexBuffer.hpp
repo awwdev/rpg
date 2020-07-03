@@ -3,10 +3,10 @@
 #pragma once
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/VertexBuffer.hpp"
-#include "mini/RenderGraph/InstanceData.hpp"
 
 namespace mini::vk
 {
+    /*
     inline void CreateVertexBuffer_UI(Context& context, VertexBuffer& vb)
     {
         vb.CreateDynamic(context);
@@ -63,5 +63,6 @@ namespace mini::vk
             .offset     = offsetof(InstanceData_UI, color)
         });
     }
+    */
 
 }//ns

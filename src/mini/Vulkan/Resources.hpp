@@ -16,7 +16,6 @@
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/Utils/Structs.hpp"
-#include "mini/RenderGraph/IRenderer.hpp"
 #include "mini/RenderGraph/UboData.hpp"
 
 namespace mini::vk

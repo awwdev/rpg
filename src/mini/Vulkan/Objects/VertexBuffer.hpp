@@ -4,13 +4,13 @@
 
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Buffer.hpp"
-#include "mini/RenderGraph/InstanceData.hpp"
 
 #include "mini/Box/Array.hpp"
 
 
 namespace mini::vk
 {
+    /*
     struct VertexBuffer
     {
         //! count not actually needed since we can test host vertex buffer
@@ -94,5 +94,6 @@ namespace mini::vk
             .pVertexAttributeDescriptions    = vb.attributes.Data()
         };
     }
+    */
 
 }//ns

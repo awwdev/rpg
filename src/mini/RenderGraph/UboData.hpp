@@ -3,11 +3,6 @@
 
 namespace mini
 {
-    struct UboData_UI
-    {
-        bool useTexture = false;   
-    };
-
     namespace rendergraph 
     {
         struct UniformData_Text
@@ -18,6 +13,5 @@ namespace mini
             uint32_t    textureIndex; 
         };
     }
-
 
 }//ns
