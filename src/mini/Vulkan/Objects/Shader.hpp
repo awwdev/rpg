@@ -40,7 +40,7 @@ namespace mini::vk
             std::ifstream file(path, std::ios::ate | std::ios::binary);
             mini::Assert(file.is_open(), "cannot open shader file");
 
-            const uint32_t size = file.tellg();
+            const uint32_t size = (uint32_t)file.tellg();
             auto ptrBuffer = mem::ClaimBlock<char[BUFFER_SIZE]>();
             file.seekg(std::ios::beg);
             file.read(*ptrBuffer, size);

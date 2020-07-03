@@ -86,7 +86,7 @@ namespace mini::vk
         VK_CHECK(vkAllocateDescriptorSets(context.device, &allocInfo, pipeline.sets.Data()));
 
         box::Array<VkWriteDescriptorSet, 10> writes;
-        for(auto i = 0; i < context.swapImages.count; ++i)
+        for(u32 i = 0; i < context.swapImages.count; ++i)
         {
             FOR_CARRAY(uniformInfos, j)
             {

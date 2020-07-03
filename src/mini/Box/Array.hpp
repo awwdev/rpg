@@ -271,7 +271,7 @@ namespace mini::box
             }
             else
             {
-                if (i < min || i >= max)
+                if ((IDX_T)i < min || (IDX_T)i >= max) //not sure if cast is good
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Array access out of bounds");
                     __debugbreak();

@@ -16,7 +16,7 @@
 namespace mini::app::ui
 {
     template<u32 STRLEN_0>
-    bool DrawButton(rendergraph::RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<int>& rect)
+    bool DrawButton(rendergraph::RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& rect)
     {
         const bool isMouseInside   = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, rect);
         const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released) != nullptr; 
@@ -29,8 +29,8 @@ namespace mini::app::ui
 
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
-                .offset         = { (float)rect.x, (float)rect.y }, 
-                .size           = { (float)rect.w, (float)rect.h },
+                .offset         = { rect.x, rect.y }, 
+                .size           = { rect.w, rect.h },
                 .colorIndex     = btnColorIdx,
                 .textureIndex   = 95 //this is full opaque
             }
@@ -48,7 +48,7 @@ namespace mini::app::ui
         for(auto i = 0; i < STRLEN; ++i) {
             renderGraph.uboText.Append(
                 rendergraph::UniformData_Text { 
-                    .offset         = { (float) str_x + LETTER_SPACE * i, str_y }, 
+                    .offset         = { str_x + LETTER_SPACE * i, str_y }, 
                     .size           = { LETTER_SIZE, LETTER_SIZE },
                     .colorIndex     = (uint32_t)0,
                     .textureIndex   = (uint32_t)str[i] - 32 //ascii "text offset"
@@ -60,13 +60,13 @@ namespace mini::app::ui
     }
 
 
-    inline void DrawFPS(rendergraph::RenderGraph& renderGraph, const utils::Rect<int>& rect = { 0, 0, 64, 24 })
+    inline void DrawFPS(rendergraph::RenderGraph& renderGraph, const utils::Rect<float>& rect = { 0, 0, 64, 24 })
     {
         //? quad
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
-                .offset         = { (float)rect.x, (float)rect.y }, 
-                .size           = { (float)rect.w, (float)rect.h },
+                .offset         = { rect.x, rect.y }, 
+                .size           = { rect.w, rect.h },
                 .colorIndex     = 4, 
                 .textureIndex   = 95 //this is full opaque
             }
@@ -88,7 +88,7 @@ namespace mini::app::ui
         for(auto i = 0; i < STRLEN; ++i) {
             renderGraph.uboText.Append(
                 rendergraph::UniformData_Text { 
-                    .offset         = { (float) str_x + LETTER_SPACE * i, str_y }, 
+                    .offset         = { str_x + LETTER_SPACE * i, str_y }, 
                     .size           = { LETTER_SIZE, LETTER_SIZE },
                     .colorIndex     = (uint32_t)0,
                     .textureIndex   = (uint32_t)fpsStr[i] - 32 //ascii "text offset"
@@ -97,71 +97,4 @@ namespace mini::app::ui
         }
     }
 
-
-
-
-
-
-//using namespace rendergraph;
-//UniformData_Text arr [10]; //same size as str
-//auto fpsStr = std::to_string(dt::fps);
-//for(auto i = 0; i < fpsStr.size(); ++i){
-//    arr[i] = UniformData_Text{ { 32 + 32.f*i, 32.f, 0}, 0, (uint32_t)fpsStr[i] - 32 };
-//}
-
-    /*
-    inline void UpdateFpsMonitorText(rendergraph::IRenderer& renderer, const double dt, ecs::C_UI& uiData)
-    {
-        static box::String<100> fpsStr; //!hacked
-        static double counter = 0;
-        counter += dt;
-
-        if (counter >= 1)
-        {
-            counter -= 1;
-            fpsStr.Clear();
-            fpsStr.Set("fps: ");
-            char buf[20];
-            sprintf_s(buf, "%4.0f", 1/dt);
-            fpsStr.Append(buf);
-        }
-
-        uiData.text.Set(fpsStr.dataPtr);
-    }
-
-    inline void ProcessComponents_UI(rendergraph::IRenderer& renderer, box::IArray<ecs::C_UI>& uiDatas)
-    {
-        FOR_ARRAY(uiDatas, i)
-        {
-            auto& uiData = uiDatas[i];
-
-            if (uiData.type == ecs::C_UI::Label)
-            {
-                renderer.Add_DrawLabel(uiData.text.dataPtr, uiData.rect, uiData.rect_col);
-            }
-            
-            if (uiData.type == ecs::C_UI::Button)
-            {
-                uiData.state = ecs::C_UI::Idle;
-                if (utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, uiData.rect))
-                {
-                    uiData.state = ecs::C_UI::Hovered;
-                    if (wnd::IsPressed(wnd::EventType::Mouse_Left)){
-                        uiData.state = ecs::C_UI::Hold;
-                    }
-                    if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released)) {
-                        uiData.state = ecs::C_UI::Released;
-                    }
-                }
-                
-                switch(uiData.state)
-                {
-                    case ecs::C_UI::Idle:     renderer.Add_DrawLabel(uiData.text.dataPtr, uiData.rect, utils::HighlightColor(uiData.rect_col, 0), uiData.text_col); break;
-                    case ecs::C_UI::Hovered:  renderer.Add_DrawLabel(uiData.text.dataPtr, uiData.rect, utils::HighlightColor(uiData.rect_col, 20), uiData.text_col); break;
-                    case ecs::C_UI::Hold:     renderer.Add_DrawLabel(uiData.text.dataPtr, uiData.rect, utils::HighlightColor(uiData.rect_col, 40), uiData.text_col); break;
-                }
-            }
-        }
-    }
-    */
 }//ns

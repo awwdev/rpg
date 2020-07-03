@@ -74,9 +74,9 @@ namespace mini::box
         template<typename COUNT>
         void Set(const CHAR_T* const ptr, const COUNT arrCount)
         {
-            CheckBounds(arrCount, COUNT_MAX + 1);
+            CheckBounds((u32)arrCount, COUNT_MAX + 1);
             std::memcpy(dataPtr, ptr, arrCount);
-            count = arrCount;
+            count = (u32)arrCount;
         }
 
         //IString& (const IString& other)      { Clear(); Append(other); }

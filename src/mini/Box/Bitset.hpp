@@ -134,7 +134,7 @@ namespace mini::box
             if constexpr (std::is_enum_v<IDX>)
             {
                 using UT = std::underlying_type_t<IDX>;
-                if ((UT)i < 0 || (UT)i >= max)
+                if ((IDX_T)i < 0 || (IDX_T)i >= max)
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
                     __debugbreak();
@@ -142,7 +142,7 @@ namespace mini::box
             }
             else
             {
-                if (i < 0 || i >= max)
+                if ((IDX_T)i < 0 || (IDX_T)i >= max)
                 {
                     mini::dbg::dlog<mini::dbg::ColorMode::Red>("Bitset access out of bounds");
                     __debugbreak();

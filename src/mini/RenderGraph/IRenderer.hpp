@@ -7,7 +7,6 @@
 #include "mini/Utils/Structs.hpp"
 #include "mini/RenderGraph/UboData.hpp"
 #include "mini/Resources/PrimitiveMeshes.hpp"
-#include "mini/Resources/Font.hpp"
 #include "mini/Resources/HostResources.hpp"
 
 //! not used right now, use as ref for vbo based rendering

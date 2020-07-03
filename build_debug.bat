@@ -11,6 +11,7 @@
  /nologo ^
  /MTd ^
  /GR ^
+ /W3 ^
  /D _UNICODE /D UNICODE /D _STATIC_CPPLIB /D _HAS_EXCEPTIONS=0 ^
  /Fo: build_debug\objs\ ^
  /Fe: build_debug\main_debug.exe ^

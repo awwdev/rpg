@@ -272,7 +272,7 @@ namespace mini::vk
 
             swapImageViews.count = swapImages.count;
             //LOG("swapchain count", images.count);
-            for (auto i=0; i<swapImages.count; ++i) {
+            for (u32 i=0; i<swapImages.count; ++i) {
                 const VkImageViewCreateInfo viewInfo {
                     .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
                     .pNext      = nullptr,

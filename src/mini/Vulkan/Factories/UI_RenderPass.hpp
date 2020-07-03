@@ -60,7 +60,7 @@ namespace mini::vk
         VK_CHECK(vkCreateRenderPass(context.device, &renderPassInfo, nullptr, &rp.renderPass));
 
         //? framebuffers
-        for (auto i = 0; i < context.swapImages.count; ++i)
+        for (u32 i = 0; i < context.swapImages.count; ++i)
         {
             rp.framebuffers.Append();
 
@@ -138,7 +138,7 @@ namespace mini::vk
         VK_CHECK(vkCreateRenderPass(context.device, &renderPassInfo, nullptr, &rp.renderPass));
 
         //? framebuffers
-        for (auto i = 0; i < context.swapImages.count; ++i)
+        for (u32 i = 0; i < context.swapImages.count; ++i)
         {
             rp.framebuffers.Append();
 

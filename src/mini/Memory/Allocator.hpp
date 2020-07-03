@@ -31,8 +31,8 @@ namespace mini::mem
 {
     struct AllocInfo
     {
-        std::size_t blockSize;
-        std::size_t blockCount;
+        u32 blockSize;
+        u32 blockCount;
     };
 
     //!--------------------------------------
@@ -120,7 +120,7 @@ namespace mini::mem
         using DATA_T = T;
 
         T* ptr = nullptr;
-        std::size_t blockId = 0;
+        u32 blockId = 0;
 
         T* operator->() { return ptr; }
         T& operator* () { return *ptr;}
@@ -137,7 +137,7 @@ namespace mini::mem
             if (doAutoClaim == AutoClaim::Yes)
                 ClaimBlock(*this);
         };
-        BlockPtr(T* const pPtr, const std::size_t pBlockId)
+        BlockPtr(T* const pPtr, const u32 pBlockId)
             : ptr     { pPtr }
             , blockId { pBlockId } 
         {}
@@ -174,14 +174,14 @@ namespace mini::mem
     {
         struct FittingAlloc 
         { 
-            std::size_t allocIdx; 
-            std::size_t allocBitBegin;
+            u32 allocIdx; 
+            u32 allocBitBegin;
         };
 
         //!WHEN YOU GET A COMPILE ERROR HERE, ITS PROBABLY BECAUSE THERE IS NO BLOCK SIZE
         constexpr auto FIT = []() constexpr -> FittingAlloc {
-            std::size_t allocBitBegin = 0;
-            for(std::size_t i=0; i<ALLOC_COUNT; ++i) 
+            u32 allocBitBegin = 0;
+            for(u32 i=0; i<ALLOC_COUNT; ++i) 
             {
                 if (ALLOC_INFOS[i].blockSize >= (sizeof(T) + alignof(T))) //!assumes sorted
                     return { i, allocBitBegin };
