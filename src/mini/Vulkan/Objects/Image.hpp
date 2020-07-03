@@ -251,9 +251,7 @@ namespace mini::vk
             width   = textureArray.WIDTH;
             height  = textureArray.HEIGHT;
 
-            //TODO: check for channels
-            //const auto FORMAT = VK_FORMAT_R8G8B8A8_SRGB; //!depends on channels!
-            const auto FORMAT = VK_FORMAT_R8_SRGB; //!depends on channels!
+            const auto FORMAT = VK_FORMAT_R8_SRGB; //!
 
             //? IMAGE
 

@@ -25,6 +25,8 @@ namespace mini::app
         void Update(rendergraph::RenderGraph& renderGraph, const double dt)
         {
             //? UI
+            ui::DrawFPS(renderGraph); 
+
             if (ui::DrawButton(renderGraph, "This is insane", {64, 64, 128, 24}))
             {
                 LOG("pressed");

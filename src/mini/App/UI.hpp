@@ -8,6 +8,10 @@
 #include "mini/ECS/ComponentArray.hpp"
 #include "mini/Utils/Algorithms.hpp"
 #include "mini/Utils/Structs.hpp"
+#include "mini/Utils/DeltaTime.hpp"
+#include "mini/Memory/Allocator.hpp"
+
+#include <charconv>
 
 namespace mini::app::ui
 {
@@ -56,24 +60,54 @@ namespace mini::app::ui
     }
 
 
+    inline void DrawFPS(rendergraph::RenderGraph& renderGraph, const utils::Rect<int>& rect = { 0, 0, 64, 24 })
+    {
+        //? quad
+        renderGraph.uboText.Append(
+            rendergraph::UniformData_Text { 
+                .offset         = { (float)rect.x, (float)rect.y }, 
+                .size           = { (float)rect.w, (float)rect.h },
+                .colorIndex     = 4, 
+                .textureIndex   = 95 //this is full opaque
+            }
+        );
+
+        //? text
+        const auto& fps = dt::fps;
+        char fpsStr [10] { '\0 '};
+        const auto res = std::to_chars(fpsStr, fpsStr + 10, fps);
+
+        const auto STRLEN = strlen(fpsStr);
+        const auto LETTER_SIZE  = 16;
+        const auto LETTER_SPACE = 8;
+        const auto TOTAL_STR_W = (STRLEN+1) * LETTER_SPACE;
+
+        const auto str_x = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
+        const auto str_y = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
+       
+        for(auto i = 0; i < STRLEN; ++i) {
+            renderGraph.uboText.Append(
+                rendergraph::UniformData_Text { 
+                    .offset         = { (float) str_x + LETTER_SPACE * i, str_y }, 
+                    .size           = { LETTER_SIZE, LETTER_SIZE },
+                    .colorIndex     = (uint32_t)0,
+                    .textureIndex   = (uint32_t)fpsStr[i] - 32 //ascii "text offset"
+                }
+            );
+        }
+    }
+
+
+
+
+
+
 //using namespace rendergraph;
 //UniformData_Text arr [10]; //same size as str
 //auto fpsStr = std::to_string(dt::fps);
 //for(auto i = 0; i < fpsStr.size(); ++i){
 //    arr[i] = UniformData_Text{ { 32 + 32.f*i, 32.f, 0}, 0, (uint32_t)fpsStr[i] - 32 };
 //}
-
-
-
-
-
-
-
-
-
-
-
-
 
     /*
     inline void UpdateFpsMonitorText(rendergraph::IRenderer& renderer, const double dt, ecs::C_UI& uiData)
