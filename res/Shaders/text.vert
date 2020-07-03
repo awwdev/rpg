@@ -39,7 +39,7 @@ const vec2 uv [6] = {
 };
 
 //alpha does not matter
-const vec4 colors[5] = {
+const vec4 colors[] = {
     //font color
     vec4(0.9, 0.9, 0.9, 1),
     vec4(1.0, 0.0, 0.0, 1),
@@ -47,6 +47,7 @@ const vec4 colors[5] = {
     vec4(0.20, 0.20, 0.20 ,1),
     vec4(0.05, 0.05, 0.05 ,1),
     vec4(0.02, 0.02, 0.02 ,1),
+    vec4(0.01, 0.01, 0.01 ,1),
 };
 
 void main() 
