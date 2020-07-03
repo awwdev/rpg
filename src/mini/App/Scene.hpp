@@ -25,7 +25,7 @@ namespace mini::app
         void Update(rendergraph::RenderGraph& renderGraph, const double dt)
         {
             //? UI
-            if (ui::DrawButton(renderGraph, "Button", {64, 64, 128, 24}))
+            if (ui::DrawButton(renderGraph, "This is insane", {64, 64, 128, 24}))
             {
                 LOG("pressed");
             }

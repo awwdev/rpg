@@ -25,7 +25,7 @@ namespace mini::app::ui
 
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
-                .offset         = { (float)rect.x, (float)rect.y, 0}, 
+                .offset         = { (float)rect.x, (float)rect.y }, 
                 .size           = { (float)rect.w, (float)rect.h },
                 .colorIndex     = btnColorIdx,
                 .textureIndex   = 95 //this is full opaque
@@ -34,8 +34,9 @@ namespace mini::app::ui
 
         //? TEXT
         constexpr auto STRLEN = STRLEN_0 - 1; //don't consider \0 for rendering
-        constexpr auto LETTER_SIZE = 16; //monospace
-        constexpr auto TOTAL_STR_W = STRLEN * LETTER_SIZE;
+        constexpr auto LETTER_SIZE  = 16;
+        constexpr auto LETTER_SPACE = 8;
+        constexpr auto TOTAL_STR_W = STRLEN_0 * LETTER_SPACE; //not sure why strlen0 works (+1)
 
         const auto str_x = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
         const auto str_y = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
@@ -43,7 +44,7 @@ namespace mini::app::ui
         for(auto i = 0; i < STRLEN; ++i) {
             renderGraph.uboText.Append(
                 rendergraph::UniformData_Text { 
-                    .offset         = { (float) str_x + LETTER_SIZE * i, str_y, 0 }, 
+                    .offset         = { (float) str_x + LETTER_SPACE * i, str_y }, 
                     .size           = { LETTER_SIZE, LETTER_SIZE },
                     .colorIndex     = (uint32_t)0,
                     .textureIndex   = (uint32_t)str[i] - 32 //ascii "text offset"

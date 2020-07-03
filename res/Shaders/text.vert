@@ -7,7 +7,7 @@ layout(push_constant) uniform Push {
 } push;
 
 struct INSTANCE_DATA {
-    vec4 offset;
+    vec4 pos;
     vec2 size;
     uint colorIdx;
     uint textureIdx;
@@ -54,14 +54,24 @@ void main()
     const uint instID = gl_VertexIndex / 6;
     const uint vertID = gl_VertexIndex % 6;
 
-    //vert position
-    float x = 2 * ((quad[vertID].x * instanceData.arr[instID].size.x) / push.wnd_width ) - 1;
-    float y = 2 * ((quad[vertID].y * instanceData.arr[instID].size.y) / push.wnd_height) - 1;
-    //quad offest
-    x += 2 * instanceData.arr[instID].offset.x / push.wnd_width;
-    y += 2 * instanceData.arr[instID].offset.y / push.wnd_height;
+    const INSTANCE_DATA instData = instanceData.arr[instID];
 
-    gl_Position = vec4(x, y, 0, 1);
+    const float quadX = instData.pos.x;
+    const float quadY = instData.pos.y;
+    const float quadW = instData.size.x;
+    const float quadH = instData.size.y;
+
+    const float vertOffX = quad[vertID].x * quadW;
+    const float vertOffY = quad[vertID].y * quadH;
+
+    const float xnorm1 = (quadX + vertOffX) / push.wnd_width;
+    const float ynorm1 = (quadY + vertOffY) / push.wnd_height;
+    const float xnorm2 = xnorm1 * 2 - 1;
+    const float ynorm2 = ynorm1 * 2 - 1;
+
+
+
+    gl_Position = vec4(xnorm2, ynorm2, 0, 1);
     outColors   = colors[instanceData.arr[instID].colorIdx]; //color lookup
     outUV       = vec3(uv[vertID], instanceData.arr[instID].textureIdx); //texture index lookup
 }
