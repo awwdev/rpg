@@ -30,10 +30,9 @@ namespace mini::app
         {
             //? UI
             ui::DrawFPS(renderGraph); 
-            ui::DrawWindow(renderGraph, ui.window1);
 
-            if (ui::DrawButton(renderGraph, "This is insane", {64, 64, 128, 24}))
-            {
+            ui::DrawWindow(renderGraph, ui.window1);
+            if (ui::DrawButton(renderGraph, "Button", {8, 8, 128, 24}, ui.window1)) {
                 LOG("pressed");
             }
 

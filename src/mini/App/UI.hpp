@@ -11,8 +11,12 @@
 #include "mini/Utils/Structs.hpp"
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Memory/Allocator.hpp"
+#include "mini/Utils/Algorithms.hpp"
 
 #include <charconv>
+
+//TODO: input field
+//TODO: console
 
 namespace mini::app::ui
 {
@@ -28,8 +32,11 @@ namespace mini::app::ui
     {
         utils::Rect<float> rect;
         box::String<20>    title;
-        bool isDragging = false;
+        bool isDragged  = false;
+        bool isResizing = false;
         s32 dragX, dragY;
+
+        static constexpr u32 BAR_H = 24;
     };
 
     struct UI
@@ -37,7 +44,11 @@ namespace mini::app::ui
         Window window1 {};
     };
 
-
+    template<u32 STRLEN_0>
+    bool DrawButton(rendergraph::RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
+    {
+        return DrawButton(renderGraph, str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
+    }
 
     template<u32 STRLEN_0>
     bool DrawButton(rendergraph::RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& rect)
@@ -48,8 +59,8 @@ namespace mini::app::ui
 
         //? QUAD
         uint32_t btnColorIdx;
-        if (isMouseInside && isMousePressed) btnColorIdx = 2;
-        else btnColorIdx = isMouseInside ? 3 : 4; //TODO: push some const stuff to shader that came from host
+        if (isMouseInside && isMousePressed) btnColorIdx = WHITE;
+        else btnColorIdx = isMouseInside ? GRAY : DARK; //TODO: push some const stuff to shader that came from host
 
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
@@ -130,27 +141,53 @@ namespace mini::app::ui
         Window& wnd)
     {
         const auto& rect = wnd.rect;
-        const utils::Rect<float> bar = { rect.x, rect.y, rect.w, 24 };
+        const utils::Rect<float> bar = { rect.x, rect.y, rect.w, wnd.BAR_H };
+        const utils::Rect<float> resizer = { rect.x + rect.w - 8, rect.y + rect.h - 8, 8, 8 };
 
-        const bool isMouseOnBar   = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, bar);
-        const bool isMouseHeld    = wnd::IsPressed(wnd::EventType::Mouse_Left);
-        const bool isMousePressed = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
+        const bool isMouseOnBar    = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, bar);
+        const bool isMouseOnResizer= utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, resizer);
+
+        const bool isMouseHeld     = wnd::IsPressed(wnd::EventType::Mouse_Left);
+        const bool isMousePressed  = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
+        const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released);
 
         //? DRAGGING
-        if (isMouseOnBar && isMousePressed)
+        if (isMouseReleased)
+        {
+            wnd.isDragged  = false;
+            wnd.isResizing = false;
+        }
+        if (isMousePressed)
         {
             wnd.dragX = wnd::mouse_x;
             wnd.dragY = wnd::mouse_y;
         }
-        if (isMouseOnBar && isMouseHeld)
+        if (isMousePressed && isMouseOnBar) {
+            wnd.isDragged = true;    
+        }
+        if (isMousePressed && isMouseOnResizer) {
+            wnd.isResizing = true;    
+        }
+
+        if (wnd.isDragged || wnd.isResizing)
         {
             const s32 deltaX = wnd::mouse_x - wnd.dragX;
             const s32 deltaY = wnd::mouse_y - wnd.dragY;
             wnd.dragX = wnd::mouse_x;
             wnd.dragY = wnd::mouse_y;
 
-            wnd.rect.x += deltaX;
-            wnd.rect.y += deltaY;
+            if (wnd.isDragged) //drag
+            {
+                wnd.rect.x += deltaX;
+                wnd.rect.y += deltaY;
+            }
+            if (wnd.isResizing) //resize
+            {
+                wnd.rect.w += deltaX;
+                wnd.rect.h += deltaY;
+                utils::IfClamp<140, 600>(wnd.rect.w);
+                utils::IfClamp<64 , 600>(wnd.rect.h);
+            }
         }
 
         //? QUAD
@@ -168,6 +205,15 @@ namespace mini::app::ui
                 .offset         = { bar.x, bar.y }, 
                 .size           = { bar.w, bar.h },
                 .colorIndex     = BLACK,
+                .textureIndex   = FULL_OPAQUE,
+            }
+        );
+        //? RESIZER
+        renderGraph.uboText.Append(
+            rendergraph::UniformData_Text { 
+                .offset         = { resizer.x, resizer.y }, 
+                .size           = { resizer.w, resizer.h },
+                .colorIndex     = isMouseOnResizer ? GRAY : DARK,
                 .textureIndex   = FULL_OPAQUE,
             }
         );
