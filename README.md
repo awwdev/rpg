@@ -4,6 +4,8 @@ It is intended to **show my experience with programming** in C++ and software en
 It can also be used as framework and reference for your own engine.
 I choose the name "mini" since I like to write elegant and minimal code (as much as possible).
 
+![](media/progress/2020_07_04_ui_wnd.gif)
+
 ### Contents
 - Containers (Array, Bitset, String, Map)
 - Global allocator
