@@ -90,6 +90,14 @@ namespace mini::box
         {
             Append(arr, N); //no need for strlen
         }
+
+        void Append(const CHAR_T ch)
+        {
+            //consider the \0 trail
+            CheckBounds(count, COUNT_MAX + 1);
+            dataPtr[count-1] = ch;
+            ++count;
+        }
         
         template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
         void Append(const PTR ptr)
@@ -117,6 +125,13 @@ namespace mini::box
         void Remove(const u32 i, const u32 len)
         {
             static_assert(false, "Not yet implemented");
+        }
+
+        void Pop()
+        {
+            if (count <= 1) return;
+            dataPtr[count-1] = '\0';
+            --count;
         }
 
 

@@ -10,8 +10,7 @@ namespace mini::wnd
         Mouse_Right,
 
         Keyboard_Escape,
-        Keyboard_W,
-        Keyboard_E,
+        Keyboard_ASCII,
 
         PRESSABLE_END,
 
@@ -30,9 +29,11 @@ namespace mini::wnd
     {
         EventType  type;
         EventState state;
+        //TODO: better write dedicated ctors
         union {
-            struct { s32 x, y; } pos;
+            struct { s32 x, y; } pos; 
             struct { u32 w, h; } size;
+            char   ascii;
         };
 
         bool operator==(const EventType otherType) { return type == otherType; }
@@ -55,10 +56,13 @@ namespace mini::wnd
         return nullptr;
     }
 
-
     inline bool IsPressed(const EventType type)
     {
         return pressed.Test(type);
+    }
+
+    inline EventType GetKey()
+    {
     }
 
     //TODO: maybe some ConsumeEvent method

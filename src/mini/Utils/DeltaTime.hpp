@@ -31,7 +31,7 @@ namespace mini::dt
         {
             counter -= 1;
             fps = frames;
-            LOG("fps", fps);
+            //LOG("fps", fps);
             frames = 0;
         }
     }

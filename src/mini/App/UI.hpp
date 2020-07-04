@@ -39,9 +39,17 @@ namespace mini::app::ui
         static constexpr u32 BAR_H = 24;
     };
 
+    struct InputField
+    {
+        box::String<30> input;
+        bool isActive = false;
+        //TODO: conversion function to grab data of input field
+    };
+
     struct UI
     {   
-        Window window1 {};
+        Window window1    {};
+        InputField input1 {};
     };
 
     template<u32 STRLEN_0>
@@ -136,7 +144,7 @@ namespace mini::app::ui
         utils::Rect<float> rect;
     };
 
-    void DrawWindow(
+    inline void DrawWindow(
         rendergraph::RenderGraph& renderGraph, 
         Window& wnd)
     {
@@ -239,6 +247,106 @@ namespace mini::app::ui
         }
     }
 
+
+    
+
+    template<u32 STRLEN_0>
+    bool DrawInputField(rendergraph::RenderGraph& renderGraph, InputField& inputField, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
+    {
+        return DrawInputField(renderGraph, inputField, str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
+    }
+
+    template<u32 STRLEN_0>
+    bool DrawInputField(
+        rendergraph::RenderGraph& renderGraph,
+        InputField& inputField,
+        const char(&str)[STRLEN_0],
+        const utils::Rect<float>& rect = { 0, 0, 64, 24 })
+    {
+        const utils::Rect<float> inputRect { rect.x + 64, rect.y, rect.w - 64, rect.h };
+        const bool isMouseOnInput = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, inputRect);
+        const bool isMousePressed  = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
+       
+
+        if (isMouseOnInput && isMousePressed) {
+            inputField.isActive = true;
+        }
+        if (!isMouseOnInput && isMousePressed) {
+            inputField.isActive = false; //probably does not cover all cases
+        }
+
+        if (inputField.isActive) {
+            if (const auto* ev = wnd::CheckEvent(wnd::EventType::Keyboard_ASCII, wnd::EventState::Pressed)){
+                if (ev->ascii == '\b')
+                    inputField.input.Pop();
+                else
+                    inputField.input.Append(ev->ascii);
+            }
+        }
+
+        //const bool isMouseOnBar    = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, bar);
+        //const bool isMouseOnResizer= utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, resizer);
+        //const bool isMouseHeld     = wnd::IsPressed(wnd::EventType::Mouse_Left);
+        //
+        //
+
+        //? INPUT FIELD
+        renderGraph.uboText.Append(
+            rendergraph::UniformData_Text { 
+                .offset         = { inputRect.x, inputRect.y }, 
+                .size           = { inputRect.w, inputRect.h },
+                .colorIndex     = isMouseOnInput ? GRAY : DARK,
+                .textureIndex   = FULL_OPAQUE,
+            }
+        );
+
+        //? LABEL
+        {
+            const auto STRLEN = STRLEN_0 - 1; //don't consider \0 for rendering
+            const auto LETTER_SIZE  = 16;
+            const auto LETTER_SPACE = 8;
+            const auto TOTAL_STR_W  = (STRLEN_0 + 1) * LETTER_SPACE; //not sure why strlen0 works (+1)
+
+            const auto str_x = rect.x + 0;
+            const auto str_y = rect.y + 24 * 0.5f - LETTER_SIZE * 0.5f;
+
+            for(u32 i = 0; i < STRLEN; ++i) {
+                renderGraph.uboText.Append(
+                    rendergraph::UniformData_Text { 
+                        .offset         = { str_x + LETTER_SPACE * i, str_y }, 
+                        .size           = { LETTER_SIZE, LETTER_SIZE },
+                        .colorIndex     = WHITE,
+                        .textureIndex   = (uint32_t)str[i] - 32 //ascii "text offset"
+                    }
+                );
+            }
+        }
+
+        //? INPUT
+        {
+            const auto STRLEN = inputField.input.Count() - 1; //don't consider \0 for rendering
+            const auto LETTER_SIZE  = 16;
+            const auto LETTER_SPACE = 8;
+            const auto TOTAL_STR_W  = (inputField.input.Count() + 1) * LETTER_SPACE; //not sure why strlen0 works (+1)
+
+            const auto str_x = rect.x + 64 + 8;
+            const auto str_y = rect.y + 24 * 0.5f - LETTER_SIZE * 0.5f;
+
+            for(u32 i = 0; i < STRLEN; ++i) {
+                renderGraph.uboText.Append(
+                    rendergraph::UniformData_Text { 
+                        .offset         = { str_x + LETTER_SPACE * i, str_y }, 
+                        .size           = { LETTER_SIZE, LETTER_SIZE },
+                        .colorIndex     = WHITE,
+                        .textureIndex   = (uint32_t)inputField.input[i] - 32 //ascii "text offset"
+                    }
+                );
+            }
+        }
+        
+
+        return false;
+    }
 
 
 }//ns
