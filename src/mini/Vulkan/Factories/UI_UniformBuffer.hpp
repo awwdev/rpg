@@ -7,9 +7,9 @@
 namespace mini::vk
 {
     template<class T, u32 N>
-    inline void CreateUniformBuffer_Text(Context& context, UniformBuffer_Array<T, N>& ub)
+    inline void CreateUniformBuffer_Text(UniformBuffer_Array<T, N>& ub)
     {
-        ub.Create(context);
+        ub.Create();
 
         ub.info.type = UniformInfo::Buffer;
         ub.info.layout = {

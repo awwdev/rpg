@@ -14,13 +14,11 @@ namespace mini::vk
 {
     template<class T, u32 N>
     void CreatePipeline_Text(
-        Context& context, 
         Pipeline& pipeline,
         Shader& shader, 
         RenderPass& renderPass,
         UniformBuffer_Array<T, N>& uboText)
     {
-        pipeline.device = context.device;
         auto device = context.device;
         auto ptrRenderPass = &renderPass;
         auto ptrShader = &shader;
@@ -39,7 +37,7 @@ namespace mini::vk
             &shader.info,
             &uboText.info,
         };
-        WriteDescriptors(context, pipeline, uniformInfos);
+        WriteDescriptors(pipeline, uniformInfos);
 
         const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
             .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,

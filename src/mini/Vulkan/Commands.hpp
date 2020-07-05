@@ -5,23 +5,16 @@
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Ctors.hpp"
 
-
 namespace mini::vk
 {
     struct Commands
     {
-        VkDevice device;
-
         VkCommandPool cmdPool;
         box::POD_Array<VkCommandBuffer, 4> cmdBuffers { 0 };
 
-
-        inline void Create(Context& context)
+        inline void Create()
         {
-            device = context.device;
-
             //? CMD POOL
-
             const VkCommandPoolCreateInfo poolInfo
             {
                 .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
@@ -29,7 +22,7 @@ namespace mini::vk
                 .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
                 .queueFamilyIndex = context.queueIndex
             };
-            VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &cmdPool));
+            VK_CHECK(vkCreateCommandPool(context.device, &poolInfo, nullptr, &cmdPool));
 
             //? CMD BUFFERS
 
@@ -42,13 +35,13 @@ namespace mini::vk
              .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
              .commandBufferCount = cmdBuffers.count
             };
-            VK_CHECK(vkAllocateCommandBuffers(device, &allocInfo, cmdBuffers.data));
+            VK_CHECK(vkAllocateCommandBuffers(context.device, &allocInfo, cmdBuffers.data));
         }
 
         ~Commands()
         {
-            vkFreeCommandBuffers(device, cmdPool, cmdBuffers.count, cmdBuffers.data);
-            vkDestroyCommandPool(device, cmdPool, nullptr);
+            vkFreeCommandBuffers(context.device, cmdPool, cmdBuffers.count, cmdBuffers.data);
+            vkDestroyCommandPool(context.device, cmdPool, nullptr);
         }
     };
 

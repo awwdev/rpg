@@ -45,10 +45,10 @@ namespace mini::vk
             ui_fontImages.Create(context, hostRes.fontTextures, commands.cmdPool);
 
             //? "factories"
-            CreateUniformBuffer_Text    (context, ui_ubo_array);
-            CreateShader_Text           (context, ui_shader, ui_fontImages);
-            CreateRenderPass_Text       (context, ui_renderPass);
-            CreatePipeline_Text         (context, ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
+            CreateUniformBuffer_Text    (ui_ubo_array);
+            CreateShader_Text           (ui_shader, ui_fontImages);
+            CreateRenderPass_Text       (ui_renderPass);
+            CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
         }
 
     };

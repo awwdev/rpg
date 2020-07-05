@@ -10,8 +10,6 @@ namespace mini::vk
 {
     struct Pipeline
     {
-        VkDevice device;
-
         VkPipeline pipeline;
         VkPipelineLayout layout;
 
@@ -21,11 +19,11 @@ namespace mini::vk
 
         ~Pipeline()
         {
-            vkDestroyPipelineLayout(device, layout, nullptr);
-            vkDestroyPipeline(device, pipeline, nullptr);
-            vkDestroyDescriptorPool(device, descPool, nullptr);
+            vkDestroyPipelineLayout (context.device, layout, nullptr);
+            vkDestroyPipeline       (context.device, pipeline, nullptr);
+            vkDestroyDescriptorPool (context.device, descPool, nullptr);
             FOR_ARRAY(setLayouts, i) 
-                vkDestroyDescriptorSetLayout(device, setLayouts[i], nullptr); 
+                vkDestroyDescriptorSetLayout(context.device, setLayouts[i], nullptr); 
         }
     };
 
@@ -33,7 +31,6 @@ namespace mini::vk
 
     template<std::size_t N>
     void WriteDescriptors(
-        Context& context, 
         Pipeline& pipeline,
         UniformInfo* (&uniformInfos)[N])
     {

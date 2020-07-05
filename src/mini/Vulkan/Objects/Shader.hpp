@@ -16,8 +16,6 @@ namespace mini::vk
 {
     struct Shader
     {
-        VkDevice device;
-
         box::Array<VkShaderModule, 4> modules;
         box::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
 
@@ -27,8 +25,8 @@ namespace mini::vk
 
         ~Shader()
         {
-            FOR_ARRAY(modules, i)    vkDestroyShaderModule(device, modules[i], nullptr);
-            FOR_ARRAY(samplers, i)   vkDestroySampler(device, samplers[i], nullptr);
+            FOR_ARRAY(modules, i)    vkDestroyShaderModule  (context.device, modules[i], nullptr);
+            FOR_ARRAY(samplers, i)   vkDestroySampler       (context.device, samplers[i], nullptr);
         }
 
         template<auto BUFFER_SIZE = 10000u>
@@ -51,7 +49,7 @@ namespace mini::vk
             };
 
             auto& mod = modules.AppendReturn();
-            VK_CHECK(vkCreateShaderModule(device, &moduleInfo, nullptr, &mod));
+            VK_CHECK(vkCreateShaderModule(context.device, &moduleInfo, nullptr, &mod));
 
             stageInfos.Append(VkPipelineShaderStageCreateInfo{
                 .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,

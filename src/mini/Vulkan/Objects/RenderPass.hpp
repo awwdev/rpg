@@ -10,17 +10,15 @@ namespace mini::vk
 {
     struct RenderPass
     {
-        VkDevice device;
-
         VkRenderPass renderPass;
         box::Array<VkFramebuffer, 4> framebuffers;
         const VkSampleCountFlagBits SAMPLE_COUNT = VK_SAMPLE_COUNT_1_BIT;
 
         ~RenderPass()
         {
-            vkDestroyRenderPass(device, renderPass, nullptr);
+            vkDestroyRenderPass(context.device, renderPass, nullptr);
             FOR_SIMPLE_ARRAY(framebuffers, i) 
-                vkDestroyFramebuffer(device, framebuffers[i], nullptr);
+                vkDestroyFramebuffer(context.device, framebuffers[i], nullptr);
         }
         
     };

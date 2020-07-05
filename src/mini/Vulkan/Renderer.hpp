@@ -22,10 +22,10 @@ namespace mini::vk
         
         VkRenderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
         {
-            context.Create(wndHandle); //global
-            sync.Create(context);
-            commands.Create(context);
-            resources.Create(hostResources, commands); //global
+            context.Create(wndHandle); //!global
+            sync.Create();
+            commands.Create();
+            resources.Create(hostResources, commands); //!global
         }
 
 
@@ -37,11 +37,10 @@ namespace mini::vk
 
             //? same as when creating stuff but with dtor
             resources.ui_renderPass.~RenderPass();
-            CreateRenderPass_Text(context, resources.ui_renderPass);
+            CreateRenderPass_Text(resources.ui_renderPass);
 
             resources.ui_pipeline.~Pipeline();
             CreatePipeline_Text(
-                context, 
                 resources.ui_pipeline,
                 resources.ui_shader, 
                 resources.ui_renderPass, 
@@ -49,7 +48,7 @@ namespace mini::vk
             );
 
             commands.~Commands();
-            commands.Create(context);
+            commands.Create();
 
             //TODO: find a way to keep track what was created and then recreate it
             //maybe a unified method Create() that also can be used OnRecreate (need of checks)

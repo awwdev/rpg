@@ -34,12 +34,9 @@ namespace mini::vk
         //! COMPLETE UniformInfo IN A FACTORY METHOD
 
 
-        void Create(
-            Context& context, 
-            VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+        void Create(VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         {
             buffer.Create(
-                context.device, 
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                 TOTAL_SIZE,
                 memFlags,
@@ -81,7 +78,6 @@ namespace mini::vk
 
 
         explicit UniformBuffer(
-            Context& context, 
             const u32 maxSize,
             const u32 alignment = 0, //not used
             const u32 maxCount = 0)//not used
@@ -94,7 +90,6 @@ namespace mini::vk
         void Create(Context& context)
         {
             buffer.Create(
-                context.device, 
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                 MAX_SIZE,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,

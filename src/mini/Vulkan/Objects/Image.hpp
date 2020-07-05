@@ -179,7 +179,6 @@ namespace mini::vk
 
             Buffer buffer;
             buffer.Create(
-                device,
                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                 texture.SIZE,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -323,7 +322,6 @@ namespace mini::vk
 
             Buffer buffer;
             buffer.Create(
-                device,
                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                 textureArray.TOTAL_SIZE, //!
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,

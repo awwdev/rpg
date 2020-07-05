@@ -36,34 +36,29 @@ namespace mini::vk
 
     struct Buffer
     {
-        VkDevice device;
-
         VkBuffer buffer;
         VkDeviceMemory memory;
         void* memPtr;
         std::size_t size;
 
-
         inline void Map()
         {
-            VK_CHECK(vkMapMemory(device, memory, 0, size, 0, &memPtr));
+            VK_CHECK(vkMapMemory(context.device, memory, 0, size, 0, &memPtr));
             //VK_WHOLE_SIZE
         }
 
         inline void Unmap()
         {
-            vkUnmapMemory(device, memory);
+            vkUnmapMemory(context.device, memory);
         }
 
  
         inline void Create(
-            VkDevice pDevice, 
             const VkBufferUsageFlags usage, 
             const std::size_t pSize, 
             const VkMemoryPropertyFlags memProps,
             const VkPhysicalDeviceMemoryProperties& physicalMemProps)
         {
-            device = pDevice;
             size   = pSize; 
 
             //? BUFFER
@@ -80,17 +75,17 @@ namespace mini::vk
                 .pQueueFamilyIndices    = nullptr
             };
 
-            VK_CHECK(vkCreateBuffer(device, &bufferInfo, nullptr, &buffer));
+            VK_CHECK(vkCreateBuffer(context.device, &bufferInfo, nullptr, &buffer));
 
             //? MEMORY
 
             VkMemoryRequirements memReqs;
-            vkGetBufferMemoryRequirements(device, buffer, &memReqs);
+            vkGetBufferMemoryRequirements(context.device, buffer, &memReqs);
             size = memReqs.size; //render doc complains but not vulkan ?
 
             const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(physicalMemProps, memReqs, memProps));
-            VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &memory)); //todo: allocate once for app and reuse memory pool
-            VK_CHECK(vkBindBufferMemory(device, buffer, memory, 0));
+            VK_CHECK(vkAllocateMemory(context.device, &allocInfo, nullptr, &memory)); //todo: allocate once for app and reuse memory pool
+            VK_CHECK(vkBindBufferMemory(context.device, buffer, memory, 0));
 
             //if(memProps & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) return;
             Map();
@@ -104,8 +99,8 @@ namespace mini::vk
         ~Buffer()
         {
             Unmap();
-            vkDestroyBuffer(device, buffer, nullptr);
-            vkFreeMemory(device, memory, nullptr);
+            vkDestroyBuffer (context.device, buffer, nullptr);
+            vkFreeMemory    (context.device, memory, nullptr);
         }
     };
 
