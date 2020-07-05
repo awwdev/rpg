@@ -7,9 +7,7 @@
 
 namespace mini::vk
 {
-    inline VkMemoryAllocateInfo CreateAllocInfo(
-        const VkDeviceSize& size,
-        const uint32_t memTypeIndex)
+    inline VkMemoryAllocateInfo CreateAllocInfo(const VkDeviceSize& size, const uint32_t memTypeIndex)
     {
         return {
             .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
@@ -36,35 +34,28 @@ namespace mini::vk
 
     struct Buffer
     {
-        VkBuffer buffer;
-        VkDeviceMemory memory;
-        void* memPtr;
-        std::size_t size;
+        VkBuffer        buffer;
+        VkDeviceMemory  memory;
+        void*           memPtr;
+        std::size_t     size;
 
-        inline void Map()
+        void Map()   { VK_CHECK(vkMapMemory(context.device, memory, 0, size, 0, &memPtr)); }
+        void Unmap() { vkUnmapMemory(context.device, memory); }
+
+        void Store(const void* const data, const size_t size, const size_t offset = 0)
         {
-            VK_CHECK(vkMapMemory(context.device, memory, 0, size, 0, &memPtr));
-            //VK_WHOLE_SIZE
+            std::memcpy((char*)memPtr + offset, data, size);
         }
 
-        inline void Unmap()
-        {
-            vkUnmapMemory(context.device, memory);
-        }
-
- 
-        inline void Create(
+        void Create(
             const VkBufferUsageFlags usage, 
             const std::size_t pSize, 
-            const VkMemoryPropertyFlags memProps,
-            const VkPhysicalDeviceMemoryProperties& physicalMemProps)
+            const VkMemoryPropertyFlags memProps)
         {
-            size   = pSize; 
+            size = pSize; 
 
             //? BUFFER
-
-            const VkBufferCreateInfo bufferInfo
-            {
+            const VkBufferCreateInfo bufferInfo {
                 .sType                  = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
                 .pNext                  = nullptr,
                 .flags                  = 0,
@@ -74,26 +65,18 @@ namespace mini::vk
                 .queueFamilyIndexCount  = 0,
                 .pQueueFamilyIndices    = nullptr
             };
-
             VK_CHECK(vkCreateBuffer(context.device, &bufferInfo, nullptr, &buffer));
 
             //? MEMORY
-
             VkMemoryRequirements memReqs;
             vkGetBufferMemoryRequirements(context.device, buffer, &memReqs);
             size = memReqs.size; //render doc complains but not vulkan ?
 
-            const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(physicalMemProps, memReqs, memProps));
+            const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(context.physicalMemProps, memReqs, memProps));
             VK_CHECK(vkAllocateMemory(context.device, &allocInfo, nullptr, &memory)); //todo: allocate once for app and reuse memory pool
             VK_CHECK(vkBindBufferMemory(context.device, buffer, memory, 0));
 
-            //if(memProps & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) return;
             Map();
-        }
-
-        inline void Store(const void* const data, const size_t size, const size_t offset = 0)
-        {
-            std::memcpy((char*)memPtr + offset, data, size);
         }
 
         ~Buffer()

@@ -39,8 +39,7 @@ namespace mini::vk
             buffer.Create(
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                 TOTAL_SIZE,
-                memFlags,
-                context.physicalMemProps
+                memFlags
             );
         }
 
@@ -92,8 +91,7 @@ namespace mini::vk
             buffer.Create(
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                 MAX_SIZE,
-                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                context.physicalMemProps
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
             );
         }
 

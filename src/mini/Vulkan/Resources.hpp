@@ -12,6 +12,7 @@
 #include "mini/Vulkan/Factories/UI_Shader.hpp"
 #include "mini/Vulkan/Factories/UI_VertexBuffer.hpp"
 #include "mini/Vulkan/Factories/UI_UniformBuffer.hpp"
+#include "mini/Vulkan/Objects/ImageArray.hpp"
 
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/HostResources.hpp"
@@ -42,7 +43,7 @@ namespace mini::vk
         void Create(hostRes::HostResources& hostRes, Commands& commands)
         { 
             //? host to vk resources
-            ui_fontImages.Create(context, hostRes.fontTextures, commands.cmdPool);
+            ui_fontImages.Create(hostRes.fontTextures, commands.cmdPool);
 
             //? "factories"
             CreateUniformBuffer_Text    (ui_ubo_array);
