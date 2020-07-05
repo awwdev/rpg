@@ -315,6 +315,7 @@ namespace mini::vk
         }
     };
 
+    //!GLOBAL
     inline Context context;
 
 }//ns
