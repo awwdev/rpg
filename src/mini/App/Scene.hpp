@@ -22,25 +22,18 @@ namespace mini::app
             //TODO: move into some resource manager an load at loading scene
             ecs.prefabs.Parse("res/prefabs.txt"); 
 
-            ui.window1.rect  = { 128, 128, 300, 100 };
-            ui.window1.title = "Console";
-            ui.input1.input  = "123";
+            //? UI 
+            ui.console.rect   = { 8, wnd::window_h - 8 - 100.f, wnd::window_w * 0.75f, 100 };
+            ui.console.limits = { 100, 100, 800, 300 };
+            ui.console.title  = "Console";
+
+            ui.consoleInput.input  = "123";
         }
 
         void Update(rendergraph::RenderGraph& renderGraph, const double dt)
         {
-            //? UI
             ui::DrawFPS(renderGraph); 
-
-            //?console
-            ui::DrawWindow(renderGraph, ui.window1);
-            if (ui::DrawInputField(renderGraph, ui.input1, "Input", {8, 40, 300 - 16, 24}, ui.window1)) {
-                LOG("pressed input field");
-            }
-            if (ui::DrawButton(renderGraph, "Button", {8, 8, 128, 24}, ui.window1)) {
-                LOG(ui.input1.GetInt());
-            }
-            
+            ui::DrawConsole(renderGraph, ui);
 
         }
 

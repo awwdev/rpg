@@ -20,17 +20,25 @@ namespace mini::utils
     }
 
     template<auto MIN, auto MAX, typename T>
-    bool IfClamp(T& val)
+    void Clamp(T& val)
     {
         if (val > MAX) {
             val = MAX;
-            return true;
         }
         else if (val < MIN) {
             val = MIN;
-            return true;
         }
-        return false;
+    }
+
+    template<typename MIN, typename MAX, typename T>
+    void Clamp(T& val, const MIN min, const MAX max)
+    {
+        if (val > max) {
+            val = max;
+        }
+        else if (val < min) {
+            val = min;
+        }
     }
 
 }//ns
