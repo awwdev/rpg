@@ -56,13 +56,9 @@ namespace mini::wnd
         return nullptr;
     }
 
-    inline bool IsPressed(const EventType type)
+    inline bool IsClicked(const EventType type)
     {
         return pressed.Test(type);
-    }
-
-    inline EventType GetKey()
-    {
     }
 
     //TODO: maybe some ConsumeEvent method

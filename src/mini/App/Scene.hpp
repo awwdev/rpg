@@ -23,7 +23,7 @@ namespace mini::app
             ecs.prefabs.Parse("res/prefabs.txt"); 
 
             ui.window1.rect  = { 128, 128, 300, 100 };
-            ui.window1.title = "Window";
+            ui.window1.title = "Console";
             ui.input1.input  = "123";
         }
 
@@ -32,13 +32,15 @@ namespace mini::app
             //? UI
             ui::DrawFPS(renderGraph); 
 
+            //?console
             ui::DrawWindow(renderGraph, ui.window1);
-            if (ui::DrawButton(renderGraph, "Button", {8, 8, 128, 24}, ui.window1)) {
-                LOG("pressed button");
-            }
             if (ui::DrawInputField(renderGraph, ui.input1, "Input", {8, 40, 300 - 16, 24}, ui.window1)) {
                 LOG("pressed input field");
             }
+            if (ui::DrawButton(renderGraph, "Button", {8, 8, 128, 24}, ui.window1)) {
+                LOG(ui.input1.GetInt());
+            }
+            
 
         }
 

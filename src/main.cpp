@@ -46,7 +46,7 @@ int WINAPI wWinMain(
         rendergraph::RenderGraph renderGraph; //TODO: allocate block
 
         //? PROGRAM LOOP
-        while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
+        while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsClicked(EventType::Keyboard_Escape))
         {
             wnd::PollEvents();
             dt::UpdateFPS();     

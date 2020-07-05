@@ -20,13 +20,49 @@
 
 namespace mini::app::ui
 {
-    using UI_ID = u32;
-    constexpr u32 FULL_OPAQUE = 95;
-    constexpr u32 WHITE  = 0;
-    constexpr u32 BLACK  = 5;
-    constexpr u32 DARKER = 4;
-    constexpr u32 DARK   = 3;
-    constexpr u32 GRAY   = 2;
+    using namespace rendergraph;
+
+    //? CONST (consistency)
+    constexpr float LETTER_SIZE  = 16;
+    constexpr float LETTER_SPACE = 8;
+
+    //TODO: if branch in shader (if usesTexture) or just opaque sampling
+    //TODO: use all textures of ascii even if never used (no ascii offset necessary then)
+    constexpr u32 FULL_OPAQUE  = 95;
+    constexpr u32 ASCII_OFFSET = 32; //texture begins at 0 with usable letters
+
+    enum Colors : u32
+    {
+        WHITE ,
+        BLACK1,
+        BLACK2,
+        BLACK3,
+        BLACK4,
+        BLACK5,
+    };
+    
+    inline void TextCentered(RenderGraph& renderGraph, const utils::Rect<float>& rect, chars_t str, const u32 len)
+    {
+        const auto STRLEN = len;
+        const auto TOTAL_STR_W = (STRLEN + 1) * LETTER_SPACE;
+        const auto str_x  = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
+        const auto str_y  = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
+
+        for(u32 i = 0; i < STRLEN; ++i) {
+            renderGraph.uboText.Append(
+                UniformData_Text { 
+                    .rect         = { str_x + LETTER_SPACE * i, str_y, LETTER_SIZE, LETTER_SIZE },
+                    .colorIndex   = WHITE,
+                    .textureIndex = str[i] - ASCII_OFFSET
+                }
+            );
+        }
+    }
+
+
+
+
+
 
     struct Window
     {
@@ -43,7 +79,9 @@ namespace mini::app::ui
     {
         box::String<30> input;
         bool isActive = false;
-        //TODO: conversion function to grab data of input field
+        
+        s32 GetInt() const { return std::atoi(input.dataPtr); }
+        //f64 GetFloat()   const { return std::atof(input.dataPtr); }
     };
 
     struct UI
@@ -51,6 +89,9 @@ namespace mini::app::ui
         Window window1    {};
         InputField input1 {};
     };
+
+
+
 
     template<u32 STRLEN_0>
     bool DrawButton(rendergraph::RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
@@ -62,42 +103,24 @@ namespace mini::app::ui
     bool DrawButton(rendergraph::RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& rect)
     {
         const bool isMouseInside   = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, rect);
-        const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released) != nullptr; 
-        const bool isMousePressed  = wnd::IsPressed(wnd::EventType::Mouse_Left);
+        const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released); 
+        const bool isMousePressed  = wnd::IsClicked(wnd::EventType::Mouse_Left);
 
         //? QUAD
         uint32_t btnColorIdx;
-        if (isMouseInside && isMousePressed) btnColorIdx = WHITE;
-        else btnColorIdx = isMouseInside ? GRAY : DARK; //TODO: push some const stuff to shader that came from host
+        if (isMouseInside && isMousePressed) btnColorIdx = BLACK5;
+        else btnColorIdx = isMouseInside ? BLACK4 : BLACK3;
 
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
-                .offset         = { rect.x, rect.y }, 
-                .size           = { rect.w, rect.h },
+                .rect           = rect, 
                 .colorIndex     = btnColorIdx,
-                .textureIndex   = 95 //this is full opaque
+                .textureIndex   = FULL_OPAQUE
             }
         );
 
         //? TEXT
-        constexpr auto STRLEN = STRLEN_0 - 1; //don't consider \0 for rendering
-        constexpr auto LETTER_SIZE  = 16;
-        constexpr auto LETTER_SPACE = 8;
-        constexpr auto TOTAL_STR_W = STRLEN_0 * LETTER_SPACE; //not sure why strlen0 works (+1)
-
-        const auto str_x = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
-        const auto str_y = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
-
-        for(auto i = 0; i < STRLEN; ++i) {
-            renderGraph.uboText.Append(
-                rendergraph::UniformData_Text { 
-                    .offset         = { str_x + LETTER_SPACE * i, str_y }, 
-                    .size           = { LETTER_SIZE, LETTER_SIZE },
-                    .colorIndex     = (uint32_t)0,
-                    .textureIndex   = (uint32_t)str[i] - 32 //ascii "text offset"
-                }
-            );
-        }
+        TextCentered(renderGraph, rect, str, STRLEN_0 - 1);
 
         return isMouseInside && isMouseReleased;
     }
@@ -107,8 +130,7 @@ namespace mini::app::ui
         //? quad
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
-                .offset         = { rect.x, rect.y }, 
-                .size           = { rect.w, rect.h },
+                .rect           = rect,
                 .colorIndex     = 4, 
                 .textureIndex   = 95 //this is full opaque
             }
@@ -118,25 +140,9 @@ namespace mini::app::ui
         const auto& fps = dt::fps;
         char fpsStr [10] { '\0 '};
         const auto res = std::to_chars(fpsStr, fpsStr + 10, fps);
+        TextCentered(renderGraph, rect, fpsStr, (u32)strlen(fpsStr));
 
-        const auto STRLEN = strlen(fpsStr);
-        const auto LETTER_SIZE  = 16;
-        const auto LETTER_SPACE = 8;
-        const auto TOTAL_STR_W = (STRLEN+1) * LETTER_SPACE;
 
-        const auto str_x = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
-        const auto str_y = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
-       
-        for(auto i = 0; i < STRLEN; ++i) {
-            renderGraph.uboText.Append(
-                rendergraph::UniformData_Text { 
-                    .offset         = { str_x + LETTER_SPACE * i, str_y }, 
-                    .size           = { LETTER_SIZE, LETTER_SIZE },
-                    .colorIndex     = (uint32_t)0,
-                    .textureIndex   = (uint32_t)fpsStr[i] - 32 //ascii "text offset"
-                }
-            );
-        }
     }
 
     struct WindowContext
@@ -155,7 +161,7 @@ namespace mini::app::ui
         const bool isMouseOnBar    = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, bar);
         const bool isMouseOnResizer= utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, resizer);
 
-        const bool isMouseHeld     = wnd::IsPressed(wnd::EventType::Mouse_Left);
+        const bool isMouseHeld     = wnd::IsClicked(wnd::EventType::Mouse_Left);
         const bool isMousePressed  = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
         const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released);
 
@@ -201,50 +207,30 @@ namespace mini::app::ui
         //? QUAD
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
-                .offset         = { rect.x, rect.y }, 
-                .size           = { rect.w, rect.h },
-                .colorIndex     = DARKER,
+                .rect           = rect,
+                .colorIndex     = BLACK2,
                 .textureIndex   = FULL_OPAQUE,
             }
         );
         //? TITLE BAR
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
-                .offset         = { bar.x, bar.y }, 
-                .size           = { bar.w, bar.h },
-                .colorIndex     = BLACK,
+                .rect           = bar,
+                .colorIndex     = BLACK1,
                 .textureIndex   = FULL_OPAQUE,
             }
         );
         //? RESIZER
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
-                .offset         = { resizer.x, resizer.y }, 
-                .size           = { resizer.w, resizer.h },
-                .colorIndex     = isMouseOnResizer ? GRAY : DARK,
+                .rect           = resizer, 
+                .colorIndex     = isMouseOnResizer ? BLACK4 : BLACK3,
                 .textureIndex   = FULL_OPAQUE,
             }
         );
 
         //? TITLE TEXT
-        const auto STRLEN = wnd.title.Length(); //don't consider \0 for rendering
-        const auto LETTER_SIZE  = 16;
-        const auto LETTER_SPACE = 8;
-        const auto TOTAL_STR_W = (wnd.title.Length() + 1) * LETTER_SPACE; //not sure why strlen0 works (+1)
-
-        const auto str_x = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
-        const auto str_y = rect.y + 24 * 0.5f - LETTER_SIZE * 0.5f;
-
-        for(u32 i = 0; i < STRLEN; ++i) {
-            renderGraph.uboText.Append(
-                rendergraph::UniformData_Text { 
-                    .offset         = { str_x + LETTER_SPACE * i, str_y }, 
-                    .size           = { LETTER_SIZE, LETTER_SIZE },
-                    .colorIndex     = WHITE,
-                    .textureIndex   = (uint32_t)wnd.title[i] - 32 //ascii "text offset"
-                }
-            );
-        }
+        TextCentered(renderGraph, bar, wnd.title.dataPtr, wnd.title.Length());
     }
 
 
@@ -263,9 +249,13 @@ namespace mini::app::ui
         const char(&str)[STRLEN_0],
         const utils::Rect<float>& rect = { 0, 0, 64, 24 })
     {
-        const utils::Rect<float> inputRect { rect.x + 64, rect.y, rect.w - 64, rect.h };
+        const auto STRLEN = STRLEN_0 - 1; //don't consider \0 for rendering
+        const auto TOTAL_STR_W  = (STRLEN_0 + 1) * LETTER_SPACE; //not sure why strlen0 works (+1)
+
+        const utils::Rect<float> inputRect { rect.x + TOTAL_STR_W, rect.y, rect.w - TOTAL_STR_W, rect.h };
+        const utils::Rect<float> labelRect { rect.x, rect.y, TOTAL_STR_W, rect.h };
         const bool isMouseOnInput = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, inputRect);
-        const bool isMousePressed  = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
+        const bool isMousePressed = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
        
 
         if (isMouseOnInput && isMousePressed) {
@@ -293,60 +283,19 @@ namespace mini::app::ui
         //? INPUT FIELD
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
-                .offset         = { inputRect.x, inputRect.y }, 
-                .size           = { inputRect.w, inputRect.h },
-                .colorIndex     = isMouseOnInput ? GRAY : DARK,
+                .rect           = inputRect, 
+                .colorIndex     = isMouseOnInput ? BLACK4 : BLACK3,
                 .textureIndex   = FULL_OPAQUE,
             }
         );
 
         //? LABEL
-        {
-            const auto STRLEN = STRLEN_0 - 1; //don't consider \0 for rendering
-            const auto LETTER_SIZE  = 16;
-            const auto LETTER_SPACE = 8;
-            const auto TOTAL_STR_W  = (STRLEN_0 + 1) * LETTER_SPACE; //not sure why strlen0 works (+1)
-
-            const auto str_x = rect.x + 0;
-            const auto str_y = rect.y + 24 * 0.5f - LETTER_SIZE * 0.5f;
-
-            for(u32 i = 0; i < STRLEN; ++i) {
-                renderGraph.uboText.Append(
-                    rendergraph::UniformData_Text { 
-                        .offset         = { str_x + LETTER_SPACE * i, str_y }, 
-                        .size           = { LETTER_SIZE, LETTER_SIZE },
-                        .colorIndex     = WHITE,
-                        .textureIndex   = (uint32_t)str[i] - 32 //ascii "text offset"
-                    }
-                );
-            }
-        }
+        TextCentered(renderGraph, labelRect, str, STRLEN_0 - 1);
 
         //? INPUT
-        {
-            const auto STRLEN = inputField.input.Count() - 1; //don't consider \0 for rendering
-            const auto LETTER_SIZE  = 16;
-            const auto LETTER_SPACE = 8;
-            const auto TOTAL_STR_W  = (inputField.input.Count() + 1) * LETTER_SPACE; //not sure why strlen0 works (+1)
-
-            const auto str_x = rect.x + 64 + 8;
-            const auto str_y = rect.y + 24 * 0.5f - LETTER_SIZE * 0.5f;
-
-            for(u32 i = 0; i < STRLEN; ++i) {
-                renderGraph.uboText.Append(
-                    rendergraph::UniformData_Text { 
-                        .offset         = { str_x + LETTER_SPACE * i, str_y }, 
-                        .size           = { LETTER_SIZE, LETTER_SIZE },
-                        .colorIndex     = WHITE,
-                        .textureIndex   = (uint32_t)inputField.input[i] - 32 //ascii "text offset"
-                    }
-                );
-            }
-        }
+        TextCentered(renderGraph, inputRect, inputField.input.dataPtr, inputField.input.Length());
         
-
         return false;
     }
-
 
 }//ns

@@ -45,22 +45,21 @@ namespace mini::wnd
             {
                 case VK_ESCAPE: PRESSED(EventType::Keyboard_Escape); break;
             }
-            if (wParam < 128) //ascii 
-            {
-                PRESSED(EventType::Keyboard_ASCII);
-                events.Last().ascii = (char)wParam;
-            }
+        break;
+        case WM_CHAR:
+            PRESSED(EventType::Keyboard_ASCII);
+            events.Last().ascii = (char)wParam;
         break;
 
         case WM_KEYUP:
             switch (wParam) 
             {
                 case VK_ESCAPE: RELEASED(EventType::Keyboard_Escape); break;
-            }
-            if (wParam < 128) //ascii 
-            {
-                RELEASED(EventType::Keyboard_ASCII);
-                events.Last().ascii = (char)wParam;
+                default:
+                {
+                    RELEASED(EventType::Keyboard_ASCII);
+                    events.Last().ascii = (char)wParam;
+                }
             }
         break;
 
@@ -115,4 +114,4 @@ namespace mini::wnd
         return 0;    
     }
 
-}//ns
+}//ns.

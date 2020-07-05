@@ -7,10 +7,11 @@ layout(push_constant) uniform Push {
 } push;
 
 struct INSTANCE_DATA {
-    vec4 pos;
-    vec2 size;
+    vec4 rect;
     uint colorIdx;
     uint textureIdx;
+    uint padding1;
+    uint padding2;
 };
 
 layout(binding = 1) uniform InstanceData { 
@@ -40,14 +41,12 @@ const vec2 uv [6] = {
 
 //alpha does not matter
 const vec4 colors[] = {
-    //font color
-    vec4(0.9, 0.9, 0.9, 1),
-    vec4(1.0, 0.0, 0.0, 1),
-    //button background
-    vec4(0.20, 0.20, 0.20 ,1),
-    vec4(0.05, 0.05, 0.05 ,1),
-    vec4(0.02, 0.02, 0.02 ,1),
-    vec4(0.01, 0.01, 0.01 ,1),
+    vec4(0.90, 0.90, 0.90, 1), //WHITE
+    vec4(0.01, 0.01, 0.01, 1), //BLACK1
+    vec4(0.02, 0.02, 0.02, 1), //BLACK2
+    vec4(0.03, 0.03, 0.03, 1), //BLACK3
+    vec4(0.04, 0.04, 0.04, 1), //BLACK4
+    vec4(0.05, 0.05, 0.05, 1), //BLACK5
 };
 
 void main() 
@@ -57,20 +56,13 @@ void main()
 
     const INSTANCE_DATA instData = instanceData.arr[instID];
 
-    const float quadX = instData.pos.x;
-    const float quadY = instData.pos.y;
-    const float quadW = instData.size.x;
-    const float quadH = instData.size.y;
+    const float vertOffX = quad[vertID].x * instData.rect.z;
+    const float vertOffY = quad[vertID].y * instData.rect.w;
 
-    const float vertOffX = quad[vertID].x * quadW;
-    const float vertOffY = quad[vertID].y * quadH;
-
-    const float xnorm1 = (quadX + vertOffX) / push.wnd_width;
-    const float ynorm1 = (quadY + vertOffY) / push.wnd_height;
+    const float xnorm1 = (instData.rect.x + vertOffX) / push.wnd_width;
+    const float ynorm1 = (instData.rect.y + vertOffY) / push.wnd_height;
     const float xnorm2 = xnorm1 * 2 - 1;
     const float ynorm2 = ynorm1 * 2 - 1;
-
-
 
     gl_Position = vec4(xnorm2, ynorm2, 0, 1);
     outColors   = colors[instanceData.arr[instID].colorIdx]; //color lookup
