@@ -26,7 +26,7 @@ namespace mini::app::ui
     constexpr float LETTER_SIZE  = 16;
     constexpr float LETTER_SPACE = 8;
 
-    //TODO: if branch in shader (if usesTexture) or just opaque sampling
+    //TODO: if branch in shader (if usesTexture) or just opaque and always sampling
     //TODO: use all textures of ascii even if never used (no ascii offset necessary then)
     constexpr u32 FULL_OPAQUE  = 95;
     constexpr u32 ASCII_OFFSET = 32; //texture begins at 0 with usable letters
@@ -190,32 +190,14 @@ namespace mini::app::ui
     }
 
 
-
-
-
-
-
-
-
-
-    
+ 
 
     struct InputField
     {
-        box::String<30> input;
+        box::String<100> str;
         bool isActive = false;
-        
-        s32 GetInt() const { return std::atoi(input.dataPtr); }
-        //f64 GetFloat()   const { return std::atof(input.dataPtr); }
+        s32 GetInt() const { return std::atoi(str.dataPtr); }
     };
-
-    struct UI
-    {   
-        Window     console      {};
-        InputField consoleInput {};
-    };
-
-
 
 
 
@@ -250,14 +232,6 @@ namespace mini::app::ui
 
         return isMouseInside && isMouseReleased;
     }
-
-    
-
-
-    
-
-
-    
 
     template<u32 STRLEN_0>
     bool DrawInputField(rendergraph::RenderGraph& renderGraph, InputField& inputField, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
@@ -297,12 +271,6 @@ namespace mini::app::ui
             }
         }
 
-        //const bool isMouseOnBar    = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, bar);
-        //const bool isMouseOnResizer= utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, resizer);
-        //const bool isMouseHeld     = wnd::IsPressed(wnd::EventType::Mouse_Left);
-        //
-        //
-
         //? INPUT FIELD
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
@@ -321,27 +289,50 @@ namespace mini::app::ui
         return false;
     }
 
-
-
-
-
-    inline void DrawConsole(RenderGraph& renderGraph, UI& ui)
+    inline void DrawConsole(RenderGraph& renderGraph)
     {
-        DrawWindow(renderGraph, ui.console);
+        static Window wnd {
+            .rect   = { 8, wnd::window_h - 8 - 100.f, wnd::window_w * 0.75f, 100 },
+            .limits = { 100, 100, 800, 300 },
+            .title  = "Console",
+        };
+        static InputField inputField {};
+
+        DrawWindow(renderGraph, wnd);
 
         //? INPUT
         const utils::Rect<float> inputRect { 
-            ui.console.rect.x, 
-            ui.console.rect.y + ui.console.rect.h - 20  , 
-            ui.console.rect.w - 8, 
+            wnd.rect.x, 
+            wnd.rect.y + wnd.rect.h - 20  , 
+            wnd.rect.w - 8, 
             20 
         };
-        auto input = "input";
+        auto input = ">>";
         DrawText(renderGraph, inputRect.x, inputRect.y, input, (u32)strlen(input));
 
-        //if (ui::DrawButton(renderGraph, "Button", {8, 8, 128, 24}, ui.console)) {
-        //    LOG(ui.input1.GetInt());
-        //}
+        const bool isMouseOnInput = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, inputRect);
+        const bool isMousePressed = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
+
+        if (isMouseOnInput && isMousePressed) {
+            inputField.isActive = true;
+        }
+        if (!isMouseOnInput && isMousePressed) {
+            inputField.isActive = false; //probably does not cover all cases
+        }
+        if (inputField.isActive) {
+            if (const auto* ev = wnd::CheckEvent(wnd::EventType::Keyboard_ASCII, wnd::EventState::Pressed)){
+                if (ev->ascii == '\b')
+                    inputField.str.Pop();
+                else if (ev->ascii != '\r')
+                    inputField.str.Append(ev->ascii);
+            }
+        }
+        DrawText(renderGraph, inputRect.x + 32, inputRect.y, inputField.str.dataPtr, inputField.str.Length());
+        if (const auto* ev = wnd::CheckEvent(wnd::EventType::Keyboard_ASCII, wnd::EventState::Pressed)){
+            if (ev->ascii == '\r'){
+                LOG(inputField.GetInt());
+            }
+        }
     }
 
 }//ns
