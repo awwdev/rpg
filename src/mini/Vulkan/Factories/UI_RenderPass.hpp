@@ -90,6 +90,7 @@ namespace mini::vk
 
     inline void CreateRenderPass_Text(Context& context, RenderPass& rp)
     {  
+        rp.device = context.device;
         //! its annoying to make this generic so I leave it raw for now ...
         //1)add stuff (color, depth...) and then call a method on struct side (Create())
 

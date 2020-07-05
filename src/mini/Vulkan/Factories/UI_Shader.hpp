@@ -10,6 +10,8 @@ namespace mini::vk
 {
     inline void CreateShader_Text(Context& context, Shader& shader, ImageArray& imageArray)
     {  
+        shader.device = context.device;
+
         shader.CreateShaderModule("res/Shaders/spv/text.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         shader.CreateShaderModule("res/Shaders/spv/text.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 

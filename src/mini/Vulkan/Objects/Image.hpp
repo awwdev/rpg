@@ -329,7 +329,7 @@ namespace mini::vk
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                 physicalMemProps
             );
-            buffer.Store(textureArray.dataPtr, textureArray.TOTAL_SIZE);
+            buffer.Store(textureArray.data, textureArray.TOTAL_SIZE);
             
             
             //? COPY FROM BUFFER

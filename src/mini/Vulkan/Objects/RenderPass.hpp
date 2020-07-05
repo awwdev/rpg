@@ -16,9 +16,6 @@ namespace mini::vk
         box::Array<VkFramebuffer, 4> framebuffers;
         const VkSampleCountFlagBits SAMPLE_COUNT = VK_SAMPLE_COUNT_1_BIT;
 
-
-        explicit RenderPass(Context& context) : device { context.device } {;}
-
         ~RenderPass()
         {
             vkDestroyRenderPass(device, renderPass, nullptr);

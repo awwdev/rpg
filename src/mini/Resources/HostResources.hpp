@@ -1,67 +1,24 @@
+//https://github.com/awwdev
 #pragma once
+
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/TextureLoader.hpp"
 #include "mini/Box/Map.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/Debug/Logger.hpp"
-
-#include <fstream>
-#include <filesystem>
+#include "mini/Resources/TextureArray.hpp"
 
 namespace mini::hostRes
 {
-    struct ITextureArray
+    struct HostResources
     {
-        const u32 WIDTH;
-        const u32 HEIGHT;
-        const u32 CHANNELS;
-        const u32 COUNT;
-        const u32 TEX_SIZE;
-        const u32 TOTAL_SIZE;
+        TextureArray<96, 16, 16, 1> fontTextures; // added one texture that is all FF which can be used for blank quad () 
 
-        char* const dataPtr;
-    };
-
-    template<u32 N, u32 W, u32 H, u8 C = 4>
-    struct TextureArray : ITextureArray
-    {
-        constexpr static auto WIDTH      = W;
-        constexpr static auto HEIGHT     = H;
-        constexpr static auto CHANNELS   = C;
-        constexpr static auto COUNT      = N;
-        constexpr static auto TEX_SIZE   = W*H*C;
-        constexpr static auto TOTAL_SIZE = TEX_SIZE * N;
-
-        char data [COUNT][TEX_SIZE];
-        u32 count = 0;
-
-
-        TextureArray() : ITextureArray
+        HostResources() 
         {
-            .WIDTH      = WIDTH,
-            .HEIGHT     = HEIGHT,
-            .CHANNELS   = CHANNELS,
-            .COUNT      = COUNT,
-            .TEX_SIZE   = TEX_SIZE,
-            .TOTAL_SIZE = TOTAL_SIZE,
-            .dataPtr    = &(data[0][0])
+            //currently load is instant inside ctor
+            fontTextures.LoadArray("res/TextureArray"); //RLE would be nice
         }
-        {;}
-
-        void LoadSingle(const std::filesystem::path& path)
-        {
-            std::ifstream file(path, std::ios::binary);
-            file.read(&(data[count][0]), TEX_SIZE);
-            ++count;
-        }
-
-        void LoadArray(chars_t dir)
-        {
-            for(auto& p: std::filesystem::directory_iterator(dir)) { 
-                LoadSingle(p.path());
-            }
-        }
-
     };
 
 
@@ -78,7 +35,7 @@ namespace mini::hostRes
 
 
 
-
+/*
     struct TextureInfo
     {
         chars_t path;
@@ -153,20 +110,7 @@ namespace mini::hostRes
                 ERR("not texture array found");
         }
     };
-
-    struct HostResources
-    {
-        Textures textures; //host side ram textures (will be loaded to gpu "vk images")
-
-        TextureArray<96, 16, 16, 1> textureArray;
-        //! added one texture that is all FF which can be used for blank quad
-
-        HostResources() 
-        {
-            //currently load is instant inside ctor
-            textures.Load();
-            textureArray.LoadArray("res/TextureArray"); //RLE would be nice but conversion tools are work
-        }
-    };
+*/
+   
 
 }//ns

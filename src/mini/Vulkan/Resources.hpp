@@ -23,39 +23,36 @@ namespace mini::vk
     struct VkResources
     {
         //? host to vk resources
-        ImageArray text_imageArray;
+        ImageArray ui_fontImages;
 
         //? vk pipeline resources
-        Default_PushConstants   text_pushConst;
-        RenderPass              text_renderPass;
-        Shader                  text_shader;
-        Pipeline                text_pipeline;
-
-        UniformBuffer_Array<rendergraph::UniformData_Text, 1000> text_ubo_array;
-
-
-        explicit VkResources(Context& context) 
-            : text_pushConst    {}
-            , text_pipeline     { context }
-            , text_shader       { context }
-            , text_renderPass   { context }
-            , text_ubo_array    {}
-        {;}
+        Default_PushConstants   default_pushConsts;
+        //simple UI (text and quads)
+        RenderPass              ui_renderPass;
+        Shader                  ui_shader;
+        Pipeline                ui_pipeline;
+        UniformBuffer_Array<rendergraph::UniformData_Text, 1000> ui_ubo_array;
+        //3d default
+        //RenderPass              default_renderPass;
+        //Shader                  default_shader;
+        //Pipeline                default_pipeline;
 
         //! resource manager needs to load beforehand
         //! order matters!
-        inline void Create(Context& context, hostRes::HostResources& hostRes, Commands& commands)
+        void Create(hostRes::HostResources& hostRes, Commands& commands)
         { 
             //? host to vk resources
-            text_imageArray.Create(context, hostRes.textureArray, commands.cmdPool);
+            ui_fontImages.Create(context, hostRes.fontTextures, commands.cmdPool);
 
             //? "factories"
-            CreateUniformBuffer_Text    (context, text_ubo_array);
-            CreateShader_Text           (context, text_shader, text_imageArray);
-            CreateRenderPass_Text       (context, text_renderPass);
-            CreatePipeline_Text         (context, text_pipeline, text_shader, text_renderPass, text_ubo_array);
+            CreateUniformBuffer_Text    (context, ui_ubo_array);
+            CreateShader_Text           (context, ui_shader, ui_fontImages);
+            CreateRenderPass_Text       (context, ui_renderPass);
+            CreatePipeline_Text         (context, ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
         }
 
     };
+
+    inline VkResources resources;
 
 }//ns

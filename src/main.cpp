@@ -58,7 +58,7 @@ int WINAPI wWinMain(
         }
         
         //? THE END
-        VK_CHECK(vkDeviceWaitIdle(ptrRenderer->context.device));
+        VK_CHECK(vkDeviceWaitIdle(vk::context.device));
     }
 
     mem::GlobalDeallocate();

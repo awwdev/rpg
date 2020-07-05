@@ -25,9 +25,6 @@ namespace mini::vk
         UniformInfo info; //! probably need array?
         box::Array<VkSampler, 4> samplers; //just some capacity
 
-        
-        explicit Shader(Context& context) : device { context.device } {;}
-
         ~Shader()
         {
             FOR_ARRAY(modules, i)    vkDestroyShaderModule(device, modules[i], nullptr);

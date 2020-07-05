@@ -18,6 +18,7 @@ namespace mini::rendergraph
         }
     };
 
+    //! global
     inline RenderGraph renderGraph;
 
 }//ns

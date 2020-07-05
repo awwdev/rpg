@@ -64,7 +64,7 @@ namespace mini::vk
         //? CTOR
 
         //inline void Create(const WindowHandle& wndHandle)
-        explicit Context(const WindowHandle& wndHandle)
+        void Create(const WindowHandle& wndHandle)
         {
             CreateInstance();
             CreatePhysical();
@@ -75,7 +75,7 @@ namespace mini::vk
 
         //? INSTANCE AND DEBUG
 
-        inline void CreateInstance()
+        void CreateInstance()
         {
             const VkApplicationInfo appInfo {
                 .sType                  = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -142,7 +142,7 @@ namespace mini::vk
 
         //? PHYSICAL DEVICE
 
-        inline void CreatePhysical()
+        void CreatePhysical()
         {
             box::POD_Array<VkPhysicalDevice, 4> physicals { 4 };
             VK_CHECK(vkEnumeratePhysicalDevices(instance, &physicals.count, physicals.data));
@@ -211,7 +211,7 @@ namespace mini::vk
 
         //? SURFACE
 
-        inline void CreateSurface(const WindowHandle& wndHandle)
+        void CreateSurface(const WindowHandle& wndHandle)
         {
             const VkWin32SurfaceCreateInfoKHR surfInfo {
                 .sType      = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
@@ -230,7 +230,7 @@ namespace mini::vk
 
         //? SWAPCHAIN
 
-        inline bool RecreateSwapchain()
+        bool RecreateSwapchain()
         {
             VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
             if (surfaceCapabilities.currentExtent.width == 0 || surfaceCapabilities.currentExtent.height == 0)
@@ -242,7 +242,7 @@ namespace mini::vk
             return true;
         }
 
-        inline void CreateSwapchain()
+        void CreateSwapchain()
         {
             const VkSwapchainCreateInfoKHR swapInfo {
                 .sType                  = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
@@ -298,7 +298,7 @@ namespace mini::vk
             }
         }
 
-        inline void DestroySwapchain()
+        void DestroySwapchain()
         {
             FOR_SIMPLE_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
             vkDestroySwapchainKHR(device, swapchain, nullptr);
@@ -314,5 +314,7 @@ namespace mini::vk
             vkDestroyInstance(instance, nullptr);
         }
     };
+
+    inline Context context;
 
 }//ns

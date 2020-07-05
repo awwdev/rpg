@@ -14,24 +14,18 @@
 
 namespace mini::vk
 {
-    struct VkRenderer //: rendergraph::IRenderer
+    struct VkRenderer
     {
-        Context         context; //! must come first
-        VkResources     resources;
         Commands        commands;
         Synchronization sync;
-
-        uint32_t currentFrame = 0;
+        uint32_t        currentFrame = 0;
         
         VkRenderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
-            //: IRenderer { hostResources }
-            : context   { wndHandle } //! must come first
-            , resources { context }
         {
-            //uniforms.alignment = context.physicalProps.limits.minUniformBufferOffsetAlignment;
+            context.Create(wndHandle); //global
             sync.Create(context);
             commands.Create(context);
-            resources.Create(context, hostResources, commands);
+            resources.Create(hostResources, commands); //global
         }
 
 
@@ -42,16 +36,16 @@ namespace mini::vk
                 return;
 
             //? same as when creating stuff but with dtor
-            resources.text_renderPass.~RenderPass();
-            CreateRenderPass_Text(context, resources.text_renderPass);
+            resources.ui_renderPass.~RenderPass();
+            CreateRenderPass_Text(context, resources.ui_renderPass);
 
-            resources.text_pipeline.~Pipeline();
+            resources.ui_pipeline.~Pipeline();
             CreatePipeline_Text(
                 context, 
-                resources.text_pipeline,
-                resources.text_shader, 
-                resources.text_renderPass, 
-                resources.text_ubo_array
+                resources.ui_pipeline,
+                resources.ui_shader, 
+                resources.ui_renderPass, 
+                resources.ui_ubo_array
             );
 
             commands.~Commands();
@@ -64,10 +58,10 @@ namespace mini::vk
 
         void UpdateVkResources(const app::Scene& scene, const double dt)
         {
-            resources.text_pushConst.wnd_w = wnd::window_w;
-            resources.text_pushConst.wnd_h = wnd::window_h;
+            resources.default_pushConsts.wnd_w = wnd::window_w;
+            resources.default_pushConsts.wnd_h = wnd::window_h;
 
-            resources.text_ubo_array.Store(rendergraph::renderGraph.uboText);
+            resources.ui_ubo_array.Store(rendergraph::renderGraph.uboText);
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
@@ -82,17 +76,17 @@ namespace mini::vk
             const VkClearValue clears { .color = { 0.1f, 0.1f, 0.1f, 1.0f } };
             const auto renderPassInfo = CreateRenderPassBeginInfo(
                 context, 
-                resources.text_renderPass.renderPass, 
-                resources.text_renderPass.framebuffers[cmdBufferIdx],
+                resources.ui_renderPass.renderPass, 
+                resources.ui_renderPass.framebuffers[cmdBufferIdx],
                 &clears
             );
             vkCmdBeginRenderPass (cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
             //? TEXT
-            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.text_pipeline.pipeline);
-            vkCmdPushConstants      (cmdBuffer, resources.text_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.text_pushConst), &resources.text_pushConst);
-            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.text_pipeline.layout, 0, 1, &resources.text_pipeline.sets[cmdBufferIdx], 0, nullptr); 
-            vkCmdDraw               (cmdBuffer, resources.text_ubo_array.count * 6, 1, 0, 0); 
+            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.pipeline);
+            vkCmdPushConstants      (cmdBuffer, resources.ui_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.default_pushConsts), &resources.default_pushConsts);
+            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 0, nullptr); 
+            vkCmdDraw               (cmdBuffer, resources.ui_ubo_array.count * 6, 1, 0, 0); 
 
             vkCmdEndRenderPass(cmdBuffer);
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));

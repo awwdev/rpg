@@ -20,6 +20,7 @@ namespace mini::vk
         RenderPass& renderPass,
         UniformBuffer_Array<T, N>& uboText)
     {
+        pipeline.device = context.device;
         auto device = context.device;
         auto ptrRenderPass = &renderPass;
         auto ptrShader = &shader;
