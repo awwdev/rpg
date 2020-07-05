@@ -22,10 +22,10 @@ namespace mini::app
             ecs.prefabs.Parse("res/prefabs.txt"); 
         }
 
-        void Update(rendergraph::RenderGraph& renderGraph, const double dt)
+        void Update(const double dt)
         {
-            ui::DrawFPS(renderGraph); 
-            ui::DrawConsole(renderGraph);
+            ui::DrawFPS(); 
+            ui::DrawConsole();
 
         }
 

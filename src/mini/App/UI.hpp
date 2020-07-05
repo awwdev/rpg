@@ -14,7 +14,7 @@
 #include "mini/Utils/Algorithms.hpp"
 
 #include <charconv>
-
+#undef DrawText
 //TODO: input field
 //TODO: console
 
@@ -44,7 +44,6 @@ namespace mini::app::ui
     };
     
     inline void DrawTextCentered(
-        RenderGraph& renderGraph, 
         const utils::Rect<float>& rect, 
         chars_t str, const u32 len, 
         const Colors col = WHITE)
@@ -66,7 +65,6 @@ namespace mini::app::ui
     }
 
     inline void DrawText(
-        RenderGraph& renderGraph, 
         const float x, const float y,
         chars_t str, const u32 len, 
         const Colors col = WHITE)
@@ -82,7 +80,7 @@ namespace mini::app::ui
         }
     }
 
-    inline void DrawFPS(rendergraph::RenderGraph& renderGraph, const utils::Rect<float>& rect = { 0, 0, 48, 20 })
+    inline void DrawFPS(const utils::Rect<float>& rect = { 0, 0, 48, 20 })
     {
         renderGraph.uboText.Append(
             rendergraph::UniformData_Text { 
@@ -94,7 +92,7 @@ namespace mini::app::ui
 
         char fpsStr [10] { '\0 '};
         const auto res = std::to_chars(fpsStr, fpsStr + 10, dt::fps);
-        DrawTextCentered(renderGraph, rect, fpsStr, (u32)strlen(fpsStr), GREEN);
+        DrawTextCentered(rect, fpsStr, (u32)strlen(fpsStr), GREEN);
     }
 
     struct Window
@@ -109,7 +107,7 @@ namespace mini::app::ui
         static constexpr u32 BAR_H = 20;
     };
 
-    inline void DrawWindow(rendergraph::RenderGraph& renderGraph, Window& wnd)
+    inline void DrawWindow(Window& wnd)
     {
         const utils::Rect<float> bar     = { wnd.rect.x, wnd.rect.y, wnd.rect.w, wnd.BAR_H };
         const utils::Rect<float> resizer = { wnd.rect.x + wnd.rect.w - 8, wnd.rect.y + wnd.rect.h - 8, 8, 8 };
@@ -186,7 +184,7 @@ namespace mini::app::ui
         );
 
         //? TITLE TEXT
-        DrawTextCentered(renderGraph, bar, wnd.title.dataPtr, wnd.title.Length());
+        DrawTextCentered(bar, wnd.title.dataPtr, wnd.title.Length());
     }
 
 
@@ -202,13 +200,13 @@ namespace mini::app::ui
 
 
     template<u32 STRLEN_0>
-    bool DrawButton(rendergraph::RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
+    bool DrawButton(const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
     {
-        return DrawButton(renderGraph, str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
+        return DrawButton(str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
     }
 
     template<u32 STRLEN_0>
-    bool DrawButton(rendergraph::RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& rect)
+    bool DrawButton(const char(&str)[STRLEN_0], const utils::Rect<float>& rect)
     {
         const bool isMouseInside   = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, rect);
         const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released); 
@@ -228,20 +226,19 @@ namespace mini::app::ui
         );
 
         //? TEXT
-        DrawTextCentered(renderGraph, rect, str, STRLEN_0 - 1);
+        DrawTextCentered(rect, str, STRLEN_0 - 1);
 
         return isMouseInside && isMouseReleased;
     }
 
     template<u32 STRLEN_0>
-    bool DrawInputField(rendergraph::RenderGraph& renderGraph, InputField& inputField, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
+    bool DrawInputField(InputField& inputField, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
     {
-        return DrawInputField(renderGraph, inputField, str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
+        return DrawInputField(inputField, str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
     }
 
     template<u32 STRLEN_0>
     bool DrawInputField(
-        rendergraph::RenderGraph& renderGraph,
         InputField& inputField,
         const char(&str)[STRLEN_0],
         const utils::Rect<float>& rect = { 0, 0, 64, 24 })
@@ -281,15 +278,15 @@ namespace mini::app::ui
         );
 
         //? LABEL
-        DrawTextCentered(renderGraph, labelRect, str, STRLEN_0 - 1);
+        DrawTextCentered(labelRect, str, STRLEN_0 - 1);
 
         //? INPUT
-        DrawTextCentered(renderGraph, inputRect, inputField.input.dataPtr, inputField.input.Length());
+        DrawTextCentered(inputRect, inputField.input.dataPtr, inputField.input.Length());
         
         return false;
     }
 
-    inline void DrawConsole(RenderGraph& renderGraph)
+    inline void DrawConsole()
     {
         static Window wnd {
             .rect   = { 8, wnd::window_h - 8 - 100.f, wnd::window_w * 0.75f, 100 },
@@ -298,7 +295,7 @@ namespace mini::app::ui
         };
         static InputField inputField {};
 
-        DrawWindow(renderGraph, wnd);
+        DrawWindow(wnd);
 
         //? INPUT
         const utils::Rect<float> inputRect { 
@@ -308,7 +305,7 @@ namespace mini::app::ui
             20 
         };
         auto input = ">>";
-        DrawText(renderGraph, inputRect.x, inputRect.y, input, (u32)strlen(input));
+        DrawText(inputRect.x, inputRect.y, input, (u32)strlen(input));
 
         const bool isMouseOnInput = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, inputRect);
         const bool isMousePressed = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
@@ -327,7 +324,7 @@ namespace mini::app::ui
                     inputField.str.Append(ev->ascii);
             }
         }
-        DrawText(renderGraph, inputRect.x + 32, inputRect.y, inputField.str.dataPtr, inputField.str.Length());
+        DrawText(inputRect.x + 32, inputRect.y, inputField.str.dataPtr, inputField.str.Length());
         if (const auto* ev = wnd::CheckEvent(wnd::EventType::Keyboard_ASCII, wnd::EventState::Pressed)){
             if (ev->ascii == '\r'){
                 LOG(inputField.GetInt());

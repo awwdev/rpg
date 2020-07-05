@@ -62,12 +62,12 @@ namespace mini::vk
         }
 
 
-        void UpdateVkResources(const app::Scene& scene, const double dt, rendergraph::RenderGraph& renderGraph)
+        void UpdateVkResources(const app::Scene& scene, const double dt)
         {
             resources.text_pushConst.wnd_w = wnd::window_w;
             resources.text_pushConst.wnd_h = wnd::window_h;
 
-            resources.text_ubo_array.Store(renderGraph.uboText);
+            resources.text_ubo_array.Store(rendergraph::renderGraph.uboText);
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
@@ -99,7 +99,7 @@ namespace mini::vk
         }
 
 
-        void Render(const double dt, rendergraph::RenderGraph& renderGraph, app::Scene& scene)
+        void Render(const double dt, app::Scene& scene)
         {
             if (wnd::CheckEvent(wnd::EventType::Window_Resize)){
                 RecreateScwapchain();
@@ -133,7 +133,7 @@ namespace mini::vk
             VK_CHECK(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
             //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-            UpdateVkResources(scene, dt, renderGraph);
+            UpdateVkResources(scene, dt);
             RecordCommands(imageIndex, dt, scene);
             //!--------------------------------------------------
 

@@ -40,11 +40,12 @@ namespace mini::wnd
     };
 
 
-    //!global arrays for wnd proc
+    //!global arrays
     inline box::Array<Event, 10> events; //per frame max
     inline box::Bitset<EventType::PRESSABLE_END> pressed;
     inline u32 window_w = 0, window_h = 0;
-    inline u32 mouse_x = 0, mouse_y = 0;
+    inline u32 mouse_x  = 0, mouse_y  = 0;
+
 
     inline Event* CheckEvent(const EventType type, const EventState state = EventState::None)
     {
