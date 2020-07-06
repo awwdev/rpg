@@ -21,30 +21,26 @@ using namespace mini::wnd;
 
 
 int WINAPI wWinMain(
-    _In_        HINSTANCE hInstance,
-    _In_opt_    HINSTANCE hPrevInstance,
-    _In_        PWSTR pCmdLine,
-    _In_        int nCmdShow)
+    _In_        HINSTANCE   hInstance,
+    _In_opt_    HINSTANCE   hPrevInstance,
+    _In_        PWSTR       pCmdLine,
+    _In_        int         nCmdShow)
 {
     {
-        //? META
         dbg::Console console {};
-        wnd::Window  window  { hInstance, 800, 600 };
+        wnd::Window  window { hInstance, 800, 600 };
         mem::GlobalAllocate();
         hostRes::HostResources hostResources {}; //will load immediately for now
 
-        //? RENDERER
         constexpr auto s = sizeof vk::VkRenderer;
         auto ptrRenderer = mem::ClaimBlock<vk::VkRenderer>(
             vk::WindowHandle{window.hInstance, window.hWnd},
             hostResources
         );
         
-        //? SCENES
         auto ptrSceneStack = mem::ClaimBlock<box::Array<app::Scene, 1, box::INIT::Yes>>();
-        uint32_t sceneIdx = 0;
+        uint32_t sceneIdx  = 0;
 
-        //? PROGRAM LOOP
         while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsClicked(EventType::Keyboard_Escape))
         {
             wnd::PollEvents();
@@ -57,7 +53,6 @@ int WINAPI wWinMain(
             }   
         }
         
-        //? THE END
         VK_CHECK(vkDeviceWaitIdle(vk::context.device));
     }
 

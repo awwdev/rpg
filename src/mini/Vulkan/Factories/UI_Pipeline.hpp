@@ -23,6 +23,9 @@ namespace mini::vk
         auto ptrRenderPass = &renderPass;
         auto ptrShader = &shader;
 
+        //comment test
+#define MACRO_TEST_DO_DELETE
+
         const VkPipelineVertexInputStateCreateInfo vertexInput {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext                           = nullptr,
