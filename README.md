@@ -27,7 +27,7 @@ This is Work In Progress!
 # Rationale
 
 ## Custom STL
-The std is hard to read and hard to extend (e.g. using own std::vector with your custom allocator).
+The std is hard to read and hard to extend (e.g. using std::vector with your custom allocator).
 So I decided to roll my own containers and memory allocation.
 
 ### mini::box::Array
