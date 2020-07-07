@@ -7,11 +7,16 @@
 #include "mini/Vulkan/Commands.hpp"
 #include "mini/Vulkan/Synchronization.hpp"
 
-#include "mini/Vulkan/Factories/UI_RenderPass.hpp"
-#include "mini/Vulkan/Factories/UI_Pipeline.hpp"
-#include "mini/Vulkan/Factories/UI_Shader.hpp"
-#include "mini/Vulkan/Factories/UI_VertexBuffer.hpp"
-#include "mini/Vulkan/Factories/UI_UniformBuffer.hpp"
+#include "mini/Vulkan/Factories/UI/UI_RenderPass.hpp"
+#include "mini/Vulkan/Factories/UI/UI_Pipeline.hpp"
+#include "mini/Vulkan/Factories/UI/UI_Shader.hpp"
+#include "mini/Vulkan/Factories/UI/UI_VertexBuffer.hpp"
+#include "mini/Vulkan/Factories/UI/UI_UniformBuffer.hpp"
+
+#include "mini/Vulkan/Factories/Default/Default_RenderPass.hpp"
+#include "mini/Vulkan/Factories/Default/Default_Pipeline.hpp"
+#include "mini/Vulkan/Factories/Default/Default_Shader.hpp"
+
 #include "mini/Vulkan/Objects/ImageArray.hpp"
 
 #include "mini/Resources/HostResources.hpp"
@@ -26,14 +31,14 @@ namespace mini::vk
 
         Default_PushConstants default_pushConsts;
 
-        RenderPass ui_renderPass;
-        Shader ui_shader;
-        Pipeline ui_pipeline;
+        RenderPass  ui_renderPass;
+        Shader      ui_shader;
+        Pipeline    ui_pipeline;
         UniformBuffer_Array<rendergraph::UniformData_Text, 1000> ui_ubo_array;
 
-        //RenderPass  default_renderPass;
-        //Shader default_shader;
-        //Pipeline default_pipeline;
+        RenderPass  default_renderPass;
+        Shader      default_shader;
+        Pipeline    default_pipeline;
 
         void Create(hostRes::HostResources &hostRes, Commands &commands)
         {
@@ -45,6 +50,10 @@ namespace mini::vk
             CreateShader_Text           (ui_shader, ui_fontImages);
             CreateRenderPass_Text       (ui_renderPass);
             CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
+
+            CreateShader_Default        (default_shader);
+            CreateRenderPass_Default    (default_renderPass);
+            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass);
         }
     };
 

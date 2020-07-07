@@ -3,10 +3,10 @@
 	"telemetry.enableCrashReporter": false,
 	// Code settings
 	"editor.fontFamily": "Cousine",
-	"editor.fontSize": 12,
+	"editor.fontSize": 13,
 	"editor.fontWeight": "100",
 	"editor.fontLigatures": true,
-	"editor.lineHeight": 21,
+	"editor.lineHeight": 22,
 	"editor.tabSize": 4,
 	"editor.lineNumbers": "on",
 	"editor.renderIndentGuides": false,
@@ -36,7 +36,7 @@
 	// Terminal
 	"terminal.integrated.fontFamily": "Consolas",
 	"terminal.integrated.fontSize": 12,
-	"terminal.integrated.lineHeight": 0,
+	"terminal.integrated.lineHeight": 1,
 	"terminal.integrated.cursorStyle": "block",
 	"terminal.integrated.cursorBlinking": true,
 	"terminal.integrated.fontWeight": "100",
@@ -133,7 +133,7 @@
                     "entity.other.attribute-name"
                 ],
                 "settings": {
-                    "foreground": "#d6b95b",
+                    "foreground": "#e9ca66",
                    "fontStyle": "bold"
                 }
 			},
@@ -159,8 +159,6 @@
                     "foreground": "#838383",
                 }
             },
-
-
 		]
 	}
 }

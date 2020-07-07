@@ -31,7 +31,6 @@ int WINAPI wWinMain(
         mem::GlobalAllocate();
         hostRes::HostResources hostResources{}; //will load immediately for now
 
-        constexpr auto s = sizeof(vk::VkRenderer);
         auto ptrRenderer = mem::ClaimBlock<vk::VkRenderer>(
             vk::WindowHandle{window.hInstance, window.hWnd},
             hostResources);
@@ -54,10 +53,8 @@ int WINAPI wWinMain(
 
         VK_CHECK(vkDeviceWaitIdle(vk::g_contextPtr->device));
     }
-
+    
     mem::GlobalDeallocate();
     system("pause");
 
 } //main end
-
-//TODO: Resource Manager
