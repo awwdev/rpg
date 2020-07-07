@@ -160,5 +160,8 @@
                 }
             },
 		]
+	},
+	"files.associations": {
+		"xutility": "cpp"
 	}
 }

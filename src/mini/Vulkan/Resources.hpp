@@ -26,7 +26,7 @@ namespace mini::vk
 {
     struct VkResources
     {
-        //? host to vk resources
+        //host to vk resources
         ImageArray ui_fontImages;
 
         Default_PushConstants default_pushConsts;
@@ -40,7 +40,7 @@ namespace mini::vk
         Shader      default_shader;
         Pipeline    default_pipeline;
 
-        void Create(hostRes::HostResources &hostRes, Commands &commands)
+        void Create(hostRes::HostResources& hostRes, Commands& commands)
         {
             //? host to vk resources
             ui_fontImages.Create(hostRes.fontTextures, commands.cmdPool);
@@ -52,7 +52,7 @@ namespace mini::vk
             CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
 
             CreateShader_Default        (default_shader);
-            CreateRenderPass_Default    (default_renderPass);
+            CreateRenderPass_Default    (default_renderPass, commands.cmdPool);
             CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass);
         }
     };
