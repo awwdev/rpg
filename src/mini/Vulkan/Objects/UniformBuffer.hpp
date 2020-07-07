@@ -82,7 +82,7 @@ namespace mini::vk
             const u32 maxCount = 0)//not used
             : MAX_COUNT     { maxCount  }
             , MAX_SIZE      { maxSize   }
-            , ALIGNMENT     { alignment } //context.physicalProps.limits.minUniformBufferOffsetAlignment
+            , ALIGNMENT     { alignment } //g_contextPtr->physicalProps.limits.minUniformBufferOffsetAlignment
         {            
         }
 

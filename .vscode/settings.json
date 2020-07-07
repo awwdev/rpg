@@ -2,12 +2,12 @@
 	"telemetry.enableTelemetry": false,
 	"telemetry.enableCrashReporter": false,
 	// Code settings
-	"editor.fontFamily": "Cousine", //"SF Mono",
+	"editor.fontFamily": "Cousine",
 	"editor.fontSize": 12,
 	"editor.fontWeight": "100",
 	"editor.fontLigatures": true,
 	"editor.lineHeight": 21,
-	"editor.tabSize": 1,
+	"editor.tabSize": 4,
 	"editor.lineNumbers": "on",
 	"editor.renderIndentGuides": false,
 	"editor.renderWhitespace": "none",
@@ -41,7 +41,7 @@
 	"terminal.integrated.cursorBlinking": true,
 	"terminal.integrated.fontWeight": "100",
 	"code-runner.runInTerminal": true,
-	"editor.formatOnSave": true,
+	"editor.formatOnSave": false,
 	"workbench.startupEditor": "none",
 	"editor.detectIndentation": true,
 	"editor.insertSpaces": true,
@@ -50,15 +50,117 @@
 	// VS Colors
 	"workbench.colorCustomizations": {
 		"scrollbar.shadow": "#00000000",
-		//"editor.background": "#313335",
-		//"panel.background": "#313235",
+		"editor.background": "#242627",
+		"panel.border": "#222",
+		"tab.border": "#222",
+		"contrastBorder": "#222",
+		"editorGroup.border": "#333",
+		"panel.background": "#242627",
 		"editorLineNumber.foreground": "#444444",
 		"editorLineNumber.activeForeground": "#0F0",
-		"editor.lineHighlightBorder": "#313235",
-		//"sideBar.background": "#000",
+		"editor.lineHighlightBorder": "#242627",
+		"sideBar.background": "#000",
 	},
+	"editor.scrollbar.horizontal": "hidden",
 	"editor.renderLineHighlight": "gutter",
 	"scm.diffDecorationsGutterVisibility": "hover",
 	"git.decorations.enabled": false,
-	"scm.diffDecorations": "none"
+	"scm.diffDecorations": "none",
+	// COLOR CODING
+	"editor.tokenColorCustomizations": {
+		"textMateRules": [
+			//"LITERALS"
+			{
+				"scope" : [ 
+					"constant.numeric", 
+					"string",
+					"variable.other.enummember" ,
+					"entity.name.function.preprocessor",
+					"punctuation.definition.string.begin",
+					"punctuation.definition.string.end",
+					"keyword",
+				],
+				"settings": {
+					"foreground": "#ce9078",
+				}
+			},
+			{
+                "scope": [
+				
+					"variable",
+                ],
+                "settings": {
+					"foreground": "#ece5e2",
+		
+                }
+			},
+			{
+                "scope": [
+					"meta",
+					"punctuation",
+					"keyword.operator.assignment",
+					"entity.name.namespace",
+                ],
+                "settings": {
+					"foreground": "#dbd1cce7",
+			
+                }
+            },
+			{
+                "scope": [
+					"storage.type",
+                ],
+                "settings": {
+                    "foreground": "#e07fc3",
+                }
+			},
+			{
+                "scope": [
+					"storage",
+                    "storage.modifier",
+                    "keyword.control",
+					"keyword.operator.logical",
+                ],
+                "settings": {
+                    "foreground": "#d84141",
+                }
+			},
+			{
+                "scope": [
+                    "entity.name.type",
+                    "punctuation.definition.template-expression.begin",
+                    "punctuation.definition.template-expression.end",
+                    "entity.other.attribute-name"
+                ],
+                "settings": {
+                    "foreground": "#d6b95b",
+                   "fontStyle": "bold"
+                }
+			},
+			{
+                "scope": [
+                    "entity.name.function",
+                    "entity.name.method",
+                ],
+                "settings": {
+                    "foreground": "#628bc9",
+                    "fontStyle": "bold"
+                }
+			},
+			//COMMENT
+            {
+                "scope": [
+                    "comment.line",
+                    "comment.block.documentation",
+                    "comment.block",
+					"comment",
+                ],
+                "settings": {
+                    "foreground": "#838383",
+                }
+            },
+
+
+		]
+	}
 }

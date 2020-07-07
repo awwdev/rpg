@@ -20,13 +20,13 @@ namespace mini::vk
                 .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
                 .pNext = nullptr,
                 .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-                .queueFamilyIndex = context.queueIndex
+                .queueFamilyIndex = g_contextPtr->queueIndex
             };
-            VK_CHECK(vkCreateCommandPool(context.device, &poolInfo, nullptr, &cmdPool));
+            VK_CHECK(vkCreateCommandPool(g_contextPtr->device, &poolInfo, nullptr, &cmdPool));
 
             //? CMD BUFFERS
 
-            cmdBuffers.count = context.swapImages.count;
+            cmdBuffers.count = g_contextPtr->swapImages.count;
             const VkCommandBufferAllocateInfo allocInfo
             {
              .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -35,13 +35,13 @@ namespace mini::vk
              .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
              .commandBufferCount = cmdBuffers.count
             };
-            VK_CHECK(vkAllocateCommandBuffers(context.device, &allocInfo, cmdBuffers.data));
+            VK_CHECK(vkAllocateCommandBuffers(g_contextPtr->device, &allocInfo, cmdBuffers.data));
         }
 
         ~Commands()
         {
-            vkFreeCommandBuffers(context.device, cmdPool, cmdBuffers.count, cmdBuffers.data);
-            vkDestroyCommandPool(context.device, cmdPool, nullptr);
+            vkFreeCommandBuffers(g_contextPtr->device, cmdPool, cmdBuffers.count, cmdBuffers.data);
+            vkDestroyCommandPool(g_contextPtr->device, cmdPool, nullptr);
         }
     };
 

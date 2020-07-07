@@ -16,18 +16,19 @@ namespace mini::vk
 {
     struct VkRenderer
     {
+        Context         context;
+        VkResources     resources;
         Commands        commands;
         Synchronization sync;
         uint32_t        currentFrame = 0;
         
         VkRenderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
         {
-            context.Create(wndHandle); //!global
+            context.Create(wndHandle); //there is a global ptr to vk context
             sync.Create();
             commands.Create();
-            resources.Create(hostResources, commands); //!global
+            resources.Create(hostResources, commands);
         }
-
 
         void RecreateScwapchain()
         {
@@ -141,8 +142,6 @@ namespace mini::vk
     };
 
 }//ns
-
-
 
 
 /*

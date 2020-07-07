@@ -29,6 +29,9 @@ namespace mini::vk
         return VK_FALSE;
     }
 
+    //!GLOBAL REFERENCE
+    struct Context;
+    inline Context* g_contextPtr = nullptr;
 
     struct Context
     {
@@ -55,25 +58,20 @@ namespace mini::vk
         //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
         //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
         
-        
         VkSwapchainKHR swapchain;
         box::POD_Array<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
         box::POD_Array<VkImageView, 4> swapImageViews { 0 };
 
 
-        //? CTOR
-
-        //inline void Create(const WindowHandle& wndHandle)
         void Create(const WindowHandle& wndHandle)
         {
+            g_contextPtr = this;
             CreateInstance();
             CreatePhysical();
             CreateLogicalDevice();
             CreateSurface(wndHandle);
             CreateSwapchain();
         }
-
-        //? INSTANCE AND DEBUG
 
         void CreateInstance()
         {
@@ -115,7 +113,6 @@ namespace mini::vk
                 .pUserData              = nullptr
             };
 
-
             const VkInstanceCreateInfo instInfo {
                 .sType                  = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
                 .pNext                  = &debugCreateInfo, //so instance creation messages are handled
@@ -139,8 +136,6 @@ namespace mini::vk
             //    LOG(layerProps.data[i].layerName);
             //}
         }
-
-        //? PHYSICAL DEVICE
 
         void CreatePhysical()
         {
@@ -168,8 +163,6 @@ namespace mini::vk
                 VK_VERSION_PATCH(physicalProps.apiVersion)
             );
         }
-
-        //? LOGICAL DEVICE
 
         inline void CreateLogicalDevice()
         {
@@ -209,8 +202,6 @@ namespace mini::vk
             vkGetDeviceQueue(device, queueIndex, 0, &queue);
         }
 
-        //? SURFACE
-
         void CreateSurface(const WindowHandle& wndHandle)
         {
             const VkWin32SurfaceCreateInfoKHR surfInfo {
@@ -227,8 +218,6 @@ namespace mini::vk
             VK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(physical, queueIndex, surface, &supported));
             VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
         }
-
-        //? SWAPCHAIN
 
         bool RecreateSwapchain()
         {
@@ -312,10 +301,8 @@ namespace mini::vk
             vkDestroyDevice(device, nullptr);
             ((PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"))(instance, debugMessenger, nullptr);
             vkDestroyInstance(instance, nullptr);
+            g_contextPtr = nullptr;
         }
     };
-
-    //!GLOBAL
-    inline Context context;
 
 }//ns

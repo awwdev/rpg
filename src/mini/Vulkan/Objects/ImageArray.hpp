@@ -44,16 +44,16 @@ namespace mini::vk
                 .pQueueFamilyIndices    = 0,
                 .initialLayout          = VK_IMAGE_LAYOUT_UNDEFINED
             };
-            VK_CHECK(vkCreateImage(context.device, &imageInfo, nullptr, &image));
+            VK_CHECK(vkCreateImage(g_contextPtr->device, &imageInfo, nullptr, &image));
 
             //? MEMORY
             VkMemoryRequirements memReqs;
-            vkGetImageMemoryRequirements(context.device, image, &memReqs);
+            vkGetImageMemoryRequirements(g_contextPtr->device, image, &memReqs);
 
             const VkMemoryPropertyFlags memProps { VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT };
-            const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(context.physicalMemProps, memReqs, memProps));
-            VK_CHECK(vkAllocateMemory(context.device, &allocInfo, nullptr, &memory)); //todo: allocate once for the app and use memory pool
-            VK_CHECK(vkBindImageMemory(context.device, image, memory, 0));
+            const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(g_contextPtr->physicalMemProps, memReqs, memProps));
+            VK_CHECK(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory)); //todo: allocate once for the app and use memory pool
+            VK_CHECK(vkBindImageMemory(g_contextPtr->device, image, memory, 0));
 
             //? VIEW
             const VkImageViewCreateInfo viewInfo {
@@ -79,10 +79,10 @@ namespace mini::vk
                     .layerCount     = textureArray.COUNT
                 }
             };
-            VK_CHECK(vkCreateImageView(context.device, &viewInfo, nullptr, &view));
+            VK_CHECK(vkCreateImageView(g_contextPtr->device, &viewInfo, nullptr, &view));
 
             //? LOAD
-            TransitionImageLayout(context.device, cmdPool, context.queue, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, image, textureArray.COUNT);
+            TransitionImageLayout(g_contextPtr->device, cmdPool, g_contextPtr->queue, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, image, textureArray.COUNT);
 
             //? TMP BUFFER
             Buffer buffer;
@@ -94,7 +94,7 @@ namespace mini::vk
             buffer.Store(textureArray.data, textureArray.TOTAL_SIZE);
             
             //? COPY FROM BUFFER
-            auto cmdBuffer = BeginCommands_OneTime(context.device, cmdPool);
+            auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
 
             VkBufferImageCopy regions [N];
             FOR_CARRAY(regions, i) {
@@ -115,15 +115,15 @@ namespace mini::vk
             }
 
             vkCmdCopyBufferToImage(cmdBuffer, buffer.buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, textureArray.COUNT, regions);
-            EndCommands_OneTime(context.device, cmdBuffer, cmdPool, context.queue);
-            TransitionImageLayout(context.device, cmdPool, context.queue, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, image, textureArray.COUNT);
+            EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
+            TransitionImageLayout(g_contextPtr->device, cmdPool, g_contextPtr->queue, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, image, textureArray.COUNT);
         }
 
         ~ImageArray()
         {
-            vkDestroyImage      (context.device, image, nullptr);
-            vkFreeMemory        (context.device, memory, nullptr);
-            vkDestroyImageView  (context.device, view, nullptr);
+            vkDestroyImage      (g_contextPtr->device, image, nullptr);
+            vkFreeMemory        (g_contextPtr->device, memory, nullptr);
+            vkDestroyImageView  (g_contextPtr->device, view, nullptr);
         }
     };
 

@@ -14,9 +14,7 @@
 #include "mini/Vulkan/Factories/UI_UniformBuffer.hpp"
 #include "mini/Vulkan/Objects/ImageArray.hpp"
 
-#include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/HostResources.hpp"
-#include "mini/Utils/Structs.hpp"
 #include "mini/RenderGraph/UboData.hpp"
 
 namespace mini::vk
@@ -26,22 +24,19 @@ namespace mini::vk
         //? host to vk resources
         ImageArray ui_fontImages;
 
-        //? vk pipeline resources
-        Default_PushConstants   default_pushConsts;
-        //simple UI (text and quads)
-        RenderPass              ui_renderPass;
-        Shader                  ui_shader;
-        Pipeline                ui_pipeline;
-        UniformBuffer_Array<rendergraph::UniformData_Text, 1000> ui_ubo_array;
-        //3d default
-        //RenderPass              default_renderPass;
-        //Shader                  default_shader;
-        //Pipeline                default_pipeline;
+        Default_PushConstants default_pushConsts;
 
-        //! resource manager needs to load beforehand
-        //! order matters!
-        void Create(hostRes::HostResources& hostRes, Commands& commands)
-        { 
+        RenderPass ui_renderPass;
+        Shader ui_shader;
+        Pipeline ui_pipeline;
+        UniformBuffer_Array<rendergraph::UniformData_Text, 1000> ui_ubo_array;
+
+        //RenderPass  default_renderPass;
+        //Shader default_shader;
+        //Pipeline default_pipeline;
+
+        void Create(hostRes::HostResources &hostRes, Commands &commands)
+        {
             //? host to vk resources
             ui_fontImages.Create(hostRes.fontTextures, commands.cmdPool);
 
@@ -51,9 +46,6 @@ namespace mini::vk
             CreateRenderPass_Text       (ui_renderPass);
             CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
         }
-
     };
 
-    inline VkResources resources;
-
-}//ns
+} // namespace mini::vk

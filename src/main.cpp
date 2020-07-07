@@ -27,11 +27,11 @@ int WINAPI wWinMain(
 {
     {
         dbg::Console console{};
-        wnd::Window window{hInstance, 800, 600};
+        wnd::Window  window { hInstance, 800, 600 };
         mem::GlobalAllocate();
         hostRes::HostResources hostResources{}; //will load immediately for now
 
-        constexpr auto s = sizeof vk::VkRenderer;
+        constexpr auto s = sizeof(vk::VkRenderer);
         auto ptrRenderer = mem::ClaimBlock<vk::VkRenderer>(
             vk::WindowHandle{window.hInstance, window.hWnd},
             hostResources);
@@ -52,7 +52,7 @@ int WINAPI wWinMain(
             }
         }
 
-        VK_CHECK(vkDeviceWaitIdle(vk::context.device));
+        VK_CHECK(vkDeviceWaitIdle(vk::g_contextPtr->device));
     }
 
     mem::GlobalDeallocate();

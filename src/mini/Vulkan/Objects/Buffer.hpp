@@ -39,8 +39,8 @@ namespace mini::vk
         void*           memPtr;
         std::size_t     size;
 
-        void Map()   { VK_CHECK(vkMapMemory(context.device, memory, 0, size, 0, &memPtr)); }
-        void Unmap() { vkUnmapMemory(context.device, memory); }
+        void Map()   { VK_CHECK(vkMapMemory(g_contextPtr->device, memory, 0, size, 0, &memPtr)); }
+        void Unmap() { vkUnmapMemory(g_contextPtr->device, memory); }
 
         void Store(const void* const data, const size_t size, const size_t offset = 0)
         {
@@ -65,16 +65,16 @@ namespace mini::vk
                 .queueFamilyIndexCount  = 0,
                 .pQueueFamilyIndices    = nullptr
             };
-            VK_CHECK(vkCreateBuffer(context.device, &bufferInfo, nullptr, &buffer));
+            VK_CHECK(vkCreateBuffer(g_contextPtr->device, &bufferInfo, nullptr, &buffer));
 
             //? MEMORY
             VkMemoryRequirements memReqs;
-            vkGetBufferMemoryRequirements(context.device, buffer, &memReqs);
+            vkGetBufferMemoryRequirements(g_contextPtr->device, buffer, &memReqs);
             size = memReqs.size; //render doc complains but not vulkan ?
 
-            const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(context.physicalMemProps, memReqs, memProps));
-            VK_CHECK(vkAllocateMemory(context.device, &allocInfo, nullptr, &memory)); //todo: allocate once for app and reuse memory pool
-            VK_CHECK(vkBindBufferMemory(context.device, buffer, memory, 0));
+            const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(g_contextPtr->physicalMemProps, memReqs, memProps));
+            VK_CHECK(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory)); //todo: allocate once for app and reuse memory pool
+            VK_CHECK(vkBindBufferMemory(g_contextPtr->device, buffer, memory, 0));
 
             Map();
         }
@@ -82,8 +82,8 @@ namespace mini::vk
         ~Buffer()
         {
             Unmap();
-            vkDestroyBuffer (context.device, buffer, nullptr);
-            vkFreeMemory    (context.device, memory, nullptr);
+            vkDestroyBuffer (g_contextPtr->device, buffer, nullptr);
+            vkFreeMemory    (g_contextPtr->device, memory, nullptr);
         }
     };
 
