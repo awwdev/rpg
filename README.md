@@ -41,13 +41,6 @@ So I decided to roll my own containers and memory allocation.
 - bounds checking is toggleable via macro, no exceptions are used
 - removal of elements can be done fast (swapping) or slow while preserving order
 
-### mini::box::Map
-- no bucket hash system, instead intended to be used with plain enums and integers
-- fixed size (capacity-based with internal count)
-- no ctor calls when initializing the array (underlying byte array)
-- bounds checking is toggleable via macro, no exceptions are used
-- using a bitset to check if key exists (unique keys)
-
 ### mini::mem::Allocate()
 - global functions
 - compile time (capacity based system)
