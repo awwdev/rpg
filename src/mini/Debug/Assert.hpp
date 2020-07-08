@@ -16,7 +16,7 @@ namespace mini
         {
             BringWindowToTop(GetConsoleWindow()); //win only
             ERR(msg);
-            __debugbreak();
+            //__debugbreak();
             //system("pause"); //win only
         }
     } 

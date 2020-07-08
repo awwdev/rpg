@@ -90,7 +90,7 @@
 					"variable",
                 ],
                 "settings": {
-					"foreground": "#ece5e2",
+					"foreground": "#e9dad3e7",
 		
                 }
 			},
@@ -102,7 +102,7 @@
 					"entity.name.namespace",
                 ],
                 "settings": {
-					"foreground": "#dbd1cce7",
+					"foreground": "#e9dad3e7",
 			
                 }
             },
@@ -133,7 +133,7 @@
                     "entity.other.attribute-name"
                 ],
                 "settings": {
-                    "foreground": "#e9ca66",
+                    "foreground": "#dbc169",
                    "fontStyle": "bold"
                 }
 			},
@@ -162,6 +162,61 @@
 		]
 	},
 	"files.associations": {
-		"xutility": "cpp"
+		"xutility": "cpp",
+		"algorithm": "cpp",
+		"cctype": "cpp",
+		"charconv": "cpp",
+		"chrono": "cpp",
+		"cmath": "cpp",
+		"concepts": "cpp",
+		"cstddef": "cpp",
+		"cstdint": "cpp",
+		"cstdio": "cpp",
+		"cstdlib": "cpp",
+		"cstring": "cpp",
+		"ctime": "cpp",
+		"cwchar": "cpp",
+		"exception": "cpp",
+		"filesystem": "cpp",
+		"fstream": "cpp",
+		"initializer_list": "cpp",
+		"iomanip": "cpp",
+		"ios": "cpp",
+		"iosfwd": "cpp",
+		"iostream": "cpp",
+		"istream": "cpp",
+		"iterator": "cpp",
+		"limits": "cpp",
+		"list": "cpp",
+		"locale": "cpp",
+		"map": "cpp",
+		"memory": "cpp",
+		"new": "cpp",
+		"numeric": "cpp",
+		"ostream": "cpp",
+		"ratio": "cpp",
+		"stdexcept": "cpp",
+		"streambuf": "cpp",
+		"string": "cpp",
+		"system_error": "cpp",
+		"tuple": "cpp",
+		"type_traits": "cpp",
+		"typeinfo": "cpp",
+		"utility": "cpp",
+		"vector": "cpp",
+		"xfacet": "cpp",
+		"xiosbase": "cpp",
+		"xlocale": "cpp",
+		"xlocbuf": "cpp",
+		"xlocinfo": "cpp",
+		"xlocmes": "cpp",
+		"xlocmon": "cpp",
+		"xlocnum": "cpp",
+		"xloctime": "cpp",
+		"xmemory": "cpp",
+		"xstddef": "cpp",
+		"xstring": "cpp",
+		"xtr1common": "cpp",
+		"xtree": "cpp"
 	}
 }

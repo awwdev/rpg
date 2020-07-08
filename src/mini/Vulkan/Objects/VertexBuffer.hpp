@@ -1,88 +1,97 @@
 //https://github.com/awwdev
 
 #pragma once
-
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Buffer.hpp"
-
 #include "mini/Box/Array.hpp"
-
+#include "mini/Utils/Structs.hpp"
 
 namespace mini::vk
 {
-    /*
-    struct VertexBuffer
+    template<class T, u32 N>
+    struct VertexBufferStatic
     {
-        //! count not actually needed since we can test host vertex buffer
-        //(that we use to collect stuff and then we store it on gpu via this very class)
-        //we could use count for bound checking though, but that is done auto by the host array ...
+        using VERTEX_TYPE = T;
+        static constexpr u32 MAX_VERTEX_COUNT = N;
+        static constexpr u32 TOTAL_SIZE = N * sizeof(T);
 
-        Buffer vertexBuffer;
-        Buffer indexBuffer;
-        Buffer instanceBuffer;
-        const std::size_t MAX_VERTEX_COUNT;
-        const std::size_t MAX_INSTANCE_COUNT;
+        Buffer srcBuffer; //host
+        Buffer dstBuffer; //device local
+        u32 count = 0;
 
-        box::Array<VkVertexInputBindingDescription, 10>   bindings;
-        box::Array<VkVertexInputAttributeDescription, 10> attributes;
+        u32 CurrentSize() const { return sizeof(T) * count; }
 
-        explicit VertexBuffer(const std::size_t maxVertCount, const std::size_t maxInstCount)
-            : MAX_VERTEX_COUNT   { maxVertCount }
-            , MAX_INSTANCE_COUNT { maxInstCount }
-        {;}
-
-        inline void CreateDynamic(Context& context)
+        //? need to be filled by "factory" method
+        box::Array<VkVertexInputBindingDescription, 2>   bindings;
+        box::Array<VkVertexInputAttributeDescription, 4> attributes;
+       
+        void Create()
         {
-            vertexBuffer.Create(
-                context.device, 
-                VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                sizeof(utils::Vertex) * MAX_VERTEX_COUNT,
-                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                context.physicalMemProps
+            srcBuffer.Create(
+                VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                TOTAL_SIZE,
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
             );
-
-            indexBuffer.Create(
-                context.device,
-                VK_BUFFER_USAGE_INDEX_BUFFER_BIT, 
-                sizeof(uint16_t) * MAX_VERTEX_COUNT, 
-                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                context.physicalMemProps
-            );
-
-            instanceBuffer.Create(
-                context.device,
-                VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 
-                sizeof(InstanceData_UI) * MAX_INSTANCE_COUNT, 
-                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                context.physicalMemProps
+            srcBuffer.Map();
+            dstBuffer.Create(
+                VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+                TOTAL_SIZE,
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
             );
         }
 
-        inline void CreateStatic(VkDevice device, VkCommandPool cmdPool)
+        void Transfer(VkCommandPool cmdPool)
         {
-            //TODO: do
+            const VkCommandBufferAllocateInfo allocInfo {
+                .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+                .pNext              = nullptr,
+                .commandPool        = cmdPool,
+                .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+                .commandBufferCount = 1
+            };
+            VkCommandBuffer commandBuffer;
+            VK_CHECK(vkAllocateCommandBuffers(g_contextPtr->device, &allocInfo, &commandBuffer));
+
+            const VkCommandBufferBeginInfo beginInfo{
+                .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+                .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+            };
+            VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+
+            const VkBufferCopy copyRegion {
+                .srcOffset = 0,
+                .dstOffset = 0,
+                .size = CurrentSize()
+            };
+            vkCmdCopyBuffer(commandBuffer, srcBuffer.buffer, dstBuffer.buffer, 1, &copyRegion);
+
+            VK_CHECK(vkEndCommandBuffer(commandBuffer));
+
+            const VkSubmitInfo submitInfo {
+                .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                .commandBufferCount = 1,
+                .pCommandBuffers = &commandBuffer
+            };
+            VK_CHECK(vkQueueSubmit(g_contextPtr->queue, 1, &submitInfo, VK_NULL_HANDLE));
+            VK_CHECK(vkQueueWaitIdle(g_contextPtr->queue));
+
+            vkFreeCommandBuffers(g_contextPtr->device, cmdPool, 1, &commandBuffer);
         }
 
-        //template<std::size_t N>
-        //void Store(const utils::Vertex (&vertices)[N])
-        //{
-        //    buffer.Store(vertices, sizeof(vertices));
-        //    count = N;
-        //    indexCount = N + (N / 2);
-        //}
-//
-        //void Store(const utils::Vertex* const vertices, const std::size_t pCount)
-        //{
-        //    buffer.Store(vertices, pCount * sizeof(utils::Vertex));
-        //    count = pCount;
-        //    indexCount = pCount + (pCount / 2);
-        //}
+        void Append(const T* const vertices, const u32 pCount)
+        {
+            srcBuffer.Store(vertices, pCount * sizeof(T), CurrentSize());
+            count += pCount;
+        }
 
-        //TODO: StoreGroup / Range 
-        //TODO: when drawing (cmd draw) wwe actually ask the vbo how much verts he has (count, not capacity)
+        void Clear()
+        {
+            count = 0;
+        }        
     };
 
-    inline auto CreatePipelineVertexInputInfo(VertexBuffer& vb) -> VkPipelineVertexInputStateCreateInfo
+    template<class T, u32 N>
+    auto CreatePipelineVertexInputInfo(VertexBufferStatic<T, N>& vb) -> VkPipelineVertexInputStateCreateInfo
     {
         return {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -94,6 +103,5 @@ namespace mini::vk
             .pVertexAttributeDescriptions    = vb.attributes.Data()
         };
     }
-    */
 
 }//ns

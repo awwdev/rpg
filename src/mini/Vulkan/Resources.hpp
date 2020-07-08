@@ -16,8 +16,10 @@
 #include "mini/Vulkan/Factories/Default/Default_RenderPass.hpp"
 #include "mini/Vulkan/Factories/Default/Default_Pipeline.hpp"
 #include "mini/Vulkan/Factories/Default/Default_Shader.hpp"
+#include "mini/Vulkan/Factories/Default/Default_VertexBuffer.hpp"
 
 #include "mini/Vulkan/Objects/ImageArray.hpp"
+#include "mini/Vulkan/Objects/VertexBuffer.hpp"
 
 #include "mini/Resources/HostResources.hpp"
 #include "mini/RenderGraph/UboData.hpp"
@@ -39,6 +41,8 @@ namespace mini::vk
         RenderPass  default_renderPass;
         Shader      default_shader;
         Pipeline    default_pipeline;
+        VertexBufferStatic<utils::Vertex, 1000> default_vbo;
+
 
         void Create(hostRes::HostResources& hostRes, Commands& commands)
         {
@@ -51,6 +55,7 @@ namespace mini::vk
             CreateRenderPass_Text       (ui_renderPass);
             CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
 
+            CreateVertexBuffer_Default  (default_vbo, commands.cmdPool);
             CreateShader_Default        (default_shader);
             CreateRenderPass_Default    (default_renderPass, commands.cmdPool);
             CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass);

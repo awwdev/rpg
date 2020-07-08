@@ -8,35 +8,26 @@ namespace mini::utils
     using NormColor4f = math::Vec4f;
     using RGBAColor4u = math::Vec<u8, 4>;
 
-    //! need of alignment?
-    //vertex is not render graph only resource (used by physics, pathfinding...)
-
     struct Vertex
     {
-        math::Vec3f         pos;
-        utils::NormColor4f  col;
-        math::Vec2f         tex;
-        
-    };
-
-    struct VertexUI
-    {
-        math::Vec2f         pos;
-        utils::NormColor4f  col;
-        math::Vec2f         tex;
+        math::Vec4f pos;
+        math::Vec4f nor;
+        math::Vec4f col;
+        math::Vec4f tex;
     };
 
     std::ostream& operator<<(std::ostream& os, const Vertex& vert)
     {
-        os << "vertex data\n";
-        os << "pos " << vert.pos << '\n';
-        os << "col " << vert.col << '\n';
-        os << "tex " << vert.tex;
+        os << "vertex data\n" <<
+        "pos " << vert.pos << '\n' <<
+        "nor " << vert.nor << '\n' <<
+        "col " << vert.col << '\n' <<
+        "tex " << vert.tex;
         return os;
     }
 
     inline NormColor4f NormaliseColor(const RGBAColor4u& col) { 
-        return { 
+        return { //normalise on gpu always instead??
             col[Vx] / 255.f, 
             col[Vy] / 255.f, 
             col[Vz] / 255.f, 

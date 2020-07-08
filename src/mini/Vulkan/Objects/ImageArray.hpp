@@ -91,6 +91,7 @@ namespace mini::vk
                 textureArray.TOTAL_SIZE, //!
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
             );
+            buffer.Map();
             buffer.Store(textureArray.data, textureArray.TOTAL_SIZE);
             
             //? COPY FROM BUFFER

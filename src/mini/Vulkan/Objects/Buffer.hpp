@@ -75,37 +75,13 @@ namespace mini::vk
             const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(g_contextPtr->physicalMemProps, memReqs, memProps));
             VK_CHECK(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory)); //todo: allocate once for app and reuse memory pool
             VK_CHECK(vkBindBufferMemory(g_contextPtr->device, buffer, memory, 0));
-
-            Map();
         }
 
         ~Buffer()
         {
-            Unmap();
             vkDestroyBuffer (g_contextPtr->device, buffer, nullptr);
             vkFreeMemory    (g_contextPtr->device, memory, nullptr);
         }
     };
 
 }//ns
-
-//? static buffer stuff:
-//inline void copyBuffer(
-//    VkQueue queue, 
-//    VkDevice device, 
-//    VkCommandPool cmdPool, 
-//    VkBuffer src, 
-//    VkBuffer dst, 
-//    VkDeviceSize size) 
-//{
-//    auto cmdBuffer = utils::beginSingleTimeCommands(device, cmdPool);
-//
-//    const VkBufferCopy copyRegion {
-//        .srcOffset = 0,
-//        .dstOffset = 0,
-//        .size = size
-//    };
-//    vkCmdCopyBuffer(cmdBuffer, src, dst, 1, &copyRegion);
-//
-//    utils::endSingleTimeCommands(device, cmdBuffer, cmdPool, queue);
-//}

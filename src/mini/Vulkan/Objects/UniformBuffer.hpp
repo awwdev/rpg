@@ -41,6 +41,7 @@ namespace mini::vk
                 TOTAL_SIZE,
                 memFlags
             );
+            buffer.Map();
         }
 
         void Store(const T* const ptr, const u32 pCount)
@@ -93,6 +94,7 @@ namespace mini::vk
                 MAX_SIZE,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
             );
+            buffer.Map();
         }
 
     };
