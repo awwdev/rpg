@@ -73,22 +73,59 @@ namespace mini::vk
             auto beginInfo = vk::CreateCmdBeginInfo();
             VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
 
-            const VkClearValue clears { .color = { 0.1f, 0.1f, 0.1f, 1.0f } };
-            const auto renderPassInfo = CreateRenderPassBeginInfo(
-                context, 
-                resources.ui_renderPass.renderPass, 
-                resources.ui_renderPass.framebuffers[cmdBufferIdx],
-                &clears
-            );
-            vkCmdBeginRenderPass (cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            const VkRenderPassBeginInfo beginInfo_ui {
+                .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+                .pNext          = nullptr,
+                .renderPass     = resources.ui_renderPass.renderPass,
+                .framebuffer    = resources.ui_renderPass.framebuffers[cmdBufferIdx],
+                .renderArea     = {
+                    .offset     = VkOffset2D {0, 0},
+                    .extent     = g_contextPtr->surfaceCapabilities.currentExtent
+                },
+                .clearValueCount= 0,
+                .pClearValues   = nullptr
+            };
+
+            const VkClearValue clears_default [] { 
+                { .color = { 0.1f, 0.1f, 0.1f, 1.0f } },
+                { .depthStencil = { 1.0f, 0 } }
+            };
+            const VkRenderPassBeginInfo beginInfo_default {
+                .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+                .pNext          = nullptr,
+                .renderPass     = resources.default_renderPass.renderPass,
+                .framebuffer    = resources.default_renderPass.framebuffers[cmdBufferIdx],
+                .renderArea     = {
+                    .offset     = VkOffset2D {0, 0},
+                    .extent     = g_contextPtr->surfaceCapabilities.currentExtent
+                },
+                .clearValueCount= ARRAY_COUNT(clears_default),
+                .pClearValues   = clears_default
+            };
+             
+            vkCmdPushConstants(cmdBuffer, resources.ui_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.default_pushConsts), &resources.default_pushConsts);
+
+            //? DEFAULT
+            VkDeviceSize offsets = 0;
+            vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
+            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default_vbo.dstBuffer.buffer, &offsets);
+            //TODO: UBO bind once too
+            constexpr u32 INSTANCE_TYPE_COUNT = 1;
+            constexpr u32 INSTANCE_COUNT = 1; //needs to be retrieved per instance type (from UBO??)
+            constexpr u32 INSTANCE_OFFSET = 0;
+            for(u32 i = 0; i < INSTANCE_TYPE_COUNT; ++i) {
+                vkCmdDraw (cmdBuffer, resources.default_vbo.vertexGroups[0].count, INSTANCE_COUNT, resources.default_vbo.vertexGroups[0].begin, INSTANCE_OFFSET); 
+            }
+            vkCmdEndRenderPass      (cmdBuffer);
 
             //? TEXT
+            vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.pipeline);
-            vkCmdPushConstants      (cmdBuffer, resources.ui_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.default_pushConsts), &resources.default_pushConsts);
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 0, nullptr); 
             vkCmdDraw               (cmdBuffer, resources.ui_ubo_array.count * 6, 1, 0, 0); 
+            vkCmdEndRenderPass      (cmdBuffer);
 
-            vkCmdEndRenderPass(cmdBuffer);
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }
 

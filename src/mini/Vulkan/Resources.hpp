@@ -58,7 +58,7 @@ namespace mini::vk
             CreateVertexBuffer_Default  (default_vbo, commands.cmdPool);
             CreateShader_Default        (default_shader);
             CreateRenderPass_Default    (default_renderPass, commands.cmdPool);
-            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass);
+            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo);
         }
     };
 

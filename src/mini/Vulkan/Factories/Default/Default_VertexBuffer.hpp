@@ -10,8 +10,12 @@ namespace mini::vk
     void CreateVertexBuffer_Default(VertexBufferStatic<T, N>& vbo, VkCommandPool cmdPool)
     {  
         vbo.Create();
-        utils::Vertex v{};
-        vbo.Append(&v, 1);
+        utils::Vertex tris [] = {
+            { {  0.0, -0.5, 0.1, 1 }, {}, { 1, 0, 0, 1 }, {} },
+            { {  0.5,  0.5, 0.1, 1 }, {}, { 0, 1, 0, 1 }, {} },
+            { { -0.5,  0.5, 0.1, 1 }, {}, { 0, 0, 1, 1 }, {} },
+        };
+        vbo.AppendGroup(tris, 3);
         vbo.Transfer(cmdPool);
 
         vbo.bindings.Append(VkVertexInputBindingDescription{

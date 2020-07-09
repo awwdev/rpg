@@ -8,6 +8,11 @@
 
 namespace mini::vk
 {
+    struct VertexGroup
+    {
+        u32 begin, count;
+    };
+
     template<class T, u32 N>
     struct VertexBufferStatic
     {
@@ -17,8 +22,9 @@ namespace mini::vk
 
         Buffer srcBuffer; //host
         Buffer dstBuffer; //device local
-        u32 count = 0;
 
+        box::Array<VertexGroup, 100> vertexGroups;
+        u32 count = 0;
         u32 CurrentSize() const { return sizeof(T) * count; }
 
         //? need to be filled by "factory" method
@@ -78,9 +84,10 @@ namespace mini::vk
             vkFreeCommandBuffers(g_contextPtr->device, cmdPool, 1, &commandBuffer);
         }
 
-        void Append(const T* const vertices, const u32 pCount)
+        void AppendGroup(const T* const vertices, const u32 pCount)
         {
             srcBuffer.Store(vertices, pCount * sizeof(T), CurrentSize());
+            vertexGroups.Append(count, pCount);
             count += pCount;
         }
 

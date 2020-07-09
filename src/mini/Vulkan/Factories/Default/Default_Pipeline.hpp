@@ -12,19 +12,21 @@
 
 namespace mini::vk
 {
+    template<class VBO_T, u32 VBO_N>
     void CreatePipeline_Default(
         Pipeline& pipeline,
         Shader& shader, 
-        RenderPass& renderPass)
+        RenderPass& renderPass,
+        VertexBufferStatic<VBO_T, VBO_N>& vbo)
     {
         const VkPipelineVertexInputStateCreateInfo vertexInput {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext                           = nullptr,
             .flags                           = 0,
-            .vertexBindingDescriptionCount   = 0,
-            .pVertexBindingDescriptions      = nullptr,
-            .vertexAttributeDescriptionCount = 0,
-            .pVertexAttributeDescriptions    = nullptr
+            .vertexBindingDescriptionCount   = vbo.bindings.Count(),
+            .pVertexBindingDescriptions      = vbo.bindings.Data(),
+            .vertexAttributeDescriptionCount = vbo.attributes.Count(),
+            .pVertexAttributeDescriptions    = vbo.attributes.Data()
         };
 
         //UniformInfo* uniformInfos [] = {
@@ -75,7 +77,7 @@ namespace mini::vk
             .depthClampEnable        = VK_FALSE,
             .rasterizerDiscardEnable = VK_FALSE,
             .polygonMode             = VK_POLYGON_MODE_FILL,
-            .cullMode                = VK_CULL_MODE_BACK_BIT,
+            .cullMode                = VK_CULL_MODE_NONE, //VK_CULL_MODE_BACK_BIT,
             .frontFace               = VK_FRONT_FACE_CLOCKWISE,
             .depthBiasEnable         = VK_FALSE,
             .depthBiasConstantFactor = 0.f,
@@ -100,8 +102,8 @@ namespace mini::vk
             .sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
             .pNext                 = nullptr,
             .flags                 = 0,
-            .depthTestEnable       = VK_FALSE,
-            .depthWriteEnable      = VK_FALSE,
+            .depthTestEnable       = VK_TRUE,
+            .depthWriteEnable      = VK_TRUE,
             .depthCompareOp        = VK_COMPARE_OP_LESS,
             .depthBoundsTestEnable = VK_FALSE,
             .stencilTestEnable     = VK_FALSE,
@@ -112,7 +114,7 @@ namespace mini::vk
         };
 
         const VkPipelineColorBlendAttachmentState colorBlend {
-            .blendEnable                = VK_TRUE,
+            .blendEnable                = VK_FALSE,
             .srcColorBlendFactor        = VK_BLEND_FACTOR_SRC_ALPHA,
             .dstColorBlendFactor        = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, 
             .colorBlendOp               = VK_BLEND_OP_ADD,
