@@ -47,6 +47,13 @@ namespace mini::vk
                 resources.ui_renderPass, 
                 resources.ui_ubo_array
             );
+            resources.default_pipeline.~Pipeline();
+            CreatePipeline_Default(
+                resources.default_pipeline,
+                resources.default_shader,
+                resources.default_renderPass,
+                resources.default_vbo
+            );
 
             commands.~Commands();
             commands.Create();
