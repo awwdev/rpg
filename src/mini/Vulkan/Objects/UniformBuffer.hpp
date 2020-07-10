@@ -99,7 +99,7 @@ namespace mini::vk
 
         void AppendGroup(const T* const ptr, const u32 pCount)
         {
-            buffer.Store(ptr, pCount * sizeof(T));
+            buffer.Store(ptr, pCount * sizeof(T), CurrentSize());
             groups.Append(totalCount, pCount);
             totalCount += pCount;
         }

@@ -29,8 +29,18 @@ namespace mini::app
             //TEST: update ubo data (transform)
             //TODO: ECS provides render data
             rendergraph::UniformData_Default triangles [] = {
-                math::Identity4x4(),
-                math::Identity4x4(),
+                { 
+                    .1f, 0.f, 0.f, .5f,
+                    0.f, .1f, 0.f, 0.f,
+                    0.f, 0.f, .1f, 0.f,
+                    0.f, 0.f, 0.f, 1.f,            
+                },
+                { 
+                    .1f, 0.f, 0.f, -.5f,
+                    0.f, .1f, 0.f, 0.f,
+                    0.f, 0.f, .1f, 0.f,
+                    0.f, 0.f, 0.f, 1.f,            
+                },
             };
             rendergraph::UniformData_Default quads [] = {
                 { 
@@ -51,7 +61,7 @@ namespace mini::app
 
             renderGraph.default_uboGroups.Clear();
             renderGraph.default_uboArray.Clear();
-            
+
             renderGraph.default_uboGroups.Append(rendergraph::UniformGroup{ 
                 .begin = renderGraph.default_uboArray.count, 
                 .count = (u32)ARRAY_COUNT(triangles) 

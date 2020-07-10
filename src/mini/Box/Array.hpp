@@ -211,12 +211,12 @@ namespace mini::box
             }
         }
 
-        template<std::size_t N>
+        template<u32 N>
         void AppendArray(const T (&other)[N])
         {
             CheckRange(count + N, COUNT_MAX + 1);
-            for(std::size_t i = 0; i < N; ++i) {
-            //FOR_CARRAY(other, i) {
+            //TODO: memcpy of trivial
+            for(u32 i = 0; i < N; ++i) {
                 PlacementNew(count, other[i]);
                 ++count;
             }
@@ -242,13 +242,13 @@ namespace mini::box
 
 
         ///INTERNAL
-
+        //TODO: && or const & ???
         template<class... CtorArgs>
-        void PlacementNew(const IDX_T idx, CtorArgs&&... args)
+        void PlacementNew(const IDX_T idx, const CtorArgs&... args)
         {
             if constexpr (std::is_aggregate_v<T>)
             {
-                new(&dataPtr[idx]) T{ std::forward<CtorArgs>(args)... };
+                new(&dataPtr[idx]) T{ args... };
             }
             else
             {
