@@ -11,6 +11,8 @@
 #include "mini/Box/String.hpp"
 #include "mini/Window/AppEvents.hpp"
 #include "mini/Utils/DeltaTime.hpp"
+#undef near
+#undef far
 
 namespace mini::vk
 {
@@ -45,6 +47,28 @@ namespace mini::vk
 
         void UpdateVkResources(const app::Scene& scene, const double dt)
         {
+            const float n = 0.01f;
+            const float f = 100.f;
+            const float fov = 45.f;
+            const float a = 1.f / (std::tanf(fov / 2.f) * (3.14f / 180.f));
+            const float r = (float)wnd::window_w / (float)wnd::window_h;
+            const float b = a * r;
+            const float c = -(f / (f-n));
+            const float d = -((f*n) / (f-n));
+            resources.default_pushConsts.projection = {
+                a, 0, 0, 0,
+                0, b, 0, 0,
+                0, 0, c,-1,
+                0, 0, d, 1,
+            };
+            resources.default_pushConsts.projection = {
+                math::Identity4x4()
+            };
+
+            //! perspective devide
+            //! normalization matrix
+            
+
             resources.default_pushConsts.wnd_w = wnd::window_w;
             resources.default_pushConsts.wnd_h = wnd::window_h;
 
@@ -98,7 +122,8 @@ namespace mini::vk
                 .clearValueCount= ARRAY_COUNT(clears_default),
                 .pClearValues   = clears_default
             };
-             
+
+            //! does this work fot both pipelines?? (see layout passed) 
             vkCmdPushConstants(cmdBuffer, resources.ui_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.default_pushConsts), &resources.default_pushConsts);
 
             //? DEFAULT

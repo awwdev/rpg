@@ -11,8 +11,8 @@ namespace mini::vk
 {
     inline void CreateShader_Text(Shader& shader, ImageArray& imageArray)
     {  
-        shader.CreateShaderModule("res/Shaders/spv/text.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-        shader.CreateShaderModule("res/Shaders/spv/text.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+        shader.CreateShaderModule("res/Shaders/spv/ui.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+        shader.CreateShaderModule("res/Shaders/spv/ui.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 
         const VkSamplerCreateInfo samplerInfo {
             .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
