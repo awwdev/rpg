@@ -10,6 +10,7 @@ namespace mini::vk
     void CreateVertexBuffer_Default(VertexBuffer_Static<T, N>& vbo, VkCommandPool cmdPool)
     {  
         vbo.Create();
+        //TODO: move stuff into mesh resource loader or primitive meshes gen
         utils::Vertex tris [] = {
             //!important note: W must be 1
             { { -1.0f, -1.0f, +0.0f, +1.0f }, {}, { 1.f, 0.f, 0.f, 1.f }, {} },

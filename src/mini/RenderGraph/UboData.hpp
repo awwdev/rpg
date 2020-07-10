@@ -15,6 +15,11 @@ namespace mini
             uint32_t padding2;
         };
 
+        struct UniformGroup
+        {
+            u32 begin, count;
+        };
+
         struct UniformData_Default
         {
             math::Mat4f transform;

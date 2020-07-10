@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "mini/RenderGraph/UboData.hpp"
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Buffer.hpp"
 
@@ -64,11 +65,11 @@ namespace mini::vk
             count += arr.Count();
         }
 
-    };
+        void Clear()
+        {
+            count = 0;
+        }
 
-    struct UniformGroup
-    {
-        u32 begin, count;
     };
 
     template<class T, u32 MAX_COUNT_T>
@@ -82,7 +83,7 @@ namespace mini::vk
         UniformInfo info { .type = UniformInfo::Buffer };
         //! COMPLETE UniformInfo IN A FACTORY METHOD
 
-        box::Array<UniformGroup, 100> groups;
+        box::Array<rendergraph::UniformGroup, 100> groups;
         u32 totalCount;
         u32 CurrentSize() const { return sizeof(T) * totalCount; }
 
@@ -116,6 +117,12 @@ namespace mini::vk
             buffer.Store(arr.dataPtr, arr.Count() * sizeof(T), CurrentSize());
             groups.Append(totalCount, arr.Count());
             totalCount += arr.Count();
+        }
+
+        void Clear()
+        {
+            totalCount = 0;
+            groups.Clear();
         }
 
     };

@@ -18,7 +18,7 @@ namespace mini::vk
             .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
             .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
-            .finalLayout    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+            .finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
         };
 
         constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT; //VK_FORMAT_D16_UNORM, 

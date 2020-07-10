@@ -48,7 +48,16 @@ namespace mini::vk
             resources.default_pushConsts.wnd_w = wnd::window_w;
             resources.default_pushConsts.wnd_h = wnd::window_h;
 
-            resources.ui_ubo_array.Append(rendergraph::renderGraph.uboText);
+            resources.ui_ubo_array.Clear();
+            resources.ui_ubo_array.Append(rendergraph::g_renderGraphPtr->ubo_ui);
+
+            resources.default_ubo_groups.Clear();
+            FOR_ARRAY(rendergraph::g_renderGraphPtr->default_uboGroups, i){
+                const auto& group = rendergraph::g_renderGraphPtr->default_uboGroups[i];
+                const auto& uboArray = rendergraph::g_renderGraphPtr->default_uboArray;
+                resources.default_ubo_groups.AppendGroup(&uboArray[group.begin], group.count); 
+            }
+            
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
@@ -114,7 +123,6 @@ namespace mini::vk
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 0, nullptr); 
             vkCmdDraw               (cmdBuffer, resources.ui_ubo_array.count * 6, 1, 0, 0); 
             vkCmdEndRenderPass      (cmdBuffer);
-            
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }
 

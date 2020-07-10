@@ -54,7 +54,7 @@ namespace mini::app::ui
         const auto str_y  = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
 
         for(u32 i = 0; i < STRLEN; ++i) {
-            renderGraph.uboText.Append(
+            g_renderGraphPtr->ubo_ui.Append(
                 UniformData_Text { 
                     .rect         = { str_x + LETTER_SPACE * i, str_y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
@@ -70,7 +70,7 @@ namespace mini::app::ui
         const Colors col = WHITE)
     {
         for(u32 i = 0; i < len; ++i) {
-            renderGraph.uboText.Append(
+            g_renderGraphPtr->ubo_ui.Append(
                 UniformData_Text { 
                     .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
@@ -82,7 +82,7 @@ namespace mini::app::ui
 
     inline void DrawFPS(const utils::Rect<float>& rect = { 0, 0, 48, 20 })
     {
-        renderGraph.uboText.Append(
+        g_renderGraphPtr->ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = rect,
                 .colorIndex     = BLACK1, 
@@ -159,7 +159,7 @@ namespace mini::app::ui
         }
 
         //? WINDOW
-        renderGraph.uboText.Append(
+        g_renderGraphPtr->ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = wnd.rect,
                 .colorIndex     = BLACK2,
@@ -167,7 +167,7 @@ namespace mini::app::ui
             }
         );
         //? TITLE BAR
-        renderGraph.uboText.Append(
+        g_renderGraphPtr->ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = bar,
                 .colorIndex     = BLACK1,
@@ -175,7 +175,7 @@ namespace mini::app::ui
             }
         );
         //? RESIZER
-        renderGraph.uboText.Append(
+        g_renderGraphPtr->ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = resizer, 
                 .colorIndex     = isMouseOnResizer ? RED : BLACK3,
@@ -217,7 +217,7 @@ namespace mini::app::ui
         if (isMouseInside && isMousePressed) btnColorIdx = BLACK5;
         else btnColorIdx = isMouseInside ? BLACK4 : BLACK3;
 
-        renderGraph.uboText.Append(
+        g_renderGraphPtr->ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = rect, 
                 .colorIndex     = btnColorIdx,
@@ -269,7 +269,7 @@ namespace mini::app::ui
         }
 
         //? INPUT FIELD
-        renderGraph.uboText.Append(
+        g_renderGraphPtr->ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = inputRect, 
                 .colorIndex     = isMouseOnInput ? BLACK4 : BLACK3,

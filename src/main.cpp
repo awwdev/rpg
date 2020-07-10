@@ -45,7 +45,7 @@ int WINAPI wWinMain(
 
             if (wnd::window_h != 0 && wnd::window_w != 0)
             {
-                rendergraph::renderGraph.Clear();
+                rendergraph::g_renderGraphPtr->Clear();
                 ptrSceneStack[sceneIdx].Update(mini::dt::seconds);
                 ptrRenderer->Render(mini::dt::seconds, ptrSceneStack[sceneIdx]);
             }

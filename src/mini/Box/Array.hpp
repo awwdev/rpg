@@ -244,7 +244,7 @@ namespace mini::box
         ///INTERNAL
 
         template<class... CtorArgs>
-        inline void PlacementNew(const IDX_T idx, CtorArgs&&... args)
+        void PlacementNew(const IDX_T idx, CtorArgs&&... args)
         {
             if constexpr (std::is_aggregate_v<T>)
             {
