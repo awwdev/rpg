@@ -45,7 +45,7 @@ namespace mini::vk
         RenderPass      default_renderPass;
         Shader          default_shader;
         Pipeline        default_pipeline;
-        UniformBuffer_Array<UniformData_Default, 1000> default_ubo_array;
+        UniformBuffer_Groups<UniformData_Default, 1000> default_ubo_groups;
         VertexBuffer_Static<Vertex, 1000> default_vbo;
 
 
@@ -61,10 +61,10 @@ namespace mini::vk
             CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
 
             CreateVertexBuffer_Default  (default_vbo, commands.cmdPool);
-            CreateUniformBuffer_Default (default_ubo_array);
+            CreateUniformBuffer_Default (default_ubo_groups);
             CreateShader_Default        (default_shader);
             CreateRenderPass_Default    (default_renderPass, commands.cmdPool);
-            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo, default_ubo_array);
+            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo, default_ubo_groups);
         }
 
         void RecreateSwapchain(VkCommandPool cmdPool)
@@ -76,7 +76,7 @@ namespace mini::vk
 
             CreateRenderPass_Text       (ui_renderPass);
             CreateRenderPass_Default    (default_renderPass, cmdPool);
-            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo, default_ubo_array);
+            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo, default_ubo_groups);
             CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
         }
     };

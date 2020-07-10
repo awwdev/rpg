@@ -18,7 +18,7 @@ namespace mini::vk
         Shader& shader, 
         RenderPass& renderPass,
         VertexBuffer_Static<VBO_T, VBO_N>& vbo,
-        UniformBuffer_Array<UBO_T, UBO_N>& ubo)
+        UniformBuffer_Groups<UBO_T, UBO_N>& ubo)
     {
         const VkPipelineVertexInputStateCreateInfo vertexInput {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

@@ -48,7 +48,7 @@ namespace mini::vk
             resources.default_pushConsts.wnd_w = wnd::window_w;
             resources.default_pushConsts.wnd_h = wnd::window_h;
 
-            resources.ui_ubo_array.Store(rendergraph::renderGraph.uboText);
+            resources.ui_ubo_array.Append(rendergraph::renderGraph.uboText);
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
@@ -98,11 +98,13 @@ namespace mini::vk
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
             vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default_vbo.dstBuffer.buffer, &offsets);
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_pipeline.sets[cmdBufferIdx], 0, nullptr); 
-            constexpr u32 INSTANCE_TYPE_COUNT = 1;
-            constexpr u32 INSTANCE_COUNT = 1; //needs to be retrieved per instance type (from UBO??)
-            constexpr u32 INSTANCE_OFFSET = 0;
-            for(u32 i = 0; i < INSTANCE_TYPE_COUNT; ++i) {
-                vkCmdDraw (cmdBuffer, resources.default_vbo.vertexGroups[0].count, INSTANCE_COUNT, resources.default_vbo.vertexGroups[0].begin, INSTANCE_OFFSET); 
+            const auto instTypeCount = resources.default_ubo_groups.groups.Count(); //ubo group (inst type) congruent to vertex group
+            for(u32 i = 0; i < instTypeCount; ++i) {
+                const auto vertOff   = resources.default_vbo.vertexGroups[i].begin;
+                const auto vertCount = resources.default_vbo.vertexGroups[i].count;
+                const auto instOff   = resources.default_ubo_groups.groups[i].begin;
+                const auto instCount = resources.default_ubo_groups.groups[i].count;
+                vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
             }
             vkCmdEndRenderPass      (cmdBuffer);
            

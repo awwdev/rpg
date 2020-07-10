@@ -91,6 +91,14 @@ namespace mini::vk
             count += pCount;
         }
 
+        template<u32 COUNT>
+        void AppendGroup(const T(&arr)[COUNT])
+        {
+            srcBuffer.Store(arr, COUNT * sizeof(T), CurrentSize());
+            vertexGroups.Append(count, COUNT);
+            count += COUNT;
+        }
+
         void Clear()
         {
             count = 0;

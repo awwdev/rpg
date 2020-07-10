@@ -8,13 +8,13 @@
 namespace mini::vk
 {
     template<class T, u32 N>
-    void CreateUniformBuffer_Default(UniformBuffer_Array<T, N>& ubo)
+    void CreateUniformBuffer_Default(UniformBuffer_Groups<T, N>& ubo)
     {  
         ubo.Create();
         rendergraph::UniformData_Default data [] = {
             math::Identity4x4()
         };
-        ubo.Store(data);
+        ubo.AppendGroup(data);
 
         ubo.info.type = UniformInfo::Buffer;
         ubo.info.layout = {

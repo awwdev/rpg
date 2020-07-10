@@ -16,7 +16,7 @@ namespace mini::vk
             { {  0.5f,  0.5f, 0.1f, 1.f }, {}, { 0.f, 1.f, 0.f, 1.f }, {} },
             { { -0.5f,  0.5f, 0.1f, 1.f }, {}, { 0.f, 0.f, 1.f, 1.f }, {} },
         };
-        vbo.AppendGroup(tris, 3);
+        vbo.AppendGroup(tris);
         vbo.Transfer(cmdPool);
 
         vbo.bindings.Append(VkVertexInputBindingDescription{

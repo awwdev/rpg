@@ -20,6 +20,9 @@ namespace mini::vk
         };
     };
 
+    //array is agnostic about layout of the array
+    //groups does know about the layout of the array
+
     template<class T, u32 MAX_COUNT_T>
     struct UniformBuffer_Array
     {
@@ -42,23 +45,76 @@ namespace mini::vk
             buffer.Map();
         }
 
-        void Store(const T* const ptr, const u32 pCount)
+        void Append(const T* const ptr, const u32 pCount)
         {
             buffer.Store(ptr, pCount * sizeof(T));
-            count = pCount;
+            count += pCount;
         }
 
         template<u32 COUNT>
-        void Store(const T (&arr)[COUNT])
+        void Append(const T (&arr)[COUNT])
         {
             buffer.Store(arr, COUNT * sizeof(T));
-            count = COUNT;
+            count += COUNT;
         }
 
-        void Store(const box::IArray<T>& arr)
+        void Append(const box::IArray<T>& arr)
         {
             buffer.Store(arr.dataPtr, arr.Count() * sizeof(T));
-            count = arr.Count();
+            count += arr.Count();
+        }
+
+    };
+
+    struct UniformGroup
+    {
+        u32 begin, count;
+    };
+
+    template<class T, u32 MAX_COUNT_T>
+    struct UniformBuffer_Groups
+    {
+        static constexpr u32 MAX_COUNT  = MAX_COUNT_T;
+        static constexpr u32 TOTAL_SIZE = sizeof(T) * MAX_COUNT_T;
+        using  TYPE = T;
+
+        Buffer      buffer;
+        UniformInfo info { .type = UniformInfo::Buffer };
+        //! COMPLETE UniformInfo IN A FACTORY METHOD
+
+        box::Array<UniformGroup, 100> groups;
+        u32 totalCount;
+
+        void Create(VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+        {
+            buffer.Create(
+                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                TOTAL_SIZE,
+                memFlags
+            );
+            buffer.Map();
+        }
+
+        void AppendGroup(const T* const ptr, const u32 pCount)
+        {
+            buffer.Store(ptr, pCount * sizeof(T));
+            groups.Append(totalCount, pCount);
+            totalCount += pCount;
+        }
+
+        template<u32 COUNT>
+        void AppendGroup(const T (&arr)[COUNT])
+        {
+            buffer.Store(arr, COUNT * sizeof(T));
+            groups.Append(totalCount, COUNT);
+            totalCount += COUNT;
+        }
+
+        void AppendGroup(const box::IArray<T>& arr)
+        {
+            buffer.Store(arr.dataPtr, arr.Count() * sizeof(T));
+            groups.Append(totalCount, arr.Count());
+            totalCount += arr.Count();
         }
 
     };
