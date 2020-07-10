@@ -36,30 +36,10 @@ namespace mini::vk
             if (!context.RecreateSwapchain())
                 return;
 
-            //? same as when creating stuff but with dtor
-            resources.ui_renderPass.~RenderPass();
-            CreateRenderPass_Text(resources.ui_renderPass);
-
-            resources.ui_pipeline.~Pipeline();
-            CreatePipeline_Text(
-                resources.ui_pipeline,
-                resources.ui_shader, 
-                resources.ui_renderPass, 
-                resources.ui_ubo_array
-            );
-            resources.default_pipeline.~Pipeline();
-            CreatePipeline_Default(
-                resources.default_pipeline,
-                resources.default_shader,
-                resources.default_renderPass,
-                resources.default_vbo
-            );
+            resources.RecreateSwapchain(commands.cmdPool);
 
             commands.~Commands();
             commands.Create();
-
-            //TODO: find a way to keep track what was created and then recreate it
-            //maybe a unified method Create() that also can be used OnRecreate (need of checks)
         }
 
 

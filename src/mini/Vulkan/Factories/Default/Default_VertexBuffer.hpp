@@ -12,9 +12,9 @@ namespace mini::vk
         vbo.Create();
         utils::Vertex tris [] = {
             //!important note: W must be 1
-            { {  0.0, -0.5, 0.1, 1 }, {}, { 1, 0, 0, 1 }, {} },
-            { {  0.5,  0.5, 0.1, 1 }, {}, { 0, 1, 0, 1 }, {} },
-            { { -0.5,  0.5, 0.1, 1 }, {}, { 0, 0, 1, 1 }, {} },
+            { {  0.0f, -0.5f, 0.1f, 1.f }, {}, { 1.f, 0.f, 0.f, 1.f }, {} },
+            { {  0.5f,  0.5f, 0.1f, 1.f }, {}, { 0.f, 1.f, 0.f, 1.f }, {} },
+            { { -0.5f,  0.5f, 0.1f, 1.f }, {}, { 0.f, 0.f, 1.f, 1.f }, {} },
         };
         vbo.AppendGroup(tris, 3);
         vbo.Transfer(cmdPool);

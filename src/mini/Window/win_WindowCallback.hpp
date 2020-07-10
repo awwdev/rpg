@@ -92,16 +92,14 @@ namespace mini::wnd
         
         case WM_SETCURSOR: //prevent cursor redraw
         {
-             const auto hit = LOWORD(lParam);
-             switch(hit)
-             {
-                 //TODO: more clean way like refresh previous declared cursor?
-                 case HTCLIENT:  SetCursor(LoadCursor(NULL, IDC_ARROW)); break;
-                 default:        SetCursor(LoadCursor(NULL, IDC_HAND)); break;
-             }
+            const auto hit = LOWORD(lParam);
+            switch(hit)
+            {
+                //TODO: more clean way like refresh previous declared cursor?
+                case HTCLIENT:  SetCursor(LoadCursor(NULL, IDC_ARROW)); break;
+            }
         }
-           
-        break;
+        //!no break (just needed to force arrow on HT CLIENT)
 
         //?default
 

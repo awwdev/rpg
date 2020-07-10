@@ -60,6 +60,19 @@ namespace mini::vk
             CreateRenderPass_Default    (default_renderPass, commands.cmdPool);
             CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo);
         }
+
+        void RecreateSwapchain(VkCommandPool cmdPool)
+        {
+            ui_pipeline.~Pipeline();
+            default_pipeline.~Pipeline();
+            default_renderPass.~RenderPass();
+            ui_renderPass.~RenderPass();
+
+            CreateRenderPass_Text       (ui_renderPass);
+            CreateRenderPass_Default    (default_renderPass, cmdPool);
+            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo);
+            CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
+        }
     };
 
 } // namespace mini::vk
