@@ -1,6 +1,7 @@
 #version 450
 
 layout(push_constant) uniform Push {
+    mat4 projection;
     uint wnd_width;
     uint wnd_height;
 } push;
@@ -22,6 +23,6 @@ layout (location = 0) out vec4 outCol;
 
 void main() 
 {
-    gl_Position = inPos * instanceData.arr[gl_InstanceIndex].transform;
+    gl_Position = push.projection * instanceData.arr[gl_InstanceIndex].transform * inPos;
     outCol      = inCol;
 }
