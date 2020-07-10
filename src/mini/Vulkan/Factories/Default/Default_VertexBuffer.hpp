@@ -12,11 +12,21 @@ namespace mini::vk
         vbo.Create();
         utils::Vertex tris [] = {
             //!important note: W must be 1
-            { {  0.0f, -0.5f, 0.1f, 1.f }, {}, { 1.f, 0.f, 0.f, 1.f }, {} },
-            { {  0.5f,  0.5f, 0.1f, 1.f }, {}, { 0.f, 1.f, 0.f, 1.f }, {} },
-            { { -0.5f,  0.5f, 0.1f, 1.f }, {}, { 0.f, 0.f, 1.f, 1.f }, {} },
+            { { -1.0f, -1.0f, +0.0f, +1.0f }, {}, { 1.f, 0.f, 0.f, 1.f }, {} },
+            { { +0.0f, -1.0f, +0.0f, +1.0f }, {}, { 0.f, 1.f, 0.f, 1.f }, {} },
+            { { -1.0f, +1.0f, +0.0f, +1.0f }, {}, { 0.f, 0.f, 1.f, 1.f }, {} },
+        };
+        utils::Vertex quad [] = {
+            //!important note: W must be 1
+            { { -0.0f, -1.0f, +0.0f, +1.0f }, {}, { 0.3f, 0.3f, 0.8f, 1.f }, {} },
+            { { +1.0f, -1.0f, +0.0f, +1.0f }, {}, { 0.3f, 0.3f, 0.8f, 1.f }, {} },
+            { { +1.0f, +1.0f, +0.0f, +1.0f }, {}, { 0.3f, 0.3f, 0.8f, 1.f }, {} },
+            { { -0.0f, -1.0f, +0.0f, +1.0f }, {}, { 0.3f, 0.3f, 0.8f, 1.f }, {} },
+            { { +1.0f, +1.0f, +0.0f, +1.0f }, {}, { 0.3f, 0.3f, 0.8f, 1.f }, {} },
+            { { +0.0f, +1.0f, +0.0f, +1.0f }, {}, { 0.3f, 0.3f, 0.8f, 1.f }, {} },
         };
         vbo.AppendGroup(tris);
+        vbo.AppendGroup(quad);
         vbo.Transfer(cmdPool);
 
         vbo.bindings.Append(VkVertexInputBindingDescription{

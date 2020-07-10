@@ -84,6 +84,7 @@ namespace mini::vk
 
         box::Array<UniformGroup, 100> groups;
         u32 totalCount;
+        u32 CurrentSize() const { return sizeof(T) * totalCount; }
 
         void Create(VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         {
@@ -105,14 +106,14 @@ namespace mini::vk
         template<u32 COUNT>
         void AppendGroup(const T (&arr)[COUNT])
         {
-            buffer.Store(arr, COUNT * sizeof(T));
+            buffer.Store(arr, COUNT * sizeof(T), CurrentSize());
             groups.Append(totalCount, COUNT);
             totalCount += COUNT;
         }
 
         void AppendGroup(const box::IArray<T>& arr)
         {
-            buffer.Store(arr.dataPtr, arr.Count() * sizeof(T));
+            buffer.Store(arr.dataPtr, arr.Count() * sizeof(T), CurrentSize());
             groups.Append(totalCount, arr.Count());
             totalCount += arr.Count();
         }

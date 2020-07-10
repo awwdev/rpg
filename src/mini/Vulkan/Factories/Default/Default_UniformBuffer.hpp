@@ -11,10 +11,25 @@ namespace mini::vk
     void CreateUniformBuffer_Default(UniformBuffer_Groups<T, N>& ubo)
     {  
         ubo.Create();
-        rendergraph::UniformData_Default data [] = {
-            math::Identity4x4()
+        rendergraph::UniformData_Default triangles [] = {
+            math::Identity4x4(),
         };
-        ubo.AppendGroup(data);
+        rendergraph::UniformData_Default quads [] = {
+            { 
+                .1f, 0.f, 0.f, .5f,
+                0.f, .1f, 0.f, 0.f,
+                0.f, 0.f, .1f, 0.f,
+                0.f, 0.f, 0.f, 1.f,            
+            },
+            { 
+                .1f, 0.f, 0.f, -.5f,
+                0.f, .1f, 0.f, 0.f,
+                0.f, 0.f, .1f, 0.f,
+                0.f, 0.f, 0.f, 1.f,            
+            },
+        };
+        ubo.AppendGroup(triangles);
+        ubo.AppendGroup(quads);
 
         ubo.info.type = UniformInfo::Buffer;
         ubo.info.layout = {
