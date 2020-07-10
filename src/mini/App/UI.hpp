@@ -44,6 +44,7 @@ namespace mini::app::ui
     };
     
     inline void DrawTextCentered(
+        RenderGraph& renderGraph,
         const utils::Rect<float>& rect, 
         chars_t str, const u32 len, 
         const Colors col = WHITE)
@@ -54,7 +55,7 @@ namespace mini::app::ui
         const auto str_y  = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
 
         for(u32 i = 0; i < STRLEN; ++i) {
-            g_renderGraphPtr->ubo_ui.Append(
+            renderGraph.ubo_ui.Append(
                 UniformData_Text { 
                     .rect         = { str_x + LETTER_SPACE * i, str_y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
@@ -65,12 +66,13 @@ namespace mini::app::ui
     }
 
     inline void DrawText(
+        RenderGraph& renderGraph,
         const float x, const float y,
         chars_t str, const u32 len, 
         const Colors col = WHITE)
     {
         for(u32 i = 0; i < len; ++i) {
-            g_renderGraphPtr->ubo_ui.Append(
+            renderGraph.ubo_ui.Append(
                 UniformData_Text { 
                     .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
@@ -80,9 +82,9 @@ namespace mini::app::ui
         }
     }
 
-    inline void DrawFPS(const utils::Rect<float>& rect = { 0, 0, 48, 20 })
+    inline void DrawFPS(RenderGraph& renderGraph, const utils::Rect<float>& rect = { 0, 0, 48, 20 })
     {
-        g_renderGraphPtr->ubo_ui.Append(
+        renderGraph.ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = rect,
                 .colorIndex     = BLACK1, 
@@ -92,7 +94,7 @@ namespace mini::app::ui
 
         char fpsStr [10] { '\0 '};
         const auto res = std::to_chars(fpsStr, fpsStr + 10, dt::fps);
-        DrawTextCentered(rect, fpsStr, (u32)strlen(fpsStr), GREEN);
+        DrawTextCentered(renderGraph, rect, fpsStr, (u32)strlen(fpsStr), GREEN);
     }
 
     struct Window
@@ -107,7 +109,7 @@ namespace mini::app::ui
         static constexpr u32 BAR_H = 20;
     };
 
-    inline void DrawWindow(Window& wnd)
+    inline void DrawWindow(RenderGraph& renderGraph, Window& wnd)
     {
         const utils::Rect<float> bar     = { wnd.rect.x, wnd.rect.y, wnd.rect.w, wnd.BAR_H };
         const utils::Rect<float> resizer = { wnd.rect.x + wnd.rect.w - 8, wnd.rect.y + wnd.rect.h - 8, 8, 8 };
@@ -159,7 +161,7 @@ namespace mini::app::ui
         }
 
         //? WINDOW
-        g_renderGraphPtr->ubo_ui.Append(
+        renderGraph.ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = wnd.rect,
                 .colorIndex     = BLACK2,
@@ -167,7 +169,7 @@ namespace mini::app::ui
             }
         );
         //? TITLE BAR
-        g_renderGraphPtr->ubo_ui.Append(
+        renderGraph.ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = bar,
                 .colorIndex     = BLACK1,
@@ -175,7 +177,7 @@ namespace mini::app::ui
             }
         );
         //? RESIZER
-        g_renderGraphPtr->ubo_ui.Append(
+        renderGraph.ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = resizer, 
                 .colorIndex     = isMouseOnResizer ? RED : BLACK3,
@@ -184,7 +186,7 @@ namespace mini::app::ui
         );
 
         //? TITLE TEXT
-        DrawTextCentered(bar, wnd.title.dataPtr, wnd.title.Length());
+        DrawTextCentered(renderGraph,bar, wnd.title.dataPtr, wnd.title.Length());
     }
 
 
@@ -200,13 +202,13 @@ namespace mini::app::ui
 
 
     template<u32 STRLEN_0>
-    bool DrawButton(const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
+    bool DrawButton(RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
     {
-        return DrawButton(str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
+        return DrawButton(renderGraph, str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
     }
 
     template<u32 STRLEN_0>
-    bool DrawButton(const char(&str)[STRLEN_0], const utils::Rect<float>& rect)
+    bool DrawButton(RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& rect)
     {
         const bool isMouseInside   = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, rect);
         const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released); 
@@ -217,7 +219,7 @@ namespace mini::app::ui
         if (isMouseInside && isMousePressed) btnColorIdx = BLACK5;
         else btnColorIdx = isMouseInside ? BLACK4 : BLACK3;
 
-        g_renderGraphPtr->ubo_ui.Append(
+        renderGraph.ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = rect, 
                 .colorIndex     = btnColorIdx,
@@ -226,19 +228,20 @@ namespace mini::app::ui
         );
 
         //? TEXT
-        DrawTextCentered(rect, str, STRLEN_0 - 1);
+        DrawTextCentered(renderGraph, rect, str, STRLEN_0 - 1);
 
         return isMouseInside && isMouseReleased;
     }
 
     template<u32 STRLEN_0>
-    bool DrawInputField(InputField& inputField, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
+    bool DrawInputField(RenderGraph& renderGraph, InputField& inputField, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
     {
-        return DrawInputField(inputField, str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
+        return DrawInputField(renderGraph, inputField, str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
     }
 
     template<u32 STRLEN_0>
     bool DrawInputField(
+        RenderGraph& renderGraph,
         InputField& inputField,
         const char(&str)[STRLEN_0],
         const utils::Rect<float>& rect = { 0, 0, 64, 24 })
@@ -269,7 +272,7 @@ namespace mini::app::ui
         }
 
         //? INPUT FIELD
-        g_renderGraphPtr->ubo_ui.Append(
+        renderGraph.ubo_ui.Append(
             rendergraph::UniformData_Text { 
                 .rect           = inputRect, 
                 .colorIndex     = isMouseOnInput ? BLACK4 : BLACK3,
@@ -278,15 +281,15 @@ namespace mini::app::ui
         );
 
         //? LABEL
-        DrawTextCentered(labelRect, str, STRLEN_0 - 1);
+        DrawTextCentered(renderGraph, labelRect, str, STRLEN_0 - 1);
 
         //? INPUT
-        DrawTextCentered(inputRect, inputField.input.dataPtr, inputField.input.Length());
+        DrawTextCentered(renderGraph, inputRect, inputField.input.dataPtr, inputField.input.Length());
         
         return false;
     }
 
-    inline void DrawConsole()
+    inline void DrawConsole(RenderGraph& renderGraph)
     {
         static Window wnd {
             .rect   = { 8, wnd::window_h - 8 - 100.f, wnd::window_w * 0.75f, 100 },
@@ -295,7 +298,7 @@ namespace mini::app::ui
         };
         static InputField inputField {};
 
-        DrawWindow(wnd);
+        DrawWindow(renderGraph, wnd);
 
         //? INPUT
         const utils::Rect<float> inputRect { 
@@ -305,7 +308,7 @@ namespace mini::app::ui
             20 
         };
         auto input = ">>";
-        DrawText(inputRect.x, inputRect.y, input, (u32)strlen(input));
+        DrawText(renderGraph, inputRect.x, inputRect.y, input, (u32)strlen(input));
 
         const bool isMouseOnInput = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, inputRect);
         const bool isMousePressed = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
@@ -324,7 +327,7 @@ namespace mini::app::ui
                     inputField.str.Append(ev->ascii);
             }
         }
-        DrawText(inputRect.x + 32, inputRect.y, inputField.str.dataPtr, inputField.str.Length());
+        DrawText(renderGraph, inputRect.x + 32, inputRect.y, inputField.str.dataPtr, inputField.str.Length());
         if (const auto* ev = wnd::CheckEvent(wnd::EventType::Keyboard_ASCII, wnd::EventState::Pressed)){
             if (ev->ascii == '\r'){
                 LOG(inputField.GetInt());

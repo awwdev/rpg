@@ -21,6 +21,4 @@ namespace mini::rendergraph
         }
     };
 
-    inline RenderGraph* g_renderGraphPtr = nullptr;
-
 }//ns
