@@ -17,6 +17,7 @@
 #include "mini/Vulkan/Factories/Default/Default_Pipeline.hpp"
 #include "mini/Vulkan/Factories/Default/Default_Shader.hpp"
 #include "mini/Vulkan/Factories/Default/Default_VertexBuffer.hpp"
+#include "mini/Vulkan/Factories/Default/Default_UniformBuffer.hpp"
 
 #include "mini/Vulkan/Objects/ImageArray.hpp"
 #include "mini/Vulkan/Objects/VertexBuffer.hpp"
@@ -26,6 +27,9 @@
 
 namespace mini::vk
 {
+    using namespace rendergraph;
+    using namespace utils;
+
     struct VkResources
     {
         //host to vk resources
@@ -33,15 +37,16 @@ namespace mini::vk
 
         Default_PushConstants default_pushConsts;
 
-        RenderPass  ui_renderPass;
-        Shader      ui_shader;
-        Pipeline    ui_pipeline;
-        UniformBuffer_Array<rendergraph::UniformData_Text, 1000> ui_ubo_array;
+        RenderPass      ui_renderPass;
+        Shader          ui_shader;
+        Pipeline        ui_pipeline;
+        UniformBuffer_Array<UniformData_Text, 1000> ui_ubo_array;
 
-        RenderPass  default_renderPass;
-        Shader      default_shader;
-        Pipeline    default_pipeline;
-        VertexBufferStatic<utils::Vertex, 1000> default_vbo;
+        RenderPass      default_renderPass;
+        Shader          default_shader;
+        Pipeline        default_pipeline;
+        UniformBuffer_Array<UniformData_Default, 1000> default_ubo_array;
+        VertexBuffer_Static<Vertex, 1000> default_vbo;
 
 
         void Create(hostRes::HostResources& hostRes, Commands& commands)
@@ -56,9 +61,10 @@ namespace mini::vk
             CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
 
             CreateVertexBuffer_Default  (default_vbo, commands.cmdPool);
+            CreateUniformBuffer_Default (default_ubo_array);
             CreateShader_Default        (default_shader);
             CreateRenderPass_Default    (default_renderPass, commands.cmdPool);
-            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo);
+            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo, default_ubo_array);
         }
 
         void RecreateSwapchain(VkCommandPool cmdPool)
@@ -70,7 +76,7 @@ namespace mini::vk
 
             CreateRenderPass_Text       (ui_renderPass);
             CreateRenderPass_Default    (default_renderPass, cmdPool);
-            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo);
+            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo, default_ubo_array);
             CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
         }
     };

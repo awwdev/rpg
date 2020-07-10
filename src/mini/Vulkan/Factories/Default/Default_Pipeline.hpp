@@ -12,12 +12,13 @@
 
 namespace mini::vk
 {
-    template<class VBO_T, u32 VBO_N>
+    template<class VBO_T, u32 VBO_N, class UBO_T, u32 UBO_N>
     void CreatePipeline_Default(
         Pipeline& pipeline,
         Shader& shader, 
         RenderPass& renderPass,
-        VertexBufferStatic<VBO_T, VBO_N>& vbo)
+        VertexBuffer_Static<VBO_T, VBO_N>& vbo,
+        UniformBuffer_Array<UBO_T, UBO_N>& ubo)
     {
         const VkPipelineVertexInputStateCreateInfo vertexInput {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -29,10 +30,10 @@ namespace mini::vk
             .pVertexAttributeDescriptions    = vbo.attributes.Data()
         };
 
-        //UniformInfo* uniformInfos [] = {
-        //    &shader.info,
-        //};
-        //WriteDescriptors(pipeline, uniformInfos);
+        UniformInfo* uniformInfos [] = {
+            &ubo.info,
+        };
+        WriteDescriptors(pipeline, uniformInfos);
 
         const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
             .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,

@@ -14,7 +14,7 @@ namespace mini::vk
     };
 
     template<class T, u32 N>
-    struct VertexBufferStatic
+    struct VertexBuffer_Static
     {
         using VERTEX_TYPE = T;
         static constexpr u32 MAX_VERTEX_COUNT = N;
@@ -98,7 +98,7 @@ namespace mini::vk
     };
 
     template<class T, u32 N>
-    auto CreatePipelineVertexInputInfo(VertexBufferStatic<T, N>& vb) -> VkPipelineVertexInputStateCreateInfo
+    auto CreatePipelineVertexInputInfo(VertexBuffer_Static<T, N>& vb) -> VkPipelineVertexInputStateCreateInfo
     {
         return {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

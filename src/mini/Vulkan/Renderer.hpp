@@ -97,7 +97,7 @@ namespace mini::vk
             vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
             vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default_vbo.dstBuffer.buffer, &offsets);
-            //TODO: UBO bind once too
+            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_pipeline.sets[cmdBufferIdx], 0, nullptr); 
             constexpr u32 INSTANCE_TYPE_COUNT = 1;
             constexpr u32 INSTANCE_COUNT = 1; //needs to be retrieved per instance type (from UBO??)
             constexpr u32 INSTANCE_OFFSET = 0;
@@ -105,14 +105,14 @@ namespace mini::vk
                 vkCmdDraw (cmdBuffer, resources.default_vbo.vertexGroups[0].count, INSTANCE_COUNT, resources.default_vbo.vertexGroups[0].begin, INSTANCE_OFFSET); 
             }
             vkCmdEndRenderPass      (cmdBuffer);
-
+           
             //? TEXT
             vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.pipeline);
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 0, nullptr); 
             vkCmdDraw               (cmdBuffer, resources.ui_ubo_array.count * 6, 1, 0, 0); 
             vkCmdEndRenderPass      (cmdBuffer);
-
+            
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }
 
@@ -166,16 +166,3 @@ namespace mini::vk
     };
 
 }//ns
-
-
-/*
-dynamic ubo binding 
-//FOR_ARRAY(vertexGroups, i)
-{
-    //uboOffsets = resources.ui_ibo.ALIGNMENT * i; 
-    //! still abit unclear to me why we need to call twice (since first one could be called once) and also why both need dynamic
-    //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
-    //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 1, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 1, &uboOffsets); 
-    //vkCmdDrawIndexed        (cmdBuffer, vertexGroups[i].IndexCount(), 3, 0, vertexGroups[i].v1, 0); 
-}
-*/

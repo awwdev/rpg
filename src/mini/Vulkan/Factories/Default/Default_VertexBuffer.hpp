@@ -7,7 +7,7 @@
 namespace mini::vk
 {
     template<class T, u32 N>
-    void CreateVertexBuffer_Default(VertexBufferStatic<T, N>& vbo, VkCommandPool cmdPool)
+    void CreateVertexBuffer_Default(VertexBuffer_Static<T, N>& vbo, VkCommandPool cmdPool)
     {  
         vbo.Create();
         utils::Vertex tris [] = {

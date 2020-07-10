@@ -1,5 +1,6 @@
 //https://github.com/awwdev
 #pragma once
+#include "mini/Math/Matrix.hpp"
 
 namespace mini
 {
@@ -12,6 +13,11 @@ namespace mini
             uint32_t textureIndex; 
             uint32_t padding1;
             uint32_t padding2;
+        };
+
+        struct UniformData_Default
+        {
+            math::Mat4f transform;
         };
     }
 

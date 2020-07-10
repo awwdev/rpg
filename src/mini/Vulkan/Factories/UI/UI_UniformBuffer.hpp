@@ -7,7 +7,7 @@
 namespace mini::vk
 {
     template<class T, u32 N>
-    inline void CreateUniformBuffer_Text(UniformBuffer_Array<T, N>& ub)
+    void CreateUniformBuffer_Text(UniformBuffer_Array<T, N>& ub)
     {
         ub.Create();
 
@@ -27,27 +27,3 @@ namespace mini::vk
     }
 
 }//ns
-
-
-/*
-inline void CreateUniformBuffer_UI(Context& context, UniformBuffer& ub)
-{
-    ub.Create(context);
-
-    ub.uniformInfo.layout = {
-        .binding            = 1,
-        .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
-        .descriptorCount    = 1,
-        .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
-        .pImmutableSamplers = nullptr,
-    };
-
-    ub.uniformInfo.type = UniformInfo::Buffer;
-    ub.uniformInfo.bufferInfo = {
-        .buffer = ub.buffer.buffer, //!important, buffer must be created beforehand so we have valid ptr
-        .offset = 0,
-        .range  = VK_WHOLE_SIZE
-    };
-
-}
-*/

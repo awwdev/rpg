@@ -20,7 +20,6 @@ namespace mini::vk
         };
     };
 
-
     template<class T, u32 MAX_COUNT_T>
     struct UniformBuffer_Array
     {
@@ -32,7 +31,6 @@ namespace mini::vk
         UniformInfo info { .type = UniformInfo::Buffer };
         u32         count;
         //! COMPLETE UniformInfo IN A FACTORY METHOD
-
 
         void Create(VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         {
@@ -61,40 +59,6 @@ namespace mini::vk
         {
             buffer.Store(arr.dataPtr, arr.Count() * sizeof(T));
             count = arr.Count();
-        }
-
-    };
-
-
-
-    
-    struct UniformBuffer 
-    {
-        Buffer buffer;
-        const u32 MAX_COUNT; //not used
-        const u32 MAX_SIZE;
-        const VkDeviceSize ALIGNMENT; //not used (needed for dynamic)
-        UniformInfo uniformInfo; //!set this in a "factory" method
-
-
-        explicit UniformBuffer(
-            const u32 maxSize,
-            const u32 alignment = 0, //not used
-            const u32 maxCount = 0)//not used
-            : MAX_COUNT     { maxCount  }
-            , MAX_SIZE      { maxSize   }
-            , ALIGNMENT     { alignment } //g_contextPtr->physicalProps.limits.minUniformBufferOffsetAlignment
-        {            
-        }
-
-        void Create(Context& context)
-        {
-            buffer.Create(
-                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                MAX_SIZE,
-                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-            );
-            buffer.Map();
         }
 
     };
