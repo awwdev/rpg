@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "mini/RenderGraph/UboData.hpp"
+#include "mini/Rendering/UboData.hpp"
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Buffer.hpp"
 
@@ -83,7 +83,7 @@ namespace mini::vk
         UniformInfo info { .type = UniformInfo::Buffer };
         //! COMPLETE UniformInfo IN A FACTORY METHOD
 
-        box::Array<rendergraph::UniformGroup, 100> groups;
+        box::Array<rendering::UniformGroup, 100> groups;
         u32 totalCount;
         u32 CurrentSize() const { return sizeof(T) * totalCount; }
 

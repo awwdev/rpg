@@ -20,7 +20,7 @@
 
 namespace mini::app::ui
 {
-    using namespace rendergraph;
+    using namespace rendering;
 
     //? CONST (consistency)
     constexpr float LETTER_SIZE  = 16;
@@ -85,7 +85,7 @@ namespace mini::app::ui
     inline void DrawFPS(RenderGraph& renderGraph, const utils::Rect<float>& rect = { 0, 0, 48, 20 })
     {
         renderGraph.ubo_ui.Append(
-            rendergraph::UniformData_Text { 
+            rendering::UniformData_Text { 
                 .rect           = rect,
                 .colorIndex     = BLACK1, 
                 .textureIndex   = FULL_OPAQUE
@@ -162,7 +162,7 @@ namespace mini::app::ui
 
         //? WINDOW
         renderGraph.ubo_ui.Append(
-            rendergraph::UniformData_Text { 
+            rendering::UniformData_Text { 
                 .rect           = wnd.rect,
                 .colorIndex     = BLACK2,
                 .textureIndex   = FULL_OPAQUE,
@@ -170,7 +170,7 @@ namespace mini::app::ui
         );
         //? TITLE BAR
         renderGraph.ubo_ui.Append(
-            rendergraph::UniformData_Text { 
+            rendering::UniformData_Text { 
                 .rect           = bar,
                 .colorIndex     = BLACK1,
                 .textureIndex   = FULL_OPAQUE,
@@ -178,7 +178,7 @@ namespace mini::app::ui
         );
         //? RESIZER
         renderGraph.ubo_ui.Append(
-            rendergraph::UniformData_Text { 
+            rendering::UniformData_Text { 
                 .rect           = resizer, 
                 .colorIndex     = isMouseOnResizer ? RED : BLACK3,
                 .textureIndex   = FULL_OPAQUE,
@@ -220,7 +220,7 @@ namespace mini::app::ui
         else btnColorIdx = isMouseInside ? BLACK4 : BLACK3;
 
         renderGraph.ubo_ui.Append(
-            rendergraph::UniformData_Text { 
+            rendering::UniformData_Text { 
                 .rect           = rect, 
                 .colorIndex     = btnColorIdx,
                 .textureIndex   = FULL_OPAQUE
@@ -273,7 +273,7 @@ namespace mini::app::ui
 
         //? INPUT FIELD
         renderGraph.ubo_ui.Append(
-            rendergraph::UniformData_Text { 
+            rendering::UniformData_Text { 
                 .rect           = inputRect, 
                 .colorIndex     = isMouseOnInput ? BLACK4 : BLACK3,
                 .textureIndex   = FULL_OPAQUE,

@@ -4,7 +4,7 @@
 
 namespace mini
 {
-    namespace rendergraph 
+    namespace rendering 
     {
         struct UniformData_Text
         {

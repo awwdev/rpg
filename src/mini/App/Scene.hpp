@@ -7,7 +7,7 @@
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
-#include "mini/RenderGraph/RenderGraph.hpp"
+#include "mini/Rendering/RenderGraph.hpp"
 #include "mini/App/UI.hpp"
 
 namespace mini::app
@@ -15,7 +15,7 @@ namespace mini::app
     struct Scene
     {
         ecs::ECS ecs {};
-        rendergraph::RenderGraph renderGraph;
+        rendering::RenderGraph renderGraph;
 
         Scene()
         {
@@ -27,7 +27,7 @@ namespace mini::app
         {
             //TEST: update ubo data (transform)
             //TODO: ECS provides render data ("render system")
-            rendergraph::UniformData_Default cubes [] = {
+            rendering::UniformData_Default cubes [] = {
                 math::Identity4x4(),
                 math::Identity4x4(),
             };
@@ -36,7 +36,7 @@ namespace mini::app
             renderGraph.default_uboGroups.Clear();
             renderGraph.default_uboArray.Clear();
 
-            renderGraph.default_uboGroups.Append(rendergraph::UniformGroup{ 
+            renderGraph.default_uboGroups.Append(rendering::UniformGroup{ 
                 .begin = renderGraph.default_uboArray.count, 
                 .count = (u32)ARRAY_COUNT(cubes) 
             });

@@ -6,7 +6,7 @@
 #include "mini/Vulkan/Resources.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/App/Scene.hpp"
-#include "mini/RenderGraph/RenderGraph.hpp"
+#include "mini/Rendering/RenderGraph.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Window/AppEvents.hpp"

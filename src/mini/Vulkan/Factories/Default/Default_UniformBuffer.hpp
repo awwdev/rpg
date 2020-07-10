@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/Vulkan/Objects/UniformBuffer.hpp"
-#include "mini/RenderGraph/UboData.hpp"
+#include "mini/Rendering/UboData.hpp"
 #include "mini/Utils/Structs.hpp"
 
 namespace mini::vk

@@ -23,11 +23,11 @@
 #include "mini/Vulkan/Objects/VertexBuffer.hpp"
 
 #include "mini/Resources/HostResources.hpp"
-#include "mini/RenderGraph/UboData.hpp"
+#include "mini/Rendering/UboData.hpp"
 
 namespace mini::vk
 {
-    using namespace rendergraph;
+    using namespace rendering;
     using namespace utils;
 
     struct VkResources

@@ -2,9 +2,9 @@
 
 #pragma once
 #include "mini/Box/Array.hpp"
-#include "mini/RenderGraph/UboData.hpp"
+#include "mini/Rendering/UboData.hpp"
 
-namespace mini::rendergraph
+namespace mini::rendering
 {
     struct RenderGraph
     {
