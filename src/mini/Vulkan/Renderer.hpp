@@ -47,6 +47,7 @@ namespace mini::vk
 
         void UpdateVkResources(const app::Scene& scene, const double dt)
         {
+            //TODO: Camera
             const float n = 0.01f;
             const float f = 100.f;
             const float fov = 45.f;
@@ -55,19 +56,19 @@ namespace mini::vk
             const float b = a * r;
             const float c = -(f / (f-n));
             const float d = -((f*n) / (f-n));
-            resources.default_pushConsts.projection = {
+
+            const math::Mat4f projection {
                 a, 0, 0, 0,
                 0, b, 0, 0,
                 0, 0, c,-1,
                 0, 0, d, 1,
             };
             resources.default_pushConsts.projection = {
-                math::Identity4x4()
+                projection
             };
-
-            //! perspective devide
-            //! normalization matrix
-            
+            //resources.default_pushConsts.projection = {
+            //    math::Identity4x4()
+            //};
 
             resources.default_pushConsts.wnd_w = wnd::window_w;
             resources.default_pushConsts.wnd_h = wnd::window_h;

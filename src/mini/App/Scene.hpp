@@ -28,10 +28,13 @@ namespace mini::app
             //TEST: update ubo data (transform)
             //TODO: ECS provides render data ("render system")
             static float rot = 0;
-            rot += 1 * dt;
-            const auto rotMat = math::RotationMatrixZ(rot);
+            rot += 1.f * (float)dt;
+            auto rotMat1 = math::RotationMatrixX(0.5);
+            auto rotMat2 = math::RotationMatrixY(rot);
+            rotMat2 *= rotMat1;
+            rotMat2[3][2] = -100;
             rendering::UniformData_Default cubes [] = {
-                rotMat
+                rotMat2
             };
             //! ORDERING IS CURRENTLY IMPORTANT
             //TODO: SORTING; MESH ID -> ARRAY ID -> UBO VERTICAL ALIGN

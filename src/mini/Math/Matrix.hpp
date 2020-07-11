@@ -314,6 +314,18 @@ namespace mini::math
         };
     }
 
+    Mat4f RotationMatrixX(const f32 rad)
+    {
+        const auto c = std::cosf(rad);
+        const auto s = std::sinf(rad);
+        return {
+            1, 0, 0, 0,
+            0, c,-s, 0,
+            0, s, c, 0,
+            0, 0, 0, 1,
+        };
+    }
+
 
 
     ///stringify
