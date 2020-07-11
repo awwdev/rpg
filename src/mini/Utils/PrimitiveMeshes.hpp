@@ -6,7 +6,7 @@
 
 namespace mini::utils
 {
-    constexpr f32 S = 0.1f;
+    constexpr f32 S = 1.0f;
     constexpr f32 D = 0.0f;
     constexpr math::Vec4f GREEN = { 0, 1, 0, 1 };
     constexpr math::Vec4f BLUE  = { 0, 0, 1, 1 };

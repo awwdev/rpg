@@ -32,7 +32,8 @@ namespace mini::app
             auto rotMat1 = math::RotationMatrixX(0.5);
             auto rotMat2 = math::RotationMatrixY(rot);
             rotMat2 *= rotMat1;
-            rotMat2[3][2] = -100;
+            rotMat2[3][2] = -10;
+            rotMat2[3][0] = 0;
             rendering::UniformData_Default cubes [] = {
                 rotMat2
             };
