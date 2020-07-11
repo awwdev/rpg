@@ -47,32 +47,8 @@ namespace mini::vk
 
         void UpdateVkResources(const app::Scene& scene, const double dt)
         {
-            //TODO: Camera
-            const float n = 0.01f;
-            const float f = 100.f;
-            const float fov = 45.f;
-            const float aspect = (float)wnd::window_w / (float)wnd::window_h;
-            const float tanFov = std::tanf(fov * 0.5f);
-            const float a = 1.f / (tanFov * aspect);
-            const float b = 1.f / (tanFov);
-            const float c = -(f+n) / (f-n);
-            const float d = -2*(f*n) / (f-n);
-
-            const math::Mat4f projection {
-                a, 0, 0, 0,
-                0, b, 0, 0,
-                0, 0, c,-1,
-                0, 0, d, 1,
-            };
-             const math::Mat4f view {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1,
-            };
-
             resources.default_pushConsts.projection = {
-                projection* view
+                scene.camera.GetMat()
             };
 
             resources.default_pushConsts.wnd_w = wnd::window_w;

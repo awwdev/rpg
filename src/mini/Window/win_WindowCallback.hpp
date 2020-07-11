@@ -49,6 +49,7 @@ namespace mini::wnd
         case WM_CHAR:
             PRESSED(EventType::Keyboard_ASCII);
             events.Last().ascii = (char)wParam;
+            asciiPressed = (char)wParam;
         break;
 
         case WM_KEYUP:
@@ -59,6 +60,7 @@ namespace mini::wnd
                 {
                     RELEASED(EventType::Keyboard_ASCII);
                     events.Last().ascii = (char)wParam;
+                    asciiPressed = 0;
                 }
             }
         break;

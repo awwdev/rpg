@@ -45,7 +45,7 @@ namespace mini::vk
         RenderPass      default_renderPass;
         Shader          default_shader;
         Pipeline        default_pipeline;
-        UniformBuffer_Groups<UniformData_Default, 1000> default_ubo_groups;
+        UniformBuffer_Groups<UniformData_Default, 500> default_ubo_groups;
         VertexBuffer_Static<Vertex, 1000> default_vbo;
 
 

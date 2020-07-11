@@ -38,7 +38,7 @@ int WINAPI wWinMain(
         auto ptrSceneStack = mem::ClaimBlock<box::Array<app::Scene, 1, box::INIT::Yes>>();
         uint32_t sceneIdx = 0;
 
-        while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsClicked(EventType::Keyboard_Escape))
+        while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
         {
             wnd::PollEvents();
             dt::UpdateFPS();

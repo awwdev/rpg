@@ -117,7 +117,7 @@ namespace mini::app::ui
         const bool isMouseOnBar    = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, bar);
         const bool isMouseOnResizer= utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, resizer);
 
-        const bool isMouseHeld     = wnd::IsClicked(wnd::EventType::Mouse_Left);
+        const bool isMouseHeld     = wnd::IsPressed(wnd::EventType::Mouse_Left);
         const bool isMousePressed  = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
         const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released);
 
@@ -212,7 +212,7 @@ namespace mini::app::ui
     {
         const bool isMouseInside   = utils::IsPointInsideRect(wnd::mouse_x, wnd::mouse_y, rect);
         const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released); 
-        const bool isMousePressed  = wnd::IsClicked(wnd::EventType::Mouse_Left);
+        const bool isMousePressed  = wnd::IsPressed(wnd::EventType::Mouse_Left);
 
         //? QUAD
         uint32_t btnColorIdx;

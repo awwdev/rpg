@@ -7,6 +7,7 @@
 #include "mini/Box/String.hpp"
 #include "mini/Utils/CharsView.hpp"
 #include "mini/Utils/Structs.hpp"
+#include "mini/Resources/Mesh.hpp"
 
 namespace mini::ecs
 {
@@ -57,9 +58,6 @@ namespace mini::ecs
         { "state" ,     ComponentData::state        },
     };
 
-    //TODO: .mini instead of .txt and make vs color coding syntax highlighting 
-
-
     inline ComponentType GetComponentType(const utils::CharsView& view)
     {
         FOR_INDEX_MAP_BEGIN(componentTypeToStr, i)
@@ -89,7 +87,7 @@ namespace mini::ecs
 
     struct C_RenderData
     {
-
+        resources::MeshType meshType;
     };
 
     struct C_UI

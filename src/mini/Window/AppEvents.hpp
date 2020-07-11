@@ -43,6 +43,7 @@ namespace mini::wnd
     //!global arrays
     inline box::Array<Event, 10> events; //per frame max
     inline box::Bitset<EventType::PRESSABLE_END> pressed;
+    inline char asciiPressed = 0;
     inline u32 window_w = 0, window_h = 0;
     inline u32 mouse_x  = 0, mouse_y  = 0;
 
@@ -57,7 +58,7 @@ namespace mini::wnd
         return nullptr;
     }
 
-    inline bool IsClicked(const EventType type)
+    inline bool IsPressed(const EventType type)
     {
         return pressed.Test(type);
     }
