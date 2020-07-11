@@ -52,11 +52,9 @@ namespace mini::vk
             const float f = 100.f;
             const float fov = 45.f;
             const float aspect = (float)wnd::window_w / (float)wnd::window_h;
-            //const float a_ = 1.f / (std::tanf(fov / 2.f) * (3.14f / 180.f));
             const float tanFov = std::tanf(fov * 0.5f);
             const float a = 1.f / (tanFov * aspect);
             const float b = 1.f / (tanFov);
-            //const float b = a * r;
             const float c = -(f+n) / (f-n);
             const float d = -2*(f*n) / (f-n);
 
@@ -66,12 +64,16 @@ namespace mini::vk
                 0, 0, c,-1,
                 0, 0, d, 1,
             };
-            resources.default_pushConsts.projection = {
-                projection
+             const math::Mat4f view {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1,
             };
-            //resources.default_pushConsts.projection = {
-            //    math::Identity4x4()
-            //};
+
+            resources.default_pushConsts.projection = {
+                projection* view
+            };
 
             resources.default_pushConsts.wnd_w = wnd::window_w;
             resources.default_pushConsts.wnd_h = wnd::window_h;
