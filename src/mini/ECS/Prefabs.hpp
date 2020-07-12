@@ -180,7 +180,7 @@ namespace mini::ecs
                             
                             if (currentKey == KeyType::COMPONENT_DATA) //implicit key
                             {
-                                ParseComponentData(currentComponent, { line, valueBegin - 1 }, { line + valueBegin, i - valueBegin });
+                                //ParseComponentData(currentComponent, { line, valueBegin - 1 }, { line + valueBegin, i - valueBegin });
                             }
                         }
                         
@@ -190,6 +190,7 @@ namespace mini::ecs
             } 
         }
 
+        /*
         void ParseComponentData(const ComponentType& componentType, const utils::CharsView& key, const utils::CharsView& value)
         {
             //the name of a component data could be the same for multiple component types
@@ -236,6 +237,7 @@ namespace mini::ecs
                 break;
             }
         }
+        */
 
     };  
 

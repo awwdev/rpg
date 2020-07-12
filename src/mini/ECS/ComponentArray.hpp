@@ -77,15 +77,13 @@ namespace mini::ecs
 
         ComponentArray<C_Transform, MAX_COUNT>  transforms;
         ComponentArray<C_RenderData, MAX_COUNT> renderData;
-        ComponentArray<C_UI, MAX_COUNT>         uiData;
 
         template<ComponentType Type, class... CtorArgs>
         void AddComponent(const ID entityID, CtorArgs&&... args)
         {
             signatures[entityID].Set<true>(Type);
-            if constexpr(Type == ComponentType::RenderData) renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
-            if constexpr(Type == ComponentType::UI)         uiData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
             if constexpr(Type == ComponentType::Transform)  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+            if constexpr(Type == ComponentType::RenderData) renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
         }
 
         template<u32 OTHER_MAX_COUNT>
@@ -96,7 +94,6 @@ namespace mini::ecs
         {
             transforms.CopyComponentOptional (entityID, other.transforms.GetOptional(otherEntityID));
             renderData.CopyComponentOptional (entityID, other.renderData.GetOptional(otherEntityID));
-            uiData.CopyComponentOptional     (entityID, other.uiData.GetOptional(otherEntityID));
         }
     };
 

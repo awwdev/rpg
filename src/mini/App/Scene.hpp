@@ -26,32 +26,34 @@ namespace mini::app
             //TODO: move into some resource manager an load at loading scene
             //ecs.prefabs.Parse("res/prefabs.txt"); 
 
-            const auto cubeID1 = ecs.AddEntity();
-            ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID1, math::Mat4f{
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0,-5, 1,
-            });
-            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID1, resources::MeshType::PrimitiveCube);
+            for(auto i = 0; i < 200; i+=2){
+                const auto cubeID1 = ecs.AddEntity();
+                ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID1, math::Mat4f{
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    i-50.f,0,-50, 1,
+                });
+                ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID1, resources::MeshType::PrimitiveCube);
 
-            const auto cubeID2 = ecs.AddEntity();
-            ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID2, math::Mat4f{
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                4, 0,-9, 1,
-            });
-            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID2, resources::MeshType::PrimitiveTriangle);
+                const auto cubeID2 = ecs.AddEntity();
+                ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID2, math::Mat4f{
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    i-50.f,4,-50, 1,
+                });
+                ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID2, resources::MeshType::PrimitiveTriangle);
 
-            const auto cubeID3 = ecs.AddEntity();
-            ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID3, math::Mat4f{
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-               -4, 0,-9, 1,
-            });
-            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID3, resources::MeshType::PrimitiveQuad);
+                const auto cubeID3 = ecs.AddEntity();
+                ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID3, math::Mat4f{
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    i-50.f,-4,-50, 1,
+                });
+                ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID3, resources::MeshType::PrimitiveQuad);
+            }
         }
 
         void Update(const double dt)

@@ -22,7 +22,6 @@ namespace mini::ecs
     {
         Transform, 
         RenderData,
-        UI,
         ENUM_END
     };
 
@@ -32,7 +31,6 @@ namespace mini::ecs
     {
         { ComponentType::Transform,     "Transform"   },
         { ComponentType::RenderData,    "RenderData"  },
-        { ComponentType::UI,            "UI"          },
     };
 
     enum class ComponentData
@@ -89,17 +87,6 @@ namespace mini::ecs
     struct C_RenderData
     {
         resources::MeshType meshType;
-    };
-
-    struct C_UI
-    {
-        utils::Rect<int> rect; //or name it box
-        box::String<20>  text;
-        utils::RGBAColor4u   text_col;
-        utils::RGBAColor4u   rect_col;
-
-        enum Type  { Button, Label } type; 
-        enum State { Idle, Hovered, Hold, Released, Inactive } state;
     };
 
 }//ns
