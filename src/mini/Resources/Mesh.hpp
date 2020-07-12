@@ -8,6 +8,7 @@ namespace mini::resources
     enum MeshType
     {
         PrimitiveCube,
+        ENUM_END
     };
 
     struct Mesh

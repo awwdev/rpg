@@ -15,38 +15,34 @@ namespace mini::ecs
         auto& arr_render    = arrays.renderData;
         auto& arr_transform = arrays.transforms;
 
-        static float rot = 0; //test
+        static float rot = 0; //!test
         rot += 1.f * (float)dt;
 
-        box::Array<rendering::UniformData_Default, 500> uboCubes;
+        //SORTING
+        box::Array<ecs::ID, 100> meshTypes [resources::MeshType::ENUM_END];
         FOR_ARRAY(arr_render.dense, i) {
-            const auto eID  = arr_render.entityLookup[i];
-            auto& transform = arr_transform.Get(eID);
-            auto rotMat     = math::RotationMatrixY(rot);
-            uboCubes.Append(rotMat * transform.transform);
+            const auto idx = arr_render.dense[i].meshType;
+            meshTypes[idx].Append(arr_render.entityLookup[i]);
+        }   
+
+        box::Array<rendering::UniformData_Default, 100> ubos;
+        FOR_CARRAY(meshTypes, i){
+            if (meshTypes[i].Empty()) continue;
+            ubos.Clear();
+            FOR_ARRAY(meshTypes[i], j){
+                const auto eID  = meshTypes[i][j];
+                auto& transform = arr_transform.Get(eID);
+                auto rotMat     = math::RotationMatrixY(rot);//!test
+                ubos.Append(rotMat * transform.transform);
+            }
+
+            renderGraph.default_uboGroups.Append(rendering::UniformGroup{
+                .begin = renderGraph.default_uboArray.count, 
+                .count = ubos.Count()
+            });
+            renderGraph.default_uboArray.AppendArray(ubos);
         }
 
-        renderGraph.default_uboGroups.Append(rendering::UniformGroup{ 
-            .begin = renderGraph.default_uboArray.count, 
-            .count = uboCubes.Count()
-        });
-        renderGraph.default_uboArray.AppendArray(uboCubes);
     }
 
 }//ns
-
-/*
-rendering::UniformData_Default cubes [500];
-for(auto y = 0; y < 10; ++y)
-for(auto x = 0; x < 50; ++x)
-{
-auto rotMat1 = math::RotationMatrixX(0.5f+y);
-auto rotMat2 = math::RotationMatrixY(rot);
-rotMat2 *= rotMat1;
-rotMat2[3][2] = -100.f;
-rotMat2[3][0] = x * 5.f;
-rotMat2[3][1] = y * 5.f;
-cubes [y * 50 + x] = {
-    rotMat2
-};
-}*/
