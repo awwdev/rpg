@@ -42,7 +42,16 @@ namespace mini::app
                 0, 0, 1, 0,
                 4, 0,-9, 1,
             });
-            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID2, resources::MeshType::PrimitiveCube);
+            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID2, resources::MeshType::PrimitiveTriangle);
+
+            const auto cubeID3 = ecs.AddEntity();
+            ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID3, math::Mat4f{
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+               -4, 0,-9, 1,
+            });
+            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID3, resources::MeshType::PrimitiveQuad);
         }
 
         void Update(const double dt)

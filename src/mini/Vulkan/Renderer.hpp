@@ -120,6 +120,7 @@ namespace mini::vk
                 const auto vertCount = resources.default_vbo.vertexGroups[i].count;
                 const auto instOff   = resources.default_ubo_groups.groups[i].begin;
                 const auto instCount = resources.default_ubo_groups.groups[i].count;
+                if (instCount == 0) continue;
                 vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
             }
             vkCmdEndRenderPass      (cmdBuffer);

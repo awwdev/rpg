@@ -27,12 +27,12 @@ namespace mini::ecs
 
         box::Array<rendering::UniformData_Default, 100> ubos;
         FOR_CARRAY(meshTypes, i){
-            if (meshTypes[i].Empty()) continue;
+
             ubos.Clear();
             FOR_ARRAY(meshTypes[i], j){
                 const auto eID  = meshTypes[i][j];
                 auto& transform = arr_transform.Get(eID);
-                auto rotMat     = math::RotationMatrixY(rot);//!test
+                auto rotMat = math::RotationMatrixY(rot);//!test
                 ubos.Append(rotMat * transform.transform);
             }
 
