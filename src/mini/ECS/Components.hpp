@@ -18,7 +18,7 @@ namespace mini::ecs
     //4) add to ComponentArrays
     //5) add parsing (prefabs)
 
-    enum ComponentType
+    enum class ComponentType
     {
         Transform, 
         RenderData,
@@ -80,6 +80,7 @@ namespace mini::ecs
 
     struct C_Transform
     {
+        math::Mat4f transform;
         math::Vec3f pos;
         //rotation
         //scale

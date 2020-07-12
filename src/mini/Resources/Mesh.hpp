@@ -5,7 +5,7 @@
 
 namespace mini::resources
 {
-    enum class MeshType
+    enum MeshType
     {
         PrimitiveCube,
     };

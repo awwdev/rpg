@@ -174,7 +174,7 @@ namespace mini::ecs
                                 }
                                 currentComponent = GetComponentType({ line + valueBegin, i - valueBegin }); 
                                 //add default component (and customize it when we actaully have a key see below)
-                                arrays.AddComponent((ID)currentPrefab, currentComponent);
+                                //arrays.AddComponent((ID)currentPrefab, currentComponent);
                                 break;
                             }
                             

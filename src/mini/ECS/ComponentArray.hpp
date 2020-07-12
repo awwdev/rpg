@@ -12,7 +12,7 @@
 
 namespace mini::ecs
 {
-    template<u32 MAX_COUNT, class COMPONENT>
+    template<class COMPONENT, u32 MAX_COUNT = MAX_ENTITY_COUNT>
     struct ComponentArray
     {
         box::Array<COMPONENT, MAX_COUNT> dense;
@@ -30,6 +30,7 @@ namespace mini::ecs
             FOR_CARRAY(entityLookup, i)    entityLookup[i]    = NONE;
         }
 
+        //TODO: args... do not work yet
         template<class... CtorArgs>
         void AddComponent(const ID entityID, CtorArgs&&... args)
         {
@@ -69,25 +70,22 @@ namespace mini::ecs
         }
     };
 
-    template<u32 MAX_COUNT>
+    template<u32 MAX_COUNT = MAX_ENTITY_COUNT>
     struct ComponentArrays
     {
         box::Bitset<ComponentType::ENUM_END> signatures[MAX_COUNT];
 
-        ComponentArray<MAX_COUNT, C_Transform>  transforms;
-        ComponentArray<MAX_COUNT, C_RenderData> renderData;
-        ComponentArray<MAX_COUNT, C_UI>         uiData;
+        ComponentArray<C_Transform, MAX_COUNT>  transforms;
+        ComponentArray<C_RenderData, MAX_COUNT> renderData;
+        ComponentArray<C_UI, MAX_COUNT>         uiData;
 
-        template<class... CtorArgs>
-        void AddComponent(const ID entityID, const ComponentType& type, CtorArgs&&... args)
+        template<ComponentType Type, class... CtorArgs>
+        void AddComponent(const ID entityID, CtorArgs&&... args)
         {
-            signatures[entityID].Set<true>(type);
-            switch(type)
-            {
-                case ComponentType::Transform:  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);     break; 
-                case ComponentType::RenderData: renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);     break;
-                case ComponentType::UI:         uiData.AddComponent(entityID, std::forward<CtorArgs>(args)...);         break;
-            }
+            signatures[entityID].Set<true>(Type);
+            if constexpr(Type == ComponentType::RenderData) renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+            if constexpr(Type == ComponentType::UI)         uiData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+            if constexpr(Type == ComponentType::Transform)  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
         }
 
         template<u32 OTHER_MAX_COUNT>

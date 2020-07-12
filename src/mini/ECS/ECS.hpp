@@ -14,9 +14,9 @@ namespace mini::ecs
 {
     struct ECS
     {
-        box::Bitset<MAX_ENTITY_COUNT>       entities;
-        ComponentArrays<MAX_ENTITY_COUNT>   arrays;
-        Prefabs                             prefabs;
+        box::Bitset<MAX_ENTITY_COUNT>     entities;
+        ComponentArrays<MAX_ENTITY_COUNT> arrays;
+        Prefabs                           prefabs;
         
         ID AddEntity()
         {
