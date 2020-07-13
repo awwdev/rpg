@@ -335,4 +335,24 @@ namespace mini::app::ui
         }
     }
 
+    inline void DrawRenderStats(RenderGraph& renderGraph)
+    {
+        const auto totalInstCount = renderGraph.default_uboArray.Count();
+        const auto drawCount      = renderGraph.default_uboGroups.Count();
+        const auto totalUICount   = renderGraph.ubo_ui.Count();
+
+        char ch_totalInstCount [] = "inst count:     ";
+        char ch_drawCount []      = "draw calls:     ";
+        char ch_totalUICount []   = "ui counts:      ";
+
+        std::to_chars(ch_totalInstCount + 12, ch_totalInstCount+16, totalInstCount);
+        std::to_chars(ch_drawCount + 12, ch_drawCount+16, drawCount);
+        std::to_chars(ch_totalUICount +12, ch_totalUICount+16, totalUICount);
+
+        DrawText(renderGraph, 8, 20+8+ 0, ch_totalInstCount, 16);
+        DrawText(renderGraph, 8, 20+8+12, ch_drawCount, 16);
+        DrawText(renderGraph, 8, 20+8+24, ch_totalUICount, 16);
+
+    }
+
 }//ns

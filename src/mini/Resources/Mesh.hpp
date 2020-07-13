@@ -2,10 +2,12 @@
 
 #pragma once
 #include "mini/Math/Matrix.hpp"
+#include "mini/Utils/PrimitiveMeshes.hpp"
+#include "mini/box/IndexMap.hpp"
+#include "mini/Memory/Allocator.hpp"
 
 namespace mini::resources
 {
-    //TODO: ADDING TO THE DEFAULT VERTEX BUFFER, ORDER
     enum MeshType
     {
         PrimitiveCube,
@@ -14,9 +16,17 @@ namespace mini::resources
         ENUM_END
     };
 
-    struct Mesh
+    struct MeshVertexView
     {
-
+        const utils::Vertex* begin;
+        u32 count;
     };
+
+    //the actual vertex data is stored somehwere else
+    const box::IndexMap<MeshVertexView, MeshType::ENUM_END> MESH_VERTEX_MAP {
+        { MeshType::PrimitiveCube,      { utils::MESH_CUBE, ARRAY_COUNT(utils::MESH_CUBE) } },
+        { MeshType::PrimitiveQuad,      { utils::MESH_QUAD, ARRAY_COUNT(utils::MESH_QUAD) } },
+        { MeshType::PrimitiveTriangle,  { utils::MESH_TRIANGLE, ARRAY_COUNT(utils::MESH_TRIANGLE) } },
+    }; 
 
 } //ns

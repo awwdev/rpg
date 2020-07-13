@@ -64,7 +64,7 @@ namespace mini::mem
         return size;
     }();
 
-    constexpr inline u32 GetAllocIdxFromBlockId(const u32 blockId)
+    constexpr  u32 GetAllocIdxFromBlockId(const u32 blockId)
     {
         u32 currBlockCount = 0;
         for(u32 i = 0; i < ALLOC_COUNT; ++i)

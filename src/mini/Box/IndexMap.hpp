@@ -112,12 +112,12 @@ namespace mini::box
             (fn(elements), ...);
         }
 
-        IndexMap(std::initializer_list<Pair_t> initList)
+        explicit IndexMap(std::initializer_list<Pair_t> initList)
             : Base_t(values, &bitset, CAPACITY) 
             , values {}
             , bitset {}
         {
-            for(auto& l : initList)
+            for(auto& l : initList) //order independent
                 this->Set(l.key, l.val);
         }
 

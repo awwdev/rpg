@@ -13,12 +13,11 @@ namespace mini::vk
     void CreateVertexBuffer_Default(VertexBuffer_Static<T, N>& vbo, VkCommandPool cmdPool)
     {  
         vbo.Create();
+
         for(auto i = 0; i < resources::MeshType::ENUM_END; ++i){
-            //vbo.AppendGroup(MESH_CUBE);//TODO: MESH MAPPING
+            const auto& mesh = resources::MESH_VERTEX_MAP.Get(i);
+            vbo.AppendGroup(mesh.begin, mesh.count);
         }
-        vbo.AppendGroup(MESH_CUBE);//remove, do mapping instead!
-        vbo.AppendGroup(MESH_QUAD);
-        vbo.AppendGroup(MESH_TRIANGLE);
         vbo.Transfer(cmdPool);
 
         vbo.bindings.Append(VkVertexInputBindingDescription{
