@@ -31,21 +31,18 @@ namespace mini::rendering
 
         math::Mat4f GetMat() const
         {
-            const float n = 0.01f;
-            const float f = 100.f;
-            const float fov = 45.f;
             const float aspect = (float)wnd::window_w / (float)wnd::window_h;
-            const float tanFov = std::tanf(fov * 0.5f);
-            const float w = 1.f / (tanFov * aspect);
-            const float h = 1.f / (tanFov);
-            const float c = -(f+n) / (f-n);
-            const float d = -2*(f*n) / (f-n);
+            const float fov = 0.785f; //rad
+            const float n = 0.01f;
+            const float f = 0; //infinity
+            const float h = 1.f / std::tanf(fov * 0.5f);
+            const float w = h / aspect;
 
             const math::Mat4f projection {
                 w, 0, 0, 0,
                 0, h, 0, 0,
-                0, 0, c,-1,
-                0, 0, d, 1,
+                0, 0, f,-1,
+                0, 0, n, 0,
             };
              const math::Mat4f view {
                 1, 0, 0, 0,

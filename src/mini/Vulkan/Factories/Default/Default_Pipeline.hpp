@@ -105,7 +105,7 @@ namespace mini::vk
             .flags                 = 0,
             .depthTestEnable       = VK_TRUE,
             .depthWriteEnable      = VK_TRUE,
-            .depthCompareOp        = VK_COMPARE_OP_LESS,
+            .depthCompareOp        = VK_COMPARE_OP_GREATER_OR_EQUAL,
             .depthBoundsTestEnable = VK_FALSE,
             .stencilTestEnable     = VK_FALSE,
             .front                 = {},

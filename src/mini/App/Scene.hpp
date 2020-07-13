@@ -31,7 +31,7 @@ namespace mini::app
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
-               -5, 0,-10, 1,
+               -3, 0,-5, 1,
             });
             ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID1, resources::MeshType::PrimitiveCube);
 
@@ -49,7 +49,7 @@ namespace mini::app
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
-                5, 0,-10, 1,
+                3, 0,-15, 1,
             });
             ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID3, resources::MeshType::PrimitiveQuad);
 

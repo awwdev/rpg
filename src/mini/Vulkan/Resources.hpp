@@ -71,6 +71,7 @@ namespace mini::vk
     struct VkResources
     {
         Common_PushConstants common_pushConsts;
+        //sub resources
         UI_Resources ui;
         Default_Resources default;
 

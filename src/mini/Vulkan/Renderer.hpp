@@ -90,7 +90,7 @@ namespace mini::vk
 
             const VkClearValue clears_default [] { 
                 { .color = { 0.1f, 0.1f, 0.1f, 1.0f } },
-                { .depthStencil = { 1.0f, 0 } }
+                { .depthStencil = { 0, 0 } }
             };
             const VkRenderPassBeginInfo beginInfo_default {
                 .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,

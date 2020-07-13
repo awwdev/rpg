@@ -10,7 +10,7 @@ namespace mini::rendering
     {
         box::Array<UniformData_Text, 1000>      ui_ubo;
         box::Array<UniformData_Default, 1000>   default_uboArray;  //1 group -> N inst
-        box::Array<UniformGroup, 1000>          default_uboGroups; //1 group == 1 inst type
+        box::Array<UniformGroup, 1000>          default_uboGroups; //1 group == 1 inst type (1 draw call)
 
         void Clear()
         {

@@ -21,7 +21,7 @@ namespace mini::vk
             .finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
         };
 
-        constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT; //VK_FORMAT_D16_UNORM, 
+        constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
         const VkAttachmentDescription depthDesc {
             .flags          = 0 ,
             .format         = DEPTH_FORMAT, 

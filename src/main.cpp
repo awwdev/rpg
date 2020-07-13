@@ -58,3 +58,7 @@ int WINAPI wWinMain(
     system("pause");
 
 } //main end
+
+
+//TODO: model load
+//TODO: multisampling
