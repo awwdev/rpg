@@ -47,21 +47,21 @@ namespace mini::vk
 
         void UpdateVkResources(const app::Scene& scene, const double dt)
         {
-            resources.default_pushConsts.projection = {
+            resources.common_pushConsts.projection = {
                 scene.camera.GetMat()
             };
 
-            resources.default_pushConsts.wnd_w = wnd::window_w;
-            resources.default_pushConsts.wnd_h = wnd::window_h;
+            resources.common_pushConsts.wnd_w = wnd::window_w;
+            resources.common_pushConsts.wnd_h = wnd::window_h;
 
-            resources.ui_ubo_array.Clear();
-            resources.ui_ubo_array.Append(scene.renderGraph.ubo_ui);
+            resources.ui.ubo_array.Clear();
+            resources.ui.ubo_array.Append(scene.renderGraph.ui_ubo);
 
-            resources.default_ubo_groups.Clear();
+            resources.default.ubo_groups.Clear();
             FOR_ARRAY(scene.renderGraph.default_uboGroups, i){
                 const auto& group = scene.renderGraph.default_uboGroups[i];
                 const auto& uboArray = scene.renderGraph.default_uboArray;
-                resources.default_ubo_groups.AppendGroup(&uboArray[group.begin], group.count); 
+                resources.default.ubo_groups.AppendGroup(&uboArray[group.begin], group.count); 
             }
             
         }
@@ -78,8 +78,8 @@ namespace mini::vk
             const VkRenderPassBeginInfo beginInfo_ui {
                 .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
                 .pNext          = nullptr,
-                .renderPass     = resources.ui_renderPass.renderPass,
-                .framebuffer    = resources.ui_renderPass.framebuffers[cmdBufferIdx],
+                .renderPass     = resources.ui.renderPass.renderPass,
+                .framebuffer    = resources.ui.renderPass.framebuffers[cmdBufferIdx],
                 .renderArea     = {
                     .offset     = VkOffset2D {0, 0},
                     .extent     = g_contextPtr->surfaceCapabilities.currentExtent
@@ -95,8 +95,8 @@ namespace mini::vk
             const VkRenderPassBeginInfo beginInfo_default {
                 .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
                 .pNext          = nullptr,
-                .renderPass     = resources.default_renderPass.renderPass,
-                .framebuffer    = resources.default_renderPass.framebuffers[cmdBufferIdx],
+                .renderPass     = resources.default.renderPass.renderPass,
+                .framebuffer    = resources.default.renderPass.framebuffers[cmdBufferIdx],
                 .renderArea     = {
                     .offset     = VkOffset2D {0, 0},
                     .extent     = g_contextPtr->surfaceCapabilities.currentExtent
@@ -105,21 +105,25 @@ namespace mini::vk
                 .pClearValues   = clears_default
             };
 
-            //! does this work fot both pipelines?? (see layout passed) 
-            vkCmdPushConstants(cmdBuffer, resources.ui_pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.default_pushConsts), &resources.default_pushConsts);
+            //! does this work for both pipelines?? (see layout passed) 
+            vkCmdPushConstants(cmdBuffer, resources.ui.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
 
             //? DEFAULT
             VkDeviceSize offsets = 0;
             vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.pipeline);
-            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default_vbo.dstBuffer.buffer, &offsets);
-            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default_pipeline.layout, 0, 1, &resources.default_pipeline.sets[cmdBufferIdx], 0, nullptr); 
-            const auto instTypeCount = resources.default_ubo_groups.groups.Count(); //ubo group (inst type) congruent to vertex group
+            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.pipeline);
+            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.dstBuffer.buffer, &offsets);
+            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.layout, 0, 1, &resources.default.pipeline.sets[cmdBufferIdx], 0, nullptr); 
+            // ubo group idx == vbo group idx == instance
+            // 1 ubo group -> 1 inst type (one draw call)
+            // 1 ubo group -> N insts
+            // vbo needs no group bookkeeping since ubo groups are congruent
+            const auto instTypeCount = resources.default.ubo_groups.groups.Count();
             for(u32 i = 0; i < instTypeCount; ++i) {
-                const auto vertOff   = resources.default_vbo.vertexGroups[i].begin;
-                const auto vertCount = resources.default_vbo.vertexGroups[i].count;
-                const auto instOff   = resources.default_ubo_groups.groups[i].begin;
-                const auto instCount = resources.default_ubo_groups.groups[i].count;
+                const auto vertOff   = resources.default.vbo.vertexGroups[i].begin;
+                const auto vertCount = resources.default.vbo.vertexGroups[i].count;
+                const auto instOff   = resources.default.ubo_groups.groups[i].begin;
+                const auto instCount = resources.default.ubo_groups.groups[i].count;
                 if (instCount == 0) continue;
                 vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
             }
@@ -127,9 +131,9 @@ namespace mini::vk
            
             //? TEXT
             vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.pipeline);
-            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui_pipeline.layout, 0, 1, &resources.ui_pipeline.sets[cmdBufferIdx], 0, nullptr); 
-            vkCmdDraw               (cmdBuffer, resources.ui_ubo_array.count * 6, 1, 0, 0); 
+            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.pipeline);
+            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.layout, 0, 1, &resources.ui.pipeline.sets[cmdBufferIdx], 0, nullptr); 
+            vkCmdDraw               (cmdBuffer, resources.ui.ubo_array.count * 6, 1, 0, 0); 
             vkCmdEndRenderPass      (cmdBuffer);
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }

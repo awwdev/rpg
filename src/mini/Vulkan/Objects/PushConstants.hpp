@@ -8,7 +8,7 @@
 
 namespace mini::vk
 {
-    struct Default_PushConstants
+    struct Common_PushConstants
     {
         math::Mat4f projection;
         //camera pos

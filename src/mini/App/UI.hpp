@@ -55,7 +55,7 @@ namespace mini::app::ui
         const auto str_y  = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
 
         for(u32 i = 0; i < STRLEN; ++i) {
-            renderGraph.ubo_ui.Append(
+            renderGraph.ui_ubo.Append(
                 UniformData_Text { 
                     .rect         = { str_x + LETTER_SPACE * i, str_y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
@@ -72,7 +72,7 @@ namespace mini::app::ui
         const Colors col = WHITE)
     {
         for(u32 i = 0; i < len; ++i) {
-            renderGraph.ubo_ui.Append(
+            renderGraph.ui_ubo.Append(
                 UniformData_Text { 
                     .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
@@ -84,7 +84,7 @@ namespace mini::app::ui
 
     inline void DrawFPS(RenderGraph& renderGraph, const utils::Rect<float>& rect = { 0, 0, 48, 20 })
     {
-        renderGraph.ubo_ui.Append(
+        renderGraph.ui_ubo.Append(
             rendering::UniformData_Text { 
                 .rect           = rect,
                 .colorIndex     = BLACK1, 
@@ -161,7 +161,7 @@ namespace mini::app::ui
         }
 
         //? WINDOW
-        renderGraph.ubo_ui.Append(
+        renderGraph.ui_ubo.Append(
             rendering::UniformData_Text { 
                 .rect           = wnd.rect,
                 .colorIndex     = BLACK2,
@@ -169,7 +169,7 @@ namespace mini::app::ui
             }
         );
         //? TITLE BAR
-        renderGraph.ubo_ui.Append(
+        renderGraph.ui_ubo.Append(
             rendering::UniformData_Text { 
                 .rect           = bar,
                 .colorIndex     = BLACK1,
@@ -177,7 +177,7 @@ namespace mini::app::ui
             }
         );
         //? RESIZER
-        renderGraph.ubo_ui.Append(
+        renderGraph.ui_ubo.Append(
             rendering::UniformData_Text { 
                 .rect           = resizer, 
                 .colorIndex     = isMouseOnResizer ? RED : BLACK3,
@@ -219,7 +219,7 @@ namespace mini::app::ui
         if (isMouseInside && isMousePressed) btnColorIdx = BLACK5;
         else btnColorIdx = isMouseInside ? BLACK4 : BLACK3;
 
-        renderGraph.ubo_ui.Append(
+        renderGraph.ui_ubo.Append(
             rendering::UniformData_Text { 
                 .rect           = rect, 
                 .colorIndex     = btnColorIdx,
@@ -272,7 +272,7 @@ namespace mini::app::ui
         }
 
         //? INPUT FIELD
-        renderGraph.ubo_ui.Append(
+        renderGraph.ui_ubo.Append(
             rendering::UniformData_Text { 
                 .rect           = inputRect, 
                 .colorIndex     = isMouseOnInput ? BLACK4 : BLACK3,
@@ -339,11 +339,11 @@ namespace mini::app::ui
     {
         const auto totalInstCount = renderGraph.default_uboArray.Count();
         const auto drawCount      = renderGraph.default_uboGroups.Count();
-        const auto totalUICount   = renderGraph.ubo_ui.Count();
+        const auto totalUICount   = renderGraph.ui_ubo.Count();
 
         char ch_totalInstCount [] = "inst count:     ";
         char ch_drawCount []      = "draw calls:     ";
-        char ch_totalUICount []   = "ui counts:      ";
+        char ch_totalUICount []   = "ui count:       ";
 
         std::to_chars(ch_totalInstCount + 12, ch_totalInstCount+16, totalInstCount);
         std::to_chars(ch_drawCount + 12, ch_drawCount+16, drawCount);

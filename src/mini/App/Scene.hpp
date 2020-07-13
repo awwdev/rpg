@@ -57,10 +57,6 @@ namespace mini::app
 
         void Update(const double dt)
         {
-            //? META
-            renderGraph.default_uboGroups.Clear();
-            renderGraph.default_uboArray.Clear();
-
             camera.Update(dt);
 
             //? ECS

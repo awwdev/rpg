@@ -8,16 +8,15 @@ namespace mini::rendering
 {
     struct RenderGraph
     {
-        box::Array<UniformData_Text, 1000> ubo_ui;
-
-        box::Array<UniformGroup, 1000>          default_uboGroups;
-        box::Array<UniformData_Default, 1000>   default_uboArray;
+        box::Array<UniformData_Text, 1000>      ui_ubo;
+        box::Array<UniformData_Default, 1000>   default_uboArray;  //1 group -> N inst
+        box::Array<UniformGroup, 1000>          default_uboGroups; //1 group == 1 inst type
 
         void Clear()
         {
-            ubo_ui.Clear();
-            //probably clear when needed at the dedicated place, so it is more transparent
-            //also we may not want to clear all, but only specific stuff to replace
+            ui_ubo.Clear();
+            default_uboGroups.Clear();
+            default_uboArray.Clear();
         }
     };
 

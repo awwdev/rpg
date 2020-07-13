@@ -30,55 +30,68 @@ namespace mini::vk
     using namespace rendering;
     using namespace utils;
 
-    struct VkResources
+    struct UI_Resources
     {
-        //host to vk resources
-        ImageArray ui_fontImages;
+        ImageArray fontImages;
 
-        Default_PushConstants default_pushConsts;
-
-        RenderPass      ui_renderPass;
-        Shader          ui_shader;
-        Pipeline        ui_pipeline;
-        UniformBuffer_Array<UniformData_Text, 1000> ui_ubo_array;
-
-        RenderPass      default_renderPass;
-        Shader          default_shader;
-        Pipeline        default_pipeline;
-        UniformBuffer_Groups<UniformData_Default, 500> default_ubo_groups;
-        VertexBuffer_Static<Vertex, 1000> default_vbo;
-
+        RenderPass renderPass;
+        Shader shader;
+        Pipeline pipeline;
+        UniformBuffer_Array<UniformData_Text, 1000> ubo_array;
 
         void Create(hostRes::HostResources& hostRes, Commands& commands)
         {
-            //? host to vk resources
-            ui_fontImages.Create(hostRes.fontTextures, commands.cmdPool);
+            fontImages.Create(hostRes.fontTextures, commands.cmdPool);
 
-            //? "factories"
-            CreateUniformBuffer_Text    (ui_ubo_array);
-            CreateShader_Text           (ui_shader, ui_fontImages);
-            CreateRenderPass_Text       (ui_renderPass);
-            CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
+            CreateUniformBuffer_Text    (ubo_array);
+            CreateShader_Text           (shader, fontImages);
+            CreateRenderPass_Text       (renderPass);
+            CreatePipeline_Text         (pipeline, shader, renderPass, ubo_array);
+        }
+    };
 
-            CreateVertexBuffer_Default  (default_vbo, commands.cmdPool);
-            CreateUniformBuffer_Default (default_ubo_groups);
-            CreateShader_Default        (default_shader);
-            CreateRenderPass_Default    (default_renderPass, commands.cmdPool);
-            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo, default_ubo_groups);
+    struct Default_Resources
+    {
+        RenderPass renderPass;
+        Shader shader;
+        Pipeline pipeline;
+        UniformBuffer_Groups<UniformData_Default, 500> ubo_groups;
+        VertexBuffer_Static<Vertex, 1000> vbo;
+
+        void Create(hostRes::HostResources& hostRes, Commands& commands)
+        {
+            CreateVertexBuffer_Default  (vbo, commands.cmdPool);
+            CreateUniformBuffer_Default (ubo_groups);
+            CreateShader_Default        (shader);
+            CreateRenderPass_Default    (renderPass, commands.cmdPool);
+            CreatePipeline_Default      (pipeline, shader, renderPass, vbo, ubo_groups);
+        }
+    };
+
+    struct VkResources
+    {
+        Common_PushConstants common_pushConsts;
+        UI_Resources ui;
+        Default_Resources default;
+
+        void Create(hostRes::HostResources& hostRes, Commands& commands)
+        {
+            ui.Create(hostRes, commands);
+            default.Create(hostRes, commands);
         }
 
         void RecreateSwapchain(VkCommandPool cmdPool)
         {
-            ui_pipeline.~Pipeline();
-            default_pipeline.~Pipeline();
-            default_renderPass.~RenderPass();
-            ui_renderPass.~RenderPass();
+            ui.pipeline.~Pipeline();
+            default.pipeline.~Pipeline();
+            default.renderPass.~RenderPass();
+            ui.renderPass.~RenderPass();
 
-            CreateRenderPass_Text       (ui_renderPass);
-            CreateRenderPass_Default    (default_renderPass, cmdPool);
-            CreatePipeline_Default      (default_pipeline, default_shader, default_renderPass, default_vbo, default_ubo_groups);
-            CreatePipeline_Text         (ui_pipeline, ui_shader, ui_renderPass, ui_ubo_array);
+            CreateRenderPass_Text       (ui.renderPass);
+            CreateRenderPass_Default    (default.renderPass, cmdPool);
+            CreatePipeline_Default      (default.pipeline, default.shader, default.renderPass, default.vbo, default.ubo_groups);
+            CreatePipeline_Text         (ui.pipeline, ui.shader, ui.renderPass, ui.ubo_array);
         }
     };
 
-} // namespace mini::vk
+} //ns

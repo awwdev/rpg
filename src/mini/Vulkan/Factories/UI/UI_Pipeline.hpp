@@ -143,7 +143,7 @@ namespace mini::vk
         const VkPushConstantRange constantRange {
             .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
             .offset     = 0,
-            .size       = (uint32_t)sizeof(Default_PushConstants)
+            .size       = (uint32_t)sizeof(Common_PushConstants)
         };
 
         const VkPipelineLayoutCreateInfo layoutInfo {
