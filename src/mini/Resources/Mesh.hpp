@@ -10,6 +10,7 @@ namespace mini::resources
 {
     enum MeshType
     {
+        Sword,
         PrimitiveCube,
         PrimitiveQuad,
         PrimitiveTriangle,
@@ -23,10 +24,11 @@ namespace mini::resources
     };
 
     //the actual vertex data is stored somehwere else
-    const box::IndexMap<MeshVertexView, MeshType::ENUM_END> MESH_VERTEX_MAP {
+    box::IndexMap<MeshVertexView, MeshType::ENUM_END> MESH_VERTEX_MAP {
         { MeshType::PrimitiveCube,      { utils::MESH_CUBE, ARRAY_COUNT(utils::MESH_CUBE) } },
         { MeshType::PrimitiveQuad,      { utils::MESH_QUAD, ARRAY_COUNT(utils::MESH_QUAD) } },
         { MeshType::PrimitiveTriangle,  { utils::MESH_TRIANGLE, ARRAY_COUNT(utils::MESH_TRIANGLE) } },
+        //adding dynamic ones when they are loaded
     }; 
 
 } //ns

@@ -27,32 +27,15 @@ namespace mini::app
             //ecs.prefabs.Parse("res/prefabs.txt"); 
 
             const auto cubeID1 = ecs.AddEntity();
-            ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID1, math::Mat4f{
+            const auto rot = math::RotationMatrixX(-1.5708);
+            const math::Mat4f pos = math::Mat4f{
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
-               -3, 0,-5, 1,
-            });
-            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID1, resources::MeshType::PrimitiveCube);
-
-            const auto cubeID2 = ecs.AddEntity();
-            ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID2, math::Mat4f{
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0,-10, 1,
-            });
-            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID2, resources::MeshType::PrimitiveTriangle);
-
-            const auto cubeID3 = ecs.AddEntity();
-            ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID3, math::Mat4f{
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                3, 3,-15, 1,
-            });
-            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID3, resources::MeshType::PrimitiveQuad);
-
+                0,-.2f,-2, 1,
+            };
+            ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID1, rot * pos);
+            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID1, resources::MeshType::Sword);
         }
 
         void Update(const double dt)

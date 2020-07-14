@@ -8,6 +8,7 @@
 #include "mini/Debug/Logger.hpp"
 #include "mini/Resources/TextureArray.hpp"
 #include "mini/Resources/ModelLoader.hpp"
+#include "mini/Resources/Mesh.hpp"
 
 namespace mini::hostRes
 {
@@ -21,8 +22,9 @@ namespace mini::hostRes
         {
             //currently load is instant inside ctor
             fontTextures.LoadArray("res/TextureArray"); //RLE would be nice
+            
             LoadModel(sword, "res/Models/sword.txt");
-            box::PrintArray(sword);
+            resources::MESH_VERTEX_MAP.Set(resources::MeshType::Sword, resources::MeshVertexView{sword.dataPtr, sword.Count()});
         }
     };
 

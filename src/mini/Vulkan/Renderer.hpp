@@ -61,7 +61,8 @@ namespace mini::vk
             FOR_ARRAY(scene.renderGraph.default_uboGroups, i){
                 const auto& group = scene.renderGraph.default_uboGroups[i];
                 const auto& uboArray = scene.renderGraph.default_uboArray;
-                resources.default.ubo_groups.AppendGroup(&uboArray[group.begin], group.count); 
+                if (group.count != 0) //!not sure if this is correct
+                    resources.default.ubo_groups.AppendGroup(&uboArray[group.begin], group.count); 
             }
             
         }

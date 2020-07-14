@@ -21,16 +21,21 @@ namespace mini::hostRes
             u32 i1 = 0; 
 
             math::Vec4f position {};
+            position[0][3] = 1;
             math::Vec4f color {};
             math::Vec4f normals {};
 
             //POSITION
             for(u32 i2 = 0; i2 < 100; ++i2){
-
                 if (commaCount < 3)
                 {
                     if(line[i2] == ','){
-                        position[0][commaCount] = (float)std::atof(line+i1);
+                        if (commaCount == 0)
+                            position[Vx] = (float)std::atof(line+i1);
+                        if (commaCount == 1)
+                            position[Vy] = (float)std::atof(line+i1);
+                        if (commaCount == 2)
+                            position[Vz] = (float)std::atof(line+i1);
                         i1 = i2+1;
                         commaCount++;
                     }
