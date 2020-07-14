@@ -27,7 +27,7 @@ namespace mini::app
             //ecs.prefabs.Parse("res/prefabs.txt"); 
 
             const auto cubeID1 = ecs.AddEntity();
-            const auto rot = math::RotationMatrixX(-1.5708);
+            const auto rot = math::RotationMatrixX(-1.5708f);
             const math::Mat4f pos = math::Mat4f{
                 1, 0, 0, 0,
                 0, 1, 0, 0,

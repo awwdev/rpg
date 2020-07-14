@@ -36,11 +36,7 @@ namespace mini::ecs
                 ubos.Append(rotMat * transform.transform);
             }
 
-            renderGraph.default_uboGroups.Append(rendering::UniformGroup{
-                .begin = renderGraph.default_uboArray.count, 
-                .count = ubos.Count()
-            });
-            renderGraph.default_uboArray.AppendArray(ubos);
+            renderGraph.default_ubo.Append(ubos);
         }
 
     }
