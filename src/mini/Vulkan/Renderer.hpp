@@ -64,6 +64,8 @@ namespace mini::vk
                 //TODO: FIX
                 if (group.count != 0) //!not sure if this is correct
                     resources.default.ubo_groups.AppendGroup(&data[group.begin], group.count); 
+                //TODO: dont store for every single group but just whole data
+                //and then add also groups
             }
             
         }
