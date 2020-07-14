@@ -7,6 +7,7 @@
 #include "mini/Box/Array.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Resources/TextureArray.hpp"
+#include "mini/Resources/ModelLoader.hpp"
 
 namespace mini::hostRes
 {
@@ -14,10 +15,14 @@ namespace mini::hostRes
     {
         TextureArray<96, 16, 16, 1> fontTextures; // added one texture that is all FF which can be used for blank quad () 
 
+        box::Array<utils::Vertex, 250> sword;
+
         HostResources() 
         {
             //currently load is instant inside ctor
             fontTextures.LoadArray("res/TextureArray"); //RLE would be nice
+            LoadModel(sword, "res/Models/sword.txt");
+            box::PrintArray(sword);
         }
     };
 

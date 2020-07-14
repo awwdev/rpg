@@ -332,7 +332,7 @@ namespace mini::box
 
     ///OTHER
 
-    template<class ARR, typename = IsPrintable<typename ARR::DATA_T>>
+    template<class ARR>//, typename = IsPrintable<typename ARR::DATA_T>>
     void PrintArray(const ARR& arr, const char* name = "")
     {
         mini::dbg::dlog(name);
