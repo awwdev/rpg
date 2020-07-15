@@ -59,7 +59,7 @@ namespace mini::vk
             count += COUNT;
         }
 
-        void Append(const box::IArray<T>& arr)
+        void Store(const box::IArray<T>& arr)
         {
             buffer.Store(arr.dataPtr, arr.Count() * sizeof(T));
             count += arr.Count();
@@ -80,12 +80,12 @@ namespace mini::vk
         using  TYPE = T;
 
         Buffer      buffer;
-        UniformInfo info { .type = UniformInfo::Buffer };
-        //! COMPLETE UniformInfo IN A FACTORY METHOD
+        UniformInfo info { .type = UniformInfo::Buffer }; //!complete in factory
 
-        box::Array<rendering::UniformGroup, 100> groups;
         u32 totalCount;
         u32 CurrentSize() const { return sizeof(T) * totalCount; }
+
+        const box::IArray<rendering::UniformGroup>* groups = nullptr; //coming from rendergraph
 
         void Create(VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         {
@@ -97,32 +97,18 @@ namespace mini::vk
             buffer.Map();
         }
 
-        void AppendGroup(const T* const ptr, const u32 pCount)
+        //TODO: use max count constexpr inside a header an use on both rendering and vk 
+        template<u32 N>
+        void Store(const rendering::UniformDataGroups<T, N>& hostUBO)
         {
-            buffer.Store(ptr, pCount * sizeof(T), CurrentSize());
-            groups.Append(totalCount, pCount);
-            totalCount += pCount;
-        }
-
-        template<u32 COUNT>
-        void AppendGroup(const T (&arr)[COUNT])
-        {
-            buffer.Store(arr, COUNT * sizeof(T), CurrentSize());
-            groups.Append(totalCount, COUNT);
-            totalCount += COUNT;
-        }
-
-        void AppendGroup(const box::IArray<T>& arr)
-        {
-            buffer.Store(arr.dataPtr, arr.Count() * sizeof(T), CurrentSize());
-            groups.Append(totalCount, arr.Count());
-            totalCount += arr.Count();
+            buffer.Store(hostUBO.data.dataPtr, hostUBO.data.CurrentSize()); //no offset, all at once
+            groups = &hostUBO.groups;
         }
 
         void Clear()
         {
             totalCount = 0;
-            groups.Clear();
+            //groups.Clear();
         }
 
     };

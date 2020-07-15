@@ -55,19 +55,10 @@ namespace mini::vk
             resources.common_pushConsts.wnd_h = wnd::window_h;
 
             resources.ui.ubo_array.Clear();
-            resources.ui.ubo_array.Append(scene.renderGraph.ui_ubo);
+            resources.ui.ubo_array.Store(scene.renderGraph.ui_ubo);
 
             resources.default.ubo_groups.Clear();
-            FOR_ARRAY(scene.renderGraph.default_ubo.groups, i){
-                const auto& group = scene.renderGraph.default_ubo.groups[i];
-                const auto& data = scene.renderGraph.default_ubo.data;
-                //TODO: FIX
-                if (group.count != 0) //!not sure if this is correct
-                    resources.default.ubo_groups.AppendGroup(&data[group.begin], group.count); 
-                //TODO: dont store for every single group but just whole data
-                //and then add also groups
-            }
-            
+            resources.default.ubo_groups.Store(scene.renderGraph.default_ubo);
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
@@ -122,12 +113,12 @@ namespace mini::vk
             // 1 ubo group -> 1 inst type (one draw call)
             // 1 ubo group -> N insts
             // vbo needs no group bookkeeping since ubo groups are congruent
-            const auto instTypeCount = resources.default.ubo_groups.groups.Count();
+            const auto instTypeCount = resources.default.ubo_groups.groups->Count();
             for(u32 i = 0; i < instTypeCount; ++i) {
                 const auto vertOff   = resources.default.vbo.vertexGroups[i].begin;
                 const auto vertCount = resources.default.vbo.vertexGroups[i].count;
-                const auto instOff   = resources.default.ubo_groups.groups[i].begin;
-                const auto instCount = resources.default.ubo_groups.groups[i].count;
+                const auto instOff   = resources.default.ubo_groups.groups->operator[](i).begin;
+                const auto instCount = resources.default.ubo_groups.groups->operator[](i).count;
                 if (instCount == 0) continue;
                 vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
             }

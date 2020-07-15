@@ -63,6 +63,7 @@ namespace mini::box
         ND bool     Full()  const { return count == COUNT_MAX; }
         ND T*       Data()        { return dataPtr; }
         ND const T* Data()  const { return dataPtr; }
+        ND size_t   CurrentSize() const { return count * sizeof(T); }
 
         void Clear() 
         { 
