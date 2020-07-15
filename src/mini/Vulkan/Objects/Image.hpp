@@ -75,7 +75,9 @@ namespace mini::vk
 
     //! CURRENTLY ONLY USABLE AS DEPTH IMAGE
     //  NEEDS TO BE MORE GENERIC OR MULTIPLE STRUCTS
-    struct Image
+    //TODO: use ONE struct for different images types, generic
+
+    struct DepthImage
     {
         VkImage         image;
         VkDeviceMemory  memory;
@@ -83,7 +85,7 @@ namespace mini::vk
         uint32_t        width, height;
         VkImageLayout   layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-        void Create(VkCommandPool cmdPool, VkFormat format)
+        void Create(VkCommandPool cmdPool, VkFormat format, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT)
         {
             width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
             height = g_contextPtr->surfaceCapabilities.currentExtent.height;
@@ -97,7 +99,7 @@ namespace mini::vk
                 .extent                 = VkExtent3D { width, height, 1 },
                 .mipLevels              = 1,
                 .arrayLayers            = 1,
-                .samples                = VK_SAMPLE_COUNT_1_BIT,
+                .samples                = sampleCount,
                 .tiling                 = VK_IMAGE_TILING_OPTIMAL,
                 .usage                  = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
                 .sharingMode            = VK_SHARING_MODE_EXCLUSIVE,
@@ -187,7 +189,125 @@ namespace mini::vk
         }
 
 
-        ~Image()
+        ~DepthImage()
+        {
+            vkDestroyImage      (g_contextPtr->device, image, nullptr);
+            vkFreeMemory        (g_contextPtr->device, memory, nullptr);
+            vkDestroyImageView  (g_contextPtr->device, view, nullptr);
+        }
+    };
+
+    struct MSAAImage
+    {
+        VkImage         image;
+        VkDeviceMemory  memory;
+        VkImageView     view;
+        uint32_t        width, height;
+        VkImageLayout   layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        void Create(VkCommandPool cmdPool, VkFormat format, VkSampleCountFlagBits sampleCount)
+        {
+            width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
+            height = g_contextPtr->surfaceCapabilities.currentExtent.height;
+
+            const VkImageCreateInfo imageInfo {
+                .sType                  = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+                .pNext                  = nullptr,
+                .flags                  = 0,
+                .imageType              = VK_IMAGE_TYPE_2D,
+                .format                 = format,
+                .extent                 = VkExtent3D { width, height, 1 },
+                .mipLevels              = 1,
+                .arrayLayers            = 1,
+                .samples                = sampleCount,
+                .tiling                 = VK_IMAGE_TILING_OPTIMAL,
+                .usage                  = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                .sharingMode            = VK_SHARING_MODE_EXCLUSIVE,
+                .queueFamilyIndexCount  = 0,
+                .pQueueFamilyIndices    = 0,
+                .initialLayout          = VK_IMAGE_LAYOUT_UNDEFINED
+            };
+
+            VK_CHECK(vkCreateImage(g_contextPtr->device, &imageInfo, nullptr, &image));
+
+            //? MEMORY
+            VkMemoryRequirements memReqs;
+            vkGetImageMemoryRequirements(g_contextPtr->device, image, &memReqs);
+
+            const VkMemoryPropertyFlags memProps { VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT };
+            const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(g_contextPtr->physicalMemProps, memReqs, memProps));
+            VK_CHECK(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory)); //todo: allocate once for the app and use memory pool
+            VK_CHECK(vkBindImageMemory(g_contextPtr->device, image, memory, 0));
+
+            const VkImageViewCreateInfo viewInfo 
+            {
+                .sType              = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+                .pNext              = nullptr,
+                .flags              = 0, 
+                .image              = image, 
+                .viewType           = VK_IMAGE_VIEW_TYPE_2D, 
+                .format             = format,
+                .components         = 
+                {
+                    .r = VK_COMPONENT_SWIZZLE_R,
+                    .g = VK_COMPONENT_SWIZZLE_G,
+                    .b = VK_COMPONENT_SWIZZLE_B,
+                    .a = VK_COMPONENT_SWIZZLE_A
+                },
+                .subresourceRange   = 
+                {
+                    .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+                    .baseMipLevel   = 0,
+                    .levelCount     = 1,
+                    .baseArrayLayer = 0,
+                    .layerCount     = 1
+                }
+            };
+
+            VK_CHECK(vkCreateImageView(g_contextPtr->device, &viewInfo, nullptr, &view));
+
+            //? TRANSITION
+
+            auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
+
+            const VkImageMemoryBarrier barrier
+            {
+                .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+                .pNext               = nullptr,
+                .srcAccessMask       = 0,
+                .dstAccessMask       = VK_ACCESS_TRANSFER_WRITE_BIT,
+                .oldLayout           = VK_IMAGE_LAYOUT_UNDEFINED,
+                .newLayout           = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                .image               = image,
+                .subresourceRange    = 
+                {
+                    .aspectMask      = VK_IMAGE_ASPECT_COLOR_BIT,
+                    .baseMipLevel    = 0,
+                    .levelCount      = 1,
+                    .baseArrayLayer  = 0,
+                    .layerCount      = 1
+                }
+            };
+
+            //image.layout = newLayout;
+
+            vkCmdPipelineBarrier(
+                cmdBuffer,
+                VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
+                VK_PIPELINE_STAGE_TRANSFER_BIT,
+                0,
+                0, nullptr,
+                0, nullptr,
+                1, &barrier
+            );
+
+            EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
+        }
+
+
+        ~MSAAImage()
         {
             vkDestroyImage      (g_contextPtr->device, image, nullptr);
             vkFreeMemory        (g_contextPtr->device, memory, nullptr);

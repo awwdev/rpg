@@ -9,6 +9,11 @@ namespace mini::vk
 {
     inline void CreateRenderPass_Default(RenderPass& rp, VkCommandPool cmdPool)
     {  
+        constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
+        rp.msaaImage.Create(cmdPool, g_contextPtr->format, rp.SAMPLE_COUNT);
+        rp.depthImage.Create(cmdPool, DEPTH_FORMAT, rp.SAMPLE_COUNT);
+
+
         const VkAttachmentDescription colorDesc {
             .flags          = 0 ,
             .format         = g_contextPtr->format, 
@@ -18,10 +23,9 @@ namespace mini::vk
             .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
             .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
-            .finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            .finalLayout    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         };
 
-        constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
         const VkAttachmentDescription depthDesc {
             .flags          = 0 ,
             .format         = DEPTH_FORMAT, 
@@ -34,13 +38,29 @@ namespace mini::vk
             .finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
         };
 
+        const VkAttachmentDescription resolveDesc {
+            .flags          = 0 ,
+            .format         = g_contextPtr->format, 
+            .samples        = VK_SAMPLE_COUNT_1_BIT,
+            .loadOp         = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+            .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
+            .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+            .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+            .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
+            .finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+        };
+
         const VkAttachmentReference colorRef {
             .attachment = 0,
-            .layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+            .layout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
         };
         const VkAttachmentReference depthRef {
             .attachment = 1,
             .layout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+        };
+        const VkAttachmentReference resolveRef {
+            .attachment = 2,
+            .layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
         };
         
         const VkSubpassDescription subpassDesc {
@@ -50,7 +70,7 @@ namespace mini::vk
             .pInputAttachments       = nullptr,
             .colorAttachmentCount    = 1,
             .pColorAttachments       = &colorRef,
-            .pResolveAttachments     = nullptr,
+            .pResolveAttachments     = &resolveRef,
             .pDepthStencilAttachment = &depthRef,
             .preserveAttachmentCount = 0,
             .pPreserveAttachments    = nullptr
@@ -58,7 +78,8 @@ namespace mini::vk
 
         const VkAttachmentDescription descs [] {
             colorDesc,
-            depthDesc
+            depthDesc,
+            resolveDesc
         };
 
         //why is this needed??
@@ -85,17 +106,15 @@ namespace mini::vk
 
         VK_CHECK(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &rp.renderPass));
 
-        //depth image
-        rp.depthImage.Create(cmdPool, DEPTH_FORMAT);
-
         //? framebuffers
         for (u32 i = 0; i < g_contextPtr->swapImages.count; ++i)
         {
             rp.framebuffers.Append();
 
             const VkImageView views [] {
+                rp.msaaImage.view,
+                rp.depthImage.view,
                 g_contextPtr->swapImageViews[i],
-                rp.depthImage.view
             };
 
             const VkFramebufferCreateInfo framebufferInfo{

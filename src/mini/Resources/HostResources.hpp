@@ -48,9 +48,9 @@ namespace mini::res
         Textures textures;
         Models   models;
 
+        //! should all load before any GPU resources are used
         HostResources() 
         {
-            //! should all load before any GPU resources are used
             textures.Load();
             models.Load();
         }

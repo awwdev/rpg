@@ -1,9 +1,10 @@
 //https://github.com/awwdev
 
 /* 
-## mini::box::Map2
+## mini::box::IndexMap
 
 - index based    (no bucket hash system) usage of indicies and enums
+- order does not matter when constructing the map
 - capacity-based (no dynamic allocations)
 - bounds checking is toggleable via macro, no exceptions are used
 
@@ -23,6 +24,7 @@ namespace mini::box
     #define FOR_INDEX_MAP_BEGIN(map, i) for(auto i = 0; i < map.CAPACITY; ++i) { \
     if (map.Contains(i) == false) continue; 
     #define FOR_INDEX_MAP_END }
+
 
 
     template<class KEY, class VAL, typename = IsIntegralOrEnum<KEY>>
