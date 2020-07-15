@@ -113,13 +113,16 @@ namespace mini::vk
             // 1 ubo group -> 1 inst type (one draw call)
             // 1 ubo group -> N insts
             // vbo needs no group bookkeeping since ubo groups are congruent
-            const auto instTypeCount = resources.default.ubo.groups->Count();
+            const auto instTypeCount = res::MeshType::ENUM_END;
             for(u32 i = 0; i < instTypeCount; ++i) {
+                if (!resources.default.ubo.groups->Contains(i)) 
+                    continue;
+
                 const auto vertOff   = resources.default.vbo.vertexGroups[i].begin;
                 const auto vertCount = resources.default.vbo.vertexGroups[i].count;
-                const auto instOff   = resources.default.ubo.groups->operator[](i).begin;
-                const auto instCount = resources.default.ubo.groups->operator[](i).count;
-                if (instCount == 0) continue;
+                const auto instOff   = resources.default.ubo.groups->Get(i).begin;
+                const auto instCount = resources.default.ubo.groups->Get(i).count;
+                
                 vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
             }
             vkCmdEndRenderPass      (cmdBuffer);

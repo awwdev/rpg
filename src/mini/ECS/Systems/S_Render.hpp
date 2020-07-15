@@ -36,7 +36,8 @@ namespace mini::ecs
                 ubos.Append(rotMat * transform.transform);
             }
 
-            renderGraph.default_ubo.AppendGroup(ubos);
+            if(ubos.count != 0)
+                renderGraph.default_ubo.AppendGroup(ubos, (res::MeshType)i);
         }
 
     }

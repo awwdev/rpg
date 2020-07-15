@@ -10,10 +10,10 @@ namespace mini::res
 {
     enum MeshType
     {
-        Sword,
         PrimitiveCube,
         PrimitiveQuad,
         PrimitiveTriangle,
+        Sword,
         ENUM_END
     };
 

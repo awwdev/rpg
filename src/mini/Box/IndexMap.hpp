@@ -41,16 +41,19 @@ namespace mini::box
         using Val_t   = VAL;
         using Index_t = u32;
         const Index_t CAPACITY;
+        Index_t count = 0;
 
         #define KEY_T template<typename KEY, typename = IsIntegralOrEnum<KEY>>
 
         //? SETTERS
 
+        //TODO: move into derived
         template<typename KEY, class... CtorArgs, typename = IsIntegralOrEnum<KEY>>
         void Set(const KEY key, CtorArgs&&... args)
         {
             bitsetPtr->Set<true>(key);
             valuesPtr[(Index_t)key] = VAL{ std::forward<CtorArgs>(args)... };
+            ++count;
         }
 
         //? GETTERS

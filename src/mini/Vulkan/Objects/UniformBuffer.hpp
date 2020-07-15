@@ -35,7 +35,7 @@ namespace mini::vk
         u32 count;
         u32 CurrentSize() const { return sizeof(T) * count; }
 
-        const box::IArray<rendering::UniformGroup>* groups = nullptr; //!coming from rendergraph
+        const box::BaseIndexMap<rendering::UniformGroup>* groups = nullptr; //!coming from rendergraph
 
         void Create(VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         {
