@@ -91,7 +91,7 @@ namespace mini::vk
             .sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
             .pNext                 = nullptr,
             .flags                 = 0,
-            .rasterizationSamples  = renderPass.SAMPLE_COUNT,
+            .rasterizationSamples  = renderPass.sampleCount,
             .sampleShadingEnable   = VK_FALSE,
             .minSampleShading      = 1.f,
             .pSampleMask           = nullptr,

@@ -9,15 +9,17 @@ namespace mini::vk
 {
     inline void CreateRenderPass_Default(RenderPass& rp, VkCommandPool cmdPool)
     {  
+        rp.sampleCount = VK_SAMPLE_COUNT_4_BIT;
+
         constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
-        rp.msaaImage.Create(cmdPool, g_contextPtr->format, rp.SAMPLE_COUNT);
-        rp.depthImage.Create(cmdPool, DEPTH_FORMAT, rp.SAMPLE_COUNT);
+        rp.msaaImage.Create(cmdPool, g_contextPtr->format, rp.sampleCount);
+        rp.depthImage.Create(cmdPool, DEPTH_FORMAT, rp.sampleCount);
 
 
         const VkAttachmentDescription colorDesc {
             .flags          = 0 ,
             .format         = g_contextPtr->format, 
-            .samples        = rp.SAMPLE_COUNT,
+            .samples        = rp.sampleCount,
             .loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR,
             .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
             .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -29,7 +31,7 @@ namespace mini::vk
         const VkAttachmentDescription depthDesc {
             .flags          = 0 ,
             .format         = DEPTH_FORMAT, 
-            .samples        = rp.SAMPLE_COUNT,
+            .samples        = rp.sampleCount,
             .loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR,
             .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
             .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -47,12 +49,12 @@ namespace mini::vk
             .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
             .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
-            .finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            .finalLayout    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         };
 
         const VkAttachmentReference colorRef {
             .attachment = 0,
-            .layout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+            .layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
         };
         const VkAttachmentReference depthRef {
             .attachment = 1,

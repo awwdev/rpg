@@ -13,7 +13,7 @@ namespace mini::vk
     {
         VkRenderPass renderPass;
         box::Array<VkFramebuffer, 4> framebuffers;
-        const VkSampleCountFlagBits SAMPLE_COUNT = VK_SAMPLE_COUNT_4_BIT;
+        VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT; //!set in factory
 
         DepthImage depthImage; //optional
         MSAAImage  msaaImage;

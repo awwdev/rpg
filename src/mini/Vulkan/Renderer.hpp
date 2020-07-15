@@ -125,11 +125,11 @@ namespace mini::vk
             vkCmdEndRenderPass      (cmdBuffer);
            
             //? TEXT
-            //vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
-            //vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.pipeline);
-            //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.layout, 0, 1, &resources.ui.pipeline.sets[cmdBufferIdx], 0, nullptr); 
-            //vkCmdDraw               (cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
-            //vkCmdEndRenderPass      (cmdBuffer);
+            vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.pipeline);
+            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.layout, 0, 1, &resources.ui.pipeline.sets[cmdBufferIdx], 0, nullptr); 
+            vkCmdDraw               (cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
+            vkCmdEndRenderPass      (cmdBuffer);
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }
 
