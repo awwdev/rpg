@@ -18,7 +18,7 @@ namespace mini::vk
 
         //order matters
         for(auto i = 0; i < res::MeshType::ENUM_END; ++i){
-            const auto& mesh = res.models.meshvertexLookup.Get(i);
+            const auto& mesh = res.models.vertexLookup.Get(i);
             vbo.AppendGroup(mesh.begin, mesh.count);
         }
         vbo.Transfer(cmdPool);

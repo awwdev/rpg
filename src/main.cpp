@@ -29,11 +29,11 @@ int WINAPI wWinMain(
         dbg::Console console{};
         wnd::Window  window { hInstance, 800, 600 };
         mem::GlobalAllocate();
-        res::HostResources hostResources{}; //will load immediately for now
+        auto ptrHostResources = mem::ClaimBlock<res::HostResources>(); //will load immediately for now
 
         auto ptrRenderer = mem::ClaimBlock<vk::VkRenderer>(
             vk::WindowHandle{window.hInstance, window.hWnd},
-            hostResources);
+            *ptrHostResources);
 
         auto ptrSceneStack = mem::ClaimBlock<box::Array<app::Scene, 1, box::INIT::Yes>>();
         uint32_t sceneIdx = 0;

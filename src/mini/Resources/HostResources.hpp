@@ -9,6 +9,7 @@
 #include "mini/Resources/TextureArray.hpp"
 #include "mini/Resources/ModelLoader.hpp"
 #include "mini/Resources/Mesh.hpp"
+#include "mini/Rendering/RenderGraph.hpp"
 
 namespace mini::res
 {
@@ -24,20 +25,21 @@ namespace mini::res
 
     struct Models
     {
-        box::IndexMap<res::MeshVertexView, res::MeshType::ENUM_END> meshvertexLookup {
+        box::IndexMap<res::MeshVertexView, res::MeshType::ENUM_END> vertexLookup
+        {
+            //hardcoded primitives
             { res::MeshType::PrimitiveCube,      { utils::MESH_CUBE, ARRAY_COUNT(utils::MESH_CUBE) } },
             { res::MeshType::PrimitiveQuad,      { utils::MESH_QUAD, ARRAY_COUNT(utils::MESH_QUAD) } },
             { res::MeshType::PrimitiveTriangle,  { utils::MESH_TRIANGLE, ARRAY_COUNT(utils::MESH_TRIANGLE) } },
-            //adding dynamic ones when they are loaded
         }; 
 
-        //TODO: huge array of vertices and then views
-        box::Array<utils::VertexDefault, 250> sword;
+        //model data separated
+        box::Array<utils::VertexDefault, rendering::DEFAULT_VERTEX_MAX_COUNT> vertices;
 
         void Load()
         {
-            LoadModel(sword, "res/Models/sword.txt");
-            meshvertexLookup.Set(res::MeshType::Sword, res::MeshVertexView{sword.dataPtr, sword.Count()});
+            LoadModel(vertices, "res/Models/sword.txt");
+            vertexLookup.Set(res::MeshType::Sword, res::MeshVertexView{vertices.dataPtr, vertices.Count()});
         }
     };
 
