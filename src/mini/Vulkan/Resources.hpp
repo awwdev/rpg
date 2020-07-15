@@ -57,7 +57,7 @@ namespace mini::vk
         Shader shader;
         Pipeline pipeline;
         UniformBuffer_Groups<UniformData_Default, DEFAULT_UBO_MAX_COUNT> ubo;
-        VertexBuffer_Static<VertexDefault, DEFAULT_VERTEX_MAX_COUNT> vbo; //hardcoded limit 
+        VertexBuffer_Static<VertexDefault, DEFAULT_VERTEX_MAX_COUNT> vbo;
 
         void Create(res::HostResources& hostRes, Commands& commands)
         {

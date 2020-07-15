@@ -18,14 +18,18 @@
 #include "mini/Debug/Assert.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/Bitset.hpp"
+#include "mini/Box/Array.hpp"
 
 namespace mini::box
 {
-    #define FOR_INDEX_MAP_BEGIN(map, i) for(auto i = 0; i < map.CAPACITY; ++i) { \
-    if (map.Contains(i) == false) continue; 
-    #define FOR_INDEX_MAP_END }
+    //#define FOR_INDEX_MAP_BEGIN(map, i) for(auto i = 0; i < map.CAPACITY; ++i) { \
+    //if (map.Contains(i) == false) continue; 
+    //#define FOR_INDEX_MAP_END }
 
-
+    #define FOR_USED_INDEX_MAP_BEGIN(map, usedIndex) \
+        for(u32 i = 0; i < map.usedIndices.Count(); ++i) { \
+            const u32 usedIndex = map.usedIndices[i];
+    #define FOR_USED_INDEX_MAP_END }
 
     template<class KEY, class VAL, typename = IsIntegralOrEnum<KEY>>
     struct IndexMapPair
@@ -41,19 +45,17 @@ namespace mini::box
         using Val_t   = VAL;
         using Index_t = u32;
         const Index_t CAPACITY;
-        Index_t count = 0;
 
         #define KEY_T template<typename KEY, typename = IsIntegralOrEnum<KEY>>
 
         //? SETTERS
 
-        //TODO: move into derived
         template<typename KEY, class... CtorArgs, typename = IsIntegralOrEnum<KEY>>
         void Set(const KEY key, CtorArgs&&... args)
         {
             bitsetPtr->Set<true>(key);
             valuesPtr[(Index_t)key] = VAL{ std::forward<CtorArgs>(args)... };
-            ++count;
+            usedIndicesPtr->Append((Index_t)key);
         }
 
         //? GETTERS
@@ -63,24 +65,35 @@ namespace mini::box
         KEY_T VAL*       GetOptional(const KEY key)         { return Contains(key) ? &valuesPtr[(Index_t)key] : nullptr; }
         KEY_T const VAL* GetOptional(const KEY key) const   { return Contains(key) ? &valuesPtr[(Index_t)key] : nullptr; }
 
+        Index_t Count() const { return usedIndicesPtr->count; }
+
         //? MOD
 
         KEY_T void Remove(const KEY key) { bitsetPtr->Set<false>(key); }  
         KEY_T bool Contains(const KEY key) const { return bitsetPtr->Test(key); }
 
-        void Clear() { bitsetPtr->Clear(); }
+        void Clear()
+        { 
+            bitsetPtr->Clear(); usedIndicesPtr->Clear();
+        }
 
         #undef KEY_T
 
     protected:
-        BaseIndexMap(VAL* const values, IBitset<Index_t>* const bitset, const Index_t capacity) 
-            : valuesPtr { values }
-            , bitsetPtr { bitset }
-            , CAPACITY  { capacity } 
+        BaseIndexMap(
+            VAL* const values, 
+            IBitset<Index_t>* const bitset, 
+            IArray<Index_t>*  const usedIndices, 
+            const Index_t capacity) 
+            : valuesPtr         { values }
+            , bitsetPtr         { bitset }
+            , usedIndicesPtr    { usedIndices }
+            , CAPACITY          { capacity } 
         {;}
 
         VAL* const valuesPtr;
-        IBitset<u32>* const bitsetPtr;
+        IBitset<Index_t>* const bitsetPtr;
+        IArray<Index_t>*  const usedIndicesPtr;
 
         ~BaseIndexMap() { Clear(); }
     };
@@ -93,6 +106,7 @@ namespace mini::box
         using Val_t   = VAL;
         using Base_t  = BaseIndexMap<VAL>;
         using Pair_t  = IndexMapPair<decltype(CAPACITY_T), VAL>;
+        
 
         constexpr static auto CAPACITY  = (Index_t)CAPACITY_T;
         constexpr static auto BYTE_SIZE = (Index_t)CAPACITY_T * sizeof(VAL);
@@ -100,9 +114,10 @@ namespace mini::box
         //? CTOR
 
         IndexMap()
-            : Base_t(values, &bitset, CAPACITY) 
+            : Base_t(values, &bitset, &usedIndices, CAPACITY) 
             , values {} //initList
             , bitset {}
+            , usedIndices {}
         {;}
 
         //ctor allow for out of order input
@@ -118,15 +133,16 @@ namespace mini::box
         }
 
         explicit IndexMap(std::initializer_list<Pair_t> initList)
-            : Base_t(values, &bitset, CAPACITY) 
+            : Base_t(values, &bitset, &usedIndices, CAPACITY) 
             , values {}
             , bitset {}
+            , usedIndices {}
         {
             for(auto& l : initList) //order independent
                 this->Set(l.key, l.val);
         }
 
-        //? DATA
+        Array<Index_t, CAPACITY> usedIndices; //used for fast iteration
 
     private:
         VAL values [(Index_t)CAPACITY_T];

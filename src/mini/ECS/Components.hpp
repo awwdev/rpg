@@ -58,11 +58,12 @@ namespace mini::ecs
 
     inline ComponentType GetComponentType(const utils::CharsView& view)
     {
-        FOR_INDEX_MAP_BEGIN(componentTypeToStr, i)
-            if (utils::CharsCompare(view, componentTypeToStr.Get(i).dataPtr))
-                return (ComponentType)i;
-        FOR_INDEX_MAP_END
-        WARN("str to enum: invalid component type");
+        //TODO: using a more efficient iteration
+        //FOR_INDEX_MAP_BEGIN(componentTypeToStr, i)
+        //    if (utils::CharsCompare(view, componentTypeToStr.Get(i).dataPtr))
+        //        return (ComponentType)i;
+        //FOR_INDEX_MAP_END
+        //WARN("str to enum: invalid component type");
         return ComponentType::ENUM_END;
     }
 

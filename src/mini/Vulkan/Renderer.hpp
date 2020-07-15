@@ -113,18 +113,18 @@ namespace mini::vk
             // 1 ubo group -> 1 inst type (one draw call)
             // 1 ubo group -> N insts
             // vbo needs no group bookkeeping since ubo groups are congruent
+            //TODO: we could also pull in the rendergraph so ubos dont need to reference it impicitly ... ?
             const auto instTypeCount = res::MeshType::ENUM_END;
-            for(u32 i = 0; i < instTypeCount; ++i) {
-                if (!resources.default.ubo.groups->Contains(i)) 
-                    continue;
 
-                const auto vertOff   = resources.default.vbo.vertexGroups[i].begin;
-                const auto vertCount = resources.default.vbo.vertexGroups[i].count;
-                const auto instOff   = resources.default.ubo.groups->Get(i).begin;
-                const auto instCount = resources.default.ubo.groups->Get(i).count;
-                
+            FOR_USED_INDEX_MAP_BEGIN(scene.renderGraph.default_ubo.groups, usedIndex)
+            {
+                const auto vertOff   = resources.default.vbo.vertexGroups[usedIndex].begin;
+                const auto vertCount = resources.default.vbo.vertexGroups[usedIndex].count;
+                const auto instOff   = resources.default.ubo.groups->Get(usedIndex).begin;
+                const auto instCount = resources.default.ubo.groups->Get(usedIndex).count;
                 vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
             }
+            FOR_USED_INDEX_MAP_END
             vkCmdEndRenderPass      (cmdBuffer);
            
             //? TEXT
