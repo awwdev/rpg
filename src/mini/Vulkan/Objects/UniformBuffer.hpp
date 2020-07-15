@@ -97,9 +97,7 @@ namespace mini::vk
             buffer.Map();
         }
 
-        //TODO: use max count constexpr inside a header an use on both rendering and vk 
-        template<u32 N>
-        void Store(const rendering::UniformDataGroups<T, N>& hostUBO)
+        void Store(const rendering::UniformDataGroups<T, MAX_COUNT_T>& hostUBO)
         {
             buffer.Store(hostUBO.data.dataPtr, hostUBO.data.CurrentSize()); //no offset, all at once
             groups = &hostUBO.groups;

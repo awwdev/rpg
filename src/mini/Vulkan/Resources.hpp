@@ -24,6 +24,7 @@
 
 #include "mini/Resources/HostResources.hpp"
 #include "mini/Rendering/UboData.hpp"
+#include "mini/Rendering/RenderGraph.hpp"
 
 namespace mini::vk
 {
@@ -37,7 +38,7 @@ namespace mini::vk
         RenderPass renderPass;
         Shader shader;
         Pipeline pipeline;
-        UniformBuffer_Array<UniformData_Text, 1000> ubo_array;
+        UniformBuffer_Array<UniformData_Text, rendering::UI_UBO_MAX_COUNT> ubo_array;
 
         void Create(hostRes::HostResources& hostRes, Commands& commands)
         {
@@ -55,8 +56,8 @@ namespace mini::vk
         RenderPass renderPass;
         Shader shader;
         Pipeline pipeline;
-        UniformBuffer_Groups<UniformData_Default, 500> ubo_groups;
-        VertexBuffer_Static<Vertex, 1000> vbo;
+        UniformBuffer_Groups<UniformData_Default, rendering::DEFAULT_UBO_MAX_COUNT> ubo_groups;
+        VertexBuffer_Static<Vertex, 1000> vbo; //hardcoded limit 
 
         void Create(hostRes::HostResources& hostRes, Commands& commands)
         {
