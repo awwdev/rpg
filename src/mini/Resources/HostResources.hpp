@@ -16,7 +16,7 @@ namespace mini::hostRes
     {
         TextureArray<96, 16, 16, 1> fontTextures; // added one texture that is all FF which can be used for blank quad () 
 
-        box::Array<utils::Vertex, 250> sword;
+        box::Array<utils::VertexDefault, 250> sword;
 
         HostResources() 
         {

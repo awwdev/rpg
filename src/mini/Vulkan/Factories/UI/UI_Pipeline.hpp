@@ -9,15 +9,15 @@
 #include "mini/Vulkan/Objects/PushConstants.hpp"
 #include "mini/Vulkan/Objects/Pipeline.hpp"
 #include "mini/Vulkan/Objects/RenderPass.hpp"
+#include "mini/Rendering/RenderGraph.hpp"
 
 namespace mini::vk
 {
-    template<class T, u32 N> //template due to TextureArray<>
-    void CreatePipeline_Text(
+    void CreatePipeline_UI(
         Pipeline& pipeline,
         Shader& shader, 
         RenderPass& renderPass,
-        UniformBuffer_Array<T, N>& uboText)
+        UniformBuffer_Groups<rendering::UniformData_UI, rendering::UI_UBO_MAX_COUNT>& uboText)
     {
         const VkPipelineVertexInputStateCreateInfo vertexInput {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

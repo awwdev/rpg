@@ -3,11 +3,12 @@
 #pragma once
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/UniformBuffer.hpp"
+#include "mini/Rendering/RenderGraph.hpp"
 
 namespace mini::vk
 {
-    template<class T, u32 N>
-    void CreateUniformBuffer_Text(UniformBuffer_Array<T, N>& ub)
+    void CreateUniformBuffer_UI(
+        UniformBuffer_Groups<rendering::UniformData_UI, rendering::UI_UBO_MAX_COUNT>& ub)
     {
         ub.Create();
 

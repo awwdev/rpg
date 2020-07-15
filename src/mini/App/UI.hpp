@@ -55,8 +55,8 @@ namespace mini::app::ui
         const auto str_y  = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
 
         for(u32 i = 0; i < STRLEN; ++i) {
-            renderGraph.ui_ubo.Append(
-                UniformData_Text { 
+            renderGraph.ui_ubo.AppendData(
+                UniformData_UI { 
                     .rect         = { str_x + LETTER_SPACE * i, str_y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
                     .textureIndex = str[i] - ASCII_OFFSET
@@ -72,8 +72,8 @@ namespace mini::app::ui
         const Colors col = WHITE)
     {
         for(u32 i = 0; i < len; ++i) {
-            renderGraph.ui_ubo.Append(
-                UniformData_Text { 
+            renderGraph.ui_ubo.AppendData(
+                UniformData_UI { 
                     .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
                     .textureIndex = str[i] - ASCII_OFFSET
@@ -84,8 +84,8 @@ namespace mini::app::ui
 
     inline void DrawFPS(RenderGraph& renderGraph, const utils::Rect<float>& rect = { 0, 0, 48, 20 })
     {
-        renderGraph.ui_ubo.Append(
-            rendering::UniformData_Text { 
+        renderGraph.ui_ubo.AppendData(
+            rendering::UniformData_UI { 
                 .rect           = rect,
                 .colorIndex     = BLACK1, 
                 .textureIndex   = FULL_OPAQUE
@@ -161,24 +161,24 @@ namespace mini::app::ui
         }
 
         //? WINDOW
-        renderGraph.ui_ubo.Append(
-            rendering::UniformData_Text { 
+        renderGraph.ui_ubo.AppendData(
+            rendering::UniformData_UI { 
                 .rect           = wnd.rect,
                 .colorIndex     = BLACK2,
                 .textureIndex   = FULL_OPAQUE,
             }
         );
         //? TITLE BAR
-        renderGraph.ui_ubo.Append(
-            rendering::UniformData_Text { 
+        renderGraph.ui_ubo.AppendData(
+            rendering::UniformData_UI { 
                 .rect           = bar,
                 .colorIndex     = BLACK1,
                 .textureIndex   = FULL_OPAQUE,
             }
         );
         //? RESIZER
-        renderGraph.ui_ubo.Append(
-            rendering::UniformData_Text { 
+        renderGraph.ui_ubo.AppendData(
+            rendering::UniformData_UI { 
                 .rect           = resizer, 
                 .colorIndex     = isMouseOnResizer ? RED : BLACK3,
                 .textureIndex   = FULL_OPAQUE,
@@ -219,8 +219,8 @@ namespace mini::app::ui
         if (isMouseInside && isMousePressed) btnColorIdx = BLACK5;
         else btnColorIdx = isMouseInside ? BLACK4 : BLACK3;
 
-        renderGraph.ui_ubo.Append(
-            rendering::UniformData_Text { 
+        renderGraph.ui_ubo.AppendData(
+            rendering::UniformData_UI { 
                 .rect           = rect, 
                 .colorIndex     = btnColorIdx,
                 .textureIndex   = FULL_OPAQUE
@@ -272,8 +272,8 @@ namespace mini::app::ui
         }
 
         //? INPUT FIELD
-        renderGraph.ui_ubo.Append(
-            rendering::UniformData_Text { 
+        renderGraph.ui_ubo.AppendData(
+            rendering::UniformData_UI { 
                 .rect           = inputRect, 
                 .colorIndex     = isMouseOnInput ? BLACK4 : BLACK3,
                 .textureIndex   = FULL_OPAQUE,
@@ -339,7 +339,7 @@ namespace mini::app::ui
     {
         const auto totalInstCount = renderGraph.default_ubo.data.count;
         const auto drawCount      = renderGraph.default_ubo.groups.count;
-        const auto totalUICount   = renderGraph.ui_ubo.count;
+        const auto totalUICount   = renderGraph.ui_ubo.data.count;
 
         char ch_totalInstCount [] = "inst count:     ";
         char ch_drawCount []      = "draw calls:     ";

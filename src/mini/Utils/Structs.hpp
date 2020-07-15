@@ -8,7 +8,7 @@ namespace mini::utils
     using NormColor4f = math::Vec4f;
     using RGBAColor4u = math::Vec<u8, 4>;
 
-    struct Vertex
+    struct VertexDefault
     {
         math::Vec4f pos;
         math::Vec4f nor;
@@ -16,7 +16,7 @@ namespace mini::utils
         math::Vec4f tex;
     };
 
-    std::ostream& operator<<(std::ostream& os, const Vertex& vert)
+    std::ostream& operator<<(std::ostream& os, const VertexDefault& vert)
     {
         os << "vertex data\n" <<
         "pos " << vert.pos << '\n' <<

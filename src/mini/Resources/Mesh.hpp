@@ -19,7 +19,7 @@ namespace mini::resources
 
     struct MeshVertexView
     {
-        const utils::Vertex* begin;
+        const utils::VertexDefault* begin;
         u32 count;
     };
 

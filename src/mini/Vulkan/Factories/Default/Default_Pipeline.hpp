@@ -9,16 +9,16 @@
 #include "mini/Vulkan/Objects/PushConstants.hpp"
 #include "mini/Vulkan/Objects/Pipeline.hpp"
 #include "mini/Vulkan/Objects/RenderPass.hpp"
+#include "mini/Rendering/RenderGraph.hpp"
 
 namespace mini::vk
 {
-    template<class VBO_T, u32 VBO_N, class UBO_T, u32 UBO_N>
     void CreatePipeline_Default(
         Pipeline& pipeline,
         Shader& shader, 
         RenderPass& renderPass,
-        VertexBuffer_Static<VBO_T, VBO_N>& vbo,
-        UniformBuffer_Groups<UBO_T, UBO_N>& ubo)
+        VertexBuffer_Static<utils::VertexDefault, rendering::DEFAULT_VERTEX_MAX_COUNT>& vbo,
+        UniformBuffer_Groups<rendering::UniformData_Default, rendering::DEFAULT_UBO_MAX_COUNT>& ubo)
     {
         const VkPipelineVertexInputStateCreateInfo vertexInput {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

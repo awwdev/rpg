@@ -38,16 +38,16 @@ namespace mini::vk
         RenderPass renderPass;
         Shader shader;
         Pipeline pipeline;
-        UniformBuffer_Array<UniformData_Text, rendering::UI_UBO_MAX_COUNT> ubo_array;
+        UniformBuffer_Groups<UniformData_UI, UI_UBO_MAX_COUNT> ubo; //one group only
 
         void Create(hostRes::HostResources& hostRes, Commands& commands)
         {
             fontImages.Create(hostRes.fontTextures, commands.cmdPool);
 
-            CreateUniformBuffer_Text    (ubo_array);
-            CreateShader_Text           (shader, fontImages);
-            CreateRenderPass_Text       (renderPass);
-            CreatePipeline_Text         (pipeline, shader, renderPass, ubo_array);
+            CreateUniformBuffer_UI    (ubo);
+            CreateShader_UI           (shader, fontImages);
+            CreateRenderPass_UI       (renderPass);
+            CreatePipeline_UI         (pipeline, shader, renderPass, ubo);
         }
     };
 
@@ -56,16 +56,16 @@ namespace mini::vk
         RenderPass renderPass;
         Shader shader;
         Pipeline pipeline;
-        UniformBuffer_Groups<UniformData_Default, rendering::DEFAULT_UBO_MAX_COUNT> ubo_groups;
-        VertexBuffer_Static<Vertex, 1000> vbo; //hardcoded limit 
+        UniformBuffer_Groups<UniformData_Default, DEFAULT_UBO_MAX_COUNT> ubo;
+        VertexBuffer_Static<VertexDefault, DEFAULT_VERTEX_MAX_COUNT> vbo; //hardcoded limit 
 
         void Create(hostRes::HostResources& hostRes, Commands& commands)
         {
             CreateVertexBuffer_Default  (vbo, commands.cmdPool);
-            CreateUniformBuffer_Default (ubo_groups);
+            CreateUniformBuffer_Default (ubo);
             CreateShader_Default        (shader);
             CreateRenderPass_Default    (renderPass, commands.cmdPool);
-            CreatePipeline_Default      (pipeline, shader, renderPass, vbo, ubo_groups);
+            CreatePipeline_Default      (pipeline, shader, renderPass, vbo, ubo);
         }
     };
 
@@ -89,10 +89,10 @@ namespace mini::vk
             default.renderPass.~RenderPass();
             ui.renderPass.~RenderPass();
 
-            CreateRenderPass_Text       (ui.renderPass);
+            CreateRenderPass_UI       (ui.renderPass);
             CreateRenderPass_Default    (default.renderPass, cmdPool);
-            CreatePipeline_Default      (default.pipeline, default.shader, default.renderPass, default.vbo, default.ubo_groups);
-            CreatePipeline_Text         (ui.pipeline, ui.shader, ui.renderPass, ui.ubo_array);
+            CreatePipeline_Default      (default.pipeline, default.shader, default.renderPass, default.vbo, default.ubo);
+            CreatePipeline_UI         (ui.pipeline, ui.shader, ui.renderPass, ui.ubo);
         }
     };
 

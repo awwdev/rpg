@@ -36,7 +36,7 @@ namespace mini::ecs
                 ubos.Append(rotMat * transform.transform);
             }
 
-            renderGraph.default_ubo.Append(ubos);
+            renderGraph.default_ubo.AppendGroup(ubos);
         }
 
     }

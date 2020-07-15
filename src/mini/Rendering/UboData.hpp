@@ -7,7 +7,7 @@ namespace mini
 {
     namespace rendering 
     {
-        struct UniformData_Text
+        struct UniformData_UI
         {
             utils::Rect<float> rect;
             uint32_t colorIndex;
@@ -26,21 +26,26 @@ namespace mini
             math::Mat4f transform;
         };
 
-        template<class DATA_T, u32 N>
+        template<class DATA_T, u32 DATA_COUNT, u32 GROUP_COUNT = DATA_COUNT>
         struct UniformDataGroups
         {
              //1 group == 1 inst type (1 draw call)
              //1 group -> N instances
-            box::Array<DATA_T, N> data;  
-            box::Array<UniformGroup, N> groups; 
+            box::Array<DATA_T, DATA_COUNT> data;  
+            box::Array<UniformGroup, GROUP_COUNT> groups; 
 
-            void Append(const box::IArray<rendering::UniformData_Default>& arr)
+            void AppendGroup(const box::IArray<DATA_T>& arr)
             {
                 groups.Append(rendering::UniformGroup{
                     .begin = data.count, 
                     .count = arr.Count()
                 });
                 data.AppendArray(arr);
+            }
+
+            void AppendData(const DATA_T& element)
+            {
+                data.Append(element);
             }
 
             void Clear()

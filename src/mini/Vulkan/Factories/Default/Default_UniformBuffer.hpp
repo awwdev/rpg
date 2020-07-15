@@ -4,11 +4,13 @@
 #include "mini/Vulkan/Objects/UniformBuffer.hpp"
 #include "mini/Rendering/UboData.hpp"
 #include "mini/Utils/Structs.hpp"
+#include "mini/Rendering/RenderGraph.hpp"
 
 namespace mini::vk
 {
-    template<class T, u32 N>
-    void CreateUniformBuffer_Default(UniformBuffer_Groups<T, N>& ubo)
+    void CreateUniformBuffer_Default(
+        UniformBuffer_Groups<rendering::UniformData_Default, 
+        rendering::DEFAULT_UBO_MAX_COUNT>& ubo)
     {  
         ubo.Create();
 
