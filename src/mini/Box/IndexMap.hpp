@@ -22,10 +22,7 @@
 
 namespace mini::box
 {
-    //#define FOR_INDEX_MAP_BEGIN(map, i) for(auto i = 0; i < map.CAPACITY; ++i) { \
-    //if (map.Contains(i) == false) continue; 
-    //#define FOR_INDEX_MAP_END }
-
+    //TODO: priv used indices ? also u32 to index_t
     #define FOR_USED_INDEX_MAP_BEGIN(map, usedIndex) \
         for(u32 i = 0; i < map.usedIndices.Count(); ++i) { \
             const u32 usedIndex = map.usedIndices[i];
