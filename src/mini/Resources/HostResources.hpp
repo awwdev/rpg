@@ -10,21 +10,47 @@
 #include "mini/Resources/ModelLoader.hpp"
 #include "mini/Resources/Mesh.hpp"
 
-namespace mini::hostRes
+namespace mini::res
 {
-    struct HostResources
+    struct Textures
     {
-        TextureArray<96, 16, 16, 1> fontTextures; // added one texture that is all FF which can be used for blank quad () 
+        TextureArray<96, 16, 16, 1> monospaceFont; // added one texture that is all FF which can be used for blank quad () 
 
+        void Load()
+        {
+            monospaceFont.LoadArray("res/TextureArray"); //RLE would be nice
+        }
+    };
+
+    struct Models
+    {
+        box::IndexMap<res::MeshVertexView, res::MeshType::ENUM_END> meshvertexLookup {
+            { res::MeshType::PrimitiveCube,      { utils::MESH_CUBE, ARRAY_COUNT(utils::MESH_CUBE) } },
+            { res::MeshType::PrimitiveQuad,      { utils::MESH_QUAD, ARRAY_COUNT(utils::MESH_QUAD) } },
+            { res::MeshType::PrimitiveTriangle,  { utils::MESH_TRIANGLE, ARRAY_COUNT(utils::MESH_TRIANGLE) } },
+            //adding dynamic ones when they are loaded
+        }; 
+
+        //TODO: huge array of vertices and then views
         box::Array<utils::VertexDefault, 250> sword;
+
+        void Load()
+        {
+            LoadModel(sword, "res/Models/sword.txt");
+            meshvertexLookup.Set(res::MeshType::Sword, res::MeshVertexView{sword.dataPtr, sword.Count()});
+        }
+    };
+
+    struct HostResources
+    {   
+        Textures textures;
+        Models   models;
 
         HostResources() 
         {
-            //currently load is instant inside ctor
-            fontTextures.LoadArray("res/TextureArray"); //RLE would be nice
-
-            LoadModel(sword, "res/Models/sword.txt");
-            resources::MESH_VERTEX_MAP.Set(resources::MeshType::Sword, resources::MeshVertexView{sword.dataPtr, sword.Count()});
+            //! should all load before any GPU resources are used
+            textures.Load();
+            models.Load();
         }
     }; 
 

@@ -20,7 +20,7 @@ namespace mini::vk
         VkImageLayout   layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
         template<u32 N, u32 W, u32 H, u32 C> //assuming rgba only for now
-        void Create(const hostRes::TextureArray<N, W, H, C>& textureArray, VkCommandPool cmdPool)
+        void Create(const res::TextureArray<N, W, H, C>& textureArray, VkCommandPool cmdPool)
         {
             width  = textureArray.WIDTH;
             height = textureArray.HEIGHT;

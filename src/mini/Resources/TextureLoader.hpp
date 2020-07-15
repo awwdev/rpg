@@ -10,7 +10,7 @@
 #include <fstream>
 #include <filesystem>
 
-namespace mini::hostRes
+namespace mini::res
 {
     
     //TODO: own raw format RGBA

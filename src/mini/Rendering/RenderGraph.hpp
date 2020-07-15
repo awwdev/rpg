@@ -13,8 +13,7 @@ namespace mini::rendering
     //keep rendergraph intact until all rendering (since it will be referenced on draw too)
     struct RenderGraph
     {
-        //array data and groups (views) to manage drawing
-        UniformDataGroups<UniformData_UI, UI_UBO_MAX_COUNT, 1>  ui_ubo;
+        UniformDataGroups<UniformData_UI, UI_UBO_MAX_COUNT, 1>  ui_ubo; //1 group only
         UniformDataGroups<UniformData_Default, DEFAULT_UBO_MAX_COUNT> default_ubo;
 
         void Clear()

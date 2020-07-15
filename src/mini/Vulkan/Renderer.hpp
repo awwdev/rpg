@@ -24,7 +24,7 @@ namespace mini::vk
         Synchronization sync;
         uint32_t        currentFrame = 0;
         
-        VkRenderer(const vk::WindowHandle& wndHandle, hostRes::HostResources& hostResources)
+        VkRenderer(const vk::WindowHandle& wndHandle, res::HostResources& hostResources)
         {
             context.Create(wndHandle); //there is a global ptr to vk context
             sync.Create();

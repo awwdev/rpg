@@ -5,7 +5,7 @@
 #include <fstream>
 #include <filesystem>
 
-namespace mini::hostRes
+namespace mini::res
 {
     template<u32 N, u32 W, u32 H, u8 C = 4>
     struct TextureArray

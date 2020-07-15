@@ -86,7 +86,7 @@ namespace mini::ecs
 
     struct C_RenderData
     {
-        resources::MeshType meshType;
+        res::MeshType meshType;
     };
 
 }//ns

@@ -19,7 +19,7 @@ namespace mini::ecs
         rot += 1.f * (float)dt;
 
         //SORTING
-        box::Array<ecs::ID, 100> meshTypes [resources::MeshType::ENUM_END];
+        box::Array<ecs::ID, 100> meshTypes [res::MeshType::ENUM_END];
         FOR_ARRAY(arr_render.dense, i) {
             const auto idx = arr_render.dense[i].meshType;
             meshTypes[idx].Append(arr_render.entityLookup[i]);

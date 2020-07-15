@@ -35,7 +35,7 @@ namespace mini::app
                 0,-.2f,-2, 1,
             };
             ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID1, rot * pos);
-            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID1, resources::MeshType::Sword);
+            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID1, res::MeshType::Sword);
         }
 
         void Update(const double dt)

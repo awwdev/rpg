@@ -29,7 +29,7 @@ int WINAPI wWinMain(
         dbg::Console console{};
         wnd::Window  window { hInstance, 800, 600 };
         mem::GlobalAllocate();
-        hostRes::HostResources hostResources{}; //will load immediately for now
+        res::HostResources hostResources{}; //will load immediately for now
 
         auto ptrRenderer = mem::ClaimBlock<vk::VkRenderer>(
             vk::WindowHandle{window.hInstance, window.hWnd},

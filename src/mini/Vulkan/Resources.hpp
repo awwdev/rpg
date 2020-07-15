@@ -40,9 +40,9 @@ namespace mini::vk
         Pipeline pipeline;
         UniformBuffer_Groups<UniformData_UI, UI_UBO_MAX_COUNT> ubo; //one group only
 
-        void Create(hostRes::HostResources& hostRes, Commands& commands)
+        void Create(res::HostResources& hostRes, Commands& commands)
         {
-            fontImages.Create(hostRes.fontTextures, commands.cmdPool);
+            fontImages.Create(hostRes.textures.monospaceFont, commands.cmdPool);
 
             CreateUniformBuffer_UI    (ubo);
             CreateShader_UI           (shader, fontImages);
@@ -59,9 +59,9 @@ namespace mini::vk
         UniformBuffer_Groups<UniformData_Default, DEFAULT_UBO_MAX_COUNT> ubo;
         VertexBuffer_Static<VertexDefault, DEFAULT_VERTEX_MAX_COUNT> vbo; //hardcoded limit 
 
-        void Create(hostRes::HostResources& hostRes, Commands& commands)
+        void Create(res::HostResources& hostRes, Commands& commands)
         {
-            CreateVertexBuffer_Default  (vbo, commands.cmdPool);
+            CreateVertexBuffer_Default  (vbo, commands.cmdPool, hostRes);
             CreateUniformBuffer_Default (ubo);
             CreateShader_Default        (shader);
             CreateRenderPass_Default    (renderPass, commands.cmdPool);
@@ -76,7 +76,7 @@ namespace mini::vk
         UI_Resources ui;
         Default_Resources default;
 
-        void Create(hostRes::HostResources& hostRes, Commands& commands)
+        void Create(res::HostResources& hostRes, Commands& commands)
         {
             ui.Create(hostRes, commands);
             default.Create(hostRes, commands);
