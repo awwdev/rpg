@@ -55,13 +55,16 @@ namespace mini::rendering
             const auto rotViewY = math::RotationMatrixY(-rot[Vy]);
             const auto rotViewX = math::RotationMatrixX(+rot[Vx]);
 
-            static float r = 0;
-            r += 0.01f;
-            auto quat = math::QuatAngleAxis(r, math::Vec3f{0, 1, 0});
-            auto quatMat = math::ToMat4(quat);
+            const auto quat1 = math::QuatAngleAxis(+rot[Vx] * 150, math::Vec3f{0, 0, 1});
+            const auto quat2 = math::QuatAngleAxis(-rot[Vy] * 150, math::Vec3f{0, 1, 0});
+            auto quat  = quat1 * quat2;
+            math::NormalizeThis(quat);
+            const auto quatMat = math::ToMat4(quat);
             
-            //return rotViewY * rotViewX * posMat * projection;
-            return quatMat * posMat * projection;
+            //TODO: correct camera movement, camera needs to move correspoding to the look
+
+            return posMat * rotViewY * rotViewX * projection;
+            //return posMat * quatMat * projection;
         }
     };
 

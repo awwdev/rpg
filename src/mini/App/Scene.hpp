@@ -42,10 +42,10 @@ namespace mini::app
             {
                 const auto cubeID = ecs.AddEntity();
                 const math::Mat4f pos = math::Mat4f{
-                   .2, 0, 0, 0,
-                    0,.2, 0, 0,
-                    0, 0,.2, 0,
-                   -3, 0, 0, 1,
+                   .2f, 0, 0, 0,
+                    0,.2f, 0, 0,
+                    0, 0,.2f, 0,
+                   -2, 0, 0, 1,
                 };
                 ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID, pos);
                 ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID, res::MeshType::PrimitiveCube);
