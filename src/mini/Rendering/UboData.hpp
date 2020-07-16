@@ -43,6 +43,7 @@ namespace mini
                 data.AppendArray(arr);
             }
 
+            //used when there is one group only
             void AppendData(const DATA_T& element)
             {
                 data.Append(element);

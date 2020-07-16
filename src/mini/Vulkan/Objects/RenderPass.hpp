@@ -9,6 +9,27 @@
 
 namespace mini::vk
 {
+    inline VkRenderPassBeginInfo CreateRenderPassBeginInfo(
+        VkRenderPass  renderPass,
+        VkFramebuffer framebuffer,
+        const uint32_t clearValueCount = 0,
+        const VkClearValue*  clears = nullptr
+    )
+    {
+        return {
+            .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            .pNext          = nullptr,
+            .renderPass     = renderPass,
+            .framebuffer    = framebuffer,
+            .renderArea     = {
+                .offset     = VkOffset2D {0, 0},
+                .extent     = g_contextPtr->surfaceCapabilities.currentExtent
+            },
+            .clearValueCount= clearValueCount,
+            .pClearValues   = clears
+        };
+    }
+
     struct RenderPass
     {
         VkRenderPass renderPass;

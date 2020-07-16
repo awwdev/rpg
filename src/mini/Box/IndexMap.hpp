@@ -23,10 +23,10 @@
 namespace mini::box
 {
     //TODO: priv used indices ? also u32 to index_t
-    #define FOR_USED_INDEX_MAP_BEGIN(map, usedIndex) \
+    #define FOR_USED_INDICES_MAP_BEGIN(map, usedIndex) \
         for(u32 i = 0; i < map.usedIndices.Count(); ++i) { \
             const u32 usedIndex = map.usedIndices[i];
-    #define FOR_USED_INDEX_MAP_END }
+    #define FOR_USED_INDICES_MAP_END }
 
     template<class KEY, class VAL, typename = IsIntegralOrEnum<KEY>>
     struct IndexMapPair
@@ -71,7 +71,8 @@ namespace mini::box
 
         void Clear()
         { 
-            bitsetPtr->Clear(); usedIndicesPtr->Clear();
+            bitsetPtr->Clear(); 
+            usedIndicesPtr->Clear();
         }
 
         #undef KEY_T

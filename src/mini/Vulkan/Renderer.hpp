@@ -50,7 +50,6 @@ namespace mini::vk
             resources.common_pushConsts.projection = {
                 scene.camera.GetMat()
             };
-
             resources.common_pushConsts.wnd_w = wnd::window_w;
             resources.common_pushConsts.wnd_h = wnd::window_h;
 
@@ -70,64 +69,42 @@ namespace mini::vk
             auto beginInfo = vk::CreateCmdBeginInfo();
             VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
 
-            const VkRenderPassBeginInfo beginInfo_ui {
-                .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-                .pNext          = nullptr,
-                .renderPass     = resources.ui.renderPass.renderPass,
-                .framebuffer    = resources.ui.renderPass.framebuffers[cmdBufferIdx],
-                .renderArea     = {
-                    .offset     = VkOffset2D {0, 0},
-                    .extent     = g_contextPtr->surfaceCapabilities.currentExtent
-                },
-                .clearValueCount= 0,
-                .pClearValues   = nullptr
-            };
+            const auto beginInfo_ui = CreateRenderPassBeginInfo(
+                resources.ui.renderPass.renderPass,
+                resources.ui.renderPass.framebuffers[cmdBufferIdx]
+            );
 
             const VkClearValue clears_default [] { 
                 { .color = { 0.1f, 0.1f, 0.1f, 1.0f } },
-                { .depthStencil = { 0, 0 } }
+                { .depthStencil = { 0, 0 } } //reversed z
             };
-            const VkRenderPassBeginInfo beginInfo_default {
-                .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-                .pNext          = nullptr,
-                .renderPass     = resources.default.renderPass.renderPass,
-                .framebuffer    = resources.default.renderPass.framebuffers[cmdBufferIdx],
-                .renderArea     = {
-                    .offset     = VkOffset2D {0, 0},
-                    .extent     = g_contextPtr->surfaceCapabilities.currentExtent
-                },
-                .clearValueCount= ARRAY_COUNT(clears_default),
-                .pClearValues   = clears_default
-            };
-
-            //! does this work for both pipelines?? (see layout passed) 
-            vkCmdPushConstants(cmdBuffer, resources.ui.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
+            const auto beginInfo_default = CreateRenderPassBeginInfo(
+                resources.default.renderPass.renderPass,
+                resources.default.renderPass.framebuffers[cmdBufferIdx],
+                ARRAY_COUNT(clears_default),
+                clears_default
+            );
 
             //? DEFAULT
             VkDeviceSize offsets = 0;
+            vkCmdPushConstants      (cmdBuffer, resources.default.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
             vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.pipeline);
             vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.dstBuffer.buffer, &offsets);
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.layout, 0, 1, &resources.default.pipeline.sets[cmdBufferIdx], 0, nullptr); 
-            // ubo group idx == vbo group idx == instance
-            // 1 ubo group -> 1 inst type (one draw call)
-            // 1 ubo group -> N insts
-            // vbo needs no group bookkeeping since ubo groups are congruent
-            //TODO: we could also pull in the rendergraph so ubos dont need to reference it impicitly ... ?
-            const auto instTypeCount = res::MeshType::ENUM_END;
-
-            FOR_USED_INDEX_MAP_BEGIN(scene.renderGraph.default_ubo.groups, usedIndex)
+            FOR_USED_INDICES_MAP_BEGIN(scene.renderGraph.default_ubo.groups, usedIndex)
             {
                 const auto vertOff   = resources.default.vbo.vertexGroups[usedIndex].begin;
                 const auto vertCount = resources.default.vbo.vertexGroups[usedIndex].count;
-                const auto instOff   = resources.default.ubo.groups->Get(usedIndex).begin;
-                const auto instCount = resources.default.ubo.groups->Get(usedIndex).count;
+                const auto instOff   = scene.renderGraph.default_ubo.groups.Get(usedIndex).begin;
+                const auto instCount = scene.renderGraph.default_ubo.groups.Get(usedIndex).count;
                 vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
             }
-            FOR_USED_INDEX_MAP_END
+            FOR_USED_INDICES_MAP_END
             vkCmdEndRenderPass      (cmdBuffer);
            
             //? TEXT
+            vkCmdPushConstants      (cmdBuffer, resources.ui.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
             vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.pipeline);
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.layout, 0, 1, &resources.ui.pipeline.sets[cmdBufferIdx], 0, nullptr); 
