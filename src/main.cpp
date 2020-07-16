@@ -59,5 +59,4 @@ int WINAPI wWinMain(
 
 } //main end
 
-//TODO: Quaternion?
 //TODO: plane grid, terrain editing

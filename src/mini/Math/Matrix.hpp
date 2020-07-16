@@ -57,6 +57,8 @@ namespace mini::math
     using Vec2i = Vec<s32, 2>;
     using Vec3i = Vec<s32, 3>;
 
+    using Quatf = Vec<f32, 4>; //quaternion
+
     ///comparsion
 
     template<class T, u8 Y, u8 X>
@@ -151,6 +153,16 @@ namespace mini::math
         return out;
     }
 
+    Quatf operator*(const Quatf& a, const Quatf& b)
+    {
+        return {
+            a[Vw]*b[Vw] - a[Vx]*b[Vx] - a[Vy]*b[Vy] - a[Vz]*b[Vz],
+            a[Vw]*b[Vx] + a[Vx]*b[Vw] + a[Vy]*b[Vz] - a[Vz]*b[Vy],
+            a[Vw]*b[Vy] - a[Vx]*b[Vz] + a[Vy]*b[Vw] + a[Vz]*b[Vx],
+            a[Vw]*b[Vz] + a[Vx]*b[Vy] - a[Vy]*b[Vx] + a[Vz]*b[Vw], 
+        };
+    }
+
     template<class IDX, class S, u8 Y, u8 X>
     void operator*=(Mat<IDX, Y, X>& ref, const S scalar)
     {
@@ -205,6 +217,12 @@ namespace mini::math
     auto Normalize(const Vec<T, X>& vec)
     {
         const F mag = Magnitude(vec);
+        if (mag == 0 || std::isnan(mag))
+        {
+            WARN("mag is null or nan");
+            return {};
+        }
+            
 
         Vec<F, X> out;
         for (u8 x = 0; x < X; ++x) {
@@ -218,6 +236,10 @@ namespace mini::math
     void NormalizeThis(Vec<T, X>& ref)
     {
         const auto mag = Magnitude(ref);
+        if (mag == 0 || std::isnan(mag)) {
+            WARN("mag is null or nan");
+            return;
+        }
         for (u8 x = 0; x < X; ++x) {
             ref[0][x] /= mag;
         }
@@ -326,6 +348,76 @@ namespace mini::math
         };
     }
 
+    //quaternion
+
+    inline Quatf QuatAngleAxis(const float degree, const Vec3f& unitAxis)
+    {
+        const float radh = ((degree * 3.14f) / 180.f) * 0.5f;
+        const float s = std::sinf(radh);
+        return {
+            unitAxis[Vx] * s,
+            unitAxis[Vy] * s,
+            unitAxis[Vz] * s,
+            std::cosf(radh),
+        };
+    }
+
+    inline Vec3f operator*(const Vec3f& v, const Quatf& q)
+    {
+        const Vec3f u { q[Vx], q[Vy], q[Vz] };
+        const float s { q[Vw] };
+        return { u * 2.0f * Dot(u, v) + v * (s*s - Dot(u, u)) + Cross(u, v) * s * 2.0f };
+    }
+
+    inline Mat4f ToMat4(const Quatf& q)
+    {
+        const float y2 = 2*q[Vy]*q[Vy];
+        const float z2 = 2*q[Vz]*q[Vz];
+        const float x2 = 2*q[Vx]*q[Vx];
+                        
+        const float xw = 2*q[Vx]*q[Vw];
+        const float xy = 2*q[Vx]*q[Vy];
+        const float xz = 2*q[Vx]*q[Vz];
+        const float yw = 2*q[Vy]*q[Vw];
+        const float yz = 2*q[Vy]*q[Vz];
+        const float zw = 2*q[Vz]*q[Vw];
+
+        const float a =  1 - y2 - z2;
+        const float b = xy - zw;
+        const float c = xz + yw;
+        const float d = xy + zw;
+        const float e = 1 - x2 - z2;
+        const float f = yz - xw;
+        const float g = xz - yw;
+        const float h = yz + xw;
+        const float i = 1 - x2 - y2;
+
+        return {
+            a, b, c, 0, 
+            d, e, f, 0, 
+            g, h, i, 0, 
+            0, 0, 0, 1
+        };
+    }
+
+    /* inline mat4 lookAt(const vec3& from, const vec3& at)
+    {
+        const vec3 f = normalize(at - from);
+              vec3 u = normalize({ 0, 1, 0});
+        const vec3 s = normalize(cross(f, u));
+        u = cross(s, f);
+
+        const float Tx =-dot(s, from);
+        const float Ty =-dot(u, from);
+        const float Tz = dot(f, from);
+
+        return { 
+            s.x, u.x,-f.x, 0,
+            s.y, u.y,-f.y, 0, 
+            s.z, u.z,-f.z, 0,
+            Tx , Ty , Tz , 1,
+        };
+    } */
 
 
     ///stringify

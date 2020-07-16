@@ -8,8 +8,8 @@ namespace mini::rendering
 {
     struct Camera
     {
-        math::Vec3f pos;
-        math::Vec3f rot;
+        math::Vec3f pos { 0, 0, -5};
+        math::Vec3f rot {};
         float spd = 2;
 
         void Update(const double dt)
@@ -55,7 +55,13 @@ namespace mini::rendering
             const auto rotViewY = math::RotationMatrixY(-rot[Vy]);
             const auto rotViewX = math::RotationMatrixX(+rot[Vx]);
 
-            return rotViewY * rotViewX * posMat * projection;
+            static float r = 0;
+            r += 0.01f;
+            auto quat = math::QuatAngleAxis(r, math::Vec3f{0, 1, 0});
+            auto quatMat = math::ToMat4(quat);
+            
+            //return rotViewY * rotViewX * posMat * projection;
+            return quatMat * posMat * projection;
         }
     };
 
