@@ -8,27 +8,40 @@ namespace mini::rendering
 {
     struct Camera
     {
-        math::Vec3f pos { 0, 0, -5};
+        math::Vec3f pos { 0, 0, 5};
         math::Vec3f rot {};
+        math::Vec3f normMov {};
+        math::Quatf qRot {};
         float spd = 2;
 
         void Update(const double dt)
         {
+            normMov = {};
+
             if(wnd::asciiPressed == 'd'){
-                pos[Vx] -= (float)dt * spd;
+                normMov[Vx] -= 1;
             }
             if(wnd::asciiPressed == 'a'){
-                pos[Vx] += (float)dt * spd;
+                normMov[Vx] += 1;
             }
             if(wnd::asciiPressed == 'w'){
-                pos[Vz] += (float)dt * spd;
+                normMov[Vz] += 1;
             }
             if(wnd::asciiPressed == 's'){
-                pos[Vz] -= (float)dt * spd;
+                normMov[Vz] -= 1;
             }
+            NormalizeThis(normMov);
 
             rot[Vy] += wnd::mouse_dx * 0.001f;
             rot[Vx] += wnd::mouse_dy * 0.001f;
+
+            const auto qX = math::QuatAngleAxis(-rot[Vx] * 150, math::Vec3f{0, 0, 1});
+            const auto qY = math::QuatAngleAxis(-rot[Vy] * 150, math::Vec3f{0, 1, 0});
+            qRot = qX * qY;
+            math::NormalizeThis(qRot);
+
+            const auto mov = normMov * qRot;
+            pos += mov * spd * dt;
         }
 
         math::Mat4f GetMat() const
@@ -46,25 +59,21 @@ namespace mini::rendering
                 0, 0, f,-1,
                 0, 0, n, 0,
             };
-            const math::Mat4f posMat {
+
+            //mat solution
+            const math::Mat4f mPos {
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
                 pos[Vx], pos[Vy], pos[Vz], 1,
             };
-            const auto rotViewY = math::RotationMatrixY(-rot[Vy]);
-            const auto rotViewX = math::RotationMatrixX(+rot[Vx]);
+            const auto rotViewY = math::RotationMatrixY(+rot[Vy]);
+            const auto rotViewX = math::RotationMatrixX(-rot[Vx]);
+            //return posMat * rotViewY * rotViewX * projection;
 
-            const auto quat1 = math::QuatAngleAxis(+rot[Vx] * 150, math::Vec3f{0, 0, 1});
-            const auto quat2 = math::QuatAngleAxis(-rot[Vy] * 150, math::Vec3f{0, 1, 0});
-            auto quat  = quat1 * quat2;
-            math::NormalizeThis(quat);
-            const auto quatMat = math::ToMat4(quat);
-            
-            //TODO: correct camera movement, camera needs to move correspoding to the look
-
-            return posMat * rotViewY * rotViewX * projection;
-            //return posMat * quatMat * projection;
+            //quat solution
+            const auto mRot = math::ToMat4(qRot);
+            return mPos * mRot * projection;
         }
     };
 

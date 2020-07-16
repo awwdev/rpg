@@ -217,9 +217,7 @@ namespace mini::math
     auto Normalize(const Vec<T, X>& vec)
     {
         const F mag = Magnitude(vec);
-        if (mag == 0 || std::isnan(mag))
-        {
-            WARN("mag is null or nan");
+        if (mag == 0 || std::isnan(mag)) {
             return {};
         }
             
@@ -237,7 +235,6 @@ namespace mini::math
     {
         const auto mag = Magnitude(ref);
         if (mag == 0 || std::isnan(mag)) {
-            WARN("mag is null or nan");
             return;
         }
         for (u8 x = 0; x < X; ++x) {
