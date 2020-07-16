@@ -10,6 +10,7 @@ namespace mini::wnd
 {
     inline void PollEvents()
     {
+        mouse_dx = mouse_dy = 0;
         events.Clear();
         for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);) { //probably define a limit per frame
             TranslateMessage(&msg); //virtual to char?
@@ -30,13 +31,6 @@ namespace mini::wnd
         case WM_RBUTTONDOWN:    PRESSED (EventType::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
         case WM_LBUTTONUP:      RELEASED(EventType::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
         case WM_RBUTTONUP:      RELEASED(EventType::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
-        
-        case WM_MOUSEMOVE:      
-        {
-            mouse_x = GET_X_LPARAM(lParam); 
-            mouse_y = GET_Y_LPARAM(lParam);
-        }
-        break;             
 
         //?keyboard
 
@@ -102,6 +96,32 @@ namespace mini::wnd
             }
         }
         //!no break (just needed to force arrow on HT CLIENT)
+
+        //? RAW INPUT
+
+        //TODO: implement raw input winapi
+        //TODO: camera mouse movement
+        //TODO: we get 0 when hit enter / return  (some LOG)
+        case WM_INPUT:
+        {
+            //TODO: GetRawInputBuffer
+
+            UINT dwSize = 0;
+            
+            if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER)) == 0)
+            {
+                RAWINPUT raw {};
+                GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &raw, &dwSize, sizeof(RAWINPUTHEADER));
+
+                if (raw.header.dwType == RIM_TYPEMOUSE) 
+                {
+                    mouse_dx = (s32)raw.data.mouse.lLastX;
+                    mouse_dy = (s32)raw.data.mouse.lLastY;
+                }
+            }
+
+        }
+        break;
 
         //?default
 

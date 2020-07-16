@@ -1,13 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-
 #include "mini/Rendering/UboData.hpp"
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Buffer.hpp"
-
-#include "mini/Box/Array.hpp"
-
 
 namespace mini::vk
 {

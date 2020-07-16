@@ -11,8 +11,6 @@
 #include "mini/Box/String.hpp"
 #include "mini/Window/AppEvents.hpp"
 #include "mini/Utils/DeltaTime.hpp"
-#undef near
-#undef far
 
 namespace mini::vk
 {

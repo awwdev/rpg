@@ -8,25 +8,27 @@ namespace mini::rendering
 {
     struct Camera
     {
-        float x = 0;
-        float y = 0;
-        float z = 0;
+        math::Vec3f pos;
+        math::Vec3f rot;
         float spd = 2;
 
         void Update(const double dt)
         {
             if(wnd::asciiPressed == 'd'){
-                x -= (float)dt * spd;
+                pos[Vx] -= (float)dt * spd;
             }
             if(wnd::asciiPressed == 'a'){
-                x += (float)dt * spd;
+                pos[Vx] += (float)dt * spd;
             }
             if(wnd::asciiPressed == 'w'){
-                z += (float)dt * spd;
+                pos[Vz] += (float)dt * spd;
             }
             if(wnd::asciiPressed == 's'){
-                z -= (float)dt * spd;
+                pos[Vz] -= (float)dt * spd;
             }
+
+            rot[Vy] += wnd::mouse_dx * 0.001f;
+            rot[Vx] += wnd::mouse_dy * 0.001f;
         }
 
         math::Mat4f GetMat() const
@@ -44,14 +46,15 @@ namespace mini::rendering
                 0, 0, f,-1,
                 0, 0, n, 0,
             };
-             const math::Mat4f view {
+            const math::Mat4f view {
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
-                x, y, z, 1,
+                pos[Vx], pos[Vy], pos[Vz], 1,
             };
+            const auto rotView = math::RotationMatrixY(rot[Vy]);
 
-            return view * projection;
+            return rotView * projection;
         }
     };
 

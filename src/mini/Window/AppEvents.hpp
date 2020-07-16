@@ -46,6 +46,7 @@ namespace mini::wnd
     inline char asciiPressed = 0;
     inline u32 window_w = 0, window_h = 0;
     inline u32 mouse_x  = 0, mouse_y  = 0;
+    inline s32 mouse_dx = 0, mouse_dy = 0;
 
 
     inline Event* CheckEvent(const EventType type, const EventState state = EventState::None)
