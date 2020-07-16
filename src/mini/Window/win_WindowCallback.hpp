@@ -25,13 +25,6 @@ namespace mini::wnd
         #define PRESSED(t, ...)  events.Append(t, EventState::Pressed, __VA_ARGS__);  pressed.Set<t, true>();
         #define RELEASED(t, ...) events.Append(t, EventState::Released, __VA_ARGS__); pressed.Set<t, false>();
 
-        //?mouse
-
-        case WM_LBUTTONDOWN:    PRESSED (EventType::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
-        case WM_RBUTTONDOWN:    PRESSED (EventType::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
-        case WM_LBUTTONUP:      RELEASED(EventType::Mouse_Left,  GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
-        case WM_RBUTTONUP:      RELEASED(EventType::Mouse_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
-
         //?keyboard
 
         case WM_KEYDOWN:
@@ -93,21 +86,26 @@ namespace mini::wnd
             {
                 //TODO: more clean way like refresh previous declared cursor?
                 case HTCLIENT:  SetCursor(LoadCursor(NULL, IDC_ARROW)); break;
+                default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
             }
         }
-        //!no break (just needed to force arrow on HT CLIENT)
+        break;
 
         //? RAW INPUT
 
-        //TODO: implement raw input winapi
-        //TODO: camera mouse movement
-        //TODO: we get 0 when hit enter / return  (some LOG)
+        case WM_LBUTTONDOWN: PRESSED (EventType::Mouse_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        case WM_LBUTTONUP:   RELEASED(EventType::Mouse_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        case WM_MOUSEMOVE: 
+        {
+            mouse_x = GET_X_LPARAM(lParam);
+            mouse_y = GET_Y_LPARAM(lParam);
+        }
+
         case WM_INPUT:
         {
             //TODO: GetRawInputBuffer
 
             UINT dwSize = 0;
-            
             if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER)) == 0)
             {
                 RAWINPUT raw {};

@@ -46,15 +46,16 @@ namespace mini::rendering
                 0, 0, f,-1,
                 0, 0, n, 0,
             };
-            const math::Mat4f view {
+            const math::Mat4f posMat {
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
                 pos[Vx], pos[Vy], pos[Vz], 1,
             };
-            const auto rotView = math::RotationMatrixY(rot[Vy]);
+            const auto rotViewY = math::RotationMatrixY(-rot[Vy]);
+            const auto rotViewX = math::RotationMatrixX(+rot[Vx]);
 
-            return rotView * projection;
+            return rotViewY * rotViewX * posMat * projection;
         }
     };
 

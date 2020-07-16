@@ -59,6 +59,5 @@ int WINAPI wWinMain(
 
 } //main end
 
-//TODO: FPS style camera
 //TODO: Quaternion?
 //TODO: plane grid, terrain editing
