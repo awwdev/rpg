@@ -13,7 +13,7 @@ namespace mini
 
 namespace mini::math
 {
-    template<class T, u8 Y_T, u8 X_T, typename = IsArithmetic<T>> //enums? probably bad idea
+    template<class T, u8 Y_T, u8 X_T, bool IsQuat = false, typename = IsArithmetic<T>>
     struct Mat
     {
         static constexpr auto X = X_T;
@@ -57,7 +57,7 @@ namespace mini::math
     using Vec2i = Vec<s32, 2>;
     using Vec3i = Vec<s32, 3>;
 
-    using Quatf = Vec<f32, 4>; //quaternion
+    using Quatf = Mat<float, 1, 4, true>;
 
     ///comparsion
 
@@ -153,16 +153,6 @@ namespace mini::math
         return out;
     }
 
-    Quatf operator*(const Quatf& a, const Quatf& b)
-    {
-        return {
-            a[Vw]*b[Vw] - a[Vx]*b[Vx] - a[Vy]*b[Vy] - a[Vz]*b[Vz],
-            a[Vw]*b[Vx] + a[Vx]*b[Vw] + a[Vy]*b[Vz] - a[Vz]*b[Vy],
-            a[Vw]*b[Vy] - a[Vx]*b[Vz] + a[Vy]*b[Vw] + a[Vz]*b[Vx],
-            a[Vw]*b[Vz] + a[Vx]*b[Vy] - a[Vy]*b[Vx] + a[Vz]*b[Vw], 
-        };
-    }
-
     template<class IDX, class S, u8 Y, u8 X>
     void operator*=(Mat<IDX, Y, X>& ref, const S scalar)
     {
@@ -198,8 +188,8 @@ namespace mini::math
 
     ///vector magnitude
 
-    template<class T, u8 X, typename F = f32> ND
-    F Magnitude(const Vec<T, X>& vec)
+    template<class T, u8 X, bool IsQuat, typename F = f32> ND
+    F Magnitude(const Mat<T, 1, X, IsQuat>& vec)
     {
         T mag = 0;
         for (u8 x = 0; x < X; ++x) {
@@ -230,8 +220,8 @@ namespace mini::math
         return out;
     }
 
-    template<class T, u8 X>
-    void NormalizeThis(Vec<T, X>& ref)
+    template<class T, u8 X, bool IsQuat>
+    void NormalizeThis(Mat<T, 1, X, IsQuat>& ref)
     {
         const auto mag = Magnitude(ref);
         if (mag == 0 || std::isnan(mag)) {
@@ -309,7 +299,7 @@ namespace mini::math
 
     //? ROTATION 
 
-    Mat4f RotationMatrixY(const f32 rad)
+    inline Mat4f RotationMatrixY(const f32 rad)
     {
         const auto c = std::cosf(rad);
         const auto s = std::sinf(rad);
@@ -321,7 +311,7 @@ namespace mini::math
         };
     }
 
-    Mat4f RotationMatrixZ(const f32 rad)
+    inline Mat4f RotationMatrixZ(const f32 rad)
     {
         const auto c = std::cosf(rad);
         const auto s = std::sinf(rad);
@@ -333,7 +323,7 @@ namespace mini::math
         };
     }
 
-    Mat4f RotationMatrixX(const f32 rad)
+    inline Mat4f RotationMatrixX(const f32 rad)
     {
         const auto c = std::cosf(rad);
         const auto s = std::sinf(rad);
@@ -345,7 +335,7 @@ namespace mini::math
         };
     }
 
-    //quaternion
+    //Quaternion
 
     inline Quatf QuatAngleAxis(const float degree, const Vec3f& unitAxis)
     {
@@ -364,6 +354,16 @@ namespace mini::math
         const Vec3f u { q[Vx], q[Vy], q[Vz] };
         const float s { q[Vw] };
         return { u * 2.0f * Dot(u, v) + v * (s*s - Dot(u, u)) + Cross(u, v) * s * 2.0f };
+    }
+
+    Quatf operator*(const Quatf& q1, const Quatf& q2)
+    {
+        return {
+             q1[Vx] * q2[Vw] + q1[Vy] * q2[Vz] - q1[Vz] * q2[Vy] + q1[Vw] * q2[Vx],
+            -q1[Vx] * q2[Vz] + q1[Vy] * q2[Vw] + q1[Vz] * q2[Vx] + q1[Vw] * q2[Vy],
+             q1[Vx] * q2[Vy] - q1[Vy] * q2[Vx] + q1[Vz] * q2[Vw] + q1[Vw] * q2[Vz],
+            -q1[Vx] * q2[Vx] - q1[Vy] * q2[Vy] - q1[Vz] * q2[Vz] + q1[Vw] * q2[Vw],
+        };
     }
 
     inline Mat4f ToMat4(const Quatf& q)
@@ -409,9 +409,9 @@ namespace mini::math
         const float Tz = dot(f, from);
 
         return { 
-            s.x, u.x,-f.x, 0,
-            s.y, u.y,-f.y, 0, 
-            s.z, u.z,-f.z, 0,
+            s[Vx], u[Vx],-f[Vx], 0,
+            s[Vy], u[Vy],-f[Vy], 0, 
+            s[Vz], u[Vz],-f[Vz], 0,
             Tx , Ty , Tz , 1,
         };
     } */

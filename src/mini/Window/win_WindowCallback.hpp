@@ -33,7 +33,7 @@ namespace mini::wnd
                 case VK_ESCAPE: PRESSED(EventType::Keyboard_Escape); break;
             }
         break;
-        case WM_CHAR:
+        case WM_CHAR: //!issue: single key only at a time
             PRESSED(EventType::Keyboard_ASCII);
             events.Last().ascii = (char)wParam;
             asciiPressed = (char)wParam;

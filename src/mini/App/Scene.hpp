@@ -33,7 +33,7 @@ namespace mini::app
                     1, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, 1, 0,
-                    0,-.2f,0, 1,
+                    0,-.2f,-1, 1,
                 };
                 ecs.arrays.AddComponent<ecs::ComponentType::Transform>(swordID, rot * pos);
                 ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(swordID, res::MeshType::Sword);
