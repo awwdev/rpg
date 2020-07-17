@@ -27,29 +27,36 @@ namespace mini::app
             //ecs.prefabs.Parse("res/prefabs.txt"); 
 
             {
-                const auto swordID = ecs.AddEntity();
-                const auto rot = math::RotationMatrixX(-1.5708f);
+                constexpr float S = 1; //sword is one 1x1 blender cube
+                constexpr float X = 0; 
+                constexpr float Y = 0; //vulkan: negative will go upwards
+                constexpr float Z = 0;
+                const auto id = ecs.AddEntity();
                 const math::Mat4f pos = math::Mat4f{
-                    1, 0, 0, 0,
-                    0, 1, 0, 0,
-                    0, 0, 1, 0,
-                    0,-.2f,-1, 1,
+                    S, 0, 0, 0,
+                    0, S, 0, 0,
+                    0, 0, S, 0,
+                    X, Y, Z, 1,
                 };
-                ecs.arrays.AddComponent<ecs::ComponentType::Transform>(swordID, rot * pos);
-                ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(swordID, res::MeshType::Sword);
+                ecs.arrays.AddComponent<ecs::ComponentType::Transform> (id, pos);
+                ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(id, res::MeshType::Sword);
             }
 
-            {
-                const auto cubeID = ecs.AddEntity();
+            /*{
+                constexpr float S =  0.5; //ths cube is -1 to 1 and half matches sword
+                constexpr float X =  0; 
+                constexpr float Y =  0; //vulkan: negative will go upwards
+                constexpr float Z =  0;
+                const auto id = ecs.AddEntity();
                 const math::Mat4f pos = math::Mat4f{
-                   .2f, 0, 0, 0,
-                    0,.2f, 0, 0,
-                    0, 0,.2f, 0,
-                   -2, 0, 0, 1,
+                    S, 0, 0, 0,
+                    0, S, 0, 0,
+                    0, 0, S, 0,
+                    X, Y, Z, 1,
                 };
-                ecs.arrays.AddComponent<ecs::ComponentType::Transform>(cubeID, pos);
-                ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID, res::MeshType::PrimitiveCube);
-            }
+                ecs.arrays.AddComponent<ecs::ComponentType::Transform> (id, pos);
+                ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(id, res::MeshType::PrimitiveCube);
+            }*/
             
         }
 

@@ -270,7 +270,7 @@ namespace mini::math
         for (u8 x = 0; x < X2; ++x) {
 
             for (u8 c = 0; c < X1; ++c)
-                out[y][x] += m1[y][c] * m2[c][x];
+                out[y][x] += m2[y][c] * m1[c][x];
             
         }}
 
