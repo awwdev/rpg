@@ -70,9 +70,9 @@ namespace mini::rendering
             const auto mRot = math::ToMat4(qRot);
             const auto mView = mRot * mPos;
 
-            //const auto matLook = math::LookAt();
+            const auto matLook = math::LookAt(math::Vec3f{1, 0, 0}, math::Vec3f{0, 0, 0});
 
-            return mProj * mView;
+            return mProj * matLook;
         }
     };
 

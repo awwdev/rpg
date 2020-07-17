@@ -16,6 +16,8 @@ namespace mini::math
     template<class T, u8 Y_T, u8 X_T, bool IsQuat = false, typename = IsArithmetic<T>>
     struct Mat
     {
+        using CELL_T = T;
+
         static constexpr auto X = X_T;
         static constexpr auto Y = Y_T;
 
@@ -92,10 +94,10 @@ namespace mini::math
 
     ///addition
 
-    template<class IDX, class VAL, u8 Y, u8 X> ND
-    auto operator+(const Mat<IDX, Y, X>& m1, const Mat<VAL, Y, X>& m2) 
+    template<class T1, class T2, u8 Y, u8 X> ND
+    auto operator+(const Mat<T1, Y, X>& m1, const Mat<T2, Y, X>& m2) 
     {
-        Mat<std::common_type_t<IDX, VAL>, Y, X> out;
+        Mat<std::common_type_t<T1, T2>, Y, X> out;
 
         for (u8 y = 0; y < Y; ++y) {
         for (u8 x = 0; x < X; ++x) {
@@ -105,8 +107,8 @@ namespace mini::math
         return out;
     }
 
-    template<class IDX, class VAL, u8 Y, u8 X> 
-    void operator+=(Mat<IDX, Y, X>& ref, const Mat<VAL, Y, X>& other)
+    template<class T1, class T2, u8 Y, u8 X> 
+    void operator+=(Mat<T1, Y, X>& ref, const Mat<T2, Y, X>& other)
     {
         for (u8 y = 0; y < Y; ++y) {
         for (u8 x = 0; x < X; ++x) {
@@ -116,10 +118,10 @@ namespace mini::math
 
     ///subtraction
 
-    template<class IDX, class VAL, u8 Y, u8 X> ND
-    auto operator-(const Mat<IDX, Y, X>& m1, const Mat<VAL, Y, X>& m2)
+    template<class T1, class T2, u8 Y, u8 X> ND
+    auto operator-(const Mat<T1, Y, X>& m1, const Mat<T2, Y, X>& m2)
     {
-        Mat<std::common_type_t<IDX, VAL>, Y, X> out;
+        Mat<std::common_type_t<T1, T2>, Y, X> out;
 
         for (u8 y = 0; y < Y; ++y) {
         for (u8 x = 0; x < X; ++x) {
@@ -129,8 +131,14 @@ namespace mini::math
         return out;
     }
 
-    template<class IDX, class VAL, u8 Y, u8 X> 
-    void operator-=(Mat<IDX, Y, X>& ref, const Mat<VAL, Y, X>& other)
+    template<class T, class VAL, u8 Y, u8 X> ND
+    auto operator-(const Mat<T, Y, X>& m)
+    {
+        return m * (Mat<T, Y, X>::CELL_T)-1;
+    }
+
+    template<class T1, class T2, u8 Y, u8 X> 
+    void operator-=(Mat<T1, Y, X>& ref, const Mat<T2, Y, X>& other)
     {
         for (u8 y = 0; y < Y; ++y) {
         for (u8 x = 0; x < X; ++x) {
@@ -208,10 +216,9 @@ namespace mini::math
     {
         const F mag = Magnitude(vec);
         if (mag == 0 || std::isnan(mag)) {
-            return {};
+            return Vec<F, X>{};
         }
             
-
         Vec<F, X> out;
         for (u8 x = 0; x < X; ++x) {
             out[0][x] = vec[0][x] / mag;
@@ -234,10 +241,10 @@ namespace mini::math
 
     ///vector dot product
 
-    template<class IDX, class VAL, u8 X> ND
-    auto Dot(const Vec<IDX, X>& v1, const Vec<VAL, X>& v2)
+    template<class T1, class T2, u8 X> ND
+    auto Dot(const Vec<T1, X>& v1, const Vec<T2, X>& v2)
     {
-        std::common_type_t<IDX, VAL> out = 0; //scalar
+        std::common_type_t<T1, T2> out = 0; //scalar
 
         for (u8 x = 0; x < X; ++x) {
             out += v1[0][x] * v2[0][x];
@@ -248,10 +255,10 @@ namespace mini::math
 
     ///vector cross product
 
-    template<class IDX, class VAL> ND
-    auto Cross(const Vec<IDX, 3>& v1, const Vec<VAL, 3>& v2) //not commutative
+    template<class T1, class T2> ND
+    auto Cross(const Vec<T1, 3>& v1, const Vec<T2, 3>& v2) //not commutative
     {
-        return Vec<std::common_type_t<IDX, VAL>, 3>
+        return Vec<std::common_type_t<T1, T2>, 3>
         {
             v1[0][1] * v2[0][2] - v1[0][2] * v2[0][1],
             v1[0][2] * v2[0][0] - v1[0][0] * v2[0][2],
@@ -261,10 +268,10 @@ namespace mini::math
 
     ///multiplication 
 
-    template<class IDX, class VAL, u8 Y1, u8 X1, u8 X2> ND
-    auto operator*(const Mat<IDX, Y1, X1>& m1, const Mat<VAL, X1, X2>& m2) //requirement: columns1 == rows2
+    template<class T1, class T2, u8 Y1, u8 X1, u8 X2> ND
+    auto operator*(const Mat<T1, Y1, X1>& m1, const Mat<T2, X1, X2>& m2) //requirement: columns1 == rows2
     {
-        Mat<std::common_type_t<IDX, VAL>, Y1, X2> out {};
+        Mat<std::common_type_t<T1, T2>, Y1, X2> out {};
 
         for (u8 y = 0; y < Y1; ++y) {
         for (u8 x = 0; x < X2; ++x) {
@@ -277,8 +284,8 @@ namespace mini::math
         return out;
     }
 
-    template<class IDX, class VAL, u8 Y1, u8 X1, u8 X2>
-    void operator*=(Mat<IDX, Y1, X1>& ref, const Mat<VAL, X1, X2>& other)
+    template<class T1, class T2, u8 Y1, u8 X1, u8 X2>
+    void operator*=(Mat<T1, Y1, X1>& ref, const Mat<T2, X1, X2>& other)
     {
         ref = ref * other;
     }
@@ -397,24 +404,19 @@ namespace mini::math
         };
     }
 
-    /* inline mat4 lookAt(const vec3& from, const vec3& at)
+    inline Mat4f LookAt(const Vec3f& from, const Vec3f& at)
     {
-        const vec3 f = normalize(at - from);
-              vec3 u = normalize({ 0, 1, 0});
-        const vec3 s = normalize(cross(f, u));
-        u = cross(s, f);
-
-        const float Tx =-dot(s, from);
-        const float Ty =-dot(u, from);
-        const float Tz = dot(f, from);
+        const Vec3f f = Normalize(from - at);
+        const Vec3f r = Cross(Vec3f{ 0, 1, 0 }, f);
+        const Vec3f u = Cross(f, r);
 
         return { 
-            s[Vx], u[Vx],-f[Vx], 0,
-            s[Vy], u[Vy],-f[Vy], 0, 
-            s[Vz], u[Vz],-f[Vz], 0,
-            Tx , Ty , Tz , 1,
+            r[Vx], r[Vy], r[Vz], 0,
+            u[Vx], u[Vy], u[Vz], 0,
+            f[Vx], f[Vy], f[Vz], 0,
+            from[Vx], from[Vy], from[Vz], 1
         };
-    } */
+    }
 
 
     ///stringify

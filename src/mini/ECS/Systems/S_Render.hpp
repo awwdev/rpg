@@ -30,8 +30,8 @@ namespace mini::ecs
             FOR_ARRAY(meshTypes[i], j){
                 const auto eID  = meshTypes[i][j];
                 auto& transform = arr_transform.Get(eID);
-                auto rotMat = math::RotationMatrixZ(rot);//!test
-                group.Append(transform.transform);
+                auto rotMat = math::RotationMatrixY(rot);
+                group.Append(transform.transform * rotMat);
             }
 
             if (!group.Empty()) 

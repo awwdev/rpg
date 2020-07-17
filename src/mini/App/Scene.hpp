@@ -42,9 +42,9 @@ namespace mini::app
                 ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(id, res::MeshType::Sword);
             }
 
-            /*{
+            {
                 constexpr float S =  0.5; //ths cube is -1 to 1 and half matches sword
-                constexpr float X =  0; 
+                constexpr float X =  -1; 
                 constexpr float Y =  0; //vulkan: negative will go upwards
                 constexpr float Z =  0;
                 const auto id = ecs.AddEntity();
@@ -56,7 +56,7 @@ namespace mini::app
                 };
                 ecs.arrays.AddComponent<ecs::ComponentType::Transform> (id, pos);
                 ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(id, res::MeshType::PrimitiveCube);
-            }*/
+            }
             
         }
 
