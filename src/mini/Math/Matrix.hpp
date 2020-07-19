@@ -131,10 +131,15 @@ namespace mini::math
         return out;
     }
 
-    template<class T, class VAL, u8 Y, u8 X> ND
-    auto operator-(const Mat<T, Y, X>& m)
+    //TODO: template
+    Vec3f operator-(const Vec3f& m)
     {
-        return m * (Mat<T, Y, X>::CELL_T)-1;
+        //TODO: make m * -1 (scalar mult)
+        Vec3f out;
+        for (u8 x = 0; x < 3; ++x) {
+            out[0][x] = m[0][x] * -1;
+        }
+        return out;
     }
 
     template<class T1, class T2, u8 Y, u8 X> 
@@ -147,7 +152,7 @@ namespace mini::math
     }
 
     ///scalar multiplication
-
+/*
     template<class T, class S, u8 Y, u8 X> ND
     auto operator*(const Mat<T, Y, X>& m, const S scalar)
     {
@@ -158,6 +163,16 @@ namespace mini::math
             out[y][x] = m[y][x] * scalar;
         }}
 
+        return out;
+    }
+*/
+    //TODO: template
+    Vec3f operator*(const Vec3f& m, const float scalar)
+    {
+        Vec3f out;
+        for (u8 x = 0; x < 3; ++x) {
+            out[0][x] = m[0][x] * scalar;
+        }
         return out;
     }
 
@@ -417,26 +432,6 @@ namespace mini::math
             from[Vx], from[Vy], from[Vz], 1
         };
     }
-
-
-    ///stringify
-
-    //todo: string class (cannot copy char* due to local dtor and char[] not possible)
-
-    //template<class T, u8 Y, u8 X>
-    //mini::String ToString(const Mat<T, Y, X>& m)
-    //{
-    //    const char* out = "Hello Matrix";
-    //    for (u8 y = 0; y < Y; ++y)
-    //    {
-    //        for (u8 x = 0; x < X; ++x)
-    //        {
-    //            //os << mat[y][x] << '|';
-    //        }
-    //        //out << '\n';
-    //    }
-    //    return out;
-    //}
 
 }
 

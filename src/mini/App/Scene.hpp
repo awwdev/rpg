@@ -29,7 +29,7 @@ namespace mini::app
             {
                 constexpr float S = 1; //sword is one 1x1 blender cube
                 constexpr float X = 0; 
-                constexpr float Y = 0; //vulkan: negative will go upwards
+                constexpr float Y = 0;
                 constexpr float Z = 0;
                 const auto id = ecs.AddEntity();
                 const math::Mat4f pos = math::Mat4f{
@@ -44,8 +44,8 @@ namespace mini::app
 
             {
                 constexpr float S =  0.5; //ths cube is -1 to 1 and half matches sword
-                constexpr float X =  -1; 
-                constexpr float Y =  0; //vulkan: negative will go upwards
+                constexpr float X = -1; 
+                constexpr float Y =  0;
                 constexpr float Z =  0;
                 const auto id = ecs.AddEntity();
                 const math::Mat4f pos = math::Mat4f{
@@ -71,6 +71,8 @@ namespace mini::app
             ui::DrawFPS(renderGraph); 
             ui::DrawConsole(renderGraph);
             ui::DrawRenderStats(renderGraph);
+            ui::DrawCamera(renderGraph, camera);
+
         }
 
     };

@@ -12,6 +12,7 @@
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Utils/Algorithms.hpp"
+#include "mini/Rendering/Camera.hpp"
 
 #include <charconv>
 #undef DrawText
@@ -76,7 +77,7 @@ namespace mini::app::ui
                 UniformData_UI { 
                     .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
-                    .textureIndex = str[i] - ASCII_OFFSET
+                    .textureIndex = str[i] != '\0' ? str[i] - ASCII_OFFSET : ' ' - ASCII_OFFSET
                 }
             );
         }
@@ -353,6 +354,15 @@ namespace mini::app::ui
         DrawText(renderGraph, 8, 20+8+12, ch_drawCount, 16);
         DrawText(renderGraph, 8, 20+8+24, ch_totalUICount, 16);
 
+    }
+
+    inline void DrawCamera(RenderGraph& renderGraph, const Camera& camera)
+    {
+        char ch_camera [100] = "camera:";
+        std::to_chars(ch_camera +  8, ch_camera + 20, camera.pos[Vx]);
+        std::to_chars(ch_camera + 22, ch_camera + 34, camera.pos[Vy]);
+        std::to_chars(ch_camera + 36, ch_camera + 48, camera.pos[Vz]);
+        DrawText(renderGraph, 8, 20+8+36, ch_camera, 100);
     }
 
 }//ns
