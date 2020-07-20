@@ -10,7 +10,7 @@
 namespace mini::res
 {
     //specific blender export!
-    inline void LoadModel(box::IArray<utils::VertexDefault>& vertices, chars_t path)
+    inline void LoadModel(box::IArray<utils::Common_Vertex>& vertices, chars_t path)
     {
         std::ifstream file(path, std::ios::binary);
         if (!file) ERR("cannot open file");

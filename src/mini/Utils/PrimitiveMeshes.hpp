@@ -12,7 +12,7 @@ namespace mini::utils
     constexpr math::Vec4f WHITE = { 1, 1, 1, 1 };
     
 
-    const utils::VertexDefault MESH_CUBE [] {
+    const utils::Common_Vertex MESH_CUBE [] {
         { { -1, 1, 1, 1 }, {}, GREEN, {} },
         { {  1, 1, 1, 1 }, {}, GREEN, {} },
         { {  1, 1,-1, 1 }, {}, GREEN, {} },
@@ -51,7 +51,7 @@ namespace mini::utils
         { { -1, 1,-1, 1 }, {}, GREEN, {} },
     };
 
-    const utils::VertexDefault MESH_QUAD [] {
+    const utils::Common_Vertex MESH_QUAD [] {
         { { -1.0f, -1.0f, 0, 1 }, {}, { GREEN }, {} },
         { {  1.0f, -1.0f, 0, 1 }, {}, { GREEN }, {} },
         { {  1.0f,  1.0f, 0, 1 }, {}, { GREEN }, {} },
@@ -60,7 +60,7 @@ namespace mini::utils
         { { -1.0f,  1.0f, 0, 1 }, {}, { RED }, {} },
     };
 
-    const utils::VertexDefault MESH_TRIANGLE [] = {
+    const utils::Common_Vertex MESH_TRIANGLE [] = {
         { {  0.0f, -1.0f, 0, 1 }, {}, { .8f, .2f, .2f, 1 }, {} },
         { {  1.0f,  1.0f, 0, 1 }, {}, { .8f, .2f, .2f, 1 }, {} },
         { { -1.0f,  1.0f, 0, 1 }, {}, { .8f, .2f, .2f, 1 }, {} },

@@ -17,13 +17,13 @@ namespace mini::ecs
         rot += 1.f * (float)dt;
 
         //SORTING (for mesh type)
-        box::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypes [res::MeshType::ENUM_END];
+        box::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypes [(u32)res::MeshType::ENUM_END];
         FOR_ARRAY(arr_render.dense, i) {
-            const auto idx = arr_render.dense[i].meshType;
+            const auto idx = (u32)arr_render.dense[i].meshType;
             meshTypes[idx].Append(arr_render.entityLookup[i]);
         }   
 
-        box::Array<rendering::UniformData_Default, rendering::DEFAULT_UBO_MAX_COUNT> group;
+        box::Array<rendering::Default_UniformData, rendering::DEFAULT_UBO_MAX_COUNT> group;
         FOR_CARRAY(meshTypes, i){ // meshType == group
 
             group.Clear();

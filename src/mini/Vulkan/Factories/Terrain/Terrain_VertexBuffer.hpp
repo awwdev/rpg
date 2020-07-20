@@ -10,20 +10,22 @@
 
 namespace mini::vk
 {
-    inline void Default_CreateVertexBuffer(
-        VertexBuffer<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT>& vbo, 
+    //TODO: grid mesh (dynamic create, same for all quadrants)
+    //TODO: 
+    //TODO:
+    //TODO:
+    //TODO:
+
+
+    inline void Terrain_CreateVertexBuffer(
+        VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT>& vbo, 
         VkCommandPool cmdPool,
         res::HostResources& res)
     {  
         vbo.Create();
 
-        //order matters
-        for(u32 i = 0; i < (u32)res::MeshType::ENUM_END; ++i){
-            Assert(res.models.vertexLookup.Contains(i), "mesh type not existent");
-            const auto& mesh = res.models.vertexLookup.Get(i);
-            vbo.AppendGroup(mesh.begin, mesh.count);
-        }
-        vbo.Bake(cmdPool);
+        //adding grids
+        res::CreateMeshGrid<1000>(100, 100, 10, 10;
 
         vbo.bindings.Append(VkVertexInputBindingDescription{
             .binding    = 0,

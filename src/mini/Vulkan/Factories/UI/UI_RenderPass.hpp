@@ -7,7 +7,7 @@
 
 namespace mini::vk
 {
-    inline void CreateRenderPass_UI(RenderPass& rp)
+    inline void UI_CreateRenderPass(RenderPass& rp)
     {  
         const VkAttachmentDescription colorDesc {
             .flags          = 0 ,

@@ -6,7 +6,7 @@
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Debug/Assert.hpp"
-#include "mini/Box/POD_Array.hpp"
+#include "mini/Box/SimpleArray.hpp"
 
 #define VK_USE_PLATFORM_WIN32_KHR
 #include "../third/include/vulkan.h"

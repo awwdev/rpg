@@ -59,5 +59,5 @@ int WINAPI wWinMain(
 
 } //main end
 
-//TODO: if UI or, outside wnd, dont move camera
+
 //TODO: plane grid, terrain editing

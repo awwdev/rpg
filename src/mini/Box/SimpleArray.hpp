@@ -13,9 +13,10 @@ namespace mini::box
     #define FOR_SIMPLE_ARRAY(arr, i) for(u32 i = 0; i < arr.count; ++i)
 
     template<class T, u32 N>
-    struct POD_Array
+    struct VkArray
     {
-        POD_Array(const u32 pCount = 0) : count { pCount } { ; }
+        static constexpr auto CAPACITY = N;
+        VkArray(const u32 pCount = 0) : count { pCount } { ; }
 
         u32 count;
         T   data[N];
@@ -36,6 +37,15 @@ namespace mini::box
             data[id] = data[count - 1];
             --count;
         }
+    };
+
+    template<class T, u32 N>
+    struct SimpleArray
+    {
+        static constexpr auto CAPACITY = N;
+        using TYPE = T;
+
+        T data [N];
     };
 
 }//ns

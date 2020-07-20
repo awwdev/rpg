@@ -9,7 +9,7 @@
 
 namespace mini::vk
 {
-    inline void CreateShader_UI(Shader& shader, ImageArray& imageArray)
+    inline void UI_CreateShader(Shader& shader, ImageArray& imageArray)
     {  
         shader.CreateShaderModule("res/Shaders/spv/ui.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         shader.CreateShaderModule("res/Shaders/spv/ui.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);

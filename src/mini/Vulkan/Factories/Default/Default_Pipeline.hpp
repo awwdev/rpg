@@ -13,12 +13,12 @@
 
 namespace mini::vk
 {
-    void CreatePipeline_Default(
+    void Default_CreatePipeline(
         Pipeline& pipeline,
         Shader& shader, 
         RenderPass& renderPass,
-        VertexBuffer_Static<utils::VertexDefault, rendering::DEFAULT_VERTEX_MAX_COUNT>& vbo,
-        UniformBuffer_Groups<rendering::UniformData_Default, rendering::DEFAULT_UBO_MAX_COUNT>& ubo)
+        VertexBuffer<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT>& vbo,
+        UniformBuffer_Groups<rendering::Default_UniformData, rendering::DEFAULT_UBO_MAX_COUNT>& ubo)
     {
         const VkPipelineVertexInputStateCreateInfo vertexInput {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

@@ -7,7 +7,7 @@ namespace mini
 {
     namespace rendering 
     {
-        struct UniformData_UI
+        struct UI_UniformData
         {
             utils::Rect<float> rect;
             uint32_t colorIndex;
@@ -21,7 +21,7 @@ namespace mini
             u32 begin, count;
         };
 
-        struct UniformData_Default
+        struct Default_UniformData
         {
             math::Mat4f transform;
         };

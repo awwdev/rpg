@@ -12,14 +12,17 @@
 #include "mini/Rendering/RenderGraph.hpp"
 #include "mini/Rendering/Camera.hpp"
 #include "mini/Rendering/UI.hpp"
+#include "mini/Resources/Terrain.hpp"
 
 namespace mini::app
 {
     struct Scene
     {
+        //TODO: not every Scene will have those members
         ecs::ECS ecs {};
         rendering::RenderGraph renderGraph;
         rendering::Camera camera;
+        res::Terrain terrain;
 
         Scene()
         {

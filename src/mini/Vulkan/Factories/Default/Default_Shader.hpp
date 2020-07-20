@@ -9,7 +9,7 @@
 
 namespace mini::vk
 {
-    inline void CreateShader_Default(Shader& shader)
+    inline void Default_CreateShader(Shader& shader)
     {  
         shader.CreateShaderModule("res/Shaders/spv/default.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         shader.CreateShaderModule("res/Shaders/spv/default.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);

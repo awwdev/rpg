@@ -34,7 +34,7 @@ namespace mini::res
         }; 
 
         //model data separated
-        box::Array<utils::VertexDefault, rendering::DEFAULT_VERTEX_MAX_COUNT> vertices;
+        box::Array<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT> vertices;
 
         void Load()
         {

@@ -4,6 +4,7 @@
 
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Utils/Structs.hpp"
+#include "mini/Debug/Assert.hpp"
 
 namespace mini::vk
 {
@@ -44,6 +45,7 @@ namespace mini::vk
 
         void Store(const void* const data, const size_t size, const size_t offset = 0)
         {
+            Assert(data != nullptr, "data is nullptr"); //UB on memcpy
             std::memcpy((char*)memPtr + offset, data, size);
         }
 

@@ -13,8 +13,9 @@ namespace mini::vk
         u32 begin, count;
     };
 
+    //bakable
     template<class T, u32 N>
-    struct VertexBuffer_Static
+    struct VertexBuffer
     {
         using VERTEX_TYPE = T;
         static constexpr u32 MAX_VERTEX_COUNT = N;
@@ -46,7 +47,8 @@ namespace mini::vk
             );
         }
 
-        void Transfer(VkCommandPool cmdPool)
+        //move to device buffer (no dynamic edit anymore)
+        void Bake(VkCommandPool cmdPool)
         {
             const VkCommandBufferAllocateInfo allocInfo {
                 .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -106,7 +108,7 @@ namespace mini::vk
     };
 
     template<class T, u32 N>
-    auto CreatePipelineVertexInputInfo(VertexBuffer_Static<T, N>& vb) -> VkPipelineVertexInputStateCreateInfo
+    auto CreatePipelineVertexInputInfo(VertexBuffer<T, N>& vb) -> VkPipelineVertexInputStateCreateInfo
     {
         return {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

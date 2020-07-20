@@ -57,7 +57,7 @@ namespace mini::app::ui
 
         for(u32 i = 0; i < STRLEN; ++i) {
             renderGraph.ui_ubo.AppendData(
-                UniformData_UI { 
+                UI_UniformData { 
                     .rect         = { str_x + LETTER_SPACE * i, str_y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
                     .textureIndex = str[i] - ASCII_OFFSET
@@ -74,7 +74,7 @@ namespace mini::app::ui
     {
         for(u32 i = 0; i < len; ++i) {
             renderGraph.ui_ubo.AppendData(
-                UniformData_UI { 
+                UI_UniformData { 
                     .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
                     .colorIndex   = col,
                     .textureIndex = str[i] != '\0' ? str[i] - ASCII_OFFSET : ' ' - ASCII_OFFSET
@@ -86,7 +86,7 @@ namespace mini::app::ui
     inline void DrawFPS(RenderGraph& renderGraph, const utils::Rect<float>& rect = { 0, 0, 48, 20 })
     {
         renderGraph.ui_ubo.AppendData(
-            rendering::UniformData_UI { 
+            rendering::UI_UniformData { 
                 .rect           = rect,
                 .colorIndex     = BLACK1, 
                 .textureIndex   = FULL_OPAQUE
@@ -163,7 +163,7 @@ namespace mini::app::ui
 
         //? WINDOW
         renderGraph.ui_ubo.AppendData(
-            rendering::UniformData_UI { 
+            rendering::UI_UniformData { 
                 .rect           = wnd.rect,
                 .colorIndex     = BLACK2,
                 .textureIndex   = FULL_OPAQUE,
@@ -171,7 +171,7 @@ namespace mini::app::ui
         );
         //? TITLE BAR
         renderGraph.ui_ubo.AppendData(
-            rendering::UniformData_UI { 
+            rendering::UI_UniformData { 
                 .rect           = bar,
                 .colorIndex     = BLACK1,
                 .textureIndex   = FULL_OPAQUE,
@@ -179,7 +179,7 @@ namespace mini::app::ui
         );
         //? RESIZER
         renderGraph.ui_ubo.AppendData(
-            rendering::UniformData_UI { 
+            rendering::UI_UniformData { 
                 .rect           = resizer, 
                 .colorIndex     = isMouseOnResizer ? RED : BLACK3,
                 .textureIndex   = FULL_OPAQUE,
@@ -221,7 +221,7 @@ namespace mini::app::ui
         else btnColorIdx = isMouseInside ? BLACK4 : BLACK3;
 
         renderGraph.ui_ubo.AppendData(
-            rendering::UniformData_UI { 
+            rendering::UI_UniformData { 
                 .rect           = rect, 
                 .colorIndex     = btnColorIdx,
                 .textureIndex   = FULL_OPAQUE
@@ -274,7 +274,7 @@ namespace mini::app::ui
 
         //? INPUT FIELD
         renderGraph.ui_ubo.AppendData(
-            rendering::UniformData_UI { 
+            rendering::UI_UniformData { 
                 .rect           = inputRect, 
                 .colorIndex     = isMouseOnInput ? BLACK4 : BLACK3,
                 .textureIndex   = FULL_OPAQUE,

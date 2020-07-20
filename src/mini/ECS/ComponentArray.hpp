@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/Box/POD_Array.hpp"
+#include "mini/Box/SimpleArray.hpp"
 #include "mini/Box/IndexMap.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Math/Matrix.hpp"

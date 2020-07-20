@@ -7,7 +7,7 @@
 
 namespace mini::vk
 {
-    inline void CreateRenderPass_Default(RenderPass& rp, VkCommandPool cmdPool)
+    inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
     {  
         rp.sampleCount = VK_SAMPLE_COUNT_4_BIT;
 

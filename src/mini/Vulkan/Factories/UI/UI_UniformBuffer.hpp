@@ -7,8 +7,8 @@
 
 namespace mini::vk
 {
-    void CreateUniformBuffer_UI(
-        UniformBuffer_Groups<rendering::UniformData_UI, rendering::UI_UBO_MAX_COUNT>& ub)
+    void UI_CreateUniformBuffer(
+        UniformBuffer_Groups<rendering::UI_UniformData, rendering::UI_UBO_MAX_COUNT>& ub)
     {
         ub.Create();
 
