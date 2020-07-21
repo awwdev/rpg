@@ -56,6 +56,11 @@ namespace mini::vk
 
             resources.default.ubo.Clear();
             resources.default.ubo.Store(scene.renderGraph.default_ubo);
+
+            //TODO: (selectively update terrain data)
+            resources.terrain.vbo.Clear();
+            decltype(scene.renderGraph.terrain)::CREF terrain = scene.renderGraph.terrain;
+            resources.terrain.vbo.AppendGroup(terrain);
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)

@@ -107,6 +107,7 @@ namespace mini::vk
         void Clear()
         {
             count = 0;
+            vertexGroups.Clear();
         }        
     };
 

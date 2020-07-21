@@ -5,7 +5,6 @@
 #include "mini/Utils/Structs.hpp"
 #include "mini/Utils/PrimitiveMeshes.hpp"
 #include "mini/Resources/Mesh.hpp"
-#include "mini/Utils/PrimitiveMeshes.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/Debug/Assert.hpp"
 
@@ -25,12 +24,9 @@ namespace mini::vk
     {  
         vbo.Create();
 
-        //adding grids
-        //TODO: move this into terrain or something
-        const auto verts = res::CreateMeshGrid<10, 10>(100, 100);
-        decltype(verts)::CREF arr = verts;
-        vbo.AppendGroup(arr);
-
+        //const auto verts = res::CreateMeshGrid<10, 10>(100, 100);
+        //decltype(verts)::CREF arr = verts;
+        //vbo.AppendGroup(arr);
 
         vbo.bindings.Append(VkVertexInputBindingDescription{
             .binding    = 0,
