@@ -20,6 +20,9 @@
 #include "mini/Vulkan/Factories/Default/Default_UniformBuffer.hpp"
 
 #include "mini/Vulkan/Factories/Terrain/Terrain_VertexBuffer.hpp"
+#include "mini/Vulkan/Factories/Terrain/Terrain_Pipeline.hpp"
+#include "mini/Vulkan/Factories/Terrain/Terrain_RenderPass.hpp"
+#include "mini/Vulkan/Factories/Terrain/Terrain_Shader.hpp"
 
 #include "mini/Vulkan/Objects/ImageArray.hpp"
 #include "mini/Vulkan/Objects/VertexBuffer.hpp"
@@ -73,11 +76,17 @@ namespace mini::vk
 
     struct Terrain_Resources
     {
+        RenderPass renderPass;
+        Shader shader;
+        Pipeline pipeline;
         VertexBuffer<Common_Vertex, TERRAIN_VERTEX_MAX_COUNT> vbo;
 
         void Create(res::HostResources& hostRes, Commands& commands)
         {
-            Terrain_CreateVertexBuffer(vbo, commands.cmdPool, hostRes);
+            Terrain_CreateVertexBuffer  (vbo, commands.cmdPool, hostRes);
+            Terrain_CreateShader        (shader);
+            Terrain_CreateRenderPass    (renderPass, commands.cmdPool);
+            Terrain_CreatePipeline      (pipeline, shader, renderPass, vbo);
         }
     };
 
@@ -102,11 +111,15 @@ namespace mini::vk
             ui.renderPass.~RenderPass();
             default.pipeline.~Pipeline();
             default.renderPass.~RenderPass();
+            terrain.pipeline.~Pipeline();
+            terrain.renderPass.~RenderPass();
             
+            Default_CreateRenderPass  (default.renderPass, cmdPool);
+            Default_CreatePipeline    (default.pipeline, default.shader, default.renderPass, default.vbo, default.ubo);
             UI_CreateRenderPass       (ui.renderPass);
-            Default_CreateRenderPass    (default.renderPass, cmdPool);
-            Default_CreatePipeline      (default.pipeline, default.shader, default.renderPass, default.vbo, default.ubo);
             UI_CreatePipeline         (ui.pipeline, ui.shader, ui.renderPass, ui.ubo);
+            Terrain_CreateRenderPass  (terrain.renderPass, cmdPool);
+            Terrain_CreatePipeline    (terrain.pipeline, terrain.shader, terrain.renderPass, terrain.vbo);
         }
     };
 
