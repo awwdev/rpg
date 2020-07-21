@@ -56,10 +56,12 @@ namespace mini::wnd
             SetCursor(LoadCursor(NULL, IDC_ARROW));
 
             //make mouse delta 0 at the beginning
-            POINT point;
-            GetCursorPos(&point);
-            mouse_screen_x = point.x;
-            mouse_screen_y = point.y;
+            RECT wndRect;
+            GetWindowRect(hWnd, &wndRect);
+            const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
+            const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
+            SetCursorPos(cx, cy);
+            mouse_dx = mouse_dy = 0;
 
             //raw input 
             {

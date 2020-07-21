@@ -10,6 +10,7 @@ namespace mini::wnd
         Mouse_Right,
 
         Keyboard_Escape,
+        Keyboard_F1,
         Keyboard_ASCII,
 
         PRESSABLE_END,
@@ -46,8 +47,8 @@ namespace mini::wnd
     inline char asciiPressed = 0;
     inline u32 window_w = 0, window_h = 0;
     inline u32 mouse_client_x = 0, mouse_client_y = 0;
-    inline u32 mouse_screen_x = 0, mouse_screen_y = 0;
     inline s32 mouse_dx = 0, mouse_dy = 0;
+    inline bool ui_mode = false;
 
 
     inline Event* CheckEvent(const EventType type, const EventState state = EventState::None)

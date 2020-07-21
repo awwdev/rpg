@@ -40,7 +40,7 @@ int WINAPI wWinMain(
 
         while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
         {
-            wnd::PollEvents();
+            wnd::PollEvents(window.hWnd);
             dt::UpdateFPS();
 
             if (wnd::window_h != 0 && wnd::window_w != 0)

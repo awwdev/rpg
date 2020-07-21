@@ -31,7 +31,7 @@ namespace mini::ecs
                 const auto eID  = meshTypes[i][j];
                 auto& transform = arr_transform.Get(eID);
                 auto rotMat = math::RotationMatrixY(rot);
-                group.Append(transform.transform * rotMat);
+                group.Append(transform.transform);// * rotMat);
             }
 
             if (!group.Empty()) 

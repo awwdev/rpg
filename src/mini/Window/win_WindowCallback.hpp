@@ -8,7 +8,7 @@
 
 namespace mini::wnd
 {
-    inline void PollEvents()
+    inline void PollEvents(HWND hWnd)
     {
         //mouse_dx = mouse_dy = 0;
         events.Clear();
@@ -18,12 +18,20 @@ namespace mini::wnd
         }
 
         //outside the window mouse movement
-        POINT point;
-        GetCursorPos(&point);
-        mouse_dx = point.x - mouse_screen_x;
-        mouse_dy = point.y - mouse_screen_y;
-        mouse_screen_x = point.x;
-        mouse_screen_y = point.y;
+        if (ui_mode == false)
+        {
+            RECT wndRect;
+            GetWindowRect(hWnd, &wndRect);
+            const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
+            const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
+
+            POINT point;
+            GetCursorPos(&point);
+            mouse_dx = point.x - (cx);
+            mouse_dy = point.y - (cy);
+
+            SetCursorPos(cx, cy);
+        }
     }
     
     LRESULT __stdcall WndProc1(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -39,6 +47,19 @@ namespace mini::wnd
             switch (wParam) 
             {
                 case VK_ESCAPE: PRESSED(EventType::Keyboard_Escape); break;
+                case VK_F1:    
+                {
+                    PRESSED(EventType::Keyboard_F1); 
+                    ui_mode = !ui_mode; //TODO: move into UI I guess
+                    if (!ui_mode) {
+                        RECT wndRect;
+                        GetWindowRect(hWnd, &wndRect);
+                        const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
+                        const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
+                        SetCursorPos(cx, cy);
+                    }
+                } 
+                break;
             }
         break;
         case WM_CHAR: //!issue: single key only at a time
@@ -51,6 +72,7 @@ namespace mini::wnd
             switch (wParam) 
             {
                 case VK_ESCAPE: RELEASED(EventType::Keyboard_Escape); break;
+                case VK_F1:     RELEASED(EventType::Keyboard_F1); break;
                 default:
                 {
                     RELEASED(EventType::Keyboard_ASCII);
@@ -99,8 +121,16 @@ namespace mini::wnd
         }
         break;
 
-        case WM_LBUTTONDOWN: PRESSED (EventType::Mouse_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
-        case WM_LBUTTONUP:   RELEASED(EventType::Mouse_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
+        case WM_LBUTTONDOWN: 
+        {
+            PRESSED (EventType::Mouse_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); 
+        }
+        break;
+        case WM_LBUTTONUP:  
+        {
+            RELEASED(EventType::Mouse_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+        }
+        break;
 
         case WM_MOUSEMOVE:
         {
@@ -144,4 +174,4 @@ namespace mini::wnd
         return 0;    
     }
 
-}//ns.
+}//ns

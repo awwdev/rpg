@@ -34,8 +34,10 @@ namespace mini::rendering
             }
             NormalizeThis(movNorm);
 
-            rotTarget[Vy] += wnd::mouse_dx * mouseSpd;
-            rotTarget[Vx] += wnd::mouse_dy * mouseSpd;
+            if (wnd::ui_mode == false) {
+                rotTarget[Vy] += wnd::mouse_dx * mouseSpd;
+                rotTarget[Vx] += wnd::mouse_dy * mouseSpd;
+            }
 
             const auto qX = math::QuatAngleAxis(+rotTarget[Vx] * dirSpd, math::Vec3f{1, 0, 0});
             const auto qY = math::QuatAngleAxis(-rotTarget[Vy] * dirSpd, math::Vec3f{0, 1, 0});
@@ -43,7 +45,10 @@ namespace mini::rendering
             math::NormalizeThis(qRot);
 
             const auto movDir = movNorm * qRot;
-            pos += movDir * movSpd * (float)dt;
+
+            if (wnd::ui_mode == false) {
+                pos += movDir * movSpd * (float)dt;
+            }
         }
 
         math::Mat4f GetMat() const

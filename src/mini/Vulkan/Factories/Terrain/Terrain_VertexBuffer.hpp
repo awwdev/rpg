@@ -26,6 +26,7 @@ namespace mini::vk
         vbo.Create();
 
         //adding grids
+        //TODO: move this into terrain or something
         const auto verts = res::CreateMeshGrid<10, 10>(100, 100);
         decltype(verts)::CREF arr = verts;
         vbo.AppendGroup(arr);
