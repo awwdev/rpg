@@ -21,8 +21,9 @@
 
 #include "mini/Vulkan/Factories/Terrain/Terrain_VertexBuffer.hpp"
 #include "mini/Vulkan/Factories/Terrain/Terrain_Pipeline.hpp"
+#include "mini/Vulkan/Factories/Terrain/Terrain_PipelineWire.hpp"
 #include "mini/Vulkan/Factories/Terrain/Terrain_RenderPass.hpp"
-#include "mini/Vulkan/Factories/Terrain/Terrain_Shader.hpp"
+#include "mini/Vulkan/Factories/Terrain/Terrain_Shader.hpp" //includes wire
 
 #include "mini/Vulkan/Objects/ImageArray.hpp"
 #include "mini/Vulkan/Objects/VertexBuffer.hpp"
@@ -78,15 +79,19 @@ namespace mini::vk
     {
         RenderPass renderPass;
         Shader shader;
+        Shader shaderWire;
         Pipeline pipeline;
+        Pipeline pipelineWire;
         VertexBuffer<Common_Vertex, TERRAIN_VERTEX_MAX_COUNT> vbo;
 
         void Create(res::HostResources& hostRes, Commands& commands)
         {
             Terrain_CreateVertexBuffer  (vbo, commands.cmdPool, hostRes);
             Terrain_CreateShader        (shader);
+            Terrain_CreateShaderWire    (shaderWire);
             Terrain_CreateRenderPass    (renderPass, commands.cmdPool);
             Terrain_CreatePipeline      (pipeline, shader, renderPass, vbo);
+            Terrain_CreatePipelineWire  (pipelineWire, shaderWire, renderPass, vbo);
         }
     };
 
@@ -112,6 +117,7 @@ namespace mini::vk
             default.pipeline.~Pipeline();
             default.renderPass.~RenderPass();
             terrain.pipeline.~Pipeline();
+            terrain.pipelineWire.~Pipeline();
             terrain.renderPass.~RenderPass();
             
             Default_CreateRenderPass  (default.renderPass, cmdPool);
@@ -120,6 +126,7 @@ namespace mini::vk
             UI_CreatePipeline         (ui.pipeline, ui.shader, ui.renderPass, ui.ubo);
             Terrain_CreateRenderPass  (terrain.renderPass, cmdPool);
             Terrain_CreatePipeline    (terrain.pipeline, terrain.shader, terrain.renderPass, terrain.vbo);
+            Terrain_CreatePipeline    (terrain.pipelineWire, terrain.shaderWire, terrain.renderPass, terrain.vbo);
         }
     };
 

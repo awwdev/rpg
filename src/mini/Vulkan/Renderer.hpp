@@ -93,8 +93,8 @@ namespace mini::vk
             vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.pipeline);
             vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
-            //vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.pipeline);
-            //vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
+            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipelineWire.pipeline);
+            vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
 
             //! DEFAULT
             vkCmdPushConstants      (cmdBuffer, resources.default.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);

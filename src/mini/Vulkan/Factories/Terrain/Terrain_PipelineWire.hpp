@@ -13,7 +13,7 @@
 
 namespace mini::vk
 {
-    void Terrain_CreatePipeline(
+    void Terrain_CreatePipelineWire(
         Pipeline& pipeline,
         Shader& shader, 
         RenderPass& renderPass,
@@ -71,7 +71,7 @@ namespace mini::vk
             .flags                   = 0,
             .depthClampEnable        = VK_FALSE,
             .rasterizerDiscardEnable = VK_FALSE,
-            .polygonMode             = VK_POLYGON_MODE_FILL,
+            .polygonMode             = VK_POLYGON_MODE_LINE,
             .cullMode                = VK_CULL_MODE_NONE, //VK_CULL_MODE_BACK_BIT,
             .frontFace               = VK_FRONT_FACE_CLOCKWISE,
             .depthBiasEnable         = VK_FALSE,
