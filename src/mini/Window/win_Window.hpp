@@ -42,8 +42,8 @@ namespace mini::wnd
                 className,
                 wndName,
                 WS_OVERLAPPEDWINDOW,
-                CW_USEDEFAULT,
-                CW_USEDEFAULT,
+                300,
+                300,
                 static_cast<int>(width),
                 static_cast<int>(height),
                 NULL,
@@ -55,6 +55,12 @@ namespace mini::wnd
             ShowWindow(hWnd, SW_SHOWDEFAULT);
             SetCursor(LoadCursor(NULL, IDC_ARROW));
 
+            //make mouse delta 0 at the beginning
+            POINT point;
+            GetCursorPos(&point);
+            mouse_screen_x = point.x;
+            mouse_screen_y = point.y;
+
             //raw input 
             {
                 tagRAWINPUTDEVICE devices [] = 
@@ -62,7 +68,7 @@ namespace mini::wnd
                     {
                         .usUsagePage    = HID_USAGE_PAGE_GENERIC,
                         .usUsage        = HID_USAGE_GENERIC_MOUSE,
-                        .dwFlags        = 0,
+                        .dwFlags        = 0, //RIDEV_INPUTSINK,RIDEV_NOLEGACY
                         .hwndTarget     = hWnd,
                     },
                     //{

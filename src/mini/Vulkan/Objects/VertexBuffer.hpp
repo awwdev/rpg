@@ -21,8 +21,9 @@ namespace mini::vk
         static constexpr u32 MAX_VERTEX_COUNT = N;
         static constexpr u32 TOTAL_SIZE = N * sizeof(T);
 
-        Buffer srcBuffer; //host
-        Buffer dstBuffer; //device local
+        Buffer  cpuBuffer; //host visible
+        Buffer  gpuBuffer; //device local
+        Buffer* activeBuffer = nullptr;
 
         box::Array<VertexGroup, 100> vertexGroups;
         u32 count = 0;
@@ -34,22 +35,24 @@ namespace mini::vk
        
         void Create()
         {
-            srcBuffer.Create(
+            cpuBuffer.Create(
                 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                 TOTAL_SIZE,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
             );
-            srcBuffer.Map();
-            dstBuffer.Create(
+            cpuBuffer.Map();
+            activeBuffer = &cpuBuffer;
+        }
+
+        void Bake(VkCommandPool cmdPool)
+        {
+            gpuBuffer.Create(
                 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                 TOTAL_SIZE,
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
             );
-        }
+            activeBuffer = &gpuBuffer;
 
-        //move to device buffer (no dynamic edit anymore)
-        void Bake(VkCommandPool cmdPool)
-        {
             const VkCommandBufferAllocateInfo allocInfo {
                 .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
                 .pNext              = nullptr,
@@ -71,7 +74,7 @@ namespace mini::vk
                 .dstOffset = 0,
                 .size = CurrentSize()
             };
-            vkCmdCopyBuffer(commandBuffer, srcBuffer.buffer, dstBuffer.buffer, 1, &copyRegion);
+            vkCmdCopyBuffer(commandBuffer, cpuBuffer.buffer, gpuBuffer.buffer, 1, &copyRegion);
 
             VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
@@ -88,7 +91,7 @@ namespace mini::vk
 
         void AppendGroup(const T* const vertices, const u32 pCount)
         {
-            srcBuffer.Store(vertices, pCount * sizeof(T), CurrentSize());
+            cpuBuffer.Store(vertices, pCount * sizeof(T), CurrentSize());
             vertexGroups.Append(count, pCount);
             count += pCount;
         }
@@ -96,7 +99,7 @@ namespace mini::vk
         template<u32 COUNT>
         void AppendGroup(const T(&arr)[COUNT])
         {
-            srcBuffer.Store(arr, COUNT * sizeof(T), CurrentSize());
+            cpuBuffer.Store(arr, COUNT * sizeof(T), CurrentSize());
             vertexGroups.Append(count, COUNT);
             count += COUNT;
         }

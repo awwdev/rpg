@@ -9,12 +9,13 @@ namespace mini::rendering
     struct Camera
     {
         math::Vec3f pos { 0, 0, -5 };
-        math::Vec3f rot {};
+        math::Vec3f rotTarget  {}; 
         math::Vec3f movNorm {};
         math::Quatf qRot {};
 
-        float movSpd = 2;
-        float dirSpd = 150;
+        float movSpd   = 2;
+        float dirSpd   = 150;
+        float mouseSpd = 0.001f;
 
         void Update(const double dt)
         {
@@ -33,11 +34,11 @@ namespace mini::rendering
             }
             NormalizeThis(movNorm);
 
-            rot[Vy] += wnd::mouse_dx * 0.001f;
-            rot[Vx] += wnd::mouse_dy * 0.001f;
+            rotTarget[Vy] += wnd::mouse_dx * mouseSpd;
+            rotTarget[Vx] += wnd::mouse_dy * mouseSpd;
 
-            const auto qX = math::QuatAngleAxis(+rot[Vx] * dirSpd, math::Vec3f{1, 0, 0});
-            const auto qY = math::QuatAngleAxis(-rot[Vy] * dirSpd, math::Vec3f{0, 1, 0});
+            const auto qX = math::QuatAngleAxis(+rotTarget[Vx] * dirSpd, math::Vec3f{1, 0, 0});
+            const auto qY = math::QuatAngleAxis(-rotTarget[Vy] * dirSpd, math::Vec3f{0, 1, 0});
             qRot = qY * qX;
             math::NormalizeThis(qRot);
 

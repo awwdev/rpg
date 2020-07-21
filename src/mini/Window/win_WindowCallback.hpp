@@ -10,12 +10,20 @@ namespace mini::wnd
 {
     inline void PollEvents()
     {
-        mouse_dx = mouse_dy = 0;
+        //mouse_dx = mouse_dy = 0;
         events.Clear();
         for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);) { //probably define a limit per frame
             TranslateMessage(&msg); //virtual to char?
             DispatchMessage(&msg);
         }
+
+        //outside the window mouse movement
+        POINT point;
+        GetCursorPos(&point);
+        mouse_dx = point.x - mouse_screen_x;
+        mouse_dy = point.y - mouse_screen_y;
+        mouse_screen_x = point.x;
+        mouse_screen_y = point.y;
     }
     
     LRESULT __stdcall WndProc1(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -91,19 +99,20 @@ namespace mini::wnd
         }
         break;
 
-        //? RAW INPUT
-
         case WM_LBUTTONDOWN: PRESSED (EventType::Mouse_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
         case WM_LBUTTONUP:   RELEASED(EventType::Mouse_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
-        case WM_MOUSEMOVE: 
+
+        case WM_MOUSEMOVE:
         {
-            mouse_x = GET_X_LPARAM(lParam);
-            mouse_y = GET_Y_LPARAM(lParam);
+            mouse_client_x = GET_X_LPARAM(lParam);
+            mouse_client_y = GET_Y_LPARAM(lParam);
         }
+        break;
 
         case WM_INPUT:
         {
             //TODO: GetRawInputBuffer
+            //TODO: multipe keys
 
             UINT dwSize = 0;
             if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER)) == 0)
@@ -113,8 +122,11 @@ namespace mini::wnd
 
                 if (raw.header.dwType == RIM_TYPEMOUSE) 
                 {
-                    mouse_dx = (s32)raw.data.mouse.lLastX;
-                    mouse_dy = (s32)raw.data.mouse.lLastY;
+                    
+                    //mouse_dx = (s32)raw.data.mouse.lLastX;
+                    //mouse_dy = (s32)raw.data.mouse.lLastY;
+                    //LOG(mouse_dx, mouse_dy);
+                    //SetCursorPos(300 + window_w/2.f, 300 + window_h/2.f);
                 }
             }
 

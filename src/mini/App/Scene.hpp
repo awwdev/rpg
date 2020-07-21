@@ -45,6 +45,7 @@ namespace mini::app
                 ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(id, res::MeshType::Sword);
             }
 
+            /*
             {
                 constexpr float S =  0.5; //ths cube is -1 to 1 and half matches sword
                 constexpr float X = -1; 
@@ -60,6 +61,7 @@ namespace mini::app
                 ecs.arrays.AddComponent<ecs::ComponentType::Transform> (id, pos);
                 ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(id, res::MeshType::PrimitiveCube);
             }
+            */
             
         }
 

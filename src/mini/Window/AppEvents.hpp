@@ -45,7 +45,8 @@ namespace mini::wnd
     inline box::Bitset<EventType::PRESSABLE_END> pressed;
     inline char asciiPressed = 0;
     inline u32 window_w = 0, window_h = 0;
-    inline u32 mouse_x  = 0, mouse_y  = 0;
+    inline u32 mouse_client_x = 0, mouse_client_y = 0;
+    inline u32 mouse_screen_x = 0, mouse_screen_y = 0;
     inline s32 mouse_dx = 0, mouse_dy = 0;
 
 

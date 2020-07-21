@@ -25,14 +25,27 @@ namespace mini::res
         u32 count;
     };
 
-    template<u32 N>
-    box::SimpleArray<utils::Common_Vertex, N> CreateMeshGrid(
-        const f32 width, 
-        const f32 heigth, 
-        const u8  cellCountW, 
-        const u8  cellCountH)
+    template<u8 QUAD_COUNT_W, u8 QUAD_COUNT_H> 
+    auto CreateMeshGrid(const f32 gridW, const f32 gridH)
     {
-        return {};
+        box::SimpleArray<utils::Common_Vertex, QUAD_COUNT_W * QUAD_COUNT_H * 6> arr;
+
+        const auto quadW = gridW / QUAD_COUNT_W;
+        const auto quadH = gridH / QUAD_COUNT_H;
+
+        for(u8 y = 0; y < QUAD_COUNT_H; ++y) {
+        for(u8 x = 0; x < QUAD_COUNT_W; ++x) { 
+            const auto idx = (y * QUAD_COUNT_W + x) * 6;
+            constexpr math::Vec4f col = { 0.1f, 0.7f, 0.1f, 1 };
+            arr[idx + 0] = { { -1.0f, 0, -1.0f, 1 }, {}, col, {} };
+            arr[idx + 1] = { {  1.0f, 0, -1.0f, 1 }, {}, col, {} };
+            arr[idx + 2] = { {  1.0f, 0,  1.0f, 1 }, {}, col, {} };
+            arr[idx + 3] = { { -1.0f, 0, -1.0f, 1 }, {}, col, {} };
+            arr[idx + 4] = { {  1.0f, 0,  1.0f, 1 }, {}, col, {} };
+            arr[idx + 5] = { { -1.0f, 0,  1.0f, 1 }, {}, col, {} };
+        }}
+
+        return arr;
     }
 
 } //ns
