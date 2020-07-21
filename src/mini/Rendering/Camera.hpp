@@ -13,9 +13,11 @@ namespace mini::rendering
         math::Vec3f movNorm {};
         math::Quatf qRot {};
 
-        float movSpd   = 2;
-        float dirSpd   = 150;
-        float mouseSpd = 0.001f;
+        float movSpd    = 2;
+        float dirSpd    = 150;
+        float mouseSpd  = 0.001f;
+        float fov       = 45;
+        float scrollSpd = 0.01f;
 
         void Update(const double dt)
         {
@@ -49,15 +51,21 @@ namespace mini::rendering
             if (wnd::ui_mode == false) {
                 pos += movDir * movSpd * (float)dt;
             }
+
+            //? scroll
+
+            if (const auto* ev = wnd::CheckEvent(wnd::EventType::Mouse_Scroll)){
+                fov -= ev->scrollDelta * scrollSpd;
+            }
         }
 
         math::Mat4f GetMat() const
         {
             const float aspect = (float)wnd::window_w / (float)wnd::window_h;
-            const float fov = 0.785f; //rad
+            const float fovRad = fov * (3.14f / 180.f);
             const float n = 0.01f;
             const float f = 0; //infinity
-            const float h = 1.f / std::tanf(fov * 0.5f);
+            const float h = 1.f / std::tanf(fovRad * 0.5f);
             const float w = h / aspect;
 
             const math::Mat4f mProj {

@@ -8,6 +8,7 @@ namespace mini::wnd
     {
         Mouse_Left,
         Mouse_Right,
+        Mouse_Scroll,
 
         Keyboard_Escape,
         Keyboard_F1,
@@ -35,6 +36,7 @@ namespace mini::wnd
             struct { s32 x, y; } pos; 
             struct { u32 w, h; } size;
             char   ascii;
+            short  scrollDelta;
         };
 
         bool operator==(const EventType otherType) { return type == otherType; }

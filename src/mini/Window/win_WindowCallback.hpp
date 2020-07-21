@@ -14,7 +14,7 @@ namespace mini::wnd
         //std::memset(asciiPressed, false, ARRAY_COUNT(asciiPressed));
 
         for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);) { //probably define a limit per frame
-            TranslateMessage(&msg); //virtual to char?
+            TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
 
@@ -42,6 +42,13 @@ namespace mini::wnd
         #define PRESSED(t, ...)  events.Append(t, EventState::Pressed, __VA_ARGS__);  pressed.Set<t, true>();
         #define RELEASED(t, ...) events.Append(t, EventState::Released, __VA_ARGS__); pressed.Set<t, false>();
 
+        case WM_MOUSEWHEEL:
+        {
+            events.Append(EventType::Mouse_Scroll, EventState::None);
+            events.Last().scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+        }
+        break;
+
         //?keyboard
 
         case WM_KEYDOWN:
@@ -63,9 +70,6 @@ namespace mini::wnd
                 break;
                 default:
                 {
-                    //PRESSED(EventType::Keyboard_ASCII);
-                    //events.Last().ascii = (char)wParam;
-                    Assert(wParam < 255, "non ascii input");
                     asciiPressed[wParam] = true;
                 }
                 break;
@@ -79,12 +83,16 @@ namespace mini::wnd
                 case VK_F1:     RELEASED(EventType::Keyboard_F1); break;
                 default:
                 {
-                    //RELEASED(EventType::Keyboard_ASCII);
-                    //events.Last().ascii = (char)wParam;
-                    Assert(wParam < 255, "non ascii input");
                     asciiPressed[wParam] = false;
                 }
             }
+        break;
+
+        case WM_CHAR:
+        {
+            PRESSED(EventType::Keyboard_ASCII);
+            events.Last().ascii = wParam;
+        }
         break;
 
         //?window

@@ -57,7 +57,8 @@ namespace mini::vk
             resources.default.ubo.Clear();
             resources.default.ubo.Store(scene.renderGraph.default_ubo);
 
-            //TODO: (selectively update terrain data)
+            //TODO: selectively update terrain data
+            //TODO: make stuff expandable
             resources.terrain.vbo.Clear();
             decltype(scene.renderGraph.terrain)::CREF terrain = scene.renderGraph.terrain;
             resources.terrain.vbo.AppendGroup(terrain);
