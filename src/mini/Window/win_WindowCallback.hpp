@@ -10,8 +10,9 @@ namespace mini::wnd
 {
     inline void PollEvents(HWND hWnd)
     {
-        //mouse_dx = mouse_dy = 0;
         events.Clear();
+        //std::memset(asciiPressed, false, ARRAY_COUNT(asciiPressed));
+
         for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);) { //probably define a limit per frame
             TranslateMessage(&msg); //virtual to char?
             DispatchMessage(&msg);
@@ -60,14 +61,17 @@ namespace mini::wnd
                     }
                 } 
                 break;
+                default:
+                {
+                    //PRESSED(EventType::Keyboard_ASCII);
+                    //events.Last().ascii = (char)wParam;
+                    Assert(wParam < 255, "non ascii input");
+                    asciiPressed[wParam] = true;
+                }
+                break;
             }
         break;
-        case WM_CHAR: //!issue: single key only at a time
-            PRESSED(EventType::Keyboard_ASCII);
-            events.Last().ascii = (char)wParam;
-            asciiPressed = (char)wParam;
-        break;
-
+        
         case WM_KEYUP:
             switch (wParam) 
             {
@@ -75,9 +79,10 @@ namespace mini::wnd
                 case VK_F1:     RELEASED(EventType::Keyboard_F1); break;
                 default:
                 {
-                    RELEASED(EventType::Keyboard_ASCII);
-                    events.Last().ascii = (char)wParam;
-                    asciiPressed = 0;
+                    //RELEASED(EventType::Keyboard_ASCII);
+                    //events.Last().ascii = (char)wParam;
+                    Assert(wParam < 255, "non ascii input");
+                    asciiPressed[wParam] = false;
                 }
             }
         break;

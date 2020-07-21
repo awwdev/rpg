@@ -20,16 +20,16 @@ namespace mini::rendering
         void Update(const double dt)
         {
             movNorm = {};
-            if(wnd::asciiPressed == 'd'){
+            if(wnd::asciiPressed['D']){
                 movNorm[Vx] -= 1;
             }
-            if(wnd::asciiPressed == 'a'){
+            if(wnd::asciiPressed['A']){
                 movNorm[Vx] += 1;
             }
-            if(wnd::asciiPressed == 'w'){
+            if(wnd::asciiPressed['W']){
                 movNorm[Vz] += 1;
             }
-            if(wnd::asciiPressed == 's'){
+            if(wnd::asciiPressed['S']){
                 movNorm[Vz] -= 1;
             }
             NormalizeThis(movNorm);

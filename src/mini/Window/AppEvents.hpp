@@ -44,11 +44,11 @@ namespace mini::wnd
     //!global arrays
     inline box::Array<Event, 10> events; //per frame max
     inline box::Bitset<EventType::PRESSABLE_END> pressed;
-    inline char asciiPressed = 0;
-    inline u32 window_w = 0, window_h = 0;
-    inline u32 mouse_client_x = 0, mouse_client_y = 0;
-    inline s32 mouse_dx = 0, mouse_dy = 0;
-    inline bool ui_mode = false;
+    inline bool asciiPressed [255];
+    inline u32 window_w, window_h;
+    inline u32 mouse_client_x, mouse_client_y;
+    inline s32 mouse_dx, mouse_dy;
+    inline bool ui_mode;
 
 
     inline Event* CheckEvent(const EventType type, const EventState state = EventState::None)
