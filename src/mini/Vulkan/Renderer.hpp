@@ -46,7 +46,7 @@ namespace mini::vk
         void UpdateVkResources(const app::Scene& scene, const double dt)
         {
             resources.common_pushConsts.projection = {
-                scene.camera.GetMat()
+                scene.renderGraph.camera.GetProjView()
             };
             resources.common_pushConsts.wnd_w = wnd::window_w;
             resources.common_pushConsts.wnd_h = wnd::window_h;

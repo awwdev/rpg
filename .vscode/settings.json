@@ -217,6 +217,10 @@
 		"xtree": "cpp",
 		"*.rh": "cpp",
 		"functional": "cpp",
-		"xhash": "cpp"
+		"xhash": "cpp",
+		"array": "cpp",
+		"cstdarg": "cpp",
+		"sstream": "cpp",
+		"unordered_map": "cpp"
 	}
 }

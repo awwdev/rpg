@@ -8,6 +8,27 @@
 
 namespace mini::ecs
 {
+    //test placing a cube for matrix inversion
+    inline void PlaceCubeTest(rendering::RenderGraph& renderGraph, math::Mat4f& transform)
+    {
+        //renderGraph.camera.ScreenRay();
+
+        //normalisation from viewport to NDC
+        math::Vec3f NDC  { 0.1f, 0.1f, 0 }; //center
+        math::Vec4f homo { NDC[Vx], NDC[Vy], -1, 1 };
+        
+        const auto projInv = math::Inverse(renderGraph.camera.GetProjection());
+        auto eye = homo * projInv;
+        eye[Vz] = -1;
+        eye[Vw] = 1;
+
+        const auto viewInv = math::Inverse(renderGraph.camera.GetView());
+        auto world = eye * viewInv;
+        
+        transform[3][0] = world[Vx] * 2;
+        transform[3][1] = world[Vy] * 2;
+    }
+
     inline void S_Render(ComponentArrays<>& arrays, const double dt, rendering::RenderGraph& renderGraph)
     {
         auto& arr_render    = arrays.renderData;
@@ -30,6 +51,11 @@ namespace mini::ecs
             FOR_ARRAY(meshTypes[i], j){
                 const auto eID  = meshTypes[i][j];
                 auto& transform = arr_transform.Get(eID);
+
+                //!hacked into (for testing)
+                if (i == (u32)res::MeshType::PrimitiveCube)
+                    PlaceCubeTest(renderGraph, transform.transform);
+
                 auto rotMat = math::RotationMatrixY(rot);
                 group.Append(transform.transform);// * rotMat);
             }

@@ -21,8 +21,6 @@ namespace mini::app
         //TODO: not every Scene will have those members
         ecs::ECS ecs {};
         rendering::RenderGraph renderGraph;
-        rendering::Camera camera;
-        res::Terrain terrain;
 
         Scene()
         {
@@ -45,9 +43,9 @@ namespace mini::app
                 ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(id, res::MeshType::Sword);
             }
 
-            /*
+            
             {
-                constexpr float S =  0.5; //ths cube is -1 to 1 and half matches sword
+                constexpr float S =  0.1f; //ths cube is -1 to 1 and half matches sword
                 constexpr float X = -1; 
                 constexpr float Y =  0;
                 constexpr float Z =  0;
@@ -61,13 +59,13 @@ namespace mini::app
                 ecs.arrays.AddComponent<ecs::ComponentType::Transform> (id, pos);
                 ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(id, res::MeshType::PrimitiveCube);
             }
-            */
+            
             
         }
 
         void Update(const double dt)
         {
-            camera.Update(dt);
+            renderGraph.camera.Update(dt);
 
             //? ECS
             ecs::S_Render(ecs.arrays, dt, renderGraph);
@@ -76,7 +74,7 @@ namespace mini::app
             ui::DrawFPS(renderGraph); 
             ui::DrawConsole(renderGraph);
             ui::DrawRenderStats(renderGraph);
-            ui::DrawCamera(renderGraph, camera);
+            ui::DrawCameraPos(renderGraph, renderGraph.camera);
 
         }
 

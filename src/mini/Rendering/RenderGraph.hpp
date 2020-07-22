@@ -5,6 +5,7 @@
 #include "mini/Rendering/UboData.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/Resources/Mesh.hpp"
+#include "mini/Rendering/Camera.hpp"
 
 namespace mini::rendering
 {
@@ -24,6 +25,8 @@ namespace mini::rendering
         static constexpr auto QUAD_COUNT_Z = 10;
         static constexpr auto QUAD_COUNT_X = 10;
         box::SimpleArray<utils::Common_Vertex, QUAD_COUNT_Z * QUAD_COUNT_X * 6> terrain;
+
+        Camera camera;
 
         RenderGraph()
         {

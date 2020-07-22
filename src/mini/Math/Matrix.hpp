@@ -5,15 +5,17 @@
 
 #define ND [[nodiscard]]
 
+//using s32 for templates only because it is easier to read on intellisense (u8 is char and evaluates to \000 and unsigned appends U)
+
 namespace mini
 {
     //used for vector access (mat[Vx] == mat[0][0])
-    enum V : u8 { Vx = 0, Vy = 1, Vz = 2, Vw = 3 };
+    enum V : s32 { Vx = 0, Vy = 1, Vz = 2, Vw = 3 };
 }
 
 namespace mini::math
 {
-    template<class T, u8 Y_T, u8 X_T, bool IsQuat = false, typename = IsArithmetic<T>>
+    template<class T, s32 Y_T, s32 X_T, bool IsQuat = false, typename = IsArithmetic<T>>
     struct Mat
     {
         using CELL_T = T;
@@ -25,8 +27,8 @@ namespace mini::math
 
 
         //matrix access [][] 
-        inline T*       operator[](const u8 y)       { return cells[y]; }
-        inline const T* operator[](const u8 y) const { return cells[y]; } 
+        inline T*       operator[](const s32 y)       { return cells[y]; }
+        inline const T* operator[](const s32 y) const { return cells[y]; } 
 
         //vector access
         inline T&       operator[](const V  x)       { return cells[0][x]; }
@@ -46,7 +48,7 @@ namespace mini::math
     };
 
 
-    template<class T, u8 X>
+    template<class T, s32 X>
     using Vec = Mat<T, 1, X>;
 
     using Mat4f = Mat<f32, 4, 4>;
@@ -63,7 +65,7 @@ namespace mini::math
 
     ///comparsion
 
-    template<class T, u8 Y, u8 X>
+    template<class T, s32 Y, s32 X>
     bool operator==(const Mat<T, Y, X>& a, const Mat<T, Y, X>& b)
     {
         return std::memcmp(a.cells, b.cells, Y*X*sizeof(T)) == 0;
@@ -94,7 +96,7 @@ namespace mini::math
 
     ///addition
 
-    template<class T1, class T2, u8 Y, u8 X> ND
+    template<class T1, class T2, s32 Y, s32 X> ND
     auto operator+(const Mat<T1, Y, X>& m1, const Mat<T2, Y, X>& m2) 
     {
         Mat<std::common_type_t<T1, T2>, Y, X> out;
@@ -107,7 +109,7 @@ namespace mini::math
         return out;
     }
 
-    template<class T1, class T2, u8 Y, u8 X> 
+    template<class T1, class T2, s32 Y, s32 X> 
     void operator+=(Mat<T1, Y, X>& ref, const Mat<T2, Y, X>& other)
     {
         for (u8 y = 0; y < Y; ++y) {
@@ -118,7 +120,7 @@ namespace mini::math
 
     ///subtraction
 
-    template<class T1, class T2, u8 Y, u8 X> ND
+    template<class T1, class T2, s32 Y, s32 X> ND
     auto operator-(const Mat<T1, Y, X>& m1, const Mat<T2, Y, X>& m2)
     {
         Mat<std::common_type_t<T1, T2>, Y, X> out;
@@ -142,7 +144,7 @@ namespace mini::math
         return out;
     }
 
-    template<class T1, class T2, u8 Y, u8 X> 
+    template<class T1, class T2, s32 Y, s32 X> 
     void operator-=(Mat<T1, Y, X>& ref, const Mat<T2, Y, X>& other)
     {
         for (u8 y = 0; y < Y; ++y) {
@@ -176,7 +178,7 @@ namespace mini::math
         return out;
     }
 
-    template<class IDX, class S, u8 Y, u8 X>
+    template<class IDX, class S, s32 Y, s32 X>
     void operator*=(Mat<IDX, Y, X>& ref, const S scalar)
     {
         for (u8 y = 0; y < Y; ++y) {
@@ -187,7 +189,7 @@ namespace mini::math
 
     ///scalar division
 
-    template<class T, class S, u8 Y, u8 X> ND
+    template<class T, class S, s32 Y, s32 X> ND
     auto operator/(const Mat<T, Y, X>& m, const S scalar)
     {
         Mat<std::common_type_t<T, S>, Y, X> out;
@@ -200,7 +202,7 @@ namespace mini::math
         return out;
     }
 
-    template<class T, class S, u8 Y, u8 X>
+    template<class T, class S, s32 Y, s32 X>
     void operator/=(Mat<T, Y, X>& ref, const S scalar)
     {
         for (u8 y = 0; y < Y; ++y) {
@@ -211,7 +213,7 @@ namespace mini::math
 
     ///vector magnitude
 
-    template<class T, u8 X, bool IsQuat, typename F = f32> ND
+    template<class T, s32 X, bool IsQuat, typename F = f32> ND
     F Magnitude(const Mat<T, 1, X, IsQuat>& vec)
     {
         T mag = 0;
@@ -226,7 +228,7 @@ namespace mini::math
 
     ///vector normalize
 
-    template<class T, u8 X, typename F = f32> ND
+    template<class T, s32 X, typename F = f32> ND
     auto Normalize(const Vec<T, X>& vec)
     {
         Vec<F, X> out {};
@@ -243,7 +245,7 @@ namespace mini::math
         return out;//vec *  (1 / std::sqrtf(Dot(vec, vec)));
     }
 
-    template<class T, u8 X, bool IsQuat>
+    template<class T, s32 X, bool IsQuat>
     void NormalizeThis(Mat<T, 1, X, IsQuat>& ref)
     {
         const auto mag = Magnitude(ref);
@@ -257,7 +259,7 @@ namespace mini::math
 
     ///vector dot product
 
-    template<class T1, class T2, u8 X> ND
+    template<class T1, class T2, s32 X> ND
     auto Dot(const Vec<T1, X>& v1, const Vec<T2, X>& v2)
     {
         std::common_type_t<T1, T2> out = 0; //scalar
@@ -284,7 +286,7 @@ namespace mini::math
 
     ///multiplication 
 
-    template<class T1, class T2, u8 Y1, u8 X1, u8 X2> ND
+    template<class T1, class T2, s32 Y1, s32 X1, s32 X2> ND
     auto operator*(const Mat<T1, Y1, X1>& m1, const Mat<T2, X1, X2>& m2) //requirement: columns1 == rows2
     {
         Mat<std::common_type_t<T1, T2>, Y1, X2> out {};
@@ -300,7 +302,7 @@ namespace mini::math
         return out;
     }
 
-    template<class T1, class T2, u8 Y1, u8 X1, u8 X2>
+    template<class T1, class T2, s32 Y1, s32 X1, s32 X2>
     void operator*=(Mat<T1, Y1, X1>& ref, const Mat<T2, X1, X2>& other)
     {
         ref = ref * other;
@@ -436,7 +438,7 @@ namespace mini::math
         };
     }
 
-    template<class T, u8 Y, u8 X>
+    template<class T, s32 Y, s32 X>
     inline auto Inverse(const Mat<T, Y, X>& m)
     {
         auto A2323 = m[2][2] * m[3][3] - m[2][3] * m[3][2] ;
