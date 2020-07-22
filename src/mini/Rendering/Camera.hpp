@@ -3,12 +3,16 @@
 #pragma once
 #include "mini/Window/AppEvents.hpp"
 #include "mini/Math/Matrix.hpp"
+#undef far
+#undef near
 
 namespace mini::rendering
 {
+    //TODO: ray point into scene
+
     struct Camera
     {
-        math::Vec3f pos { 0, 0, -5 };
+        math::Vec3f pos { 0, 0, 0 };
         math::Vec3f rotTarget  {}; 
         math::Vec3f movNorm {};
         math::Quatf qRot {};
@@ -61,24 +65,50 @@ namespace mini::rendering
 
         math::Mat4f GetMat() const
         {
-            const float aspect = (float)wnd::window_w / (float)wnd::window_h;
-            const float fovRad = fov * (3.14f / 180.f);
-            const float n = 0.01f;
-            const float f = 0; //infinity
-            const float h = 1.f / std::tanf(fovRad * 0.5f);
-            const float w = h / aspect;
+            const auto mProjRevZ = [&]{
 
-            const math::Mat4f mProj {
-                w, 0, 0, 0,
-                0, h, 0, 0,
-                0, 0, f,-1,
-                0, 0, n, 0,
-            };
+                const float aspect = (float)wnd::window_w / (float)wnd::window_h;
+                const float fovRad = fov * (3.14f / 180.f);
+                const float n = 0.01f;
+                const float f = 0; //infinity
+                const float h = 1.f / std::tanf(fovRad * 0.5f);
+                const float w = h / aspect;
+
+                return math::Mat4f {
+                    w, 0, 0, 0,
+                    0, h, 0, 0,
+                    0, 0, f,-1,
+                    0, 0, n, 0,
+                };
+
+            }();
+           
+
+            const auto mProj = [&]{
+
+                const float aspect = (float)wnd::window_w / (float)wnd::window_h;
+                const float fovRad = fov * (3.14f / 180.f);
+                const float near   = 0.1f;
+                const float far    = 100;
+                const float f = -far / (far-near);
+                const float n = -(far*near)/(far-near);
+                const float h = 1.f / std::tanf(fovRad * 0.5f);
+                const float w = h / aspect;
+
+                return math::Mat4f {
+                    w, 0, 0, 0,
+                    0, h, 0, 0,
+                    0, 0, f,-1,
+                    0, 0, n, 0,
+                };
+
+            }();
             
             //http://dev.theomader.com/depth-precision/
             //x (left -, right +)
             //y (up -, down +)
             //z (inwards -, toYou +) - z is reversed
+            //on NDC it gets mapped to z [0,1]
 
             const math::Mat4f mPos {
                 1, 0, 0, 0,
@@ -89,9 +119,15 @@ namespace mini::rendering
             const auto mRot = math::ToMat4(qRot);
             const auto mView = mRot * mPos;
 
-            const auto mLook = math::LookAt(math::Vec3f{0, -1, -4}, math::Vec3f{0, 0, 0});
 
-            return mProj * mView;
+            static float t = 0;
+            t += 0.01f;
+            const float sx = std::sinf(t) * 2;
+            const float sz = std::cosf(t) * 2;
+
+            const auto mLook = math::LookAt({ sx, -2, sz}, {0,0,0});
+
+            return mProjRevZ * mLook;
         }
     };
 

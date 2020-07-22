@@ -91,7 +91,7 @@ namespace mini::wnd
         case WM_CHAR:
         {
             PRESSED(EventType::Keyboard_ASCII);
-            events.Last().ascii = wParam;
+            events.Last().ascii = (char)wParam;
         }
         break;
 

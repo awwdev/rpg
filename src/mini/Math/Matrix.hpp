@@ -229,17 +229,18 @@ namespace mini::math
     template<class T, u8 X, typename F = f32> ND
     auto Normalize(const Vec<T, X>& vec)
     {
+        Vec<F, X> out {};
+
         const F mag = Magnitude(vec);
         if (mag == 0 || std::isnan(mag)) {
-            return Vec<F, X>{};
+            return out;
         }
             
-        Vec<F, X> out;
         for (u8 x = 0; x < X; ++x) {
             out[0][x] = vec[0][x] / mag;
         }
 
-        return out;
+        return out;//vec *  (1 / std::sqrtf(Dot(vec, vec)));
     }
 
     template<class T, u8 X, bool IsQuat>
@@ -275,9 +276,9 @@ namespace mini::math
     {
         return Vec<std::common_type_t<T1, T2>, 3>
         {
-            v1[0][1] * v2[0][2] - v1[0][2] * v2[0][1],
-            v1[0][2] * v2[0][0] - v1[0][0] * v2[0][2],
-            v1[0][0] * v2[0][1] - v1[0][1] * v2[0][0],
+            v1[Vy] * v2[Vz] - v1[Vz] * v2[Vy],
+            v1[Vz] * v2[Vx] - v1[Vx] * v2[Vz],
+            v1[Vx] * v2[Vy] - v1[Vy] * v2[Vx],
         };
     }
 
@@ -419,17 +420,19 @@ namespace mini::math
         };
     }
 
-    inline Mat4f LookAt(const Vec3f& from, const Vec3f& at)
+    inline Mat4f LookAt(const Vec3f& eye, const Vec3f& at)
     {
-        const Vec3f f = Normalize(from - at);
-        const Vec3f r = Cross(Vec3f{ 0, 1, 0 }, f);
-        const Vec3f u = Cross(f, r);
+        const auto b = at - eye;
+        const Vec3f f = Normalize(at - eye);
+        const Vec3f r = Normalize(Cross(f, Vec3f{ 0, 1, 0 }));
+        const Vec3f u = Cross(r, f);
+        const Vec3f e = { Dot(r, eye), Dot(u, eye), Dot(f, eye)};
 
         return { 
-            r[Vx], r[Vy], r[Vz], 0,
-            u[Vx], u[Vy], u[Vz], 0,
-            f[Vx], f[Vy], f[Vz], 0,
-            from[Vx], from[Vy], from[Vz], 1
+            r[Vx], u[Vx],-f[Vx], 0,
+            r[Vy], u[Vy],-f[Vy], 0,
+            r[Vz], u[Vz],-f[Vz], 0,
+           -e[Vx],-e[Vy], e[Vz], 1
         };
     }
 

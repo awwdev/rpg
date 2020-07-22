@@ -215,6 +215,8 @@
 		"xstring": "cpp",
 		"xtr1common": "cpp",
 		"xtree": "cpp",
-		"*.rh": "cpp"
+		"*.rh": "cpp",
+		"functional": "cpp",
+		"xhash": "cpp"
 	}
 }
