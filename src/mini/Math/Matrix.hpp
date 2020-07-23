@@ -287,7 +287,7 @@ namespace mini::math
     ///multiplication 
 
     template<class T1, class T2, s32 Y1, s32 X1, s32 X2> ND
-    auto operator*(const Mat<T1, Y1, X1>& m1, const Mat<T2, X1, X2>& m2) //requirement: columns1 == rows2
+    auto operator*(const Mat<T1, X1, X2>& m1, const Mat<T2, Y1, X1>& m2) //requirement: columns1 == rows2
     {
         Mat<std::common_type_t<T1, T2>, Y1, X2> out {};
 
@@ -295,7 +295,7 @@ namespace mini::math
         for (u8 x = 0; x < X2; ++x) {
 
             for (u8 c = 0; c < X1; ++c)
-                out[y][x] += m1[y][c] * m2[c][x];
+                out[y][x] += m2[y][c] * m1[c][x];
             
         }}
 

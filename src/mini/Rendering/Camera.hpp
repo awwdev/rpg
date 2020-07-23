@@ -64,7 +64,7 @@ namespace mini::rendering
 
         math::Mat4f GetProjView() const
         {
-            return GetView() * GetProjection();// * GetView();
+            return GetProjection() * GetView();
         }
 
         math::Mat4f GetView() const 
@@ -76,7 +76,7 @@ namespace mini::rendering
                 pos[Vx], pos[Vy], pos[Vz], 1,
             };
             const auto mRot = math::ToMat4(qRot);
-            return mPos * mRot;// * mPos;
+            return mRot * mPos;
         }
 
         math::Mat4f GetProjection() const 
@@ -112,12 +112,12 @@ namespace mini::rendering
             };
 
             const auto projInv = math::Inverse(GetProjection());
-            auto eye = homo * projInv;
+            auto eye = projInv * homo;
             eye[Vz] = -1;
             eye[Vw] =  0;
             
             const auto viewInv = math::Inverse(GetView());
-            auto world = eye * viewInv;
+            auto world = viewInv * eye;
 
             return { world[Vx], world[Vy], world[Vz] };
         }

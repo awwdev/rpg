@@ -73,9 +73,9 @@ namespace mini::app
             //TODO: move camera outside of rendergraph (same with terrain) later on ..
             using namespace utils;
             const auto& trisTransform = ecs.arrays.transforms.Get(trisID).transform;
-            const auto v0  = MESH_TRIANGLE[0].pos * trisTransform;
-            const auto v1  = MESH_TRIANGLE[1].pos * trisTransform;
-            const auto v2  = MESH_TRIANGLE[2].pos * trisTransform;
+            const auto v0  = trisTransform * MESH_TRIANGLE[0].pos;
+            const auto v1  = trisTransform * MESH_TRIANGLE[1].pos;
+            const auto v2  = trisTransform * MESH_TRIANGLE[2].pos;
 
             const auto ray = renderGraph.camera.ScreenRay();
             const auto intersection = utils::RayTriangleIntersection(

@@ -19,12 +19,12 @@ namespace mini::ecs
         math::Vec4f homo { NDC[Vx], NDC[Vy], -1, 1 };
         
         const auto projInv = math::Inverse(renderGraph.camera.GetProjection());
-        auto eye = homo * projInv;
+        auto eye = projInv * homo;
         eye[Vz] = -1;
         eye[Vw] = 1;
 
         const auto viewInv = math::Inverse(renderGraph.camera.GetView());
-        auto world = eye * viewInv;
+        auto world = viewInv * eye;
         
         transform[3][0] = world[Vx] * 2;
         transform[3][1] = world[Vy] * 2;
