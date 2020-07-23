@@ -3,13 +3,12 @@
 #pragma once
 #include "mini/Window/AppEvents.hpp"
 #include "mini/Math/Matrix.hpp"
+#include "mini/Box/Optional.hpp"
 #undef far
 #undef near
 
 namespace mini::rendering
 {
-    //TODO: ray point into scene
-
     struct Camera
     {
         math::Vec3f pos { 0, 0, 0 };
@@ -65,7 +64,7 @@ namespace mini::rendering
 
         math::Mat4f GetProjView() const
         {
-            return GetProjection() * GetView();
+            return GetView() * GetProjection();// * GetView();
         }
 
         math::Mat4f GetView() const 
@@ -77,7 +76,7 @@ namespace mini::rendering
                 pos[Vx], pos[Vy], pos[Vz], 1,
             };
             const auto mRot = math::ToMat4(qRot);
-            return mRot * mPos;
+            return mPos * mRot;// * mPos;
         }
 
         math::Mat4f GetProjection() const 
@@ -125,6 +124,7 @@ namespace mini::rendering
     };
 
 }//ns
+
 
 
 /*

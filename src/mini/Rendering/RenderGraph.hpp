@@ -24,13 +24,13 @@ namespace mini::rendering
         //TODO: expandable
         static constexpr auto QUAD_COUNT_Z = 10;
         static constexpr auto QUAD_COUNT_X = 10;
-        box::SimpleArray<utils::Common_Vertex, QUAD_COUNT_Z * QUAD_COUNT_X * 6> terrain;
+        box::SimpleArray<utils::Common_Vertex, QUAD_COUNT_Z * QUAD_COUNT_X * 6> terrain {};
 
         Camera camera;
 
         RenderGraph()
         {
-            terrain = res::CreateMeshGrid<QUAD_COUNT_X, QUAD_COUNT_Z>(100, 100);
+            //terrain = res::CreateMeshGrid<QUAD_COUNT_X, QUAD_COUNT_Z>(100, 100);
         }
 
         void Clear()

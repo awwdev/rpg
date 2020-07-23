@@ -11,7 +11,8 @@ namespace mini::ecs
     //test placing a cube for matrix inversion
     inline void PlaceCubeTest(rendering::RenderGraph& renderGraph, math::Mat4f& transform)
     {
-        //renderGraph.camera.ScreenRay();
+        const auto ray = renderGraph.camera.ScreenRay();
+        
 
         //normalisation from viewport to NDC
         math::Vec3f NDC  { 0.1f, 0.1f, 0 }; //center
