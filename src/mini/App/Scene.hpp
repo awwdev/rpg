@@ -22,7 +22,8 @@ namespace mini::app
         ecs::ECS ecs {};
         rendering::RenderGraph renderGraph;
 
-        ecs::ID trisID = 0;
+        ecs::ID cubeID = 0;
+
 
         Scene()
         {
@@ -46,21 +47,21 @@ namespace mini::app
             }*/
 
             
-            /*{
-                constexpr float S =  0.1f; //ths cube is -1 to 1 and half matches sword
-                constexpr float X = -1; 
+            {
+                constexpr float S =  0.05f; //ths cube is -1 to 1 and half matches sword
+                constexpr float X =  0; 
                 constexpr float Y =  0;
                 constexpr float Z =  0;
-                const auto id = ecs.AddEntity();
+                cubeID = ecs.AddEntity();
                 const math::Mat4f pos = math::Mat4f{
                     S, 0, 0, 0,
                     0, S, 0, 0,
                     0, 0, S, 0,
                     X, Y, Z, 1,
                 };
-                ecs.arrays.AddComponent<ecs::ComponentType::Transform> (id, pos);
-                ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(id, res::MeshType::PrimitiveCube);
-            }*/
+                ecs.arrays.AddComponent<ecs::ComponentType::Transform> (cubeID, pos);
+                ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(cubeID, res::MeshType::PrimitiveCube);
+            }
             
             
         }
@@ -92,7 +93,21 @@ namespace mini::app
                     { v1[Vx], v1[Vy], v1[Vz] },
                     { v2[Vx], v2[Vy], v2[Vz] }
                 );
-                if (intersection) LOG(i / 3);
+                if (intersection) {
+                    const auto X = intersection.t[Vx];
+                    const auto Y = intersection.t[Vy];
+                    const auto Z = intersection.t[Vz];
+
+                    constexpr float S = 0.2f;
+                    auto& cubeTrans = ecs.arrays.transforms.Get(cubeID);
+                    cubeTrans.transform = {
+                        S, 0, 0, 0,
+                        0, S, 0, 0,
+                        0, 0, S, 0,
+                        X, Y, Z, 1,
+                    };
+
+                }
             }
             
             
