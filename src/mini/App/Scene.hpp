@@ -21,6 +21,7 @@ namespace mini::app
         //TODO: not every Scene will have those members
         ecs::ECS ecs {};
         rendering::RenderGraph renderGraph;
+        res::Terrain terrain;
 
         ecs::ID cubeID = 0;
 
@@ -70,16 +71,14 @@ namespace mini::app
         {
             renderGraph.camera.Update(dt);
 
-            //INTERSECTION TEST
-            //TODO: now test against terrain 
-            //TODO: move camera outside of rendergraph (same with terrain) later on ..
-            
-            using namespace utils;
-            //const auto& trisTransform = ecs.arrays.transforms.Get(trisID).transform;
-            //const auto v0  = trisTransform * MESH_TRIANGLE[0].pos;
-            //const auto v1  = trisTransform * MESH_TRIANGLE[1].pos;
-            //const auto v2  = trisTransform * MESH_TRIANGLE[2].pos;
 
+
+            //!INTERSECTION TEST
+            //TODO: move camera outside of rendergraph (same with TERRAIN) later on ..
+            //TODO: grab terrain vertex and move it on drag (ui mode)
+            //TODO: UI gizmos
+            //TODO: keep this code around for placing objects
+            using namespace utils;
             const auto ray = renderGraph.camera.ScreenRay();
             for(auto i = 0; i < renderGraph.terrain.CAPACITY; i+=3)
             {
@@ -94,9 +93,39 @@ namespace mini::app
                     { v2[Vx], v2[Vy], v2[Vz] }
                 );
                 if (intersection) {
-                    const auto X = intersection.t[Vx];
-                    const auto Y = intersection.t[Vy];
-                    const auto Z = intersection.t[Vz];
+                    auto X = intersection->pos[Vx];
+                    auto Y = intersection->pos[Vy];
+                    auto Z = intersection->pos[Vz];
+
+                    X = v0[Vx];
+                    Y = v0[Vy];
+                    Z = v0[Vz];
+
+                    if (intersection->u > 0.5){
+                        X = v1[Vx];
+                        Y = v1[Vy];
+                        Z = v1[Vz];
+                    }
+                    if (intersection->v > 0.5) {
+                        X = v2[Vx];
+                        Y = v2[Vy];
+                        Z = v2[Vz];
+                    }
+                    if (intersection->u > 0.25 && intersection->v > 0.25)
+                    {
+                        if (intersection->u > intersection->v){
+                            X = v1[Vx];
+                            Y = v1[Vy];
+                            Z = v1[Vz];
+                        }
+                        else {
+                            X = v2[Vx];
+                            Y = v2[Vy];
+                            Z = v2[Vz];
+                        }
+                    }
+
+                    LOG(intersection->u, intersection->v);
 
                     constexpr float S = 0.2f;
                     auto& cubeTrans = ecs.arrays.transforms.Get(cubeID);
@@ -106,13 +135,12 @@ namespace mini::app
                         0, 0, S, 0,
                         X, Y, Z, 1,
                     };
-
                 }
             }
 
-            //TODO: vertex colors are cleared on resize, must be due to swapchain res recreation
-            
-            
+
+
+
 
             //? ECS
             ecs::S_Render(ecs.arrays, dt, renderGraph);

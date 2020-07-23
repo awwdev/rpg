@@ -42,7 +42,13 @@ namespace mini::utils
         }
     }
 
-    box::Optional<math::Vec3f> RayTriangleIntersection(
+    struct Intersection
+    {
+        math::Vec3f pos;
+        float u, v;
+    };
+
+    box::Optional<Intersection> RayTriangleIntersection(
         const math::Vec3f& rayOrigin, 
         const math::Vec3f& rayDir, 
         const math::Vec3f& v0,
@@ -73,7 +79,7 @@ namespace mini::utils
 
         const float t = f * Dot(edge2, q);
         if (t > EPSILON) 
-            return { -rayOrigin + rayDir * t };
+            return Intersection{ -rayOrigin + rayDir * t, u, v };
 
         return {};
     }

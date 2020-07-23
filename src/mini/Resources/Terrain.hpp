@@ -10,7 +10,11 @@ namespace mini::res
 {
     struct Terrain
     {
-        
+        void Update()
+        {
+            
+        }
+
     };
     
 }//ns
