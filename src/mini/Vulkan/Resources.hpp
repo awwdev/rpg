@@ -126,7 +126,7 @@ namespace mini::vk
             UI_CreatePipeline         (ui.pipeline, ui.shader, ui.renderPass, ui.ubo);
             Terrain_CreateRenderPass  (terrain.renderPass, cmdPool);
             Terrain_CreatePipeline    (terrain.pipeline, terrain.shader, terrain.renderPass, terrain.vbo);
-            Terrain_CreatePipeline    (terrain.pipelineWire, terrain.shaderWire, terrain.renderPass, terrain.vbo);
+            Terrain_CreatePipelineWire(terrain.pipelineWire, terrain.shaderWire, terrain.renderPass, terrain.vbo);
         }
     };
 

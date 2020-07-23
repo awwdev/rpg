@@ -109,6 +109,8 @@ namespace mini::app
 
                 }
             }
+
+            //TODO: vertex colors are cleared on resize, must be due to swapchain res recreation
             
             
 
