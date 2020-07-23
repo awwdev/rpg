@@ -37,12 +37,12 @@ namespace mini::res
         for(u8 x = 0; x < QUAD_COUNT_X; ++x) { 
             const auto idx = (z * QUAD_COUNT_X + x) * 6;
             constexpr math::Vec4f col = { 0.1f, 0.7f, 0.1f, 1 };
-            arr[idx + 0] = { {  0.0f + x, 0,  0.0f + z, 1 }, {}, col, {} };
-            arr[idx + 1] = { {  1.0f + x, 0,  0.0f + z, 1 }, {}, col, {} };
-            arr[idx + 2] = { {  1.0f + x, 0,  1.0f + z, 1 }, {}, col, {} };
-            arr[idx + 3] = { {  0.0f + x, 0,  0.0f + z, 1 }, {}, col, {} };
-            arr[idx + 4] = { {  1.0f + x, 0,  1.0f + z, 1 }, {}, col, {} };
-            arr[idx + 5] = { {  0.0f + x, 0,  1.0f + z, 1 }, {}, col, {} };
+            arr[idx + 0] = { {  0.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
+            arr[idx + 1] = { {  1.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
+            arr[idx + 2] = { {  1.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
+            arr[idx + 3] = { {  0.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
+            arr[idx + 4] = { {  1.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
+            arr[idx + 5] = { {  0.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
         }}
 
         return arr;

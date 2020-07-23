@@ -106,12 +106,12 @@ namespace mini::app
                         Y = v1[Vy];
                         Z = v1[Vz];
                     }
-                    if (intersection->v > 0.5) {
+                    else if (intersection->v > 0.5) {
                         X = v2[Vx];
                         Y = v2[Vy];
                         Z = v2[Vz];
                     }
-                    if (intersection->u > 0.25 && intersection->v > 0.25)
+                    else if (intersection->u > 0.25 && intersection->v > 0.25)
                     {
                         if (intersection->u > intersection->v){
                             X = v1[Vx];
@@ -125,9 +125,7 @@ namespace mini::app
                         }
                     }
 
-                    LOG(intersection->u, intersection->v);
-
-                    constexpr float S = 0.2f;
+                    constexpr float S = 1;
                     auto& cubeTrans = ecs.arrays.transforms.Get(cubeID);
                     cubeTrans.transform = {
                         S, 0, 0, 0,
