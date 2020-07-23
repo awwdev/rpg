@@ -289,13 +289,13 @@ namespace mini::vk
 
         void DestroySwapchain()
         {
-            FOR_SIMPLE_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
+            FOR_VK_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
             vkDestroySwapchainKHR(device, swapchain, nullptr);
         }
 
         ~Context()
         {
-            FOR_SIMPLE_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
+            FOR_VK_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
             vkDestroySwapchainKHR(device, swapchain, nullptr);
             vkDestroySurfaceKHR(instance, surface, nullptr);
             vkDestroyDevice(device, nullptr);

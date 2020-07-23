@@ -30,7 +30,7 @@ namespace mini::rendering
 
         RenderGraph()
         {
-            //terrain = res::CreateMeshGrid<QUAD_COUNT_X, QUAD_COUNT_Z>(100, 100);
+            terrain = res::CreateMeshGrid<QUAD_COUNT_X, QUAD_COUNT_Z>(100, 100);
         }
 
         void Clear()

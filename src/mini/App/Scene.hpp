@@ -29,7 +29,7 @@ namespace mini::app
             //TODO: move into some resource manager an load at loading scene
             //ecs.prefabs.Parse("res/prefabs.txt"); 
 
-            {
+            /*{
                 constexpr float S = 1; //sword is one 1x1 blender cube
                 constexpr float X = 0; 
                 constexpr float Y = 0;
@@ -43,7 +43,7 @@ namespace mini::app
                 };
                 ecs.arrays.AddComponent<ecs::ComponentType::Transform> (trisID, pos);
                 ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(trisID, res::MeshType::PrimitiveTriangle);
-            }
+            }*/
 
             
             /*{
@@ -70,22 +70,32 @@ namespace mini::app
             renderGraph.camera.Update(dt);
 
             //INTERSECTION TEST
+            //TODO: now test against terrain 
             //TODO: move camera outside of rendergraph (same with terrain) later on ..
+            
             using namespace utils;
-            const auto& trisTransform = ecs.arrays.transforms.Get(trisID).transform;
-            const auto v0  = trisTransform * MESH_TRIANGLE[0].pos;
-            const auto v1  = trisTransform * MESH_TRIANGLE[1].pos;
-            const auto v2  = trisTransform * MESH_TRIANGLE[2].pos;
+            //const auto& trisTransform = ecs.arrays.transforms.Get(trisID).transform;
+            //const auto v0  = trisTransform * MESH_TRIANGLE[0].pos;
+            //const auto v1  = trisTransform * MESH_TRIANGLE[1].pos;
+            //const auto v2  = trisTransform * MESH_TRIANGLE[2].pos;
 
             const auto ray = renderGraph.camera.ScreenRay();
-            const auto intersection = utils::RayTriangleIntersection(
-                renderGraph.camera.pos,
-                ray,
-                { v0[Vx], v0[Vy], v0[Vz] },
-                { v1[Vx], v1[Vy], v1[Vz] },
-                { v2[Vx], v2[Vy], v2[Vz] }
-            );
-            if (intersection) LOG(intersection.t);
+            for(auto i = 0; i < renderGraph.terrain.CAPACITY; i+=3)
+            {
+                const auto& v0 = renderGraph.terrain[i+0].pos;
+                const auto& v1 = renderGraph.terrain[i+1].pos;
+                const auto& v2 = renderGraph.terrain[i+2].pos;
+                const auto intersection = utils::RayTriangleIntersection(
+                    renderGraph.camera.pos,
+                    ray,
+                    { v0[Vx], v0[Vy], v0[Vz] },
+                    { v1[Vx], v1[Vy], v1[Vz] },
+                    { v2[Vx], v2[Vy], v2[Vz] }
+                );
+                if (intersection) LOG(i / 3);
+            }
+            
+            
 
             //? ECS
             ecs::S_Render(ecs.arrays, dt, renderGraph);

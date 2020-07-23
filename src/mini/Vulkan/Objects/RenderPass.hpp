@@ -42,7 +42,7 @@ namespace mini::vk
         ~RenderPass()
         {
             vkDestroyRenderPass(g_contextPtr->device, renderPass, nullptr);
-            FOR_SIMPLE_ARRAY(framebuffers, i) 
+            FOR_VK_ARRAY(framebuffers, i) 
                 vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
         }
         

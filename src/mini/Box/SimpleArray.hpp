@@ -10,7 +10,8 @@
 
 namespace mini::box
 {
-    #define FOR_SIMPLE_ARRAY(arr, i) for(u32 i = 0; i < arr.count; ++i)
+    #define FOR_VK_ARRAY(arr, i) for(u32 i = 0; i < arr.count; ++i)
+    #define FOR_SIMPLE_ARRAY(arr, i) for(u32 i = 0; i < arr.CAPACITY; ++i)
 
     template<class T, u32 N>
     struct VkArray
