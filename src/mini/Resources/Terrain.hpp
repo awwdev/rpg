@@ -20,7 +20,7 @@ namespace mini::res
     //! mind the terrain vertex max count!
     struct Quadrant
     {
-        static constexpr auto QUAD_COUNT = 4;
+        static constexpr auto QUAD_COUNT = 2;
         static constexpr auto QUAD_COUNT_TOTAL = QUAD_COUNT * QUAD_COUNT;
         static constexpr auto VERT_COUNT_TOTAL = QUAD_COUNT_TOTAL * 6;
         static constexpr auto SIZE  = 20;
@@ -52,22 +52,53 @@ namespace mini::res
                 verts[idx + 0] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
                 verts[idx + 1] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
                 verts[idx + 2] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
-
                 verts[idx + 3] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
                 verts[idx + 4] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
                 verts[idx + 5] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
             }}
 
+            //TODO: bitset instead of array
             const auto CORNER_COUNT = QUAD_COUNT + 1;
             for(u8 z = 0; z < CORNER_COUNT; ++z) {
             for(u8 x = 0; x < CORNER_COUNT; ++x) { 
 
-                if (x < CORNER_COUNT && z < CORNER_COUNT){
-                    qCorners[z][x].Append(x*6 + z*(CORNER_COUNT*6));
+                auto& corner = qCorners[z][x];
+                const auto cIdx = x*6 + z*(QUAD_COUNT*6);
+
+                if (x != CORNER_COUNT - 1){
+                    if (z != CORNER_COUNT - 1) 
+                    {
+                        corner.Append(cIdx);
+                        corner.Append(cIdx + 3);
+                        if (x > 0)  corner.Append(cIdx - 5);
+                    }
+                    
+                    if (z > 0)  corner.Append(cIdx - (QUAD_COUNT*6) + 5);
+                    if (x > 0 && z > 0) {      
+                        corner.Append(cIdx - (QUAD_COUNT*6) - 2);
+                        corner.Append(cIdx - (QUAD_COUNT*6) - 4);
+                    }
+                }  
+                if (x == CORNER_COUNT - 1) {
+                    const auto cIdx_ = (x-1)*6 + z*(QUAD_COUNT*6) + 1;
+                    if (z != CORNER_COUNT - 1) 
+                        corner.Append(cIdx_);
+                    if (z > 0) {
+                        corner.Append(cIdx_ - (QUAD_COUNT*6) + 1);
+                        corner.Append(cIdx_ - (QUAD_COUNT*6) + 3);
+                    }
                 }
+                    
 
             }}
+
+            for(u8 z = 0; z < CORNER_COUNT; ++z) {
+            for(u8 x = 0; x < CORNER_COUNT; ++x) { 
+                box::PrintArray(qCorners[z][x]);
+            } LOG("//////////////");}
         }
+
+
     };
 
     struct Terrain
@@ -84,6 +115,7 @@ namespace mini::res
 
         f32 yDragPoint = 0;
         s32 draggedVertex = -1;
+        u32 corner = 0;
 
         void Create(ecs::ECS& ecs)
         {
@@ -171,36 +203,44 @@ namespace mini::res
                         0, 0, S, 0,
                         X, Y, Z, 1,
                     };
-                   
+                
                     if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed))
                     {
                         yDragPoint = (f32)wnd::mouse_client_y;
                         if (closeVertex == V0) draggedVertex = i+0;
                         if (closeVertex == V1) draggedVertex = i+1;
                         if (closeVertex == V2) draggedVertex = i+2;
-
-                        LOG(
-                            quadrant.GetCornerByVertex(draggedVertex)//;
-                        );
-                    }
-                    if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released))
-                    {
-                        draggedVertex = -1;
-                    }
-
-                    if (draggedVertex)
-                    {
-                        const auto yDragDelta = (f32)wnd::mouse_client_y - yDragPoint;
-                        constexpr f32 dragScale = 0.01f;
-                        auto& v = quadrant.verts[draggedVertex].pos;
-                        v[Vy] += yDragDelta * dragScale;
-                        yDragPoint = (f32)wnd::mouse_client_y;
+                        corner = quadrant.GetCornerByVertex(draggedVertex);
                     }
                     
                     break;
                 }
 
             }//for end
+
+            
+            if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released))
+            {
+                draggedVertex = -1;
+            }
+
+            if (draggedVertex >= 0)
+            {
+                const auto yDragDelta = (f32)wnd::mouse_client_y - yDragPoint;
+                constexpr f32 dragScale = 0.01f;
+                
+                const auto cx = corner % (quadrant.QUAD_COUNT + 1);
+                const auto cy = corner / (quadrant.QUAD_COUNT + 1);
+                FOR_ARRAY(quadrant.qCorners[cy][cx], i)
+                {
+                    const auto vIdx = quadrant.qCorners[cy][cx][i];
+                    auto& v = quadrant.verts[vIdx].pos;
+                    v[Vy] += yDragDelta * dragScale;
+                }
+                yDragPoint = (f32)wnd::mouse_client_y;
+
+                
+            }
         }
 
     };
