@@ -8,6 +8,7 @@
 #include "mini/ECS/ECS.hpp"
 #include "mini/Rendering/Camera.hpp"
 #include "mini/Window/AppEvents.hpp"
+#include "mini/Box/Array.hpp"
 
 //TODO: move vertical
 //TODO: AABB to check which quadrant
@@ -19,31 +20,52 @@ namespace mini::res
     //! mind the terrain vertex max count!
     struct Quadrant
     {
-        static constexpr auto QUAD_COUNT_Z = 10;
-        static constexpr auto QUAD_COUNT_X = 10;
-        static constexpr auto QUAD_COUNT_TOTAL = QUAD_COUNT_X * QUAD_COUNT_Z;
+        static constexpr auto QUAD_COUNT = 4;
+        static constexpr auto QUAD_COUNT_TOTAL = QUAD_COUNT * QUAD_COUNT;
         static constexpr auto VERT_COUNT_TOTAL = QUAD_COUNT_TOTAL * 6;
-        static constexpr auto WIDTH  = 20;
-        static constexpr auto HEIGHT = 20;
+        static constexpr auto SIZE  = 20;
 
         const f32 quadrantX;
         const f32 quadrantY;
         utils::Common_Vertex verts [VERT_COUNT_TOTAL];
 
+        box::Array<u32, 6> qCorners [QUAD_COUNT+1][QUAD_COUNT+1];
+        u32 GetCornerByVertex(const u32 vIdx)
+        {
+            const auto normIdx = (u32)(vIdx % 6);
+            const auto quadIdx = (u32)(vIdx / 6);
+            const auto quadRow = (u32)(quadIdx / QUAD_COUNT);
+
+            if (normIdx == 0 || normIdx == 3)   return quadIdx + quadRow + 0;
+            if (normIdx == 1)                   return quadIdx + quadRow + 1;
+            if (normIdx == 2 || normIdx == 4)   return quadIdx + quadRow + 1 + QUAD_COUNT + 1;
+            if (normIdx == 5)                   return quadIdx + quadRow + 0 + QUAD_COUNT + 1;
+        }
+
         void Create(const math::Vec4f& col = { 0.1f, 0.7f, 0.1f, 1 })
         {
-            const auto quadW = WIDTH  / QUAD_COUNT_X;
-            const auto quadH = HEIGHT / QUAD_COUNT_Z;
+            const auto quadSize = SIZE  / QUAD_COUNT;
 
-            for(u8 z = 0; z < QUAD_COUNT_Z; ++z) {
-            for(u8 x = 0; x < QUAD_COUNT_X; ++x) { 
-                const auto idx = (z * QUAD_COUNT_X + x) * 6;
-                verts[idx + 0] = { {  quadrantX + 0.0f * quadW + x * quadW, 0,  quadrantY + 0.0f * quadH + z * quadH, 1 }, {}, col, {} };
-                verts[idx + 1] = { {  quadrantX + 1.0f * quadW + x * quadW, 0,  quadrantY + 0.0f * quadH + z * quadH, 1 }, {}, col, {} };
-                verts[idx + 2] = { {  quadrantX + 1.0f * quadW + x * quadW, 0,  quadrantY + 1.0f * quadH + z * quadH, 1 }, {}, col, {} };
-                verts[idx + 3] = { {  quadrantX + 0.0f * quadW + x * quadW, 0,  quadrantY + 0.0f * quadH + z * quadH, 1 }, {}, col, {} };
-                verts[idx + 4] = { {  quadrantX + 1.0f * quadW + x * quadW, 0,  quadrantY + 1.0f * quadH + z * quadH, 1 }, {}, col, {} };
-                verts[idx + 5] = { {  quadrantX + 0.0f * quadW + x * quadW, 0,  quadrantY + 1.0f * quadH + z * quadH, 1 }, {}, col, {} };
+            for(u8 z = 0; z < QUAD_COUNT; ++z) {
+            for(u8 x = 0; x < QUAD_COUNT; ++x) { 
+                const auto idx = (z * QUAD_COUNT + x) * 6;
+                verts[idx + 0] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
+                verts[idx + 1] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
+                verts[idx + 2] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
+
+                verts[idx + 3] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
+                verts[idx + 4] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
+                verts[idx + 5] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
+            }}
+
+            const auto CORNER_COUNT = QUAD_COUNT + 1;
+            for(u8 z = 0; z < CORNER_COUNT; ++z) {
+            for(u8 x = 0; x < CORNER_COUNT; ++x) { 
+
+                if (x < CORNER_COUNT && z < CORNER_COUNT){
+                    qCorners[z][x].Append(x*6 + z*(CORNER_COUNT*6));
+                }
+
             }}
         }
     };
@@ -51,10 +73,10 @@ namespace mini::res
     struct Terrain
     {
         Quadrant quadrants [4] = {
-            {  0,              0 },
-            { Quadrant::WIDTH, 0 },
-            {  0,              Quadrant::HEIGHT },
-            { Quadrant::WIDTH, Quadrant::HEIGHT },
+            { 0,              0 },
+            { Quadrant::SIZE, 0 },
+            { 0,              Quadrant::SIZE },
+            { Quadrant::SIZE, Quadrant::SIZE },
         };
 
         ecs::ID gizmoID = 0;
@@ -156,6 +178,10 @@ namespace mini::res
                         if (closeVertex == V0) draggedVertex = i+0;
                         if (closeVertex == V1) draggedVertex = i+1;
                         if (closeVertex == V2) draggedVertex = i+2;
+
+                        LOG(
+                            quadrant.GetCornerByVertex(draggedVertex)//;
+                        );
                     }
                     if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released))
                     {
