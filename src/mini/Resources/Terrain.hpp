@@ -10,19 +10,21 @@
 #include "mini/Window/AppEvents.hpp"
 
 //TODO: move vertical
+//TODO: AABB to check which quadrant
 //TODO: exapandable
 //TODO: serialize
 
 namespace mini::res
 {
+    //! mind the terrain vertex max count!
     struct Quadrant
     {
-        static constexpr auto QUAD_COUNT_Z = 5;
-        static constexpr auto QUAD_COUNT_X = 5;
+        static constexpr auto QUAD_COUNT_Z = 10;
+        static constexpr auto QUAD_COUNT_X = 10;
         static constexpr auto QUAD_COUNT_TOTAL = QUAD_COUNT_X * QUAD_COUNT_Z;
         static constexpr auto VERT_COUNT_TOTAL = QUAD_COUNT_TOTAL * 6;
-        static constexpr auto WIDTH  = 10;
-        static constexpr auto HEIGHT = 10;
+        static constexpr auto WIDTH  = 20;
+        static constexpr auto HEIGHT = 20;
 
         const f32 quadrantX;
         const f32 quadrantY;
@@ -49,14 +51,14 @@ namespace mini::res
     struct Terrain
     {
         Quadrant quadrants [4] = {
-            {  0,  0 },
-            { 10,  0 },
-            {  0, 10 },
-            { 10, 10 },
+            {  0,              0 },
+            { Quadrant::WIDTH, 0 },
+            {  0,              Quadrant::HEIGHT },
+            { Quadrant::WIDTH, Quadrant::HEIGHT },
         };
 
         ecs::ID gizmoID = 0;
-        const float S = 1.f; //gizmo cube scale
+        const float S = .2f; //gizmo cube scale
 
         void Create(ecs::ECS& ecs)
         {
@@ -91,9 +93,9 @@ namespace mini::res
             const auto ray = camera.ScreenRay();
             for(auto i = 0; i < quadrant.VERT_COUNT_TOTAL; i+=3)
             {
-                const auto& v0 = quadrant.verts[i+0].pos;
-                const auto& v1 = quadrant.verts[i+1].pos;
-                const auto& v2 = quadrant.verts[i+2].pos;
+                auto& v0 = quadrant.verts[i+0].pos;
+                auto& v1 = quadrant.verts[i+1].pos;
+                auto& v2 = quadrant.verts[i+2].pos;
                 const auto intersection = utils::RayTriangleIntersection(
                     camera.pos,
                     ray,
@@ -106,36 +108,41 @@ namespace mini::res
                     auto Y = intersection->pos[Vy];
                     auto Z = intersection->pos[Vz];
 
-                    X = v0[Vx];
-                    Y = v0[Vy];
-                    Z = v0[Vz];
+                    //TODO: could be written better:
+                    enum CloseVertex { V0, V1, V2 } closeVertex = V0;
+                    if      (intersection->u > 0.5) closeVertex = V1;
+                    else if (intersection->v > 0.5) closeVertex = V2;
+                    else if (intersection->u > 0.25 && intersection->v > 0.25)
+                    {
+                        if  (intersection->u > intersection->v) closeVertex = V1;
+                        else closeVertex = V2;
+                    }
 
-                    if (intersection->u > 0.5){
+                    if (closeVertex == V0)
+                    {
+                        X = v0[Vx];
+                        Y = v0[Vy];
+                        Z = v0[Vz];
+                    }
+                    if (closeVertex == V1)
+                    {
                         X = v1[Vx];
                         Y = v1[Vy];
                         Z = v1[Vz];
                     }
-                    else if (intersection->v > 0.5) {
+                    if (closeVertex == V2)
+                    {
                         X = v2[Vx];
                         Y = v2[Vy];
                         Z = v2[Vz];
                     }
-                    else if (intersection->u > 0.25 && intersection->v > 0.25)
-                    {
-                        if (intersection->u > intersection->v){
-                            X = v1[Vx];
-                            Y = v1[Vy];
-                            Z = v1[Vz];
-                        }
-                        else {
-                            X = v2[Vx];
-                            Y = v2[Vy];
-                            Z = v2[Vz];
-                        }
-                    }
-
+                   
                     if (wnd::IsPressed(wnd::EventType::Mouse_Left))
                     {
+                        if (closeVertex == V0) v0[Vy] = -1;
+                        if (closeVertex == V1) v1[Vy] = -1;
+                        if (closeVertex == V2) v2[Vy] = -1;
+
                         auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
                         cubeTrans.transform = {
                             S, 0, 0, 0,

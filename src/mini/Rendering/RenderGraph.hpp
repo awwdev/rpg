@@ -12,7 +12,7 @@ namespace mini::rendering
     constexpr u32 UI_UBO_MAX_COUNT = 1000;
     constexpr u32 DEFAULT_UBO_MAX_COUNT = 1000;
     constexpr u32 DEFAULT_VERTEX_MAX_COUNT = 1000;
-    constexpr u32 TERRAIN_VERTEX_MAX_COUNT = 1000;
+    constexpr u32 TERRAIN_VERTEX_MAX_COUNT = 1'000'000;
 
     //keep rendergraph intact until all rendering (since it will be referenced on draw too)
     struct RenderGraph
