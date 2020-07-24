@@ -20,19 +20,6 @@ namespace mini::rendering
         UniformDataGroups<UI_UniformData, UI_UBO_MAX_COUNT, 1>  ui_ubo; //1 group only
         UniformDataGroups<Default_UniformData, DEFAULT_UBO_MAX_COUNT> default_ubo;
 
-        //Terrain
-        //TODO: expandable
-        static constexpr auto QUAD_COUNT_Z = 10;
-        static constexpr auto QUAD_COUNT_X = 10;
-        box::SimpleArray<utils::Common_Vertex, QUAD_COUNT_Z * QUAD_COUNT_X * 6> terrain {};
-
-        Camera camera;
-
-        RenderGraph()
-        {
-            terrain = res::CreateMeshGrid<QUAD_COUNT_X, QUAD_COUNT_Z>(50, 50);
-        }
-
         void Clear()
         {
             ui_ubo.Clear();

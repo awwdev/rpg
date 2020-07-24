@@ -35,8 +35,9 @@ int WINAPI wWinMain(
             vk::WindowHandle{window.hInstance, window.hWnd},
             *ptrHostResources);
 
-        auto ptrSceneStack = mem::ClaimBlock<box::Array<app::Scene, 1, box::INIT::Yes>>();
-        uint32_t sceneIdx = 0;
+        //TODO: make stack for each scene type instead of one generic scene
+        auto ptrGameScenes = mem::ClaimBlock<box::Array<app::GameScene, 1, box::INIT::Yes>>();
+        uint32_t gameSceneIdx = 0;
 
         while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
         {
@@ -45,9 +46,9 @@ int WINAPI wWinMain(
 
             if (wnd::window_h != 0 && wnd::window_w != 0)
             {
-                ptrSceneStack[sceneIdx].renderGraph.Clear();
-                ptrSceneStack[sceneIdx].Update(mini::dt::seconds);
-                ptrRenderer->Render(mini::dt::seconds, ptrSceneStack[sceneIdx]);
+                ptrGameScenes[gameSceneIdx].renderGraph.Clear();
+                ptrGameScenes[gameSceneIdx].Update(mini::dt::seconds);
+                ptrRenderer->Render(mini::dt::seconds, ptrGameScenes[gameSceneIdx]);
             }
         }
 

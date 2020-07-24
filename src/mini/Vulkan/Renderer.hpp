@@ -43,10 +43,10 @@ namespace mini::vk
         }
 
 
-        void UpdateVkResources(const app::Scene& scene, const double dt)
+        void UpdateVkResources(const app::GameScene& scene, const double dt)
         {
             resources.common_pushConsts.projection = {
-                scene.renderGraph.camera.GetProjView()
+                scene.camera.GetProjView()
             };
             resources.common_pushConsts.wnd_w = wnd::window_w;
             resources.common_pushConsts.wnd_h = wnd::window_h;
@@ -60,11 +60,11 @@ namespace mini::vk
             //TODO: selectively update terrain data
             //TODO: make stuff expandable
             resources.terrain.vbo.Clear();
-            decltype(scene.renderGraph.terrain)::CREF terrain = scene.renderGraph.terrain;
+            decltype(scene.terrain.verts)::CREF terrain = scene.terrain.verts;
             resources.terrain.vbo.AppendGroup(terrain);
         }
 
-        void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::Scene& scene)
+        void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::GameScene& scene)
         {
             auto& cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
             VkDeviceSize vboOffsets { 0 };
@@ -129,7 +129,7 @@ namespace mini::vk
         }
 
 
-        void Render(const double dt, app::Scene& scene)
+        void Render(const double dt, app::GameScene& scene)
         {
             if (wnd::CheckEvent(wnd::EventType::Window_Resize)){
                 RecreateScwapchain();
