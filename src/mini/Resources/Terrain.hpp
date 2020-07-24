@@ -17,16 +17,18 @@ namespace mini::res
 {
     struct Quadrant
     {
-        static constexpr auto QUAD_COUNT_Z = 10;
-        static constexpr auto QUAD_COUNT_X = 10;
+        static constexpr auto QUAD_COUNT_Z = 5;
+        static constexpr auto QUAD_COUNT_X = 5;
         static constexpr auto QUAD_COUNT_TOTAL = QUAD_COUNT_X * QUAD_COUNT_Z;
         static constexpr auto VERT_COUNT_TOTAL = QUAD_COUNT_TOTAL * 6;
-        static constexpr auto WIDTH  = 50;
-        static constexpr auto HEIGHT = 50;
+        static constexpr auto WIDTH  = 10;
+        static constexpr auto HEIGHT = 10;
 
+        const f32 quadrantX;
+        const f32 quadrantY;
         utils::Common_Vertex verts [VERT_COUNT_TOTAL];
 
-        void Create()
+        void Create(const math::Vec4f& col = { 0.1f, 0.7f, 0.1f, 1 })
         {
             const auto quadW = WIDTH  / QUAD_COUNT_X;
             const auto quadH = HEIGHT / QUAD_COUNT_Z;
@@ -34,26 +36,34 @@ namespace mini::res
             for(u8 z = 0; z < QUAD_COUNT_Z; ++z) {
             for(u8 x = 0; x < QUAD_COUNT_X; ++x) { 
                 const auto idx = (z * QUAD_COUNT_X + x) * 6;
-                constexpr math::Vec4f col = { 0.1f, 0.7f, 0.1f, 1 };
-                verts[idx + 0] = { {  0.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
-                verts[idx + 1] = { {  1.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
-                verts[idx + 2] = { {  1.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
-                verts[idx + 3] = { {  0.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
-                verts[idx + 4] = { {  1.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
-                verts[idx + 5] = { {  0.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 0] = { {  quadrantX + 0.0f * quadW + x * quadW, 0,  quadrantY + 0.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 1] = { {  quadrantX + 1.0f * quadW + x * quadW, 0,  quadrantY + 0.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 2] = { {  quadrantX + 1.0f * quadW + x * quadW, 0,  quadrantY + 1.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 3] = { {  quadrantX + 0.0f * quadW + x * quadW, 0,  quadrantY + 0.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 4] = { {  quadrantX + 1.0f * quadW + x * quadW, 0,  quadrantY + 1.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 5] = { {  quadrantX + 0.0f * quadW + x * quadW, 0,  quadrantY + 1.0f * quadH + z * quadH, 1 }, {}, col, {} };
             }}
         }
     };
 
     struct Terrain
     {
-        Quadrant quadrants [1];
+        Quadrant quadrants [4] = {
+            {  0,  0 },
+            { 10,  0 },
+            {  0, 10 },
+            { 10, 10 },
+        };
+
         ecs::ID gizmoID = 0;
         const float S = 1.f; //gizmo cube scale
 
         void Create(ecs::ECS& ecs)
         {
-            quadrants[0].Create();
+            quadrants[0].Create({ 0.1f, 0.7f, 0.1f, 1 });
+            quadrants[1].Create({ 0.7f, 0.1f, 0.1f, 1 });
+            quadrants[2].Create({ 0.1f, 0.1f, 0.7f, 1 });
+            quadrants[3].Create({ 0.7f, 0.7f, 0.7f, 1 });
 
             //GIZMO CUBE
             {

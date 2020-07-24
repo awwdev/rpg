@@ -59,7 +59,9 @@ namespace mini::vk
 
             //TODO: selectively update terrain data
             resources.terrain.vbo.Clear();
-            resources.terrain.vbo.AppendGroup(scene.terrain.quadrants[0].verts);
+            FOR_CARRAY(scene.terrain.quadrants, i) {
+                resources.terrain.vbo.AppendGroup(scene.terrain.quadrants[i].verts);
+            }
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::GameScene& scene)

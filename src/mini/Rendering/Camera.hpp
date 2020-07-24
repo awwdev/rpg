@@ -11,16 +11,16 @@ namespace mini::rendering
 {
     struct Camera
     {
-        math::Vec3f pos { 0, 0, 0 };
-        math::Vec3f rotTarget  {}; 
+        math::Vec3f pos         { 0, 4, -4 };
+        math::Vec3f rotTarget   { 0.5f, 0, 0 }; 
         math::Vec3f movNorm {};
         math::Quatf qRot {};
 
-        float movSpd    = 2;
+        float movSpd    = 10;
         float dirSpd    = 150;
-        float mouseSpd  = 0.001f;
+        float mouseSpd  = 0.002f;
         float fov       = 45;
-        float scrollSpd = 0.01f;
+        float scrollSpd = 0.02f;
 
         void Update(const double dt)
         {
