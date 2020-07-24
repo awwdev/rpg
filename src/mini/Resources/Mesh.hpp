@@ -25,11 +25,11 @@ namespace mini::res
         u32 count;
     };
 
+    /*
+    used by terrain - but has its own method now
     template<u8 QUAD_COUNT_X, u8 QUAD_COUNT_Z> 
-    auto CreateMeshGrid(const f32 gridW, const f32 gridH)
+    void CreateMeshGrid(const f32 gridW, const f32 gridH, utils::Common_Vertex(&arr)[QUAD_COUNT_X*QUAD_COUNT_Z*6])
     {
-        box::SimpleArray<utils::Common_Vertex, QUAD_COUNT_Z * QUAD_COUNT_X * 6> arr;
-
         const auto quadW = gridW / QUAD_COUNT_X;
         const auto quadH = gridH / QUAD_COUNT_Z;
 
@@ -44,8 +44,7 @@ namespace mini::res
             arr[idx + 4] = { {  1.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
             arr[idx + 5] = { {  0.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
         }}
-
-        return arr;
     }
+    */
 
 } //ns

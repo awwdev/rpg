@@ -7,26 +7,56 @@
 #include "mini/Utils/Structs.hpp"
 #include "mini/ECS/ECS.hpp"
 #include "mini/Rendering/Camera.hpp"
+#include "mini/Window/AppEvents.hpp"
+
+//TODO: move vertical
+//TODO: exapandable
+//TODO: serialize
 
 namespace mini::res
 {
-    struct Terrain
+    struct Quadrant
     {
         static constexpr auto QUAD_COUNT_Z = 10;
         static constexpr auto QUAD_COUNT_X = 10;
+        static constexpr auto QUAD_COUNT_TOTAL = QUAD_COUNT_X * QUAD_COUNT_Z;
+        static constexpr auto VERT_COUNT_TOTAL = QUAD_COUNT_TOTAL * 6;
+        static constexpr auto WIDTH  = 50;
+        static constexpr auto HEIGHT = 50;
 
-        box::SimpleArray<utils::Common_Vertex, QUAD_COUNT_Z * QUAD_COUNT_X * 6> verts {};
+        utils::Common_Vertex verts [VERT_COUNT_TOTAL];
 
+        void Create()
+        {
+            const auto quadW = WIDTH  / QUAD_COUNT_X;
+            const auto quadH = HEIGHT / QUAD_COUNT_Z;
+
+            for(u8 z = 0; z < QUAD_COUNT_Z; ++z) {
+            for(u8 x = 0; x < QUAD_COUNT_X; ++x) { 
+                const auto idx = (z * QUAD_COUNT_X + x) * 6;
+                constexpr math::Vec4f col = { 0.1f, 0.7f, 0.1f, 1 };
+                verts[idx + 0] = { {  0.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 1] = { {  1.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 2] = { {  1.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 3] = { {  0.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 4] = { {  1.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
+                verts[idx + 5] = { {  0.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };
+            }}
+        }
+    };
+
+    struct Terrain
+    {
+        Quadrant quadrants [1];
         ecs::ID gizmoID = 0;
-
+        const float S = 1.f; //gizmo cube scale
 
         void Create(ecs::ECS& ecs)
         {
-            verts = res::CreateMeshGrid<QUAD_COUNT_X, QUAD_COUNT_Z>(50, 50);
+            quadrants[0].Create();
 
             //GIZMO CUBE
             {
-                constexpr float S =  0.05f;
                 constexpr float X =  0; 
                 constexpr float Y =  0;
                 constexpr float Z =  0;
@@ -44,14 +74,16 @@ namespace mini::res
 
         void Update(const double dt, const rendering::Camera& camera, ecs::ECS& ecs)
         {
+            auto& quadrant = quadrants[0];
+
             //INTERSECTION
             using namespace utils;
             const auto ray = camera.ScreenRay();
-            for(auto i = 0; i < verts.CAPACITY; i+=3)
+            for(auto i = 0; i < quadrant.VERT_COUNT_TOTAL; i+=3)
             {
-                const auto& v0 = verts[i+0].pos;
-                const auto& v1 = verts[i+1].pos;
-                const auto& v2 = verts[i+2].pos;
+                const auto& v0 = quadrant.verts[i+0].pos;
+                const auto& v1 = quadrant.verts[i+1].pos;
+                const auto& v2 = quadrant.verts[i+2].pos;
                 const auto intersection = utils::RayTriangleIntersection(
                     camera.pos,
                     ray,
@@ -92,14 +124,17 @@ namespace mini::res
                         }
                     }
 
-                    constexpr float S = 1;
-                    auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
-                    cubeTrans.transform = {
-                        S, 0, 0, 0,
-                        0, S, 0, 0,
-                        0, 0, S, 0,
-                        X, Y, Z, 1,
-                    };
+                    if (wnd::IsPressed(wnd::EventType::Mouse_Left))
+                    {
+                        auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
+                        cubeTrans.transform = {
+                            S, 0, 0, 0,
+                            0, S, 0, 0,
+                            0, 0, S, 0,
+                            X, Y, Z, 1,
+                        };
+                    }
+                    
                 }
             }
         }

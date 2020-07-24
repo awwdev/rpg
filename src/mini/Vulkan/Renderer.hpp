@@ -42,8 +42,8 @@ namespace mini::vk
             commands.Create();
         }
 
-
-        void UpdateVkResources(const app::GameScene& scene, const double dt)
+        //TODO: depends on scene
+        void UpdateVkResources_GameScene(const app::GameScene& scene, const double dt)
         {
             resources.common_pushConsts.projection = {
                 scene.camera.GetProjView()
@@ -58,10 +58,8 @@ namespace mini::vk
             resources.default.ubo.Store(scene.renderGraph.default_ubo);
 
             //TODO: selectively update terrain data
-            //TODO: make stuff expandable
             resources.terrain.vbo.Clear();
-            decltype(scene.terrain.verts)::CREF terrain = scene.terrain.verts;
-            resources.terrain.vbo.AppendGroup(terrain);
+            resources.terrain.vbo.AppendGroup(scene.terrain.quadrants[0].verts);
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::GameScene& scene)
@@ -163,7 +161,7 @@ namespace mini::vk
             VK_CHECK(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
             //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-            UpdateVkResources(scene, dt);
+            UpdateVkResources_GameScene(scene, dt); //TODO: depends on scene
             RecordCommands(imageIndex, dt, scene);
             //!--------------------------------------------------
 
