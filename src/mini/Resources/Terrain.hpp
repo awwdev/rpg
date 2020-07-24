@@ -58,7 +58,10 @@ namespace mini::res
         };
 
         ecs::ID gizmoID = 0;
-        const float S = .2f; //gizmo cube scale
+        const float S = .05f; //gizmo cube scale
+
+        f32 yDragPoint = 0;
+        s32 draggedVertex = -1;
 
         void Create(ecs::ECS& ecs)
         {
@@ -103,7 +106,9 @@ namespace mini::res
                     { v1[Vx], v1[Vy], v1[Vz] },
                     { v2[Vx], v2[Vy], v2[Vz] }
                 );
-                if (intersection) {
+
+                if (intersection)
+                {
                     auto X = intersection->pos[Vx];
                     auto Y = intersection->pos[Vy];
                     auto Z = intersection->pos[Vz];
@@ -136,24 +141,40 @@ namespace mini::res
                         Y = v2[Vy];
                         Z = v2[Vz];
                     }
-                   
-                    if (wnd::IsPressed(wnd::EventType::Mouse_Left))
-                    {
-                        if (closeVertex == V0) v0[Vy] = -1;
-                        if (closeVertex == V1) v1[Vy] = -1;
-                        if (closeVertex == V2) v2[Vy] = -1;
 
-                        auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
-                        cubeTrans.transform = {
-                            S, 0, 0, 0,
-                            0, S, 0, 0,
-                            0, 0, S, 0,
-                            X, Y, Z, 1,
-                        };
+                    auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
+                    cubeTrans.transform = {
+                        S, 0, 0, 0,
+                        0, S, 0, 0,
+                        0, 0, S, 0,
+                        X, Y, Z, 1,
+                    };
+                   
+                    if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed))
+                    {
+                        yDragPoint = (f32)wnd::mouse_client_y;
+                        if (closeVertex == V0) draggedVertex = i+0;
+                        if (closeVertex == V1) draggedVertex = i+1;
+                        if (closeVertex == V2) draggedVertex = i+2;
+                    }
+                    if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released))
+                    {
+                        draggedVertex = -1;
+                    }
+
+                    if (draggedVertex)
+                    {
+                        const auto yDragDelta = (f32)wnd::mouse_client_y - yDragPoint;
+                        constexpr f32 dragScale = 0.01f;
+                        auto& v = quadrant.verts[draggedVertex].pos;
+                        v[Vy] += yDragDelta * dragScale;
+                        yDragPoint = (f32)wnd::mouse_client_y;
                     }
                     
+                    break;
                 }
-            }
+
+            }//for end
         }
 
     };
