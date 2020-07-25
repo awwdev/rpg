@@ -59,6 +59,7 @@ namespace mini::vk
         ~RenderPassDepth()
         {
             vkDestroyRenderPass(g_contextPtr->device, renderPass, nullptr);
+            vkDestroyFramebuffer(g_contextPtr->device, framebuffer, nullptr);
         }
     };
 

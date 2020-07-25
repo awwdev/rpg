@@ -89,12 +89,31 @@ namespace mini::vk
                 clears_default
             );
 
+            const VkClearValue clears_shadow [] { 
+                { .depthStencil = { 0, 0 } } //reversed z
+            };
+            const auto beginInfo_shadow = CreateRenderPassBeginInfo(
+                resources.shadow.renderPass.renderPass,
+                resources.shadow.renderPass.framebuffer,
+                ARRAY_COUNT(clears_shadow),
+                clears_shadow
+            );
+
             VkDeviceSize offsets = 0;
 
-            vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE); //used to terrain too now
+             //! SHADOW
+            //update push constants with sun view projection
+            vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_shadow, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdPushConstants      (cmdBuffer, resources.shadow.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
+            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
+            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.shadow.pipeline.pipeline);
+            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.shadow.pipeline.layout, 0, 1, &resources.shadow.pipeline.sets[cmdBufferIdx], 0, nullptr); 
+            //vkCmdDraw               (cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
+            vkCmdEndRenderPass      (cmdBuffer);
 
             //! TERRAIN
             //TODO: culling (loops)
+            vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdPushConstants      (cmdBuffer, resources.terrain.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
             vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.pipeline);
@@ -125,6 +144,7 @@ namespace mini::vk
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.layout, 0, 1, &resources.ui.pipeline.sets[cmdBufferIdx], 0, nullptr); 
             vkCmdDraw               (cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
             vkCmdEndRenderPass      (cmdBuffer);
+
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }
 
