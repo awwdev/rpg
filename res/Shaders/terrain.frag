@@ -11,9 +11,9 @@ void main()
 {
     float dist = texture(shadowMap, inShadowCoord.st).r;
     outColor = vec4(
-        inColors.r * dist, 
-        inColors.g * dist,
-        inColors.b * dist,
+        inColors.r * (1-dist), 
+        inColors.g * (1-dist),
+        inColors.b * (1-dist),
         inColors.a
     );
 }

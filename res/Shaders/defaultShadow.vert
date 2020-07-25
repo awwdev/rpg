@@ -1,9 +1,8 @@
 #version 450
 
 layout(push_constant) uniform Push {
-    mat4 projection;
-    uint wnd_width;
-    uint wnd_height;
+    mat4 camera;
+    mat4 sun;
 } push;
 
 layout(location = 0) in vec4 inPos;
@@ -22,5 +21,5 @@ layout(binding = 0) uniform InstanceData {
 
 void main() 
 {
-    gl_Position = push.projection * instanceData.arr[gl_InstanceIndex].transform * inPos;
+    gl_Position = push.camera * instanceData.arr[gl_InstanceIndex].transform * inPos;
 }

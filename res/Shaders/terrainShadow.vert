@@ -1,9 +1,8 @@
 #version 450
 
 layout(push_constant) uniform Push {
-    mat4 projection;
-    uint wnd_width;
-    uint wnd_height;
+    mat4 camera;
+    mat4 sun;
 } push;
 
 layout(location = 0) in vec4 inPos;
@@ -13,5 +12,5 @@ layout(location = 3) in vec4 inTex;
 
 void main() 
 {
-    gl_Position = push.projection * inPos;
+    gl_Position = push.camera * inPos;
 }

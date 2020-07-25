@@ -1,9 +1,8 @@
 #version 450
 
 layout(push_constant) uniform Push {
-    mat4 projection;
-    uint wnd_width;
-    uint wnd_height;
+    mat4 camera;
+    mat4 sun;
 } push;
 
 layout(location = 0) in vec4 inPos;
@@ -23,8 +22,9 @@ const mat4 biasMat = mat4(
 
 void main() 
 {
-    gl_Position = push.projection * inPos;
+    gl_Position = push.camera * inPos;
     outCol      = inCol;
 
-    outShadowCoord = (biasMat * push.projection) * inPos;	
+    vec4 shadowCoords = biasMat * push.sun * inPos;
+    outShadowCoord = shadowCoords / shadowCoords.w;	
 }

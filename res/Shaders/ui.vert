@@ -2,7 +2,6 @@
 //todo: shader extension to allow smaller types on INSTANCE_DATA
 
 layout(push_constant) uniform Push {
-    mat4 projection;
     uint wnd_width;
     uint wnd_height;
 } push;
