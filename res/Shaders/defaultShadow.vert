@@ -1,7 +1,7 @@
 #version 450
 
 layout(push_constant) uniform Push {
-    mat4 depthProj;
+    mat4 projection;
     uint wnd_width;
     uint wnd_height;
 } push;
@@ -19,7 +19,8 @@ layout(binding = 0) uniform InstanceData {
     INSTANCE_DATA arr[1000];
 } instanceData;
 
+
 void main() 
 {
-    gl_Position = push.depthProj * instanceData.arr[gl_InstanceIndex].transform * inPos;
+    gl_Position = push.projection * instanceData.arr[gl_InstanceIndex].transform * inPos;
 }
