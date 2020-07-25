@@ -88,13 +88,14 @@ namespace mini::vk
         Pipeline pipelineWire;
         VertexBuffer<Common_Vertex, TERRAIN_VERTEX_MAX_COUNT> vbo;
 
-        void Create(res::HostResources& hostRes, Commands& commands)
+        void Create(res::HostResources& hostRes, Commands& commands, Resources_Default& defaultRes)
         {
+            //to make pipelines more compatibe for shadow mapping, we just use the ubo
             Terrain_CreateVertexBuffer  (vbo, commands.cmdPool, hostRes);
             Terrain_CreateShader        (shader);
             Terrain_CreateShaderWire    (shaderWire);
             Terrain_CreateRenderPass    (renderPass, commands.cmdPool);
-            Terrain_CreatePipeline      (pipeline, shader, renderPass, vbo);
+            Terrain_CreatePipeline      (pipeline, shader, renderPass, vbo, defaultRes.ubo);
             Terrain_CreatePipelineWire  (pipelineWire, shaderWire, renderPass, vbo);
         }
     };
@@ -132,7 +133,7 @@ namespace mini::vk
         {
             ui.Create(hostRes, commands);
             default.Create(hostRes, commands);
-            terrain.Create(hostRes, commands);
+            terrain.Create(hostRes, commands, default);
             shadow.Create(hostRes, commands, default);
         }
 
@@ -151,7 +152,7 @@ namespace mini::vk
             UI_CreateRenderPass       (ui.renderPass);
             UI_CreatePipeline         (ui.pipeline, ui.shader, ui.renderPass, ui.ubo);
             Terrain_CreateRenderPass  (terrain.renderPass, cmdPool);
-            Terrain_CreatePipeline    (terrain.pipeline, terrain.shader, terrain.renderPass, terrain.vbo);
+            Terrain_CreatePipeline    (terrain.pipeline, terrain.shader, terrain.renderPass, terrain.vbo, default.ubo);
             Terrain_CreatePipelineWire(terrain.pipelineWire, terrain.shaderWire, terrain.renderPass, terrain.vbo);
         }
     };

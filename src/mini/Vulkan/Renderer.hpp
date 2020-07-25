@@ -105,10 +105,23 @@ namespace mini::vk
             //update push constants with sun view projection
             vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_shadow, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdPushConstants      (cmdBuffer, resources.shadow.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
-            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
+            vkCmdBindDescripto
+            rSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.shadow.pipeline.layout, 0, 1, &resources.shadow.pipeline.sets[cmdBufferIdx], 0, nullptr); 
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.shadow.pipeline.pipeline);
-            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.shadow.pipeline.layout, 0, 1, &resources.shadow.pipeline.sets[cmdBufferIdx], 0, nullptr); 
-            //vkCmdDraw               (cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
+            //terrain
+            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
+            vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
+            //default
+            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
+            FOR_USED_INDICES_MAP_BEGIN(scene.renderGraph.default_ubo.groups, usedIndex)
+            {
+                const auto vertOff   = resources.default.vbo.vertexGroups[usedIndex].begin;
+                const auto vertCount = resources.default.vbo.vertexGroups[usedIndex].count;
+                const auto instOff   = scene.renderGraph.default_ubo.groups.Get(usedIndex).begin;
+                const auto instCount = scene.renderGraph.default_ubo.groups.Get(usedIndex).count;
+                vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
+            }
+            FOR_USED_INDICES_MAP_END
             vkCmdEndRenderPass      (cmdBuffer);
 
             //! TERRAIN

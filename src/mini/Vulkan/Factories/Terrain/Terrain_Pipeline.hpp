@@ -17,7 +17,8 @@ namespace mini::vk
         Pipeline& pipeline,
         Shader& shader, 
         RenderPass& renderPass,
-        VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT>& vbo)
+        VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT>& vbo,
+        UniformBuffer_Groups<rendering::Default_UniformData, rendering::DEFAULT_UBO_MAX_COUNT>& ubo)
     {
         const VkPipelineVertexInputStateCreateInfo vertexInput {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -28,6 +29,11 @@ namespace mini::vk
             .vertexAttributeDescriptionCount = vbo.attributes.Count(),
             .pVertexAttributeDescriptions    = vbo.attributes.Data()
         };
+
+        UniformInfo* uniformInfos [] = {
+            &ubo.info,
+        };
+        WriteDescriptors(pipeline, uniformInfos);
 
         const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
             .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
