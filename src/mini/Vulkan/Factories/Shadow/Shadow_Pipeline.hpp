@@ -13,21 +13,32 @@
 
 namespace mini::vk
 {
-    void Terrain_CreatePipelineWire(
+    //TODO: here we have a pipeline that takes the layout from multiple other pipelines
+    //when it comes to vertex layout and ubo 
+    //but currently the layout is bound to the specific vbo / ubo
+
+    void Shadow_CreatePipeline(
         Pipeline& pipeline,
         Shader& shader, 
-        RenderPass& renderPass,
-        VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT>& vbo)
+        RenderPassDepth& renderPass,
+        box::IArray<VkVertexInputBindingDescription>& vertDescs,
+        box::IArray<VkVertexInputAttributeDescription>& vertAttribs,
+        UniformBuffer_Groups<rendering::Default_UniformData, rendering::DEFAULT_UBO_MAX_COUNT>& ubo)
     {
         const VkPipelineVertexInputStateCreateInfo vertexInput {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext                           = nullptr,
             .flags                           = 0,
-            .vertexBindingDescriptionCount   = vbo.bindings.Count(),
-            .pVertexBindingDescriptions      = vbo.bindings.Data(),
-            .vertexAttributeDescriptionCount = vbo.attributes.Count(),
-            .pVertexAttributeDescriptions    = vbo.attributes.Data()
+            .vertexBindingDescriptionCount   = vertDescs.Count(),
+            .pVertexBindingDescriptions      = vertDescs.Data(),
+            .vertexAttributeDescriptionCount = vertAttribs.Count(),
+            .pVertexAttributeDescriptions    = vertAttribs.Data()
         };
+
+        UniformInfo* uniformInfos [] = {
+            &ubo.info,
+        };
+        WriteDescriptors(pipeline, uniformInfos);
 
         const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
             .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
@@ -71,11 +82,11 @@ namespace mini::vk
             .flags                   = 0,
             .depthClampEnable        = VK_FALSE,
             .rasterizerDiscardEnable = VK_FALSE,
-            .polygonMode             = VK_POLYGON_MODE_LINE,
-            .cullMode                = VK_CULL_MODE_BACK_BIT,
+            .polygonMode             = VK_POLYGON_MODE_FILL,
+            .cullMode                = VK_CULL_MODE_BACK_BIT,//VK_CULL_MODE_NONE, //VK_CULL_MODE_BACK_BIT,
             .frontFace               = VK_FRONT_FACE_CLOCKWISE,
             .depthBiasEnable         = VK_FALSE,
-            .depthBiasConstantFactor = 10.f,
+            .depthBiasConstantFactor = 0.f,
             .depthBiasClamp          = 0.f,
             .depthBiasSlopeFactor    = 0.f,
             .lineWidth               = 1.f  

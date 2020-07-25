@@ -13,7 +13,13 @@ namespace mini::vk
 
         constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
         rp.msaaImage.Create(cmdPool, g_contextPtr->format, rp.sampleCount);
-        rp.depthImage.Create(cmdPool, DEPTH_FORMAT, rp.sampleCount);
+        rp.depthImage.Create(
+            cmdPool, 
+            DEPTH_FORMAT,
+            g_contextPtr->surfaceCapabilities.currentExtent.width,
+            g_contextPtr->surfaceCapabilities.currentExtent.height,
+            VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+            rp.sampleCount);
 
 
         const VkAttachmentDescription colorDesc {

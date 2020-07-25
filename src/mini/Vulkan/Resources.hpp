@@ -25,6 +25,10 @@
 #include "mini/Vulkan/Factories/Terrain/Terrain_RenderPass.hpp"
 #include "mini/Vulkan/Factories/Terrain/Terrain_Shader.hpp" //includes wire
 
+#include "mini/Vulkan/Factories/Shadow/Shadow_Pipeline.hpp"
+#include "mini/Vulkan/Factories/Shadow/Shadow_Shader.hpp"
+#include "mini/Vulkan/Factories/Shadow/Shadow_RenderPass.hpp"
+
 #include "mini/Vulkan/Objects/ImageArray.hpp"
 #include "mini/Vulkan/Objects/VertexBuffer.hpp"
 
@@ -37,7 +41,7 @@ namespace mini::vk
     using namespace rendering;
     using namespace utils;
 
-    struct UI_Resources
+    struct Resources_UI
     {
         ImageArray fontImages;
 
@@ -57,7 +61,7 @@ namespace mini::vk
         }
     };
 
-    struct Default_Resources
+    struct Resources_Default
     {
         RenderPass renderPass;
         Shader shader;
@@ -75,7 +79,7 @@ namespace mini::vk
         }
     };
 
-    struct Terrain_Resources
+    struct Resources_Terrain
     {
         RenderPass renderPass;
         Shader shader;
@@ -95,19 +99,41 @@ namespace mini::vk
         }
     };
 
+    struct Resources_Shadow
+    {
+        Pipeline pipeline;
+        RenderPassDepth renderPass;
+        Shader shader;
+
+        void Create(res::HostResources& hostRes, Commands& commands, Resources_Default& defaultRes)
+        {
+            Shadow_CreateShader(shader, renderPass);
+            Shadow_CreateRenderPass(renderPass, commands.cmdPool);
+            Shadow_CreatePipeline(
+                pipeline, 
+                shader, 
+                renderPass, 
+                defaultRes.vbo.bindings, 
+                defaultRes.vbo.attributes,
+                defaultRes.ubo);
+        }
+    };
+
     struct VkResources
     {
         Common_PushConstants common_pushConsts;
         //sub resources
-        UI_Resources ui;
-        Default_Resources default;
-        Terrain_Resources terrain;
+        Resources_UI ui;
+        Resources_Default default;
+        Resources_Terrain terrain;
+        Resources_Shadow  shadow;
 
         void Create(res::HostResources& hostRes, Commands& commands)
         {
             ui.Create(hostRes, commands);
             default.Create(hostRes, commands);
             terrain.Create(hostRes, commands);
+            shadow.Create(hostRes, commands, default);
         }
 
         void RecreateSwapchain(VkCommandPool cmdPool)

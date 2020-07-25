@@ -85,10 +85,15 @@ namespace mini::vk
         uint32_t        width, height;
         VkImageLayout   layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-        void Create(VkCommandPool cmdPool, VkFormat format, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT)
+        void Create(
+            VkCommandPool cmdPool, 
+            VkFormat format, 
+            uint32_t pWidth, uint32_t pHeight,
+            VkImageUsageFlags usage,
+            VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT)
         {
-            width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
-            height = g_contextPtr->surfaceCapabilities.currentExtent.height;
+            width  = pWidth; //g_contextPtr->surfaceCapabilities.currentExtent.width;
+            height = pHeight;//g_contextPtr->surfaceCapabilities.currentExtent.height;
 
             const VkImageCreateInfo imageInfo {
                 .sType                  = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -101,7 +106,7 @@ namespace mini::vk
                 .arrayLayers            = 1,
                 .samples                = sampleCount,
                 .tiling                 = VK_IMAGE_TILING_OPTIMAL,
-                .usage                  = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+                .usage                  = usage,
                 .sharingMode            = VK_SHARING_MODE_EXCLUSIVE,
                 .queueFamilyIndexCount  = 0,
                 .pQueueFamilyIndices    = 0,

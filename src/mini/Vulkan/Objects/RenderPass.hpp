@@ -48,4 +48,18 @@ namespace mini::vk
         
     };
 
+    struct RenderPassDepth
+    {
+        VkRenderPass renderPass;
+        VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT; //!set in factory
+
+        VkFramebuffer framebuffer;
+        DepthImage    depthImage;
+
+        ~RenderPassDepth()
+        {
+            vkDestroyRenderPass(g_contextPtr->device, renderPass, nullptr);
+        }
+    };
+
 }//ns

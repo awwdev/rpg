@@ -4,7 +4,7 @@
         {
             "type": "shell",
             "label": "build_debug",
-            "command": "${workspaceFolder}\\build_debug.bat",
+            "command": "${workspaceFolder}\\build_debug.bat"
         },
         {
             "type": "shell",

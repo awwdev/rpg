@@ -17,10 +17,9 @@
 
 namespace mini::res
 {
-    //! mind the terrain vertex max count!
     struct Quadrant
     {
-        static constexpr auto QUAD_COUNT = 2;
+        static constexpr auto QUAD_COUNT = 10;
         static constexpr auto QUAD_COUNT_TOTAL = QUAD_COUNT * QUAD_COUNT;
         static constexpr auto VERT_COUNT_TOTAL = QUAD_COUNT_TOTAL * 6;
         static constexpr auto SIZE  = 20;
@@ -36,10 +35,10 @@ namespace mini::res
             const auto quadIdx = (u32)(vIdx / 6);
             const auto quadRow = (u32)(quadIdx / QUAD_COUNT);
 
-            if (normIdx == 0 || normIdx == 3)   return quadIdx + quadRow + 0;
-            if (normIdx == 1)                   return quadIdx + quadRow + 1;
-            if (normIdx == 2 || normIdx == 4)   return quadIdx + quadRow + 1 + QUAD_COUNT + 1;
-            if (normIdx == 5)                   return quadIdx + quadRow + 0 + QUAD_COUNT + 1;
+            if (normIdx == 0 || normIdx == 3)        return quadIdx + quadRow + 0;
+            else if (normIdx == 1)                   return quadIdx + quadRow + 1;
+            else if (normIdx == 2 || normIdx == 4)   return quadIdx + quadRow + 1 + QUAD_COUNT + 1;
+            else /*if (normIdx == 5)*/               return quadIdx + quadRow + 0 + QUAD_COUNT + 1;
         }
 
         void Create(const math::Vec4f& col = { 0.1f, 0.7f, 0.1f, 1 })
@@ -92,10 +91,10 @@ namespace mini::res
 
             }}
 
-            for(u8 z = 0; z < CORNER_COUNT; ++z) {
-            for(u8 x = 0; x < CORNER_COUNT; ++x) { 
-                box::PrintArray(qCorners[z][x]);
-            } LOG("//////////////");}
+            //for(u8 z = 0; z < CORNER_COUNT; ++z) {
+            //for(u8 x = 0; x < CORNER_COUNT; ++x) { 
+            //    box::PrintArray(qCorners[z][x]);
+            //} LOG("//////////////");}
         }
 
 
