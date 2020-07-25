@@ -21,4 +21,10 @@ namespace mini::vk
         shader.CreateShaderModule("res/Shaders/spv/terrainWire.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
     }
 
+    inline void Terrain_CreateShaderShadow(Shader& shader)
+    {  
+        shader.CreateShaderModule("res/Shaders/spv/terrainShadow.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+        shader.CreateShaderModule("res/Shaders/spv/terrainShadow.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    }
+
 }//ns

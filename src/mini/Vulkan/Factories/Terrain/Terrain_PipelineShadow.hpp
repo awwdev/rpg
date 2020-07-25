@@ -13,10 +13,10 @@
 
 namespace mini::vk
 {
-    void Terrain_CreatePipeline(
+    void Terrain_CreatePipelineShadow(
         Pipeline& pipeline,
         Shader& shader, 
-        RenderPass& renderPass,
+        RenderPassDepth& renderPass,
         VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT>& vbo)
     {
         const VkPipelineVertexInputStateCreateInfo vertexInput {

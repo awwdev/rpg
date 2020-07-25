@@ -13,6 +13,7 @@
 #include "mini/Rendering/Camera.hpp"
 #include "mini/Rendering/UI.hpp"
 #include "mini/Resources/Terrain.hpp"
+#include "mini/Rendering/Sun.hpp"
 
 namespace mini::app
 {
@@ -23,6 +24,7 @@ namespace mini::app
         rendering::RenderGraph  renderGraph;
         res::Terrain            terrain;
         rendering::Camera       camera;
+        rendering::Sun          sun;
 
         GameScene()
         {

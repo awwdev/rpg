@@ -14,7 +14,8 @@ namespace mini::vk
         rp.depthImage.Create(
             cmdPool, 
             DEPTH_FORMAT, 
-            2048, 2048,
+            g_contextPtr->surfaceCapabilities.currentExtent.width,//2048, 
+            g_contextPtr->surfaceCapabilities.currentExtent.height,//2048,
             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             rp.sampleCount);
 

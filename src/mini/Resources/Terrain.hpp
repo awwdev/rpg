@@ -110,7 +110,7 @@ namespace mini::res
         };
 
         ecs::ID gizmoID = 0;
-        const float S = .05f; //gizmo cube scale
+        const float S = 1.f; //gizmo cube scale
 
         f32 yDragPoint = 0;
         s32 draggedVertex = -1;

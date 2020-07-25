@@ -55,4 +55,10 @@ namespace mini::vk
         */
     }
 
+    inline void Default_CreateShaderShadow(Shader& shader)
+    {  
+        shader.CreateShaderModule("res/Shaders/spv/defaultShadow.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+        shader.CreateShaderModule("res/Shaders/spv/defaultShadow.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    }
+
 }//ns
