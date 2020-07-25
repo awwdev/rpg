@@ -110,7 +110,7 @@ namespace mini::vk
         {
             Terrain_CreateVertexBuffer  (vbo, commands.cmdPool, hostRes);
             Terrain_CreateShaderShadow  (shaderShadow);
-            Terrain_CreateShader        (shader);
+            Terrain_CreateShader        (shader, shadow.renderPass);
             Terrain_CreateShaderWire    (shaderWire);
             Terrain_CreateRenderPass    (renderPass, commands.cmdPool);
             Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);

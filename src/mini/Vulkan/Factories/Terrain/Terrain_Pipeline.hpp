@@ -37,6 +37,11 @@ namespace mini::vk
             .primitiveRestartEnable = VK_FALSE 
         };
 
+        UniformInfo* uniformInfos [] = {
+            &shader.info,
+        };
+        WriteDescriptors(pipeline, uniformInfos);
+
         const VkViewport viewport {
             .x        = 0.f,
             .y        = 0.f,

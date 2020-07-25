@@ -11,6 +11,7 @@ namespace mini::vk
     {  
         rp.sampleCount = VK_SAMPLE_COUNT_1_BIT;
         constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
+        rp.depthImage.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
         rp.depthImage.Create(
             cmdPool, 
             DEPTH_FORMAT, 

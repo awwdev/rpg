@@ -84,6 +84,7 @@ namespace mini::vk
         VkImageView     view;
         uint32_t        width, height;
         VkImageLayout   layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        //TODO: probably also move into ctor since shadowMapImg is not same with usual depthImg
 
         void Create(
             VkCommandPool cmdPool, 

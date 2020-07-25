@@ -10,5 +10,10 @@ layout(binding  = 0) uniform sampler2D shadowMap;
 void main() 
 {
     float dist = texture(shadowMap, inShadowCoord.st).r;
-    outColor = vec4(dist);
+    outColor = vec4(
+        inColors.r * dist, 
+        inColors.g * dist,
+        inColors.b * dist,
+        inColors.a
+    );
 }
