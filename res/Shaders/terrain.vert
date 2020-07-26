@@ -25,6 +25,6 @@ void main()
     gl_Position = push.camera * inPos;
     outCol      = inCol;
 
-    vec4 shadowCoords = biasMat * push.sun * inPos;
-    outShadowCoord = shadowCoords / shadowCoords.w;	
+    vec4 shadowCoords = push.sun * inPos;
+    outShadowCoord    = shadowCoords / shadowCoords.w;
 }

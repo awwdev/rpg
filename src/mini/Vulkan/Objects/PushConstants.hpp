@@ -10,9 +10,14 @@ namespace mini::vk
 {
     struct Common_PushConstants
     {
-        math::Mat4f projection;
-        //camera pos
-        u32 wnd_w, wnd_h;
+        math::Mat4f camera;
+        math::Mat4f sun;
+    };
+
+    struct UI_PushConstants
+    {
+        u32 wnd_w;
+        u32 wnd_h;
     };
 
 }//ns

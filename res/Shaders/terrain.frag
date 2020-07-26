@@ -9,11 +9,15 @@ layout(binding  = 0) uniform sampler2D shadowMap;
 
 void main() 
 {
-    float dist = texture(shadowMap, inShadowCoord.st).r;
-    outColor = vec4(
-        inColors.r * (1-dist), 
-        inColors.g * (1-dist),
-        inColors.b * (1-dist),
-        inColors.a
-    );
+    float shadow = 1.0;
+	if (inShadowCoord.z > -1.0 && inShadowCoord.z < 1.0) 
+	{
+		float dist = texture(shadowMap, inShadowCoord.st).r;
+		if (inShadowCoord.w > 0.0 && dist < inShadowCoord.z) 
+		{
+			shadow = 0.1f;
+		}
+	}
+
+    outColor = vec4(inColors.rgb * shadow, 1);
 }

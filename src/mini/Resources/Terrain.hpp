@@ -124,6 +124,7 @@ namespace mini::res
             quadrants[3].Create({ 0.7f, 0.7f, 0.7f, 1 });
 
             //GIZMO CUBE
+            //to display snap
             {
                 constexpr float X =  0; 
                 constexpr float Y =  0;
@@ -195,13 +196,14 @@ namespace mini::res
                         Z = v2[Vz];
                     }
 
-                    auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
-                    cubeTrans.transform = {
-                        S, 0, 0, 0,
-                        0, S, 0, 0,
-                        0, 0, S, 0,
-                        X, Y, Z, 1,
-                    };
+                    //display snap
+                    //auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
+                    //cubeTrans.transform = {
+                    //    S, 0, 0, 0,
+                    //    0, S, 0, 0,
+                    //    0, 0, S, 0,
+                    //    X, Y, Z, 1,
+                    //};
                 
                     if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed))
                     {

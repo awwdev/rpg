@@ -64,7 +64,7 @@ namespace mini::rendering
 
         math::Mat4f GetProjView() const
         {
-            return GetProjection() * GetView();
+            return GetPerspective() * GetView();
         }
 
         math::Mat4f GetView() const 
@@ -79,7 +79,7 @@ namespace mini::rendering
             return mRot * mPos;
         }
 
-        math::Mat4f GetProjection() const 
+        math::Mat4f GetPerspective() const 
         {
             //reversed z
             const float aspect = (float)wnd::window_w / (float)wnd::window_h;
@@ -97,6 +97,21 @@ namespace mini::rendering
             };
         }
 
+        math::Mat4f GetOrthographic() const 
+        {
+            const float W = 0.1f;
+            const float H = 0.1f;
+            const float D = 0.01f;
+            const float Z = 0.2f;
+
+            return {
+                W, 0, 0, 0,
+                0, H, 0, 0,
+                0, 0, D, 0,
+                0, 0, Z, 1,
+            };
+        }
+
         math::Vec3f ScreenRay() const
         {
             const auto mx = (f32)wnd::mouse_client_x;
@@ -111,7 +126,7 @@ namespace mini::rendering
                 1
             };
 
-            const auto projInv = math::Inverse(GetProjection());
+            const auto projInv = math::Inverse(GetPerspective());
             auto eye = projInv * homo;
             eye[Vz] = -1;
             eye[Vw] =  0;

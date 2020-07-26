@@ -45,8 +45,17 @@ namespace mini::vk
         //TODO: depends on scene
         void UpdateVkResources_GameScene(const app::GameScene& scene, const double dt)
         {
-            resources.common_pushConsts.wnd_w = wnd::window_w;
-            resources.common_pushConsts.wnd_h = wnd::window_h;
+            const math::Mat4f BIAS { 
+                0.5, 0.0, 0.0, 0.0,
+                0.0, 0.5, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.5, 0.5, 0.0, 1.0 
+            };
+
+            resources.common_pushConsts.camera = scene.camera.GetPerspective() * scene.camera.GetView();
+            resources.common_pushConsts.sun    = BIAS * scene.camera.GetOrthographic() * scene.sun.GetView();
+            resources.ui.pushConsts.wnd_w = wnd::window_w;
+            resources.ui.pushConsts.wnd_h = wnd::window_h;
 
             resources.ui.ubo.Clear();
             resources.ui.ubo.Store(scene.renderGraph.ui_ubo);
@@ -98,14 +107,12 @@ namespace mini::vk
 
             VkDeviceSize offsets = 0;
 
+            vkCmdPushConstants(cmdBuffer, resources.terrain.pipelineShadow.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
 
-            resources.common_pushConsts.projection = scene.camera.GetProjection() * scene.sun.GetMat();
             //! SHADOW
-            //update push constants with sun view projection
-            vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_shadow, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBeginRenderPass(cmdBuffer, &beginInfo_shadow, VK_SUBPASS_CONTENTS_INLINE);
             {
                 //TERRAIN
-                vkCmdPushConstants      (cmdBuffer, resources.terrain.pipelineShadow.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
                 vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipelineShadow.pipeline);
                 vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
@@ -125,14 +132,12 @@ namespace mini::vk
                 }
                 FOR_USED_INDICES_MAP_END
             }
-            vkCmdEndRenderPass      (cmdBuffer);
+            vkCmdEndRenderPass(cmdBuffer);
 
-            resources.common_pushConsts.projection = scene.camera.GetProjView();
-            vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBeginRenderPass(cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
             {
                 //! TERRAIN
                 //TODO: culling (loops)
-                vkCmdPushConstants      (cmdBuffer, resources.terrain.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
                 vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.layout, 0, 1, &resources.terrain.pipeline.sets[cmdBufferIdx], 0, nullptr); 
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.pipeline);
@@ -141,7 +146,6 @@ namespace mini::vk
                 vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
 
                 //! DEFAULT
-                vkCmdPushConstants      (cmdBuffer, resources.default.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.layout, 0, 1, &resources.default.pipeline.sets[cmdBufferIdx], 0, nullptr); 
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.pipeline);
                 vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
@@ -155,17 +159,17 @@ namespace mini::vk
                 }
                 FOR_USED_INDICES_MAP_END
             }
-            vkCmdEndRenderPass      (cmdBuffer);
+            vkCmdEndRenderPass(cmdBuffer);
            
             //! TEXT
-            vkCmdBeginRenderPass    (cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBeginRenderPass(cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
             {
-                vkCmdPushConstants      (cmdBuffer, resources.ui.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
+                vkCmdPushConstants      (cmdBuffer, resources.ui.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.ui.pushConsts), &resources.ui.pushConsts);
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.pipeline);
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.layout, 0, 1, &resources.ui.pipeline.sets[cmdBufferIdx], 0, nullptr); 
                 vkCmdDraw               (cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
             }
-            vkCmdEndRenderPass      (cmdBuffer);
+            vkCmdEndRenderPass(cmdBuffer);
 
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }

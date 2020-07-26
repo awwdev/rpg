@@ -47,9 +47,10 @@ namespace mini::vk
     {
         ImageArray fontImages;
 
-        RenderPass  renderPass;
-        Shader      shader;
-        Pipeline    pipeline;
+        UI_PushConstants pushConsts;
+        RenderPass       renderPass;
+        Shader           shader;
+        Pipeline         pipeline;
         UniformBuffer_Groups<UI_UniformData, UI_UBO_MAX_COUNT> ubo; //one group only
 
         void Create(res::HostResources& hostRes, Commands& commands)
