@@ -50,7 +50,7 @@ namespace mini::wnd
     inline u32 window_w, window_h;
     inline u32 mouse_client_x, mouse_client_y;
     inline s32 mouse_dx, mouse_dy;
-    inline bool ui_mode;
+    inline bool ui_mode = true;
 
 
     inline Event* CheckEvent(const EventType type, const EventState state = EventState::None)

@@ -101,7 +101,7 @@ namespace mini::vk
         {
             Default_CreateVertexBuffer  (vbo, cmdPool, hostRes);
             Default_CreateUniformBuffer (ubo);
-            Default_CreateShader        (shader);
+            Default_CreateShader        (shader, shadow.renderPass);
             Default_CreateShaderShadow  (shaderShadow);
             Default_CreateRenderPass    (renderPass, cmdPool);
             Default_CreatePipeline      (pipeline, shader, renderPass, vbo, ubo);
@@ -110,10 +110,13 @@ namespace mini::vk
 
         void Recreate(VkCommandPool cmdPool, Resources_Shadow& shadow)
         {
+            shader.~Shader();
             pipeline.~Pipeline();
             pipelineShadow.~Pipeline();
             renderPass.~RenderPass();
 
+            //TODO: recreate whole shader is wrong, only sampler needs recreation (due to img resize)
+            Default_CreateShader        (shader, shadow.renderPass);
             Default_CreateRenderPass    (renderPass, cmdPool);
             Default_CreatePipeline      (pipeline, shader, renderPass, vbo, ubo);
             Default_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
@@ -145,11 +148,14 @@ namespace mini::vk
 
         void Recreate(VkCommandPool& cmdPool, Resources_Shadow& shadow)
         {
+            shader.~Shader();
             pipeline.~Pipeline();
             pipelineWire.~Pipeline();
             pipelineShadow.~Pipeline();
             renderPass.~RenderPass();
-
+            
+            //TODO: recreate whole shader is wrong, only sampler needs recreation (due to img resize)
+            Terrain_CreateShader        (shader, shadow.renderPass);
             Terrain_CreateRenderPass    (renderPass, cmdPool);
             Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);
             Terrain_CreatePipeline      (pipeline, shader, renderPass, vbo);

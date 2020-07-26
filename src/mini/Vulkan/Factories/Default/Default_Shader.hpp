@@ -9,12 +9,11 @@
 
 namespace mini::vk
 {
-    inline void Default_CreateShader(Shader& shader)
+    inline void Default_CreateShader(Shader& shader, RenderPassDepth& rp)
     {  
         shader.CreateShaderModule("res/Shaders/spv/default.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         shader.CreateShaderModule("res/Shaders/spv/default.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 
-        /*
         const VkSamplerCreateInfo samplerInfo {
             .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .pNext                   = nullptr,
@@ -40,7 +39,7 @@ namespace mini::vk
         shader.info.type = UniformInfo::Image;
         shader.info.layout =
         {
-            .binding            = 0,
+            .binding            = 1,
             .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
             .descriptorCount    = 1,
             .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
@@ -52,7 +51,6 @@ namespace mini::vk
             .imageView      = rp.depthImage.view, 
             .imageLayout    = rp.depthImage.layout
         };
-        */
     }
 
     inline void Default_CreateShaderShadow(Shader& shader)
