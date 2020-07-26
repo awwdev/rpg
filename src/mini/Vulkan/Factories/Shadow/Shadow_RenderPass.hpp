@@ -11,12 +11,15 @@ namespace mini::vk
     {  
         rp.sampleCount = VK_SAMPLE_COUNT_1_BIT;
         constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
+        rp.width  = 2048;
+        rp.height = 2048;
+
         rp.depthImage.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
         rp.depthImage.Create(
             cmdPool, 
             DEPTH_FORMAT, 
-            g_contextPtr->surfaceCapabilities.currentExtent.width,//2048, 
-            g_contextPtr->surfaceCapabilities.currentExtent.height,//2048,
+            rp.width, 
+            rp.height,
             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             rp.sampleCount);
 
@@ -103,8 +106,8 @@ namespace mini::vk
             .renderPass      = rp.renderPass,
             .attachmentCount = ARRAY_COUNT(views),
             .pAttachments    = views,
-            .width           = rp.depthImage.width,
-            .height          = rp.depthImage.height,
+            .width           = rp.width,
+            .height          = rp.height,
             .layers          = 1
         };
         

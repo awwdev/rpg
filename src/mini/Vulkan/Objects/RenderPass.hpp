@@ -12,9 +12,9 @@ namespace mini::vk
     inline VkRenderPassBeginInfo CreateRenderPassBeginInfo(
         VkRenderPass  renderPass,
         VkFramebuffer framebuffer,
+        const VkExtent2D& extent,
         const uint32_t clearValueCount = 0,
-        const VkClearValue*  clears = nullptr
-    )
+        const VkClearValue* clears = nullptr)
     {
         return {
             .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
@@ -23,7 +23,7 @@ namespace mini::vk
             .framebuffer    = framebuffer,
             .renderArea     = {
                 .offset     = VkOffset2D {0, 0},
-                .extent     = g_contextPtr->surfaceCapabilities.currentExtent
+                .extent     = extent
             },
             .clearValueCount= clearValueCount,
             .pClearValues   = clears
@@ -35,6 +35,8 @@ namespace mini::vk
         VkRenderPass renderPass;
         box::Array<VkFramebuffer, 4> framebuffers;
         VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT; //!set in factory
+        VkRenderPassBeginInfo beginInfo; //!set in factory
+        uint32_t width, height;
 
         DepthImage depthImage; //optional
         MSAAImage  msaaImage;
@@ -45,6 +47,25 @@ namespace mini::vk
             FOR_VK_ARRAY(framebuffers, i) 
                 vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
         }
+
+        VkRenderPassBeginInfo GetBeginInfo(
+            const u32 framBufferIdx, 
+            const u32 clearCount = 0, 
+            const VkClearValue* clears = nullptr) 
+        {
+            return {
+                .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+                .pNext          = nullptr,
+                .renderPass     = renderPass,
+                .framebuffer    = framebuffers[framBufferIdx],
+                .renderArea     = {
+                    .offset     = VkOffset2D {0, 0},
+                    .extent     = { width, height }
+                },
+                .clearValueCount= clearCount,
+                .pClearValues   = clears
+            };
+        }
         
     };
 
@@ -52,9 +73,29 @@ namespace mini::vk
     {
         VkRenderPass renderPass;
         VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT; //!set in factory
+        VkRenderPassBeginInfo beginInfo; //!set in factory
+        uint32_t width, height;
 
         VkFramebuffer framebuffer;
         DepthImage    depthImage;
+
+         VkRenderPassBeginInfo GetBeginInfo(
+            const u32 clearCount = 0, 
+            const VkClearValue* clears = nullptr) 
+        {
+            return {
+                .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+                .pNext          = nullptr,
+                .renderPass     = renderPass,
+                .framebuffer    = framebuffer,
+                .renderArea     = {
+                    .offset     = VkOffset2D {0, 0},
+                    .extent     = { width, height }
+                },
+                .clearValueCount= clearCount,
+                .pClearValues   = clears
+            };
+        }
 
         ~RenderPassDepth()
         {

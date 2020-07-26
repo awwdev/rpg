@@ -10,14 +10,16 @@ namespace mini::vk
     inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
     {  
         rp.sampleCount = VK_SAMPLE_COUNT_4_BIT;
+        rp.width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
+        rp.height = g_contextPtr->surfaceCapabilities.currentExtent.height;
 
         constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
         rp.msaaImage.Create(cmdPool, g_contextPtr->format, rp.sampleCount);
         rp.depthImage.Create(
             cmdPool, 
             DEPTH_FORMAT, 
-            g_contextPtr->surfaceCapabilities.currentExtent.width,
-            g_contextPtr->surfaceCapabilities.currentExtent.height,
+            rp.width,
+            rp.height,
             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
             rp.sampleCount);
 
@@ -132,13 +134,14 @@ namespace mini::vk
                 .renderPass      = rp.renderPass,
                 .attachmentCount = ARRAY_COUNT(views),
                 .pAttachments    = views,
-                .width           = g_contextPtr->surfaceCapabilities.currentExtent.width,
-                .height          = g_contextPtr->surfaceCapabilities.currentExtent.height,
+                .width           = rp.width,
+                .height          = rp.height,
                 .layers          = 1
             };
             
             VK_CHECK(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &rp.framebuffers[i]));
         }
+
     }
     
 

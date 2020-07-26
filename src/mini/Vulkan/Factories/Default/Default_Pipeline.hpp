@@ -46,8 +46,8 @@ namespace mini::vk
         const VkViewport viewport {
             .x        = 0.f,
             .y        = 0.f,
-            .width    = (float)g_contextPtr->surfaceCapabilities.currentExtent.width,
-            .height   = (float)g_contextPtr->surfaceCapabilities.currentExtent.height,
+            .width    = (float)renderPass.width,
+            .height   = (float)renderPass.height,
             .minDepth = 0.f,
             .maxDepth = 1.f
         };
@@ -56,8 +56,8 @@ namespace mini::vk
             .offset = VkOffset2D { 0, 0 },
             .extent = VkExtent2D 
             { 
-                g_contextPtr->surfaceCapabilities.currentExtent.width, 
-                g_contextPtr->surfaceCapabilities.currentExtent.height 
+                renderPass.width, 
+                renderPass.height 
             }
         };
 

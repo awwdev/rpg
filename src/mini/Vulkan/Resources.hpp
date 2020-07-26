@@ -27,7 +27,6 @@
 #include "mini/Vulkan/Factories/Terrain/Terrain_RenderPass.hpp"
 #include "mini/Vulkan/Factories/Terrain/Terrain_Shader.hpp" //includes wire and shadow
 
-#include "mini/Vulkan/Factories/Shadow/Shadow_Pipeline.hpp"
 #include "mini/Vulkan/Factories/Shadow/Shadow_Shader.hpp"
 #include "mini/Vulkan/Factories/Shadow/Shadow_RenderPass.hpp"
 
@@ -53,12 +52,20 @@ namespace mini::vk
         Pipeline         pipeline;
         UniformBuffer_Groups<UI_UniformData, UI_UBO_MAX_COUNT> ubo; //one group only
 
-        void Create(res::HostResources& hostRes, Commands& commands)
+        void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
         {
-            fontImages.Create(hostRes.textures.monospaceFont, commands.cmdPool);
+            fontImages.Create(hostRes.textures.monospaceFont, cmdPool);
 
             UI_CreateUniformBuffer    (ubo);
             UI_CreateShader           (shader, fontImages);
+            UI_CreateRenderPass       (renderPass);
+            UI_CreatePipeline         (pipeline, shader, renderPass, ubo);
+        }
+
+        void Recreate()
+        {
+            renderPass.~RenderPass();
+            pipeline.~Pipeline();
             UI_CreateRenderPass       (renderPass);
             UI_CreatePipeline         (pipeline, shader, renderPass, ubo);
         }
@@ -68,9 +75,15 @@ namespace mini::vk
     {
         RenderPassDepth renderPass;
 
-        void Create(res::HostResources& hostRes, Commands& commands)
+        void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
         {
-            Shadow_CreateRenderPass(renderPass, commands.cmdPool);
+            Shadow_CreateRenderPass(renderPass, cmdPool);
+        }
+
+        void Recreate(VkCommandPool cmdPool)
+        {
+            renderPass.~RenderPassDepth();
+            Shadow_CreateRenderPass(renderPass, cmdPool);
         }
     };
 
@@ -84,13 +97,24 @@ namespace mini::vk
         UniformBuffer_Groups<Default_UniformData, DEFAULT_UBO_MAX_COUNT> ubo;
         VertexBuffer<Common_Vertex, DEFAULT_VERTEX_MAX_COUNT> vbo;
 
-        void Create(res::HostResources& hostRes, Commands& commands, Resources_Shadow& shadow)
+        void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow& shadow)
         {
-            Default_CreateVertexBuffer  (vbo, commands.cmdPool, hostRes);
+            Default_CreateVertexBuffer  (vbo, cmdPool, hostRes);
             Default_CreateUniformBuffer (ubo);
             Default_CreateShader        (shader);
             Default_CreateShaderShadow  (shaderShadow);
-            Default_CreateRenderPass    (renderPass, commands.cmdPool);
+            Default_CreateRenderPass    (renderPass, cmdPool);
+            Default_CreatePipeline      (pipeline, shader, renderPass, vbo, ubo);
+            Default_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
+        }
+
+        void Recreate(VkCommandPool cmdPool, Resources_Shadow& shadow)
+        {
+            pipeline.~Pipeline();
+            pipelineShadow.~Pipeline();
+            renderPass.~RenderPass();
+
+            Default_CreateRenderPass    (renderPass, cmdPool);
             Default_CreatePipeline      (pipeline, shader, renderPass, vbo, ubo);
             Default_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
         }
@@ -107,13 +131,26 @@ namespace mini::vk
         Pipeline    pipelineWire;
         VertexBuffer<Common_Vertex, TERRAIN_VERTEX_MAX_COUNT> vbo;
 
-        void Create(res::HostResources& hostRes, Commands& commands, Resources_Shadow& shadow)
+        void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow& shadow)
         {
-            Terrain_CreateVertexBuffer  (vbo, commands.cmdPool, hostRes);
+            Terrain_CreateVertexBuffer  (vbo, cmdPool, hostRes);
             Terrain_CreateShaderShadow  (shaderShadow);
             Terrain_CreateShader        (shader, shadow.renderPass);
             Terrain_CreateShaderWire    (shaderWire);
-            Terrain_CreateRenderPass    (renderPass, commands.cmdPool);
+            Terrain_CreateRenderPass    (renderPass, cmdPool);
+            Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);
+            Terrain_CreatePipeline      (pipeline, shader, renderPass, vbo);
+            Terrain_CreatePipelineWire  (pipelineWire, shaderWire, renderPass, vbo);
+        }
+
+        void Recreate(VkCommandPool& cmdPool, Resources_Shadow& shadow)
+        {
+            pipeline.~Pipeline();
+            pipelineWire.~Pipeline();
+            pipelineShadow.~Pipeline();
+            renderPass.~RenderPass();
+
+            Terrain_CreateRenderPass    (renderPass, cmdPool);
             Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);
             Terrain_CreatePipeline      (pipeline, shader, renderPass, vbo);
             Terrain_CreatePipelineWire  (pipelineWire, shaderWire, renderPass, vbo);
@@ -129,43 +166,20 @@ namespace mini::vk
         Resources_Terrain terrain;
         Resources_Shadow  shadow;
 
-        void Create(res::HostResources& hostRes, Commands& commands)
+        void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
         {
-            ui.Create(hostRes, commands);
-            shadow.Create(hostRes, commands);
-            default.Create(hostRes, commands, shadow);
-            terrain.Create(hostRes, commands, shadow);
+            ui.Create(hostRes, cmdPool);
+            shadow.Create(hostRes, cmdPool);
+            default.Create(hostRes, cmdPool, shadow);
+            terrain.Create(hostRes, cmdPool, shadow);
         }
 
         void RecreateSwapchain(VkCommandPool cmdPool)
         {
-            shadow.renderPass.~RenderPassDepth();
-
-            ui.pipeline.~Pipeline();
-            ui.renderPass.~RenderPass();
-
-            default.pipeline.~Pipeline();
-            default.pipelineShadow.~Pipeline();
-            default.renderPass.~RenderPass();
-
-            terrain.pipeline.~Pipeline();
-            terrain.pipelineWire.~Pipeline();
-            terrain.pipelineShadow.~Pipeline();
-            terrain.renderPass.~RenderPass();
-            
-            Shadow_CreateRenderPass     (shadow.renderPass, cmdPool);
-
-            Default_CreateRenderPass    (default.renderPass, cmdPool);
-            Default_CreatePipeline      (default.pipeline, default.shader, default.renderPass, default.vbo, default.ubo);
-            Default_CreatePipelineShadow(default.pipeline, default.shaderShadow, shadow.renderPass, default.vbo, default.ubo);
-
-            UI_CreateRenderPass         (ui.renderPass);
-            UI_CreatePipeline           (ui.pipeline, ui.shader, ui.renderPass, ui.ubo);
-
-            Terrain_CreateRenderPass    (terrain.renderPass, cmdPool);
-            Terrain_CreatePipeline      (terrain.pipeline, terrain.shader, terrain.renderPass, terrain.vbo);
-            Terrain_CreatePipelineWire  (terrain.pipelineWire, terrain.shaderWire, terrain.renderPass, terrain.vbo);
-            Terrain_CreatePipelineShadow(terrain.pipelineShadow, terrain.shaderShadow, shadow.renderPass, terrain.vbo);
+            ui.Recreate();
+            shadow.Recreate(cmdPool);
+            default.Recreate(cmdPool, shadow);
+            terrain.Recreate(cmdPool, shadow);            
         }
     };
 

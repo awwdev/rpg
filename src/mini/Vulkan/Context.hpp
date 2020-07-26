@@ -250,7 +250,7 @@ namespace mini::vk
                 .preTransform           = surfaceCapabilities.currentTransform,
                 .compositeAlpha         = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
                 .presentMode            = presentMode,
-                .clipped                = VK_TRUE,
+                .clipped                = VK_FALSE,
                 .oldSwapchain           = nullptr
             };
 

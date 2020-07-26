@@ -9,6 +9,9 @@ namespace mini::vk
 {
     inline void UI_CreateRenderPass(RenderPass& rp)
     {  
+        rp.width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
+        rp.height = g_contextPtr->surfaceCapabilities.currentExtent.height;
+
         const VkAttachmentDescription colorDesc {
             .flags          = 0 ,
             .format         = g_contextPtr->format, 
@@ -69,8 +72,8 @@ namespace mini::vk
                 .renderPass      = rp.renderPass,
                 .attachmentCount = ARRAY_COUNT(views),
                 .pAttachments    = views,
-                .width           = g_contextPtr->surfaceCapabilities.currentExtent.width,
-                .height          = g_contextPtr->surfaceCapabilities.currentExtent.height,
+                .width           = rp.width,
+                .height          = rp.height,
                 .layers          = 1
             };
             

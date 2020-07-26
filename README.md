@@ -3,7 +3,7 @@ Base framework for my games, ui and multimedia projects.
 Intended to show my experience with programming in C++ and software engineering.
 It is not intended to be a "plug in and play" library. 
 
-![](media/progress/2020_07_21_terrain1.png)
+![](media/progress/2020_07_26_shadowMap.gif)
 ![](media/progress/2020_07_15_msaa.gif)
 ![](media/progress/2020_01_23_grassMoving.gif)
 

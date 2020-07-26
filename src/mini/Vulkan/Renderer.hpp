@@ -27,7 +27,7 @@ namespace mini::vk
             context.Create(wndHandle); //there is a global ptr to vk context
             sync.Create();
             commands.Create();
-            resources.Create(hostResources, commands);
+            resources.Create(hostResources, commands.cmdPool);
         }
 
         void RecreateScwapchain()
@@ -54,7 +54,7 @@ namespace mini::vk
 
             //resources.common_pushConsts.camera = scene.camera.GetOrthographic() * scene.sun.GetView();
             resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.camera.GetView();
-            resources.common_pushConsts.sun    = (scene.camera.GetOrthographic()) * scene.sun.GetView(); //BIAS * 
+            resources.common_pushConsts.sun    = scene.camera.GetOrthographic() * scene.sun.GetView(); //BIAS * 
             resources.ui.pushConsts.wnd_w = wnd::window_w;
             resources.ui.pushConsts.wnd_h = wnd::window_h;
 
@@ -80,35 +80,27 @@ namespace mini::vk
             auto beginInfo = vk::CreateCmdBeginInfo();
             VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
 
-            const auto beginInfo_ui = CreateRenderPassBeginInfo(
-                resources.ui.renderPass.renderPass,
-                resources.ui.renderPass.framebuffers[cmdBufferIdx]
-            );
+            const auto beginInfo_ui = resources.ui.renderPass.GetBeginInfo(cmdBufferIdx);
 
             const VkClearValue clears_default [] { 
                 { .color = { 0.1f, 0.1f, 0.1f, 1.0f } },
                 { .depthStencil = { 0, 0 } } //reversed z
             };
-            const auto beginInfo_default = CreateRenderPassBeginInfo(
-                resources.default.renderPass.renderPass,
-                resources.default.renderPass.framebuffers[cmdBufferIdx],
-                ARRAY_COUNT(clears_default),
-                clears_default
-            );
+            const auto beginInfo_default = resources.default.renderPass.GetBeginInfo(
+                cmdBufferIdx, ARRAY_COUNT(clears_default), clears_default);
 
             const VkClearValue clears_shadow [] { 
                 { .depthStencil = { 0, 0 } } //reversed z
             };
-            const auto beginInfo_shadow = CreateRenderPassBeginInfo(
-                resources.shadow.renderPass.renderPass,
-                resources.shadow.renderPass.framebuffer,
-                ARRAY_COUNT(clears_shadow),
-                clears_shadow
-            );
+            const auto beginInfo_shadow = resources.shadow.renderPass.GetBeginInfo(
+                ARRAY_COUNT(clears_shadow), clears_shadow);
+
 
             VkDeviceSize offsets = 0;
 
             vkCmdPushConstants(cmdBuffer, resources.terrain.pipelineShadow.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
+
+            //TODO: FIX RESIZE ERROR NOW!
 
             //! SHADOW
             vkCmdBeginRenderPass(cmdBuffer, &beginInfo_shadow, VK_SUBPASS_CONTENTS_INLINE);
@@ -119,7 +111,6 @@ namespace mini::vk
                 vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
 
                 //DEFAULT
-                vkCmdPushConstants      (cmdBuffer, resources.default.pipelineShadow.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.layout, 0, 1, &resources.default.pipelineShadow.sets[cmdBufferIdx], 0, nullptr); 
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.pipeline);
                 vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);

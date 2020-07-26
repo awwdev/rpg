@@ -40,8 +40,8 @@ namespace mini::vk
         const VkViewport viewport {
             .x        = 0.f,
             .y        = 0.f,
-            .width    = (float)g_contextPtr->surfaceCapabilities.currentExtent.width,
-            .height   = (float)g_contextPtr->surfaceCapabilities.currentExtent.height,
+            .width    = (f32)renderPass.width,
+            .height   = (f32)renderPass.height,
             .minDepth = 0.f,
             .maxDepth = 1.f
         };
@@ -50,8 +50,8 @@ namespace mini::vk
             .offset = VkOffset2D { 0, 0 },
             .extent = VkExtent2D 
             { 
-                g_contextPtr->surfaceCapabilities.currentExtent.width, 
-                g_contextPtr->surfaceCapabilities.currentExtent.height 
+                renderPass.width, 
+                renderPass.height 
             }
         };
 
@@ -75,10 +75,10 @@ namespace mini::vk
             .cullMode                = VK_CULL_MODE_NONE, //VK_CULL_MODE_BACK_BIT,
             .frontFace               = VK_FRONT_FACE_CLOCKWISE,
             .depthBiasEnable         = VK_TRUE,
-            .depthBiasConstantFactor = -1.25f,
-            .depthBiasClamp          = 0.f,
-            .depthBiasSlopeFactor    = -1.75f,
-            .lineWidth               = 1.f  
+            .depthBiasConstantFactor = -2.f,
+            .depthBiasClamp          =  0.f,
+            .depthBiasSlopeFactor    = -2.f,
+            .lineWidth               =  1.f  
         };
 
         const VkPipelineMultisampleStateCreateInfo multisampling {
