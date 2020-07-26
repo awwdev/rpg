@@ -99,10 +99,10 @@ namespace mini::rendering
 
         math::Mat4f GetOrthographic() const 
         {
-            const float W = 0.1f;
-            const float H = 0.1f;
-            const float D = 0.01f;
-            const float Z = 0.2f;
+            const float W = 0.1f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
+            const float H = 0.1f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
+            const float D = 0.0001f;
+            const float Z = 0.01f;
 
             return {
                 W, 0, 0, 0,

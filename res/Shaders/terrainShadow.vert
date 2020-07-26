@@ -12,5 +12,5 @@ layout(location = 3) in vec4 inTex;
 
 void main() 
 {
-    gl_Position = push.camera * inPos;
+    gl_Position = push.sun * inPos;
 }

@@ -80,7 +80,7 @@ namespace mini::vk
             .cullMode                = VK_CULL_MODE_NONE, //VK_CULL_MODE_BACK_BIT,
             .frontFace               = VK_FRONT_FACE_CLOCKWISE,
             .depthBiasEnable         = VK_FALSE,
-            .depthBiasConstantFactor = 0.f,
+            .depthBiasConstantFactor = 1.f,
             .depthBiasClamp          = 0.f,
             .depthBiasSlopeFactor    = 0.f,
             .lineWidth               = 1.f  

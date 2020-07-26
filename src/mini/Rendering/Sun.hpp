@@ -8,7 +8,7 @@ namespace mini::rendering
 {
     struct Sun
     {
-        math::Vec3f pos { -4, -4, -4 };
+        math::Vec3f pos { -4, -2, -4 };
 
         math::Mat4f GetView() const
         {

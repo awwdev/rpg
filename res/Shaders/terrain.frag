@@ -7,17 +7,23 @@ layout(location = 0) in vec4 inColors;
 layout(location = 1) in vec4 inShadowCoord;
 layout(binding  = 0) uniform sampler2D shadowMap;
 
-void main() 
+float textureProj(vec4 shadowCoord, vec2 off)
 {
-    float shadow = 1.0;
-	if (inShadowCoord.z > -1.0 && inShadowCoord.z < 1.0) 
+	float shadow = 0.1f;
+	if ( shadowCoord.z > -1.0 && shadowCoord.z < 1.0 ) 
 	{
-		float dist = texture(shadowMap, inShadowCoord.st).r;
-		if (inShadowCoord.w > 0.0 && dist < inShadowCoord.z) 
+		float dist = texture( shadowMap, shadowCoord.st + off ).r;
+		if ( shadowCoord.w > 0.0 && dist < shadowCoord.z ) 
 		{
-			shadow = 0.1f;
+			shadow = 1.0f;
 		}
 	}
+	return shadow;
+}
+
+void main() 
+{
+    float shadow = textureProj(inShadowCoord / inShadowCoord.w, vec2(0.0));
 
     outColor = vec4(inColors.rgb * shadow, 1);
 }

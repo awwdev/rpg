@@ -52,8 +52,9 @@ namespace mini::vk
                 0.5, 0.5, 0.0, 1.0 
             };
 
-            resources.common_pushConsts.camera = scene.camera.GetPerspective() * scene.camera.GetView();
-            resources.common_pushConsts.sun    = BIAS * scene.camera.GetOrthographic() * scene.sun.GetView();
+            //resources.common_pushConsts.camera = scene.camera.GetOrthographic() * scene.sun.GetView();
+            resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.camera.GetView();
+            resources.common_pushConsts.sun    = (scene.camera.GetOrthographic()) * scene.sun.GetView(); //BIAS * 
             resources.ui.pushConsts.wnd_w = wnd::window_w;
             resources.ui.pushConsts.wnd_h = wnd::window_h;
 
