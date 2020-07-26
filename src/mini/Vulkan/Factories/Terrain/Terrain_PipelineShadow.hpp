@@ -74,10 +74,10 @@ namespace mini::vk
             .polygonMode             = VK_POLYGON_MODE_FILL,
             .cullMode                = VK_CULL_MODE_NONE, //VK_CULL_MODE_BACK_BIT,
             .frontFace               = VK_FRONT_FACE_CLOCKWISE,
-            .depthBiasEnable         = VK_FALSE,
-            .depthBiasConstantFactor = 0.f,
+            .depthBiasEnable         = VK_TRUE,
+            .depthBiasConstantFactor = -1.25f,
             .depthBiasClamp          = 0.f,
-            .depthBiasSlopeFactor    = 0.f,
+            .depthBiasSlopeFactor    = -1.75f,
             .lineWidth               = 1.f  
         };
 
