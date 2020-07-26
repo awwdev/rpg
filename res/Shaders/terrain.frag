@@ -21,9 +21,32 @@ float textureProj(vec4 shadowCoord, vec2 off)
 	return shadow;
 }
 
+float filterPCF(vec4 sc)
+{
+	ivec2 texDim = textureSize(shadowMap, 0);
+	float scale = 1.5;
+	float dx = scale * 1.0 / float(texDim.x);
+	float dy = scale * 1.0 / float(texDim.y);
+
+	float shadowFactor = 0.0;
+	int count = 0;
+	int range = 1;
+	
+	for (int x = -range; x <= range; x++)
+	{
+		for (int y = -range; y <= range; y++)
+		{
+			shadowFactor += textureProj(sc, vec2(dx*x, dy*y));
+			count++;
+		}
+	
+	}
+	return shadowFactor / count;
+}
+
 void main() 
 {
-    float shadow = textureProj(inShadowCoord / inShadowCoord.w, vec2(0.0));
+    float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
 
     outColor = vec4(inColors.rgb * shadow, 1);
 }
