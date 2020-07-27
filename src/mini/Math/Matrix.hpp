@@ -37,6 +37,16 @@ namespace mini::math
 
     //? VECTOR
 
+    inline Vec3f TruncateVec4(const Vec4f& vec)
+    {
+        return { vec[X], vec[Y], vec[Z] };
+    }
+
+    inline Vec4f MakeHomoVec(const Vec3f& vec)
+    {
+        return { vec[X], vec[Y], vec[Z], 1 };
+    }
+
     inline float FastSqrt(float number)
     {
         //from quake <3 
@@ -97,6 +107,18 @@ namespace mini::math
             v1[Y] * v2[Z] - v1[Z] * v2[Y],
             v1[Z] * v2[X] - v1[X] * v2[Z],
             v1[X] * v2[Y] - v1[Y] * v2[X],
+        };
+    }
+
+    //! this is not a true cross product, it resets w to 1
+    template<class T>
+    auto Cross(const Vec<T, 4>& v1, const Vec<T, 4>& v2)
+    {
+        return Vec<T, 4> {
+            v1[Y] * v2[Z] - v1[Z] * v2[Y],
+            v1[Z] * v2[X] - v1[X] * v2[Z],
+            v1[X] * v2[Y] - v1[Y] * v2[X],
+            1
         };
     }
 

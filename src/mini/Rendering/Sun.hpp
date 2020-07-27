@@ -8,7 +8,16 @@ namespace mini::rendering
 {
     struct Sun
     {
-        math::Vec3f pos { -4, -2, -4 };
+        math::Vec3f pos { -4, -1, -4 };
+        float t = 0;
+
+        void Update(const double dt)
+        {
+            using namespace math;
+            t += dt * 0.5f;
+            pos[X] = std::sinf(t);
+            pos[Z] = std::cosf(t);
+        }
 
         math::Mat4f GetView() const
         {

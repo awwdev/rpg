@@ -55,6 +55,7 @@ namespace mini::app
             //? META
             camera.Update(dt);
             terrain.Update(dt, camera, ecs);
+            sun.Update(dt);
 
             //? ECS
             ecs::S_Render(ecs.arrays, dt, renderGraph);

@@ -12,6 +12,7 @@ namespace mini::vk
     {
         math::Mat4f camera;
         math::Mat4f sun;
+        math::Vec3f sunDir;
     };
 
     struct UI_PushConstants

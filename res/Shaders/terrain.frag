@@ -5,6 +5,7 @@ layout(location = 0) out vec4 outColor;
 
 layout(location = 0) in vec4 inColors;
 layout(location = 1) in vec4 inShadowCoord;
+layout(location = 2) in float inShadowDot;
 layout(binding  = 0) uniform sampler2D shadowMap;
 
 float textureProj(vec4 shadowCoord, vec2 off)
@@ -47,6 +48,9 @@ float filterPCF(vec4 sc)
 void main() 
 {
     float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
-
-    outColor = vec4(inColors.rgb * shadow, 1);
+	if (inShadowDot > 0)
+		outColor = vec4(inColors.rgb * (1 + inShadowDot * 0.5) * shadow, 1);
+	else 
+		outColor = vec4(inColors.rgb * 0.1, 1);
+    //outColor = vec4(inColors.rgb * (1.5 + inShadowDot * 0.25) * shadow, 1);
 }

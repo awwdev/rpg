@@ -10,7 +10,6 @@
 #include "mini/Window/AppEvents.hpp"
 #include "mini/Box/Array.hpp"
 
-//TODO: move vertical
 //TODO: AABB to check which quadrant
 //TODO: exapandable
 //TODO: serialize
@@ -48,12 +47,12 @@ namespace mini::res
             for(u8 z = 0; z < QUAD_COUNT; ++z) {
             for(u8 x = 0; x < QUAD_COUNT; ++x) { 
                 const auto idx = (z * QUAD_COUNT + x) * 6;
-                verts[idx + 0] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
-                verts[idx + 1] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
-                verts[idx + 2] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
-                verts[idx + 3] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
-                verts[idx + 4] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
-                verts[idx + 5] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, {}, col, {} };
+                verts[idx + 0] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
+                verts[idx + 1] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
+                verts[idx + 2] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
+                verts[idx + 3] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
+                verts[idx + 4] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
+                verts[idx + 5] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
             }}
 
             //TODO: bitset instead of array
@@ -102,11 +101,11 @@ namespace mini::res
 
     struct Terrain
     {
-        Quadrant quadrants [4] = {
-            { 0,              0 },
-            { Quadrant::SIZE, 0 },
-            { 0,              Quadrant::SIZE },
-            { Quadrant::SIZE, Quadrant::SIZE },
+        Quadrant quadrants [1] = {
+            { -Quadrant::SIZE*0.5f, -Quadrant::SIZE*0.5 },
+            //{ Quadrant::SIZE, 0 },
+            //{ 0,              Quadrant::SIZE },
+            //{ Quadrant::SIZE, Quadrant::SIZE },
         };
 
         ecs::ID gizmoID = 0;
@@ -115,13 +114,15 @@ namespace mini::res
         f32 yDragPoint = 0;
         s32 draggedVertex = -1;
         u32 corner = 0;
+        enum CloseVertex { V0, V1, V2 } closeVertex = V0;
+        u32 triangle = 0;
 
         void Create(ecs::ECS& ecs)
         {
             quadrants[0].Create({ 0.1f, 0.7f, 0.1f, 1 });
-            quadrants[1].Create({ 0.7f, 0.1f, 0.1f, 1 });
-            quadrants[2].Create({ 0.1f, 0.1f, 0.7f, 1 });
-            quadrants[3].Create({ 0.7f, 0.7f, 0.7f, 1 });
+            //quadrants[1].Create({ 0.7f, 0.1f, 0.1f, 1 });
+            //quadrants[2].Create({ 0.1f, 0.1f, 0.7f, 1 });
+            //quadrants[3].Create({ 0.7f, 0.7f, 0.7f, 1 });
 
             //GIZMO CUBE
             //to display snap
@@ -150,6 +151,8 @@ namespace mini::res
             using namespace math;
 
             const auto ray = camera.ScreenRay();
+            
+
             for(auto i = 0; i < quadrant.VERT_COUNT_TOTAL; i+=3)
             {
                 auto& v0 = quadrant.verts[i+0].pos;
@@ -168,9 +171,9 @@ namespace mini::res
                     auto x = intersection->pos[X];
                     auto y = intersection->pos[Y];
                     auto z = intersection->pos[Z];
+                    triangle = i / 3;
 
                     //TODO: could be written better:
-                    enum CloseVertex { V0, V1, V2 } closeVertex = V0;
                     if      (intersection->u > 0.5) closeVertex = V1;
                     else if (intersection->v > 0.5) closeVertex = V2;
                     else if (intersection->u > 0.25 && intersection->v > 0.25)
@@ -224,6 +227,26 @@ namespace mini::res
             
             if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released))
             {
+                //Recalculate normals
+                const auto cx = corner % (quadrant.QUAD_COUNT + 1);
+                const auto cy = corner / (quadrant.QUAD_COUNT + 1);
+                FOR_ARRAY(quadrant.qCorners[cy][cx], i)
+                {
+                    const auto vIdx = quadrant.qCorners[cy][cx][i];
+                    const auto tris = vIdx/3;
+
+                    auto& v0  = quadrant.verts[tris*3 + 0];
+                    auto& v1  = quadrant.verts[tris*3 + 1];
+                    auto& v2  = quadrant.verts[tris*3 + 2];
+                    const auto p0   = math::TruncateVec4(v0.pos);
+                    const auto p1   = math::TruncateVec4(v1.pos);
+                    const auto p2   = math::TruncateVec4(v2.pos);
+                    const auto vec1 = math::Normalize(p0 - p1);
+                    const auto vec2 = math::Normalize(p0 - p2);
+                    const auto norm = math::Cross(vec1, vec2);
+                    v0.nor = v1.nor = v2.nor = MakeHomoVec(norm);
+                }
+
                 draggedVertex = -1;
             }
 
