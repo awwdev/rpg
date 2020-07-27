@@ -16,6 +16,8 @@
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Resources/HostResources.hpp"
 
+#include "mini/Math/Matrix2.hpp"
+
 using namespace mini;
 using namespace mini::wnd;
 
@@ -25,6 +27,23 @@ int WINAPI wWinMain(
     _In_ PWSTR pCmdLine,
     _In_ int nCmdShow)
 {
+    {
+        dbg::Console console{};
+
+        using namespace math2;
+        Vec3f mat {
+            1, 2, 3,
+        };
+        const auto q  = QuatAngleAxis(123, {1, 0, 0});
+        const auto qm = QuatToMat(q);
+        PrintMatrix(qm);
+       
+
+        system("pause");
+        std::exit(0);
+    }
+
+
     {
         dbg::Console console{};
         wnd::Window  window { hInstance, 800, 600 };
