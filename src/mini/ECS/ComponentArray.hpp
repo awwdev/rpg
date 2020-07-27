@@ -4,7 +4,6 @@
 #include "mini/Box/SimpleArray.hpp"
 #include "mini/Box/IndexMap.hpp"
 #include "mini/Box/String.hpp"
-#include "mini/Math/Matrix.hpp"
 
 #include "mini/ECS/Components.hpp"
 #include "mini/ECS/EntityID.hpp"

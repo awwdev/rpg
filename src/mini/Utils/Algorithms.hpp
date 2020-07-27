@@ -67,7 +67,7 @@ namespace mini::utils
             return {};
 
         const auto f = 1.f / a;
-        const auto s = -rayOrigin - v0;
+        const auto s = (rayOrigin*-1.f) - v0;
         const auto u = f * Dot(s, h);
         if (u < 0.0 || u > 1.0)
             return {};
@@ -79,7 +79,7 @@ namespace mini::utils
 
         const float t = f * Dot(edge2, q);
         if (t > EPSILON) 
-            return Intersection{ -rayOrigin + rayDir * t, u, v };
+            return Intersection{ (rayOrigin*-1.f) + rayDir * t, u, v };
 
         return {};
     }

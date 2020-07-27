@@ -355,13 +355,14 @@ namespace mini::app::ui
 
     inline void DrawCameraPos(RenderGraph& renderGraph, const Camera& camera)
     {
+        using namespace math;
         char ch_camera [100] = "camera:";
-        std::to_chars(ch_camera +  8, ch_camera + 20, camera.pos[Vx]);
-        std::to_chars(ch_camera + 22, ch_camera + 34, camera.pos[Vy]);
-        std::to_chars(ch_camera + 36, ch_camera + 48, camera.pos[Vz]);
-        //std::to_chars(ch_camera +  8, ch_camera + 24, ray[Vx]);
-        //std::to_chars(ch_camera + 26, ch_camera + 42, ray[Vy]);
-        //std::to_chars(ch_camera + 44, ch_camera + 60, ray[Vz]);
+        std::to_chars(ch_camera +  8, ch_camera + 20, camera.pos[X]);
+        std::to_chars(ch_camera + 22, ch_camera + 34, camera.pos[Y]);
+        std::to_chars(ch_camera + 36, ch_camera + 48, camera.pos[Z]);
+        //std::to_chars(ch_camera +  8, ch_camera + 24, ray[X]);
+        //std::to_chars(ch_camera + 26, ch_camera + 42, ray[Y]);
+        //std::to_chars(ch_camera + 44, ch_camera + 60, ray[Z]);
         DrawText(renderGraph, 8, 20+8+36, ch_camera, 100);
     }
 

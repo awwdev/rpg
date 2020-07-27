@@ -126,15 +126,15 @@ namespace mini::res
             //GIZMO CUBE
             //to display snap
             {
-                constexpr float X =  0; 
-                constexpr float Y =  0;
-                constexpr float Z =  0;
+                constexpr float x =  0; 
+                constexpr float y =  0;
+                constexpr float z =  0;
                 gizmoID = ecs.AddEntity();
                 const math::Mat4f pos = math::Mat4f{
                     S, 0, 0, 0,
                     0, S, 0, 0,
                     0, 0, S, 0,
-                    X, Y, Z, 1,
+                    x, y, z, 1,
                 };
                 ecs.arrays.AddComponent<ecs::ComponentType::Transform> (gizmoID, pos);
                 ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(gizmoID, res::MeshType::PrimitiveCube);
@@ -147,6 +147,8 @@ namespace mini::res
 
             //INTERSECTION
             using namespace utils;
+            using namespace math;
+
             const auto ray = camera.ScreenRay();
             for(auto i = 0; i < quadrant.VERT_COUNT_TOTAL; i+=3)
             {
@@ -156,16 +158,16 @@ namespace mini::res
                 const auto intersection = utils::RayTriangleIntersection(
                     camera.pos,
                     ray,
-                    { v0[Vx], v0[Vy], v0[Vz] },
-                    { v1[Vx], v1[Vy], v1[Vz] },
-                    { v2[Vx], v2[Vy], v2[Vz] }
+                    { v0[X], v0[Y], v0[Z] },
+                    { v1[X], v1[Y], v1[Z] },
+                    { v2[X], v2[Y], v2[Z] }
                 );
 
                 if (intersection)
                 {
-                    auto X = intersection->pos[Vx];
-                    auto Y = intersection->pos[Vy];
-                    auto Z = intersection->pos[Vz];
+                    auto x = intersection->pos[X];
+                    auto y = intersection->pos[Y];
+                    auto z = intersection->pos[Z];
 
                     //TODO: could be written better:
                     enum CloseVertex { V0, V1, V2 } closeVertex = V0;
@@ -179,21 +181,21 @@ namespace mini::res
 
                     if (closeVertex == V0)
                     {
-                        X = v0[Vx];
-                        Y = v0[Vy];
-                        Z = v0[Vz];
+                        x = v0[X];
+                        y = v0[Y];
+                        z = v0[Z];
                     }
                     if (closeVertex == V1)
                     {
-                        X = v1[Vx];
-                        Y = v1[Vy];
-                        Z = v1[Vz];
+                        x = v1[X];
+                        y = v1[Y];
+                        z = v1[Z];
                     }
                     if (closeVertex == V2)
                     {
-                        X = v2[Vx];
-                        Y = v2[Vy];
-                        Z = v2[Vz];
+                        x = v2[X];
+                        y = v2[Y];
+                        z = v2[Z];
                     }
 
                     //display snap
@@ -202,7 +204,7 @@ namespace mini::res
                     //    S, 0, 0, 0,
                     //    0, S, 0, 0,
                     //    0, 0, S, 0,
-                    //    X, Y, Z, 1,
+                    //    x, y, z 1,
                     //};
                 
                     if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed))
@@ -236,7 +238,7 @@ namespace mini::res
                 {
                     const auto vIdx = quadrant.qCorners[cy][cx][i];
                     auto& v = quadrant.verts[vIdx].pos;
-                    v[Vy] += yDragDelta * dragScale;
+                    v[Y] += yDragDelta * dragScale;
                 }
                 yDragPoint = (f32)wnd::mouse_client_y;
 

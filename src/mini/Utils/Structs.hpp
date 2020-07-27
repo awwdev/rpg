@@ -18,29 +18,30 @@ namespace mini::utils
 
     std::ostream& operator<<(std::ostream& os, const Common_Vertex& vert)
     {
-        os << "vertex data\n" <<
-        "pos " << vert.pos << '\n' <<
-        "nor " << vert.nor << '\n' <<
-        "col " << vert.col << '\n' <<
-        "tex " << vert.tex;
+        PrintMatrix(vert.pos);
+        PrintMatrix(vert.nor);
+        PrintMatrix(vert.col);
+        PrintMatrix(vert.tex);
         return os;
     }
 
     inline NormColor4f NormaliseColor(const RGBAColor4u& col) { 
+        using namespace math;
         return { //normalise on gpu always instead??
-            col[Vx] / 255.f, 
-            col[Vy] / 255.f, 
-            col[Vz] / 255.f, 
-            col[Vw] / 255.f 
+            col[X] / 255.f, 
+            col[Y] / 255.f, 
+            col[Z] / 255.f, 
+            col[W] / 255.f 
         };
     }
 
     inline RGBAColor4u HighlightColor(const RGBAColor4u& col, const u8 amount)
     {
+        using namespace math;
         RGBAColor4u out { col };
-        out[Vx] += amount;
-        out[Vy] += amount;
-        out[Vz] += amount;
+        out[X] += amount;
+        out[Y] += amount;
+        out[Z] += amount;
         return out;
     }
 

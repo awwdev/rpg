@@ -3,7 +3,6 @@
 #pragma once
 #include "mini/Box/Bitset.hpp"
 #include "mini/Box/Array.hpp"
-#include "mini/Math/Matrix.hpp"
 
 #include "mini/ECS/EntityID.hpp"
 #include "mini/ECS/ComponentArray.hpp"

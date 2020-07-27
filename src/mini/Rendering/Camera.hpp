@@ -24,35 +24,37 @@ namespace mini::rendering
 
         void Update(const double dt)
         {
+            using namespace math;
+
             movNorm = {};
             if(wnd::asciiPressed['D']){
-                movNorm[Vx] -= 1;
+                movNorm[X] -= 1;
             }
             if(wnd::asciiPressed['A']){
-                movNorm[Vx] += 1;
+                movNorm[X] += 1;
             }
             if(wnd::asciiPressed['W']){
-                movNorm[Vz] += 1;
+                movNorm[Z] += 1;
             }
             if(wnd::asciiPressed['S']){
-                movNorm[Vz] -= 1;
+                movNorm[Z] -= 1;
             }
             NormalizeThis(movNorm);
 
             if (wnd::ui_mode == false) {
-                rotTarget[Vy] += wnd::mouse_dx * mouseSpd;
-                rotTarget[Vx] += wnd::mouse_dy * mouseSpd;
+                rotTarget[Y] += wnd::mouse_dx * mouseSpd;
+                rotTarget[X] += wnd::mouse_dy * mouseSpd;
             }
 
-            const auto qX = math::QuatAngleAxis(+rotTarget[Vx] * dirSpd, math::Vec3f{1, 0, 0});
-            const auto qY = math::QuatAngleAxis(-rotTarget[Vy] * dirSpd, math::Vec3f{0, 1, 0});
-            qRot = qY * qX;
-            math::NormalizeThis(qRot);
+            const auto qX = QuatAngleAxis(+rotTarget[X] * dirSpd, math::Vec3f{1, 0, 0});
+            const auto qY = QuatAngleAxis(-rotTarget[Y] * dirSpd, math::Vec3f{0, 1, 0});
+            qRot = math::QuatMultQuat(qY, qX);
+            NormalizeThis(qRot);
 
-            const auto movDir = movNorm * qRot;
+            const auto movDir = math::QuatMultVec(qRot, movNorm);
 
             if (wnd::ui_mode == false) {
-                pos += movDir * movSpd * (float)dt;
+                pos = pos + (movDir * movSpd * (float)dt);
             }
 
             //? scroll
@@ -69,13 +71,14 @@ namespace mini::rendering
 
         math::Mat4f GetView() const 
         {
-            const math::Mat4f mPos {
+            using namespace math;
+            const Mat4f mPos {
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
-                pos[Vx], pos[Vy], pos[Vz], 1,
+                pos[X], pos[Y], pos[Z], 1,
             };
-            const auto mRot = math::ToMat4(qRot);
+            const auto mRot = QuatToMat(qRot);
             return mRot * mPos;
         }
 
@@ -114,6 +117,8 @@ namespace mini::rendering
 
         math::Vec3f ScreenRay() const
         {
+            using namespace math;
+
             const auto mx = (f32)wnd::mouse_client_x;
             const auto my = (f32)wnd::mouse_client_y;
             const auto ww = (f32)wnd::window_w;
@@ -126,15 +131,15 @@ namespace mini::rendering
                 1
             };
 
-            const auto projInv = math::Inverse(GetPerspective());
+            const auto projInv = Inverse(GetPerspective());
             auto eye = projInv * homo;
-            eye[Vz] = -1;
-            eye[Vw] =  0;
+            eye[Z] = -1;
+            eye[W] =  0;
             
-            const auto viewInv = math::Inverse(GetView());
+            const auto viewInv = Inverse(GetView());
             auto world = viewInv * eye;
 
-            return { world[Vx], world[Vy], world[Vz] };
+            return { world[X], world[Y], world[Z] };
         }
     };
 

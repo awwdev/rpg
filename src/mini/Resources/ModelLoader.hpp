@@ -12,6 +12,8 @@ namespace mini::res
     //specific blender export!
     inline void LoadModel(box::IArray<utils::Common_Vertex>& vertices, chars_t path)
     {
+        using namespace math;
+        
         std::ifstream file(path, std::ios::binary);
         if (!file) ERR("cannot open file");
 
@@ -32,11 +34,11 @@ namespace mini::res
                 {
                     if(line[i2] == ','){
                         if (commaCount == 0)
-                            position[Vx] = (float)std::atof(line+i1);
+                            position[X] = (float)std::atof(line+i1);
                         if (commaCount == 1)
-                            position[Vy] = (float)std::atof(line+i1);
+                            position[Y] = (float)std::atof(line+i1);
                         if (commaCount == 2)
-                            position[Vz] = (float)std::atof(line+i1);
+                            position[Z] = (float)std::atof(line+i1);
                         i1 = i2+1;
                         commaCount++;
                     }
