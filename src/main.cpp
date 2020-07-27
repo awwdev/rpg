@@ -16,6 +16,9 @@
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Resources/HostResources.hpp"
 
+#include "mini/Math/Matrix.hpp"
+#include "mini/Math/MatrixOld.hpp"
+
 using namespace mini;
 using namespace mini::wnd;
 

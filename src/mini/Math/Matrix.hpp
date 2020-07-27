@@ -107,7 +107,7 @@ namespace mini::math
         const Mat<T, X1, X2>& m1, 
         const Mat<T, Y1, X1>& m2)
     {
-        Mat<T, Y1, X2> out;
+        Mat<T, Y1, X2> out {};
 
         for (u8 y = 0; y < Y1; ++y) {
         for (u8 x = 0; x < X2; ++x) {

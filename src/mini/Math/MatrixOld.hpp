@@ -13,7 +13,7 @@ namespace mini
     enum V : s32 { Vx = 0, Vy = 1, Vz = 2, Vw = 3 };
 }
 
-namespace mini::math
+namespace mini::mathOld
 {
     template<class T, s32 Y_T, s32 X_T, bool IsQuat = false, typename = IsArithmetic<T>>
     struct Mat
@@ -309,8 +309,8 @@ namespace mini::math
     }
 
 
-    template<class T, auto Y, auto X>
-    std::ostream& operator<<(std::ostream& os, const Mat<T, Y, X>& mat)
+    template<class T, auto Y, auto X, bool Q>
+    std::ostream& operator<<(std::ostream& os, const Mat<T, Y, X, Q>& mat)
     {
         os << "mat\n";
         for(auto y = 0; y < Y; ++y) {
