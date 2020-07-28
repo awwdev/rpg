@@ -20,30 +20,22 @@ namespace mini::rendering
         float dirSpd    = 150;
         float mouseSpd  = 0.002f;
         float fov       = 45;
-        float scrollSpd = 0.02f;
+        float scrollSpd = 0.1f;
 
         void Update(const double dt)
         {
             using namespace math;
 
             movNorm = {};
-            if(wnd2::IsPressed<wnd2::D>()){
-                movNorm[X] -= 1;
-            }
-            if(wnd2::IsPressed<wnd2::A>()){
-                movNorm[X] += 1;
-            }
-            if(wnd2::IsPressed<wnd2::D>()){
-                movNorm[Z] += 1;
-            }
-            if(wnd2::IsPressed<wnd2::S>()){
-                movNorm[Z] -= 1;
-            }
+            if(wnd2::IsPressed<wnd2::D>()) { movNorm[X] -= 1; }
+            if(wnd2::IsPressed<wnd2::A>()) { movNorm[X] += 1; }
+            if(wnd2::IsPressed<wnd2::W>()) { movNorm[Z] += 1; }
+            if(wnd2::IsPressed<wnd2::S>()) { movNorm[Z] -= 1; }
             NormalizeThis(movNorm);
 
-            if (wnd::ui_mode == false) {
-                rotTarget[Y] += wnd::mouse_dx * mouseSpd;
-                rotTarget[X] += wnd::mouse_dy * mouseSpd;
+            if (wnd2::g_ui_mode == false) {
+                rotTarget[Y] += wnd2::g_mouse_delta_x * mouseSpd;
+                rotTarget[X] += wnd2::g_mouse_delta_y * mouseSpd;
             }
 
             const auto qX = QuatAngleAxis(+rotTarget[X] * dirSpd, math::Vec3f{1, 0, 0});
@@ -53,14 +45,13 @@ namespace mini::rendering
 
             const auto movDir = math::QuatMultVec(qRot, movNorm);
 
-            if (wnd::ui_mode == false) {
+            if (wnd2::g_ui_mode == false) {
                 pos = pos + (movDir * movSpd * (float)dt);
             }
 
             //? scroll
-
-            if (const auto* ev = wnd::CheckEvent(wnd::EventType::Mouse_Scroll)){
-                fov -= ev->scrollDelta * scrollSpd;
+            if (wnd2::g_input[wnd2::Mouse_Scroll] == wnd2::Yes) {
+                fov -= wnd2::g_mouse_scroll_delta * scrollSpd;
             }
         }
 
@@ -119,8 +110,8 @@ namespace mini::rendering
         {
             using namespace math;
 
-            const auto mx = (f32)wnd::mouse_client_x;
-            const auto my = (f32)wnd::mouse_client_y;
+            const auto mx = (f32)wnd2::g_mouse_window_x;
+            const auto my = (f32)wnd2::g_mouse_window_y;
             const auto ww = (f32)wnd::window_w;
             const auto wh = (f32)wnd::window_h;
 

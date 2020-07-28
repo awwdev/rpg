@@ -210,9 +210,10 @@ namespace mini::res
                     //    x, y, z 1,
                     //};
                 
-                    if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed))
+                    const auto mouseLeftButton = wnd2::g_input[wnd2::Mouse_ButtonLeft];
+                    if (mouseLeftButton == wnd2::Pressed)
                     {
-                        yDragPoint = (f32)wnd::mouse_client_y;
+                        yDragPoint = (f32)wnd2::g_mouse_window_y;
                         if (closeVertex == V0) draggedVertex = i+0;
                         if (closeVertex == V1) draggedVertex = i+1;
                         if (closeVertex == V2) draggedVertex = i+2;
@@ -224,8 +225,8 @@ namespace mini::res
 
             }//for end
 
-            
-            if (wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released))
+            const auto mouseLeftButton = wnd2::g_input[wnd2::Mouse_ButtonLeft];
+            if (mouseLeftButton == wnd2::Released)
             {
                 //Recalculate normals
                 const auto cx = corner % (quadrant.QUAD_COUNT + 1);
@@ -252,7 +253,7 @@ namespace mini::res
 
             if (draggedVertex >= 0)
             {
-                const auto yDragDelta = (f32)wnd::mouse_client_y - yDragPoint;
+                const auto yDragDelta = (f32)wnd2::g_mouse_window_y - yDragPoint;
                 constexpr f32 dragScale = 0.01f;
                 
                 const auto cx = corner % (quadrant.QUAD_COUNT + 1);
@@ -263,7 +264,7 @@ namespace mini::res
                     auto& v = quadrant.verts[vIdx].pos;
                     v[Y] += yDragDelta * dragScale;
                 }
-                yDragPoint = (f32)wnd::mouse_client_y;
+                yDragPoint = (f32)wnd2::g_mouse_window_y;
 
                 
             }

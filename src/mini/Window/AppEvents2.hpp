@@ -15,6 +15,11 @@ namespace mini::wnd2
         F1  = 112, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
 
         //custom
+        Mouse_ButtonLeft,
+        Mouse_ButtonRight,
+        Mouse_ButtonMiddle,
+        Mouse_Move,
+        Mouse_Scroll,
         Window_Close,
         Window_Resize,
 
@@ -31,14 +36,24 @@ namespace mini::wnd2
     };
 
     inline State g_input [InputType::ENUM_END];
-    inline box::Array<InputType, 10> tmpBuffer; //internal usage 
+    inline box::Array<InputType, 10> g_tmpBuffer; //internal usage 
     inline u32 g_window_w, g_window_h;
     inline u32 g_mouse_window_x, g_mouse_window_y;
+    inline s32 g_mouse_delta_x, g_mouse_delta_y;
+    inline s16 g_mouse_scroll_delta; //windows type short
+    inline bool g_ui_mode = true; //TODO: move to UI
 
     template<auto type>
     bool IsPressed() 
     {
         return g_input[type] == Pressed || g_input[type] == Held;
+    }
+
+    template<InputType type>
+    void AddEvent(const State state = Yes)
+    {
+        g_input[type] = state;
+        g_tmpBuffer.Append(type);
     }
 
 }//ns

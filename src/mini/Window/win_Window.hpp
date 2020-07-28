@@ -77,7 +77,7 @@ namespace mini::wnd
                     {
                         .usUsagePage    = HID_USAGE_PAGE_GENERIC,
                         .usUsage        = HID_USAGE_GENERIC_KEYBOARD,
-                        .dwFlags        = RIDEV_NOLEGACY,
+                        .dwFlags        = 0,
                         .hwndTarget     = hWnd,
                     }
                 };

@@ -13,15 +13,16 @@ namespace mini::wnd2
     inline void PollEvents(HWND hWnd)
     {
         //"advance" or reset input
-        FOR_ARRAY(tmpBuffer, i)
+        FOR_ARRAY(g_tmpBuffer, i)
         {
-            if (tmpBuffer[i] == Pressed) g_input[i] = Held;
-            else                         g_input[i] = None;     
+            const auto t = g_tmpBuffer[i];
+            if (g_input[t] == Pressed) g_input[t] = Held;
+            else                       g_input[t] = None;     
         }
-        tmpBuffer.Clear();
+        g_tmpBuffer.Clear();
 
         //outside the window mouse movement
-        if (wnd::ui_mode == false)
+        if (wnd2::g_ui_mode == false)
         {
             RECT wndRect;
             GetWindowRect(hWnd, &wndRect);
@@ -30,8 +31,8 @@ namespace mini::wnd2
 
             POINT point;
             GetCursorPos(&point);
-            wnd::mouse_dx = point.x - (cx);
-            wnd::mouse_dy = point.y - (cy);
+            g_mouse_delta_x = point.x - (cx);
+            g_mouse_delta_y = point.y - (cy);
 
             SetCursorPos(cx, cy);
         }
@@ -59,8 +60,8 @@ namespace mini::wnd2
                 
                 //TODO: place in UI
                 if (IsPressed<F1>())
-                    wnd::ui_mode = !wnd::ui_mode;
-                if (!wnd::ui_mode) {
+                    wnd2::g_ui_mode = !wnd2::g_ui_mode;
+                if (!wnd2::g_ui_mode) {
                     RECT wndRect;
                     GetWindowRect(hWnd, &wndRect);
                     const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
@@ -68,7 +69,7 @@ namespace mini::wnd2
                     SetCursorPos(cx, cy);
                 }
 
-                tmpBuffer.Append((InputType)vKey);
+                g_tmpBuffer.Append((InputType)vKey);
             }
 
             else if (raw.header.dwType == RIM_TYPEMOUSE) 
@@ -80,23 +81,64 @@ namespace mini::wnd2
 
     inline void WmSize(WPARAM wParam, LPARAM lParam)
     {
+        switch (wParam) 
+        {
+            case SIZE_MAXIMIZED: 
+            case SIZE_MINIMIZED: 
+                AddEvent<Window_Resize>();
+            break;
+
+            case SIZE_RESTORED: //this means spamming
+            if (g_tmpBuffer.Contains(Window_Resize) == nullptr)
+                AddEvent<Window_Resize>();
+            break;
+        }
+
         wnd::window_w = LOWORD(lParam);
         wnd::window_h = HIWORD(lParam);
-
-        g_input[Window_Resize] = Yes;
         g_window_w = LOWORD(lParam);
         g_window_h = HIWORD(lParam);
     }
 
     inline void WmClose(WPARAM, WPARAM)
     {
-        g_input[Window_Close] = Yes;
+        AddEvent<Window_Close>();
     }
 
     inline void WmMouseMove(WPARAM wParam, LPARAM lParam)
     {
-        wnd::mouse_client_x = GET_X_LPARAM(lParam);
-        wnd::mouse_client_y = GET_Y_LPARAM(lParam);
+        AddEvent<Mouse_Move>();
+        g_mouse_window_x = GET_X_LPARAM(lParam);
+        g_mouse_window_y = GET_Y_LPARAM(lParam);
+    }
+
+    inline void WmMouseWheel(WPARAM wParam, LPARAM lParam)
+    {
+        AddEvent<Mouse_Scroll>();
+        g_mouse_scroll_delta = GET_WHEEL_DELTA_WPARAM(wParam);
+    }
+
+    inline auto WmSetCursor(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> LRESULT
+    {
+        const auto hit = LOWORD(lParam);
+        switch(hit)
+        {
+            case HTCLIENT:  SetCursor(LoadCursor(NULL, IDC_ARROW)); break;
+            default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        }
+        return 0;
+    }
+
+    inline void WmLButtonDown(WPARAM wParam, LPARAM lParam)
+    {
+        AddEvent<Mouse_ButtonLeft>(Pressed);
+        g_mouse_window_x = GET_X_LPARAM(lParam);
+        g_mouse_window_y = GET_Y_LPARAM(lParam);
+    }
+
+    inline void WmLButtonUp(WPARAM wParam, LPARAM lParam)
+    {
+        AddEvent<Mouse_ButtonLeft>(Released);
         g_mouse_window_x = GET_X_LPARAM(lParam);
         g_mouse_window_y = GET_Y_LPARAM(lParam);
     }
@@ -105,10 +147,14 @@ namespace mini::wnd2
     {
         switch(uMsg)
         {
-            case WM_INPUT:      WmInput(wParam, lParam, hWnd); break;
-            case WM_SIZE:       WmSize (wParam, lParam);       break;
-            case WM_CLOSE:      WmClose(wParam, lParam);       break;
-            case WM_MOUSEMOVE:  WmMouseMove(wParam, lParam);   break;
+            case WM_INPUT:       WmInput(wParam, lParam, hWnd);         break;
+            case WM_SIZE:        WmSize (wParam, lParam);               break;
+            case WM_CLOSE:       WmClose(wParam, lParam);               break;
+            case WM_MOUSEMOVE:   WmMouseMove(wParam, lParam);           break;
+            case WM_MOUSEWHEEL:  WmMouseWheel(wParam, lParam);          break;
+            case WM_LBUTTONDOWN: WmLButtonDown(wParam, lParam);         break; //TODO: realise with raw input
+            case WM_LBUTTONUP:   WmLButtonUp(wParam, lParam);           break;
+            case WM_SETCURSOR:   return WmSetCursor(hWnd, uMsg, wParam, lParam);
 
             default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
         }
