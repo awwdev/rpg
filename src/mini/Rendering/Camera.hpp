@@ -27,16 +27,16 @@ namespace mini::rendering
             using namespace math;
 
             movNorm = {};
-            if(wnd::asciiPressed['D']){
+            if(wnd2::IsPressed<wnd2::D>()){
                 movNorm[X] -= 1;
             }
-            if(wnd::asciiPressed['A']){
+            if(wnd2::IsPressed<wnd2::A>()){
                 movNorm[X] += 1;
             }
-            if(wnd::asciiPressed['W']){
+            if(wnd2::IsPressed<wnd2::D>()){
                 movNorm[Z] += 1;
             }
-            if(wnd::asciiPressed['S']){
+            if(wnd2::IsPressed<wnd2::S>()){
                 movNorm[Z] -= 1;
             }
             NormalizeThis(movNorm);

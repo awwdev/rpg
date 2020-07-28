@@ -14,7 +14,7 @@ namespace mini::rendering
         void Update(const double dt)
         {
             using namespace math;
-            t += dt * 0.5f;
+            t += (float)dt * 0.5f;
             pos[X] = std::sinf(t);
             pos[Z] = std::cosf(t);
         }

@@ -39,9 +39,10 @@ int WINAPI wWinMain(
         auto ptrGameScenes = mem::ClaimBlock<box::Array<app::GameScene, 1, box::INIT::Yes>>();
         uint32_t gameSceneIdx = 0;
 
-        while (!wnd::CheckEvent(EventType::Window_Close) && !wnd::IsPressed(EventType::Keyboard_Escape))
+        while (wnd2::g_input[wnd2::Window_Close] == wnd2::None && wnd2::g_input[wnd2::ESC] == wnd2::None)
         {
-            wnd::PollEvents(window.hWnd);
+            wnd2::PollEvents(window.hWnd);
+            //wnd::PollEvents(window.hWnd);
             dt::UpdateFPS();
 
             if (wnd::window_h != 0 && wnd::window_w != 0)
@@ -59,6 +60,3 @@ int WINAPI wWinMain(
     system("pause");
 
 } //main end
-
-
-//TODO: plane grid, terrain editing

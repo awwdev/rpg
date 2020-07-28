@@ -70,7 +70,7 @@ namespace mini::wnd
                 break;
                 default:
                 {
-                    asciiPressed[wParam] = true;
+                    //asciiPressed[wParam] = true;
                 }
                 break;
             }
@@ -83,7 +83,7 @@ namespace mini::wnd
                 case VK_F1:     RELEASED(EventType::Keyboard_F1); break;
                 default:
                 {
-                    asciiPressed[wParam] = false;
+                    //asciiPressed[wParam] = false;
                 }
             }
         break;
@@ -154,22 +154,32 @@ namespace mini::wnd
 
         case WM_INPUT:
         {
-            //TODO: GetRawInputBuffer
-            //TODO: multipe keys
-
-            UINT dwSize = 0;
-            if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER)) == 0)
+            UINT dwSize;
+            if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER)) == NULL)
             {
                 RAWINPUT raw {};
                 GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &raw, &dwSize, sizeof(RAWINPUTHEADER));
 
-                if (raw.header.dwType == RIM_TYPEMOUSE) 
+                if (raw.header.dwType == RIM_TYPEKEYBOARD) 
                 {
+                    const bool isKeyDown = raw.data.keyboard.Flags == RI_KEY_MAKE;
+                    const auto vKey      = raw.data.keyboard.VKey;
                     
-                    //mouse_dx = (s32)raw.data.mouse.lLastX;
-                    //mouse_dy = (s32)raw.data.mouse.lLastY;
-                    //LOG(mouse_dx, mouse_dy);
-                    //SetCursorPos(300 + window_w/2.f, 300 + window_h/2.f);
+                    switch(vKey)
+                    {
+                        case VK_F1: LOG("help"); break;
+                        case VK_ESCAPE: LOG("escape"); break;
+                    }
+
+
+                    if (isKeyDown)
+                    {
+                        asciiPressed.Set<true>(vKey);
+                    }
+                    else
+                    {
+                        asciiPressed.Set<false>(vKey);
+                    }
                 }
             }
 

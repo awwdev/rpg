@@ -1,5 +1,6 @@
 #pragma once
 #include "mini/Window/win_WindowCallback.hpp"
+#include "mini/Window/win_WindowCallback2.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -23,7 +24,7 @@ namespace mini::wnd
             WNDCLASSEX wndClass {
                 .cbSize         = sizeof(WNDCLASSEX),
                 .style          = 0,
-                .lpfnWndProc    = WndProc1,
+                .lpfnWndProc    = wnd2::CustomWindowProc,
                 .cbClsExtra     = 0,
                 .cbWndExtra     = 0,
                 .hInstance      = hInst,
@@ -67,18 +68,18 @@ namespace mini::wnd
             {
                 tagRAWINPUTDEVICE devices [] = 
                 {
-                    {
-                        .usUsagePage    = HID_USAGE_PAGE_GENERIC,
-                        .usUsage        = HID_USAGE_GENERIC_MOUSE,
-                        .dwFlags        = 0, //RIDEV_INPUTSINK,RIDEV_NOLEGACY
-                        .hwndTarget     = hWnd,
-                    },
                     //{
                     //    .usUsagePage    = HID_USAGE_PAGE_GENERIC,
-                    //    .usUsage        = HID_USAGE_GENERIC_KEYBOARD,
-                    //    .dwFlags        = 0,
+                    //    .usUsage        = HID_USAGE_GENERIC_MOUSE,
+                    //    .dwFlags        = 0, //RIDEV_INPUTSINK,RIDEV_NOLEGACY
                     //    .hwndTarget     = hWnd,
-                    //}
+                    //},
+                    {
+                        .usUsagePage    = HID_USAGE_PAGE_GENERIC,
+                        .usUsage        = HID_USAGE_GENERIC_KEYBOARD,
+                        .dwFlags        = RIDEV_NOLEGACY,
+                        .hwndTarget     = hWnd,
+                    }
                 };
                 RegisterRawInputDevices(devices, ARRAY_COUNT(devices), sizeof(tagRAWINPUTDEVICE));
             }

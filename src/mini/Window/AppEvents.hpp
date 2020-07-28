@@ -46,7 +46,8 @@ namespace mini::wnd
     //!global arrays
     inline box::Array<Event, 10> events; //per frame max
     inline box::Bitset<EventType::PRESSABLE_END> pressed;
-    inline bool asciiPressed [255];
+    inline box::Bitset<255> asciiPressed;
+    //inline bool asciiPressed [255];
     inline u32 window_w, window_h;
     inline u32 mouse_client_x, mouse_client_y;
     inline s32 mouse_dx, mouse_dy;
