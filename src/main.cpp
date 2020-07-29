@@ -45,7 +45,7 @@ int WINAPI wWinMain(
             //wnd::PollEvents(window.hWnd);
             dt::UpdateFPS();
 
-            if (wnd::window_h != 0 && wnd::window_w != 0)
+            if (wnd2::g_window_h != 0 && wnd2::g_window_w != 0)
             {
                 ptrGameScenes[gameSceneIdx].renderGraph.Clear();
                 ptrGameScenes[gameSceneIdx].Update(mini::dt::seconds);

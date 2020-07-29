@@ -2,6 +2,7 @@
 #include "mini/Box/Array.hpp"
 #include "mini/Box/Bitset.hpp"
 
+/*
 namespace mini::wnd
 {
     enum class EventType : u8
@@ -47,7 +48,7 @@ namespace mini::wnd
     inline box::Array<Event, 10> events; //per frame max
     inline box::Bitset<EventType::PRESSABLE_END> pressed;
     inline box::Bitset<255> asciiPressed;
-    //inline bool asciiPressed [255];
+    inline bool asciiPressed [255];
     inline u32 window_w, window_h;
     inline u32 mouse_client_x, mouse_client_y;
     inline s32 mouse_dx, mouse_dy;
@@ -72,3 +73,4 @@ namespace mini::wnd
     //TODO: maybe some ConsumeEvent method
 
 }//ns
+*/

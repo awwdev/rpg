@@ -53,6 +53,7 @@ namespace mini::app
         void Update(const double dt)
         {
             //? META
+            ui::Update();
             camera.Update(dt);
             terrain.Update(dt, camera, ecs);
             sun.Update(dt);

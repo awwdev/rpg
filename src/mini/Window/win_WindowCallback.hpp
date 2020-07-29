@@ -5,7 +5,7 @@
 #include <Windows.h>
 #include <windowsx.h>
 #undef max
-
+/*
 namespace mini::wnd
 {
     inline void PollEvents(HWND hWnd)
@@ -198,3 +198,4 @@ namespace mini::wnd
     }
 
 }//ns
+*/

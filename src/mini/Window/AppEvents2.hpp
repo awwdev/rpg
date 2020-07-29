@@ -39,8 +39,9 @@ namespace mini::wnd2
     inline box::Array<InputType, 10> g_tmpBuffer; //internal usage 
     inline u32 g_window_w, g_window_h;
     inline u32 g_mouse_window_x, g_mouse_window_y;
-    inline s32 g_mouse_delta_x, g_mouse_delta_y;
+    inline s32 g_mouse_dx, g_mouse_dy;
     inline s16 g_mouse_scroll_delta; //windows type short
+    inline box::String<10> g_chars;
     inline bool g_ui_mode = true; //TODO: move to UI
 
     template<auto type>

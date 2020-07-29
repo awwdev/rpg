@@ -34,8 +34,8 @@ namespace mini::rendering
             NormalizeThis(movNorm);
 
             if (wnd2::g_ui_mode == false) {
-                rotTarget[Y] += wnd2::g_mouse_delta_x * mouseSpd;
-                rotTarget[X] += wnd2::g_mouse_delta_y * mouseSpd;
+                rotTarget[Y] += wnd2::g_mouse_dx * mouseSpd;
+                rotTarget[X] += wnd2::g_mouse_dy * mouseSpd;
             }
 
             const auto qX = QuatAngleAxis(+rotTarget[X] * dirSpd, math::Vec3f{1, 0, 0});
@@ -76,7 +76,7 @@ namespace mini::rendering
         math::Mat4f GetPerspective() const 
         {
             //reversed z
-            const float aspect = (float)wnd::window_w / (float)wnd::window_h;
+            const float aspect = (float)wnd2::g_window_w / (float)wnd2::g_window_h;
             const float fovRad = fov * (3.14f / 180.f);
             const float n = 0.01f;
             const float f = 0; //infinity
@@ -112,8 +112,8 @@ namespace mini::rendering
 
             const auto mx = (f32)wnd2::g_mouse_window_x;
             const auto my = (f32)wnd2::g_mouse_window_y;
-            const auto ww = (f32)wnd::window_w;
-            const auto wh = (f32)wnd::window_h;
+            const auto ww = (f32)wnd2::g_window_w;
+            const auto wh = (f32)wnd2::g_window_h;
 
             const math::Vec4f homo {
                 ((mx / ww) * 2) - 1,

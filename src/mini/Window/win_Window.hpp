@@ -62,29 +62,7 @@ namespace mini::wnd
             const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
             const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
             SetCursorPos(cx, cy);
-            mouse_dx = mouse_dy = 0;
-
-            //raw input 
-            {
-                tagRAWINPUTDEVICE devices [] = 
-                {
-                    //{
-                    //    .usUsagePage    = HID_USAGE_PAGE_GENERIC,
-                    //    .usUsage        = HID_USAGE_GENERIC_MOUSE,
-                    //    .dwFlags        = 0, //RIDEV_INPUTSINK,RIDEV_NOLEGACY
-                    //    .hwndTarget     = hWnd,
-                    //},
-                    {
-                        .usUsagePage    = HID_USAGE_PAGE_GENERIC,
-                        .usUsage        = HID_USAGE_GENERIC_KEYBOARD,
-                        .dwFlags        = 0,
-                        .hwndTarget     = hWnd,
-                    }
-                };
-                RegisterRawInputDevices(devices, ARRAY_COUNT(devices), sizeof(tagRAWINPUTDEVICE));
-            }
-            
-
+            wnd2::g_mouse_dx = wnd2::g_mouse_dy = 0;
         }
 
         ~Window()

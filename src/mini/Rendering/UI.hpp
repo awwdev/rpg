@@ -40,6 +40,19 @@ namespace mini::app::ui
         BLACK4,
         BLACK5,
     };
+
+    inline void Update()
+    {
+        //if (wnd2::IsPressed<wnd2::F1>())
+        //    wnd2::g_ui_mode = !wnd2::g_ui_mode;
+        //if (!wnd2::g_ui_mode) {
+        //    RECT wndRect;
+        //    GetWindowRect(hWnd, &wndRect);
+        //    const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
+        //    const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
+        //    SetCursorPos(cx, cy);
+        //}
+    }
     
     inline void DrawTextCentered(
         RenderGraph& renderGraph,
@@ -295,7 +308,7 @@ namespace mini::app::ui
     inline void DrawConsole(RenderGraph& renderGraph)
     {
         static Window wnd {
-            .rect   = { 8, wnd::window_h - 8 - 100.f, wnd::window_w * 0.75f, 100 },
+            .rect   = { 8, wnd2::g_window_h - 8 - 100.f, wnd2::g_window_w * 0.75f, 100 },
             .limits = { 100, 100, 800, 300 },
             .title  = "Console",
         };
@@ -324,19 +337,17 @@ namespace mini::app::ui
             inputField.isActive = false; //probably does not cover all cases
         }
         if (inputField.isActive) {
-            if (const auto* ev = wnd::CheckEvent(wnd::EventType::Keyboard_ASCII, wnd::EventState::Pressed)){
-                if (ev->ascii == '\b')
-                    inputField.str.Pop();
-                else if (ev->ascii != '\r')
-                    inputField.str.Append(ev->ascii);
+            if (!wnd2::g_chars.Empty()){
+                for(u32 i = 0; i < wnd2::g_chars.Length(); ++i)
+                {
+                    if (wnd2::g_chars[i] == '\b')
+                        inputField.str.Pop();
+                    else if (wnd2::g_chars[i] != '\r')
+                        inputField.str.Append(wnd2::g_chars[i]);
+                }
             }
         }
         DrawText(renderGraph, inputRect.x + 32, inputRect.y, inputField.str.dataPtr, inputField.str.Length());
-        if (const auto* ev = wnd::CheckEvent(wnd::EventType::Keyboard_ASCII, wnd::EventState::Pressed)){
-            if (ev->ascii == '\r'){
-                LOG(inputField.GetInt());
-            }
-        }
     }
 
     inline void DrawRenderStats(RenderGraph& renderGraph)

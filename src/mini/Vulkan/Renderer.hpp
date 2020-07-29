@@ -56,8 +56,8 @@ namespace mini::vk
             resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.camera.GetView();
             resources.common_pushConsts.sun    = scene.camera.GetOrthographic() * scene.sun.GetView(); //BIAS * 
             resources.common_pushConsts.sunDir = math::Normalize(scene.sun.pos);
-            resources.ui.pushConsts.wnd_w = wnd::window_w;
-            resources.ui.pushConsts.wnd_h = wnd::window_h;
+            resources.ui.pushConsts.wnd_w = wnd2::g_window_w;
+            resources.ui.pushConsts.wnd_h = wnd2::g_window_h;
 
             resources.ui.ubo.Clear();
             resources.ui.ubo.Store(scene.renderGraph.ui_ubo);
@@ -170,7 +170,7 @@ namespace mini::vk
 
         void Render(const double dt, app::GameScene& scene)
         {
-            if (wnd::CheckEvent(wnd::EventType::Window_Resize)){
+            if (wnd2::g_input[wnd2::Window_Resize] == wnd2::Yes){
                 RecreateScwapchain();
                 return;
             } //checking for size==0 is done previously (will also pause other logic)
