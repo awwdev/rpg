@@ -1,76 +1,70 @@
-#pragma once
-#include "mini/Box/Array.hpp"
-#include "mini/Box/Bitset.hpp"
+//https://github.com/awwdev
 
-/*
+#pragma once
+#include "mini/Box/Bitset.hpp"
+#include "mini/Box/Array.hpp"
+
 namespace mini::wnd
 {
-    enum class EventType : u8
+    enum EventType
     {
-        Mouse_Left,
-        Mouse_Right,
+        //ascii
+        ESC = 27,
+        A   = 65, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+        a   = 97, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, 
+        F1  = 112, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
+
+        //custom
+        Mouse_ButtonLeft,
+        Mouse_ButtonRight,
+        Mouse_ButtonMiddle,
+        Mouse_Move,
         Mouse_Scroll,
-
-        Keyboard_Escape,
-        Keyboard_F1,
-        Keyboard_ASCII,
-
-        PRESSABLE_END,
-
         Window_Close,
         Window_Resize,
-        Window_Minimize,
+
+        ENUM_END
     };
 
-    enum class EventState : u8
+    enum EventState : u8
     {
-        None, Released, Pressed
+        None,     
+        Pressed,        //once 
+        Released,       //once
+        Held,    
+        PressedOrHeld,
+        Set,            //misc like wnd
     };
 
-
-    struct Event 
+    namespace global
     {
-        EventType  type;
-        EventState state;
-        //TODO: better write dedicated ctors
-        union {
-            struct { s32 x, y; } pos; 
-            struct { u32 w, h; } size;
-            char   ascii;
-            short  scrollDelta;
-        };
+        inline EventState events [EventType::ENUM_END];
 
-        bool operator==(const EventType otherType) { return type == otherType; }
-    };
-
-
-    //!global arrays
-    inline box::Array<Event, 10> events; //per frame max
-    inline box::Bitset<EventType::PRESSABLE_END> pressed;
-    inline box::Bitset<255> asciiPressed;
-    inline bool asciiPressed [255];
-    inline u32 window_w, window_h;
-    inline u32 mouse_client_x, mouse_client_y;
-    inline s32 mouse_dx, mouse_dy;
-    inline bool ui_mode = true;
-
-
-    inline Event* CheckEvent(const EventType type, const EventState state = EventState::None)
-    {
-        FOR_ARRAY(events, i)
-        {
-            if (events[i].type == type && events[i].state == state)
-                return &events[i];
-        }
-        return nullptr;
+        inline box::Array<EventType, 10> tmpBuffer; //internal usage 
+        inline u32 window_w, window_h;
+        inline u32 mouse_window_x, mouse_window_y;
+        inline s32 mouse_dx, mouse_dy;
+        inline s16 mouse_scroll_delta; //windows type short
+        inline box::String<10> chars;
+        inline bool ui_mode = true; //TODO: move to UI
     }
 
-    inline bool IsPressed(const EventType type)
+    //abstraction over global access
+    template<auto type, auto state> bool HasEvent()
     {
-        return pressed.Test(type);
+             if constexpr (state == EventState::None)            return global::events[type] == None;
+        else if constexpr (state == EventState::Pressed)         return global::events[type] == Pressed;
+        else if constexpr (state == EventState::Released)        return global::events[type] == Released;
+        else if constexpr (state == EventState::Held)            return global::events[type] == Held;
+        else if constexpr (state == EventState::PressedOrHeld)   return global::events[type] == Pressed || global::events[type] == Held;
+        else if constexpr (state == EventState::Set)             return global::events[type] == Set;
     }
 
-    //TODO: maybe some ConsumeEvent method
+    template<auto TYPE, auto STATE = Set>
+    void AddEvent()
+    {
+        global::events[TYPE] = STATE;
+        global::tmpBuffer.Append(TYPE);
+    }
 
 }//ns
-*/

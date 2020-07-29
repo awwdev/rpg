@@ -1,25 +1,29 @@
+//https://github.com/awwdev
+
 #pragma once
+#include "mini/Box/Optional.hpp"
 #include "mini/Window/AppEvents.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <windowsx.h>
-#undef max
-/*
+
 namespace mini::wnd
 {
     inline void PollEvents(HWND hWnd)
     {
-        events.Clear();
-        //std::memset(asciiPressed, false, ARRAY_COUNT(asciiPressed));
-
-        for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);) { //probably define a limit per frame
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+        global::chars.Clear();
+        //"advance" or reset input
+        FOR_ARRAY(global::tmpBuffer, i)
+        {
+            const auto t = global::tmpBuffer[i];
+            if (global::events[t] == Pressed) global::events[t] = Held;
+            else                       global::events[t] = None;     
         }
+        global::tmpBuffer.Clear();
 
         //outside the window mouse movement
-        if (ui_mode == false)
+        if (wnd::global::ui_mode == false)
         {
             RECT wndRect;
             GetWindowRect(hWnd, &wndRect);
@@ -28,174 +32,123 @@ namespace mini::wnd
 
             POINT point;
             GetCursorPos(&point);
-            mouse_dx = point.x - (cx);
-            mouse_dy = point.y - (cy);
+            global::mouse_dx = point.x - (cx);
+            global::mouse_dy = point.y - (cy);
 
             SetCursorPos(cx, cy);
         }
+
+        for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);) { 
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
     }
-    
-    LRESULT __stdcall WndProc1(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+
+    inline void WmSize(WPARAM wParam, LPARAM lParam)
     {
-        switch (uMsg) {
-
-        #define PRESSED(t, ...)  events.Append(t, EventState::Pressed, __VA_ARGS__);  pressed.Set<t, true>();
-        #define RELEASED(t, ...) events.Append(t, EventState::Released, __VA_ARGS__); pressed.Set<t, false>();
-
-        case WM_MOUSEWHEEL:
+        switch (wParam) 
         {
-            events.Append(EventType::Mouse_Scroll, EventState::None);
-            events.Last().scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+            case SIZE_MAXIMIZED: 
+            case SIZE_MINIMIZED: 
+                AddEvent<Window_Resize>();
+            break;
+
+            case SIZE_RESTORED: //this means spamming
+            if (global::tmpBuffer.Contains(Window_Resize) == nullptr)
+                AddEvent<Window_Resize>();
+            break;
         }
-        break;
 
-        //?keyboard
+        global::window_w = LOWORD(lParam);
+        global::window_h = HIWORD(lParam);
+    }
 
-        case WM_KEYDOWN:
-            switch (wParam) 
-            {
-                case VK_ESCAPE: PRESSED(EventType::Keyboard_Escape); break;
-                case VK_F1:    
-                {
-                    PRESSED(EventType::Keyboard_F1); 
-                    ui_mode = !ui_mode; //TODO: move into UI I guess
-                    if (!ui_mode) {
-                        RECT wndRect;
-                        GetWindowRect(hWnd, &wndRect);
-                        const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
-                        const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
-                        SetCursorPos(cx, cy);
-                    }
-                } 
-                break;
-                default:
-                {
-                    //asciiPressed[wParam] = true;
-                }
-                break;
-            }
-        break;
-        
-        case WM_KEYUP:
-            switch (wParam) 
-            {
-                case VK_ESCAPE: RELEASED(EventType::Keyboard_Escape); break;
-                case VK_F1:     RELEASED(EventType::Keyboard_F1); break;
-                default:
-                {
-                    //asciiPressed[wParam] = false;
-                }
-            }
-        break;
+    inline void WmClose(WPARAM, WPARAM)
+    {
+        AddEvent<Window_Close>();
+    }
 
-        case WM_CHAR:
+    inline void WmMouseMove(WPARAM wParam, LPARAM lParam)
+    {
+        AddEvent<Mouse_Move>();
+        global::mouse_window_x = GET_X_LPARAM(lParam);
+        global::mouse_window_y = GET_Y_LPARAM(lParam);
+    }
+
+    inline void WmMouseWheel(WPARAM wParam, LPARAM lParam)
+    {
+        AddEvent<Mouse_Scroll>();
+        global::mouse_scroll_delta = GET_WHEEL_DELTA_WPARAM(wParam);
+    }
+
+    inline auto WmSetCursor(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> LRESULT
+    {
+        const auto hit = LOWORD(lParam);
+        switch(hit)
         {
-            PRESSED(EventType::Keyboard_ASCII);
-            events.Last().ascii = (char)wParam;
+            case HTCLIENT:  SetCursor(LoadCursor(NULL, IDC_ARROW)); break;
+            default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
         }
-        break;
+        return 0;
+    }
 
-        //?window
+    inline void WmLButtonDown(WPARAM wParam, LPARAM lParam)
+    {
+        AddEvent<Mouse_ButtonLeft, Pressed>();
+        global::mouse_window_x = GET_X_LPARAM(lParam);
+        global::mouse_window_y = GET_Y_LPARAM(lParam);
+    }
 
-        case WM_CLOSE: events.Append(EventType::Window_Close); break;
+    inline void WmLButtonUp(WPARAM wParam, LPARAM lParam)
+    {
+        AddEvent<Mouse_ButtonLeft, Released>();
+        global::mouse_window_x = GET_X_LPARAM(lParam);
+        global::mouse_window_y = GET_Y_LPARAM(lParam);
+    }
 
-        case WM_SIZE: 
+    inline void WmKeyDown(WPARAM wParam, LPARAM lParam, HWND hWnd)
+    {
+        global::events[wParam] = Pressed;
+
+        if (wnd::HasEvent<wnd::F1, wnd::Pressed>())
+            wnd::global::ui_mode = !wnd::global::ui_mode;
+        if (!wnd::global::ui_mode) {
+            RECT wndRect;
+            GetWindowRect(hWnd, &wndRect);
+            const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
+            const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
+            SetCursorPos(cx, cy);
+        }
+    }
+
+    inline void WmKeyUp(WPARAM wParam, LPARAM lParam)
+    {
+        global::events[wParam] = Released;
+    }
+
+    inline void WmChar(WPARAM wParam, LPARAM lParam)
+    {
+        global::chars.Append((char)wParam);        
+    }
+
+    inline LRESULT CALLBACK CustomWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+    {
+        switch(uMsg)
         {
-            switch (wParam) 
-            {
-                case SIZE_MAXIMIZED: 
-                events.Append(EventType::Window_Resize);
-                break;
+            case WM_SIZE:        WmSize (wParam, lParam);               break;
+            case WM_CLOSE:       WmClose(wParam, lParam);               break;
+            case WM_MOUSEMOVE:   WmMouseMove(wParam, lParam);           break;
+            case WM_MOUSEWHEEL:  WmMouseWheel(wParam, lParam);          break;
+            case WM_LBUTTONDOWN: WmLButtonDown(wParam, lParam);         break;
+            case WM_LBUTTONUP:   WmLButtonUp(wParam, lParam);           break;
+            case WM_CHAR:        WmChar(wParam, lParam);                break;
+            case WM_KEYDOWN:     WmKeyDown(wParam, lParam, hWnd);       break;
+            case WM_KEYUP:       WmKeyUp(wParam, lParam);               break;
+            case WM_SETCURSOR:   return WmSetCursor(hWnd, uMsg, wParam, lParam);
 
-                case SIZE_MINIMIZED: 
-                events.Append(EventType::Window_Resize); 
-                break;
-
-                case SIZE_RESTORED: //this means spamming
-                if (events.Contains(EventType::Window_Resize) == nullptr)
-                    events.Append(EventType::Window_Resize); 
-                break;
-            }
-
-            window_w = LOWORD(lParam);
-            window_h = HIWORD(lParam);
+            default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
         }
-        break;
-        
-        case WM_SETCURSOR: //prevent cursor redraw
-        {
-            const auto hit = LOWORD(lParam);
-            switch(hit)
-            {
-                //TODO: more clean way like refresh previous declared cursor?
-                case HTCLIENT:  SetCursor(LoadCursor(NULL, IDC_ARROW)); break;
-                default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
-            }
-        }
-        break;
-
-        case WM_LBUTTONDOWN: 
-        {
-            PRESSED (EventType::Mouse_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); 
-        }
-        break;
-        case WM_LBUTTONUP:  
-        {
-            RELEASED(EventType::Mouse_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-        }
-        break;
-
-        case WM_MOUSEMOVE:
-        {
-            mouse_client_x = GET_X_LPARAM(lParam);
-            mouse_client_y = GET_Y_LPARAM(lParam);
-        }
-        break;
-
-        case WM_INPUT:
-        {
-            UINT dwSize;
-            if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER)) == NULL)
-            {
-                RAWINPUT raw {};
-                GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &raw, &dwSize, sizeof(RAWINPUTHEADER));
-
-                if (raw.header.dwType == RIM_TYPEKEYBOARD) 
-                {
-                    const bool isKeyDown = raw.data.keyboard.Flags == RI_KEY_MAKE;
-                    const auto vKey      = raw.data.keyboard.VKey;
-                    
-                    switch(vKey)
-                    {
-                        case VK_F1: LOG("help"); break;
-                        case VK_ESCAPE: LOG("escape"); break;
-                    }
-
-
-                    if (isKeyDown)
-                    {
-                        asciiPressed.Set<true>(vKey);
-                    }
-                    else
-                    {
-                        asciiPressed.Set<false>(vKey);
-                    }
-                }
-            }
-
-        }
-        break;
-
-        //?default
-
-        default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
-
-        #undef PRESSED
-        #undef RELEASED
-        }
-
-        return 0;    
+        return 0;
     }
 
 }//ns
-*/

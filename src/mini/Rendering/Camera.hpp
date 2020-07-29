@@ -27,15 +27,15 @@ namespace mini::rendering
             using namespace math;
 
             movNorm = {};
-            if(wnd2::IsPressed<wnd2::D>()) { movNorm[X] -= 1; }
-            if(wnd2::IsPressed<wnd2::A>()) { movNorm[X] += 1; }
-            if(wnd2::IsPressed<wnd2::W>()) { movNorm[Z] += 1; }
-            if(wnd2::IsPressed<wnd2::S>()) { movNorm[Z] -= 1; }
+            if(wnd::HasEvent<wnd::D, wnd::PressedOrHeld>()) { movNorm[X] -= 1; }
+            if(wnd::HasEvent<wnd::A, wnd::PressedOrHeld>()) { movNorm[X] += 1; }
+            if(wnd::HasEvent<wnd::W, wnd::PressedOrHeld>()) { movNorm[Z] += 1; }
+            if(wnd::HasEvent<wnd::S, wnd::PressedOrHeld>()) { movNorm[Z] -= 1; }
             NormalizeThis(movNorm);
 
-            if (wnd2::g_ui_mode == false) {
-                rotTarget[Y] += wnd2::g_mouse_dx * mouseSpd;
-                rotTarget[X] += wnd2::g_mouse_dy * mouseSpd;
+            if (wnd::global::ui_mode == false) {
+                rotTarget[Y] += wnd::global::mouse_dx * mouseSpd;
+                rotTarget[X] += wnd::global::mouse_dy * mouseSpd;
             }
 
             const auto qX = QuatAngleAxis(+rotTarget[X] * dirSpd, math::Vec3f{1, 0, 0});
@@ -45,13 +45,13 @@ namespace mini::rendering
 
             const auto movDir = math::QuatMultVec(qRot, movNorm);
 
-            if (wnd2::g_ui_mode == false) {
+            if (wnd::global::ui_mode == false) {
                 pos = pos + (movDir * movSpd * (float)dt);
             }
 
             //? scroll
-            if (wnd2::g_input[wnd2::Mouse_Scroll] == wnd2::Yes) {
-                fov -= wnd2::g_mouse_scroll_delta * scrollSpd;
+            if (wnd::global::events[wnd::Mouse_Scroll] == wnd::Set) {
+                fov -= wnd::global::mouse_scroll_delta * scrollSpd;
             }
         }
 
@@ -76,7 +76,7 @@ namespace mini::rendering
         math::Mat4f GetPerspective() const 
         {
             //reversed z
-            const float aspect = (float)wnd2::g_window_w / (float)wnd2::g_window_h;
+            const float aspect = (float)wnd::global::window_w / (float)wnd::global::window_h;
             const float fovRad = fov * (3.14f / 180.f);
             const float n = 0.01f;
             const float f = 0; //infinity
@@ -110,10 +110,10 @@ namespace mini::rendering
         {
             using namespace math;
 
-            const auto mx = (f32)wnd2::g_mouse_window_x;
-            const auto my = (f32)wnd2::g_mouse_window_y;
-            const auto ww = (f32)wnd2::g_window_w;
-            const auto wh = (f32)wnd2::g_window_h;
+            const auto mx = (f32)wnd::global::mouse_window_x;
+            const auto my = (f32)wnd::global::mouse_window_y;
+            const auto ww = (f32)wnd::global::window_w;
+            const auto wh = (f32)wnd::global::window_h;
 
             const math::Vec4f homo {
                 ((mx / ww) * 2) - 1,

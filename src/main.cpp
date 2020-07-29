@@ -39,13 +39,13 @@ int WINAPI wWinMain(
         auto ptrGameScenes = mem::ClaimBlock<box::Array<app::GameScene, 1, box::INIT::Yes>>();
         uint32_t gameSceneIdx = 0;
 
-        while (wnd2::g_input[wnd2::Window_Close] == wnd2::None && wnd2::g_input[wnd2::ESC] == wnd2::None)
+        while (wnd::global::events[wnd::Window_Close] == wnd::None && wnd::global::events[wnd::ESC] == wnd::None)
         {
-            wnd2::PollEvents(window.hWnd);
+            wnd::PollEvents(window.hWnd);
             //wnd::PollEvents(window.hWnd);
             dt::UpdateFPS();
 
-            if (wnd2::g_window_h != 0 && wnd2::g_window_w != 0)
+            if (wnd::global::window_h != 0 && wnd::global::window_w != 0)
             {
                 ptrGameScenes[gameSceneIdx].renderGraph.Clear();
                 ptrGameScenes[gameSceneIdx].Update(mini::dt::seconds);

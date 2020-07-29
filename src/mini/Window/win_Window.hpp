@@ -1,12 +1,8 @@
 #pragma once
 #include "mini/Window/win_WindowCallback.hpp"
-#include "mini/Window/win_WindowCallback2.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#include <windowsx.h>
-#include <hidusage.h> 
-#undef max
 
 namespace mini::wnd
 {
@@ -16,7 +12,6 @@ namespace mini::wnd
         HWND hWnd;
         HINSTANCE hInstance;
 
-
         Window(HINSTANCE hInst, u16 width, u16 height, const wchar_t* pClassName = L"miniClass", const wchar_t* wndName = L"miniWnd")
             : className { pClassName }
             , hInstance { hInst }
@@ -24,7 +19,7 @@ namespace mini::wnd
             WNDCLASSEX wndClass {
                 .cbSize         = sizeof(WNDCLASSEX),
                 .style          = 0,
-                .lpfnWndProc    = wnd2::CustomWindowProc,
+                .lpfnWndProc    = wnd::CustomWindowProc,
                 .cbClsExtra     = 0,
                 .cbWndExtra     = 0,
                 .hInstance      = hInst,
@@ -62,7 +57,7 @@ namespace mini::wnd
             const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
             const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
             SetCursorPos(cx, cy);
-            wnd2::g_mouse_dx = wnd2::g_mouse_dy = 0;
+            wnd::global::mouse_dx = wnd::global::mouse_dy = 0;
         }
 
         ~Window()
