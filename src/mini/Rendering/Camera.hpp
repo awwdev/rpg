@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/Window/AppEvents.hpp"
+#include "mini/Window/WindowEvents.hpp"
 #include "mini/Math/Matrix.hpp"
 #include "mini/Box/Optional.hpp"
 #undef far
@@ -33,7 +33,7 @@ namespace mini::rendering
             if(wnd::HasEvent<wnd::S, wnd::PressedOrHeld>()) { movNorm[Z] -= 1; }
             NormalizeThis(movNorm);
 
-            if (wnd::global::ui_mode == false) {
+            if (wnd::global::ui_debug_mode == false) {
                 rotTarget[Y] += wnd::global::mouse_dx * mouseSpd;
                 rotTarget[X] += wnd::global::mouse_dy * mouseSpd;
             }
@@ -45,7 +45,7 @@ namespace mini::rendering
 
             const auto movDir = math::QuatMultVec(qRot, movNorm);
 
-            if (wnd::global::ui_mode == false) {
+            if (wnd::global::ui_debug_mode == false) {
                 pos = pos + (movDir * movSpd * (float)dt);
             }
 
@@ -110,8 +110,8 @@ namespace mini::rendering
         {
             using namespace math;
 
-            const auto mx = (f32)wnd::global::mouse_window_x;
-            const auto my = (f32)wnd::global::mouse_window_y;
+            const auto mx = (f32)wnd::global::mouse_wx;
+            const auto my = (f32)wnd::global::mouse_wy;
             const auto ww = (f32)wnd::global::window_w;
             const auto wh = (f32)wnd::global::window_h;
 

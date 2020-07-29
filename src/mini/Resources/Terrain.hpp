@@ -7,7 +7,7 @@
 #include "mini/Utils/Structs.hpp"
 #include "mini/ECS/ECS.hpp"
 #include "mini/Rendering/Camera.hpp"
-#include "mini/Window/AppEvents.hpp"
+#include "mini/Window/WindowEvents.hpp"
 #include "mini/Box/Array.hpp"
 
 //TODO: AABB to check which quadrant
@@ -212,7 +212,7 @@ namespace mini::res
                 
                     if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>())
                     {
-                        yDragPoint = (f32)wnd::global::mouse_window_y;
+                        yDragPoint = (f32)wnd::global::mouse_wy;
                         if (closeVertex == V0) draggedVertex = i+0;
                         if (closeVertex == V1) draggedVertex = i+1;
                         if (closeVertex == V2) draggedVertex = i+2;
@@ -252,7 +252,7 @@ namespace mini::res
 
             if (draggedVertex >= 0)
             {
-                const auto yDragDelta = (f32)wnd::global::mouse_window_y - yDragPoint;
+                const auto yDragDelta = (f32)wnd::global::mouse_wy - yDragPoint;
                 constexpr f32 dragScale = 0.01f;
                 
                 const auto cx = corner % (quadrant.QUAD_COUNT + 1);
@@ -263,7 +263,7 @@ namespace mini::res
                     auto& v = quadrant.verts[vIdx].pos;
                     v[Y] += yDragDelta * dragScale;
                 }
-                yDragPoint = (f32)wnd::global::mouse_window_y;
+                yDragPoint = (f32)wnd::global::mouse_wy;
 
                 
             }

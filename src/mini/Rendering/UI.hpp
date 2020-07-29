@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/Memory/Allocator.hpp"
-#include "mini/Window/AppEvents.hpp"
+#include "mini/Window/WindowEvents.hpp"
 #include "mini/Utils/Types.hpp"
 #include "mini/Utils/Algorithms.hpp"
 #include "mini/Utils/DeltaTime.hpp"
@@ -43,15 +43,15 @@ namespace mini::app::ui
 
     inline void Update()
     {
-        //if (wnd::IsPressed<wnd::F1>())
-        //    wnd::global::ui_mode = !wnd::global::ui_mode;
-        //if (!wnd::global::ui_mode) {
-        //    RECT wndRect;
-        //    GetWindowRect(hWnd, &wndRect);
-        //    const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
-        //    const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
-        //    SetCursorPos(cx, cy);
-        //}
+        if (wnd::HasEvent<wnd::F1, wnd::Pressed>())
+            wnd::global::ui_debug_mode = !wnd::global::ui_debug_mode;
+        if (wnd::global::ui_debug_mode == false) {
+            RECT wndRect;
+            GetWindowRect(GetActiveWindow(), &wndRect); //bit hacked
+            const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
+            const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
+            SetCursorPos(cx, cy);
+        }
     }
     
     inline void DrawTextCentered(
@@ -122,42 +122,42 @@ namespace mini::app::ui
 
     inline void DrawWindow(RenderGraph& renderGraph, Window& wnd)
     {
+        using namespace wnd;
+
         const utils::Rect<float> bar     = { wnd.rect.x, wnd.rect.y, wnd.rect.w, wnd.BAR_H };
         const utils::Rect<float> resizer = { wnd.rect.x + wnd.rect.w - 8, wnd.rect.y + wnd.rect.h - 8, 8, 8 };
 
-        const bool isMouseOnBar    = utils::IsPointInsideRect(wnd::global::mouse_window_x, wnd::global::mouse_window_y, bar);
-        const bool isMouseOnResizer= utils::IsPointInsideRect(wnd::global::mouse_window_x, wnd::global::mouse_window_y, resizer);
+        const bool isMouseOnBar    = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, bar);
+        const bool isMouseOnResizer= utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, resizer);
 
         //const bool isMouseHeld     = wnd::IsPressed(wnd::EventType::Mouse_Left);
         //const bool isMousePressed  = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
         //const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released);
 
-        const auto mouseLeftButton = wnd::global::events[wnd::Mouse_ButtonLeft];
-
         //? DRAGGING
-        if (mouseLeftButton == wnd::Released)
+        if (HasEvent<Mouse_ButtonLeft, Released>())
         {
             wnd.isDragged  = false;
             wnd.isResizing = false;
         }
-        if (mouseLeftButton == wnd::Pressed)
+        if (HasEvent<Mouse_ButtonLeft, Pressed>())
         {
-            wnd.dragX = wnd::global::mouse_window_x;
-            wnd.dragY = wnd::global::mouse_window_y;
+            wnd.dragX = wnd::global::mouse_wx;
+            wnd.dragY = wnd::global::mouse_wy;
         }
-        if (mouseLeftButton == wnd::Held && isMouseOnBar) {
+        if (HasEvent<Mouse_ButtonLeft, Held>() && isMouseOnBar) {
             wnd.isDragged = true;    
         }
-        if (mouseLeftButton == wnd::Held && isMouseOnResizer) {
+        if (HasEvent<Mouse_ButtonLeft, Held>() && isMouseOnResizer) {
             wnd.isResizing = true;    
         }
 
         if (wnd.isDragged || wnd.isResizing)
         {
-            const s32 deltaX = wnd::global::mouse_window_x - wnd.dragX;
-            const s32 deltaY = wnd::global::mouse_window_y - wnd.dragY;
-            wnd.dragX = wnd::global::mouse_window_x;
-            wnd.dragY = wnd::global::mouse_window_y;
+            const s32 deltaX = wnd::global::mouse_wx - wnd.dragX;
+            const s32 deltaY = wnd::global::mouse_wy - wnd.dragY;
+            wnd.dragX = wnd::global::mouse_wx;
+            wnd.dragY = wnd::global::mouse_wy;
 
             if (wnd.isDragged)
             {
@@ -223,15 +223,12 @@ namespace mini::app::ui
     template<u32 STRLEN_0>
     bool DrawButton(RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& rect)
     {
-        const auto mouseLeftButton = wnd::global::events[wnd::Mouse_ButtonLeft];
-
-        const bool isMouseInside   = utils::IsPointInsideRect(wnd::global::mouse_window_x, wnd::global::mouse_window_y, rect);
-        //const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released); 
-        //const bool isMousePressed  = wnd::IsPressed(wnd::EventType::Mouse_Left);
+        using namespace wnd;
+        const bool isMouseInside = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, rect);
 
         //? QUAD
         uint32_t btnColorIdx;
-        if (isMouseInside && mouseLeftButton == wnd::Pressed) btnColorIdx = BLACK5;
+        if (isMouseInside && HasEvent<Mouse_ButtonLeft, Pressed>()) btnColorIdx = BLACK5;
         else btnColorIdx = isMouseInside ? BLACK4 : BLACK3;
 
         renderGraph.ui_ubo.AppendData(
@@ -245,7 +242,7 @@ namespace mini::app::ui
         //? TEXT
         DrawTextCentered(renderGraph, rect, str, STRLEN_0 - 1);
 
-        return isMouseInside && mouseLeftButton == wnd::Released;
+        return isMouseInside && HasEvent<Mouse_ButtonLeft, Released>();
     }
 
     template<u32 STRLEN_0>
@@ -261,29 +258,31 @@ namespace mini::app::ui
         const char(&str)[STRLEN_0],
         const utils::Rect<float>& rect = { 0, 0, 64, 24 })
     {
+        using namespace wnd;
+
         const auto STRLEN = STRLEN_0 - 1; //don't consider \0 for rendering
         const auto TOTAL_STR_W  = (STRLEN_0 + 1) * LETTER_SPACE; //not sure why strlen0 works (+1)
-
         const utils::Rect<float> inputRect { rect.x + TOTAL_STR_W, rect.y, rect.w - TOTAL_STR_W, rect.h };
         const utils::Rect<float> labelRect { rect.x, rect.y, TOTAL_STR_W, rect.h };
-        const bool isMouseOnInput = utils::IsPointInsideRect(wnd::global::mouse_window_x, wnd::global::mouse_window_y, inputRect);
-        const auto mouseLeftButton = wnd::global::events[wnd::Mouse_ButtonLeft];
-        //const bool isMousePressed = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
-       
 
-        if (isMouseOnInput && mouseLeftButton == wnd::Pressed) {
+        const bool isMouseOnInput = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, inputRect);
+
+        if (isMouseOnInput && HasEvent<Mouse_ButtonLeft, Pressed>()) {
             inputField.isActive = true;
         }
-        if (!isMouseOnInput && mouseLeftButton == wnd::Pressed) {
+        if (!isMouseOnInput && HasEvent<Mouse_ButtonLeft, Pressed>()) {
             inputField.isActive = false; //probably does not cover all cases
         }
 
         if (inputField.isActive) {
-            if (const auto* ev = wnd::CheckEvent(wnd::EventType::Keyboard_ASCII, wnd::EventState::Pressed)){
-                if (ev->ascii == '\b')
-                    inputField.input.Pop();
-                else
-                    inputField.input.Append(ev->ascii);
+            if (!wnd::global::chars.Empty()){
+                for(u32 i = 0; i < wnd::global::chars.Length(); ++i)
+                {
+                    if (wnd::global::chars[i] == '\b')
+                        inputField.str.Pop();
+                    else if (wnd::global::chars[i] != '\r')
+                        inputField.str.Append(wnd::global::chars[i]);
+                }
             }
         }
 
@@ -307,6 +306,8 @@ namespace mini::app::ui
 
     inline void DrawConsole(RenderGraph& renderGraph)
     {
+        using namespace wnd;
+
         static Window wnd {
             .rect   = { 8, wnd::global::window_h - 8 - 100.f, wnd::global::window_w * 0.75f, 100 },
             .limits = { 100, 100, 800, 300 },
@@ -326,14 +327,12 @@ namespace mini::app::ui
         auto input = ">>";
         DrawText(renderGraph, inputRect.x, inputRect.y, input, (u32)strlen(input));
 
-        const bool isMouseOnInput = utils::IsPointInsideRect(wnd::global::mouse_window_x, wnd::global::mouse_window_y, inputRect);
-        const auto mouseLeftButton = wnd::global::events[wnd::Mouse_ButtonLeft];
-        //const bool isMousePressed = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
+        const bool isMouseOnInput = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, inputRect);
 
-        if (isMouseOnInput &&  mouseLeftButton == wnd::Pressed) {
+        if (isMouseOnInput && HasEvent<Mouse_ButtonLeft, Pressed>()) {
             inputField.isActive = true;
         }
-        if (!isMouseOnInput &&  mouseLeftButton == wnd::Pressed) {
+        if (!isMouseOnInput && HasEvent<Mouse_ButtonLeft, Pressed>()) {
             inputField.isActive = false; //probably does not cover all cases
         }
         if (inputField.isActive) {

@@ -39,14 +39,16 @@ namespace mini::wnd
     namespace global
     {
         inline EventState events [EventType::ENUM_END];
-
-        inline box::Array<EventType, 10> tmpBuffer; //internal usage 
-        inline u32 window_w, window_h;
-        inline u32 mouse_window_x, mouse_window_y;
-        inline s32 mouse_dx, mouse_dy;
-        inline s16 mouse_scroll_delta; //windows type short
         inline box::String<10> chars;
-        inline bool ui_mode = true; //TODO: move to UI
+
+        inline u32 window_w, window_h;
+        inline u32 mouse_wx, mouse_wy; //window
+        inline s32 mouse_dx, mouse_dy; //delta
+        inline s32 mouse_scroll_delta;
+
+        inline bool ui_debug_mode = true;
+
+        inline box::Array<EventType, 10> frameEvents; //tmp (internal usage mostly)
     }
 
     //abstraction over global access
@@ -64,7 +66,8 @@ namespace mini::wnd
     void AddEvent()
     {
         global::events[TYPE] = STATE;
-        global::tmpBuffer.Append(TYPE);
+        global::frameEvents.Append(TYPE);
+        //!may want to add an assert here
     }
 
 }//ns

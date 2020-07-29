@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/Box/Optional.hpp"
-#include "mini/Window/AppEvents.hpp"
+#include "mini/Window/WindowEvents.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -14,16 +14,15 @@ namespace mini::wnd
     {
         global::chars.Clear();
         //"advance" or reset input
-        FOR_ARRAY(global::tmpBuffer, i)
+        FOR_ARRAY(global::frameEvents, i)
         {
-            const auto t = global::tmpBuffer[i];
+            const auto t = global::frameEvents[i];
             if (global::events[t] == Pressed) global::events[t] = Held;
             else                       global::events[t] = None;     
         }
-        global::tmpBuffer.Clear();
+        global::frameEvents.Clear();
 
-        //outside the window mouse movement
-        if (wnd::global::ui_mode == false)
+        if (wnd::global::ui_debug_mode == false)
         {
             RECT wndRect;
             GetWindowRect(hWnd, &wndRect);
@@ -54,7 +53,7 @@ namespace mini::wnd
             break;
 
             case SIZE_RESTORED: //this means spamming
-            if (global::tmpBuffer.Contains(Window_Resize) == nullptr)
+            if (global::frameEvents.Contains(Window_Resize) == nullptr)
                 AddEvent<Window_Resize>();
             break;
         }
@@ -71,8 +70,8 @@ namespace mini::wnd
     inline void WmMouseMove(WPARAM wParam, LPARAM lParam)
     {
         AddEvent<Mouse_Move>();
-        global::mouse_window_x = GET_X_LPARAM(lParam);
-        global::mouse_window_y = GET_Y_LPARAM(lParam);
+        global::mouse_wx = GET_X_LPARAM(lParam);
+        global::mouse_wy = GET_Y_LPARAM(lParam);
     }
 
     inline void WmMouseWheel(WPARAM wParam, LPARAM lParam)
@@ -95,30 +94,20 @@ namespace mini::wnd
     inline void WmLButtonDown(WPARAM wParam, LPARAM lParam)
     {
         AddEvent<Mouse_ButtonLeft, Pressed>();
-        global::mouse_window_x = GET_X_LPARAM(lParam);
-        global::mouse_window_y = GET_Y_LPARAM(lParam);
+        global::mouse_wx = GET_X_LPARAM(lParam);
+        global::mouse_wy = GET_Y_LPARAM(lParam);
     }
 
     inline void WmLButtonUp(WPARAM wParam, LPARAM lParam)
     {
         AddEvent<Mouse_ButtonLeft, Released>();
-        global::mouse_window_x = GET_X_LPARAM(lParam);
-        global::mouse_window_y = GET_Y_LPARAM(lParam);
+        global::mouse_wx = GET_X_LPARAM(lParam);
+        global::mouse_wy = GET_Y_LPARAM(lParam);
     }
 
     inline void WmKeyDown(WPARAM wParam, LPARAM lParam, HWND hWnd)
     {
         global::events[wParam] = Pressed;
-
-        if (wnd::HasEvent<wnd::F1, wnd::Pressed>())
-            wnd::global::ui_mode = !wnd::global::ui_mode;
-        if (!wnd::global::ui_mode) {
-            RECT wndRect;
-            GetWindowRect(hWnd, &wndRect);
-            const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
-            const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
-            SetCursorPos(cx, cy);
-        }
     }
 
     inline void WmKeyUp(WPARAM wParam, LPARAM lParam)

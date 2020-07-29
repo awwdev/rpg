@@ -9,7 +9,7 @@
 #include "mini/Rendering/RenderGraph.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/Box/String.hpp"
-#include "mini/Window/AppEvents.hpp"
+#include "mini/Window/WindowEvents.hpp"
 #include "mini/Utils/DeltaTime.hpp"
 
 namespace mini::vk
