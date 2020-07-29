@@ -42,7 +42,6 @@ int WINAPI wWinMain(
         while (wnd::global::events[wnd::Window_Close] == wnd::None && wnd::global::events[wnd::ESC] == wnd::None)
         {
             wnd::PollEvents(window.hWnd);
-            //wnd::PollEvents(window.hWnd);
             dt::UpdateFPS();
 
             if (wnd::global::window_h != 0 && wnd::global::window_w != 0)

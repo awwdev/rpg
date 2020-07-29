@@ -10,38 +10,48 @@
 
 namespace mini::wnd
 {
+    namespace priv 
+    {
+         inline void ResetEvents(HWND hWnd) 
+        {
+            global::chars.Clear();
+            //"advance" or reset input
+            FOR_ARRAY(global::frameEvents, i)
+            {
+                const auto t = global::frameEvents[i];
+                if  (global::events[t] == Pressed) global::events[t] = Held;
+                else global::events[t] = None;     
+            }
+            global::frameEvents.Clear();
+
+            if (wnd::global::ui_debug_mode == false)
+            {
+                RECT wndRect;
+                GetWindowRect(hWnd, &wndRect);
+                const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
+                const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
+
+                POINT point;
+                GetCursorPos(&point);
+                global::mouse_dx = point.x - (cx);
+                global::mouse_dy = point.y - (cy);
+
+                SetCursorPos(cx, cy);
+            }
+        }
+    }
+
     inline void PollEvents(HWND hWnd)
     {
-        global::chars.Clear();
-        //"advance" or reset input
-        FOR_ARRAY(global::frameEvents, i)
-        {
-            const auto t = global::frameEvents[i];
-            if (global::events[t] == Pressed) global::events[t] = Held;
-            else                       global::events[t] = None;     
-        }
-        global::frameEvents.Clear();
-
-        if (wnd::global::ui_debug_mode == false)
-        {
-            RECT wndRect;
-            GetWindowRect(hWnd, &wndRect);
-            const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
-            const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
-
-            POINT point;
-            GetCursorPos(&point);
-            global::mouse_dx = point.x - (cx);
-            global::mouse_dy = point.y - (cy);
-
-            SetCursorPos(cx, cy);
-        }
+        priv::ResetEvents(hWnd); //reset before populate
 
         for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);) { 
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
     }
+
+    //? WINDOWS MESSAGES
 
     inline void WmSize(WPARAM wParam, LPARAM lParam)
     {
