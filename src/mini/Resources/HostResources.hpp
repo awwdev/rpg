@@ -4,7 +4,7 @@
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/TextureLoader.hpp"
 #include "mini/Box/Map.hpp"
-#include "mini/Box/Array.hpp"
+#include "mini/Box/Array2.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Resources/TextureArray.hpp"
 #include "mini/Resources/ModelLoader.hpp"
@@ -34,12 +34,12 @@ namespace mini::res
         }; 
 
         //model data separated
-        box::Array<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT> vertices;
+        box2::Array<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT> vertices;
 
         void Load()
         {
             LoadModel(vertices, "res/Models/sword.txt");
-            vertexLookup.Set(res::MeshType::Sword, res::MeshVertexView{vertices.dataPtr, vertices.Count()});
+            vertexLookup.Set(res::MeshType::Sword, res::MeshVertexView{(utils::Common_Vertex*)vertices.bytes, vertices.count});
         }
     };
 

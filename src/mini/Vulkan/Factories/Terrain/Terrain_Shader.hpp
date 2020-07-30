@@ -34,7 +34,7 @@ namespace mini::vk
             .borderColor             = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE, 
             .unnormalizedCoordinates = VK_FALSE
         };
-        VK_CHECK(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, &shader.samplers.AppendReturn()));
+        VK_CHECK(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, shader.samplers.Append()));
 
         shader.info.type = UniformInfo::Image;
         shader.info.layout =

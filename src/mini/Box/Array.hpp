@@ -168,7 +168,6 @@ namespace mini::box
             }
         }
 
-
         void Reverse()
         {
             for (IDX_T i = 0; i < (IDX_T)(count * 0.5f); ++i) {

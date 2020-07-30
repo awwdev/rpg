@@ -9,24 +9,24 @@
 #include "mini/Vulkan/Objects/UniformBuffer.hpp"
 
 #include "mini/Memory/Allocator.hpp"
-#include "mini/Box/Array.hpp"
+#include "mini/Box/Array2.hpp"
 #include "mini/Box/Map.hpp"
 
 namespace mini::vk
 {
     struct Shader
     {
-        box::Array<VkShaderModule, 4> modules;
-        box::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
+        box2::Array<VkShaderModule, 4> modules;
+        box2::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
 
         //uniform data
         UniformInfo info; //! probably need array?
-        box::Array<VkSampler, 4> samplers; //just some capacity
+        box2::Array<VkSampler, 4> samplers; //just some capacity
 
         ~Shader()
         {
-            FOR_ARRAY(modules, i)    vkDestroyShaderModule  (g_contextPtr->device, modules[i], nullptr);
-            FOR_ARRAY(samplers, i)   vkDestroySampler       (g_contextPtr->device, samplers[i], nullptr);
+            FOR_ARRAY2(modules, i)    vkDestroyShaderModule  (g_contextPtr->device, modules[i], nullptr);
+            FOR_ARRAY2(samplers, i)   vkDestroySampler       (g_contextPtr->device, samplers[i], nullptr);
         }
 
         template<auto BUFFER_SIZE = 10000u>
@@ -48,15 +48,15 @@ namespace mini::vk
                 .pCode      = reinterpret_cast<const uint32_t*>(*ptrBuffer)
             };
 
-            auto& mod = modules.AppendReturn();
-            VK_CHECK(vkCreateShaderModule(g_contextPtr->device, &moduleInfo, nullptr, &mod));
+            auto* mod = modules.Append();
+            VK_CHECK(vkCreateShaderModule(g_contextPtr->device, &moduleInfo, nullptr, mod));
 
             stageInfos.Append(VkPipelineShaderStageCreateInfo{
                 .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
                 .pNext  = nullptr,
                 .flags  = 0,
                 .stage  = stage,
-                .module = mod,
+                .module = *mod,
                 .pName  = "main",
                 .pSpecializationInfo = nullptr 
             });
