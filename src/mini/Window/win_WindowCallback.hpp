@@ -8,20 +8,22 @@
 #include <Windows.h>
 #include <windowsx.h>
 
+//! important: when asking for specific button state use BIG(!) letters
+
 namespace mini::wnd
 {
     namespace priv 
     {
-         inline void ResetEvents(HWND hWnd) 
+        inline void ResetEvents(HWND hWnd) 
         {
-            global::chars.Clear();
             //"advance" or reset input
-            FOR_ARRAY(global::frameEvents, i)
+            FOR_ARRAY2(global::frameEvents, i)
             {
                 const auto t = global::frameEvents[i];
                 if  (global::events[t] == Pressed) global::events[t] = Held;
                 else global::events[t] = None;     
             }
+            global::chars.Clear();
             global::frameEvents.Clear();
 
             if (wnd::global::ui_debug_mode == false)
@@ -35,10 +37,11 @@ namespace mini::wnd
                 GetCursorPos(&point);
                 global::mouse_dx = point.x - (cx);
                 global::mouse_dy = point.y - (cy);
-
                 SetCursorPos(cx, cy);
             }
         }
+
+        
     }
 
     inline void UpdateEvents(HWND hWnd)
@@ -117,11 +120,13 @@ namespace mini::wnd
     inline void WmKeyDown(WPARAM wParam, LPARAM lParam, HWND hWnd)
     {
         global::events[wParam] = Pressed;
+        global::frameEvents.Append((EventType)wParam);
     }
 
     inline void WmKeyUp(WPARAM wParam, LPARAM lParam)
     {
         global::events[wParam] = Released;
+        global::frameEvents.Append((EventType)wParam);
     }
 
     inline void WmChar(WPARAM wParam, LPARAM lParam)

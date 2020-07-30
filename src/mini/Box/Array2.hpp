@@ -37,22 +37,30 @@ namespace mini::box2
         const T& Last() const               { this->operator[count - 1]; }
 
         template<class... ARGS>
-        void Append(ARGS&&... args)
+        T& Append(ARGS&&... args)
         {
-            Assert(count + 1 <= CAPACITY, "array capacity exhausted");
-            new(&bytes[sizeof(T) * count]) T { std::forward<T>(args)... };
             ++count;
+            Assert(count <= CAPACITY, "array capacity exhausted");
+            return *new(&bytes[sizeof(T) * (count - 1)]) T { std::forward<T>(args)... };
         }
 
         void Clear()
         {
-            count = 0;
-            //if constexpr(!std::is_trivial_v<T>) 
-            {
-                FOR_ARRAY2((*this), i) {
-                    this->operator[](i).~T();
-                }
+            if constexpr(!std::is_trivial_v<T>) {
+                while(count > 0)
+                    this->operator[](--count).~T();
             }
+            else count = 0;
+        }
+
+        template<class E>
+        T* Contains(const E& element) //allows for custom operator==
+        {
+            FOR_ARRAY2((*this), i) {
+                if (this->operator[](i) == element)
+                    return &(this->operator[](i));
+            }
+            return nullptr;
         }
 
         IDX count = 0;

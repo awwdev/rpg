@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/Box/Bitset.hpp"
-#include "mini/Box/Array.hpp"
+#include "mini/Box/Array2.hpp"
 
 namespace mini::wnd
 {
@@ -48,7 +48,7 @@ namespace mini::wnd
 
         inline bool ui_debug_mode = true;
 
-        inline box::Array<EventType, 10> frameEvents; //tmp (internal usage mostly)
+        inline box2::Array<EventType, 10> frameEvents; //tmp (internal usage mostly)
     }
 
     //abstraction over global access
@@ -67,7 +67,6 @@ namespace mini::wnd
     {
         global::events[TYPE] = STATE;
         global::frameEvents.Append(TYPE);
-        //!may want to add an assert here
     }
 
 }//ns
