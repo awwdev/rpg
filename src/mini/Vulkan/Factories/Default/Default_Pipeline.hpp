@@ -24,10 +24,10 @@ namespace mini::vk
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext                           = nullptr,
             .flags                           = 0,
-            .vertexBindingDescriptionCount   = vbo.bindings.Count(),
-            .pVertexBindingDescriptions      = vbo.bindings.Data(),
-            .vertexAttributeDescriptionCount = vbo.attributes.Count(),
-            .pVertexAttributeDescriptions    = vbo.attributes.Data()
+            .vertexBindingDescriptionCount   = (u32)vbo.bindings.count,
+            .pVertexBindingDescriptions      = &vbo.bindings[0],
+            .vertexAttributeDescriptionCount = (u32)vbo.attributes.count,
+            .pVertexAttributeDescriptions    = &vbo.attributes[0]
         };
 
         UniformInfo* uniformInfos [] = {
@@ -151,8 +151,8 @@ namespace mini::vk
             .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
             .pNext                  = nullptr,
             .flags                  = 0,
-            .setLayoutCount         = pipeline.setLayouts.Count(),
-            .pSetLayouts            = pipeline.setLayouts.Data(),
+            .setLayoutCount         = (u32)pipeline.setLayouts.count,
+            .pSetLayouts            = &pipeline.setLayouts[0],
             .pushConstantRangeCount = 1,
             .pPushConstantRanges    = &constantRange,
         };

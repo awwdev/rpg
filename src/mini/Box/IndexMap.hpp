@@ -140,7 +140,7 @@ namespace mini::box
                 this->Set(l.key, l.val);
         }
 
-        Array<Index_t, CAPACITY> usedIndices; //used for fast iteration
+        box::Array<Index_t, CAPACITY> usedIndices; //used for fast iteration
 
     private:
         VAL values [(Index_t)CAPACITY_T];

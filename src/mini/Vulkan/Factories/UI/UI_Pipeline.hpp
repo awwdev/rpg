@@ -150,8 +150,8 @@ namespace mini::vk
             .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
             .pNext                  = nullptr,
             .flags                  = 0,
-            .setLayoutCount         = pipeline.setLayouts.Count(),
-            .pSetLayouts            = pipeline.setLayouts.Data(),
+            .setLayoutCount         = (u32)pipeline.setLayouts.count,
+            .pSetLayouts            = &pipeline.setLayouts[0],
             .pushConstantRangeCount = 1,
             .pPushConstantRanges    = &constantRange,
         };

@@ -2,8 +2,6 @@
 
 #pragma once
 #include "mini/Box/Bitset.hpp"
-#include "mini/Box/Array.hpp"
-
 #include "mini/ECS/EntityID.hpp"
 #include "mini/ECS/ComponentArray.hpp"
 #include "mini/ECS/Prefabs.hpp"

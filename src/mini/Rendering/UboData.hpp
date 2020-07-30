@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 #pragma once
 #include "mini/Math/Matrix.hpp"
-#include "mini/box/Array.hpp"
+#include "mini/box/Array2.hpp"
 
 namespace mini
 {

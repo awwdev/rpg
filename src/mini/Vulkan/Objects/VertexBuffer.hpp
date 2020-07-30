@@ -3,7 +3,7 @@
 #pragma once
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Buffer.hpp"
-#include "mini/Box/Array.hpp"
+#include "mini/Box/Array2.hpp"
 #include "mini/Utils/Structs.hpp"
 
 namespace mini::vk
@@ -25,13 +25,13 @@ namespace mini::vk
         Buffer  gpuBuffer; //device local
         Buffer* activeBuffer = nullptr;
 
-        box::Array<VertexGroup, 100> vertexGroups;
+        box2::Array<VertexGroup, 100> vertexGroups;
         u32 count = 0;
         u32 CurrentSize() const { return sizeof(T) * count; }
 
         //? need to be filled by "factory" method
-        box::Array<VkVertexInputBindingDescription, 2>   bindings;
-        box::Array<VkVertexInputAttributeDescription, 4> attributes;
+        box2::Array<VkVertexInputBindingDescription, 2>   bindings;
+        box2::Array<VkVertexInputAttributeDescription, 4> attributes;
        
         void Create()
         {

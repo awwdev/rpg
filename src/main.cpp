@@ -4,7 +4,7 @@
 #include "mini/Window/win_WindowCallback.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Debug/Console.hpp"
-#include "mini/Box/Array.hpp"
+#include "mini/Box/Array2.hpp"
 #include "mini/Box/Map.hpp"
 #include "mini/Box/StringMap.hpp"
 #include "mini/Utils/Types.hpp"
@@ -36,8 +36,9 @@ int WINAPI wWinMain(
             *ptrHostResources);
 
         //TODO: make stack for each scene type instead of one generic scene
-        auto ptrGameScenes = mem::ClaimBlock<box::Array<app::GameScene, 1, box::INIT::Yes>>();
-        uint32_t gameSceneIdx = 0;
+        auto ptrGameScenes = mem::ClaimBlock<app::GameScene>();
+
+
 
         while (wnd::global::events[wnd::Window_Close] == wnd::None && wnd::global::events[wnd::ESC] == wnd::None)
         {
@@ -46,9 +47,9 @@ int WINAPI wWinMain(
 
             if (wnd::global::window_h != 0 && wnd::global::window_w != 0)
             {
-                ptrGameScenes[gameSceneIdx].renderGraph.Clear();
-                ptrGameScenes[gameSceneIdx].Update(mini::dt::seconds);
-                ptrRenderer->Render(mini::dt::seconds, ptrGameScenes[gameSceneIdx]);
+                ptrGameScenes->renderGraph.Clear();
+                ptrGameScenes->Update(mini::dt::seconds);
+                ptrRenderer->Render(mini::dt::seconds, *ptrGameScenes);
             }
         }
 

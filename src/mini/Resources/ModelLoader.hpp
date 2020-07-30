@@ -3,7 +3,6 @@
 
 #include "mini/Utils/Types.hpp"
 #include "mini/Utils/Structs.hpp"
-#include "mini/Box/Array.hpp"
 #include <fstream>
 #include <filesystem>
 

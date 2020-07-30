@@ -9,8 +9,8 @@
 
 //win only
 #define DEBUG_BREAK() \
+    __debugbreak(); \
     BringWindowToTop(GetConsoleWindow()); \
-    system("pause");
 
 namespace mini 
 {

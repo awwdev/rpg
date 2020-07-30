@@ -11,7 +11,7 @@
 
 namespace mini::box2
 {
-    constexpr auto USE_ARRAY_ASSERTS = true;
+    constexpr bool USE_ARRAY_ASSERTS = true;
 
     inline void Assert(const bool condition, chars_t msg = "assertion failed")
     {
@@ -37,17 +37,8 @@ namespace mini::box2
 
         //? ACCESS
 
-        T& operator[](const IDX idx) 
-        { 
-            Assert(idx < count); 
-            return reinterpret_cast<T&>(bytes[sizeof(T) * idx]); 
-        }
-
-        const T& operator[](const IDX idx) const 
-        { 
-            Assert(idx < count); 
-            return reinterpret_cast<const T&>(bytes[sizeof(T) * idx]); 
-        }
+        T&       operator[](const IDX idx)       { return reinterpret_cast<T&>      (bytes[sizeof(T) * idx]); }
+        const T& operator[](const IDX idx) const { return reinterpret_cast<const T&>(bytes[sizeof(T) * idx]); }
 
         T& Last()       
         { 

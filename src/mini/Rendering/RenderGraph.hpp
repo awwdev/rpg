@@ -1,7 +1,6 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/Box/Array.hpp"
 #include "mini/Rendering/UboData.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/Resources/Mesh.hpp"

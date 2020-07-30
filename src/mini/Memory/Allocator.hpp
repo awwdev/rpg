@@ -204,7 +204,7 @@ namespace mini::mem
         T* obj = nullptr;
         if constexpr(std::is_array_v<T>)
         {
-            obj = new (aligned) T[sizeof(T)];
+            obj = new (aligned) T[sizeof(T)]; //!flawed?
         }
         else 
         {

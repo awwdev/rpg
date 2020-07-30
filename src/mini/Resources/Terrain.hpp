@@ -8,7 +8,7 @@
 #include "mini/ECS/ECS.hpp"
 #include "mini/Rendering/Camera.hpp"
 #include "mini/Window/WindowEvents.hpp"
-#include "mini/Box/Array.hpp"
+#include "mini/Box/Array2.hpp"
 
 //TODO: AABB to check which quadrant
 //TODO: exapandable
@@ -27,7 +27,7 @@ namespace mini::res
         const f32 quadrantY;
         utils::Common_Vertex verts [VERT_COUNT_TOTAL];
 
-        box::Array<u32, 6> qCorners [QUAD_COUNT+1][QUAD_COUNT+1];
+        box2::Array<u32, 6> qCorners [QUAD_COUNT+1][QUAD_COUNT+1];
         u32 GetCornerByVertex(const u32 vIdx)
         {
             const auto normIdx = (u32)(vIdx % 6);
@@ -61,7 +61,7 @@ namespace mini::res
             for(u8 x = 0; x < CORNER_COUNT; ++x) { 
 
                 auto& corner = qCorners[z][x];
-                const auto cIdx = x*6 + z*(QUAD_COUNT*6);
+                const u32 cIdx = x*6 + z*(QUAD_COUNT*6);
 
                 if (x != CORNER_COUNT - 1){
                     if (z != CORNER_COUNT - 1) 
@@ -78,7 +78,7 @@ namespace mini::res
                     }
                 }  
                 if (x == CORNER_COUNT - 1) {
-                    const auto cIdx_ = (x-1)*6 + z*(QUAD_COUNT*6) + 1;
+                    const u32 cIdx_ = (x-1)*6 + z*(QUAD_COUNT*6) + 1;
                     if (z != CORNER_COUNT - 1) 
                         corner.Append(cIdx_);
                     if (z > 0) {
@@ -230,7 +230,7 @@ namespace mini::res
                 //Recalculate normals
                 const auto cx = corner % (quadrant.QUAD_COUNT + 1);
                 const auto cy = corner / (quadrant.QUAD_COUNT + 1);
-                FOR_ARRAY(quadrant.qCorners[cy][cx], i)
+                FOR_ARRAY2(quadrant.qCorners[cy][cx], i)
                 {
                     const auto vIdx = quadrant.qCorners[cy][cx][i];
                     const auto tris = vIdx/3;
@@ -257,7 +257,7 @@ namespace mini::res
                 
                 const auto cx = corner % (quadrant.QUAD_COUNT + 1);
                 const auto cy = corner / (quadrant.QUAD_COUNT + 1);
-                FOR_ARRAY(quadrant.qCorners[cy][cx], i)
+                FOR_ARRAY2(quadrant.qCorners[cy][cx], i)
                 {
                     const auto vIdx = quadrant.qCorners[cy][cx][i];
                     auto& v = quadrant.verts[vIdx].pos;
