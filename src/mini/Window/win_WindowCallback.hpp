@@ -41,10 +41,9 @@ namespace mini::wnd
         }
     }
 
-    inline void PollEvents(HWND hWnd)
+    inline void UpdateEvents(HWND hWnd)
     {
-        priv::ResetEvents(hWnd); //reset before populate
-
+        priv::ResetEvents(hWnd);
         for (MSG msg; PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);) { 
             TranslateMessage(&msg);
             DispatchMessage(&msg);

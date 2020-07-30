@@ -7,6 +7,11 @@
 
 //todo: make a define #ifdef DEBUG otherwise the function is just empty
 
+//win only
+#define DEBUG_BREAK() \
+    BringWindowToTop(GetConsoleWindow()); \
+    system("pause");
+
 namespace mini 
 {
     template<class T>

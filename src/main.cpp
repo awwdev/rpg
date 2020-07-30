@@ -16,6 +16,8 @@
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Resources/HostResources.hpp"
 
+#include "mini/Box/Array2.hpp"
+
 using namespace mini;
 using namespace mini::wnd;
 
@@ -25,6 +27,19 @@ int WINAPI wWinMain(
     _In_ PWSTR pCmdLine,
     _In_ int nCmdShow)
 {
+    {
+        dbg::Console console{};
+        box2::Array<int, 10> arr;
+        for(auto i=0; i<10; ++i)
+            arr.Append(i);
+        arr.Clear();
+        arr.Append(42);
+        FOR_ARRAY2(arr, i)
+            std::cout << arr[i] << ' ';
+        std::system("pause");
+        std::exit(0);
+    }
+
     {
         dbg::Console console{};
         wnd::Window  window { hInstance, 800, 600 };
@@ -41,7 +56,7 @@ int WINAPI wWinMain(
 
         while (wnd::global::events[wnd::Window_Close] == wnd::None && wnd::global::events[wnd::ESC] == wnd::None)
         {
-            wnd::PollEvents(window.hWnd);
+            wnd::UpdateEvents(window.hWnd);
             dt::UpdateFPS();
 
             if (wnd::global::window_h != 0 && wnd::global::window_w != 0)
