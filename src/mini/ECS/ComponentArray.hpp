@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/Box/SimpleArray.hpp"
+#include "mini/Box/Array2.hpp"
 #include "mini/Box/IndexMap.hpp"
 #include "mini/Box/String.hpp"
 
@@ -14,7 +14,7 @@ namespace mini::ecs
     template<class COMPONENT, u32 MAX_COUNT = MAX_ENTITY_COUNT>
     struct ComponentArray
     {
-        box::Array<COMPONENT, MAX_COUNT> dense;
+        box2::Array<COMPONENT, MAX_COUNT> dense;
         ID componentLookup [MAX_COUNT];
         ID entityLookup    [MAX_COUNT];
 

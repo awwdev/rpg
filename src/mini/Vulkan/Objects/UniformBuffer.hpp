@@ -44,7 +44,7 @@ namespace mini::vk
         template<u32 GROUPS_COUNT>
         void Store(const rendering::UniformDataGroups<T, MAX_COUNT_T, GROUPS_COUNT>& hostUBO)
         {
-            buffer.Store(hostUBO.data.dataPtr, hostUBO.data.CurrentSize()); //no offset, all at once
+            buffer.Store(hostUBO.data.bytes, hostUBO.data.CurrentSize()); //no offset, all at once
             count = hostUBO.data.count;
         }
 

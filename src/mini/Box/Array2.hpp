@@ -31,17 +31,39 @@ namespace mini::box2
 
         static constexpr auto CAPACITY = N;
 
-        T&       operator[](IDX idx)        { Assert(idx < count); return reinterpret_cast<T&>(bytes[sizeof(T) * idx]); }
-        const T& operator[](IDX idx) const  { Assert(idx < count); return reinterpret_cast<T&>(bytes[sizeof(T) * idx]); }
-        T&       Last()                     { this->operator[count - 1]; }
-        const T& Last() const               { this->operator[count - 1]; }
+
+        template<class I> T& operator[](const I idx) 
+        { 
+            Assert(idx < count); 
+            return reinterpret_cast<T&>(bytes[sizeof(T) * idx]); 
+        }
+
+        template<class I> const T& operator[](const I idx) const 
+        { 
+            Assert(idx < count); 
+            return reinterpret_cast<const T&>(bytes[sizeof(T) * idx]); 
+        }
+
+        T&       Last()       { this->operator[count - 1]; }
+        const T& Last() const { this->operator[count - 1]; }
+
 
         template<class... ARGS>
         T& Append(ARGS&&... args)
         {
             ++count;
             Assert(count <= CAPACITY, "array capacity exhausted");
-            return *new(&bytes[sizeof(T) * (count - 1)]) T { std::forward<T>(args)... };
+            return *new(&bytes[sizeof(T) * (count - 1)]) T { std::forward<ARGS>(args)... };
+        }
+
+        template<auto OTHER_N>
+        void AppendArray(const Array<T, OTHER_N>& other)
+        {
+            Assert((count + other.count) <= CAPACITY, "array capacity exhausted");
+            FOR_ARRAY2(other, i) {
+                ++count;
+                new(&bytes[sizeof(T) * (count - 1)]) T { other[i] };
+            }
         }
 
         void Clear()
@@ -62,6 +84,9 @@ namespace mini::box2
             }
             return nullptr;
         }
+
+        bool Empty() const { return count == 0; }
+        std::size_t CurrentSize() const { return sizeof(T) * count; }
 
         IDX count = 0;
         alignas(T) u8 bytes[sizeof(T) * N]; //don't init

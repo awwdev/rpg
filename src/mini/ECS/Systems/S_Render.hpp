@@ -17,17 +17,17 @@ namespace mini::ecs
         rot += 1.f * (float)dt;
 
         //SORTING (for mesh type)
-        box::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypes [(u32)res::MeshType::ENUM_END];
-        FOR_ARRAY(arr_render.dense, i) {
+        box2::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypes [(u32)res::MeshType::ENUM_END];
+        FOR_ARRAY2(arr_render.dense, i) {
             const auto idx = (u32)arr_render.dense[i].meshType;
             meshTypes[idx].Append(arr_render.entityLookup[i]);
         }   
 
-        box::Array<rendering::Default_UniformData, rendering::DEFAULT_UBO_MAX_COUNT> group;
+        box2::Array<rendering::Default_UniformData, rendering::DEFAULT_UBO_MAX_COUNT> group;
         FOR_CARRAY(meshTypes, i){ // meshType == group
 
             group.Clear();
-            FOR_ARRAY(meshTypes[i], j){
+            FOR_ARRAY2(meshTypes[i], j){
                 const auto eID  = meshTypes[i][j];
                 auto& transform = arr_transform.Get(eID);
                 auto rotMat = math::MatAngleAxisY(rot);
