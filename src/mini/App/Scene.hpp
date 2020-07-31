@@ -13,6 +13,7 @@
 #include "mini/Rendering/Camera.hpp"
 #include "mini/Rendering/UI.hpp"
 #include "mini/Resources/Terrain.hpp"
+#include "mini/Resources/Terrain/Terrain.hpp"
 #include "mini/Rendering/Sun.hpp"
 
 namespace mini::app
@@ -22,7 +23,8 @@ namespace mini::app
         //TODO: not every Scene will have those members
         ecs::ECS                ecs {};
         rendering::RenderGraph  renderGraph;
-        res::Terrain            terrain;
+        //res::Terrain            terrain;
+        res2::Terrain<10, 30,3> terrain;
         rendering::Camera       camera;
         rendering::Sun          sun;
 
@@ -31,7 +33,8 @@ namespace mini::app
             //TODO: move into some resource manager an load at loading scene
             //ecs.prefabs.Parse("res/prefabs.txt"); 
             sun.Create(ecs);
-            terrain.Create(ecs);
+            terrain.Create();
+            //terrain.Create(ecs);
 
             /*{
                 constexpr float S = 1; //sword is one 1x1 blender cube
@@ -57,7 +60,7 @@ namespace mini::app
             //? META
             ui::Update();
             camera.Update(dt);
-            terrain.Update(dt, camera, ecs);
+            //terrain.Update(dt, camera, ecs);
             sun.Update(ecs, dt);
 
             if (wnd::HasEvent<wnd::F2, wnd::Pressed>())

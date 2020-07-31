@@ -24,10 +24,6 @@ namespace mini::vk
     {  
         vbo.Create();
 
-        //const auto verts = res::CreateMeshGrid<10, 10>(100, 100);
-        //decltype(verts)::CREF arr = verts;
-        //vbo.AppendGroup(arr);
-
         vbo.bindings.Append(VkVertexInputBindingDescription{
             .binding    = 0,
             .stride     = sizeof(utils::Common_Vertex),

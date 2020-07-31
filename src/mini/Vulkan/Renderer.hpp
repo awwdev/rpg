@@ -65,11 +65,11 @@ namespace mini::vk
             resources.default.ubo.Clear();
             resources.default.ubo.Store(scene.renderGraph.default_ubo);
 
-            //TODO: selectively update terrain data
+            //TODO: once in the beginning push all data into the buffer
+            //TODO: then only update the dirty Quadrant (that is edited)
+            //need to move stuff to host res, also because serialization
             resources.terrain.vbo.Clear();
-            FOR_CARRAY(scene.terrain.quadrants, i) {
-                resources.terrain.vbo.AppendGroup(scene.terrain.quadrants[i].verts);
-            }
+            resources.terrain.vbo.AppendGroup(scene.terrain.GetEditingQuadrant().verts);
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::GameScene& scene)

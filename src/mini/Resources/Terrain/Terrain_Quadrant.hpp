@@ -23,8 +23,11 @@ namespace mini::res2
         utils::Common_Vertex verts   [VERT_COUNT_TOTAL];
         box::Array<u32, 6>   corners [CORNER_COUNT][CORNER_COUNT];
 
-        void Create()
+        void Create(const float pX, const float pZ)
         {
+            quadrantX = pX;
+            quadrantZ = pZ;
+
             constexpr math::Vec4f NORMAL_UP { 0, -1, 0, 1 };
             constexpr math::Vec4f COLOR     { 0.1f, 0.7f, 0.1f, 1 };
 
@@ -46,43 +49,17 @@ namespace mini::res2
             FOR_CARRAY(verts, i) {
                 const auto vIdx = i % 6;
                 const auto qIdx = i / 6; //quad
+                const auto qX = qIdx % QUAD_COUNT;
+                const auto qY = qIdx / QUAD_COUNT;
                 switch(vIdx)
                 {
-                    case 0:
-                    case 3:
-                        corners[0][0].Append(vIdx);
-                    break;
-
-                    case 1:
-                        corners[0][0].Append(vIdx);
-                    break;
-
-                    case 2:
-                    case 4:
-                        corners[0][0].Append(vIdx);
-                    break;
-                    
-                    case 5:
-                        corners[0][0].Append(vIdx);
-                    break;
+                    case 0: case 3: corners[qX+0][qY+0].Append(vIdx); break;   
+                    case 1:         corners[qX+1][qY+0].Append(vIdx); break;
+                    case 2: case 4: corners[qX+1][qY+1].Append(vIdx); break;
+                    case 5:         corners[qX+0][qY+1].Append(vIdx); break;
                 }
             }
 
-        }
-    };
-
-    template<auto QUAD_COUNT, auto QUADRANT_LENGTH, auto QUADRANT_COUNT_T>
-    struct Terrain
-    {
-        static constexpr auto QUADRANT_COUNT = QUADRANT_COUNT_T;
-        Quadrant<QUAD_COUNT, QUADRANT_LENGTH> quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
-
-        void Create()
-        {
-            for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
-            for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
-                quadrants[z][x].Create();
-            }}
         }
     };
 
