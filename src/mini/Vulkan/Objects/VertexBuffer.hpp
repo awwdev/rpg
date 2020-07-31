@@ -3,7 +3,7 @@
 #pragma once
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Buffer.hpp"
-#include "mini/Box/Array2.hpp"
+#include "mini/Box/Array.hpp"
 #include "mini/Utils/Structs.hpp"
 
 namespace mini::vk

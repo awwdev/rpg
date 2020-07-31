@@ -9,7 +9,7 @@
 #include "mini/Vulkan/Objects/UniformBuffer.hpp"
 
 #include "mini/Memory/Allocator.hpp"
-#include "mini/Box/Array2.hpp"
+#include "mini/Box/Array.hpp"
 #include "mini/Box/Map.hpp"
 
 namespace mini::vk

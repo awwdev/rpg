@@ -4,7 +4,8 @@
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/TextureLoader.hpp"
 #include "mini/Box/Map.hpp"
-#include "mini/Box/Array2.hpp"
+#include "mini/Box/Array.hpp"
+#include "mini/Box/IndexMap.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Resources/TextureArray.hpp"
 #include "mini/Resources/ModelLoader.hpp"
@@ -25,7 +26,7 @@ namespace mini::res
 
     struct Models
     {
-        box::IndexMap<res::MeshVertexView, res::MeshType::ENUM_END> vertexLookup
+        box2::EnumMap<res::MeshType::ENUM_END, res::MeshVertexView> vertexLookup
         {
             //hardcoded primitives
             { res::MeshType::PrimitiveCube,      { utils::MESH_CUBE, ARRAY_COUNT(utils::MESH_CUBE) } },

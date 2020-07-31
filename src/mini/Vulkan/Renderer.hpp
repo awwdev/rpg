@@ -115,15 +115,14 @@ namespace mini::vk
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.layout, 0, 1, &resources.default.pipelineShadow.sets[cmdBufferIdx], 0, nullptr); 
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.pipeline);
                 vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
-                FOR_USED_INDICES_MAP_BEGIN(scene.renderGraph.default_ubo.groups, usedIndex)
+                FOR_ARRAY2(scene.renderGraph.default_ubo.groups.usedIndices, i)
                 {
-                    const auto vertOff   = resources.default.vbo.vertexGroups[usedIndex].begin;
-                    const auto vertCount = resources.default.vbo.vertexGroups[usedIndex].count;
-                    const auto instOff   = scene.renderGraph.default_ubo.groups.Get(usedIndex).begin;
-                    const auto instCount = scene.renderGraph.default_ubo.groups.Get(usedIndex).count;
+                    const auto vertOff   = resources.default.vbo.vertexGroups[i].begin;
+                    const auto vertCount = resources.default.vbo.vertexGroups[i].count;
+                    const auto instOff   = scene.renderGraph.default_ubo.groups.Get(i).begin;
+                    const auto instCount = scene.renderGraph.default_ubo.groups.Get(i).count;
                     vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
                 }
-                FOR_USED_INDICES_MAP_END
             }
             vkCmdEndRenderPass(cmdBuffer);
 
@@ -142,15 +141,14 @@ namespace mini::vk
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.layout, 0, 1, &resources.default.pipeline.sets[cmdBufferIdx], 0, nullptr); 
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.pipeline);
                 vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
-                FOR_USED_INDICES_MAP_BEGIN(scene.renderGraph.default_ubo.groups, usedIndex)
+                FOR_ARRAY2(scene.renderGraph.default_ubo.groups.usedIndices, i)
                 {
-                    const auto vertOff   = resources.default.vbo.vertexGroups[usedIndex].begin;
-                    const auto vertCount = resources.default.vbo.vertexGroups[usedIndex].count;
-                    const auto instOff   = scene.renderGraph.default_ubo.groups.Get(usedIndex).begin;
-                    const auto instCount = scene.renderGraph.default_ubo.groups.Get(usedIndex).count;
+                    const auto vertOff   = resources.default.vbo.vertexGroups[i].begin;
+                    const auto vertCount = resources.default.vbo.vertexGroups[i].count;
+                    const auto instOff   = scene.renderGraph.default_ubo.groups.Get(i).begin;
+                    const auto instCount = scene.renderGraph.default_ubo.groups.Get(i).count;
                     vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
                 }
-                FOR_USED_INDICES_MAP_END
             }
             vkCmdEndRenderPass(cmdBuffer);
            

@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/Box/Bitset.hpp"
-#include "mini/Box/Array2.hpp"
+#include "mini/Box/Array.hpp"
 
 namespace mini::wnd
 {

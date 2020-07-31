@@ -4,7 +4,7 @@
 
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Utils/Structs.hpp"
-#include "mini/Box/Array2.hpp"
+#include "mini/Box/Array.hpp"
 
 namespace mini::vk
 {

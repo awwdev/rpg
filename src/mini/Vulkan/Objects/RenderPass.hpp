@@ -5,7 +5,7 @@
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Image.hpp"
 
-#include "mini/Box/Array2.hpp"
+#include "mini/Box/Array.hpp"
 
 namespace mini::vk
 {

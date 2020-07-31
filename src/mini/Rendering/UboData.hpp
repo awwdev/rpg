@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 #pragma once
 #include "mini/Math/Matrix.hpp"
-#include "mini/box/Array2.hpp"
+#include "mini/box/Array.hpp"
 
 namespace mini
 {
@@ -32,7 +32,7 @@ namespace mini
              //1 group == 1 inst type (1 draw call)
              //1 group -> N instances
             box2::Array<DATA_T, DATA_COUNT> data;  
-            box::IndexMap<UniformGroup, res::MeshType::ENUM_END> groups; 
+            box2::EnumMap<res::MeshType::ENUM_END, UniformGroup> groups; 
 
             template<auto N>
             void AppendGroup(const box2::Array<DATA_T, N>& arr, const res::MeshType meshType)

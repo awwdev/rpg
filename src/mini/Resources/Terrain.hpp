@@ -8,7 +8,7 @@
 #include "mini/ECS/ECS.hpp"
 #include "mini/Rendering/Camera.hpp"
 #include "mini/Window/WindowEvents.hpp"
-#include "mini/Box/Array2.hpp"
+#include "mini/Box/Array.hpp"
 
 //TODO: AABB to check which quadrant
 //TODO: exapandable

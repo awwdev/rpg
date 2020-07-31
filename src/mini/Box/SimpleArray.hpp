@@ -40,23 +40,4 @@ namespace mini::box
         }
     };
 
-    template<class T, auto N>
-    struct SimpleArray
-    {
-        using TYPE = T;
-        using IDX  = decltype(N);
-
-        static constexpr IDX CAPACITY = N;
-
-        using    REF  =       T(&)[N];
-        using    CREF = const T(&)[N];
-        operator REF ()       { return data; }
-        operator CREF() const { return data; }
-
-        T&       operator[](const IDX i)       { return data[i]; }
-        const T& operator[](const IDX i) const { return data[i]; }
-
-        T data [N];
-    };
-
 }//ns
