@@ -24,6 +24,8 @@ namespace mini::vk
             vkDestroyDescriptorPool (g_contextPtr->device, descPool, nullptr);
             FOR_ARRAY(setLayouts, i) 
                 vkDestroyDescriptorSetLayout(g_contextPtr->device, setLayouts[i], nullptr); 
+            setLayouts.Clear(); //clear due to dtor call on recreation
+            sets.Clear();
         }
     };
 

@@ -26,6 +26,9 @@ namespace mini::vk
         {
             FOR_ARRAY(modules, i)    vkDestroyShaderModule  (g_contextPtr->device, modules[i], nullptr);
             FOR_ARRAY(samplers, i)   vkDestroySampler       (g_contextPtr->device, samplers[i], nullptr);
+            modules.Clear(); //clear due to dtor call on recreation
+            samplers.Clear();
+            stageInfos.Clear();
         }
 
         template<auto BUFFER_SIZE = 10000u>

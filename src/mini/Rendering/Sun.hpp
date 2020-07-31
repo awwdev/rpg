@@ -3,20 +3,38 @@
 #pragma once
 #include "mini/Utils/Structs.hpp"
 #include "mini/Utils/Algorithms.hpp"
+#include "mini/ECS/ECS.hpp"
 
 namespace mini::rendering
 {
     struct Sun
     {
-        math::Vec3f pos { -4, -1, -4 };
+        math::Vec3f pos { -1, -10, -1 }; //xz controlled by sin
         float t = 0;
+        ecs::ID gizmoID = 0;
 
-        void Update(const double dt)
+        void Create(ecs::ECS& ecs)
+        {
+            gizmoID = ecs.AddEntity();
+            ecs.arrays.AddComponent<ecs::ComponentType::Transform> (gizmoID, math::Identity4());
+            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(gizmoID, res::MeshType::PrimitiveCube);
+        }
+
+        void Update(ecs::ECS& ecs, const double dt)
         {
             using namespace math;
             t += (float)dt * 0.5f;
-            pos[X] = std::sinf(t);
-            pos[Z] = std::cosf(t);
+            constexpr auto A = 20;
+            pos[X] = std::sinf(t) * A;
+            pos[Z] = std::cosf(t) * A;
+
+            auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
+            cubeTrans.transform = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                pos[X], pos[Y], pos[Z], 1,
+            };
         }
 
         math::Mat4f GetView() const

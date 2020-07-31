@@ -34,6 +34,15 @@ namespace mini::math
     using Vec3f = Vec<float, 3>;
     using Quatf = Vec4f;
 
+    Mat4f Identity4()
+    {
+        return {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1,
+        };
+    }
 
     //? VECTOR
 

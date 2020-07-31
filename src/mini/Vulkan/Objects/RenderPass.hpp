@@ -46,6 +46,7 @@ namespace mini::vk
             vkDestroyRenderPass(g_contextPtr->device, renderPass, nullptr);
             FOR_ARRAY(framebuffers, i) 
                 vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
+            framebuffers.Clear(); //clear because dtor is called on recreation
         }
 
         VkRenderPassBeginInfo GetBeginInfo(

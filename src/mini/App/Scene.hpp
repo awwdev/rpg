@@ -30,6 +30,7 @@ namespace mini::app
         {
             //TODO: move into some resource manager an load at loading scene
             //ecs.prefabs.Parse("res/prefabs.txt"); 
+            sun.Create(ecs);
             terrain.Create(ecs);
 
             /*{
@@ -57,7 +58,7 @@ namespace mini::app
             ui::Update();
             camera.Update(dt);
             terrain.Update(dt, camera, ecs);
-            sun.Update(dt);
+            sun.Update(ecs, dt);
 
             //? ECS
             ecs::S_Render(ecs.arrays, dt, renderGraph);
