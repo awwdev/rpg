@@ -17,7 +17,6 @@
 #pragma once
 #include "mini/Utils/Types.hpp"
 #include "mini/Box/Bitset.hpp"
-#include "mini/Box/Map.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Debug/Logger.hpp"
 
@@ -81,7 +80,7 @@ namespace mini::mem
     //?GLOBAL ----------------------------------------------
     inline u8* allocPtrs [ALLOC_COUNT];         //index based
     inline box::Bitset<BLOCK_COUNT> blocksUsed; //all blocks
-    inline box::Map<box::String<200>, BLOCK_COUNT> blockTypes;
+    //inline box::Map<box::String<200>, BLOCK_COUNT> blockTypes;
     //?-----------------------------------------------------
 
 
@@ -110,7 +109,7 @@ namespace mini::mem
     {
         //LOG("BLOCK FREE: ", typeid(T).name()); //lookup emplaced names
         blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
-        blockTypes.Remove(blockId);
+        //blockTypes.Remove(blockId);
     }
 
 
@@ -193,7 +192,7 @@ namespace mini::mem
         const auto freeBlock = blocksUsed.FindFirstFreeBit(FIT.allocBitBegin); //start search at the alloc
         blocksUsed.Flip(freeBlock); //mark used
 
-        blockTypes.Set(freeBlock, typeid(T).name());
+        //blockTypes.Set(freeBlock, typeid(T).name());
 
         constexpr auto blockSize = ALLOC_INFOS[FIT.allocIdx].blockSize;
         auto* ptr     = allocPtrs[FIT.allocIdx] + ((freeBlock - FIT.allocBitBegin) * blockSize);

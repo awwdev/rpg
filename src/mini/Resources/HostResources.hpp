@@ -3,9 +3,8 @@
 
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Resources/TextureLoader.hpp"
-#include "mini/Box/Map.hpp"
 #include "mini/Box/Array.hpp"
-#include "mini/Box/IndexMap.hpp"
+#include "mini/Box/EnumMap.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Resources/TextureArray.hpp"
 #include "mini/Resources/ModelLoader.hpp"

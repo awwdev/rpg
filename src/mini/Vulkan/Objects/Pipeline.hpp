@@ -65,8 +65,8 @@ namespace mini::vk
             .pNext          = nullptr,
             .flags          = 0,
             .maxSets        = g_contextPtr->swapImages.count,// * poolSizes.Count(), //! needed ? 
-            .poolSizeCount  = (u32)poolSizes.count,
-            .pPoolSizes     = &poolSizes[0]
+            .poolSizeCount  = poolSizes.count,
+            .pPoolSizes     = poolSizes.Data()
         };
         VK_CHECK(vkCreateDescriptorPool(g_contextPtr->device, &poolInfo, nullptr, &pipeline.descPool));
 
@@ -74,11 +74,11 @@ namespace mini::vk
             .sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
             .pNext              = nullptr,
             .descriptorPool     = pipeline.descPool,
-            .descriptorSetCount = (u32)pipeline.setLayouts.count,
-            .pSetLayouts        = &pipeline.setLayouts[0]
+            .descriptorSetCount = pipeline.setLayouts.count,
+            .pSetLayouts        = pipeline.setLayouts.Data()
         };
         pipeline.sets.count = pipeline.setLayouts.count;
-        VK_CHECK(vkAllocateDescriptorSets(g_contextPtr->device, &allocInfo, &pipeline.sets[0]));
+        VK_CHECK(vkAllocateDescriptorSets(g_contextPtr->device, &allocInfo, pipeline.sets.Data()));
 
         box::Array<VkWriteDescriptorSet, 10> writes;
         for(u32 i = 0; i < g_contextPtr->swapImages.count; ++i)
@@ -99,7 +99,7 @@ namespace mini::vk
                 });
             }
         }
-        vkUpdateDescriptorSets(g_contextPtr->device, (u32)writes.count, &writes[0], 0, nullptr);   
+        vkUpdateDescriptorSets(g_contextPtr->device, writes.count, writes.Data(), 0, nullptr);   
     }
 
 }//ns

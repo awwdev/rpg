@@ -8,7 +8,6 @@
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/Utils/PrimitiveMeshes.hpp"
-#include "mini/Box/Map.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Rendering/Camera.hpp"
 #include "mini/ECS/ComponentArray.hpp"

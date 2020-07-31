@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/Math/Matrix.hpp"
-#include "mini/Box/IndexMap.hpp"
+#include "mini/Box/EnumMap.hpp"
 #include "mini/Box/StringMap.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Utils/CharsView.hpp"

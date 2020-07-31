@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/Box/Array.hpp"
-#include "mini/Box/IndexMap.hpp"
+#include "mini/Box/EnumMap.hpp"
 #include "mini/Box/String.hpp"
 
 #include "mini/ECS/Components.hpp"

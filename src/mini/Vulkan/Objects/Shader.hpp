@@ -10,7 +10,6 @@
 
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Box/Array.hpp"
-#include "mini/Box/Map.hpp"
 
 namespace mini::vk
 {

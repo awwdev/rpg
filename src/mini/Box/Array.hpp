@@ -9,7 +9,7 @@ namespace mini::box
 {
     constexpr bool USE_ARRAY_ASSERTS = true;
 
-    inline void ArrayAssert(const bool condition, chars_t msg = "assertion failed")
+    inline void ArrayAssert(const bool condition, chars_t msg = "array assertion failed")
     {
         if constexpr(USE_ARRAY_ASSERTS) {
             if (condition == false){
@@ -39,8 +39,10 @@ namespace mini::box
 
         #undef IDX_T
 
-        T&       Last()       { this->operator[count - 1]; }
-        const T& Last() const { this->operator[count - 1]; }
+        T&       Last()       { ArrayAssert(count > 0); this->operator[count - 1]; }
+        const T& Last() const { ArrayAssert(count > 0); this->operator[count - 1]; }
+        T*       Data()       { return &(this->operator[](0)); }
+        const T* Data() const { return &(this->operator[](0)); }
 
         //? COUNT MODIFICATION
 

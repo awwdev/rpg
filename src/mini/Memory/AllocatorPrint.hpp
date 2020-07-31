@@ -24,7 +24,7 @@ namespace mini::mem
 
 <div>
 )";
-
+/*
         u32 currAllocIdx = 0;
         FOR_BITSET(blocksUsed, i)
         {
@@ -42,6 +42,7 @@ namespace mini::mem
         }
 
         out << "</div></body>";
+*/
 
     }
 

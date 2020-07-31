@@ -23,10 +23,10 @@ namespace mini::vk
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext                           = nullptr,
             .flags                           = 0,
-            .vertexBindingDescriptionCount   = (u32)vbo.bindings.count,
-            .pVertexBindingDescriptions      = &vbo.bindings[0],
-            .vertexAttributeDescriptionCount = (u32)vbo.attributes.count,
-            .pVertexAttributeDescriptions    = &vbo.attributes[0]
+            .vertexBindingDescriptionCount   = vbo.bindings.count,
+            .pVertexBindingDescriptions      = vbo.bindings.Data(),
+            .vertexAttributeDescriptionCount = vbo.attributes.count,
+            .pVertexAttributeDescriptions    = vbo.attributes.Data()
         };
 
         const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
@@ -149,8 +149,8 @@ namespace mini::vk
             .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
             .pNext                  = nullptr,
             .flags                  = 0,
-            .setLayoutCount         = (u32)pipeline.setLayouts.count,
-            .pSetLayouts            = &pipeline.setLayouts[0],
+            .setLayoutCount         = pipeline.setLayouts.count,
+            .pSetLayouts            = pipeline.setLayouts.Data(),
             .pushConstantRangeCount = 1,
             .pPushConstantRanges    = &constantRange,
         };
@@ -160,8 +160,8 @@ namespace mini::vk
             .sType                      = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
             .pNext                      = nullptr,
             .flags                      = 0,
-            .stageCount                 = (u32)shader.stageInfos.count,
-            .pStages                    = &shader.stageInfos[0],
+            .stageCount                 = shader.stageInfos.count,
+            .pStages                    = shader.stageInfos.Data(),
             .pVertexInputState          = &vertexInput,
             .pInputAssemblyState        = &inputAssembly,
             .pTessellationState         = nullptr,
