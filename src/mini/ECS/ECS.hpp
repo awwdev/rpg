@@ -11,7 +11,7 @@ namespace mini::ecs
 {
     struct ECS
     {
-        box::Bitset<MAX_ENTITY_COUNT>     entities;
+        box::Bitset<MAX_ENTITY_COUNT>    entities;
         ComponentArrays<MAX_ENTITY_COUNT> arrays;
         Prefabs                           prefabs;
         
@@ -21,7 +21,7 @@ namespace mini::ecs
             //    ? entities.FindFirstFreeBit() 
             //    : removedEntities.RemoveLast();
             const ID freeId = entities.FindFirstFreeBit();
-            entities.Set<true>(freeId);
+            entities.Set(freeId, true);
             //++entityCount;
             return freeId;
         }

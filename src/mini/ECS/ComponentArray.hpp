@@ -3,6 +3,7 @@
 #pragma once
 #include "mini/Box/Array.hpp"
 #include "mini/Box/EnumMap.hpp"
+#include "mini/Box/Bitset.hpp"
 #include "mini/Box/String.hpp"
 
 #include "mini/ECS/Components.hpp"
@@ -80,7 +81,7 @@ namespace mini::ecs
         template<ComponentType Type, class... CtorArgs>
         void AddComponent(const ID entityID, CtorArgs&&... args)
         {
-            signatures[entityID].Set<true>(Type);
+            signatures[entityID].Set(Type, true);
             if constexpr(Type == ComponentType::Transform)  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
             if constexpr(Type == ComponentType::RenderData) renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
         }

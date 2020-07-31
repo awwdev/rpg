@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/Utils/Types.hpp"
-#include "mini/Box/Bitset2.hpp"
+#include "mini/Box/Bitset.hpp"
 #include "mini/Box/Array.hpp"
 
 namespace mini::box
@@ -24,7 +24,7 @@ namespace mini::box
 
         VAL data [ENUM_END];
         box::Array<idx_t, (idx_t)ENUM_END> usedIndices; //for iteration
-        box2::Bitset<ENUM_END> bitset;
+        box::Bitset<ENUM_END> bitset;
         idx_t count = 0;
 
         EnumMap() = default;
