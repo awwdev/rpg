@@ -60,6 +60,9 @@ namespace mini::app
             terrain.Update(dt, camera, ecs);
             sun.Update(ecs, dt);
 
+            if (wnd::HasEvent<wnd::F2, wnd::Pressed>())
+                renderGraph.terrain_wire_mode = ! renderGraph.terrain_wire_mode;
+
             //? ECS
             ecs::S_Render(ecs.arrays, dt, renderGraph);
 

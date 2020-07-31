@@ -10,9 +10,6 @@
 #include "mini/Window/WindowEvents.hpp"
 #include "mini/Box/Array.hpp"
 
-//TODO: AABB to check which quadrant
-//TODO: exapandable
-//TODO: serialize
 
 namespace mini::res
 {
@@ -26,8 +23,8 @@ namespace mini::res
         const f32 quadrantX;
         const f32 quadrantY;
         utils::Common_Vertex verts [VERT_COUNT_TOTAL];
-
         box::Array<u32, 6> qCorners [QUAD_COUNT+1][QUAD_COUNT+1];
+
         u32 GetCornerByVertex(const u32 vIdx)
         {
             const auto normIdx = (u32)(vIdx % 6);
@@ -55,7 +52,6 @@ namespace mini::res
                 verts[idx + 5] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
             }}
 
-            //TODO: bitset instead of array
             const auto CORNER_COUNT = QUAD_COUNT + 1;
             for(u8 z = 0; z < CORNER_COUNT; ++z) {
             for(u8 x = 0; x < CORNER_COUNT; ++x) { 
@@ -90,12 +86,7 @@ namespace mini::res
 
             }}
 
-            //for(u8 z = 0; z < CORNER_COUNT; ++z) {
-            //for(u8 x = 0; x < CORNER_COUNT; ++x) { 
-            //    box::PrintArray(qCorners[z][x]);
-            //} LOG("//////////////");}
         }
-
 
     };
 
@@ -224,8 +215,7 @@ namespace mini::res
 
             }//for end
 
-            const auto mouseLeftButton = wnd::global::events[wnd::Mouse_ButtonLeft];
-            if (mouseLeftButton == wnd::Released)
+            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
             {
                 //Recalculate normals
                 const auto cx = corner % (quadrant.QUAD_COUNT + 1);
@@ -265,8 +255,8 @@ namespace mini::res
                 }
                 yDragPoint = (f32)wnd::global::mouse_wy;
 
-                
             }
+            
         }
 
     };
