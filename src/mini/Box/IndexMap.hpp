@@ -5,7 +5,7 @@
 #include "mini/Box/Bitset.hpp"
 #include "mini/Box/Array.hpp"
 
-namespace mini::box2
+namespace mini::box
 {
     template<class KEY, class VAL, typename = IsIntegralOrEnum<KEY>>
     struct EnumPair
@@ -23,7 +23,7 @@ namespace mini::box2
         using KEY  = decltype(ENUM_END);
 
         VAL data [ENUM_END];
-        box2::Array<idx_t, (idx_t)ENUM_END> usedIndices; //for iteration
+        box::Array<idx_t, (idx_t)ENUM_END> usedIndices; //for iteration
         box::Bitset<ENUM_END> bitset;
         idx_t count = 0;
 
@@ -64,7 +64,7 @@ namespace mini::box2
         void Remove(const KEY key)
         {
             bitset.Set<false>(key);
-            FOR_ARRAY2(usedIndices, i){
+            FOR_ARRAY(usedIndices, i){
                 if(usedIndices[i] == (idx_t)key)
             }
         }

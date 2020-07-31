@@ -17,7 +17,7 @@ namespace mini::wnd
         inline void ResetEvents(HWND hWnd) 
         {
             //"advance" or reset input
-            FOR_ARRAY2(global::frameEvents, i)
+            FOR_ARRAY(global::frameEvents, i)
             {
                 const auto t = global::frameEvents[i];
                 if  (global::events[t] == Pressed) global::events[t] = Held;

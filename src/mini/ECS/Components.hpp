@@ -27,7 +27,7 @@ namespace mini::ecs
 
     //?PARSING
 
-    const box2::EnumMap<ComponentType::ENUM_END, box::String<20>> componentTypeToStr
+    const box::EnumMap<ComponentType::ENUM_END, box::String<20>> componentTypeToStr
     {
         { ComponentType::Transform,     "Transform"   },
         { ComponentType::RenderData,    "RenderData"  },

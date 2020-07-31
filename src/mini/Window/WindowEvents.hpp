@@ -48,7 +48,7 @@ namespace mini::wnd
 
         inline bool ui_debug_mode = true;
 
-        inline box2::Array<EventType, 10> frameEvents; //tmp (internal usage mostly)
+        inline box::Array<EventType, 10> frameEvents; //tmp (internal usage mostly)
     }
 
     //abstraction over global access

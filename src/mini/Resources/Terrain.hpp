@@ -27,7 +27,7 @@ namespace mini::res
         const f32 quadrantY;
         utils::Common_Vertex verts [VERT_COUNT_TOTAL];
 
-        box2::Array<u32, 6> qCorners [QUAD_COUNT+1][QUAD_COUNT+1];
+        box::Array<u32, 6> qCorners [QUAD_COUNT+1][QUAD_COUNT+1];
         u32 GetCornerByVertex(const u32 vIdx)
         {
             const auto normIdx = (u32)(vIdx % 6);
@@ -230,7 +230,7 @@ namespace mini::res
                 //Recalculate normals
                 const auto cx = corner % (quadrant.QUAD_COUNT + 1);
                 const auto cy = corner / (quadrant.QUAD_COUNT + 1);
-                FOR_ARRAY2(quadrant.qCorners[cy][cx], i)
+                FOR_ARRAY(quadrant.qCorners[cy][cx], i)
                 {
                     const auto vIdx = quadrant.qCorners[cy][cx][i];
                     const auto tris = vIdx/3;
@@ -257,7 +257,7 @@ namespace mini::res
                 
                 const auto cx = corner % (quadrant.QUAD_COUNT + 1);
                 const auto cy = corner / (quadrant.QUAD_COUNT + 1);
-                FOR_ARRAY2(quadrant.qCorners[cy][cx], i)
+                FOR_ARRAY(quadrant.qCorners[cy][cx], i)
                 {
                     const auto vIdx = quadrant.qCorners[cy][cx][i];
                     auto& v = quadrant.verts[vIdx].pos;

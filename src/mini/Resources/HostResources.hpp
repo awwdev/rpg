@@ -26,7 +26,7 @@ namespace mini::res
 
     struct Models
     {
-        box2::EnumMap<res::MeshType::ENUM_END, res::MeshVertexView> vertexLookup
+        box::EnumMap<res::MeshType::ENUM_END, res::MeshVertexView> vertexLookup
         {
             //hardcoded primitives
             { res::MeshType::PrimitiveCube,      { utils::MESH_CUBE, ARRAY_COUNT(utils::MESH_CUBE) } },
@@ -35,7 +35,7 @@ namespace mini::res
         }; 
 
         //model data separated
-        box2::Array<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT> vertices;
+        box::Array<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT> vertices;
 
         void Load()
         {

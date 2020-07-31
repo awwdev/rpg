@@ -5,15 +5,11 @@
 #include "mini/Debug/Assert.hpp"
 #include "mini/Debug/Logger.hpp"
 
-//TODO: rework logger!
-//TODO: placement new fn
-//TODO: just alway use u32 for index
-
-namespace mini::box2
+namespace mini::box
 {
     constexpr bool USE_ARRAY_ASSERTS = true;
 
-    inline void Assert(const bool condition, chars_t msg = "assertion failed")
+    inline void ArrayAssert(const bool condition, chars_t msg = "assertion failed")
     {
         if constexpr(USE_ARRAY_ASSERTS) {
             if (condition == false){
@@ -23,49 +19,47 @@ namespace mini::box2
         }
     }
 
-    #define FOR_ARRAY2(arr, i) for(decltype(arr.count) i = 0; i < arr.count; ++i)
+    #define FOR_ARRAY(arr, i) for(idx_t i = 0; i < arr.count; ++i)
 
     template<class T, auto N>
     struct Array
     {
         using TYPE = T;
-        using IDX  = decltype(N);
 
-        IDX count = 0;
+        idx_t count = 0;
         static constexpr auto CAPACITY = N;
         alignas(T) u8 bytes[sizeof(T) * N]; //don't init
 
         //? ACCESS
 
-        T&       operator[](const IDX idx)       { return reinterpret_cast<T&>      (bytes[sizeof(T) * idx]); }
-        const T& operator[](const IDX idx) const { return reinterpret_cast<const T&>(bytes[sizeof(T) * idx]); }
+        #define IDX_T template<class IDX>
 
-        T& Last()       
-        { 
-            this->operator[count - 1]; 
-        }
-        const T& Last() const 
-        { 
-            this->operator[count - 1];
-        }
+        IDX_T T&       operator[](const IDX idx)       { return reinterpret_cast<T&>      (bytes[sizeof(T) * (idx_t)idx]); }
+        IDX_T const T& operator[](const IDX idx) const { return reinterpret_cast<const T&>(bytes[sizeof(T) * (idx_t)idx]); }
+
+        #undef IDX_T
+
+        T&       Last()       { this->operator[count - 1]; }
+        const T& Last() const { this->operator[count - 1]; }
 
         //? COUNT MODIFICATION
 
         template<class... ARGS>
         T* Append(ARGS&&... args)
         {
+            ArrayAssert(count <= CAPACITY, "array capacity exhausted");
+            auto* ptr = PlacementNew(std::forward<ARGS>(args)...);
             ++count;
-            Assert(count <= CAPACITY, "array capacity exhausted");
-            return new(&bytes[sizeof(T) * (count - 1)]) T { std::forward<ARGS>(args)... };
+            return ptr;
         }
 
         template<auto OTHER_N>
         void AppendArray(const Array<T, OTHER_N>& other)
         {
-            Assert((count + other.count) <= CAPACITY, "array capacity exhausted");
-            FOR_ARRAY2(other, i) {
+            ArrayAssert((count + other.count) <= CAPACITY, "array capacity exhausted");
+            FOR_ARRAY(other, i) {
+                PlacementNew(other[i]);
                 ++count;
-                new(&bytes[sizeof(T) * (count - 1)]) T { other[i] };
             }
         }
 
@@ -83,15 +77,21 @@ namespace mini::box2
         template<class E>
         T* Contains(const E& element) //allows for custom operator==
         {
-            FOR_ARRAY2((*this), i) {
+            FOR_ARRAY((*this), i) {
                 if (this->operator[](i) == element)
                     return &(this->operator[](i));
             }
             return nullptr;
         }
 
-        bool Empty() const { return count == 0; }
-        std::size_t CurrentSize() const { return sizeof(T) * count; }
+        template<class... ARGS>
+        T* PlacementNew(ARGS&&... args)
+        {
+            return new(&bytes[sizeof(T) * count]) T { std::forward<ARGS>(args)... };
+        }
+
+        bool Empty()       const { return count == 0; }
+        auto CurrentSize() const { return sizeof(T) * count; }
     };
 
 }//ns

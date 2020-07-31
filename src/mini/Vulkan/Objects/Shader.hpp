@@ -16,17 +16,17 @@ namespace mini::vk
 {
     struct Shader
     {
-        box2::Array<VkShaderModule, 4> modules;
-        box2::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
+        box::Array<VkShaderModule, 4> modules;
+        box::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
 
         //uniform data
         UniformInfo info; //! probably need array?
-        box2::Array<VkSampler, 4> samplers; //just some capacity
+        box::Array<VkSampler, 4> samplers; //just some capacity
 
         ~Shader()
         {
-            FOR_ARRAY2(modules, i)    vkDestroyShaderModule  (g_contextPtr->device, modules[i], nullptr);
-            FOR_ARRAY2(samplers, i)   vkDestroySampler       (g_contextPtr->device, samplers[i], nullptr);
+            FOR_ARRAY(modules, i)    vkDestroyShaderModule  (g_contextPtr->device, modules[i], nullptr);
+            FOR_ARRAY(samplers, i)   vkDestroySampler       (g_contextPtr->device, samplers[i], nullptr);
         }
 
         template<auto BUFFER_SIZE = 10000u>

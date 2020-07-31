@@ -25,13 +25,13 @@ namespace mini::vk
         Buffer  gpuBuffer; //device local
         Buffer* activeBuffer = nullptr;
 
-        box2::Array<VertexGroup, 100> vertexGroups;
+        box::Array<VertexGroup, 100> vertexGroups;
         u32 count = 0;
         u32 CurrentSize() const { return sizeof(T) * count; }
 
         //? need to be filled by "factory" method
-        box2::Array<VkVertexInputBindingDescription, 2>   bindings;
-        box2::Array<VkVertexInputAttributeDescription, 4> attributes;
+        box::Array<VkVertexInputBindingDescription, 2>   bindings;
+        box::Array<VkVertexInputAttributeDescription, 4> attributes;
        
         void Create()
         {

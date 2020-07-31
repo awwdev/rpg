@@ -115,7 +115,7 @@ namespace mini::vk
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.layout, 0, 1, &resources.default.pipelineShadow.sets[cmdBufferIdx], 0, nullptr); 
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.pipeline);
                 vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
-                FOR_ARRAY2(scene.renderGraph.default_ubo.groups.usedIndices, i)
+                FOR_ARRAY(scene.renderGraph.default_ubo.groups.usedIndices, i)
                 {
                     const auto vertOff   = resources.default.vbo.vertexGroups[i].begin;
                     const auto vertCount = resources.default.vbo.vertexGroups[i].count;
@@ -141,7 +141,7 @@ namespace mini::vk
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.layout, 0, 1, &resources.default.pipeline.sets[cmdBufferIdx], 0, nullptr); 
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.pipeline);
                 vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
-                FOR_ARRAY2(scene.renderGraph.default_ubo.groups.usedIndices, i)
+                FOR_ARRAY(scene.renderGraph.default_ubo.groups.usedIndices, i)
                 {
                     const auto vertOff   = resources.default.vbo.vertexGroups[i].begin;
                     const auto vertCount = resources.default.vbo.vertexGroups[i].count;

@@ -10,7 +10,7 @@ namespace mini::res
 {
     //specific blender export!
     template<auto N>
-    void LoadModel(box2::Array<utils::Common_Vertex, N>& vertices, chars_t path)
+    void LoadModel(box::Array<utils::Common_Vertex, N>& vertices, chars_t path)
     {
         using namespace math;
         

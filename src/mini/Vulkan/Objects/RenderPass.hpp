@@ -33,7 +33,7 @@ namespace mini::vk
     struct RenderPass
     {
         VkRenderPass renderPass;
-        box2::Array<VkFramebuffer, 4> framebuffers;
+        box::Array<VkFramebuffer, 4> framebuffers;
         VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT; //!set in factory
         VkRenderPassBeginInfo beginInfo; //!set in factory
         uint32_t width, height;
@@ -44,7 +44,7 @@ namespace mini::vk
         ~RenderPass()
         {
             vkDestroyRenderPass(g_contextPtr->device, renderPass, nullptr);
-            FOR_ARRAY2(framebuffers, i) 
+            FOR_ARRAY(framebuffers, i) 
                 vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
         }
 

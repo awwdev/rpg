@@ -14,7 +14,7 @@ namespace mini::ecs
     template<class COMPONENT, u32 MAX_COUNT = MAX_ENTITY_COUNT>
     struct ComponentArray
     {
-        box2::Array<COMPONENT, MAX_COUNT> dense;
+        box::Array<COMPONENT, MAX_COUNT> dense;
         ID componentLookup [MAX_COUNT];
         ID entityLookup    [MAX_COUNT];
 

@@ -31,11 +31,11 @@ namespace mini
         {
              //1 group == 1 inst type (1 draw call)
              //1 group -> N instances
-            box2::Array<DATA_T, DATA_COUNT> data;  
-            box2::EnumMap<res::MeshType::ENUM_END, UniformGroup> groups; 
+            box::Array<DATA_T, DATA_COUNT> data;  
+            box::EnumMap<res::MeshType::ENUM_END, UniformGroup> groups; 
 
             template<auto N>
-            void AppendGroup(const box2::Array<DATA_T, N>& arr, const res::MeshType meshType)
+            void AppendGroup(const box::Array<DATA_T, N>& arr, const res::MeshType meshType)
             {
                 groups.Set(meshType, rendering::UniformGroup{
                     .begin = data.count, 
