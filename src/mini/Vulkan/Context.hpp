@@ -59,8 +59,8 @@ namespace mini::vk
         //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
         
         VkSwapchainKHR swapchain;
-        box::VkArray<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
-        box::VkArray<VkImageView, 4> swapImageViews { 0 };
+        vk::VkArray<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
+        vk::VkArray<VkImageView, 4> swapImageViews { 0 };
 
 
         void Create(const WindowHandle& wndHandle)
@@ -139,11 +139,11 @@ namespace mini::vk
 
         void CreatePhysical()
         {
-            box::VkArray<VkPhysicalDevice, 4> physicals { 4 };
+            vk::VkArray<VkPhysicalDevice, 4> physicals { 4 };
             VK_CHECK(vkEnumeratePhysicalDevices(instance, &physicals.count, physicals.data));
             physical = physicals[0];
 
-            box::VkArray<VkQueueFamilyProperties, 10> famProps { 10 };
+            vk::VkArray<VkQueueFamilyProperties, 10> famProps { 10 };
             vkGetPhysicalDeviceQueueFamilyProperties(physical, &famProps.count, famProps.data);
 
             for (uint32_t i = 0; i < famProps.count; ++i) {

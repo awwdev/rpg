@@ -9,10 +9,10 @@ namespace mini::vk
     struct Synchronization
     {
         //triple buffering
-        box::VkArray<VkSemaphore, 3> imageAcquired { 0 }; 
-        box::VkArray<VkSemaphore, 3> imageFinished { 0 }; 
-        box::VkArray<VkFence, 3>     inFlight      { 0 };
-        box::VkArray<VkFence, 3>     fences        { 0 }; 
+        vk::VkArray<VkSemaphore, 3> imageAcquired { 0 }; 
+        vk::VkArray<VkSemaphore, 3> imageFinished { 0 }; 
+        vk::VkArray<VkFence, 3>     inFlight      { 0 };
+        vk::VkArray<VkFence, 3>     fences        { 0 }; 
 
         void Create()
         {

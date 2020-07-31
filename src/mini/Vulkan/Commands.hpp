@@ -10,7 +10,7 @@ namespace mini::vk
     struct Commands
     {
         VkCommandPool cmdPool;
-        box::VkArray<VkCommandBuffer, 4> cmdBuffers { 0 };
+        vk::VkArray<VkCommandBuffer, 4> cmdBuffers { 0 };
 
         inline void Create()
         {

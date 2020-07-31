@@ -6,7 +6,6 @@
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Debug/Assert.hpp"
-#include "mini/Box/SimpleArray.hpp"
 
 #define VK_USE_PLATFORM_WIN32_KHR
 #include "../third/include/vulkan.h"
@@ -40,3 +39,29 @@ const VkDebugUtilsObjectNameInfoEXT nameInfo
 (context.device, &nameInfo);
 
 */
+
+namespace mini::vk 
+{
+    #define FOR_VK_ARRAY(arr, i) for(u32 i = 0; i < arr.count; ++i)
+
+    template<class T, u32 N>
+    struct VkArray
+    {
+        static constexpr auto CAPACITY = N;
+        VkArray(const u32 pCount = 0) : count { pCount } { ; }
+
+        u32 count;
+        T   data[N];
+
+        T&       operator[](const u32 i)       { return data[i]; }
+        const T& operator[](const u32 i) const { return data[i]; }
+
+        template<class... CtorArgs>
+        void Append(CtorArgs&&... args)
+        {
+            //TODO: bounds check?
+            data[count] = { std::forward<CtorArgs>(args)... };
+            ++count;
+        }
+    };
+}
