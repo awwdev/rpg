@@ -48,16 +48,16 @@ namespace mini::utils
         float u, v;
 
         //TODO: write better
-        idx_t GetClosestVertex() const
+        idx_t GetClosestVertex(const idx_t vIdx) const
         {
-            if      (u > 0.5) return 1;
-            else if (v > 0.5) return 2;
+            if      (u > 0.5) return vIdx + 1;
+            else if (v > 0.5) return vIdx + 2;
             else if (u > 0.25 && v > 0.25)
             {
-                if  (u > v) return 1;
-                else        return 2;
+                if  (u > v) return vIdx + 1;
+                else        return vIdx + 2;
             }
-            return 0;
+            return vIdx;
         }
     };
 

@@ -69,7 +69,6 @@ namespace mini::res2
                 case 2: case 4: cX++; cZ++;  break;
                 case 5:               cZ++;  break;
             }
-            LOG(cZ, cX);
             return { cZ, cX };
         }
 

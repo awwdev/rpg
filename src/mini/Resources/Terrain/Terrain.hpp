@@ -21,7 +21,10 @@ namespace mini::res2
 
         struct Editing 
         {
-            box::Array<idx_t, 6> draggingVertices;
+            box::Array<idx_t, 6> draggingVertIndices;
+            bool isDragging = false;
+            f32  yDragPoint = 0;
+            f32  dragScale = 0.05f;
         } editing;
         
         u32 editingQuadrantIdx = 0;
@@ -45,13 +48,13 @@ namespace mini::res2
             for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
             for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
                 quadrants[z][x].Create(
-                    (float)z * QUADRANT_LENGTH - TOTAL_LENGTH * 0.5f, 
-                    (float)x * QUADRANT_LENGTH - TOTAL_LENGTH * 0.5f);
+                    (f32)z * QUADRANT_LENGTH - TOTAL_LENGTH * 0.5f, 
+                    (f32)x * QUADRANT_LENGTH - TOTAL_LENGTH * 0.5f);
             }}
         }
 
-        void Update(const double dt, const rendering::Camera& camera, ecs::ECS& ecs)
-        {   
+        void TestIntersectionAndPressed(const rendering::Camera& camera)
+        {
             auto& quadrant = GetEditingQuadrant();
             const auto ray = camera.ScreenRay();
 
@@ -69,19 +72,47 @@ namespace mini::res2
                     const auto iy = intersection->pos[Y];
                     const auto iz = intersection->pos[Z];
                     //visualize
-                    const auto closestVertex = intersection->GetClosestVertex();
-                    
+                    const auto closestVertex = intersection->GetClosestVertex(i);
+
                     if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
-                        editing.draggingVertices.Clear();
+                        editing.draggingVertIndices.Clear();
                         const auto corner   = quadrant.GetCornerByVertex(closestVertex);
                         const auto vertices = quadrant.GetVerticesByCorner(corner);
-                        editing.draggingVertices.AppendArray(vertices);
-                        box::PrintArray(editing.draggingVertices);
+                        editing.draggingVertIndices.AppendArray(vertices);
+                        editing.yDragPoint = (f32)wnd::global::mouse_wy;
+                        editing.isDragging = true;
                     }
                 }
-
             }
+        }
 
+        void Dragging()
+        {
+            LOG("dragging");
+
+            using namespace math;
+            auto& quadrant = GetEditingQuadrant();
+
+            const f32 yDelta = wnd::global::mouse_wy - editing.yDragPoint;
+            editing.yDragPoint = (f32)wnd::global::mouse_wy;
+            
+            const auto& vertIndices = editing.draggingVertIndices;
+            FOR_ARRAY(vertIndices, i){
+                const auto idx = vertIndices[i];
+                quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale;
+            }
+        }
+
+        void Update(const double dt, const rendering::Camera& camera, ecs::ECS& ecs)
+        {   
+            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
+                editing.isDragging = false;
+
+            if (editing.isDragging == false)
+                TestIntersectionAndPressed(camera);
+
+            if (editing.isDragging == true)
+                Dragging();
         }
     };
 
