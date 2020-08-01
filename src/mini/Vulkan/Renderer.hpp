@@ -43,7 +43,7 @@ namespace mini::vk
         }
 
         //TODO: depends on scene
-        void UpdateVkResources_GameScene(const app::GameScene& scene, const double dt)
+        void UpdateVkResources_GameScene(const app::GameScene& scene, res::HostResources& hostRes, double dt)
         {
             const math::Mat4f BIAS { 
                 0.5, 0.0, 0.0, 0.0,
@@ -65,11 +65,8 @@ namespace mini::vk
             resources.default.ubo.Clear();
             resources.default.ubo.Store(scene.renderGraph.default_ubo);
 
-            //TODO: once in the beginning push all data into the buffer
-            //TODO: then only update the dirty Quadrant (that is edited)
-            //need to move stuff to host res, also because serialization
-            resources.terrain.vbo.Clear();
-            resources.terrain.vbo.AppendGroup(scene.terrain.GetEditingQuadrant().verts);
+            //update terrain quadrant that is edited
+            resources.terrain.vbo.UpdateGroup(hostRes.terrain.editingQuadrantIdx, hostRes.terrain.GetEditingQuadrant().verts);
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::GameScene& scene)
@@ -168,7 +165,7 @@ namespace mini::vk
         }
 
 
-        void Render(const double dt, app::GameScene& scene)
+        void Render(const double dt, app::GameScene& scene, res::HostResources& hostRes)
         {
             if (wnd::global::events[wnd::Window_Resize] == wnd::Set){
                 RecreateScwapchain();
@@ -202,7 +199,7 @@ namespace mini::vk
             VK_CHECK(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
             //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-            UpdateVkResources_GameScene(scene, dt); //TODO: depends on scene
+            UpdateVkResources_GameScene(scene, hostRes, dt); //TODO: depends on scene
             RecordCommands(imageIndex, dt, scene);
             //!--------------------------------------------------
 

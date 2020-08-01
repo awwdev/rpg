@@ -19,23 +19,8 @@ namespace mini::vk
         RenderPassDepth& renderPass,
         VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT>& vbo)
     {
-        const VkPipelineVertexInputStateCreateInfo vertexInput {
-            .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-            .pNext                           = nullptr,
-            .flags                           = 0,
-            .vertexBindingDescriptionCount   = vbo.bindings.count,
-            .pVertexBindingDescriptions      = vbo.bindings.Data(),
-            .vertexAttributeDescriptionCount = vbo.attributes.count,
-            .pVertexAttributeDescriptions    = vbo.attributes.Data()
-        };
-
-        const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
-            .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-            .pNext                  = nullptr,
-            .flags                  = 0,
-            .topology               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-            .primitiveRestartEnable = VK_FALSE 
-        };
+        const auto vertexInput   = CreatePipelineVertexInputInfo(vbo);
+        const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
         const VkViewport viewport {
             .x        = 0.f,

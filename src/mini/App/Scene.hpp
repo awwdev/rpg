@@ -23,8 +23,6 @@ namespace mini::app
         //TODO: not every Scene will have those members
         ecs::ECS                ecs {};
         rendering::RenderGraph  renderGraph;
-        //res::Terrain            terrain;
-        res2::Terrain<10, 30,3> terrain;
         rendering::Camera       camera;
         rendering::Sun          sun;
 
@@ -33,7 +31,6 @@ namespace mini::app
             //TODO: move into some resource manager an load at loading scene
             //ecs.prefabs.Parse("res/prefabs.txt"); 
             sun.Create(ecs);
-            terrain.Create();
             //terrain.Create(ecs);
 
             /*{
@@ -55,12 +52,12 @@ namespace mini::app
         }
 
 
-        void Update(const double dt)
+        void Update(const double dt, res::HostResources& hostRes)
         {
             //? META
             ui::Update();
             camera.Update(dt);
-            //terrain.Update(dt, camera, ecs);
+            hostRes.terrain.Update(dt, camera, ecs);
             sun.Update(ecs, dt);
 
             if (wnd::HasEvent<wnd::F2, wnd::Pressed>())

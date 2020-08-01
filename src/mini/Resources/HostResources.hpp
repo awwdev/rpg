@@ -2,13 +2,14 @@
 #pragma once
 
 #include "mini/Memory/Allocator.hpp"
-#include "mini/Resources/TextureLoader.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/Box/EnumMap.hpp"
 #include "mini/Debug/Logger.hpp"
+#include "mini/Resources/TextureLoader.hpp"
 #include "mini/Resources/TextureArray.hpp"
 #include "mini/Resources/ModelLoader.hpp"
 #include "mini/Resources/Mesh.hpp"
+#include "mini/Resources/Terrain/Terrain.hpp"
 #include "mini/Rendering/RenderGraph.hpp"
 
 namespace mini::res
@@ -48,11 +49,14 @@ namespace mini::res
         Textures textures;
         Models   models;
 
+        res2::Terrain<10, 30,3> terrain;
+
         //! should all load before any GPU resources are used
         HostResources() 
         {
             textures.Load();
             models.Load();
+            terrain.Create();
         }
     }; 
 

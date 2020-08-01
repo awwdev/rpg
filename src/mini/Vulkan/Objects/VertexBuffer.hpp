@@ -89,7 +89,7 @@ namespace mini::vk
             vkFreeCommandBuffers(g_contextPtr->device, cmdPool, 1, &commandBuffer);
         }
 
-        void AppendGroup(const T* const vertices, const u32 pCount)
+        void StoreGroup(const T* const vertices, const u32 pCount)
         {
             cpuBuffer.Store(vertices, pCount * sizeof(T), CurrentSize());
             vertexGroups.Append(count, pCount);
@@ -97,11 +97,18 @@ namespace mini::vk
         }
 
         template<u32 COUNT>
-        void AppendGroup(const T(&arr)[COUNT])
+        void StoreGroup(const T(&arr)[COUNT])
         {
             cpuBuffer.Store(arr, COUNT * sizeof(T), CurrentSize());
             vertexGroups.Append(count, COUNT);
             count += COUNT;
+        }
+
+        template<u32 COUNT>
+        void UpdateGroup(const u32 groupIdx, const T(&arr)[COUNT])
+        {
+            const auto& group = vertexGroups[groupIdx];
+            cpuBuffer.Store(arr, COUNT * sizeof(T), group.begin);
         }
 
         void Clear()
@@ -118,10 +125,21 @@ namespace mini::vk
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext                           = nullptr,
             .flags                           = 0,
-            .vertexBindingDescriptionCount   = vb.bindings.Count(),
+            .vertexBindingDescriptionCount   = vb.bindings.count,
             .pVertexBindingDescriptions      = vb.bindings.Data(),
-            .vertexAttributeDescriptionCount = vb.attributes.Count(),
+            .vertexAttributeDescriptionCount = vb.attributes.count,
             .pVertexAttributeDescriptions    = vb.attributes.Data()
+        };
+    }
+
+    auto CreatePipelineInputAssemblyInfo(const VkPrimitiveTopology topology)
+    {
+        return VkPipelineInputAssemblyStateCreateInfo {
+            .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+            .pNext                  = nullptr,
+            .flags                  = 0,
+            .topology               = topology,
+            .primitiveRestartEnable = VK_FALSE 
         };
     }
 

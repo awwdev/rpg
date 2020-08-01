@@ -21,7 +21,7 @@ namespace mini::vk
         for(u32 i = 0; i < (u32)res::MeshType::ENUM_END; ++i){
             Assert(res.models.vertexLookup.Contains(i), "mesh type not existent");
             const auto& mesh = res.models.vertexLookup.Get(i);
-            vbo.AppendGroup(mesh.begin, mesh.count);
+            vbo.StoreGroup(mesh.begin, mesh.count);
         }
         vbo.Bake(cmdPool);
 

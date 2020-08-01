@@ -20,29 +20,14 @@ namespace mini::vk
         VertexBuffer<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT>& vbo,
         UniformBuffer_Groups<rendering::Default_UniformData, rendering::DEFAULT_UBO_MAX_COUNT>& ubo)
     {
-        const VkPipelineVertexInputStateCreateInfo vertexInput {
-            .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-            .pNext                           = nullptr,
-            .flags                           = 0,
-            .vertexBindingDescriptionCount   = vbo.bindings.count,
-            .pVertexBindingDescriptions      = vbo.bindings.Data(),
-            .vertexAttributeDescriptionCount = vbo.attributes.count,
-            .pVertexAttributeDescriptions    = vbo.attributes.Data()
-        };
+        const auto vertexInput   = CreatePipelineVertexInputInfo(vbo);
+        const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
         UniformInfo* uniformInfos [] = {
             &shader.info,
             &ubo.info,
         };
         WriteDescriptors(pipeline, uniformInfos);
-
-        const VkPipelineInputAssemblyStateCreateInfo inputAssembly {
-            .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-            .pNext                  = nullptr,
-            .flags                  = 0,
-            .topology               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-            .primitiveRestartEnable = VK_FALSE 
-        };
 
         const VkViewport viewport {
             .x        = 0.f,

@@ -10,19 +10,17 @@
 
 namespace mini::vk
 {
-    //TODO: grid mesh (dynamic create, same for all quadrants)
-    //TODO: 
-    //TODO:
-    //TODO:
-    //TODO:
-
-
     inline void Terrain_CreateVertexBuffer(
         VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT>& vbo, 
         VkCommandPool cmdPool,
         res::HostResources& res)
     {  
         vbo.Create();
+
+        for(idx_t z = 0; z < res.terrain.QUADRANT_COUNT; ++z) {
+        for(idx_t x = 0; x < res.terrain.QUADRANT_COUNT; ++x) {
+            vbo.StoreGroup(res.terrain.quadrants[z][x].verts);
+        }}
 
         vbo.bindings.Append(VkVertexInputBindingDescription{
             .binding    = 0,
