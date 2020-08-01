@@ -25,7 +25,6 @@ namespace mini::box
         VAL data [ENUM_END];
         box::Array<idx_t, (idx_t)ENUM_END> usedIndices; //for iteration
         box::Bitset<ENUM_END> bitset;
-        idx_t count = 0;
 
         EnumMap() = default;
         EnumMap(std::initializer_list<PAIR> list)
@@ -55,10 +54,12 @@ namespace mini::box
         template<class... ARGS>
         void Set(const KEY key, ARGS&&... args)
         {
-            ++count;
-            bitset.Set(key, true);
             data[(idx_t)key] = VAL { std::forward<ARGS>(args)... };
-            usedIndices.Append((idx_t)key);
+            
+            if (!bitset.Test(key)) {
+                bitset.Set(key, true);
+                usedIndices.Append((idx_t)key);
+            }
         }
 
         void Remove(const KEY key)

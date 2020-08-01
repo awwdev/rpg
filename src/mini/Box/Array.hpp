@@ -96,4 +96,14 @@ namespace mini::box
         auto CurrentSize() const { return sizeof(T) * count; }
     };
 
+    template<class T, auto N>
+    void PrintArray(const Array<T, N>& arr)
+    {
+        FOR_ARRAY(arr, i){
+            std::cout << arr[i] << ',';
+        }
+        std::cout << '\n';
+    }
+
+
 }//ns

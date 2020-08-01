@@ -18,14 +18,21 @@ namespace mini::res2
         static constexpr auto QUADRANT_COUNT = QUADRANT_COUNT_T;
         static constexpr auto TOTAL_LENGTH   = QUADRANT_COUNT * QUADRANT_LENGTH;
         QUADRANT_T quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
+
+        struct Editing 
+        {
+            box::Array<idx_t, 6> draggingVertices;
+        } editing;
         
         u32 editingQuadrantIdx = 0;
+
         const QUADRANT_T& GetEditingQuadrant() const
         {       
             const auto x = editingQuadrantIdx % QUADRANT_COUNT;
             const auto z = editingQuadrantIdx / QUADRANT_COUNT;
             return quadrants[z][x];
         }
+
         QUADRANT_T& GetEditingQuadrant()
         {       
             const auto x = editingQuadrantIdx % QUADRANT_COUNT;
@@ -54,7 +61,25 @@ namespace mini::res2
                 auto& v1 = quadrant.verts[i+1].pos;
                 auto& v2 = quadrant.verts[i+2].pos;
 
-                const auto intersection = utils::RayTriangleIntersection(camera.pos, ray, v0, v1, v2);
+                const box::Optional<utils::Intersection> intersection = 
+                    utils::RayTriangleIntersection(camera.pos, ray, v0, v1, v2);
+                if (intersection)
+                {
+                    const auto ix = intersection->pos[X];
+                    const auto iy = intersection->pos[Y];
+                    const auto iz = intersection->pos[Z];
+                    //visualize
+                    const auto closestVertex = intersection->GetClosestVertex();
+                    
+                    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
+                        editing.draggingVertices.Clear();
+                        const auto corner   = quadrant.GetCornerByVertex(closestVertex);
+                        const auto vertices = quadrant.GetVerticesByCorner(corner);
+                        editing.draggingVertices.AppendArray(vertices);
+                        box::PrintArray(editing.draggingVertices);
+                    }
+                }
+
             }
 
         }

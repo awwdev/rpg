@@ -54,6 +54,8 @@ namespace mini::app
 
         void Update(const double dt, res::HostResources& hostRes)
         {
+            renderGraph.Clear();
+            
             //? META
             ui::Update();
             camera.Update(dt);

@@ -46,7 +46,6 @@ int WINAPI wWinMain(
 
             if (wnd::global::window_h != 0 && wnd::global::window_w != 0)
             {
-                ptrGameScenes->renderGraph.Clear();
                 ptrGameScenes->Update(mini::dt::seconds, *ptrHostResources);
                 ptrRenderer->Render(mini::dt::seconds, *ptrGameScenes, *ptrHostResources);
             }

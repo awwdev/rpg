@@ -25,11 +25,13 @@ namespace mini::res2
 
         void Create(const float pX, const float pZ)
         {
+            using namespace math;
+
             quadrantX = pX;
             quadrantZ = pZ;
 
-            constexpr math::Vec3f NORMAL_UP { 0, -1, 0 };
-            constexpr math::Vec4f COLOR     { 0.1f, 0.7f, 0.1f, 1 };
+            constexpr Vec3f NORMAL_UP { 0, -1, 0 };
+            constexpr Vec4f COLOR     { 0.1f, 0.7f, 0.1f, 1 };
 
             //? CREATE VERTICES
             for(idx_t z = 0; z < QUAD_COUNT; ++z) {
@@ -47,20 +49,36 @@ namespace mini::res2
 
             //? CREATE CORNER DATA
             FOR_CARRAY(verts, i) {
-                const auto vIdx = i % 6;
-                const auto qIdx = i / 6; //quad
-                const auto qX = qIdx % QUAD_COUNT;
-                const auto qY = qIdx / QUAD_COUNT;
-                switch(vIdx)
-                {
-                    case 0: case 3: corners[qX+0][qY+0].Append(vIdx); break;   
-                    case 1:         corners[qX+1][qY+0].Append(vIdx); break;
-                    case 2: case 4: corners[qX+1][qY+1].Append(vIdx); break;
-                    case 5:         corners[qX+0][qY+1].Append(vIdx); break;
-                }
+                const auto corner = GetCornerByVertex(i);
+                corners[corner[X]][corner[Y]].Append(i); //zx
             }
-
         }
+
+        math::Vec2u GetCornerByVertex(const idx_t i) const
+        {
+            const auto vIdx = i % 6;
+            const auto qIdx = i / 6; //quad
+            const auto qX = qIdx % QUAD_COUNT;
+            const auto qZ = qIdx / QUAD_COUNT;
+            idx_t cX = qX; //top left corner q == c
+            idx_t cZ = qZ;
+            switch(vIdx)
+            {
+                case 0: case 3:              break;   
+                case 1:         cX++;        break;
+                case 2: case 4: cX++; cZ++;  break;
+                case 5:               cZ++;  break;
+            }
+            LOG(cZ, cX);
+            return { cZ, cX };
+        }
+
+        box::Array<u32, 6> GetVerticesByCorner(const math::Vec2u& pair) const
+        {
+            using namespace math;
+            return corners[pair[X]][pair[Y]];
+        }
+
     };
 
 }//ns

@@ -18,8 +18,8 @@ namespace mini::box
         }
     }
 
-    #define BIT(i)  (idx_t)i % 8
-    #define BYTE(i) (idx_t)i / 8
+    #define BIT(i)  (idx_t)i % (idx_t)8
+    #define BYTE(i) (idx_t)i / (idx_t)8
 
     constexpr auto BytesNeeded(std::size_t num)
     {
@@ -35,7 +35,7 @@ namespace mini::box
 
         static constexpr idx_t BITS  = (idx_t)N;
         static constexpr idx_t BYTES = BITS/8 + 1;
-        u8 data [BYTES] = {};
+        u8 data [BYTES] = { 0 };
 
         constexpr Bitset(const std::size_t num = 0)
         {

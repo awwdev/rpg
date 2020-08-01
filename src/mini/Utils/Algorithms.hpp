@@ -46,6 +46,19 @@ namespace mini::utils
     {
         math::Vec3f pos;
         float u, v;
+
+        //TODO: write better
+        idx_t GetClosestVertex() const
+        {
+            if      (u > 0.5) return 1;
+            else if (v > 0.5) return 2;
+            else if (u > 0.25 && v > 0.25)
+            {
+                if  (u > v) return 1;
+                else        return 2;
+            }
+            return 0;
+        }
     };
 
     box::Optional<Intersection> RayTriangleIntersection(

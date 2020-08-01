@@ -351,7 +351,7 @@ namespace mini::app::ui
     inline void DrawRenderStats(RenderGraph& renderGraph)
     {
         const auto totalInstCount = renderGraph.default_ubo.data.count;
-        const auto drawCount      = renderGraph.default_ubo.groups.count;
+        const auto drawCount      = renderGraph.default_ubo.groups.usedIndices.count;
         const auto totalUICount   = renderGraph.ui_ubo.data.count;
 
         char ch_totalInstCount [] = "inst count:     ";
