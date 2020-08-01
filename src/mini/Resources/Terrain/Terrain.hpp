@@ -20,27 +20,26 @@ namespace mini::res
         static constexpr auto TOTAL_LENGTH   = QUADRANT_COUNT * QUADRANT_LENGTH;
         QUADRANT_T quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
 
-        struct Editing 
+        struct 
         {
             box::Array<idx_t, 6> draggingVertIndices;
             bool isDragging = false;
             f32  yDragPoint = 0;
             f32  dragScale = 0.05f;
+            u32  quadrantIdx = 0;
         } editing;
-        
-        u32 editingQuadrantIdx = 0;
 
         const QUADRANT_T& GetEditingQuadrant() const
         {       
-            const auto x = editingQuadrantIdx % QUADRANT_COUNT;
-            const auto z = editingQuadrantIdx / QUADRANT_COUNT;
+            const auto x = editing.quadrantIdx % QUADRANT_COUNT;
+            const auto z = editing.quadrantIdx / QUADRANT_COUNT;
             return quadrants[z][x];
         }
 
         QUADRANT_T& GetEditingQuadrant()
         {       
-            const auto x = editingQuadrantIdx % QUADRANT_COUNT;
-            const auto z = editingQuadrantIdx / QUADRANT_COUNT;
+            const auto x = editing.quadrantIdx % QUADRANT_COUNT;
+            const auto z = editing.quadrantIdx / QUADRANT_COUNT;
             return quadrants[z][x];
         }
 
@@ -117,18 +116,17 @@ namespace mini::res
                 Save();
             if (wnd::HasEvent<wnd::F4, wnd::Pressed>())
                 Load();
+
+            if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) editing.quadrantIdx = 0;
+            if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) editing.quadrantIdx = 1;
+            if (wnd::HasEvent<wnd::N2, wnd::Pressed>()) editing.quadrantIdx = 2;
+            if (wnd::HasEvent<wnd::N3, wnd::Pressed>()) editing.quadrantIdx = 3;
         }
 
         void Save(chars_t path = "res/terrain.txt")
         {
-            //TODO: maybe just a dump would be good too
-
             using namespace math;
             LOG("saving terrain");
-
-            
-            //if (!file) ERR("cannot open file");
-            //file << std::fixed << std::setprecision(6) << std::right; //!reset needed?
 
             for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
             for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
@@ -143,25 +141,6 @@ namespace mini::res
 
                 const auto& quadrant = quadrants[z][x];
                 file.write((const char*)quadrant.verts, sizeof(utils::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);
-                file.close();
-                /*
-                FOR_CARRAY(quadrant.verts, i){
-                    const auto& vert = quadrant.verts[i];
-                    file 
-                        << std::setw(12) << vert.pos[X] << ','
-                        << std::setw(12) << vert.pos[Y] << ','
-                        << std::setw(12) << vert.pos[Z] << ','
-                        << std::setw(12) << vert.nor[X] << ','
-                        << std::setw(12) << vert.nor[Y] << ','
-                        << std::setw(12) << vert.nor[Z] << ','
-                        << std::setw(12) << vert.col[X] << ','
-                        << std::setw(12) << vert.col[Y] << ','
-                        << std::setw(12) << vert.col[Z] << ','
-                        << std::setw(12) << vert.col[W] << ','
-                        << '\n';
-                }
-                file << '\n';
-                */
             }}
         }
 
@@ -169,8 +148,6 @@ namespace mini::res
         {
             using namespace math;
             LOG("loading terrain");
-
-
 
             for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
             for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
@@ -185,8 +162,6 @@ namespace mini::res
 
                 const auto& quadrant = quadrants[z][x];
                 file.read((char*)quadrant.verts, sizeof(utils::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);
-                file.close();
-
             }}
 
         }

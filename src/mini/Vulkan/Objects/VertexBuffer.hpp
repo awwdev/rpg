@@ -108,7 +108,7 @@ namespace mini::vk
         void UpdateGroup(const u32 groupIdx, const T(&arr)[COUNT])
         {
             const auto& group = vertexGroups[groupIdx];
-            cpuBuffer.Store(arr, COUNT * sizeof(T), group.begin);
+            cpuBuffer.Store(arr, COUNT * sizeof(T), group.begin * sizeof(T));
         }
 
         void Clear()

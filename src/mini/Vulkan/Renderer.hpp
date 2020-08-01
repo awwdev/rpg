@@ -66,7 +66,7 @@ namespace mini::vk
             resources.default.ubo.Store(scene.renderGraph.default_ubo);
 
             //update terrain quadrant that is edited
-            resources.terrain.vbo.UpdateGroup(hostRes.terrain.editingQuadrantIdx, hostRes.terrain.GetEditingQuadrant().verts);
+            resources.terrain.vbo.UpdateGroup(hostRes.terrain.editing.quadrantIdx, hostRes.terrain.GetEditingQuadrant().verts);
         }
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::GameScene& scene)
