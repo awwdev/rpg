@@ -44,12 +44,12 @@ namespace mini::res
             for(u8 z = 0; z < QUAD_COUNT; ++z) {
             for(u8 x = 0; x < QUAD_COUNT; ++x) { 
                 const auto idx = (z * QUAD_COUNT + x) * 6;
-                verts[idx + 0] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
-                verts[idx + 1] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
-                verts[idx + 2] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
-                verts[idx + 3] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
-                verts[idx + 4] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
-                verts[idx + 5] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize, 1 }, { 0, -1, 0, 1}, col, {} };
+                verts[idx + 0] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize }, { 0, -1, 0 }, col, {} };
+                verts[idx + 1] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize }, { 0, -1, 0 }, col, {} };
+                verts[idx + 2] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize }, { 0, -1, 0 }, col, {} };
+                verts[idx + 3] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 0.0f * quadSize + z * quadSize }, { 0, -1, 0 }, col, {} };
+                verts[idx + 4] = { {  quadrantX + 1.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize }, { 0, -1, 0 }, col, {} };
+                verts[idx + 5] = { {  quadrantX + 0.0f * quadSize + x * quadSize, 0,  quadrantY + 1.0f * quadSize + z * quadSize }, { 0, -1, 0 }, col, {} };
             }}
 
             const auto CORNER_COUNT = QUAD_COUNT + 1;
@@ -228,13 +228,10 @@ namespace mini::res
                     auto& v0  = quadrant.verts[tris*3 + 0];
                     auto& v1  = quadrant.verts[tris*3 + 1];
                     auto& v2  = quadrant.verts[tris*3 + 2];
-                    const auto p0   = math::TruncateVec4(v0.pos);
-                    const auto p1   = math::TruncateVec4(v1.pos);
-                    const auto p2   = math::TruncateVec4(v2.pos);
-                    const auto vec1 = math::Normalize(p0 - p1);
-                    const auto vec2 = math::Normalize(p0 - p2);
+                    const auto vec1 = math::Normalize(v0.pos - v1.pos);
+                    const auto vec2 = math::Normalize(v0.pos - v2.pos);
                     const auto norm = math::Cross(vec1, vec2);
-                    v0.nor = v1.nor = v2.nor = MakeHomoVec(norm);
+                    v0.nor = v1.nor = v2.nor = norm;
                 }
 
                 draggedVertex = -1;

@@ -10,10 +10,10 @@ namespace mini::utils
 
     struct Common_Vertex //could be used by physics too, so not rendering only?
     {
-        math::Vec4f pos;
-        math::Vec4f nor;
-        math::Vec4f col;
-        math::Vec4f tex;
+        alignas(16) math::Vec3f pos;
+        alignas(16) math::Vec3f nor;
+        alignas(16) math::Vec4f col;
+        alignas(16) math::Vec2f tex;
     };
 
     std::ostream& operator<<(std::ostream& os, const Common_Vertex& vert)

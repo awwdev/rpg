@@ -45,19 +45,17 @@ namespace mini::res2
 
         void Update(const double dt, const rendering::Camera& camera, ecs::ECS& ecs)
         {   
-            auto& editingQuadrant = GetEditingQuadrant();
-            const math::Vec4f col = { 0.7f, 0.2f, 0.2f, 1 };
+            auto& quadrant = GetEditingQuadrant();
+            const auto ray = camera.ScreenRay();
 
-            for(u8 z = 0; z < QUAD_COUNT; ++z) {
-            for(u8 x = 0; x < QUAD_COUNT; ++x) { 
-                const auto idx = (z * QUAD_COUNT + x) * 6;
-                editingQuadrant.verts[idx + 0].col = col;
-                editingQuadrant.verts[idx + 1].col = col;
-                editingQuadrant.verts[idx + 2].col = col;
-                editingQuadrant.verts[idx + 3].col = col;
-                editingQuadrant.verts[idx + 4].col = col;
-                editingQuadrant.verts[idx + 5].col = col;
-            }}
+            for(idx_t i = 0; i < quadrant.VERT_COUNT_TOTAL; i+=3)
+            {
+                auto& v0 = quadrant.verts[i+0].pos;
+                auto& v1 = quadrant.verts[i+1].pos;
+                auto& v2 = quadrant.verts[i+2].pos;
+
+                const auto intersection = utils::RayTriangleIntersection(camera.pos, ray, v0, v1, v2);
+            }
 
         }
     };

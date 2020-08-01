@@ -10,7 +10,6 @@
 #include "mini/Vulkan/Factories/UI/UI_RenderPass.hpp"
 #include "mini/Vulkan/Factories/UI/UI_Pipeline.hpp"
 #include "mini/Vulkan/Factories/UI/UI_Shader.hpp"
-#include "mini/Vulkan/Factories/UI/UI_VertexBuffer.hpp"
 #include "mini/Vulkan/Factories/UI/UI_UniformBuffer.hpp"
 
 #include "mini/Vulkan/Factories/Default/Default_RenderPass.hpp"

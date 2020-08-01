@@ -32,6 +32,7 @@ namespace mini::math
     using Vec   = Mat<T, 1, X>;
     using Vec4f = Vec<float, 4>;
     using Vec3f = Vec<float, 3>;
+    using Vec2f = Vec<float, 2>;
     using Quatf = Vec4f;
 
     Mat4f Identity4()

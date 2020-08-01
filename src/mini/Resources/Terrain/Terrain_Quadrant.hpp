@@ -28,7 +28,7 @@ namespace mini::res2
             quadrantX = pX;
             quadrantZ = pZ;
 
-            constexpr math::Vec4f NORMAL_UP { 0, -1, 0, 1 };
+            constexpr math::Vec3f NORMAL_UP { 0, -1, 0 };
             constexpr math::Vec4f COLOR     { 0.1f, 0.7f, 0.1f, 1 };
 
             //? CREATE VERTICES
@@ -37,12 +37,12 @@ namespace mini::res2
                 const auto v  = (z * QUAD_COUNT + x) * 6;
                 const auto qX = quadrantX + x * QUAD_LENGTH;
                 const auto qZ = quadrantZ + z * QUAD_LENGTH;
-                verts[v+0] = { {  qX + 0.0f * QUAD_LENGTH, 0, qZ + 0.0f * QUAD_LENGTH, 1 }, NORMAL_UP, COLOR };
-                verts[v+1] = { {  qX + 1.0f * QUAD_LENGTH, 0, qZ + 0.0f * QUAD_LENGTH, 1 }, NORMAL_UP, COLOR };
-                verts[v+2] = { {  qX + 1.0f * QUAD_LENGTH, 0, qZ + 1.0f * QUAD_LENGTH, 1 }, NORMAL_UP, COLOR };
+                verts[v+0] = { {  qX + 0.0f * QUAD_LENGTH, 0, qZ + 0.0f * QUAD_LENGTH }, NORMAL_UP, COLOR };
+                verts[v+1] = { {  qX + 1.0f * QUAD_LENGTH, 0, qZ + 0.0f * QUAD_LENGTH }, NORMAL_UP, COLOR };
+                verts[v+2] = { {  qX + 1.0f * QUAD_LENGTH, 0, qZ + 1.0f * QUAD_LENGTH }, NORMAL_UP, COLOR };
                 verts[v+3] = verts[v+0];
                 verts[v+4] = verts[v+2];
-                verts[v+5] = { {  qX + 0.0f * QUAD_LENGTH, 0, qZ + 1.0f * QUAD_LENGTH, 1 }, NORMAL_UP, COLOR };
+                verts[v+5] = { {  qX + 0.0f * QUAD_LENGTH, 0, qZ + 1.0f * QUAD_LENGTH }, NORMAL_UP, COLOR };
             }}
 
             //? CREATE CORNER DATA

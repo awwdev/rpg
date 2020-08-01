@@ -23,10 +23,10 @@ namespace mini::res
             u32 commaCount = 0;
             u32 i1 = 0; 
 
-            math::Vec4f position {};
+            math::Vec3f position {};
             position[0][3] = 1;
             math::Vec4f color {};
-            math::Vec4f normals {};
+            math::Vec3f normals {};
 
             //POSITION
             for(u32 i2 = 0; i2 < 100; ++i2){
