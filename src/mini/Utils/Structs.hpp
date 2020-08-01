@@ -8,7 +8,7 @@ namespace mini::utils
     using NormColor4f = math::Vec4f;
     using RGBAColor4u = math::Vec<u8, 4>;
 
-    struct Common_Vertex //could be used by physics too, so not rendering only?
+    struct Common_Vertex 
     {
         alignas(16) math::Vec3f pos;
         alignas(16) math::Vec3f nor;

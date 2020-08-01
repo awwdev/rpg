@@ -12,7 +12,6 @@
 #include "mini/Rendering/RenderGraph.hpp"
 #include "mini/Rendering/Camera.hpp"
 #include "mini/Rendering/UI.hpp"
-#include "mini/Resources/Terrain.hpp"
 #include "mini/Resources/Terrain/Terrain.hpp"
 #include "mini/Rendering/Sun.hpp"
 

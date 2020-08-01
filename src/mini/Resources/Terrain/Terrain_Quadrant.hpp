@@ -4,7 +4,7 @@
 #include "mini/Utils/Structs.hpp"
 #include "mini/Box/Array.hpp"
 
-namespace mini::res2
+namespace mini::res
 {
     template<auto QUAD_COUNT_T, auto QUADRANT_LENGTH_T>
     struct Quadrant
