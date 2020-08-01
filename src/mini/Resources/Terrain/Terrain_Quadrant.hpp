@@ -47,11 +47,12 @@ namespace mini::res
                 verts[v+5] = { {  qX + 0.0f * QUAD_LENGTH, 0, qZ + 1.0f * QUAD_LENGTH }, NORMAL_UP, COLOR };
             }}
 
-            //? CREATE CORNER DATA
+            //? CREATE CORNER DATA (for editing)
             FOR_CARRAY(verts, i) {
                 const auto corner = GetCornerByVertex(i);
                 corners[corner[X]][corner[Y]].Append(i); //zx
             }
+
         }
 
         math::Vec2u GetCornerByVertex(const idx_t i) const

@@ -42,7 +42,6 @@ namespace mini::vk
             commands.Create();
         }
 
-        //TODO: depends on scene
         void UpdateVkResources_GameScene(const app::GameScene& scene, res::HostResources& hostRes, double dt)
         {
             const math::Mat4f BIAS { 
@@ -97,8 +96,6 @@ namespace mini::vk
             VkDeviceSize offsets = 0;
 
             vkCmdPushConstants(cmdBuffer, resources.terrain.pipelineShadow.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
-
-            //TODO: FIX RESIZE ERROR NOW!
 
             //! SHADOW
             vkCmdBeginRenderPass(cmdBuffer, &beginInfo_shadow, VK_SUBPASS_CONTENTS_INLINE);

@@ -53,6 +53,31 @@ namespace mini::res
             }}
         }
 
+        void Update(const double dt, const rendering::Camera& camera, ecs::ECS& ecs)
+        {   
+            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
+                editing.isDragging = false;
+
+            if (editing.isDragging == false)
+                TestIntersectionAndPressed(camera);
+
+            if (editing.isDragging == true)
+                Dragging();
+
+            if (wnd::HasEvent<wnd::F3, wnd::Pressed>())
+                Save();
+            if (wnd::HasEvent<wnd::F4, wnd::Pressed>())
+                Load();
+
+            if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) editing.quadrantIdx = 0;
+            if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) editing.quadrantIdx = 1;
+            if (wnd::HasEvent<wnd::N2, wnd::Pressed>()) editing.quadrantIdx = 2;
+            if (wnd::HasEvent<wnd::N3, wnd::Pressed>()) editing.quadrantIdx = 3;
+
+            if (wnd::HasEvent<wnd::F5, wnd::Pressed>())
+                Stiching();
+        }
+
         void TestIntersectionAndPressed(const rendering::Camera& camera)
         {
             auto& quadrant = GetEditingQuadrant();
@@ -101,26 +126,67 @@ namespace mini::res
             }
         }
 
-        void Update(const double dt, const rendering::Camera& camera, ecs::ECS& ecs)
-        {   
-            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
-                editing.isDragging = false;
+        void Stiching()
+        {
+            LOG("stiching terrain");
+                for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
+                for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
+                    auto& quadrant = quadrants[z][x];
+                    const bool hasNeighborRight  = x < QUADRANT_COUNT;
+                    const bool hasNeighborBottom = z < QUADRANT_COUNT;
+                    const bool hasNeighborLeft   = x > 0;
+                    const bool hasNeighbofTop    = z > 0;
 
-            if (editing.isDragging == false)
-                TestIntersectionAndPressed(camera);
+                    if (hasNeighborRight)
+                    {
+                        auto& neighborQuadrant = quadrants[z][x+1];
 
-            if (editing.isDragging == true)
-                Dragging();
+                        for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
+                            auto& edgeVerts         = quadrant.corners[z][quadrant.CORNER_COUNT - 1];
+                            auto& edgeVertsNeighbor = neighborQuadrant.corners[z][0];
 
-            if (wnd::HasEvent<wnd::F3, wnd::Pressed>())
-                Save();
-            if (wnd::HasEvent<wnd::F4, wnd::Pressed>())
-                Load();
+                            const auto averagePos = [&]
+                            { 
+                                auto  vIdx         = edgeVerts[0];
+                                auto  vIdxNeighbor = edgeVertsNeighbor[0];
+                                auto& pos          = quadrant.verts[vIdx].pos;
+                                auto& posNeighbor  = neighborQuadrant.verts[vIdx].pos;
 
-            if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) editing.quadrantIdx = 0;
-            if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) editing.quadrantIdx = 1;
-            if (wnd::HasEvent<wnd::N2, wnd::Pressed>()) editing.quadrantIdx = 2;
-            if (wnd::HasEvent<wnd::N3, wnd::Pressed>()) editing.quadrantIdx = 3;
+                                return (pos + posNeighbor) * 0.5f;  
+                            }();
+
+                            FOR_ARRAY(edgeVerts , i) { 
+                                auto vIdx = edgeVerts[i];
+                                auto& pos = quadrant.verts[vIdx].pos;
+                                pos = averagePos;
+                            }
+
+                            FOR_ARRAY(edgeVertsNeighbor , i) { 
+                                auto vIdx = edgeVertsNeighbor[i];
+                                auto& pos = neighborQuadrant.verts[vIdx].pos;
+                                pos = averagePos;
+                            }
+                        }
+                    }
+
+                    if (hasNeighborBottom)
+                    {
+                        auto& neighbor = quadrants[z+1][x];
+                    }
+
+                    if (hasNeighborLeft)
+                    {
+                        auto& neighbor = quadrants[z][x-1];
+                    }
+
+                    if (hasNeighbofTop)
+                    {
+                        auto& neighbor = quadrants[z-1][x];
+                    }
+                }}
+
+                //TODO: diagonal case
+                //TODO: recalculate normals extra function, needs to be called after stiching
         }
 
         void Save(chars_t path = "res/terrain.txt")
