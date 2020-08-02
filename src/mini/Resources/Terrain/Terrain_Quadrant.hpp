@@ -23,7 +23,7 @@ namespace mini::res
         utils::Common_Vertex verts   [VERT_COUNT_TOTAL];
         box::Array<u32, 6>   corners [CORNER_COUNT][CORNER_COUNT];
 
-        void Create(const float pX, const float pZ)
+        void Create(const float pZ, const float pX)
         {
             using namespace math;
 

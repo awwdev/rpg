@@ -44,6 +44,11 @@ namespace mini::res
             return quadrants[z][x];
         }
 
+        idx_t GetQuadrantIndex(const idx_t z, const idx_t x) const
+        {
+            return z * QUADRANT_COUNT + x;
+        }
+
         void Create()
         {
             for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
@@ -133,63 +138,156 @@ namespace mini::res
         void Stiching()
         {
             LOG("stiching terrain");
-            for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
-            for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
-                auto& quadrant = quadrants[z][x];
-                const bool hasNeighborRight  = x < QUADRANT_COUNT;
-                const bool hasNeighborBottom = z < QUADRANT_COUNT;
-                const bool hasNeighborLeft   = x > 0;
-                const bool hasNeighbofTop    = z > 0;
+            //current coord of active editing quadrant
+            const auto z = editing.quadrantIdx / QUADRANT_COUNT;
+            const auto x = editing.quadrantIdx % QUADRANT_COUNT;
+            editing.dirtyQuadrants.Append(editing.quadrantIdx);
 
-                if (hasNeighborRight)
-                {
-                    auto& neighborQuadrant = quadrants[z][x+1];
-                    const auto quadrantIdxNeighbor = z * QUADRANT_COUNT + x + 1;
-                    editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            //neighbors
+            const bool hasNeighborRight  = x < QUADRANT_COUNT - 1;
+            const bool hasNeighborBottom = z < QUADRANT_COUNT - 1;
+            const bool hasNeighborLeft   = x > 0;
+            const bool hasNeighbofTop    = z > 0;
 
-                    for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
-                        auto& edgeVerts         = quadrant.corners[z][quadrant.CORNER_COUNT - 1]; //right
-                        auto& edgeVertsNeighbor = neighborQuadrant.corners[z][0]; //left
+            if (hasNeighborRight)
+            {
+                auto& quadrant = quadrants[z][x]; //current active one
+                auto& neighborQuadrant = quadrants[z][x+1];
+                const auto quadrantIdxNeighbor = GetQuadrantIndex(z, x+1);
+                editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
 
-                        const auto averagePos = [&]
-                        { 
-                            auto  vIdx         = edgeVerts[0];
-                            auto  vIdxNeighbor = edgeVertsNeighbor[0];
-                            auto& pos          = quadrant.verts[vIdx].pos;
-                            auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
+                for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
+                    auto& edgeVerts         = quadrant.corners[z][quadrant.CORNER_COUNT - 1]; //right edge
+                    auto& edgeVertsNeighbor = neighborQuadrant.corners[z][0]; //left edge
 
-                            return (pos + posNeighbor) * 0.5f;  
-                        }();
+                    const auto averagePos = [&]
+                    { 
+                        auto  vIdx         = edgeVerts[0];
+                        auto  vIdxNeighbor = edgeVertsNeighbor[0];
+                        auto& pos          = quadrant.verts[vIdx].pos;
+                        auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
 
-                        FOR_ARRAY(edgeVerts , i) { 
-                            auto vIdx = edgeVerts[i];
-                            auto& pos = quadrant.verts[vIdx].pos;
-                            pos = averagePos;
-                        }
+                        return (pos + posNeighbor) * 0.5f;  
+                    }();
 
-                        FOR_ARRAY(edgeVertsNeighbor , i) { 
-                            auto vIdx = edgeVertsNeighbor[i];
-                            auto& pos = neighborQuadrant.verts[vIdx].pos;
-                            pos = averagePos;
-                        }
+                    FOR_ARRAY(edgeVerts , i) { 
+                        auto vIdx = edgeVerts[i];
+                        auto& pos = quadrant.verts[vIdx].pos;
+                        pos = averagePos;
+                    }
+
+                    FOR_ARRAY(edgeVertsNeighbor , i) { 
+                        auto vIdx = edgeVertsNeighbor[i];
+                        auto& pos = neighborQuadrant.verts[vIdx].pos;
+                        pos = averagePos;
                     }
                 }
+            }
 
-                if (hasNeighborBottom)
-                {
-                    auto& neighbor = quadrants[z+1][x];
-                }
+            if (hasNeighborBottom)
+            {
+                auto& quadrant = quadrants[z][x]; //current active one
+                auto& neighborQuadrant = quadrants[z+1][x];
+                const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x);
+                editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
 
-                if (hasNeighborLeft)
-                {
-                    auto& neighbor = quadrants[z][x-1];
-                }
+                for(idx_t x = 0; x < quadrant.CORNER_COUNT; ++x){
+                    auto& edgeVerts         = quadrant.corners[quadrant.CORNER_COUNT - 1][x]; //bottom edge
+                    auto& edgeVertsNeighbor = neighborQuadrant.corners[0][x]; //top edge
 
-                if (hasNeighbofTop)
-                {
-                    auto& neighbor = quadrants[z-1][x];
+                    const auto averagePos = [&]
+                    { 
+                        auto  vIdx         = edgeVerts[0];
+                        auto  vIdxNeighbor = edgeVertsNeighbor[0];
+                        auto& pos          = quadrant.verts[vIdx].pos;
+                        auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
+
+                        return (pos + posNeighbor) * 0.5f;  
+                    }();
+
+                    FOR_ARRAY(edgeVerts , i) { 
+                        auto vIdx = edgeVerts[i];
+                        auto& pos = quadrant.verts[vIdx].pos;
+                        pos = averagePos;
+                    }
+
+                    FOR_ARRAY(edgeVertsNeighbor , i) { 
+                        auto vIdx = edgeVertsNeighbor[i];
+                        auto& pos = neighborQuadrant.verts[vIdx].pos;
+                        pos = averagePos;
+                    }
                 }
-            }}
+            }
+
+            if (hasNeighborLeft)
+            {
+                auto& quadrant = quadrants[z][x]; //current active one
+                auto& neighborQuadrant = quadrants[z][x-1];
+                const auto quadrantIdxNeighbor = GetQuadrantIndex(z, x-1);
+                editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+
+                for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
+                    auto& edgeVerts         = quadrant.corners[z][0]; //left edge
+                    auto& edgeVertsNeighbor = neighborQuadrant.corners[z][quadrant.CORNER_COUNT - 1]; //right edge
+
+                    const auto averagePos = [&]
+                    { 
+                        auto  vIdx         = edgeVerts[0];
+                        auto  vIdxNeighbor = edgeVertsNeighbor[0];
+                        auto& pos          = quadrant.verts[vIdx].pos;
+                        auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
+
+                        return (pos + posNeighbor) * 0.5f;  
+                    }();
+
+                    FOR_ARRAY(edgeVerts , i) { 
+                        auto vIdx = edgeVerts[i];
+                        auto& pos = quadrant.verts[vIdx].pos;
+                        pos = averagePos;
+                    }
+
+                    FOR_ARRAY(edgeVertsNeighbor , i) { 
+                        auto vIdx = edgeVertsNeighbor[i];
+                        auto& pos = neighborQuadrant.verts[vIdx].pos;
+                        pos = averagePos;
+                    }
+                }
+            }
+
+            if (hasNeighbofTop)
+            {
+                auto& quadrant = quadrants[z][x]; //current active one
+                auto& neighborQuadrant = quadrants[z-1][x];
+                const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x);
+                editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+
+                for(idx_t x = 0; x < quadrant.CORNER_COUNT; ++x){
+                    auto& edgeVerts         = quadrant.corners[0][x]; //top edge
+                    auto& edgeVertsNeighbor = neighborQuadrant.corners[quadrant.CORNER_COUNT - 1][x]; //bottom edge
+
+                    const auto averagePos = [&]
+                    { 
+                        auto  vIdx         = edgeVerts[0];
+                        auto  vIdxNeighbor = edgeVertsNeighbor[0];
+                        auto& pos          = quadrant.verts[vIdx].pos;
+                        auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
+
+                        return (pos + posNeighbor) * 0.5f;  
+                    }();
+
+                    FOR_ARRAY(edgeVerts , i) { 
+                        auto vIdx = edgeVerts[i];
+                        auto& pos = quadrant.verts[vIdx].pos;
+                        pos = averagePos;
+                    }
+
+                    FOR_ARRAY(edgeVertsNeighbor , i) { 
+                        auto vIdx = edgeVertsNeighbor[i];
+                        auto& pos = neighborQuadrant.verts[vIdx].pos;
+                        pos = averagePos;
+                    }
+                }
+            }
 
             //TODO: diagonal case
             //TODO: recalculate normals extra function, needs to be called after stiching
