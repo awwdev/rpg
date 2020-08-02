@@ -49,7 +49,7 @@ namespace mini::res
         Textures textures;
         Models   models;
 
-        res::Terrain<5, 10,2> terrain;
+        res::Terrain<10, 20,2> terrain;
 
         //! should all load before any GPU resources are used
         HostResources() 

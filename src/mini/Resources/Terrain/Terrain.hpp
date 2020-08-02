@@ -17,6 +17,7 @@ namespace mini::res
         using QUADRANT_T = Quadrant<QUAD_COUNT, QUADRANT_LENGTH>;
 
         static constexpr auto QUADRANT_COUNT = QUADRANT_COUNT_T;
+        static constexpr auto TOTAL_QUADRANT_COUNT = QUADRANT_COUNT * QUADRANT_COUNT;
         static constexpr auto TOTAL_LENGTH   = QUADRANT_COUNT * QUADRANT_LENGTH;
         QUADRANT_T quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
 
@@ -27,7 +28,7 @@ namespace mini::res
             f32  yDragPoint = 0;
             f32  dragScale = 0.05f;
             u32  quadrantIdx = 0;
-            box::Array<idx_t, 9> dirtyQuadrants;
+            box::Array<idx_t, TOTAL_QUADRANT_COUNT> dirtyQuadrants;
         } editing;
 
         const QUADRANT_T& GetQuadrant(const idx_t i) const
@@ -332,6 +333,8 @@ namespace mini::res
 
                 const auto& quadrant = quadrants[z][x];
                 file.read((char*)quadrant.verts, sizeof(utils::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);
+
+                editing.dirtyQuadrants.Append(GetQuadrantIndex(z, x));
             }}
 
         }

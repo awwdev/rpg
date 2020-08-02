@@ -9,7 +9,7 @@ namespace mini::rendering
 {
     struct Sun
     {
-        math::Vec3f pos { -1, -10, -1 }; //xz controlled by sin
+        math::Vec3f pos { -1, -40, -1 }; //xz controlled by sin
         float t = 0;
         ecs::ID gizmoID = 0;
 
@@ -24,7 +24,7 @@ namespace mini::rendering
         {
             using namespace math;
             t += (float)dt * 0.5f;
-            constexpr auto A = 20;
+            constexpr auto A = 100;
             pos[X] = std::sinf(t) * A;
             pos[Z] = std::cosf(t) * A;
 
