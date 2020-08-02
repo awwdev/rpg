@@ -27,19 +27,20 @@ namespace mini::res
             f32  yDragPoint = 0;
             f32  dragScale = 0.05f;
             u32  quadrantIdx = 0;
+            box::Array<idx_t, 9> dirtyQuadrants;
         } editing;
 
-        const QUADRANT_T& GetEditingQuadrant() const
-        {       
-            const auto x = editing.quadrantIdx % QUADRANT_COUNT;
-            const auto z = editing.quadrantIdx / QUADRANT_COUNT;
+        const QUADRANT_T& GetQuadrant(const idx_t i) const
+        {
+            const auto x = i % QUADRANT_COUNT;
+            const auto z = i / QUADRANT_COUNT;
             return quadrants[z][x];
         }
 
-        QUADRANT_T& GetEditingQuadrant()
-        {       
-            const auto x = editing.quadrantIdx % QUADRANT_COUNT;
-            const auto z = editing.quadrantIdx / QUADRANT_COUNT;
+        QUADRANT_T& GetQuadrant(const idx_t i)
+        {
+            const auto x = i % QUADRANT_COUNT;
+            const auto z = i / QUADRANT_COUNT;
             return quadrants[z][x];
         }
 
@@ -55,6 +56,8 @@ namespace mini::res
 
         void Update(const double dt, const rendering::Camera& camera, ecs::ECS& ecs)
         {   
+            editing.dirtyQuadrants.Clear();
+
             if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
                 editing.isDragging = false;
 
@@ -80,7 +83,7 @@ namespace mini::res
 
         void TestIntersectionAndPressed(const rendering::Camera& camera)
         {
-            auto& quadrant = GetEditingQuadrant();
+            auto& quadrant = GetQuadrant(editing.quadrantIdx);
             const auto ray = camera.ScreenRay();
 
             for(idx_t i = 0; i < quadrant.VERT_COUNT_TOTAL; i+=3)
@@ -114,7 +117,8 @@ namespace mini::res
         void Dragging()
         {
             using namespace math;
-            auto& quadrant = GetEditingQuadrant();
+            auto& quadrant = GetQuadrant(editing.quadrantIdx);
+            editing.dirtyQuadrants.Append(editing.quadrantIdx);
 
             const f32 yDelta = wnd::global::mouse_wy - editing.yDragPoint;
             editing.yDragPoint = (f32)wnd::global::mouse_wy;
@@ -129,64 +133,66 @@ namespace mini::res
         void Stiching()
         {
             LOG("stiching terrain");
-                for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
-                for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
-                    auto& quadrant = quadrants[z][x];
-                    const bool hasNeighborRight  = x < QUADRANT_COUNT;
-                    const bool hasNeighborBottom = z < QUADRANT_COUNT;
-                    const bool hasNeighborLeft   = x > 0;
-                    const bool hasNeighbofTop    = z > 0;
+            for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
+            for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
+                auto& quadrant = quadrants[z][x];
+                const bool hasNeighborRight  = x < QUADRANT_COUNT;
+                const bool hasNeighborBottom = z < QUADRANT_COUNT;
+                const bool hasNeighborLeft   = x > 0;
+                const bool hasNeighbofTop    = z > 0;
 
-                    if (hasNeighborRight)
-                    {
-                        auto& neighborQuadrant = quadrants[z][x+1];
+                if (hasNeighborRight)
+                {
+                    auto& neighborQuadrant = quadrants[z][x+1];
+                    const auto quadrantIdxNeighbor = z * QUADRANT_COUNT + x + 1;
+                    editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
 
-                        for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
-                            auto& edgeVerts         = quadrant.corners[z][quadrant.CORNER_COUNT - 1];
-                            auto& edgeVertsNeighbor = neighborQuadrant.corners[z][0];
+                    for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
+                        auto& edgeVerts         = quadrant.corners[z][quadrant.CORNER_COUNT - 1]; //right
+                        auto& edgeVertsNeighbor = neighborQuadrant.corners[z][0]; //left
 
-                            const auto averagePos = [&]
-                            { 
-                                auto  vIdx         = edgeVerts[0];
-                                auto  vIdxNeighbor = edgeVertsNeighbor[0];
-                                auto& pos          = quadrant.verts[vIdx].pos;
-                                auto& posNeighbor  = neighborQuadrant.verts[vIdx].pos;
+                        const auto averagePos = [&]
+                        { 
+                            auto  vIdx         = edgeVerts[0];
+                            auto  vIdxNeighbor = edgeVertsNeighbor[0];
+                            auto& pos          = quadrant.verts[vIdx].pos;
+                            auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
 
-                                return (pos + posNeighbor) * 0.5f;  
-                            }();
+                            return (pos + posNeighbor) * 0.5f;  
+                        }();
 
-                            FOR_ARRAY(edgeVerts , i) { 
-                                auto vIdx = edgeVerts[i];
-                                auto& pos = quadrant.verts[vIdx].pos;
-                                pos = averagePos;
-                            }
+                        FOR_ARRAY(edgeVerts , i) { 
+                            auto vIdx = edgeVerts[i];
+                            auto& pos = quadrant.verts[vIdx].pos;
+                            pos = averagePos;
+                        }
 
-                            FOR_ARRAY(edgeVertsNeighbor , i) { 
-                                auto vIdx = edgeVertsNeighbor[i];
-                                auto& pos = neighborQuadrant.verts[vIdx].pos;
-                                pos = averagePos;
-                            }
+                        FOR_ARRAY(edgeVertsNeighbor , i) { 
+                            auto vIdx = edgeVertsNeighbor[i];
+                            auto& pos = neighborQuadrant.verts[vIdx].pos;
+                            pos = averagePos;
                         }
                     }
+                }
 
-                    if (hasNeighborBottom)
-                    {
-                        auto& neighbor = quadrants[z+1][x];
-                    }
+                if (hasNeighborBottom)
+                {
+                    auto& neighbor = quadrants[z+1][x];
+                }
 
-                    if (hasNeighborLeft)
-                    {
-                        auto& neighbor = quadrants[z][x-1];
-                    }
+                if (hasNeighborLeft)
+                {
+                    auto& neighbor = quadrants[z][x-1];
+                }
 
-                    if (hasNeighbofTop)
-                    {
-                        auto& neighbor = quadrants[z-1][x];
-                    }
-                }}
+                if (hasNeighbofTop)
+                {
+                    auto& neighbor = quadrants[z-1][x];
+                }
+            }}
 
-                //TODO: diagonal case
-                //TODO: recalculate normals extra function, needs to be called after stiching
+            //TODO: diagonal case
+            //TODO: recalculate normals extra function, needs to be called after stiching
         }
 
         void Save(chars_t path = "res/terrain.txt")
