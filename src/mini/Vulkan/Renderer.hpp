@@ -52,7 +52,8 @@ namespace mini::vk
             };
 
             //resources.common_pushConsts.camera = scene.camera.GetOrthographic() * scene.sun.GetView();
-            resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.camera.GetView();
+            //resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.camera.GetView();
+            resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.playerController.GetView(scene.ecs);
             resources.common_pushConsts.sun    = scene.camera.GetOrthographic() * scene.sun.GetView(); //BIAS * 
             resources.common_pushConsts.sunDir = math::Normalize(scene.sun.pos);
             resources.ui.pushConsts.wnd_w = wnd::global::window_w;

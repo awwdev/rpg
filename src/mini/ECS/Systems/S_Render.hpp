@@ -16,7 +16,7 @@ namespace mini::ecs
         static float rot = 0; //!test
         rot += 1.f * (float)dt;
 
-        //SORTING (for mesh type)
+        //SORTING (for mesh type)(so instancing can be used)
         box::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypes [(u32)res::MeshType::ENUM_END];
         FOR_ARRAY(arr_render.dense, i) {
             const auto idx = (u32)arr_render.dense[i].meshType;

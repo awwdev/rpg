@@ -55,11 +55,6 @@ namespace mini::rendering
             }
         }
 
-        math::Mat4f GetProjView() const
-        {
-            return GetPerspective() * GetView();
-        }
-
         math::Mat4f GetView() const 
         {
             using namespace math;

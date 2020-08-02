@@ -80,7 +80,7 @@ namespace mini::ecs
     struct C_Transform
     {
         math::Mat4f transform;
-        math::Vec3f pos;
+        //math::Vec3f pos;
         //rotation
         //scale
     };

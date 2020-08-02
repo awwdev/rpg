@@ -15,6 +15,8 @@
 #include "mini/Resources/Terrain/Terrain.hpp"
 #include "mini/Rendering/Sun.hpp"
 
+#include "mini/App/PlayerController.hpp"
+
 namespace mini::app
 {
     struct GameScene
@@ -25,29 +27,15 @@ namespace mini::app
         rendering::Camera       camera;
         rendering::Sun          sun;
 
+        app::PlayerController playerController;
+        
+
         GameScene()
         {
             //TODO: move into some resource manager an load at loading scene
             //ecs.prefabs.Parse("res/prefabs.txt"); 
             sun.Create(ecs);
-            //terrain.Create(ecs);
-
-            /*{
-                constexpr float S = 1; //sword is one 1x1 blender cube
-                constexpr float X = 0; 
-                constexpr float Y = 0;
-                constexpr float Z =-4;
-                trisID = ecs.AddEntity();
-                const math::Mat4f pos = math::Mat4f{
-                    S, 0, 0, 0,
-                    0, S, 0, 0,
-                    0, 0, S, 0,
-                    X, Y, Z, 1,
-                };
-                ecs.arrays.AddComponent<ecs::ComponentType::Transform> (trisID, pos);
-                ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(trisID, res::MeshType::PrimitiveTriangle);
-            }*/
-
+            playerController.Create(ecs);
         }
 
 
@@ -60,8 +48,10 @@ namespace mini::app
             camera.Update(dt);
             hostRes.terrain.Update(dt, camera, ecs);
             sun.Update(ecs, dt);
+            playerController.Update(ecs, dt);
 
-            if (wnd::HasEvent<wnd::F2, wnd::Pressed>())
+
+            if (wnd::HasEvent<wnd::F2, wnd::Pressed>()) //TODO: move into ui
                 renderGraph.terrain_wire_mode = ! renderGraph.terrain_wire_mode;
 
             //? ECS
@@ -69,9 +59,13 @@ namespace mini::app
 
             //? UI
             ui::DrawFPS(renderGraph); 
-            ui::DrawConsole(renderGraph);
-            ui::DrawRenderStats(renderGraph);
-            ui::DrawCameraPos(renderGraph, camera);
+            if (wnd::global::ui_debug_mode)
+            {
+                ui::DrawConsole(renderGraph);
+                ui::DrawRenderStats(renderGraph);
+                ui::DrawCameraPos(renderGraph, camera);
+            }
+           
         }
 
     };
