@@ -27,23 +27,21 @@ namespace mini::wnd
             global::chars.Clear();
             global::frameEvents.Clear();
 
-            if (app::global::inputMode == app::global::UI_Mode ||
-                app::global::inputMode == app::global::PlayMode) //capture mouse in center
-            {
-                RECT wndRect;
-                GetWindowRect(hWnd, &wndRect);
-                const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
-                const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
+            const auto cx = global::window_w/2;
+            const auto cy = global::window_h/2;
 
-                POINT point;
-                GetCursorPos(&point);
-                global::mouse_x_prev = (s32)point.x;
-                global::mouse_y_prev = (s32)point.x;
+            POINT point;
+            GetCursorPos(&point);
+            global::mouse_dx = (s32)point.x - global::mouse_wx; 
+            global::mouse_dy = (s32)point.y - global::mouse_wy;
+            global::mouse_wx = (s32)point.x;
+            global::mouse_wy = (s32)point.y;
 
-                global::mouse_dx = point.x - (cx); //TODO: mouse delta only in ui mode? otherwise need ref point
-                global::mouse_dy = point.y - (cy);
+            if (app::global::inputMode == app::global::FlyMode ||
+                app::global::inputMode == app::global::PlayMode) {
                 SetCursorPos(cx, cy);
             }
+
         }
     }
 
@@ -84,9 +82,10 @@ namespace mini::wnd
 
     inline void WmMouseMove(WPARAM wParam, LPARAM lParam)
     {
-        AddEvent<Mouse_Move>();
-        global::mouse_wx = GET_X_LPARAM(lParam);
-        global::mouse_wy = GET_Y_LPARAM(lParam);
+        TODO: do we need this?
+        //AddEvent<Mouse_Move>();
+        //global::mouse_wx = GET_X_LPARAM(lParam);
+        //global::mouse_wy = GET_Y_LPARAM(lParam);
     }
 
     inline void WmMouseWheel(WPARAM wParam, LPARAM lParam)
