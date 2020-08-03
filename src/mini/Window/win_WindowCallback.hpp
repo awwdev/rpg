@@ -3,6 +3,7 @@
 #pragma once
 #include "mini/Box/Optional.hpp"
 #include "mini/Window/WindowEvents.hpp"
+#include "mini/App/Input.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -26,7 +27,8 @@ namespace mini::wnd
             global::chars.Clear();
             global::frameEvents.Clear();
 
-            if (wnd::global::ui_debug_mode == false)
+            if (app::global::inputMode == app::global::UI_Mode ||
+                app::global::inputMode == app::global::PlayMode) //capture mouse in center
             {
                 RECT wndRect;
                 GetWindowRect(hWnd, &wndRect);
@@ -35,13 +37,14 @@ namespace mini::wnd
 
                 POINT point;
                 GetCursorPos(&point);
-                global::mouse_dx = point.x - (cx);
+                global::mouse_x_prev = (s32)point.x;
+                global::mouse_y_prev = (s32)point.x;
+
+                global::mouse_dx = point.x - (cx); //TODO: mouse delta only in ui mode? otherwise need ref point
                 global::mouse_dy = point.y - (cy);
                 SetCursorPos(cx, cy);
             }
         }
-
-        
     }
 
     inline void UpdateEvents(HWND hWnd)

@@ -62,6 +62,9 @@ namespace mini::res
 
         void Update(const double dt, const rendering::Camera& camera, ecs::ECS& ecs)
         {   
+            if (app::global::inputMode != app::global::UI_Mode)
+                return;
+
             editing.dirtyQuadrants.Clear();
 
             if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
@@ -73,18 +76,17 @@ namespace mini::res
             if (editing.isDragging == true)
                 Dragging();
 
-            if (wnd::HasEvent<wnd::F3, wnd::Pressed>())
+            if (wnd::HasEvent<wnd::F5, wnd::Pressed>())
                 Save();
-            if (wnd::HasEvent<wnd::F4, wnd::Pressed>())
+            if (wnd::HasEvent<wnd::F6, wnd::Pressed>())
                 Load();
+            if (wnd::HasEvent<wnd::F7, wnd::Pressed>())
+                Stiching();
 
             if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) editing.quadrantIdx = 0;
             if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) editing.quadrantIdx = 1;
             if (wnd::HasEvent<wnd::N2, wnd::Pressed>()) editing.quadrantIdx = 2;
             if (wnd::HasEvent<wnd::N3, wnd::Pressed>()) editing.quadrantIdx = 3;
-
-            if (wnd::HasEvent<wnd::F5, wnd::Pressed>())
-                Stiching();
         }
 
         void TestIntersectionAndPressed(const rendering::Camera& camera)

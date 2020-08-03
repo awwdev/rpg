@@ -43,10 +43,9 @@ namespace mini::wnd
 
         inline u32 window_w, window_h;
         inline u32 mouse_wx, mouse_wy; //window
-        inline s32 mouse_dx, mouse_dy; //delta
         inline s32 mouse_scroll_delta;
-
-        inline bool ui_debug_mode = true;
+        inline s32 mouse_dx, mouse_dy; //delta
+        inline s32 mouse_x_prev, mouse_y_prev;
 
         inline box::Array<EventType, 10> frameEvents; //tmp (internal usage mostly)
     }

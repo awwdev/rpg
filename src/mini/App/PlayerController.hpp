@@ -4,8 +4,8 @@
 #include "mini/ECS/ECS.hpp"
 #include "mini/Math/Matrix.hpp"
 #include "mini/window/WindowEvents.hpp"
+#include "mini/Rendering/Camera.hpp"
 
-//TODO: move somewhere else 
 namespace mini::app
 {
     struct PlayerController
@@ -21,9 +21,9 @@ namespace mini::app
             ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::MeshType::PrimitiveCube);
         }
 
-        void Update(ecs::ECS& ecs, const double dt)
+        void Update(ecs::ECS& ecs, const double dt, rendering::Camera& camera)
         {
-            if (wnd::global::ui_debug_mode) return;
+            if (app::global::inputMode == app::global::UI_Mode) return;
 
             using namespace math;
 
@@ -39,16 +39,12 @@ namespace mini::app
             playerTransform.transform[3][0] += move[X];
             playerTransform.transform[3][1] += move[Y];
             playerTransform.transform[3][2] += move[Z];
-        }
 
-        const auto GetView(const ecs::ECS& ecs) const 
-        {
-            auto& playerTransform = ecs.arrays.transforms.Get(playerID);
-            return math::LookAt({1, -10, 0}, {
+            camera.target = {
                 playerTransform.transform[3][0],    
                 playerTransform.transform[3][1],    
-                playerTransform.transform[3][2],    
-            });
+                playerTransform.transform[3][2],
+            };
         }
 
     };

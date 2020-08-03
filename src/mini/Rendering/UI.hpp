@@ -11,6 +11,7 @@
 #include "mini/Box/String.hpp"
 #include "mini/Rendering/Camera.hpp"
 #include "mini/ECS/ComponentArray.hpp"
+#include "mini/App/Input.hpp"
 
 #include <charconv>
 #undef DrawText
@@ -40,19 +41,6 @@ namespace mini::app::ui
         BLACK5,
     };
 
-    inline void Update()
-    {
-        if (wnd::HasEvent<wnd::F1, wnd::Pressed>())
-            wnd::global::ui_debug_mode = !wnd::global::ui_debug_mode;
-        if (wnd::global::ui_debug_mode == false) {
-            RECT wndRect;
-            GetWindowRect(GetActiveWindow(), &wndRect); //bit hacked
-            const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
-            const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
-            SetCursorPos(cx, cy);
-        }
-    }
-    
     inline void DrawTextCentered(
         RenderGraph& renderGraph,
         const utils::Rect<float>& rect, 

@@ -16,6 +16,7 @@
 #include "mini/Rendering/Sun.hpp"
 
 #include "mini/App/PlayerController.hpp"
+#include "mini/App/Input.hpp"
 
 namespace mini::app
 {
@@ -42,25 +43,20 @@ namespace mini::app
         void Update(const double dt, res::HostResources& hostRes)
         {
             renderGraph.Clear();
+            app::UpdateInputMode();
+            camera.Update(dt);
             
             //? META
-            ui::Update();
-            camera.Update(dt);
             hostRes.terrain.Update(dt, camera, ecs);
             sun.Update(ecs, dt);
-            playerController.Update(ecs, dt);
-
-
-            if (wnd::HasEvent<wnd::F2, wnd::Pressed>()) //TODO: move into ui
-                renderGraph.terrain_wire_mode = ! renderGraph.terrain_wire_mode;
+            playerController.Update(ecs, dt, camera);
 
             //? ECS
             ecs::S_Render(ecs.arrays, dt, renderGraph);
 
             //? UI
             ui::DrawFPS(renderGraph); 
-            if (wnd::global::ui_debug_mode)
-            {
+            if (app::global::UI_Mode)  {
                 ui::DrawConsole(renderGraph);
                 ui::DrawRenderStats(renderGraph);
                 ui::DrawCameraPos(renderGraph, camera);

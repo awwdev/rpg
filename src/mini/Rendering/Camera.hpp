@@ -4,6 +4,7 @@
 #include "mini/Window/WindowEvents.hpp"
 #include "mini/Math/Matrix.hpp"
 #include "mini/Box/Optional.hpp"
+#include "mini/App/Input.hpp"
 #undef far
 #undef near
 
@@ -22,8 +23,13 @@ namespace mini::rendering
         float fov       = 45;
         float scrollSpd = 0.1f;
 
+        math::Vec3f target = {};
+
         void Update(const double dt)
         {
+            if (app::global::inputMode != app::global::FlyMode)
+                return;
+
             using namespace math;
 
             movNorm = {};
@@ -33,10 +39,8 @@ namespace mini::rendering
             if(wnd::HasEvent<wnd::S, wnd::PressedOrHeld>()) { movNorm[Z] -= 1; }
             NormalizeThis(movNorm);
 
-            if (wnd::global::ui_debug_mode == false) {
-                rotTarget[Y] += wnd::global::mouse_dx * mouseSpd;
-                rotTarget[X] += wnd::global::mouse_dy * mouseSpd;
-            }
+            rotTarget[Y] += wnd::global::mouse_dx * mouseSpd;
+            rotTarget[X] += wnd::global::mouse_dy * mouseSpd;
 
             const auto qX = QuatAngleAxis(+rotTarget[X] * dirSpd, math::Vec3f{1, 0, 0});
             const auto qY = QuatAngleAxis(-rotTarget[Y] * dirSpd, math::Vec3f{0, 1, 0});
@@ -44,10 +48,7 @@ namespace mini::rendering
             NormalizeThis(qRot);
 
             const auto movDir = math::QuatMultVec(qRot, movNorm);
-
-            if (wnd::global::ui_debug_mode == false) {
-                pos = pos + (movDir * movSpd * (float)dt);
-            }
+            pos = pos + (movDir * movSpd * (float)dt);
 
             //? scroll
             if (wnd::global::events[wnd::Mouse_Scroll] == wnd::Set) {
@@ -57,6 +58,14 @@ namespace mini::rendering
 
         math::Mat4f GetView() const 
         {
+            if (app::global::inputMode == app::global::PlayMode)
+            {
+                const auto mLook = math::LookAt({1, -10, 0}, target);
+                return mLook;
+            }
+
+            //flymode/ui mode 
+            //TODO: (may want to keep last pos even from play mode)
             using namespace math;
             const Mat4f mPos {
                 1, 0, 0, 0,
