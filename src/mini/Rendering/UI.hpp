@@ -117,10 +117,6 @@ namespace mini::app::ui
         const bool isMouseOnBar    = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, bar);
         const bool isMouseOnResizer= utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, resizer);
 
-        //const bool isMouseHeld     = wnd::IsPressed(wnd::EventType::Mouse_Left);
-        //const bool isMousePressed  = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Pressed);
-        //const bool isMouseReleased = wnd::CheckEvent(wnd::EventType::Mouse_Left, wnd::EventState::Released);
-
         //? DRAGGING
         if (HasEvent<Mouse_ButtonLeft, Released>())
         {

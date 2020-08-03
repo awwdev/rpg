@@ -27,19 +27,21 @@ namespace mini::wnd
             global::chars.Clear();
             global::frameEvents.Clear();
 
-            const auto cx = global::window_w/2;
-            const auto cy = global::window_h/2;
+            const auto cx = global::window_x + global::window_w/2;
+            const auto cy = global::window_y + global::window_h/2;
 
             POINT point;
             GetCursorPos(&point);
-            global::mouse_dx = (s32)point.x - global::mouse_wx; 
-            global::mouse_dy = (s32)point.y - global::mouse_wy;
-            global::mouse_wx = (s32)point.x;
-            global::mouse_wy = (s32)point.y;
+            global::mouse_dx = (s32)point.x - global::mouse_x; 
+            global::mouse_dy = (s32)point.y - global::mouse_y;
+            global::mouse_x  = (s32)point.x;
+            global::mouse_y  = (s32)point.y;
 
             if (app::global::inputMode == app::global::FlyMode ||
                 app::global::inputMode == app::global::PlayMode) {
                 SetCursorPos(cx, cy);
+                global::mouse_x = cx;
+                global::mouse_y = cy;
             }
 
         }
@@ -75,6 +77,14 @@ namespace mini::wnd
         global::window_h = HIWORD(lParam);
     }
 
+    inline void WmMove(WPARAM wParam, LPARAM lParam)
+    {
+        if (!wnd::global::frameEvents.Contains(Window_Move))
+            AddEvent<Window_Move>();
+        wnd::global::window_x = (s32) LOWORD(lParam); 
+        wnd::global::window_y = (s32) HIWORD(lParam);
+    }
+
     inline void WmClose(WPARAM, WPARAM)
     {
         AddEvent<Window_Close>();
@@ -82,10 +92,9 @@ namespace mini::wnd
 
     inline void WmMouseMove(WPARAM wParam, LPARAM lParam)
     {
-        TODO: do we need this?
-        //AddEvent<Mouse_Move>();
-        //global::mouse_wx = GET_X_LPARAM(lParam);
-        //global::mouse_wy = GET_Y_LPARAM(lParam);
+        AddEvent<Mouse_Move>();
+        global::mouse_wx = GET_X_LPARAM(lParam);
+        global::mouse_wy = GET_Y_LPARAM(lParam);
     }
 
     inline void WmMouseWheel(WPARAM wParam, LPARAM lParam)
@@ -142,6 +151,7 @@ namespace mini::wnd
         {
             case WM_SIZE:        WmSize (wParam, lParam);               break;
             case WM_CLOSE:       WmClose(wParam, lParam);               break;
+            case WM_MOVE:        WmMove(wParam, lParam);                break;
             case WM_MOUSEMOVE:   WmMouseMove(wParam, lParam);           break;
             case WM_MOUSEWHEEL:  WmMouseWheel(wParam, lParam);          break;
             case WM_LBUTTONDOWN: WmLButtonDown(wParam, lParam);         break;

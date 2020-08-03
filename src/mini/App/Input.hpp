@@ -7,7 +7,7 @@ namespace mini::app
 {
     namespace global  
     {
-        enum InputMode { PlayMode, UI_Mode, FlyMode } inputMode;
+        enum InputMode { PlayMode, UI_Mode, FlyMode } inputMode = UI_Mode;
     }
 
     inline void UpdateInputMode()

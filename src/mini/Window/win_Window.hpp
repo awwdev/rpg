@@ -38,8 +38,8 @@ namespace mini::wnd
                 className,
                 wndName,
                 WS_OVERLAPPEDWINDOW,
-                300,
-                300,
+                300, //wnd x
+                300, //wnd y
                 static_cast<int>(width),
                 static_cast<int>(height),
                 NULL,
@@ -49,6 +49,7 @@ namespace mini::wnd
             );
 
             ShowWindow(hWnd, SW_SHOWDEFAULT);
+            //this probably trigger window size message, which sets global window size
             SetCursor(LoadCursor(NULL, IDC_ARROW));
 
             //make mouse delta 0 at the beginning
@@ -58,6 +59,10 @@ namespace mini::wnd
             const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
             SetCursorPos(cx, cy);
             wnd::global::mouse_dx = wnd::global::mouse_dy = 0;
+
+            wnd::global::window_x = (s32)wndRect.left;
+            wnd::global::window_y = (s32)wndRect.top;
+            //window size and window screen size are not same
         }
 
         ~Window()

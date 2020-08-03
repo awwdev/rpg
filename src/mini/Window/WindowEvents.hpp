@@ -22,6 +22,7 @@ namespace mini::wnd
         Mouse_Scroll,
         Window_Close,
         Window_Resize,
+        Window_Move,
 
         ENUM_END
     };
@@ -41,10 +42,12 @@ namespace mini::wnd
         inline EventState events [EventType::ENUM_END];
         inline box::String<10> chars;
 
+        inline s32 window_x, window_y;
         inline u32 window_w, window_h;
         inline s32 mouse_scroll_delta;
         inline s32 mouse_dx, mouse_dy; //delta
         inline u32 mouse_wx, mouse_wy; //window
+        inline s32 mouse_x,  mouse_y;  //screen
 
         inline box::Array<EventType, 10> frameEvents; //tmp (internal usage mostly)
     }
