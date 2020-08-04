@@ -15,7 +15,7 @@ struct EgoCamera
     math::Mat4f perspective;
     math::Mat4f view;
 
-    float mouseSpeed = 0.75f;
+    float mouseSpeed = 0.3f;
     float fov        = 45;
     float scrollSpd  = 0.1f;
     float moveSpeed  = 10;
@@ -88,24 +88,22 @@ struct EgoCamera
 struct ThirdCamera
 {
     math::Vec3f rotation;
-
-    math::Vec3f targetPosition;
-    math::Vec3f targetOrientation;
     float distance = 7;
 
     math::Mat4f perspective;
     math::Mat4f view;
+    math::Quatf qRot;
 
     float mouseSpeed = 0.03f;
     float fov        = 45;
-    float scrollSpd  = 0.1f;
+    float scrollSpd  = 0.01f;
 
     ThirdCamera()
     {
         UpdatePerspective();
     }
 
-    void Update(const double dt)
+    void Update(const math::Vec3f orientation, const math::Vec3f position, const double dt)
     {
         using namespace math;
 
@@ -119,23 +117,29 @@ struct ThirdCamera
 
         const auto qX = QuatAngleAxis(+rotation[X], math::Vec3f{1, 0, 0});
         const auto qY = QuatAngleAxis(-rotation[Y], math::Vec3f{0, 1, 0});
-        const auto qRot = math::QuatMultQuat(qY, qX);
+        qRot = math::QuatMultQuat(qY, qX);
+        auto mRot = QuatToMat(qRot);
 
         if (wnd::HasEvent<wnd::Mouse_Scroll>()) {
-            distance += wnd::global::mouse_scroll_delta * scrollSpd;
+            distance -= wnd::global::mouse_scroll_delta * scrollSpd;
         }
 
-        auto pos = targetPosition + (targetOrientation * -distance);
+        math::Vec3f orientVec = (orientation * distance);
+        math::Mat4f mOrientation = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            orientVec[X], orientVec[Y], orientVec[Z], 1,
+        };
 
         view = {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
-            pos[X], pos[Y], pos[Z], 1,
+            -position[X], -position[Y], -position[Z], 1,
         };
 
-        const auto mRot = QuatToMat(qRot);
-        view = view * mRot;
+        view = (mOrientation * mRot) * view;
     }
 
     void UpdatePerspective()
