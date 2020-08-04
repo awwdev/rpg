@@ -28,30 +28,6 @@ namespace mini::vk
         };
     }
 
-    inline VkShaderModule CreateShaderModule(VkDevice device, chars_t path)
-    {
-        std::ifstream file(path, std::ios::ate | std::ios::binary);
-        mini::Assert(file.is_open(), "cannot open shader file");
-
-        const uint32_t size = (uint32_t)file.tellg();
-        auto ptrBuffer = mini::mem::ClaimBlock<char[10000]>(); //! capacity
-        //char buffer[10000]; //!be aware of capacity, maybe use allocator to not exhaust stack
-        file.seekg(std::ios::beg);
-        file.read(*ptrBuffer, size);
-
-        const VkShaderModuleCreateInfo moduleInfo {
-            .sType      = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-            .pNext      = nullptr,
-            .flags      = 0,
-            .codeSize   = size,
-            .pCode      = reinterpret_cast<const uint32_t*>(*ptrBuffer)
-        };
-
-        VkShaderModule mod;
-        VK_CHECK(vkCreateShaderModule(device, &moduleInfo, nullptr, &mod));
-        return mod;
-    }
-
     //? PRESENTING
 
     inline VkPresentInfoKHR PresentInfo(VkSemaphore& rendered, VkSwapchainKHR& swapchain, uint32_t& imgIndex)

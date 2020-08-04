@@ -5,7 +5,6 @@
 #include "mini/Box/EnumMap.hpp"
 #include "mini/Box/StringMap.hpp"
 #include "mini/Box/String.hpp"
-#include "mini/Memory/Allocator.hpp"
 #include "mini/Utils/Algorithms.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Utils/CharsView.hpp"

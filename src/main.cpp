@@ -56,3 +56,6 @@ int WINAPI wWinMain(
     system("pause");
 
 } //main end
+
+//TODO: skydome
+//TODO: terrain refactor

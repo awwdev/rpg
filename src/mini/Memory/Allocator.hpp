@@ -1,226 +1,163 @@
 //https://github.com/awwdev
 
-/*
-## mini::mem
-
-- global functions, simple usage
-- compile time (capacity based system)
-    - user defines blocks at compile time in one place (see array allocs[])
-    - when claiming memory, the appropriate block size will be figured out at compile time
-- BlockPtr
-    - is returned when claiming memory
-    - holds data about the used block and will "free" the block when destroyed (RAII)
-- free / used blocks are represented by one bitset
-- printable
-*/
-
 #pragma once
 #include "mini/Utils/Types.hpp"
 #include "mini/Box/Bitset.hpp"
-#include "mini/Box/String.hpp"
 #include "mini/Debug/Logger.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
 #include "psapi.h"
-#undef max
-
 
 namespace mini::mem
 {
-    struct AllocInfo
+
+struct BlockArray
+{
+    u32 size;
+    u32 count;
+};
+
+//?-------------------------------------
+//?DEFINE BLOCKS HERE (keep sorted!)
+constexpr BlockArray BLOCK_ARRAYS [] {
+    { .size =          1, .count = 1 },
+    { .size =      1'000, .count = 5 },
+    { .size =     10'000, .count = 5 },
+    { .size =    100'000, .count = 5 },
+    { .size =  1'000'000, .count = 5 },
+    { .size = 10'000'000, .count = 5 },
+};
+//?-------------------------------------
+
+constexpr auto BLOCK_ARRAY_COUNT = ARRAY_COUNT(BLOCK_ARRAYS);
+constexpr auto BLOCK_COUNT_TOTAL = []() constexpr {
+    std::size_t count = 0;
+    FOR_CARRAY(BLOCK_ARRAYS, i)
+        count += BLOCK_ARRAYS[i].count;
+    return count;
+}();
+
+constexpr auto ALLOCATION_SIZE = []() constexpr {
+    std::size_t size = 0;
+    FOR_CARRAY(BLOCK_ARRAYS, i)
+        size += BLOCK_ARRAYS[i].size * BLOCK_ARRAYS[i].count;
+    return size;
+}();
+
+namespace priv 
+{
+    //all blocks are successive 
+    inline box::Bitset<BLOCK_COUNT_TOTAL> blocksUsed;
+    inline u8* blockArrayPtrs [BLOCK_ARRAY_COUNT]; //u8 for ptr arithmetics 
+
+    template<u32 ARRAY_INDEX>
+    u8* BlockAddress(const u32 blockIdx) 
     {
-        u32 blockSize;
-        u32 blockCount;
-    };
-
-    //!--------------------------------------
-    //!define blocks at compile time (size and count) 
-    //!KEEP IT SORTED BY SIZE
-    constexpr AllocInfo ALLOC_INFOS[] = {
-        { 100, 1    },     //scene stack
-        { 6'000,  1 },     
-        { 12'000, 4 },     //shader char buffer + 32*32*4 tex array (containing 2 textures)
-        { 60'000, 2 },     //vk renderer
-        { 10'000'000, 2 }  //1024*1024*4 tex array
-    };
-    //!--------------------------------------
-
-
-    constexpr auto ALLOC_COUNT = ARRAY_COUNT(ALLOC_INFOS);
-    constexpr auto BLOCK_COUNT = []() constexpr {
-        std::size_t count = 0;
-        for(auto i = 0; i < ALLOC_COUNT; ++i) {
-            count += ALLOC_INFOS[i].blockCount;
-        }
-        return count;
-    }();
-    constexpr auto ALLOC_SIZE = []() constexpr { 
-        std::size_t size = 0;
-        for(auto i = 0; i < ALLOC_COUNT; ++i) {
-            size += ALLOC_INFOS[i].blockSize * ALLOC_INFOS[i].blockCount;
-        }
-        return size;
-    }();
-
-    constexpr  u32 GetAllocIdxFromBlockId(const u32 blockId)
-    {
-        u32 currBlockCount = 0;
-        for(u32 i = 0; i < ALLOC_COUNT; ++i)
-        {
-            currBlockCount += ALLOC_INFOS[i].blockCount;
-            if (blockId < currBlockCount)
-                return i;
-        }
-        ERR("current block count wrong");
-        return 0;
+        constexpr auto blockSize = BLOCK_ARRAYS[ARRAY_INDEX].size;
+        return priv::blockArrayPtrs[ARRAY_INDEX] + (blockIdx * blockSize);
     }
-
-
-    //?GLOBAL ----------------------------------------------
-    inline u8* allocPtrs [ALLOC_COUNT];          //index based
-    inline box::Bitset<BLOCK_COUNT> blocksUsed; //all blocks
-    //inline box::Map<box::String<200>, BLOCK_COUNT> blockTypes;
-    //?-----------------------------------------------------
-
-
-    inline void GlobalAllocate()
-    {
-        auto heapPtr = VirtualAlloc(NULL, ALLOC_SIZE, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-
-        allocPtrs[0] = (u8*)heapPtr;
-        LOG("allocation:", ALLOC_INFOS[0].blockSize * ALLOC_INFOS[0].blockCount, (void*)allocPtrs[0]);
-
-        for(auto i = 1; i < ALLOC_COUNT; ++i) {
-            allocPtrs[i] = (u8*)heapPtr + ALLOC_INFOS[i-1].blockSize * ALLOC_INFOS[i-1].blockCount; 
-            LOG("allocation:", ALLOC_INFOS[i].blockSize * ALLOC_INFOS[i].blockCount, (void*)allocPtrs[i]);
-        }
-    }
-
-
-    inline void GlobalDeallocate()
-    {
-        VirtualFree(allocPtrs[0], 0, MEM_RELEASE);
-    }
-
-    enum class AutoClaim { Yes, No };
 
     inline void FreeBlock(const u32 blockId)
     {
-        //LOG("BLOCK FREE: ", typeid(T).name()); //lookup emplaced names
-        blocksUsed.Flip(blockId); //since its global we dont need to store a ref to the bitset
-        //blockTypes.Remove(blockId);
+        priv::blocksUsed.Flip(blockId);
+        //LOG("FreeBlock", blockId);
+        //dtor call of object is done in BlockPtr
+    }
+}
+
+inline void GlobalAllocate()
+{
+    priv::blockArrayPtrs[0] = (u8*)VirtualAlloc(NULL, ALLOCATION_SIZE, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    LOG("Block array:", 0, BLOCK_ARRAYS[0].size * BLOCK_ARRAYS[0].count, (void*)priv::blockArrayPtrs[0]);
+
+    for(auto i = 1; i < BLOCK_ARRAY_COUNT; ++i) {
+        priv::blockArrayPtrs[i] = priv::blockArrayPtrs[i-1] + BLOCK_ARRAYS[i-1].size * BLOCK_ARRAYS[i-1].count; 
+        LOG("Block array:", i, BLOCK_ARRAYS[i].size * BLOCK_ARRAYS[i].count, (void*)priv::blockArrayPtrs[i]);
+    }
+}
+
+inline void GlobalDeallocate()
+{
+    VirtualFree(priv::blockArrayPtrs[0], 0, MEM_RELEASE);
+}
+
+template<class T>
+struct BlockPtr
+{
+    using DATA_T = T;
+
+    T* ptr = nullptr;
+    u32 blockId = 0;
+
+    T* operator->() { return  ptr; }
+    T& operator* () { return *ptr; }
+
+    T&       Get()       { return *ptr; }
+    const T& Get() const { return *ptr; }
+
+    //array access
+    auto&       operator[](const std::size_t i)        { return (*ptr)[i]; };
+    const auto& operator[](const std::size_t i) const  { return (*ptr)[i]; };
+
+    BlockPtr(T* const pPtr, const u32 pBlockId)
+        : ptr     { pPtr }
+        , blockId { pBlockId } 
+    {}
+
+    BlockPtr(const BlockPtr&)            = delete;
+    BlockPtr& operator=(const BlockPtr&) = delete;
+
+    BlockPtr(BlockPtr&& other) 
+        : ptr     { other.ptr }
+        , blockId { other.blockId } 
+    { 
+        other.ptr = nullptr;
     }
 
-
-    template<class T>
-    struct BlockPtr
-    {
-        using DATA_T = T;
-
-        T* ptr = nullptr;
-        u32 blockId = 0;
-
-        T* operator->() { return ptr; }
-        T& operator* () { return *ptr;}
-
-        T&       Get()       { return *ptr; }
-        const T& Get() const { return *ptr; }
-
-        //array access
-        auto&       operator[](const std::size_t i)        { return (*ptr)[i]; };
-        const auto& operator[](const std::size_t i) const  { return (*ptr)[i]; };
-
-        explicit BlockPtr(const AutoClaim doAutoClaim = AutoClaim::No)
-        {
-            if (doAutoClaim == AutoClaim::Yes)
-                ClaimBlock(*this);
-        };
-        BlockPtr(T* const pPtr, const u32 pBlockId)
-            : ptr     { pPtr }
-            , blockId { pBlockId } 
-        {}
-
-        BlockPtr(const BlockPtr&)            = delete;
-        BlockPtr& operator=(const BlockPtr&) = delete;
-
-        BlockPtr(BlockPtr&& other) 
-            : ptr     { other.ptr }
-            , blockId { other.blockId } 
-        { 
-            other.ptr = nullptr;
-        }
-
-        BlockPtr& operator=(BlockPtr&& other)           
-        { 
-            ptr         = other.ptr; 
-            blockId     = other.blockId;
-            other.ptr   = nullptr; 
-            return *this; 
-        }
-
-        ~BlockPtr()
-        { 
-            if (ptr == nullptr) return;
-            ptr->~T();
-            FreeBlock(blockId);
-        }
-    };
-
-
-    template<class T, class... CtorArgs>
-    auto ClaimBlock(CtorArgs&&... args)
-    {
-        struct FittingAlloc 
-        { 
-            u32 allocIdx; 
-            u32 allocBitBegin;
-        };
-
-        //!WHEN YOU GET A COMPILE ERROR HERE, ITS PROBABLY BECAUSE THERE IS NO BLOCK SIZE
-        constexpr auto FIT = []() constexpr -> FittingAlloc {
-            u32 allocBitBegin = 0;
-            for(u32 i=0; i<ALLOC_COUNT; ++i) 
-            {
-                if (ALLOC_INFOS[i].blockSize >= (sizeof(T) + alignof(T))) //!assumes sorted
-                    return { i, allocBitBegin };
-                allocBitBegin += ALLOC_INFOS[i].blockCount;
-            }
-            //will not compile when hitting this point
-        }();
-
-        const auto freeBlock = blocksUsed.FindFirstFreeBit(FIT.allocBitBegin); //start search at the alloc
-        blocksUsed.Flip(freeBlock); //mark used
-
-        //blockTypes.Set(freeBlock, typeid(T).name());
-
-        constexpr auto blockSize = ALLOC_INFOS[FIT.allocIdx].blockSize;
-        auto* ptr     = allocPtrs[FIT.allocIdx] + ((freeBlock - FIT.allocBitBegin) * blockSize);
-        auto* aligned = (u8*) (((std::uintptr_t)ptr + (alignof(T) - 1)) & ~(alignof(T) - 1)); //next aligned address
-        
-        //LOG("BLOCK CLAIM: ", typeid(T).name(), blockSize, (void*)ptr);
-
-        T* obj = nullptr;
-        if constexpr(std::is_array_v<T>)
-        {
-            obj = new (aligned) T[sizeof(T)]; //!flawed?
-        }
-        else 
-        {
-            obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
-        }
-
-        return BlockPtr<T> { obj, freeBlock };
+    BlockPtr& operator=(BlockPtr&& other)           
+    { 
+        ptr         = other.ptr; 
+        blockId     = other.blockId;
+        other.ptr   = nullptr; 
+        return *this; 
     }
 
-
-    template<class T, class... CtorArgs>
-    void ClaimBlock(BlockPtr<T>& blockPtr, CtorArgs&&... args)
-    {
-        blockPtr = ClaimBlock<T>(args...);
+    ~BlockPtr()
+    { 
+        if (ptr == nullptr) return;
+        ptr->~T();
+        priv::FreeBlock(blockId);
     }
+};
 
+template<class T, class... CtorArgs>
+auto ClaimBlock(CtorArgs&&... args)
+{
+    struct FittingBlockArray { u32 arrayIdx; u32 bitIdx; };
+
+    constexpr auto FITTING_BLOCK_ARRAY = []() constexpr -> FittingBlockArray {
+        u32 bitIdx = 0;
+        for(u32 i = 0; i < BLOCK_ARRAY_COUNT; ++i) {
+            if (BLOCK_ARRAYS[i].size >= (sizeof(T) + alignof(T))) //max
+                return FittingBlockArray { i, bitIdx };
+            bitIdx += BLOCK_ARRAYS[i].count;
+        }
+        //!no appropriate block size found (compile time error)
+    }();
+
+    const auto freeBlockId = priv::blocksUsed.FindFirstFreeBit(FITTING_BLOCK_ARRAY.bitIdx);
+    priv::blocksUsed.Flip(freeBlockId);
+
+    u8* blockAddress = priv::BlockAddress<FITTING_BLOCK_ARRAY.arrayIdx>(freeBlockId - FITTING_BLOCK_ARRAY.bitIdx);
+    u8* aligned      = (u8*) (((std::uintptr_t)blockAddress + (alignof(T) - 1)) & ~(alignof(T) - 1));
+    
+    T* obj;
+    if constexpr(std::is_array_v<T>) obj = new (aligned) T [sizeof(T)];
+    else                             obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
+
+    //LOG("ClaimBlock", FITTING_BLOCK_ARRAY.arrayIdx, freeBlockId - FITTING_BLOCK_ARRAY.bitIdx, freeBlockId);
+    return BlockPtr<T> { obj, freeBlockId };
+}
 
 }//ns
-
-//TODO: RUNTIME VERSION OF CLAIMBLOCK ?

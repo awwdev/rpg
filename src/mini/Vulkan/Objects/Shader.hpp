@@ -31,7 +31,7 @@ namespace mini::vk
             stageInfos.Clear();
         }
 
-        template<auto BUFFER_SIZE = 10000u>
+        template<auto BUFFER_SIZE = 8000u>
         void CreateShaderModule(chars_t path, const VkShaderStageFlagBits stage)
         {
             std::ifstream file(path, std::ios::ate | std::ios::binary);

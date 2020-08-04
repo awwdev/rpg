@@ -5,7 +5,6 @@
 #include "mini/Utils/PrimitiveMeshes.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/box/EnumMap.hpp"
-#include "mini/Memory/Allocator.hpp"
 
 namespace mini::res
 {
