@@ -92,6 +92,7 @@ struct ThirdCamera
 
     math::Mat4f perspective;
     math::Mat4f view;
+    math::Mat4f mRot;
     math::Quatf qRot;
 
     float mouseSpeed = 0.03f;
@@ -118,7 +119,7 @@ struct ThirdCamera
         const auto qX = QuatAngleAxis(+rotation[X], math::Vec3f{1, 0, 0});
         const auto qY = QuatAngleAxis(-rotation[Y], math::Vec3f{0, 1, 0});
         qRot = math::QuatMultQuat(qY, qX);
-        auto mRot = QuatToMat(qRot);
+        mRot = QuatToMat(qRot);
 
         if (wnd::HasEvent<wnd::Mouse_Scroll>()) {
             distance -= wnd::global::mouse_scroll_delta * scrollSpd;

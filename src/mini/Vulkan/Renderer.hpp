@@ -54,7 +54,7 @@ namespace mini::vk
             //resources.common_pushConsts.camera = scene.camera.GetOrthographic() * scene.sun.GetView();
             //resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.playerController.GetView(scene.ecs);
             //resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.camera.GetView();
-            
+
             //TODO: this should be handled somewhere else which is active
             if (app::global::inputMode == app::global::PlayMode)
                 resources.common_pushConsts.camera = scene.playerController.camera.perspective * scene.playerController.camera.view;

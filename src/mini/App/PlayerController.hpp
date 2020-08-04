@@ -15,6 +15,9 @@ struct PlayerController
     ecs::ID playerID = 0;
     float speed = 5.f;
     math::Vec3f orientation { 0, 0, -1 };
+    math::Vec3f position {};
+    math::Vec3f rotation {};
+
 
     void Create(ecs::ECS& ecs)
     {
@@ -38,17 +41,23 @@ struct PlayerController
         const auto movDir = math::QuatMultVec(camera.qRot, moveNorm);
         auto move = movDir * speed * (float)dt;
 
-        auto& playerTransform = ecs.arrays.transforms.Get(playerID);
-        playerTransform.transform[3][0] += move[X];
-        playerTransform.transform[3][2] += move[Z];
-
-        const math::Vec3f position = 
-        {
-            playerTransform.transform[3][0],
-            playerTransform.transform[3][1],
-            playerTransform.transform[3][2],
+        position = position + move;
+        math::Mat4f mTransform = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            position[X], 0, position[Z], 1,
         };
-        camera.Update(orientation, position, dt);
+        const auto qY = QuatAngleAxis(camera.rotation[Y], math::Vec3f{0, 1, 0});
+        const auto mRot = QuatToMat(qY);
+        const auto mOrient = mTransform * mRot;
+
+        auto& playerTransform = ecs.arrays.transforms.Get(playerID);
+        playerTransform.transform = mOrient;
+
+        
+        const math::Vec3f pos = { position[X], 0, position[Z] };
+        camera.Update(orientation, pos, dt);
     }
 };
     
