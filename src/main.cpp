@@ -34,6 +34,8 @@ int WINAPI wWinMain(
             vk::WindowHandle{window.hInstance, window.hWnd},
             *ptrHostResources);
 
+        mem::PrintAllocationHTML();
+
         //TODO: make stack for each scene type instead of one generic scene
         auto ptrGameScenes = mem::ClaimBlock<app::GameScene>();
 

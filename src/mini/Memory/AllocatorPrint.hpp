@@ -1,13 +1,16 @@
+//https://github.com/awwdev
+
 #pragma once
+#include "mini/Memory/Allocator.hpp"
 #include <fstream>
 
 namespace mini::mem
 {
-    inline void PrintAllocationHTML()
-    {
-        std::ofstream out("AllocationView.html");
+inline void PrintAllocationHTML()
+{
+    std::ofstream out("log/AllocationView.html");
 
-        out << R"(
+    out << R"(
 <!DOCTYPE html>
 <head>
     <title>Allocation View</title>
@@ -21,28 +24,33 @@ namespace mini::mem
 </head>
 <body>
 
-<div>
+<div><!-- blocks -->
 )";
-/*
-        u32 currAllocIdx = 0;
-        FOR_BITSET(blocksUsed, i)
-        {
-            const auto allocIdx = GetAllocIdxFromBlockId(i);
-            if (currAllocIdx != allocIdx)
-            {
-                currAllocIdx = allocIdx;
-                out << "<br>";
-            }
-            auto* blockType = blockTypes.GetValueOptional(i);
-            
-            out << "<a title='";
-            out << (blockType == nullptr ? "unused" : *blockType);
-            out << (blocksUsed.Test(i) ? "'>&#9639;</a>" : "'>&#9634;</a>"); //filled and not filled rect
+
+    idx_t currentArrayIdx = 0;
+    out << "<div width=100px>" << BLOCK_ARRAYS[currentArrayIdx].count << " | " << BLOCK_ARRAYS[currentArrayIdx].size << "</div>";
+    FOR_BITSET(priv::blocksUsed, i)
+    {
+        const auto nextArrayIdx = GetBlockArrayIdxFromBlockId(i);
+        if (currentArrayIdx != nextArrayIdx) {
+            currentArrayIdx = nextArrayIdx;
+            out << "<br>";//new line for a new array
+            out << "<div width=100px>" << BLOCK_ARRAYS[currentArrayIdx].count << " | " << BLOCK_ARRAYS[currentArrayIdx].size << "</div>";
         }
 
-        out << "</div></body>";
-*/
-
+        out << "<a title='BLOCK INFO'>";
+        out << (priv::blocksUsed.Test(i) ? "&#9639;" : "&#9634;");
+        out << "</a>";
     }
 
+    out << "</div></body>";
+
+}
+
 }//ns
+
+/* auto* blockType = blockTypes.GetValueOptional(i);
+        
+        out << "<a title='";
+        out << (blockType == nullptr ? "unused" : *blockType);
+        out << (blocksUsed.Test(i) ? "'>&#9639;</a>" : "'>&#9634;</a>"); //filled and not filled rect*/

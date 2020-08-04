@@ -21,7 +21,6 @@ struct BlockArray
 //?-------------------------------------
 //?DEFINE BLOCKS HERE (keep sorted!)
 constexpr BlockArray BLOCK_ARRAYS [] {
-    { .size =          1, .count = 1 },
     { .size =      1'000, .count = 5 },
     { .size =     10'000, .count = 5 },
     { .size =    100'000, .count = 5 },
@@ -158,6 +157,18 @@ auto ClaimBlock(CtorArgs&&... args)
 
     //LOG("ClaimBlock", FITTING_BLOCK_ARRAY.arrayIdx, freeBlockId - FITTING_BLOCK_ARRAY.bitIdx, freeBlockId);
     return BlockPtr<T> { obj, freeBlockId };
+}
+
+inline idx_t GetBlockArrayIdxFromBlockId(const idx_t blockId)
+{
+    idx_t blockCount = 0;
+    FOR_CARRAY(BLOCK_ARRAYS, i){
+        blockCount += BLOCK_ARRAYS[i].count;
+        if (blockId < blockCount)
+            return i;
+    }
+    ERR("cannot get block array idx from block id");
+    return 0;
 }
 
 }//ns

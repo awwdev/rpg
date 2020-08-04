@@ -6,6 +6,9 @@
 
 namespace mini::box
 {
+    #define FOR_BITSET(bitset, i) for(idx_t i = 0; i < bitset.BITS; ++i)
+    
+
     constexpr bool USE_BITSET_ASSERTS = true;
 
     inline void BitsetAssert(const bool condition, chars_t msg = "bitset assertion failed")
