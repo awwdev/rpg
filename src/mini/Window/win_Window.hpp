@@ -60,6 +60,11 @@ namespace mini::wnd
             SetCursorPos(cx, cy);
             wnd::global::mouse_dx = wnd::global::mouse_dy = 0;
 
+            POINT point;
+            GetCursorPos(&point);
+            wnd::global::mouse_x = point.x;
+            wnd::global::mouse_y = point.y;
+
             wnd::global::window_x = (s32)wndRect.left;
             wnd::global::window_y = (s32)wndRect.top;
             //window size and window screen size are not same

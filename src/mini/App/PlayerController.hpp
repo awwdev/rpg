@@ -4,49 +4,46 @@
 #include "mini/ECS/ECS.hpp"
 #include "mini/Math/Matrix.hpp"
 #include "mini/window/WindowEvents.hpp"
-#include "mini/Rendering/Camera.hpp"
+#include "mini/Rendering/Cameras.hpp"
 
 namespace mini::app
 {
-    struct PlayerController
+struct PlayerController
+{
+    rendering::ThirdCamera camera;
+
+    ecs::ID playerID = 0;
+    float speed = 5.f;
+    math::Vec3f orientation { 0, -1, -1 };
+
+    void Create(ecs::ECS& ecs)
     {
-        ecs::ID playerID = 0;
+        playerID = ecs.AddEntity();
+        ecs.arrays.AddComponent<ecs::ComponentType::Transform>(playerID, math::Identity4());
+        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::MeshType::PrimitiveCube);
+    }
 
-        float speed = 5.f;
+    void Update(const double dt, ecs::ECS& ecs)
+    {
+        if (app::global::inputMode != app::global::PlayMode) return;
 
-        void Create(ecs::ECS& ecs)
-        {
-            playerID = ecs.AddEntity();
-            ecs.arrays.AddComponent<ecs::ComponentType::Transform>(playerID, math::Identity4());
-            ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::MeshType::PrimitiveCube);
-        }
+        using namespace math;
 
-        void Update(ecs::ECS& ecs, const double dt, rendering::Camera& camera)
-        {
-            if (app::global::inputMode == app::global::UI_Mode) return;
+        Vec3f moveNorm {};
+        if (wnd::HasEvent<wnd::W, wnd::PressedOrHeld>()) moveNorm[Z] += 1;
+        if (wnd::HasEvent<wnd::A, wnd::PressedOrHeld>()) moveNorm[X] += 1;
+        if (wnd::HasEvent<wnd::S, wnd::PressedOrHeld>()) moveNorm[Z] -= 1;
+        if (wnd::HasEvent<wnd::D, wnd::PressedOrHeld>()) moveNorm[X] -= 1;
+        NormalizeThis(moveNorm);
+        auto move = moveNorm * speed * (float)dt;
 
-            using namespace math;
+        auto& playerTransform = ecs.arrays.transforms.Get(playerID);
+        playerTransform.transform[3][0] += move[X];
+        playerTransform.transform[3][1] += move[Y];
+        playerTransform.transform[3][2] += move[Z];
 
-            Vec3f moveNorm {};
-            if (wnd::HasEvent<wnd::W, wnd::PressedOrHeld>()) moveNorm[Z] += 1;
-            if (wnd::HasEvent<wnd::A, wnd::PressedOrHeld>()) moveNorm[X] -= 1;
-            if (wnd::HasEvent<wnd::S, wnd::PressedOrHeld>()) moveNorm[Z] -= 1;
-            if (wnd::HasEvent<wnd::D, wnd::PressedOrHeld>()) moveNorm[X] += 1;
-            NormalizeThis(moveNorm);
-            auto move =  moveNorm * speed * (float)dt;
-
-            auto& playerTransform = ecs.arrays.transforms.Get(playerID);
-            playerTransform.transform[3][0] += move[X];
-            playerTransform.transform[3][1] += move[Y];
-            playerTransform.transform[3][2] += move[Z];
-
-            camera.target = {
-                playerTransform.transform[3][0],    
-                playerTransform.transform[3][1],    
-                playerTransform.transform[3][2],
-            };
-        }
-
-    };
+        camera.Update(dt);
+    }
+};
     
 }//ns

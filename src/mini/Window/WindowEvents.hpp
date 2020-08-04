@@ -53,7 +53,7 @@ namespace mini::wnd
     }
 
     //abstraction over global access
-    template<auto type, auto state> bool HasEvent()
+    template<auto type, auto state = EventState::Set> bool HasEvent()
     {
              if constexpr (state == EventState::None)            return global::events[type] == None;
         else if constexpr (state == EventState::Pressed)         return global::events[type] == Pressed;

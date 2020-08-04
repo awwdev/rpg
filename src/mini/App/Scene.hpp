@@ -16,7 +16,8 @@
 #include "mini/Rendering/Sun.hpp"
 
 #include "mini/App/PlayerController.hpp"
-#include "mini/App/Input.hpp"
+#include "mini/App/EditorController.hpp"
+#include "mini/App/InputMode.hpp"
 
 namespace mini::app
 {
@@ -29,8 +30,8 @@ namespace mini::app
         rendering::Sun          sun;
 
         app::PlayerController playerController;
+        app::EditorController editorController;
         
-
         GameScene()
         {
             //TODO: move into some resource manager an load at loading scene
@@ -43,13 +44,12 @@ namespace mini::app
         void Update(const double dt, res::HostResources& hostRes)
         {
             renderGraph.Clear();
+
             app::UpdateInputMode();
-            camera.Update(dt);
-            
-            //? META
-            hostRes.terrain.Update(dt, camera, ecs);
+            playerController.Update(dt, ecs);
+            editorController.Update(dt, ecs);
+            hostRes.terrain.Update(dt, editorController.camera, ecs); //move into editor?
             sun.Update(ecs, dt);
-            playerController.Update(ecs, dt, camera);
 
             //? ECS
             ecs::S_Render(ecs.arrays, dt, renderGraph);
@@ -59,7 +59,7 @@ namespace mini::app
             if (app::global::UI_Mode)  {
                 ui::DrawConsole(renderGraph);
                 ui::DrawRenderStats(renderGraph);
-                ui::DrawCameraPos(renderGraph, camera);
+                ui::DrawCameraPos(renderGraph, editorController.camera);
             }
            
         }

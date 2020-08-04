@@ -4,7 +4,7 @@
 #include "mini/Utils/Structs.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/ECS/ECS.hpp"
-#include "mini/Rendering/Camera.hpp"
+#include "mini/Rendering/Cameras.hpp"
 #include "mini/Resources/Terrain/Terrain_Quadrant.hpp"
 
 #include <fstream>
@@ -60,7 +60,7 @@ namespace mini::res
             }}
         }
 
-        void Update(const double dt, const rendering::Camera& camera, ecs::ECS& ecs)
+        void Update(const double dt, const rendering::EgoCamera& camera, ecs::ECS& ecs)
         {   
             if (app::global::inputMode != app::global::UI_Mode)
                 return;
@@ -89,10 +89,10 @@ namespace mini::res
             if (wnd::HasEvent<wnd::N3, wnd::Pressed>()) editing.quadrantIdx = 3;
         }
 
-        void TestIntersectionAndPressed(const rendering::Camera& camera)
+        void TestIntersectionAndPressed(const rendering::EgoCamera& camera)
         {
             auto& quadrant = GetQuadrant(editing.quadrantIdx);
-            const auto ray = camera.ScreenRay();
+            const auto ray = ScreenRay(camera);
 
             for(idx_t i = 0; i < quadrant.VERT_COUNT_TOTAL; i+=3)
             {
@@ -101,7 +101,7 @@ namespace mini::res
                 auto& v2 = quadrant.verts[i+2].pos;
 
                 const box::Optional<utils::Intersection> intersection = 
-                    utils::RayTriangleIntersection(camera.pos, ray, v0, v1, v2);
+                    utils::RayTriangleIntersection(camera.position, ray, v0, v1, v2);
                 if (intersection)
                 {
                     const auto ix = intersection->pos[X];

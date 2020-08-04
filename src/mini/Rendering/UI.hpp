@@ -11,7 +11,7 @@
 #include "mini/Box/String.hpp"
 #include "mini/Rendering/Camera.hpp"
 #include "mini/ECS/ComponentArray.hpp"
-#include "mini/App/Input.hpp"
+#include "mini/App/InputMode.hpp"
 
 #include <charconv>
 #undef DrawText
@@ -352,16 +352,13 @@ namespace mini::app::ui
 
     }
 
-    inline void DrawCameraPos(RenderGraph& renderGraph, const Camera& camera)
+    inline void DrawCameraPos(RenderGraph& renderGraph, const EgoCamera& camera)
     {
         using namespace math;
         char ch_camera [100] = "camera:";
-        std::to_chars(ch_camera +  8, ch_camera + 20, camera.pos[X]);
-        std::to_chars(ch_camera + 22, ch_camera + 34, camera.pos[Y]);
-        std::to_chars(ch_camera + 36, ch_camera + 48, camera.pos[Z]);
-        //std::to_chars(ch_camera +  8, ch_camera + 24, ray[X]);
-        //std::to_chars(ch_camera + 26, ch_camera + 42, ray[Y]);
-        //std::to_chars(ch_camera + 44, ch_camera + 60, ray[Z]);
+        std::to_chars(ch_camera +  8, ch_camera + 20, camera.position[X]);
+        std::to_chars(ch_camera + 22, ch_camera + 34, camera.position[Y]);
+        std::to_chars(ch_camera + 36, ch_camera + 48, camera.position[Z]);
         DrawText(renderGraph, 8, 20+8+36, ch_camera, 100);
     }
 

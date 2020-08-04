@@ -4,7 +4,7 @@
 #include "mini/Window/WindowEvents.hpp"
 #include "mini/Math/Matrix.hpp"
 #include "mini/Box/Optional.hpp"
-#include "mini/App/Input.hpp"
+#include "mini/App/InputMode.hpp"
 #undef far
 #undef near
 
@@ -12,10 +12,9 @@ namespace mini::rendering
 {
     struct Camera
     {
-        math::Vec3f pos         { 0, 4, -4 };
-        math::Vec3f rotTarget   { 0.5f, 0, 0 }; 
-        math::Vec3f movNorm {};
-        math::Quatf qRot {};
+        math::Vec3f rotation    {}; 
+        math::Vec3f position    { 0, 4, -4 }; 
+        math::Mat4f mTransform  {};
 
         float movSpd    = 10;
         float dirSpd    = 150;
@@ -27,54 +26,55 @@ namespace mini::rendering
 
         void Update(const double dt)
         {
-            if (app::global::inputMode != app::global::FlyMode)
-                return;
+            if (app::global::inputMode == app::global::FlyMode)
+            {
+                using namespace math;
 
-            using namespace math;
+                math::Vec3f movNorm {};
+                if(wnd::HasEvent<wnd::D, wnd::PressedOrHeld>()) { movNorm[X] -= 1; }
+                if(wnd::HasEvent<wnd::A, wnd::PressedOrHeld>()) { movNorm[X] += 1; }
+                if(wnd::HasEvent<wnd::W, wnd::PressedOrHeld>()) { movNorm[Z] += 1; }
+                if(wnd::HasEvent<wnd::S, wnd::PressedOrHeld>()) { movNorm[Z] -= 1; }
+                NormalizeThis(movNorm);
 
-            movNorm = {};
-            if(wnd::HasEvent<wnd::D, wnd::PressedOrHeld>()) { movNorm[X] -= 1; }
-            if(wnd::HasEvent<wnd::A, wnd::PressedOrHeld>()) { movNorm[X] += 1; }
-            if(wnd::HasEvent<wnd::W, wnd::PressedOrHeld>()) { movNorm[Z] += 1; }
-            if(wnd::HasEvent<wnd::S, wnd::PressedOrHeld>()) { movNorm[Z] -= 1; }
-            NormalizeThis(movNorm);
+                rotation[Y] += wnd::global::mouse_dx * mouseSpd; //!need of dt ?
+                rotation[X] += wnd::global::mouse_dy * mouseSpd;
+                //prevent overflow
+                if (rotation[X] >=  360) rotation[X] -= 360;
+                if (rotation[Y] >=  360) rotation[Y] -= 360;
+                if (rotation[X] <= -360) rotation[X] += 360;
+                if (rotation[Y] <= -360) rotation[Y] += 360;
 
-            rotTarget[Y] += wnd::global::mouse_dx * mouseSpd;
-            rotTarget[X] += wnd::global::mouse_dy * mouseSpd;
+                const auto qX = QuatAngleAxis(+rotation[X] * dirSpd, math::Vec3f{1, 0, 0});
+                const auto qY = QuatAngleAxis(-rotation[Y] * dirSpd, math::Vec3f{0, 1, 0});
+                const auto qRot = math::QuatMultQuat(qY, qX);
 
-            const auto qX = QuatAngleAxis(+rotTarget[X] * dirSpd, math::Vec3f{1, 0, 0});
-            const auto qY = QuatAngleAxis(-rotTarget[Y] * dirSpd, math::Vec3f{0, 1, 0});
-            qRot = math::QuatMultQuat(qY, qX);
-            NormalizeThis(qRot);
+                const auto movDir = math::QuatMultVec(qRot, movNorm);
+                position = position + (movDir * movSpd * (float)dt);
 
-            const auto movDir = math::QuatMultVec(qRot, movNorm);
-            pos = pos + (movDir * movSpd * (float)dt);
+                //? scroll
+                if (wnd::global::events[wnd::Mouse_Scroll] == wnd::Set) {
+                    fov -= wnd::global::mouse_scroll_delta * scrollSpd;
+                }
 
-            //? scroll
-            if (wnd::global::events[wnd::Mouse_Scroll] == wnd::Set) {
-                fov -= wnd::global::mouse_scroll_delta * scrollSpd;
+                mTransform = math::Identity4();
+                mTransform[3][0] = position[X];
+                mTransform[3][1] = position[Y];
+                mTransform[3][2] = position[Z];
+
+                const auto mRot = QuatToMat(qRot);
+                mTransform = mRot *  mTransform;
+            }
+
+            if (app::global::inputMode == app::global::PlayMode)
+            {
+            
             }
         }
 
         math::Mat4f GetView() const 
         {
-            if (app::global::inputMode == app::global::PlayMode)
-            {
-                const auto mLook = math::LookAt({1, -10, 0}, target);
-                return mLook;
-            }
-
-            //flymode/ui mode 
-            //TODO: (may want to keep last pos even from play mode)
-            using namespace math;
-            const Mat4f mPos {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                pos[X], pos[Y], pos[Z], 1,
-            };
-            const auto mRot = QuatToMat(qRot);
-            return mRot * mPos;
+            return mTransform;
         }
 
         math::Mat4f GetPerspective() const 
@@ -97,9 +97,10 @@ namespace mini::rendering
 
         math::Mat4f GetOrthographic() const 
         {
+            //TODO: solve how the values correlate
             const float W = 0.03f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
             const float H = 0.03f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
-            const float D = 0.0000001f;
+            const float D = 0.0000001f; 
             const float Z = 0.01f;
 
             return {
