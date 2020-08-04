@@ -6,8 +6,8 @@
 #include "mini/window/WindowEvents.hpp"
 #include "mini/Rendering/Cameras.hpp"
 
-namespace mini::app
-{
+namespace mini::app {
+    
 struct PlayerController
 {
     rendering::ThirdCamera camera;

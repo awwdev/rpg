@@ -4,7 +4,6 @@
 #include "mini/Rendering/UboData.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/Resources/Mesh.hpp"
-#include "mini/Rendering/Camera.hpp"
 
 namespace mini::rendering
 {

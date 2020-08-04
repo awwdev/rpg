@@ -9,8 +9,7 @@
 #include "windows.h"
 #include "psapi.h"
 
-namespace mini::mem
-{
+namespace mini::mem {
 
 struct BlockArray
 {

@@ -4,8 +4,8 @@
 #include "mini/Memory/Allocator.hpp"
 #include <fstream>
 
-namespace mini::mem
-{
+namespace mini::mem {
+
 inline void PrintAllocationHTML()
 {
     std::ofstream out("log/AllocationView.html");

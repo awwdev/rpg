@@ -61,7 +61,7 @@ namespace mini::vk
             else
                 resources.common_pushConsts.camera = scene.editorController.camera.perspective * scene.editorController.camera.view;
 
-            resources.common_pushConsts.sun    = scene.camera.GetOrthographic() * scene.sun.GetView(); //BIAS * 
+            resources.common_pushConsts.sun    = scene.sun.GetOrthographic() * scene.sun.GetView(); //BIAS * 
             resources.common_pushConsts.sunDir = math::Normalize(scene.sun.pos);
             resources.ui.pushConsts.wnd_w = wnd::global::window_w;
             resources.ui.pushConsts.wnd_h = wnd::global::window_h;

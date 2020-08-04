@@ -59,5 +59,9 @@ int WINAPI wWinMain(
 
 } //main end
 
+
+//TODO: logger no macro?
+//TODO: string rework
+//TODO: alloc html view
 //TODO: skydome
 //TODO: terrain refactor

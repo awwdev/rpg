@@ -7,8 +7,8 @@
 #include "mini/Rendering/Cameras.hpp"
 #include "mini/App/InputMode.hpp"
 
-namespace mini::app
-{
+namespace mini::app {
+
 struct EditorController
 {
     rendering::EgoCamera camera;

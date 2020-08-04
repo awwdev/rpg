@@ -19,7 +19,6 @@
 #include "mini/Debug/Profiler.hpp"
 
 #include <string>
-//TODO: way to convert int and float to chars
 
 namespace mini::box
 {
