@@ -12,7 +12,7 @@ namespace mini::res {
 template<auto N>
 void LoadModel(box::Array<utils::Common_Vertex, N>& vertices, chars_t path)
 {
-    using namespace math;
+    using namespace utils;
     
     std::ifstream file(path, std::ios::binary);
     if (!file) ERR("cannot open file");
@@ -23,10 +23,10 @@ void LoadModel(box::Array<utils::Common_Vertex, N>& vertices, chars_t path)
         u32 commaCount = 0;
         u32 i1 = 0; 
 
-        math::Vec3f position {};
+        utils::Vec3f position {};
         position[0][3] = 1;
-        math::Vec4f color {};
-        math::Vec3f normals {};
+        utils::Vec4f color {};
+        utils::Vec3f normals {};
 
         //POSITION
         for(u32 i2 = 0; i2 < 100; ++i2){

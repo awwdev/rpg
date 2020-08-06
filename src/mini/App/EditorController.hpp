@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/ECS/ECS.hpp"
-#include "mini/Math/Matrix.hpp"
+#include "mini/Utils/Matrix.hpp"
 #include "mini/window/WindowEvents.hpp"
 #include "mini/Rendering/Cameras.hpp"
 #include "mini/App/InputMode.hpp"

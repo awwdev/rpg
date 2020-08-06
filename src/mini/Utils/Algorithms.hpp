@@ -44,7 +44,7 @@ void Clamp(T& val, const MIN min, const MAX max)
 
 struct Intersection
 {
-    math::Vec3f pos;
+    utils::Vec3f pos;
     float u, v;
 
     //TODO: write better
@@ -62,13 +62,13 @@ struct Intersection
 };
 
 box::Optional<Intersection> RayTriangleIntersection(
-    const math::Vec3f& rayOrigin, 
-    const math::Vec3f& rayDir, 
-    const math::Vec3f& v0,
-    const math::Vec3f& v1,
-    const math::Vec3f& v2)
+    const utils::Vec3f& rayOrigin, 
+    const utils::Vec3f& rayDir, 
+    const utils::Vec3f& v0,
+    const utils::Vec3f& v1,
+    const utils::Vec3f& v2)
 {
-    using namespace math;
+    using namespace utils;
     constexpr float EPSILON = 0.0000001f;
 
     const auto edge1 = v1 - v0;

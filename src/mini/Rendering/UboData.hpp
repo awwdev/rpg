@@ -1,6 +1,6 @@
 //https://github.com/awwdev
 #pragma once
-#include "mini/Math/Matrix.hpp"
+#include "mini/Utils/Matrix.hpp"
 #include "mini/box/Array.hpp"
 
 namespace mini::rendering {
@@ -21,7 +21,7 @@ struct UniformGroup
 
 struct Default_UniformData
 {
-    math::Mat4f transform;
+    utils::Mat4f transform;
 };
 
 template<class DATA_T, u32 DATA_COUNT, u32 GROUP_COUNT = DATA_COUNT>

@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/Math/Matrix.hpp"
+#include "mini/Utils/Matrix.hpp"
 #include "mini/Utils/PrimitiveMeshes.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/box/EnumMap.hpp"
@@ -35,7 +35,7 @@ namespace mini::res
         for(u8 z = 0; z < QUAD_COUNT_Z; ++z) {
         for(u8 x = 0; x < QUAD_COUNT_X; ++x) { 
             const auto idx = (z * QUAD_COUNT_X + x) * 6;
-            constexpr math::Vec4f col = { 0.1f, 0.7f, 0.1f, 1 };
+            constexpr utils::Vec4f col = { 0.1f, 0.7f, 0.1f, 1 };
             arr[idx + 0] = { {  0.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
             arr[idx + 1] = { {  1.0f * quadW + x * quadW, 0,  0.0f * quadH + z * quadH, 1 }, {}, col, {} };
             arr[idx + 2] = { {  1.0f * quadW + x * quadW, 0,  1.0f * quadH + z * quadH, 1 }, {}, col, {} };

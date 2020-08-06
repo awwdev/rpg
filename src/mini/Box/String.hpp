@@ -12,7 +12,7 @@ namespace mini::box {
 
 constexpr bool USE_STRING_ASSERTS = true;
 
-inline void StringAssert(const bool condition, chars_t msg = "string assertion failed")
+constexpr void StringAssert(const bool condition, chars_t msg = "string assertion failed")
 {
     if (std::is_constant_evaluated())
         return;
@@ -33,7 +33,7 @@ struct String
     using DATA_T = CHAR_T;
     static constexpr idx_t CAPACITY = (idx_t)CAPACITY_T;
 
-    CHAR_T data [CAPACITY]; //no init
+    CHAR_T data [CAPACITY] { 0 };
     idx_t  count = 1; //! does include \0
 
     constexpr       CHAR_T& operator[] (const idx_t i)       { return data[i]; }
@@ -54,6 +54,21 @@ struct String
         StringAssert(N <= CAPACITY, "str capacity exhausted");
         FOR_CARRAY(arr, i)
             data[i] = arr[i];
+    }
+
+    template<idx_t N>
+    constexpr String(const String<N, CHAR_T>& str)
+    {
+        Clear(); 
+        Append(str);
+    }
+
+    template<idx_t N>
+    constexpr String& operator=(const String<N, CHAR_T>& str)
+    {
+        Clear(); 
+        Append(str);
+        return *this;
     }
 
     //? MODIFICATION
@@ -80,8 +95,8 @@ struct String
         count = count + N - 1;
     }
 
-    template<class PTR, class N, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
-    constexpr void Append(const PTR ptr, const N countNotLength) //!has to be CHAR_T
+    template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
+    constexpr void Append(const PTR ptr, const idx_t countNotLength) //!has to be CHAR_T
     {
         StringAssert(count + countNotLength - 1 <= CAPACITY, "str capacity exhausted");
         std::memcpy(&data[count-1], ptr, countNotLength * sizeof(CHAR_T));
@@ -93,14 +108,6 @@ struct String
         StringAssert(count + 1 <= CAPACITY, "str capacity exhausted");
         data[count] = ch;
         ++count;
-    }
-
-    template<idx_t N>
-    constexpr String& operator=(const String<N, CHAR_T>& str)
-    {
-        Clear(); 
-        Append(str);
-        return *this;
     }
 
     constexpr void Pop()
@@ -136,4 +143,3 @@ std::ostream& operator<<(std::ostream& os, const String<N>& str)
 }
 
 }//ns
-

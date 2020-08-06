@@ -2,18 +2,18 @@
 
 #pragma once
 #include "mini/ECS/ECS.hpp"
-#include "mini/Math/Matrix.hpp"
+#include "mini/Utils/Matrix.hpp"
 #include "mini/window/WindowEvents.hpp"
 
 namespace mini::rendering
 {
 struct EgoCamera
 {
-    math::Vec3f position { 0,  4, -4 };
-    math::Vec3f rotation {45,  0,  0 };
+    utils::Vec3f position { 0,  4, -4 };
+    utils::Vec3f rotation {45,  0,  0 };
 
-    math::Mat4f perspective;
-    math::Mat4f view;
+    utils::Mat4f perspective;
+    utils::Mat4f view;
 
     float mouseSpeed = 0.3f;
     float fov        = 45;
@@ -27,9 +27,9 @@ struct EgoCamera
 
     void Update(const double dt)
     {
-        using namespace math;
+        using namespace utils;
 
-        math::Vec3f movNorm {};
+        utils::Vec3f movNorm {};
         if(wnd::HasEvent<wnd::D, wnd::PressedOrHeld>()) { movNorm[X] -= 1; }
         if(wnd::HasEvent<wnd::A, wnd::PressedOrHeld>()) { movNorm[X] += 1; }
         if(wnd::HasEvent<wnd::W, wnd::PressedOrHeld>()) { movNorm[Z] += 1; }
@@ -44,11 +44,11 @@ struct EgoCamera
         if (rotation[X] <= -360) rotation[X] += 360;
         if (rotation[Y] <= -360) rotation[Y] += 360;
 
-        const auto qX = QuatAngleAxis(+rotation[X], math::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation[Y], math::Vec3f{0, 1, 0});
-        const auto qRot = math::QuatMultQuat(qY, qX);
+        const auto qX = QuatAngleAxis(+rotation[X], utils::Vec3f{1, 0, 0});
+        const auto qY = QuatAngleAxis(-rotation[Y], utils::Vec3f{0, 1, 0});
+        const auto qRot = utils::QuatMultQuat(qY, qX);
 
-        const auto movDir = math::QuatMultVec(qRot, movNorm);
+        const auto movDir = utils::QuatMultVec(qRot, movNorm);
         position = position + (movDir * moveSpeed * (float)dt);
 
         if (wnd::HasEvent<wnd::Mouse_Scroll>()) {
@@ -87,13 +87,13 @@ struct EgoCamera
 
 struct ThirdCamera
 {
-    math::Vec3f rotation;
+    utils::Vec3f rotation;
     float distance = 7;
 
-    math::Mat4f perspective;
-    math::Mat4f view;
-    math::Mat4f mRot;
-    math::Quatf qRot;
+    utils::Mat4f perspective;
+    utils::Mat4f view;
+    utils::Mat4f mRot;
+    utils::Quatf qRot;
 
     float mouseSpeed = 0.03f;
     float fov        = 45;
@@ -104,9 +104,9 @@ struct ThirdCamera
         UpdatePerspective();
     }
 
-    void Update(const math::Vec3f orientation, const math::Vec3f position, const double dt)
+    void Update(const utils::Vec3f orientation, const utils::Vec3f position, const double dt)
     {
-        using namespace math;
+        using namespace utils;
 
         rotation[Y] += wnd::global::mouse_dx * mouseSpeed; //!need of dt ?
         rotation[X] += wnd::global::mouse_dy * mouseSpeed;
@@ -116,17 +116,17 @@ struct ThirdCamera
         if (rotation[X] <= -360) rotation[X] += 360;
         if (rotation[Y] <= -360) rotation[Y] += 360;
 
-        const auto qX = QuatAngleAxis(+rotation[X], math::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation[Y], math::Vec3f{0, 1, 0});
-        qRot = math::QuatMultQuat(qY, qX);
+        const auto qX = QuatAngleAxis(+rotation[X], utils::Vec3f{1, 0, 0});
+        const auto qY = QuatAngleAxis(-rotation[Y], utils::Vec3f{0, 1, 0});
+        qRot = utils::QuatMultQuat(qY, qX);
         mRot = QuatToMat(qRot);
 
         if (wnd::HasEvent<wnd::Mouse_Scroll>()) {
             distance -= wnd::global::mouse_scroll_delta * scrollSpd;
         }
 
-        math::Vec3f orientVec = (orientation * distance);
-        math::Mat4f mOrientation = {
+        utils::Vec3f orientVec = (orientation * distance);
+        utils::Mat4f mOrientation = {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -162,16 +162,16 @@ struct ThirdCamera
 };
 
 template<class CAMERA>
-math::Vec3f ScreenRay(const CAMERA& camera)
+utils::Vec3f ScreenRay(const CAMERA& camera)
 {
-    using namespace math;
+    using namespace utils;
 
     const auto mx = (f32)wnd::global::mouse_wx;
     const auto my = (f32)wnd::global::mouse_wy;
     const auto ww = (f32)wnd::global::window_w;
     const auto wh = (f32)wnd::global::window_h;
 
-    const math::Vec4f homo {
+    const utils::Vec4f homo {
         ((mx / ww) * 2) - 1,
         ((my / wh) * 2) - 1,
         -1,                

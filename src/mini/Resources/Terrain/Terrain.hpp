@@ -124,7 +124,7 @@ namespace mini::res
 
         void Dragging()
         {
-            using namespace math;
+            using namespace utils;
             auto& quadrant = GetQuadrant(editing.quadrantIdx);
             editing.dirtyQuadrants.Append(editing.quadrantIdx);
 
@@ -298,7 +298,7 @@ namespace mini::res
 
         void Save(chars_t path = "res/terrain.txt")
         {
-            using namespace math;
+            using namespace utils;
             LOG("saving terrain");
 
             for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
@@ -319,7 +319,7 @@ namespace mini::res
 
         void Load(chars_t path = "res/terrain.txt")
         {
-            using namespace math;
+            using namespace utils;
             LOG("loading terrain");
 
             for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {

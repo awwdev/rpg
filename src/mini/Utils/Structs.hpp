@@ -1,19 +1,19 @@
 #pragma once
 
-#include "mini/Math/Matrix.hpp"
+#include "mini/Utils/Matrix.hpp"
 #include <iostream>
 
 namespace mini::utils {
     
-using NormColor4f = math::Vec4f;
-using RGBAColor4u = math::Vec<u8, 4>;
+using NormColor4f = utils::Vec4f;
+using RGBAColor4u = utils::Vec<u8, 4>;
 
 struct Common_Vertex 
 {
-    alignas(16) math::Vec3f pos;
-    alignas(16) math::Vec3f nor;
-    alignas(16) math::Vec4f col;
-    alignas(16) math::Vec2f tex;
+    alignas(16) utils::Vec3f pos;
+    alignas(16) utils::Vec3f nor;
+    alignas(16) utils::Vec4f col;
+    alignas(16) utils::Vec2f tex;
 };
 
 std::ostream& operator<<(std::ostream& os, const Common_Vertex& vert)
@@ -26,7 +26,7 @@ std::ostream& operator<<(std::ostream& os, const Common_Vertex& vert)
 }
 
 inline NormColor4f NormaliseColor(const RGBAColor4u& col) { 
-    using namespace math;
+    using namespace utils;
     return { //normalise on gpu always instead??
         col[X] / 255.f, 
         col[Y] / 255.f, 
@@ -37,7 +37,7 @@ inline NormColor4f NormaliseColor(const RGBAColor4u& col) {
 
 inline RGBAColor4u HighlightColor(const RGBAColor4u& col, const u8 amount)
 {
-    using namespace math;
+    using namespace utils;
     RGBAColor4u out { col };
     out[X] += amount;
     out[Y] += amount;

@@ -352,7 +352,7 @@ inline void DrawRenderStats(RenderGraph& renderGraph)
 
 inline void DrawCameraPos(RenderGraph& renderGraph, const EgoCamera& camera)
 {
-    using namespace math;
+    using namespace utils;
     char ch_camera [100] = "camera:";
     std::to_chars(ch_camera +  8, ch_camera + 20, camera.position[X]);
     std::to_chars(ch_camera + 22, ch_camera + 34, camera.position[Y]);

@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/Math/Matrix.hpp"
+#include "mini/Utils/Matrix.hpp"
 #include "mini/ECS/Components.hpp"
 #include "mini/ECS/ComponentArray.hpp"
 #include "mini/Rendering/RenderGraph.hpp"
@@ -30,7 +30,7 @@ inline void S_Render(ComponentArrays<>& arrays, const double dt, rendering::Rend
         FOR_ARRAY(meshTypes[i], j){
             const auto eID  = meshTypes[i][j];
             auto& transform = arr_transform.Get(eID);
-            auto rotMat = math::MatAngleAxisY(rot);
+            auto rotMat = utils::MatAngleAxisY(rot);
             group.Append(transform.transform);// * rotMat);
         }
 

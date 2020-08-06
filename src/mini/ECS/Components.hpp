@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/Math/Matrix.hpp"
+#include "mini/Utils/Matrix.hpp"
 #include "mini/Box/EnumMap.hpp"
 #include "mini/Box/StringMap.hpp"
 #include "mini/Box/String.hpp"
@@ -79,7 +79,7 @@ namespace mini::ecs
 
     struct C_Transform
     {
-        math::Mat4f transform;
+        utils::Mat4f transform;
         //math::Vec3f pos;
         //rotation
         //scale

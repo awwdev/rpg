@@ -25,7 +25,7 @@ namespace mini::res
 
         void Create(const float pZ, const float pX)
         {
-            using namespace math;
+            using namespace utils;
 
             quadrantX = pX;
             quadrantZ = pZ;
@@ -55,7 +55,7 @@ namespace mini::res
 
         }
 
-        math::Vec2u GetCornerByVertex(const idx_t i) const
+        utils::Vec2u GetCornerByVertex(const idx_t i) const
         {
             const auto vIdx = i % 6;
             const auto qIdx = i / 6; //quad
@@ -73,9 +73,9 @@ namespace mini::res
             return { cZ, cX };
         }
 
-        box::Array<u32, 6> GetVerticesByCorner(const math::Vec2u& pair) const
+        box::Array<u32, 6> GetVerticesByCorner(const utils::Vec2u& pair) const
         {
-            using namespace math;
+            using namespace utils;
             return corners[pair[X]][pair[Y]];
         }
 
