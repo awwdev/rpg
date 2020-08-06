@@ -38,8 +38,14 @@ inline void PrintAllocationHTML()
             out << "<div width=100px>" << BLOCK_ARRAYS[currentArrayIdx].count << " | " << BLOCK_ARRAYS[currentArrayIdx].size << "</div>";
         }
 
-        out << "<a title='BLOCK INFO'>";
-        out << (priv::blocksUsed.Test(i) ? "&#9639;" : "&#9634;");
+        if (priv::blocksUsed.Test(i))  {
+            out << "<a title='";
+            out << priv::blockInfos[i].data;
+            out << "'>&#9639;";
+        } else {
+            out << "<a>"; 
+            out << "&#9634;";
+        }
         out << "</a>";
     }
 

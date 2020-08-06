@@ -4,6 +4,7 @@
 #include "mini/Utils/Types.hpp"
 #include "mini/Box/Bitset.hpp"
 #include "mini/Debug/Logger.hpp"
+#include "mini/Box/String.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
@@ -50,6 +51,7 @@ namespace priv
     //all blocks are successive 
     inline box::Bitset<BLOCK_COUNT_TOTAL> blocksUsed;
     inline u8* blockArrayPtrs [BLOCK_ARRAY_COUNT]; //u8 for ptr arithmetics 
+    inline box::String<300> blockInfos [BLOCK_COUNT_TOTAL];
 
     template<u32 ARRAY_INDEX>
     u8* BlockAddress(const u32 blockIdx) 
@@ -61,6 +63,7 @@ namespace priv
     inline void FreeBlock(const u32 blockId)
     {
         priv::blocksUsed.Flip(blockId);
+        priv::blockInfos[blockId].Clear();
         //LOG("FreeBlock", blockId);
         //dtor call of object is done in BlockPtr
     }
@@ -155,6 +158,9 @@ auto ClaimBlock(CtorArgs&&... args)
     T* obj;
     if constexpr(std::is_array_v<T>) obj = new (aligned) T [ ArrayCount<T>() ];
     else                             obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
+
+    //? debug info
+    priv::blockInfos[freeBlockId] = __FUNCSIG__;
 
     //LOG("ClaimBlock", FITTING_BLOCK_ARRAY.arrayIdx, freeBlockId - FITTING_BLOCK_ARRAY.blockId, freeBlockId);
     return BlockPtr<T> { obj, freeBlockId };

@@ -79,21 +79,9 @@ struct String
         data[0] = '\0';
     }
 
-    template<idx_t N>
-    constexpr void Append(const String<N, CHAR_T>& str)
-    {
-        StringAssert(count + str.count - 1 <= CAPACITY, "str capacity exhausted");
-        std::memcpy(&data[count-1], str.data, str.count * sizeof(CHAR_T));
-        count = count + str.count - 1;
-    }
-
-    template<idx_t N>
-    constexpr void Append(const CHAR_T (&arr)[N])
-    {
-        StringAssert(count + N - 1 <= CAPACITY, "str capacity exhausted");
-        std::memcpy(&data[count-1], arr, N * sizeof(CHAR_T));
-        count = count + N - 1;
-    }
+    template<idx_t N> constexpr void Append(const String<N, CHAR_T>& str)   { Append(str.data, str.count); }
+    template<idx_t N> constexpr void Append(const CHAR_T (&arr)[N])         { Append(arr, N); }
+    constexpr void Append(const CHAR_T ch)                                  { Append(&ch, 2); }
 
     template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
     constexpr void Append(const PTR ptr, const idx_t countNotLength) //!has to be CHAR_T
@@ -101,13 +89,6 @@ struct String
         StringAssert(count + countNotLength - 1 <= CAPACITY, "str capacity exhausted");
         std::memcpy(&data[count-1], ptr, countNotLength * sizeof(CHAR_T));
         count = count + countNotLength - 1;
-    }
-
-    constexpr void Append(const CHAR_T ch)
-    {
-        StringAssert(count + 1 <= CAPACITY, "str capacity exhausted");
-        data[count] = ch;
-        ++count;
     }
 
     constexpr void Pop()

@@ -53,6 +53,7 @@ So I decided to roll my own containers and memory allocation.
 - free / used blocks are represented by one bitset
 - printable as HTML
 
+![](media/progress/2020_08_08_AllocationView.png)
 
 ## Vulkan
 General structure:
