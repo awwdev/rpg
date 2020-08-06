@@ -1,11 +1,19 @@
 import bpy
+import os
 
 current = bpy.context.object.data
 
-file = open("C:/Users/Programmer/Desktop/wolve.txt", "w")
+desktop = os.environ['USERPROFILE']
+path = str(desktop) + "\\Desktop\\sword.txt"
+print(path)
+
+try:
+    file = open(path, "w")
+except IOError:
+    print("IOError")
+    
 
 #VERTEX DATA
-file.write("data,\n")
 i = 0
 while i < len (current.vertices):
     #POSITIONS
@@ -51,19 +59,5 @@ while i < len (current.vertices):
     ",\n")
     #continue
     i += 1
-    
-#TRIANGLES
-#triangulate faces before!
-file.write("indices,\n")
-i = 0
-while i < len (current.polygons):
-    #get indices
-    #loop_indices
-    i1 = str(current.polygons[i].loop_indices[0])
-    i2 = str(current.polygons[i].loop_indices[1])
-    i3 = str(current.polygons[i].loop_indices[2]) 
-    #write
-    file.write(i1 + "," + i2 + "," + i3 + ",\n")
-    i += 1
-    
+        
 file.close()

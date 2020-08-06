@@ -53,10 +53,9 @@ So I decided to roll my own containers and memory allocation. Some notes:
 - free / used blocks are represented by one bitset
 - printable as HTML
 
-
 ![](media/progress/2020_08_08_AllocationView.png)
 
-## ECS
+## Entity-Component-System
 - DOD (SOA)
 - Custom parsing from txt file (prefabs)
 
