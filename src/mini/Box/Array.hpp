@@ -27,8 +27,8 @@ struct Array
     using TYPE = T;
 
     idx_t count = 0;
-    static constexpr auto CAPACITY = N;
-    alignas(T) u8 bytes[sizeof(T) * N]; //don't init
+    static constexpr idx_t CAPACITY = (idx_t)N;
+    alignas(T) u8 bytes[sizeof(T) * CAPACITY]; //don't init
 
     //? ACCESS
 

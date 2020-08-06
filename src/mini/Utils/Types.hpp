@@ -70,8 +70,20 @@ using IsNoArray = std::enable_if_t<!std::is_array_v<T>>;
 template<typename T>
 using IsPointer = std::enable_if_t<std::is_pointer_v<T>>;
 
-#define ARRAY_COUNT(arr) sizeof(arr)/sizeof(arr[0])
-#define FOR_CARRAY(arr, i) for(idx_t i = 0; i < ARRAY_COUNT(arr); ++i)
+template<class T, auto N>
+constexpr u32 ArrayCount(const T (&arr)[N])
+{
+    return sizeof(arr) / sizeof(arr[0]);
+}
+
+template<class ARR>
+constexpr auto ArrayCount() 
+{ 
+    using ARR_T = std::remove_all_extents_t<ARR>;
+    return sizeof(ARR) / sizeof(ARR_T); 
+}
+
+#define FOR_CARRAY(arr, i) for(idx_t i = 0; i < ArrayCount(arr); ++i)
 
 template<class T, class... PARAMS>
 using DoesTypeMatchParams = std::enable_if_t<std::is_same_v<T, std::common_type_t<PARAMS...>>>;

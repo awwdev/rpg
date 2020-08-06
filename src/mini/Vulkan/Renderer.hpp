@@ -96,13 +96,13 @@ namespace mini::vk
                 { .depthStencil = { 0, 0 } } //reversed z
             };
             const auto beginInfo_default = resources.default.renderPass.GetBeginInfo(
-                cmdBufferIdx, ARRAY_COUNT(clears_default), clears_default);
+                cmdBufferIdx, ArrayCount(clears_default), clears_default);
 
             const VkClearValue clears_shadow [] { 
                 { .depthStencil = { 0, 0 } } //reversed z
             };
             const auto beginInfo_shadow = resources.shadow.renderPass.GetBeginInfo(
-                ARRAY_COUNT(clears_shadow), clears_shadow);
+                ArrayCount(clears_shadow), clears_shadow);
 
 
             VkDeviceSize offsets = 0;

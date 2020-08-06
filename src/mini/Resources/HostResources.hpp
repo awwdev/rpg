@@ -28,9 +28,9 @@ struct Models
     box::EnumMap<res::MeshType::ENUM_END, res::MeshVertexView> vertexLookup
     {
         //hardcoded primitives
-        { res::MeshType::PrimitiveCube,      { utils::MESH_CUBE, ARRAY_COUNT(utils::MESH_CUBE) } },
-        { res::MeshType::PrimitiveQuad,      { utils::MESH_QUAD, ARRAY_COUNT(utils::MESH_QUAD) } },
-        { res::MeshType::PrimitiveTriangle,  { utils::MESH_TRIANGLE, ARRAY_COUNT(utils::MESH_TRIANGLE) } },
+        { res::MeshType::PrimitiveCube,      { utils::MESH_CUBE, ArrayCount(utils::MESH_CUBE) } },
+        { res::MeshType::PrimitiveQuad,      { utils::MESH_QUAD, ArrayCount(utils::MESH_QUAD) } },
+        { res::MeshType::PrimitiveTriangle,  { utils::MESH_TRIANGLE, ArrayCount(utils::MESH_TRIANGLE) } },
     }; 
 
     //model data separated

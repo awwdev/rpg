@@ -1,11 +1,10 @@
 #pragma once
-#include "mini/Box/String.hpp"
 #include <iostream>
 #include <cstdio>
 
 
-namespace mini::dbg
-{
+namespace mini::dbg {
+
 #define DO_DLOG 1
 #define LOG(...)  mini::dbg::dlog(__VA_ARGS__)
 #define LOG_VAR(var)  mini::dbg::dlog(#var, var)
@@ -24,41 +23,41 @@ namespace mini::dbg
 
 //macro DLOG has the adventage of getting the line and the file as macro too (add as macro fn?)
 
-    enum class ColorMode
-    {
-        Default, Red, Green, Yellow, Cyan
-    };
+enum class ColorMode
+{
+    Default, Red, Green, Yellow, Cyan
+};
 
-    template<ColorMode CM = ColorMode::Default, class... Args>
-    void dlog(const Args&... args)
-    {
-    #if (DO_DLOG == 1)
-        []() constexpr {
-            switch (CM)
-            {
-            case ColorMode::Default: std::cout << CONSOLE_DEFAULT;  break;
-            case ColorMode::Red:     std::cout << CONSOLE_RED;      break;
-            case ColorMode::Green:   std::cout << CONSOLE_GREEN;    break;
-            case ColorMode::Yellow:  std::cout << CONSOLE_YELLOW;   break;
-            case ColorMode::Cyan:    std::cout << CONSOLE_CYAN;     break;
-            }
-        }();
-
-        ((std::cout << args << " " ), ...);
-        std::cout << CONSOLE_DEFAULT"\n";
-    #endif
-    }
-
-    void PrintCharRange(chars_t chars, u32 start, u32 end)
-    {
-        if (start >= end) return;
-
-        while(start != end){
-            std::cout << *(chars + start);
-            ++start;
+template<ColorMode CM = ColorMode::Default, class... Args>
+void dlog(const Args&... args)
+{
+#if (DO_DLOG == 1)
+    []() constexpr {
+        switch (CM)
+        {
+        case ColorMode::Default: std::cout << CONSOLE_DEFAULT;  break;
+        case ColorMode::Red:     std::cout << CONSOLE_RED;      break;
+        case ColorMode::Green:   std::cout << CONSOLE_GREEN;    break;
+        case ColorMode::Yellow:  std::cout << CONSOLE_YELLOW;   break;
+        case ColorMode::Cyan:    std::cout << CONSOLE_CYAN;     break;
         }
-        std::cout << '\n';
+    }();
+
+    ((std::cout << args << " " ), ...);
+    std::cout << CONSOLE_DEFAULT"\n";
+#endif
+}
+
+void PrintCharRange(chars_t chars, u32 start, u32 end)
+{
+    if (start >= end) return;
+
+    while(start != end){
+        std::cout << *(chars + start);
+        ++start;
     }
+    std::cout << '\n';
+}
 
 
 #undef CONSOLE_DEFAULT

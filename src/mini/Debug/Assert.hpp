@@ -5,25 +5,20 @@
 #include <Windows.h>
 #undef max
 
-//todo: make a define #ifdef DEBUG otherwise the function is just empty
-
 //win only
 #define DEBUG_BREAK() \
     __debugbreak(); \
     BringWindowToTop(GetConsoleWindow()); \
 
-namespace mini 
-{
-    template<class T>
-    inline void Assert(const bool b, const T& msg) 
-    { 
-        if (!b)
-        {
-            BringWindowToTop(GetConsoleWindow()); //win only
-            ERR(msg);
-            //__debugbreak();
-            //system("pause"); //win only
-        }
-    } 
+namespace mini {
+
+template<class T>
+inline void Assert(const bool expression, const T& msg) 
+{ 
+    if (!expression)  {
+        ERR(msg);
+        DEBUG_BREAK();
+    }
+} 
 
 }//ns

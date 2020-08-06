@@ -118,9 +118,9 @@ namespace mini::vk
                 .pNext                  = &debugCreateInfo, //so instance creation messages are handled
                 .flags                  = 0,
                 .pApplicationInfo       = &appInfo,
-                .enabledLayerCount      = ARRAY_COUNT(layers), 
+                .enabledLayerCount      = ArrayCount(layers), 
                 .ppEnabledLayerNames    = layers,
-                .enabledExtensionCount  = ARRAY_COUNT(extensions),
+                .enabledExtensionCount  = ArrayCount(extensions),
                 .ppEnabledExtensionNames = extensions
             };
 
@@ -193,7 +193,7 @@ namespace mini::vk
                 .pQueueCreateInfos          = &queueInfo,
                 .enabledLayerCount          = 0,
                 .ppEnabledLayerNames        = nullptr,
-                .enabledExtensionCount      = ARRAY_COUNT(physicalExtensions),
+                .enabledExtensionCount      = ArrayCount(physicalExtensions),
                 .ppEnabledExtensionNames    = physicalExtensions,
                 .pEnabledFeatures           = &deviceFeatures
             };

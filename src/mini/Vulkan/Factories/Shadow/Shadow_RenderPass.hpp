@@ -83,11 +83,11 @@ namespace mini::vk
             .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
             .pNext           = nullptr,
             .flags           = 0,
-            .attachmentCount = ARRAY_COUNT(descs),
+            .attachmentCount = ArrayCount(descs),
             .pAttachments    = descs,
             .subpassCount    = 1,
             .pSubpasses      = &subpassDesc,
-            .dependencyCount = ARRAY_COUNT(dependencies),
+            .dependencyCount = ArrayCount(dependencies),
             .pDependencies   = dependencies
         };
 
@@ -104,7 +104,7 @@ namespace mini::vk
             .pNext           = nullptr,
             .flags           = 0,
             .renderPass      = rp.renderPass,
-            .attachmentCount = ARRAY_COUNT(views),
+            .attachmentCount = ArrayCount(views),
             .pAttachments    = views,
             .width           = rp.width,
             .height          = rp.height,

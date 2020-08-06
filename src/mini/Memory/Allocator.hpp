@@ -9,6 +9,8 @@
 #include "windows.h"
 #include "psapi.h"
 
+//? note: do not claim a block per array element, instead claim one block for the whole array
+
 namespace mini::mem {
 
 struct BlockArray
@@ -18,7 +20,7 @@ struct BlockArray
 };
 
 //?-------------------------------------
-//?DEFINE BLOCKS HERE (keep sorted!)
+//?DEFINE BLOCKS HERE (keep sorted for size!)
 constexpr BlockArray BLOCK_ARRAYS [] {
     { .size =      1'000, .count = 5 },
     { .size =     10'000, .count = 5 },
@@ -28,7 +30,7 @@ constexpr BlockArray BLOCK_ARRAYS [] {
 };
 //?-------------------------------------
 
-constexpr auto BLOCK_ARRAY_COUNT = ARRAY_COUNT(BLOCK_ARRAYS);
+constexpr auto BLOCK_ARRAY_COUNT = ArrayCount(BLOCK_ARRAYS);
 constexpr auto BLOCK_COUNT_TOTAL = []() constexpr {
     std::size_t count = 0;
     FOR_CARRAY(BLOCK_ARRAYS, i)
@@ -132,29 +134,29 @@ struct BlockPtr
 template<class T, class... CtorArgs>
 auto ClaimBlock(CtorArgs&&... args)
 {
-    struct FittingBlockArray { u32 arrayIdx; u32 bitIdx; };
+    struct FittingBlockSize { u32 arrayIdx; u32 blockId; }; //blockId == bitIdx
 
-    constexpr auto FITTING_BLOCK_ARRAY = []() constexpr -> FittingBlockArray {
-        u32 bitIdx = 0;
+    constexpr auto FITTING_BLOCK_ARRAY = []() constexpr -> FittingBlockSize {
+        u32 blockId = 0;
         for(u32 i = 0; i < BLOCK_ARRAY_COUNT; ++i) {
             if (BLOCK_ARRAYS[i].size >= (sizeof(T) + alignof(T))) //max
-                return FittingBlockArray { i, bitIdx };
-            bitIdx += BLOCK_ARRAYS[i].count;
+                return FittingBlockSize { i, blockId };
+            blockId += BLOCK_ARRAYS[i].count;
         }
         //!no appropriate block size found (compile time error)
     }();
 
-    const auto freeBlockId = priv::blocksUsed.FindFirstFreeBit(FITTING_BLOCK_ARRAY.bitIdx);
+    const auto freeBlockId = priv::blocksUsed.FindFirstFreeBit(FITTING_BLOCK_ARRAY.blockId);
     priv::blocksUsed.Flip(freeBlockId);
 
-    u8* blockAddress = priv::BlockAddress<FITTING_BLOCK_ARRAY.arrayIdx>(freeBlockId - FITTING_BLOCK_ARRAY.bitIdx);
+    u8* blockAddress = priv::BlockAddress<FITTING_BLOCK_ARRAY.arrayIdx>(freeBlockId - FITTING_BLOCK_ARRAY.blockId);
     u8* aligned      = (u8*) (((std::uintptr_t)blockAddress + (alignof(T) - 1)) & ~(alignof(T) - 1));
     
     T* obj;
-    if constexpr(std::is_array_v<T>) obj = new (aligned) T [sizeof(T)];
+    if constexpr(std::is_array_v<T>) obj = new (aligned) T [ ArrayCount<T>() ];
     else                             obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
 
-    //LOG("ClaimBlock", FITTING_BLOCK_ARRAY.arrayIdx, freeBlockId - FITTING_BLOCK_ARRAY.bitIdx, freeBlockId);
+    //LOG("ClaimBlock", FITTING_BLOCK_ARRAY.arrayIdx, freeBlockId - FITTING_BLOCK_ARRAY.blockId, freeBlockId);
     return BlockPtr<T> { obj, freeBlockId };
 }
 

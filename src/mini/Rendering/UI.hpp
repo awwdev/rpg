@@ -180,7 +180,7 @@ inline void DrawWindow(RenderGraph& renderGraph, Window& wnd)
     );
 
     //? TITLE TEXT
-    DrawTextCentered(renderGraph,bar, wnd.title.dataPtr, wnd.title.Length());
+    DrawTextCentered(renderGraph,bar, wnd.title.data, wnd.title.Length());
 }
 
 
@@ -190,7 +190,7 @@ struct InputField
 {
     box::String<100> str;
     bool isActive = false;
-    s32 GetInt() const { return std::atoi(str.dataPtr); }
+    s32 GetInt() const { return std::atoi(str.data); }
 };
 
 
@@ -327,7 +327,7 @@ inline void DrawConsole(RenderGraph& renderGraph)
             }
         }
     }
-    DrawText(renderGraph, inputRect.x + 32, inputRect.y, inputField.str.dataPtr, inputField.str.Length());
+    DrawText(renderGraph, inputRect.x + 32, inputRect.y, inputField.str.data, inputField.str.Length());
 }
 
 inline void DrawRenderStats(RenderGraph& renderGraph)

@@ -70,7 +70,7 @@ namespace mini::vk
                 .pNext           = nullptr,
                 .flags           = 0,
                 .renderPass      = rp.renderPass,
-                .attachmentCount = ARRAY_COUNT(views),
+                .attachmentCount = ArrayCount(views),
                 .pAttachments    = views,
                 .width           = rp.width,
                 .height          = rp.height,

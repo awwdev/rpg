@@ -2,6 +2,7 @@
 
 #pragma once
 #include "mini/Box/Array.hpp"
+#include "mini/Box/String.hpp"
 
 namespace mini::wnd
 {

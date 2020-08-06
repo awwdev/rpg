@@ -1,232 +1,139 @@
 //https://github.com/awwdev
 
-/*
-## mini::box::String
-
-- fixed size (capacity-based with internal count)
-    - auto growth can be harmful on perf (reallocations) and makes it harder to use with custom allocators
-    - simple inheritance (without vtable) is used so the (abstract) base can be passed around without the need of writing String<N> everywhere
-    - wrapper and elements are not seperated in memory and the whole object can simply be passed to an allocator
-- overloads for array, ptrs and the class 
-- bounds checking is toggleable via macro, no exceptions are used
-- overall more readable and extendible than the STL
-
-*/
-
 #pragma once
 #include "mini/Utils/Types.hpp"
+#include "mini/Debug/Assert.hpp"
 #include "mini/Debug/Logger.hpp"
-#include "mini/Debug/Profiler.hpp"
+#include <iostream>
 
-#include <string>
+//! warning this class supports 1 byte chars only for now
 
-namespace mini::box
+namespace mini::box {
+
+constexpr bool USE_STRING_ASSERTS = true;
+
+inline void StringAssert(const bool condition, chars_t msg = "string assertion failed")
 {
-#define DO_BOUNDS_CHECK 1
-#define ND [[nodiscard]]
+    if (std::is_constant_evaluated())
+        return;
 
+    if constexpr(USE_STRING_ASSERTS) {
+        if (condition == false){
+            ERR(msg);
+            DEBUG_BREAK();
+        }
+    }
+}
 
-    //size agnostic in type - for passing as ref
-    template<typename CHAR_T = char>
-    struct IString
+template<idx_t CAPACITY_T, typename CHAR_T = char>
+struct String
+{
+    //? DATA
+
+    using DATA_T = CHAR_T;
+    static constexpr idx_t CAPACITY = (idx_t)CAPACITY_T;
+
+    CHAR_T data [CAPACITY]; //no init
+    idx_t  count = 1; //! does include \0
+
+    constexpr       CHAR_T& operator[] (const idx_t i)       { return data[i]; }
+    constexpr const CHAR_T& operator[] (const idx_t i) const { return data[i]; }
+
+    constexpr idx_t Length() const { return count - 1;  }
+    constexpr bool  Empty()  const { return count <= 1; }
+
+    //? CTOR
+
+    constexpr String() = default;
+
+    template<idx_t N>
+    constexpr String(const CHAR_T (&arr)[N])
+        : data  {}
+        , count { N }
     {
-        using DATA_T = CHAR_T;
-        CHAR_T* const dataPtr;
-        const u32 COUNT_MAX;
-
-        //? ACCESS
-
-        auto&       operator[](const u32 i)       { CheckBounds(i, count); return dataPtr[i]; }
-        const auto& operator[](const u32 i) const { CheckBounds(i, count); return dataPtr[i]; }
-
-        ND u32  Length() const { return count - 1;  } //potential issue when count == 0
-        ND u32  Count()  const { return count;      }
-        ND bool Empty()  const { return count == 0; }
-
-
-        void Clear() 
-        { 
-            dataPtr[0] = '\0'; 
-            count = 1;
-        }
-
-        void GetCharArray(char* const arr) const
-        {
-            std::memcpy(arr, dataPtr, count * sizeof(CHAR_T));
-        }
-
-
-        //? SET
-
-        template<std::size_t N> 
-        void Set(const CHAR_T(&arr)[N])
-        {
-            Set(arr, N); //no need for strlen
-        }
-
-        template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
-        void Set(const PTR ptr)
-        {
-            Set(ptr, std::strlen(ptr) + 1);
-        }
-
-        template<typename COUNT>
-        void Set(const CHAR_T* const ptr, const COUNT arrCount)
-        {
-            CheckBounds((u32)arrCount, COUNT_MAX + 1);
-            std::memcpy(dataPtr, ptr, arrCount);
-            count = (u32)arrCount;
-        }
-
-        //IString& (const IString& other)      { Clear(); Append(other); }
-        void operator=(const IString& other) { Clear(); Append(other); }
-        
-
-        //? APPEND
-
-        template<std::size_t N>
-        void Append(const CHAR_T(&arr)[N])
-        {
-            Append(arr, N); //no need for strlen
-        }
-
-        void Append(const CHAR_T ch)
-        {
-            //consider the \0 trail
-            CheckBounds(count, COUNT_MAX + 1);
-            dataPtr[count-1] = ch;
-            ++count;
-        }
-        
-        template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
-        void Append(const PTR ptr)
-        {
-            Append(ptr, strlen(ptr) + 1);
-        }
-        
-        //arrCount has to be strlen + 1
-        void Append(const CHAR_T* const ptr, const u32 arrCount)
-        {
-            //consider the \0 trail
-            CheckBounds(count - 1 + arrCount, COUNT_MAX + 1);
-            std::memcpy(dataPtr + count - 1, ptr, arrCount * sizeof(CHAR_T));
-            count += arrCount - 1;
-        }
-
-        void Append(const IString<CHAR_T>& str)
-        {
-            Append(str.dataPtr, str.count);
-        }
-
-
-        //? REMOVE
-
-        void Remove(const u32 i, const u32 len)
-        {
-            static_assert(false, "Not yet implemented");
-        }
-
-        void Pop()
-        {
-            if (count <= 1) return;
-            dataPtr[count-1] = '\0';
-            --count;
-        }
-
-
-        //? OTHER
-
-        u32 Find()
-        {
-            static_assert(false, "Not yet implemented");
-            return 0;
-        }
-
-        //bool operator==(const char* const chars) const
-        //{
-        //    return std::strcmp(dataPtr, chars) == 0;
-        //}
-
-    protected:
-        u32 count; //includes \0
-
-        //? CTOR
-
-        //"abstract" base shall not be instantiated
-        constexpr IString(CHAR_T data[], const u32 countMax, const u32 pCount ) 
-            : dataPtr   { data }
-            , COUNT_MAX { countMax }
-            , count     { pCount } 
-        { ; }
-        
-        //me avoiding boilerplate, use generic methods instead
-        //IString(const IString&)             = delete;
-        //IString& operator=(const IString&)  = delete;
-
-
-        //? INTERNAL
-
-        constexpr inline void CheckBounds(const u32 i, const u32 max) const
-        {
-        #if (DO_BOUNDS_CHECK)
-            if (i < 0 || i >= max)
-            {
-                mini::dbg::dlog<mini::dbg::ColorMode::Red>("String access out of bounds");
-                __debugbreak();
-            }
-        #endif
-        }
-    };
-
-
-    template<u32 COUNT_MAX_T, typename CHAR_T = char>
-    struct String final : IString<CHAR_T>
-    {
-        using DATA_T = CHAR_T;
-        using BASE   = IString<CHAR_T>;
-
-        constexpr static u32 COUNT_MAX = COUNT_MAX_T;
-
-
-        //? CTOR
-
-        String() : BASE(data, COUNT_MAX, 1), data { "" } { ; } //is \0
-
-        template<class PTR, typename = IsNoArray<PTR>>
-        String(const PTR ptr) : String() { BASE::Set(ptr); }
-
-        template<std::size_t N>
-        String(const CHAR_T (&arr)[N]) : String() { BASE::Set(arr); }
-
-        template<typename COUNT>
-        String(chars_t ptr, const COUNT count) : String() { BASE::Set(ptr, count); }
-
-        String(const String& other) : String() { BASE::operator=(other); }
-
-    private:
-        CHAR_T data[COUNT_MAX];
-    };
-
-
-
-    //? HELPER
-
-    template<class... STRINGS>
-    auto ConcatStrings(const STRINGS&... strs)
-    {
-        static_assert("not yet implemented");
+        StringAssert(N <= CAPACITY, "str capacity exhausted");
+        FOR_CARRAY(arr, i)
+            data[i] = arr[i];
     }
 
+    //? MODIFICATION
 
-    template<typename CHAR_T>
-    std::ostream& operator<<(std::ostream& os, const IString<CHAR_T>& str)
+    constexpr void Clear()
     {
-        os << str.dataPtr << '\n';
-        //os.write(str.dataPtr, str.Count()); //should be faster ?
-        return os;
+        count = 1;
+        data[0] = '\0';
     }
+
+    template<idx_t N>
+    constexpr void Append(const String<N, CHAR_T>& str)
+    {
+        StringAssert(count + str.count - 1 <= CAPACITY, "str capacity exhausted");
+        std::memcpy(&data[count-1], str.data, str.count * sizeof(CHAR_T));
+        count = count + str.count - 1;
+    }
+
+    template<idx_t N>
+    constexpr void Append(const CHAR_T (&arr)[N])
+    {
+        StringAssert(count + N - 1 <= CAPACITY, "str capacity exhausted");
+        std::memcpy(&data[count-1], arr, N * sizeof(CHAR_T));
+        count = count + N - 1;
+    }
+
+    template<class PTR, class N, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
+    constexpr void Append(const PTR ptr, const N countNotLength) //!has to be CHAR_T
+    {
+        StringAssert(count + countNotLength - 1 <= CAPACITY, "str capacity exhausted");
+        std::memcpy(&data[count-1], ptr, countNotLength * sizeof(CHAR_T));
+        count = count + countNotLength - 1;
+    }
+
+    constexpr void Append(const CHAR_T ch)
+    {
+        StringAssert(count + 1 <= CAPACITY, "str capacity exhausted");
+        data[count] = ch;
+        ++count;
+    }
+
+    template<idx_t N>
+    constexpr String& operator=(const String<N, CHAR_T>& str)
+    {
+        Clear(); 
+        Append(str);
+        return *this;
+    }
+
+    constexpr void Pop()
+    {
+        if (Empty()) return;
+        data[count-1] = '\0';
+        --count;
+    }
+
+};
+
+template<class... STRINGS>
+constexpr auto ConcatStrings(const STRINGS&... strs)
+{
+    static_assert(sizeof...(STRINGS) > 0);
+
+    const auto TOTAL_COUNT = []() constexpr {
+        idx_t count = 0;
+        ((count += STRINGS::CAPACITY), ...);
+        return count;
+    }();
+
+    String<TOTAL_COUNT> str;
+    ((str.Append(strs.data, strs.count)), ...);
+
+    return str;
+}
+
+template<auto N>
+std::ostream& operator<<(std::ostream& os, const String<N>& str)
+{
+    return (os << str.data);
+}
 
 }//ns
 
-#undef DO_BOUNDS_CHECK
-#undef ND

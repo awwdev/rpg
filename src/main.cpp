@@ -5,7 +5,6 @@
 #include "mini/Debug/Logger.hpp"
 #include "mini/Debug/Console.hpp"
 #include "mini/Box/Array.hpp"
-#include "mini/Box/StringMap.hpp"
 #include "mini/Utils/Types.hpp"
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Memory/AllocatorPrint.hpp"
@@ -14,6 +13,8 @@
 #include "mini/App/Scene.hpp"
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Resources/HostResources.hpp"
+
+#include "mini/Box/String.hpp"
 
 using namespace mini;
 using namespace mini::wnd;
