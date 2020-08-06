@@ -8,12 +8,12 @@ It is not intended to be a "plug in and play" library.
 ![](media/progress/2020_01_23_grassMoving.gif)
 
 ### Contents
-- Custom STL (Array, String, Map, Bitset)
+- Custom STL (Array, String, Bitset, Maps)
 - Memory allocation (some CTFE)
 - Logger and profiler (HTML memory print out)
 - Math and algorithms (Matrix, Quaternion)
 - Window and input event system
-- Vulkan renderer and immediate GUI
+- Vulkan renderer (3D, terrain, player controller, shadows) and immediate GUI
 - Other utils
 
 This is Work In Progress! 
@@ -28,8 +28,8 @@ This is Work In Progress!
 # Rationale
 
 ## Custom STL
-The std is hard to read and hard to extend (e.g. using std::vector with your custom allocator).
-So I decided to roll my own containers and memory allocation.
+The std is hard to read and hard to extend (e.g. using std::vector with custom allocator).
+So I decided to roll my own containers and memory allocation. Some notes:
 
 ### mini::box::Array
 - fixed size (capacity-based with internal count)
@@ -53,11 +53,17 @@ So I decided to roll my own containers and memory allocation.
 - free / used blocks are represented by one bitset
 - printable as HTML
 
+
 ![](media/progress/2020_08_08_AllocationView.png)
+
+## ECS
+- DOD (SOA)
+- Custom parsing from txt file (prefabs)
 
 ## Vulkan
 General structure:
 - Context   (Instance, PhysicalDevice, LogicalDevice, Meta, Debug)
 - Resources (Pipeline, Shader, Renderpass, Synchronization, ...)
 - Rendering (Command recording, presentation loop)
-- Wrappers 
+- Wrappers
+- Custom parsing of mesh data (custom blender export)
