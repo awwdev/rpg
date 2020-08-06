@@ -35,8 +35,6 @@ int WINAPI wWinMain(
             vk::WindowHandle{window.hInstance, window.hWnd},
             *ptrHostResources);
 
-        mem::PrintAllocationHTML();
-
         //TODO: make stack for each scene type instead of one generic scene
         auto ptrGameScenes = mem::ClaimBlock<app::GameScene>();
 
@@ -53,6 +51,7 @@ int WINAPI wWinMain(
         }
 
         VK_CHECK(vkDeviceWaitIdle(vk::g_contextPtr->device));
+        mem::PrintAllocationHTML();
     }
     
     mem::GlobalDeallocate();
@@ -62,7 +61,5 @@ int WINAPI wWinMain(
 
 
 //TODO: logger no macro?
-//TODO: string rework
-//TODO: alloc html view
 //TODO: skydome
 //TODO: terrain refactor
