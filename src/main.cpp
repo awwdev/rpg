@@ -59,5 +59,6 @@ int WINAPI wWinMain(
 
 } //main end
 
+//TODO: change idx_t to int32 (signed)
 //TODO: skydome
 //TODO: terrain refactor

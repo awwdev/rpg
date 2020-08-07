@@ -129,6 +129,7 @@ namespace mini::vk
 
     struct Resources_Terrain
     {
+        //TODO: remove renderpass since we use the default one
         RenderPass  renderPass;
         Shader      shader;
         Shader      shaderShadow;

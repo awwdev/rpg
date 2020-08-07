@@ -82,6 +82,8 @@ namespace mini::vk
 
         void RecordCommands(const uint32_t cmdBufferIdx, const double dt, const app::GameScene& scene)
         {
+            //TODO: refactor into sub functions !!!
+
             auto& cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
             VkDeviceSize vboOffsets { 0 };
             uint32_t     uboOffsets { 0 };
@@ -89,11 +91,15 @@ namespace mini::vk
             auto beginInfo = vk::CreateCmdBeginInfo();
             VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
 
-            const auto beginInfo_ui = resources.ui.renderPass.GetBeginInfo(cmdBufferIdx);
+            const VkClearValue clears_sky [] { 
+                { .color = { 0.1f, 0.1f, 0.7f, 1.0f } },
+            };
+            const auto beginInfo_sky = resources.sky.renderPass.GetBeginInfo(cmdBufferIdx, ArrayCount(clears_sky), clears_sky);
 
             const VkClearValue clears_default [] { 
-                { .color = { 0.1f, 0.1f, 0.1f, 1.0f } },
-                { .depthStencil = { 0, 0 } } //reversed z
+                { .color = { 0.0f, 0.0f, 0.0f, 0.0f } },
+                { .depthStencil = { 0, 0 } }, //reversed z
+                { .color = { 1.0f, 1.0f, 1.0f, 1.0f } },//ignored
             };
             const auto beginInfo_default = resources.default.renderPass.GetBeginInfo(
                 cmdBufferIdx, ArrayCount(clears_default), clears_default);
@@ -104,12 +110,13 @@ namespace mini::vk
             const auto beginInfo_shadow = resources.shadow.renderPass.GetBeginInfo(
                 ArrayCount(clears_shadow), clears_shadow);
 
+            const auto beginInfo_ui  = resources.ui.renderPass.GetBeginInfo(cmdBufferIdx);
 
             VkDeviceSize offsets = 0;
 
             vkCmdPushConstants(cmdBuffer, resources.terrain.pipelineShadow.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
 
-            //! SHADOW
+            //! SHADOW MAP
             vkCmdBeginRenderPass(cmdBuffer, &beginInfo_shadow, VK_SUBPASS_CONTENTS_INLINE);
             {
                 //TERRAIN
@@ -132,6 +139,15 @@ namespace mini::vk
             }
             vkCmdEndRenderPass(cmdBuffer);
 
+            //! SKY
+            vkCmdBeginRenderPass(cmdBuffer, &beginInfo_sky, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.sky.pipeline.pipeline);
+                vkCmdDraw               (cmdBuffer, 3, 1, 0, 0); //!DOME VERTEX COUNT
+            }
+            vkCmdEndRenderPass(cmdBuffer);
+
+            //! DRAW 
             vkCmdBeginRenderPass(cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
             {
                 //! TERRAIN
@@ -160,7 +176,7 @@ namespace mini::vk
             }
             vkCmdEndRenderPass(cmdBuffer);
            
-            //! TEXT
+            //! UI
             vkCmdBeginRenderPass(cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
             {
                 vkCmdPushConstants      (cmdBuffer, resources.ui.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.ui.pushConsts), &resources.ui.pushConsts);
@@ -169,6 +185,7 @@ namespace mini::vk
                 vkCmdDraw               (cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
             }
             vkCmdEndRenderPass(cmdBuffer);
+
 
             VK_CHECK(vkEndCommandBuffer(cmdBuffer));
         }
