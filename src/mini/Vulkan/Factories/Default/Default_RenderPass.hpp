@@ -52,7 +52,7 @@ namespace mini::vk
             .flags          = 0 ,
             .format         = g_contextPtr->format, 
             .samples        = VK_SAMPLE_COUNT_1_BIT,
-            .loadOp         = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+            .loadOp         = VK_ATTACHMENT_LOAD_OP_LOAD,
             .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
             .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
             .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -92,15 +92,26 @@ namespace mini::vk
             resolveDesc
         };
 
-        //why is this needed??
-        const VkSubpassDependency dependency {
-            .srcSubpass     = VK_SUBPASS_EXTERNAL,
-            .dstSubpass     = 0,
-            .srcStageMask   = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-            .dstStageMask   = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-            .srcAccessMask  = 0,
-            .dstAccessMask  = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
-        };        
+        const VkSubpassDependency dependencies [] {
+            {
+                .srcSubpass      = VK_SUBPASS_EXTERNAL,
+                .dstSubpass      = 0,
+                .srcStageMask    = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                .dstStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                .srcAccessMask   = VK_ACCESS_MEMORY_READ_BIT,
+                .dstAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                .dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT,
+            },
+            {
+                .srcSubpass      = 0,
+                .dstSubpass      = VK_SUBPASS_EXTERNAL,
+                .srcStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                .dstStageMask    = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                .srcAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                .dstAccessMask   = VK_ACCESS_MEMORY_READ_BIT,
+                .dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT,
+            },
+        };     
 
         const VkRenderPassCreateInfo renderPassInfo {
             .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
@@ -110,8 +121,8 @@ namespace mini::vk
             .pAttachments    = descs,
             .subpassCount    = 1,
             .pSubpasses      = &subpassDesc,
-            .dependencyCount = 1,
-            .pDependencies   = &dependency
+            .dependencyCount = ArrayCount(dependencies),
+            .pDependencies   = dependencies
         };
 
         VK_CHECK(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &rp.renderPass));

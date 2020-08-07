@@ -130,7 +130,7 @@ namespace mini::vk
     struct Resources_Terrain
     {
         //TODO: remove renderpass since we use the default one
-        RenderPass  renderPass;
+        //RenderPass  renderPass;
         Shader      shader;
         Shader      shaderShadow;
         Shader      shaderWire;
@@ -139,32 +139,32 @@ namespace mini::vk
         Pipeline    pipelineWire;
         VertexBuffer<Common_Vertex, TERRAIN_VERTEX_MAX_COUNT> vbo;
 
-        void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow& shadow)
+        void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow& shadow, Resources_Default& default)
         {
             Terrain_CreateVertexBuffer  (vbo, cmdPool, hostRes);
             Terrain_CreateShaderShadow  (shaderShadow);
             Terrain_CreateShader        (shader, shadow.renderPass);
             Terrain_CreateShaderWire    (shaderWire);
-            Terrain_CreateRenderPass    (renderPass, cmdPool);
+            //Terrain_CreateRenderPass    (renderPass, cmdPool);
             Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);
-            Terrain_CreatePipeline      (pipeline, shader, renderPass, vbo);
-            Terrain_CreatePipelineWire  (pipelineWire, shaderWire, renderPass, vbo);
+            Terrain_CreatePipeline      (pipeline, shader, default.renderPass, vbo);
+            Terrain_CreatePipelineWire  (pipelineWire, shaderWire, default.renderPass, vbo);
         }
 
-        void Recreate(VkCommandPool& cmdPool, Resources_Shadow& shadow)
+        void Recreate(VkCommandPool& cmdPool, Resources_Shadow& shadow, Resources_Default& default)
         {
             shader.~Shader();
             pipeline.~Pipeline();
             pipelineWire.~Pipeline();
             pipelineShadow.~Pipeline();
-            renderPass.~RenderPass();
+            //renderPass.~RenderPass();
             
             //TODO: recreate whole shader is wrong, only sampler needs recreation (due to img resize)
             Terrain_CreateShader        (shader, shadow.renderPass);
-            Terrain_CreateRenderPass    (renderPass, cmdPool);
+            //Terrain_CreateRenderPass    (renderPass, cmdPool);
             Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);
-            Terrain_CreatePipeline      (pipeline, shader, renderPass, vbo);
-            Terrain_CreatePipelineWire  (pipelineWire, shaderWire, renderPass, vbo);
+            Terrain_CreatePipeline      (pipeline, shader, default.renderPass, vbo);
+            Terrain_CreatePipelineWire  (pipelineWire, shaderWire, default.renderPass, vbo);
         }
     };
 
@@ -208,7 +208,7 @@ namespace mini::vk
             ui.Create(hostRes, cmdPool);
             shadow.Create(hostRes, cmdPool);
             default.Create(hostRes, cmdPool, shadow);
-            terrain.Create(hostRes, cmdPool, shadow);
+            terrain.Create(hostRes, cmdPool, shadow, default);
             sky.Create(cmdPool);
         }
 
@@ -217,7 +217,7 @@ namespace mini::vk
             ui.Recreate();
             shadow.Recreate(cmdPool);
             default.Recreate(cmdPool, shadow);
-            terrain.Recreate(cmdPool, shadow);    
+            terrain.Recreate(cmdPool, shadow, default);    
             sky.Recreate(cmdPool);        
         }
         

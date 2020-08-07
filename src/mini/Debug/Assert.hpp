@@ -17,7 +17,7 @@ inline void Assert(const bool expression, const T& msg)
 { 
     if (!expression)  {
         dbg::LogError(msg);
-        DEBUG_BREAK();
+        //DEBUG_BREAK();
     }
 } 
 

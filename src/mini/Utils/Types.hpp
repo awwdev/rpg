@@ -70,7 +70,7 @@ using IsNoArray = std::enable_if_t<!std::is_array_v<T>>;
 template<typename T>
 using IsPointer = std::enable_if_t<std::is_pointer_v<T>>;
 
-template<class T, auto N>
+template<class T, idx_t N>
 constexpr u32 ArrayCount(const T (&arr)[N])
 {
     return sizeof(arr) / sizeof(arr[0]);
@@ -79,8 +79,8 @@ constexpr u32 ArrayCount(const T (&arr)[N])
 template<class ARR>
 constexpr auto ArrayCount() 
 { 
-    using ARR_T = std::remove_all_extents_t<ARR>;
-    return sizeof(ARR) / sizeof(ARR_T); 
+    using ELEMENT_T = std::remove_all_extents_t<ARR>;
+    return sizeof(ARR) / sizeof(ELEMENT_T); 
 }
 
 #define FOR_CARRAY(arr, i) for(idx_t i = 0; i < ArrayCount(arr); ++i)
