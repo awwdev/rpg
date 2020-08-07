@@ -10,7 +10,8 @@ constexpr bool LOG_ERRORS   = true;
 constexpr bool LOG_WARNINGS = true;
 constexpr bool LOG_INFO     = true;
 
-constexpr auto CONSOLE_DEFAULT = "\x1b[0m";
+//windows console 
+constexpr auto CONSOLE_DEFAULT = "\x1b[0m" ;
 constexpr auto CONSOLE_RED     = "\x1b[91m";
 constexpr auto CONSOLE_GREEN   = "\x1b[92m";
 constexpr auto CONSOLE_YELLOW  = "\x1b[93m";
@@ -33,7 +34,7 @@ inline void LogHighlight(T&&... args)
 
     std::cout << CONSOLE_CYAN;
     ((std::cout << args << " " ), ...);
-    std::cout << CONSOLE_CYAN << '\n';
+    std::cout << CONSOLE_DEFAULT << '\n';
 }
 
 template<class... T>

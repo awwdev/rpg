@@ -59,7 +59,5 @@ int WINAPI wWinMain(
 
 } //main end
 
-
-//TODO: logger no macro?
 //TODO: skydome
 //TODO: terrain refactor

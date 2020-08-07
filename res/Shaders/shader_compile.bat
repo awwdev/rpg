@@ -12,3 +12,6 @@ glslc terrainWire.frag -o spv/terrainWire.frag.spv
 glslc terrainWire.vert -o spv/terrainWire.vert.spv
 glslc terrainShadow.frag -o spv/terrainShadow.frag.spv
 glslc terrainShadow.vert -o spv/terrainShadow.vert.spv
+
+glslc sky.frag -o spv/sky.frag.spv
+glslc sky.vert -o spv/sky.vert.spv

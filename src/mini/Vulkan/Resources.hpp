@@ -29,6 +29,11 @@
 #include "mini/Vulkan/Factories/Shadow/Shadow_Shader.hpp"
 #include "mini/Vulkan/Factories/Shadow/Shadow_RenderPass.hpp"
 
+
+#include "mini/Vulkan/Factories/Sky/Sky_RenderPass.hpp"
+#include "mini/Vulkan/Factories/Sky/Sky_Pipeline.hpp"
+#include "mini/Vulkan/Factories/Sky/Sky_Shader.hpp" 
+
 #include "mini/Vulkan/Objects/ImageArray.hpp"
 #include "mini/Vulkan/Objects/VertexBuffer.hpp"
 
@@ -162,6 +167,31 @@ namespace mini::vk
         }
     };
 
+    struct Resources_Sky
+    {
+        RenderPass  renderPass;
+        Shader      shader;
+        Pipeline    pipeline;
+
+        void Create(VkCommandPool& cmdPool)
+        {
+            Sky_CreateRenderPass    (renderPass, cmdPool);
+            Sky_CreateShader        (shader);
+            Sky_CreatePipeline      (pipeline, shader, renderPass);
+        }
+
+        void Recreate(VkCommandPool& cmdPool)
+        {
+            shader.~Shader();
+            pipeline.~Pipeline();
+            renderPass.~RenderPass();
+
+            Sky_CreateRenderPass    (renderPass, cmdPool);
+            Sky_CreateShader        (shader);
+            Sky_CreatePipeline      (pipeline, shader, renderPass);
+        }
+    };
+
     struct VkResources
     {
         Common_PushConstants common_pushConsts;
@@ -170,6 +200,7 @@ namespace mini::vk
         Resources_Default default;
         Resources_Terrain terrain;
         Resources_Shadow  shadow;
+        Resources_Sky     sky;
 
         void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
         {
@@ -177,6 +208,7 @@ namespace mini::vk
             shadow.Create(hostRes, cmdPool);
             default.Create(hostRes, cmdPool, shadow);
             terrain.Create(hostRes, cmdPool, shadow);
+            sky.Create(cmdPool);
         }
 
         void RecreateSwapchain(VkCommandPool cmdPool)
@@ -184,8 +216,10 @@ namespace mini::vk
             ui.Recreate();
             shadow.Recreate(cmdPool);
             default.Recreate(cmdPool, shadow);
-            terrain.Recreate(cmdPool, shadow);            
+            terrain.Recreate(cmdPool, shadow);    
+            sky.Recreate(cmdPool);        
         }
+        
     };
 
 } //ns
