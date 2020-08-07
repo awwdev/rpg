@@ -63,7 +63,7 @@ namespace mini::ecs
         //    if (utils::CharsCompare(view, componentTypeToStr.Get(i).dataPtr))
         //        return (ComponentType)i;
         //FOR_INDEX_MAP_END
-        //WARN("str to enum: invalid component type");
+        //dbg::LogWarning("str to enum: invalid component type");
         return ComponentType::ENUM_END;
     }
 
@@ -71,7 +71,7 @@ namespace mini::ecs
     {
         const auto* const  value = componentDataToStr.GetOptional(view);
         if (value) return *value;
-        WARN("str to enum: invalid component data type");
+        dbg::LogWarning("str to enum: invalid component data type");
         return ComponentData::ENUM_END;
     }
 

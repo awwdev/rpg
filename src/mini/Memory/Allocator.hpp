@@ -64,7 +64,7 @@ namespace priv
     {
         priv::blocksUsed.Flip(blockId);
         priv::blockInfos[blockId].Clear();
-        //LOG("FreeBlock", blockId);
+        //dbg::LogInfo("FreeBlock", blockId);
         //dtor call of object is done in BlockPtr
     }
 }
@@ -72,11 +72,11 @@ namespace priv
 inline void GlobalAllocate()
 {
     priv::blockArrayPtrs[0] = (u8*)VirtualAlloc(NULL, ALLOCATION_SIZE, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-    LOG("Block array:", 0, BLOCK_ARRAYS[0].size * BLOCK_ARRAYS[0].count, (void*)priv::blockArrayPtrs[0]);
+    dbg::LogInfo("Block array:", 0, BLOCK_ARRAYS[0].size * BLOCK_ARRAYS[0].count, (void*)priv::blockArrayPtrs[0]);
 
     for(auto i = 1; i < BLOCK_ARRAY_COUNT; ++i) {
         priv::blockArrayPtrs[i] = priv::blockArrayPtrs[i-1] + BLOCK_ARRAYS[i-1].size * BLOCK_ARRAYS[i-1].count; 
-        LOG("Block array:", i, BLOCK_ARRAYS[i].size * BLOCK_ARRAYS[i].count, (void*)priv::blockArrayPtrs[i]);
+        dbg::LogInfo("Block array:", i, BLOCK_ARRAYS[i].size * BLOCK_ARRAYS[i].count, (void*)priv::blockArrayPtrs[i]);
     }
 }
 
@@ -162,7 +162,7 @@ auto ClaimBlock(CtorArgs&&... args)
     //? debug info
     priv::blockInfos[freeBlockId] = __FUNCSIG__;
 
-    //LOG("ClaimBlock", FITTING_BLOCK_ARRAY.arrayIdx, freeBlockId - FITTING_BLOCK_ARRAY.blockId, freeBlockId);
+    //dbg::LogInfo("ClaimBlock", FITTING_BLOCK_ARRAY.arrayIdx, freeBlockId - FITTING_BLOCK_ARRAY.blockId, freeBlockId);
     return BlockPtr<T> { obj, freeBlockId };
 }
 
@@ -174,7 +174,7 @@ inline idx_t GetBlockArrayIdxFromBlockId(const idx_t blockId)
         if (blockId < blockCount)
             return i;
     }
-    ERR("cannot get block array idx from block id");
+    dbg::LogError("cannot get block array idx from block id");
     return 0;
 }
 

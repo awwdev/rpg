@@ -31,7 +31,7 @@ inline void UpdateFPS()
     {
         counter -= 1;
         fps = frames;
-        //LOG("fps", fps);
+        //dbg::LogInfo("fps", fps);
         frames = 0;
     }
 }

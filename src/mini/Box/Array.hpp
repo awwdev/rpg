@@ -13,7 +13,7 @@ inline void ArrayAssert(const bool condition, chars_t msg = "array assertion fai
 {
     if constexpr(USE_ARRAY_ASSERTS) {
         if (condition == false){
-            ERR(msg);
+            dbg::LogError(msg);
             DEBUG_BREAK();
         }
     }

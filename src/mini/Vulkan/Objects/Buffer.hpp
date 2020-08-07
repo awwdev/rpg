@@ -28,7 +28,7 @@ namespace mini::vk
                 (physicalMemProps.memoryTypes[i].propertyFlags & neededMemProps) == neededMemProps) 
                 return i;
         }
-        ERR("no suitable memory type found!");
+        dbg::LogError("no suitable memory type found!");
         return {};
     }
 

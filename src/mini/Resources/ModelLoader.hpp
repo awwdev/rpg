@@ -15,7 +15,7 @@ void LoadModel(box::Array<utils::Common_Vertex, N>& vertices, chars_t path)
     using namespace utils;
     
     std::ifstream file(path, std::ios::binary);
-    if (!file) ERR("cannot open file");
+    if (!file) dbg::LogError("cannot open file");
 
     char line [100];
     while(file.getline(line, 100))

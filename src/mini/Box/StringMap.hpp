@@ -81,7 +81,7 @@ namespace mini::box
                 if (GetOptional(pair.str) != nullptr) {
                     //!on compile time you get this error:
                     //!error C2131: expression did not evaluate to a constant
-                    WARN("StringMap: key already exists (needs unique key)");
+                    dbg::LogWarning("StringMap: key already exists (needs unique key)");
                 }       
                 buckets[hash].Add(pair);
             }
@@ -134,7 +134,7 @@ namespace mini::box
             const auto& bucket = map.buckets[bucketIdx];
             for(u8 contentIdx = 0; contentIdx < bucket.count; ++contentIdx)
             {
-                LOG((int)bucketIdx, bucket.content[contentIdx].val, bucket.content[contentIdx].str);
+                dbg::LogInfo((int)bucketIdx, bucket.content[contentIdx].val, bucket.content[contentIdx].str);
             }
         }
     }

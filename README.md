@@ -66,3 +66,6 @@ General structure:
 - Rendering (Command recording, presentation loop)
 - Wrappers
 - Custom parsing of mesh data (custom blender export)
+
+
+Files in third/ directory are licensed separately, please view these files for more information.

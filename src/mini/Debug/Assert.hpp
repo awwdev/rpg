@@ -16,7 +16,7 @@ template<class T>
 inline void Assert(const bool expression, const T& msg) 
 { 
     if (!expression)  {
-        ERR(msg);
+        dbg::LogError(msg);
         DEBUG_BREAK();
     }
 } 

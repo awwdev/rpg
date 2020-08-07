@@ -19,7 +19,7 @@ constexpr void StringAssert(const bool condition, chars_t msg = "string assertio
 
     if constexpr(USE_STRING_ASSERTS) {
         if (condition == false){
-            ERR(msg);
+            dbg::LogError(msg);
             DEBUG_BREAK();
         }
     }

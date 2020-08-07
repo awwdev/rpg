@@ -16,7 +16,7 @@
 if (const auto res = fn; res != VK_SUCCESS) \
 { \
     if (res > 0) \
-        WARN("VK RESULT", res); \
+        dbg::LogWarning("VK RESULT", res); \
     else \
         mini::Assert(false, res); \
 } 

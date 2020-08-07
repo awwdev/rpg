@@ -69,7 +69,7 @@ namespace mini::ecs
         if (GetComponentDataType(view) != ComponentData::ENUM_END)
             return KeyType::COMPONENT_DATA;
 
-        WARN("str to enum: invalid key type");
+        dbg::LogWarning("str to enum: invalid key type");
         return KeyType::ENUM_END;
     }
 
@@ -77,7 +77,7 @@ namespace mini::ecs
     {
         const auto* const  value = prefabTypeToStr.GetOptional(view);
         if (value) return *value;
-        WARN("str to enum: invalid prefab type");
+        dbg::LogWarning("str to enum: invalid prefab type");
         return PrefabType::ENUM_END;
     }
 
@@ -155,7 +155,7 @@ namespace mini::ecs
                         {
                             if (valueBegin == 0) 
                             {
-                                WARN("key prefab without value!");
+                                dbg::LogWarning("key prefab without value!");
                                 break;
                             }
                             currentPrefab = GetPrefabType({ line + valueBegin, i - valueBegin }); 
@@ -168,7 +168,7 @@ namespace mini::ecs
                             {
                                 if (valueBegin == 0) 
                                 {
-                                    WARN("key component without value!");
+                                    dbg::LogWarning("key component without value!");
                                     break;
                                 }
                                 currentComponent = GetComponentType({ line + valueBegin, i - valueBegin }); 

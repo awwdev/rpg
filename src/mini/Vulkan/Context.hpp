@@ -19,7 +19,7 @@ namespace mini::vk
         void* pUserData)
     {
         if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
-            WARN(pCallbackData->pMessage);
+            dbg::LogWarning(pCallbackData->pMessage);
 
         if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
         {
@@ -133,7 +133,7 @@ namespace mini::vk
             //VK_CHECK(vkEnumerateInstanceLayerProperties(&layerProps.count, layerProps.data));
             //for(auto i = 0; i < layerProps.count; ++i)
             //{
-            //    LOG(layerProps.data[i].layerName);
+            //    dbg::LogInfo(layerProps.data[i].layerName);
             //}
         }
 
@@ -152,12 +152,12 @@ namespace mini::vk
                     break;
                 }
             }
-            //LOG("queue Index", context.queueIndex);
+            //dbg::LogInfo("queue Index", context.queueIndex);
 
             vkGetPhysicalDeviceProperties(physical, &physicalProps);
             vkGetPhysicalDeviceMemoryProperties(physical, &physicalMemProps);
 
-            INFO("Vulkan physical API version", 
+            dbg::LogInfo("Vulkan physical API version", 
                 VK_VERSION_MAJOR(physicalProps.apiVersion),
                 VK_VERSION_MINOR(physicalProps.apiVersion), 
                 VK_VERSION_PATCH(physicalProps.apiVersion)
@@ -260,7 +260,7 @@ namespace mini::vk
             VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapImages.count, swapImages.data));
 
             swapImageViews.count = swapImages.count;
-            //LOG("swapchain count", images.count);
+            //dbg::LogInfo("swapchain count", images.count);
             for (u32 i=0; i<swapImages.count; ++i) {
                 const VkImageViewCreateInfo viewInfo {
                     .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,

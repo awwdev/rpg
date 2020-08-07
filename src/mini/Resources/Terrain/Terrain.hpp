@@ -140,7 +140,7 @@ namespace mini::res
 
         void Stiching()
         {
-            LOG("stiching terrain");
+            dbg::LogInfo("stiching terrain");
             //current coord of active editing quadrant
             const auto z = editing.quadrantIdx / QUADRANT_COUNT;
             const auto x = editing.quadrantIdx % QUADRANT_COUNT;
@@ -299,7 +299,7 @@ namespace mini::res
         void Save(chars_t path = "res/terrain.txt")
         {
             using namespace utils;
-            LOG("saving terrain");
+            dbg::LogInfo("saving terrain");
 
             for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
             for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
@@ -310,7 +310,7 @@ namespace mini::res
                 path2[6] = (char)(48 + x);
                 
                 std::ofstream file(path2, std::ios::binary);
-                if (!file) ERR("cannot open file");
+                if (!file) dbg::LogError("cannot open file");
 
                 const auto& quadrant = quadrants[z][x];
                 file.write((const char*)quadrant.verts, sizeof(utils::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);
@@ -320,7 +320,7 @@ namespace mini::res
         void Load(chars_t path = "res/terrain.txt")
         {
             using namespace utils;
-            LOG("loading terrain");
+            dbg::LogInfo("loading terrain");
 
             for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
             for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
@@ -331,7 +331,7 @@ namespace mini::res
                 path2[6] = (char)(48 + x);
                  
                 std::ifstream file(path2, std::ios::binary);
-                if (!file) ERR("cannot open file");
+                if (!file) dbg::LogError("cannot open file");
 
                 const auto& quadrant = quadrants[z][x];
                 file.read((char*)quadrant.verts, sizeof(utils::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);

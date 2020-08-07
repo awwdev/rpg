@@ -1,73 +1,59 @@
+//https://github.com/awwdev
+
 #pragma once
 #include <iostream>
 #include <cstdio>
 
-
 namespace mini::dbg {
 
-#define DO_DLOG 1
-#define LOG(...)  mini::dbg::dlog(__VA_ARGS__)
-#define LOG_VAR(var)  mini::dbg::dlog(#var, var)
+constexpr bool LOG_ERRORS   = true;
+constexpr bool LOG_WARNINGS = true;
+constexpr bool LOG_INFO     = true;
 
-#define INFO(...) mini::dbg::dlog<mini::dbg::ColorMode::Cyan>(__VA_ARGS__)
-#define ERR(...)  mini::dbg::dlog<mini::dbg::ColorMode::Red>(__VA_ARGS__)
-#define WARN(...) mini::dbg::dlog<mini::dbg::ColorMode::Yellow>(__VA_ARGS__)
+constexpr auto CONSOLE_DEFAULT = "\x1b[0m";
+constexpr auto CONSOLE_RED     = "\x1b[91m";
+constexpr auto CONSOLE_GREEN   = "\x1b[92m";
+constexpr auto CONSOLE_YELLOW  = "\x1b[93m";
+constexpr auto CONSOLE_CYAN    = "\x1b[96m";
 
-//os specfic colors
-//windows
-#define CONSOLE_DEFAULT "\x1b[0m"
-#define CONSOLE_RED     "\x1b[91m"
-#define CONSOLE_GREEN   "\x1b[92m"
-#define CONSOLE_YELLOW  "\x1b[93m"
-#define CONSOLE_CYAN    "\x1b[96m"
-
-//macro DLOG has the adventage of getting the line and the file as macro too (add as macro fn?)
-
-enum class ColorMode
+template<class... T>
+inline void LogInfo(T&&... args)
 {
-    Default, Red, Green, Yellow, Cyan
-};
+    if constexpr(!LOG_INFO) return;
 
-template<ColorMode CM = ColorMode::Default, class... Args>
-void dlog(const Args&... args)
-{
-#if (DO_DLOG == 1)
-    []() constexpr {
-        switch (CM)
-        {
-        case ColorMode::Default: std::cout << CONSOLE_DEFAULT;  break;
-        case ColorMode::Red:     std::cout << CONSOLE_RED;      break;
-        case ColorMode::Green:   std::cout << CONSOLE_GREEN;    break;
-        case ColorMode::Yellow:  std::cout << CONSOLE_YELLOW;   break;
-        case ColorMode::Cyan:    std::cout << CONSOLE_CYAN;     break;
-        }
-    }();
-
+    std::cout << CONSOLE_DEFAULT;
     ((std::cout << args << " " ), ...);
-    std::cout << CONSOLE_DEFAULT"\n";
-#endif
+    std::cout << CONSOLE_DEFAULT << '\n';
 }
 
-void PrintCharRange(chars_t chars, u32 start, u32 end)
+template<class... T>
+inline void LogHighlight(T&&... args)
 {
-    if (start >= end) return;
+    if constexpr(!LOG_INFO) return;
 
-    while(start != end){
-        std::cout << *(chars + start);
-        ++start;
-    }
-    std::cout << '\n';
+    std::cout << CONSOLE_CYAN;
+    ((std::cout << args << " " ), ...);
+    std::cout << CONSOLE_CYAN << '\n';
 }
 
+template<class... T>
+inline void LogWarning(T&&... args)
+{
+    if constexpr(!LOG_WARNINGS) return;
 
-#undef CONSOLE_DEFAULT
-#undef CONSOLE_RED
-#undef CONSOLE_GREEN
-#undef CONSOLE_YELLOW
+    std::cout << CONSOLE_YELLOW;
+    ((std::cout << args << " " ), ...);
+    std::cout << CONSOLE_DEFAULT << '\n';
+}
 
-#undef DO_DLOG
+template<class... T>
+inline void LogError(T&&... args)
+{
+    if constexpr(!LOG_ERRORS) return;
+
+    std::cout << CONSOLE_RED;
+    ((std::cout << args << " " ), ...);
+    std::cout << CONSOLE_DEFAULT << '\n';
+}
 
 }//ns
-
-//todo: more advanced fmt logging?
-//todo: store logs external

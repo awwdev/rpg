@@ -35,7 +35,7 @@ namespace mini::ecs
         void AddComponent(const ID entityID, CtorArgs&&... args)
         {
             if (componentLookup[entityID] != NONE) {
-                WARN("add component that alread exists");
+                dbg::LogWarning("add component that alread exists");
                 dense[componentLookup[entityID]] = { args... };
                 return;
             }
@@ -62,7 +62,7 @@ namespace mini::ecs
         void RemoveComponent(const ID entityID)
         {
             if (componentLookup[entityID] == NONE) {
-                WARN("removing component that does not exist");
+                dbg::LogWarning("removing component that does not exist");
                 return;
             }
             //TODO:
