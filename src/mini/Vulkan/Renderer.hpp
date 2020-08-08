@@ -94,7 +94,7 @@ namespace mini::vk
             const VkClearValue clears_sky [] { 
                 { .color = { 0.1f, 0.1f, 0.7f, 1.0f } },
             };
-            const auto beginInfo_sky = resources.sky.renderPass.GetBeginInfo(cmdBufferIdx, ArrayCount(clears_sky), clears_sky);
+            //const auto beginInfo_sky = resources.sky.renderPass.GetBeginInfo(cmdBufferIdx, ArrayCount(clears_sky), clears_sky);
 
             const VkClearValue clears_default [] { 
                 { .color = { 0.0f, 0.0f, 0.0f, 0.0f } },
@@ -139,17 +139,12 @@ namespace mini::vk
             }
             vkCmdEndRenderPass(cmdBuffer);
 
-            //! SKY
-            vkCmdBeginRenderPass(cmdBuffer, &beginInfo_sky, VK_SUBPASS_CONTENTS_INLINE);
-            {
-                vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.sky.pipeline.pipeline);
-                vkCmdDraw               (cmdBuffer, 3, 1, 0, 0); //!DOME VERTEX COUNT
-            }
-            vkCmdEndRenderPass(cmdBuffer);
-
             //! DRAW 
             vkCmdBeginRenderPass(cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
             {
+                vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.sky.pipeline.pipeline);
+                vkCmdDraw               (cmdBuffer, 336, 1, 0, 0); //!DOME VERTEX COUNT
+
                 //! TERRAIN
                 //TODO: culling (loops)
                 vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);

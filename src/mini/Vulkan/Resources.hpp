@@ -170,26 +170,26 @@ namespace mini::vk
 
     struct Resources_Sky
     {
-        RenderPass  renderPass;
+        //RenderPass  renderPass;
         Shader      shader;
         Pipeline    pipeline;
 
-        void Create(VkCommandPool& cmdPool)
+        void Create(VkCommandPool& cmdPool, Resources_Default& default)
         {
-            Sky_CreateRenderPass    (renderPass, cmdPool);
+            //Sky_CreateRenderPass    (renderPass, cmdPool);
             Sky_CreateShader        (shader);
-            Sky_CreatePipeline      (pipeline, shader, renderPass);
+            Sky_CreatePipeline      (pipeline, shader, default.renderPass);
         }
 
-        void Recreate(VkCommandPool& cmdPool)
+        void Recreate(VkCommandPool& cmdPool, Resources_Default& default)
         {
             shader.~Shader();
             pipeline.~Pipeline();
-            renderPass.~RenderPass();
+            //renderPass.~RenderPass();
 
-            Sky_CreateRenderPass    (renderPass, cmdPool);
+            //Sky_CreateRenderPass    (renderPass, cmdPool);
             Sky_CreateShader        (shader);
-            Sky_CreatePipeline      (pipeline, shader, renderPass);
+            Sky_CreatePipeline      (pipeline, shader, default.renderPass);
         }
     };
 
@@ -209,7 +209,7 @@ namespace mini::vk
             shadow.Create(hostRes, cmdPool);
             default.Create(hostRes, cmdPool, shadow);
             terrain.Create(hostRes, cmdPool, shadow, default);
-            sky.Create(cmdPool);
+            sky.Create(cmdPool, default);
         }
 
         void RecreateSwapchain(VkCommandPool cmdPool)
@@ -218,7 +218,7 @@ namespace mini::vk
             shadow.Recreate(cmdPool);
             default.Recreate(cmdPool, shadow);
             terrain.Recreate(cmdPool, shadow, default);    
-            sky.Recreate(cmdPool);        
+            sky.Recreate(cmdPool, default);        
         }
         
     };
