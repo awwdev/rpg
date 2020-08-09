@@ -25,13 +25,13 @@ float textureProj(vec4 shadowCoord, vec2 off)
 float filterPCF(vec4 sc)
 {
 	ivec2 texDim = textureSize(shadowMap, 0);
-	float scale = 1.5;
+	float scale = 0.1;
 	float dx = scale * 1.0 / float(texDim.x);
 	float dy = scale * 1.0 / float(texDim.y);
 
 	float shadowFactor = 0.0;
 	int count = 0;
-	int range = 1;
+	int range = 12;
 	
 	for (int x = -range; x <= range; x++)
 	{
@@ -50,5 +50,8 @@ float filterPCF(vec4 sc)
 void main() 
 {
     float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
-	outColor = vec4(inColors.rgb * (AMBIENT + (max(0, inShadowDot) * shadow)), 1);
+	if (inShadowDot>0.5)
+		outColor = vec4(inColors.rgb * (AMBIENT + shadow), 1);
+	else
+		outColor = vec4(inColors.rgb * (AMBIENT + (max(0, inShadowDot * 2) * shadow)), 1);
 }

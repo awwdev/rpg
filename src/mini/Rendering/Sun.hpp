@@ -12,6 +12,7 @@ struct Sun
     utils::Vec3f pos { -1, -40, -1 }; //xz controlled by sin
     float t = 0;
     ecs::ID gizmoID = 0;
+    float speed = 0.001f;
 
     void Create(ecs::ECS& ecs)
     {
@@ -23,7 +24,7 @@ struct Sun
     void Update(ecs::ECS& ecs, const double dt)
     {
         using namespace utils;
-        t += (float)dt * 0.5f;
+        t += (float)dt * speed;
         constexpr auto A = 100;
         pos[X] = std::sinf(t) * A;
         pos[Z] = std::cosf(t) * A;

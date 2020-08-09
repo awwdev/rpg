@@ -65,7 +65,7 @@ namespace mini::vk
             resources.common_pushConsts.sunDir = utils::Normalize(scene.sun.pos * 1);
             resources.ui.pushConsts.wnd_w = wnd::global::window_w;
             resources.ui.pushConsts.wnd_h = wnd::global::window_h;
-            resources.sky.pushConsts.topColor = { 0.2f, 0.2f, 1.0f, 1 };
+            resources.sky.pushConsts.topColor = { 0.1f, 0.1f, 1.0f, 1 };
             resources.sky.pushConsts.botColor = { 1.0f, 1.0f, 1.0f, 1 };
 
             resources.ui.ubo.Clear();
