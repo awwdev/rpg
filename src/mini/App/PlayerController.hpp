@@ -41,12 +41,17 @@ struct PlayerController
         const auto movDir = utils::QuatMultVec(camera.qRot, moveNorm);
         auto move = movDir * speed * (float)dt;
 
+        constexpr float S = 0.2f;
+        constexpr float H = 0.5f;
+        constexpr float Ypos = -0.5f;
+        constexpr float HEAD = -1.0f;
+
         position = position + move;
         utils::Mat4f mTransform = {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            position[X], 0, position[Z], 1,
+            S, 0, 0, 0,
+            0, H, 0, 0,
+            0, 0, S, 0,
+            position[X], Ypos, position[Z], 1,
         };
         const auto qY = QuatAngleAxis(camera.rotation[Y], utils::Vec3f{0, 1, 0});
         const auto mRot = QuatToMat(qY);
@@ -56,7 +61,7 @@ struct PlayerController
         playerTransform.transform = mOrient;
 
         
-        const utils::Vec3f pos = { position[X], 0, position[Z] };
+        const utils::Vec3f pos = { position[X], HEAD, position[Z] };
         camera.Update(orientation, pos, dt);
     }
 };

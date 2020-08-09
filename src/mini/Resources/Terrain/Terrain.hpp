@@ -135,6 +135,18 @@ namespace mini::res
             FOR_ARRAY(vertIndices, i){
                 const auto idx = vertIndices[i];
                 quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale;
+
+                //recalculate normals
+                {
+                    const auto triangleIdx = (idx / 3) * 3;
+                    auto& v1 = quadrant.verts[triangleIdx + 0];
+                    auto& v2 = quadrant.verts[triangleIdx + 1];
+                    auto& v3 = quadrant.verts[triangleIdx + 2];
+                    const auto a = Normalize(v2.pos - v1.pos);
+                    const auto b = Normalize(v3.pos - v1.pos);
+                    const auto norm = Cross(a, b);
+                    v1.nor = v2.nor = v3.nor = norm;
+                }
             }
         }
 

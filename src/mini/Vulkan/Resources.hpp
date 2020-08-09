@@ -171,8 +171,10 @@ namespace mini::vk
     struct Resources_Sky
     {
         //RenderPass  renderPass;
-        Shader      shader;
-        Pipeline    pipeline;
+        Shader            shader;
+        Pipeline          pipeline;
+        Sky_PushConstants pushConsts;
+
 
         void Create(VkCommandPool& cmdPool, Resources_Default& default)
         {

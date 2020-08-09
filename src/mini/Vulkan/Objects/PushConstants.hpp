@@ -15,6 +15,14 @@ namespace mini::vk
         utils::Vec3f sunDir;
     };
 
+    struct Sky_PushConstants
+    {
+        utils::Mat4f camera;
+        utils::Mat4f sun;
+        utils::Vec4f topColor;
+        utils::Vec4f botColor;
+    };
+
     struct UI_PushConstants
     {
         u32 wnd_w;

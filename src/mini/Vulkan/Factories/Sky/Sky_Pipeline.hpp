@@ -28,7 +28,7 @@ void Sky_CreatePipeline(
         .pVertexAttributeDescriptions    = nullptr
     };
 
-    const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
 
     const VkViewport viewport {
         .x        = 0.f,
@@ -130,7 +130,7 @@ void Sky_CreatePipeline(
     const VkPushConstantRange constantRange {
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
         .offset     = 0,
-        .size       = (uint32_t)sizeof(Common_PushConstants)
+        .size       = (uint32_t)sizeof(Sky_PushConstants)
     };
 
     const VkPipelineLayoutCreateInfo layoutInfo {

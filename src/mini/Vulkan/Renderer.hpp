@@ -57,14 +57,16 @@ namespace mini::vk
 
             //TODO: this should be handled somewhere else which is active
             if (app::global::inputMode == app::global::PlayMode)
-                resources.common_pushConsts.camera = scene.playerController.camera.perspective * scene.playerController.camera.view;
+                resources.common_pushConsts.camera = resources.sky.pushConsts.camera = scene.playerController.camera.perspective * scene.playerController.camera.view;
             else
-                resources.common_pushConsts.camera = scene.editorController.camera.perspective * scene.editorController.camera.view;
+                resources.common_pushConsts.camera = resources.sky.pushConsts.camera = scene.editorController.camera.perspective * scene.editorController.camera.view;
 
             resources.common_pushConsts.sun    = scene.sun.GetOrthographic() * scene.sun.GetView(); //BIAS * 
-            resources.common_pushConsts.sunDir = utils::Normalize(scene.sun.pos);
+            resources.common_pushConsts.sunDir = utils::Normalize(scene.sun.pos * 1);
             resources.ui.pushConsts.wnd_w = wnd::global::window_w;
             resources.ui.pushConsts.wnd_h = wnd::global::window_h;
+            resources.sky.pushConsts.topColor = { 0.2f, 0.2f, 1.0f, 1 };
+            resources.sky.pushConsts.botColor = { 1.0f, 1.0f, 1.0f, 1 };
 
             resources.ui.ubo.Clear();
             resources.ui.ubo.Store(scene.renderGraph.ui_ubo);
@@ -142,16 +144,18 @@ namespace mini::vk
             //! DRAW 
             vkCmdBeginRenderPass(cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
             {
+                vkCmdPushConstants      (cmdBuffer, resources.sky.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.sky.pushConsts), &resources.sky.pushConsts);
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.sky.pipeline.pipeline);
-                vkCmdDraw               (cmdBuffer, 336, 1, 0, 0); //!DOME VERTEX COUNT
+                vkCmdDraw               (cmdBuffer, 14, 1, 0, 0); //!DOME VERTEX COUNT
 
                 //! TERRAIN
                 //TODO: culling (loops)
+                vkCmdPushConstants      (cmdBuffer, resources.terrain.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
                 vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
                 vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.layout, 0, 1, &resources.terrain.pipeline.sets[cmdBufferIdx], 0, nullptr); 
                 vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.pipeline);
                 vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
-                if (scene.renderGraph.terrain_wire_mode) {
+                if (scene.editorController.terrainWireMode) {
                     vkCmdBindPipeline   (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipelineWire.pipeline);
                     vkCmdDraw           (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
                 }

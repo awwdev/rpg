@@ -8,18 +8,18 @@ layout(location = 1) in vec4 inShadowCoord;
 layout(location = 2) in float inShadowDot;
 layout(binding  = 0) uniform sampler2D shadowMap;
 
+const float AMBIENT = 0.1;
+
 float textureProj(vec4 shadowCoord, vec2 off)
 {
-	float shadow = 0.1f;
-	if ( shadowCoord.z > -1.0 && shadowCoord.z < 1.0 ) 
+	if (shadowCoord.z > -1.0 && shadowCoord.z < 1.0) 
 	{
 		float dist = texture( shadowMap, shadowCoord.st + off ).r;
-		if ( shadowCoord.w > 0.0 && dist < shadowCoord.z ) 
-		{
-			shadow = 1.0f;
+		if ( shadowCoord.w > 0.0 && dist < shadowCoord.z ) {
+			return 1.0f;
 		}
 	}
-	return shadow;
+	return 0.0f;
 }
 
 float filterPCF(vec4 sc)
@@ -45,12 +45,10 @@ float filterPCF(vec4 sc)
 	return shadowFactor / count;
 }
 
+
+
 void main() 
 {
     float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
-	if (inShadowDot > 0)
-		outColor = vec4(inColors.rgb * (1 + inShadowDot * 0.5) * shadow, 1);
-	else 
-		outColor = vec4(inColors.rgb * 0.1, 1);
-    //outColor = vec4(inColors.rgb * (1.5 + inShadowDot * 0.25) * shadow, 1);
+	outColor = vec4(inColors.rgb * (AMBIENT + (max(0, inShadowDot) * shadow)), 1);
 }

@@ -12,11 +12,16 @@ namespace mini::app {
 struct EditorController
 {
     rendering::EgoCamera camera;
+    bool terrainWireMode = true;
 
     void Update(const double dt, ecs::ECS& ecs)
     {
         if (app::global::inputMode == app::global::FlyMode)
             camera.Update(dt);
+
+        if (wnd::HasEvent<wnd::F9, wnd::Pressed>())
+            terrainWireMode = !terrainWireMode;
+
     }
 };
 
