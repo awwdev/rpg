@@ -10,46 +10,17 @@
 
 namespace mini::vk {
 
-inline void RecordCommands(
-    VkResources& resources,
-    Commands& commands, 
-    const uint32_t cmdBufferIdx, 
-    const double dt, 
-    const app::GameScene& scene)
+inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene& scene)
 {
-    auto& cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
-    VkDeviceSize vboOffsets { 0 };
-    uint32_t     uboOffsets { 0 };
-
-    auto beginInfo = vk::CreateCmdBeginInfo();
-    VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
-
-    const VkClearValue clears_sky [] { 
-        { .color = { 0.1f, 0.1f, 0.7f, 1.0f } },
-    };
-    //const auto beginInfo_sky = resources.sky.renderPass.GetBeginInfo(cmdBufferIdx, ArrayCount(clears_sky), clears_sky);
-
-    const VkClearValue clears_default [] { 
-        { .color = { 0.0f, 0.0f, 0.0f, 0.0f } },
-        { .depthStencil = { 0, 0 } }, //reversed z
-        { .color = { 1.0f, 1.0f, 1.0f, 1.0f } },//ignored
-    };
-    const auto beginInfo_default = resources.default.renderPass.GetBeginInfo(
-        cmdBufferIdx, ArrayCount(clears_default), clears_default);
+    VkDeviceSize offsets {};
 
     const VkClearValue clears_shadow [] { 
-        { .depthStencil = { 0, 0 } } //reversed z
+        { .depthStencil = { 0, 0 } } //reversed z        
     };
-    const auto beginInfo_shadow = resources.shadow.renderPass.GetBeginInfo(
-        ArrayCount(clears_shadow), clears_shadow);
-
-    const auto beginInfo_ui  = resources.ui.renderPass.GetBeginInfo(cmdBufferIdx);
-
-    VkDeviceSize offsets = 0;
+    const auto beginInfo_shadow = resources.shadow.renderPass.GetBeginInfo(ArrayCount(clears_shadow), clears_shadow);
 
     vkCmdPushConstants(cmdBuffer, resources.terrain.pipelineShadow.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
 
-    //! SHADOW MAP
     vkCmdBeginRenderPass(cmdBuffer, &beginInfo_shadow, VK_SUBPASS_CONTENTS_INLINE);
     {
         //TERRAIN
@@ -71,8 +42,20 @@ inline void RecordCommands(
         }
     }
     vkCmdEndRenderPass(cmdBuffer);
+}
 
-    //! DRAW 
+inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene& scene)
+{
+    const VkClearValue clears_default [] { 
+        { .color = { 0.0f, 0.0f, 0.0f, 0.0f } },
+        { .depthStencil = { 0, 0 } }, //reversed z
+        { .color = { 1.0f, 1.0f, 1.0f, 1.0f } },//ignored
+    };
+    const auto beginInfo_default = resources.default.renderPass.GetBeginInfo(
+        cmdBufferIdx, ArrayCount(clears_default), clears_default);
+   
+    VkDeviceSize offsets {};
+
     vkCmdBeginRenderPass(cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
     {
         //? SKYDOME
@@ -106,8 +89,11 @@ inline void RecordCommands(
         }
     }
     vkCmdEndRenderPass(cmdBuffer);
-    
-    //! UI
+}
+
+inline void UI(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene& scene)
+{
+    const auto beginInfo_ui  = resources.ui.renderPass.GetBeginInfo(cmdBufferIdx);
     vkCmdBeginRenderPass(cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
     {
         vkCmdPushConstants      (cmdBuffer, resources.ui.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.ui.pushConsts), &resources.ui.pushConsts);
@@ -116,7 +102,25 @@ inline void RecordCommands(
         vkCmdDraw               (cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
     }
     vkCmdEndRenderPass(cmdBuffer);
+}
 
+inline void RecordCommands(
+    VkResources& resources,
+    Commands& commands, 
+    const uint32_t cmdBufferIdx, 
+    const double dt, 
+    const app::GameScene& scene)
+{
+    auto& cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
+    VkDeviceSize vboOffsets { 0 };
+    uint32_t     uboOffsets { 0 };
+
+    const auto beginInfo = vk::CreateCmdBeginInfo();
+    VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+
+    ShadowMap   (cmdBuffer, cmdBufferIdx, resources, scene);
+    Geometry    (cmdBuffer, cmdBufferIdx, resources, scene);
+    UI          (cmdBuffer, cmdBufferIdx, resources, scene); 
 
     VK_CHECK(vkEndCommandBuffer(cmdBuffer));
 }
