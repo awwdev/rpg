@@ -2,7 +2,6 @@
 
 #pragma once
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Ctors.hpp"
 #include "mini/Vulkan/Resources.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/App/Scene.hpp"
@@ -60,6 +59,7 @@ namespace mini::vk
                 resources.common_pushConsts.camera = resources.sky.pushConsts.camera = scene.playerController.camera.perspective * scene.playerController.camera.view;
             else
                 resources.common_pushConsts.camera = resources.sky.pushConsts.camera = scene.editorController.camera.perspective * scene.editorController.camera.view;
+                //resources.common_pushConsts.camera = scene.sun.GetOrthographic() * scene.sun.GetView();
 
             resources.common_pushConsts.sun    = scene.sun.GetOrthographic() * scene.sun.GetView(); //BIAS * 
             resources.common_pushConsts.sunDir = utils::Normalize(scene.sun.pos * 1);
@@ -228,10 +228,30 @@ namespace mini::vk
             RecordCommands(imageIndex, dt, scene);
             //!--------------------------------------------------
 
-            const auto submitInfo = SubmitInfo(sync.imageAcquired[currentFrame], sync.imageFinished[currentFrame], commands.cmdBuffers[imageIndex]);
+            const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            const VkSubmitInfo submitInfo {
+                .sType                  = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                .pNext                  = nullptr,
+                .waitSemaphoreCount     = 1,
+                .pWaitSemaphores        = &sync.imageAcquired[currentFrame],
+                .pWaitDstStageMask      = &waitStages,
+                .commandBufferCount     = 1,
+                .pCommandBuffers        = &commands.cmdBuffers[imageIndex],
+                .signalSemaphoreCount   = 1,
+                .pSignalSemaphores      = &sync.imageFinished[currentFrame],
+            };
             VK_CHECK(vkQueueSubmit(context.queue, 1, &submitInfo, sync.fences[currentFrame]));
 
-            const auto presentInfo = PresentInfo(sync.imageFinished[currentFrame], context.swapchain, imageIndex);
+            const VkPresentInfoKHR presentInfo {
+                .sType                  = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+                .pNext                  = nullptr,
+                .waitSemaphoreCount     = 1,
+                .pWaitSemaphores        = &sync.imageFinished[currentFrame],
+                .swapchainCount         = 1,
+                .pSwapchains            = &context.swapchain,
+                .pImageIndices          = &imageIndex,
+                .pResults               = nullptr
+            };
             VK_CHECK(vkQueuePresentKHR(context.queue, &presentInfo));
 
             currentFrame = (currentFrame + 1) % (context.swapImages.count - 1);

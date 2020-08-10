@@ -9,7 +9,7 @@ namespace mini::rendering {
 
 struct Sun
 {
-    utils::Vec3f pos { -1, -40, -1 }; //xz controlled by sin
+    utils::Vec3f pos { 0, -1, 0 }; //xz controlled by sin
     float t = 0;
     ecs::ID gizmoID = 0;
     float speed = 0.001f;
@@ -25,7 +25,7 @@ struct Sun
     {
         using namespace utils;
         t += (float)dt * speed;
-        constexpr auto A = 100;
+        constexpr auto A = 2;
         pos[X] = std::sinf(t) * A;
         pos[Z] = std::cosf(t) * A;
 
@@ -46,9 +46,9 @@ struct Sun
     utils::Mat4f GetOrthographic() const 
     {
         //TODO: solve how the values correlate
-        const float W = 0.03f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
-        const float H = 0.03f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
-        const float D = 0.0000001f; 
+        const float W = 0.04f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
+        const float H = 0.04f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
+        const float D = 0.00001f; 
         const float Z = 0.01f;
 
         return {
