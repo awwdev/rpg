@@ -95,7 +95,7 @@ struct ThirdCamera
     utils::Mat4f mRot;
     utils::Quatf qRot;
 
-    float mouseSpeed = 0.03f;
+    float mouseSpeed = 0.1f;
     float fov        = 45;
     float scrollSpd  = 0.01f;
 

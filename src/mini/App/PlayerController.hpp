@@ -59,7 +59,6 @@ struct PlayerController
 
         auto& playerTransform = ecs.arrays.transforms.Get(playerID);
         playerTransform.transform = mOrient;
-
         
         const utils::Vec3f pos = { position[X], HEAD, position[Z] };
         camera.Update(orientation, pos, dt);

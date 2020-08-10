@@ -10,7 +10,7 @@
 #include <fstream>
 
 namespace mini::res {
-    
+
 template<auto QUAD_COUNT, auto QUADRANT_LENGTH, auto QUADRANT_COUNT_T>
 struct Terrain
 {
@@ -155,6 +155,35 @@ struct Terrain
         const bool hasNeighborLeft   = x > 0;
         const bool hasNeighbofTop    = z > 0;
 
+        auto stichFn = [&](
+            QUADRANT_T& quadrant,
+            QUADRANT_T& neighborQuadrant,
+            const box::Array<u32, 6>& edgeVerts, 
+            const box::Array<u32, 6>& edgeVertsNeighbor)
+        {
+            const auto averagePos = [&]
+            { 
+                const auto  vIdx         = edgeVerts[0];
+                const auto  vIdxNeighbor = edgeVertsNeighbor[0];
+                const auto& pos          = quadrant.verts[vIdx].pos;
+                const auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
+
+                return (pos + posNeighbor) * 0.5f;  
+            }();
+
+            FOR_ARRAY(edgeVerts , i) { 
+                auto vIdx = edgeVerts[i];
+                auto& pos = quadrant.verts[vIdx].pos;
+                pos = averagePos;
+            }
+
+            FOR_ARRAY(edgeVertsNeighbor , i) { 
+                auto vIdx = edgeVertsNeighbor[i];
+                auto& pos = neighborQuadrant.verts[vIdx].pos;
+                pos = averagePos;
+            }
+        };
+
         if (hasNeighborRight)
         {
             auto& quadrant = quadrants[z][x]; //current active one
@@ -165,28 +194,7 @@ struct Terrain
             for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
                 auto& edgeVerts         = quadrant.corners[z][quadrant.CORNER_COUNT - 1]; //right edge
                 auto& edgeVertsNeighbor = neighborQuadrant.corners[z][0]; //left edge
-
-                const auto averagePos = [&]
-                { 
-                    auto  vIdx         = edgeVerts[0];
-                    auto  vIdxNeighbor = edgeVertsNeighbor[0];
-                    auto& pos          = quadrant.verts[vIdx].pos;
-                    auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
-
-                    return (pos + posNeighbor) * 0.5f;  
-                }();
-
-                FOR_ARRAY(edgeVerts , i) { 
-                    auto vIdx = edgeVerts[i];
-                    auto& pos = quadrant.verts[vIdx].pos;
-                    pos = averagePos;
-                }
-
-                FOR_ARRAY(edgeVertsNeighbor , i) { 
-                    auto vIdx = edgeVertsNeighbor[i];
-                    auto& pos = neighborQuadrant.verts[vIdx].pos;
-                    pos = averagePos;
-                }
+                stichFn(quadrant, neighborQuadrant, edgeVerts, edgeVertsNeighbor);
             }
         }
 
@@ -200,28 +208,7 @@ struct Terrain
             for(idx_t x = 0; x < quadrant.CORNER_COUNT; ++x){
                 auto& edgeVerts         = quadrant.corners[quadrant.CORNER_COUNT - 1][x]; //bottom edge
                 auto& edgeVertsNeighbor = neighborQuadrant.corners[0][x]; //top edge
-
-                const auto averagePos = [&]
-                { 
-                    auto  vIdx         = edgeVerts[0];
-                    auto  vIdxNeighbor = edgeVertsNeighbor[0];
-                    auto& pos          = quadrant.verts[vIdx].pos;
-                    auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
-
-                    return (pos + posNeighbor) * 0.5f;  
-                }();
-
-                FOR_ARRAY(edgeVerts , i) { 
-                    auto vIdx = edgeVerts[i];
-                    auto& pos = quadrant.verts[vIdx].pos;
-                    pos = averagePos;
-                }
-
-                FOR_ARRAY(edgeVertsNeighbor , i) { 
-                    auto vIdx = edgeVertsNeighbor[i];
-                    auto& pos = neighborQuadrant.verts[vIdx].pos;
-                    pos = averagePos;
-                }
+                stichFn(quadrant, neighborQuadrant, edgeVerts, edgeVertsNeighbor);
             }
         }
 
@@ -235,28 +222,7 @@ struct Terrain
             for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
                 auto& edgeVerts         = quadrant.corners[z][0]; //left edge
                 auto& edgeVertsNeighbor = neighborQuadrant.corners[z][quadrant.CORNER_COUNT - 1]; //right edge
-
-                const auto averagePos = [&]
-                { 
-                    auto  vIdx         = edgeVerts[0];
-                    auto  vIdxNeighbor = edgeVertsNeighbor[0];
-                    auto& pos          = quadrant.verts[vIdx].pos;
-                    auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
-
-                    return (pos + posNeighbor) * 0.5f;  
-                }();
-
-                FOR_ARRAY(edgeVerts , i) { 
-                    auto vIdx = edgeVerts[i];
-                    auto& pos = quadrant.verts[vIdx].pos;
-                    pos = averagePos;
-                }
-
-                FOR_ARRAY(edgeVertsNeighbor , i) { 
-                    auto vIdx = edgeVertsNeighbor[i];
-                    auto& pos = neighborQuadrant.verts[vIdx].pos;
-                    pos = averagePos;
-                }
+                stichFn(quadrant, neighborQuadrant, edgeVerts, edgeVertsNeighbor);
             }
         }
 
@@ -270,28 +236,7 @@ struct Terrain
             for(idx_t x = 0; x < quadrant.CORNER_COUNT; ++x){
                 auto& edgeVerts         = quadrant.corners[0][x]; //top edge
                 auto& edgeVertsNeighbor = neighborQuadrant.corners[quadrant.CORNER_COUNT - 1][x]; //bottom edge
-
-                const auto averagePos = [&]
-                { 
-                    auto  vIdx         = edgeVerts[0];
-                    auto  vIdxNeighbor = edgeVertsNeighbor[0];
-                    auto& pos          = quadrant.verts[vIdx].pos;
-                    auto& posNeighbor  = neighborQuadrant.verts[vIdxNeighbor].pos;
-
-                    return (pos + posNeighbor) * 0.5f;  
-                }();
-
-                FOR_ARRAY(edgeVerts , i) { 
-                    auto vIdx = edgeVerts[i];
-                    auto& pos = quadrant.verts[vIdx].pos;
-                    pos = averagePos;
-                }
-
-                FOR_ARRAY(edgeVertsNeighbor , i) { 
-                    auto vIdx = edgeVertsNeighbor[i];
-                    auto& pos = neighborQuadrant.verts[vIdx].pos;
-                    pos = averagePos;
-                }
+                stichFn(quadrant, neighborQuadrant, edgeVerts, edgeVertsNeighbor);    
             }
         }
 
