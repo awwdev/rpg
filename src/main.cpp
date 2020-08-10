@@ -59,6 +59,5 @@ int WINAPI wWinMain(
 
 } //main end
 
-//TODO: renderer split
 //TODO: draw stuff on render target for post fx
 //TODO: terrain refactor
