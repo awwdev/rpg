@@ -59,6 +59,6 @@ int WINAPI wWinMain(
 
 } //main end
 
-//TODO: change idx_t to int32 (signed)
-//TODO: skydome
+//TODO: renderer split
+//TODO: draw stuff on render target for post fx
 //TODO: terrain refactor
