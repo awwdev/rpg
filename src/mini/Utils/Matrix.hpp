@@ -61,6 +61,7 @@ inline Vec4f MakeHomoVec(const Vec3f& vec)
 inline float FastSqrt(float number)
 {
     //from quake <3 
+    //TODO: check input?
     float x2 = number * 0.5f;
     float y  = number;
 

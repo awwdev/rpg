@@ -8,7 +8,7 @@
 #include "mini/Utils/Types.hpp"
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Memory/AllocatorPrint.hpp"
-#include "mini/Vulkan/Renderer.hpp"
+#include "mini/Vulkan/Rendering/Renderer.hpp"
 
 #include "mini/App/Scene.hpp"
 #include "mini/Utils/DeltaTime.hpp"
