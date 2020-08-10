@@ -73,7 +73,7 @@ struct Quadrant
         return { cZ, cX };
     }
 
-    box::Array<u32, 6> GetVerticesByCorner(const utils::Vec2u& pair) const
+    box::Array<idx_t, 6> GetVerticesByCorner(const utils::Vec2u& pair) const
     {
         using namespace utils;
         return corners[pair[X]][pair[Y]];

@@ -50,6 +50,52 @@ struct Terrain
         return z * QUADRANT_COUNT + x;
     }
 
+    auto GetQuadrantsByQCorner(const idx_t qcz, const idx_t qcx, const idx_t cornerCount) 
+    {
+        box::Array<utils::Vec3f, 4> positions;
+        box::Array<utils::Common_Vertex*, 6> verts;
+
+        //TL
+        if (qcx > 0 && qcz > 0){
+            auto& quadrant = quadrants[qcz - 1][qcx - 1];
+            const auto  vertIndices = quadrant.GetVerticesByCorner(utils::Vec2u{quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
+            FOR_ARRAY(verts, i){
+                verts.Append(&quadrant.verts[vertIndices[i]]);
+            }
+            positions.Append(quadrant.verts[vertIndices[0]].pos);
+        }
+
+        //BL
+        if (qcx > 0 && qcz < QUADRANT_COUNT + 1){
+            auto& quadrant = quadrants[qcz - 0][qcx - 1];
+            const auto  vertIndices = quadrant.GetVerticesByCorner(utils::Vec2u{quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
+            FOR_ARRAY(verts, i){
+                //verts.Append(&quadrant.verts[vertIndices[i]]);
+            }
+            positions.Append(quadrant.verts[vertIndices[0]].pos);
+        }
+
+        //TR
+        if (qcx < QUADRANT_COUNT + 1 && qcz > 0){
+            auto& quadrant = quadrants[qcz - 1][qcx - 0];
+            const auto  vertIndices = quadrant.GetVerticesByCorner(utils::Vec2u{quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
+            FOR_ARRAY(verts, i){
+                //verts.Append(&quadrant.verts[vertIndices[i]]);
+            }
+            positions.Append(quadrant.verts[vertIndices[0]].pos);
+        }
+
+        //BR
+        if (qcx < cornerCount && qcz < QUADRANT_COUNT + 1){
+            auto& quadrant = quadrants[qcz - 0][qcx - 0];
+            const auto  vertIndices = quadrant.GetVerticesByCorner(utils::Vec2u{quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
+            FOR_ARRAY(verts, i){
+                //verts.Append(&quadrant.verts[vertIndices[i]]);
+            }
+            positions.Append(quadrant.verts[vertIndices[0]].pos);
+        }
+    }
+
     void Create()
     {
         for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
@@ -244,11 +290,15 @@ struct Terrain
             }
         }
 
+
+
         if (hasNeighborNE)
         {
             auto& neighborQuadrant = quadrants[z-1][x+1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x+1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+
+            GetQuadrantsByQCorner(z-1, x+1, quadrant.CORNER_COUNT);
 
             const auto& corner         = quadrant.corners[0][quadrant.CORNER_COUNT-1]; 
             const auto& cornerNeighbor = neighborQuadrant.corners[quadrant.CORNER_COUNT-1][0]; 
@@ -261,6 +311,8 @@ struct Terrain
             auto& neighborQuadrant = quadrants[z-1][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x-1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+
+            GetQuadrantsByQCorner(z-1, x-1, quadrant.CORNER_COUNT);
 
             const auto& corner         = quadrant.corners[0][0]; 
             const auto& cornerNeighbor = neighborQuadrant.corners[quadrant.CORNER_COUNT-1][quadrant.CORNER_COUNT-1]; 
@@ -275,6 +327,8 @@ struct Terrain
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x+1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
 
+            GetQuadrantsByQCorner(z+1, x+1, quadrant.CORNER_COUNT);
+
             const auto& corner         = quadrant.corners[quadrant.CORNER_COUNT-1][quadrant.CORNER_COUNT-1]; 
             const auto& cornerNeighbor = neighborQuadrant.corners[0][0]; 
 
@@ -286,6 +340,8 @@ struct Terrain
             auto& neighborQuadrant = quadrants[z+1][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x-1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+
+            GetQuadrantsByQCorner(z+1, x-1, quadrant.CORNER_COUNT);
 
             const auto& corner         = quadrant.corners[quadrant.CORNER_COUNT-1][0]; 
             const auto& cornerNeighbor = neighborQuadrant.corners[0][quadrant.CORNER_COUNT-1]; 

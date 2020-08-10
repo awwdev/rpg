@@ -16,13 +16,14 @@ struct Sun
 
     void Create(ecs::ECS& ecs)
     {
-        gizmoID = ecs.AddEntity();
-        ecs.arrays.AddComponent<ecs::ComponentType::Transform> (gizmoID, utils::Identity4());
-        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(gizmoID, res::MeshType::PrimitiveCube);
+        //gizmoID = ecs.AddEntity();
+        //ecs.arrays.AddComponent<ecs::ComponentType::Transform> (gizmoID, utils::Identity4());
+        //ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(gizmoID, res::MeshType::PrimitiveCube);
     }
 
     void Update(ecs::ECS& ecs, const double dt)
     {
+        /*
         using namespace utils;
         t += (float)dt * speed;
         constexpr auto A = 2;
@@ -36,6 +37,7 @@ struct Sun
             0, 0, 1, 0,
             pos[X], pos[Y], pos[Z], 1,
         };
+        */
     }
 
     utils::Mat4f GetView() const
