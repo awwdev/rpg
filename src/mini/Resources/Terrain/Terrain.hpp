@@ -28,7 +28,7 @@ struct Terrain
         f32  yDragPoint = 0;
         f32  dragScale = 0.05f;
         u32  quadrantIdx = 0;
-        box::Array<idx_t, TOTAL_QUADRANT_COUNT> dirtyQuadrants;
+        box::Array<idx_t, TOTAL_QUADRANT_COUNT> dirtyQuadrants; //!cleared by renderer
     } editing;
 
     const QUADRANT_T& GetQuadrant(const idx_t i) const
@@ -137,23 +137,31 @@ struct Terrain
             quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale;
 
             const auto triangleIdx = (idx / 3) * 3;
-            quadrant.RecalculateNormals(triangleIdx);
+            quadrant.RecalculateNormalsOfTriangle(triangleIdx);
         }
     }
 
     void Stiching()
     {
         dbg::LogInfo("stiching terrain");
+
         //current coord of active editing quadrant
         const auto z = editing.quadrantIdx / QUADRANT_COUNT;
         const auto x = editing.quadrantIdx % QUADRANT_COUNT;
-        editing.dirtyQuadrants.Append(editing.quadrantIdx);
+        editing.dirtyQuadrants.Append(editing.quadrantIdx); //!cleared by renderer
+        auto& quadrant = quadrants[z][x]; //current active one
 
         //neighbors
-        const bool hasNeighborRight  = x < QUADRANT_COUNT - 1;
-        const bool hasNeighborBottom = z < QUADRANT_COUNT - 1;
-        const bool hasNeighborLeft   = x > 0;
-        const bool hasNeighbofTop    = z > 0;
+        const bool hasNeighborE = x < QUADRANT_COUNT - 1;
+        const bool hasNeighborS = z < QUADRANT_COUNT - 1;
+        const bool hasNeighborW = x > 0;
+        const bool hasNeighborN = z > 0;
+
+        const bool hasNeighborNE = hasNeighborN && hasNeighborE;
+        const bool hasNeighborNW = hasNeighborN && hasNeighborW;
+        const bool hasNeighborSE = hasNeighborS && hasNeighborE;;
+        const bool hasNeighborSW = hasNeighborS && hasNeighborW;;
+
 
         auto stichFn = [&](
             QUADRANT_T& quadrant,
@@ -184,9 +192,8 @@ struct Terrain
             }
         };
 
-        if (hasNeighborRight)
+        if (hasNeighborE)
         {
-            auto& quadrant = quadrants[z][x]; //current active one
             auto& neighborQuadrant = quadrants[z][x+1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z, x+1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
@@ -198,9 +205,8 @@ struct Terrain
             }
         }
 
-        if (hasNeighborBottom)
+        if (hasNeighborS)
         {
-            auto& quadrant = quadrants[z][x]; //current active one
             auto& neighborQuadrant = quadrants[z+1][x];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
@@ -212,9 +218,8 @@ struct Terrain
             }
         }
 
-        if (hasNeighborLeft)
+        if (hasNeighborW)
         {
-            auto& quadrant = quadrants[z][x]; //current active one
             auto& neighborQuadrant = quadrants[z][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z, x-1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
@@ -226,9 +231,8 @@ struct Terrain
             }
         }
 
-        if (hasNeighbofTop)
+        if (hasNeighborN)
         {
-            auto& quadrant = quadrants[z][x]; //current active one
             auto& neighborQuadrant = quadrants[z-1][x];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
@@ -240,8 +244,41 @@ struct Terrain
             }
         }
 
-        //TODO: diagonal case
-        //TODO: recalculate normals extra function, needs to be called after stiching
+        if (hasNeighborNE)
+        {
+            auto& neighborQuadrant = quadrants[z-1][x-1];
+            const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x-1);
+            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+        }
+
+        if (hasNeighborNW)
+        {
+            auto& neighborQuadrant = quadrants[z-1][x+1];
+            const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x+1);
+            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+        }
+
+        if (hasNeighborSE)
+        {
+            auto& neighborQuadrant = quadrants[z+1][x-1];
+            const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x-1);
+            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+        }
+
+        if (hasNeighborSW)
+        {
+            auto& neighborQuadrant = quadrants[z+1][x+1];
+            const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x+1);
+            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+        }
+
+        //recalc normals
+        FOR_ARRAY(editing.dirtyQuadrants, i)
+        {
+            const auto quadrantIdx = editing.dirtyQuadrants[i];
+            GetQuadrant(quadrantIdx).RecalculateNormals();
+        }
+
     }
 
     void Save(chars_t path = "res/terrain.txt")
@@ -291,3 +328,5 @@ struct Terrain
 };
 
 }//ns
+        
+//TODO: recalculate normals extra function, needs to be called after stiching

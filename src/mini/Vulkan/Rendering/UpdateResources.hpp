@@ -47,6 +47,7 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
         const auto quadrantIdx = hostRes.terrain.editing.dirtyQuadrants[i];
         resources.terrain.vbo.UpdateGroup(quadrantIdx, hostRes.terrain.GetQuadrant(quadrantIdx).verts);
     }
+    hostRes.terrain.editing.dirtyQuadrants.Clear();
     
 }
 

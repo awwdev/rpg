@@ -79,16 +79,22 @@ struct Quadrant
         return corners[pair[X]][pair[Y]];
     }
 
-    void RecalculateNormals(const idx_t triangleIdx)
+    void RecalculateNormalsOfTriangle(const idx_t triangleIdx)
     {
         auto& v1 = verts[triangleIdx + 0];
         auto& v2 = verts[triangleIdx + 1];
         auto& v3 = verts[triangleIdx + 2];
-        const auto a = Normalize(v2.pos - v1.pos);
-        const auto b = Normalize(v3.pos - v1.pos);
-        const auto norm = Cross(a, b);
+        const auto a = v2.pos - v1.pos;
+        const auto b = v3.pos - v1.pos;
+        const auto norm = Normalize(Cross(a, b));
         v1.nor = v2.nor = v3.nor = norm;
     }
+
+    void RecalculateNormals()
+    {
+        for(idx_t i = 0; i < VERT_COUNT_TOTAL; i+=3)
+            RecalculateNormalsOfTriangle(i);
+    }   
 
 };
 

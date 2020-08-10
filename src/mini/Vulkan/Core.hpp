@@ -20,6 +20,7 @@ if (const auto res = fn; res != VK_SUCCESS) \
     else \
         mini::Assert(false, res); \
 } 
+
 //#else
 //#   define VK_CHECK(fn) fn
 //#endif // DEBUG
