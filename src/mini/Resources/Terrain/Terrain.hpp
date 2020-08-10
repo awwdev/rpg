@@ -50,7 +50,7 @@ struct Terrain
         return z * QUADRANT_COUNT + x;
     }
 
-    auto GetQuadrantsByQCorner(const idx_t qcz, const idx_t qcx, const idx_t cornerCount) 
+    auto StichCorner(const idx_t qcz, const idx_t qcx, const idx_t cornerCount) 
     {
         box::Array<utils::Vec3f, 4> positions;
         box::Array<utils::Common_Vertex*, 6> verts;
@@ -58,8 +58,8 @@ struct Terrain
         //TL
         if (qcx > 0 && qcz > 0){
             auto& quadrant = quadrants[qcz - 1][qcx - 1];
-            const auto  vertIndices = quadrant.GetVerticesByCorner(utils::Vec2u{quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
-            FOR_ARRAY(verts, i){
+            const auto  vertIndices = quadrant.GetVerticesByCorner({quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
+            FOR_ARRAY(vertIndices, i){
                 verts.Append(&quadrant.verts[vertIndices[i]]);
             }
             positions.Append(quadrant.verts[vertIndices[0]].pos);
@@ -68,9 +68,9 @@ struct Terrain
         //BL
         if (qcx > 0 && qcz < QUADRANT_COUNT + 1){
             auto& quadrant = quadrants[qcz - 0][qcx - 1];
-            const auto  vertIndices = quadrant.GetVerticesByCorner(utils::Vec2u{quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
-            FOR_ARRAY(verts, i){
-                //verts.Append(&quadrant.verts[vertIndices[i]]);
+            const auto  vertIndices = quadrant.GetVerticesByCorner({0, quadrant.CORNER_COUNT - 1});
+            FOR_ARRAY(vertIndices, i){
+                verts.Append(&quadrant.verts[vertIndices[i]]);
             }
             positions.Append(quadrant.verts[vertIndices[0]].pos);
         }
@@ -78,9 +78,9 @@ struct Terrain
         //TR
         if (qcx < QUADRANT_COUNT + 1 && qcz > 0){
             auto& quadrant = quadrants[qcz - 1][qcx - 0];
-            const auto  vertIndices = quadrant.GetVerticesByCorner(utils::Vec2u{quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
-            FOR_ARRAY(verts, i){
-                //verts.Append(&quadrant.verts[vertIndices[i]]);
+            const auto  vertIndices = quadrant.GetVerticesByCorner({quadrant.CORNER_COUNT - 1, 0});
+            FOR_ARRAY(vertIndices, i){
+                verts.Append(&quadrant.verts[vertIndices[i]]);
             }
             positions.Append(quadrant.verts[vertIndices[0]].pos);
         }
@@ -88,12 +88,24 @@ struct Terrain
         //BR
         if (qcx < cornerCount && qcz < QUADRANT_COUNT + 1){
             auto& quadrant = quadrants[qcz - 0][qcx - 0];
-            const auto  vertIndices = quadrant.GetVerticesByCorner(utils::Vec2u{quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
-            FOR_ARRAY(verts, i){
-                //verts.Append(&quadrant.verts[vertIndices[i]]);
+            const auto  vertIndices = quadrant.GetVerticesByCorner({0, 0});
+            FOR_ARRAY(vertIndices, i){
+                verts.Append(&quadrant.verts[vertIndices[i]]);
             }
             positions.Append(quadrant.verts[vertIndices[0]].pos);
         }
+
+        const auto avgPos = [&]{
+            utils::Vec3f pos {};
+            FOR_ARRAY(positions, i) pos = pos + positions[i];
+            pos = pos * (1/(float)positions.count);
+            return pos;
+        }();
+
+        FOR_ARRAY(verts, i){
+            verts[i]->pos = avgPos;
+        }
+
     }
 
     void Create()
@@ -238,6 +250,7 @@ struct Terrain
             }
         };
 
+        //TODO: spare the very corner
         if (hasNeighborE)
         {
             auto& neighborQuadrant = quadrants[z][x+1];
@@ -297,13 +310,7 @@ struct Terrain
             auto& neighborQuadrant = quadrants[z-1][x+1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x+1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
-
-            GetQuadrantsByQCorner(z-1, x+1, quadrant.CORNER_COUNT);
-
-            const auto& corner         = quadrant.corners[0][quadrant.CORNER_COUNT-1]; 
-            const auto& cornerNeighbor = neighborQuadrant.corners[quadrant.CORNER_COUNT-1][0]; 
-
-            stichFn(quadrant, neighborQuadrant, corner, cornerNeighbor);
+            StichCorner(z-1, x+1, quadrant.CORNER_COUNT);
         }
 
         if (hasNeighborNW)
@@ -311,14 +318,7 @@ struct Terrain
             auto& neighborQuadrant = quadrants[z-1][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x-1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
-
-            GetQuadrantsByQCorner(z-1, x-1, quadrant.CORNER_COUNT);
-
-            const auto& corner         = quadrant.corners[0][0]; 
-            const auto& cornerNeighbor = neighborQuadrant.corners[quadrant.CORNER_COUNT-1][quadrant.CORNER_COUNT-1]; 
-
-            stichFn(quadrant, neighborQuadrant, corner, cornerNeighbor);
-
+            StichCorner(z-1, x-1, quadrant.CORNER_COUNT);
         }
 
         if (hasNeighborSE)
@@ -326,13 +326,7 @@ struct Terrain
             auto& neighborQuadrant = quadrants[z+1][x+1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x+1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
-
-            GetQuadrantsByQCorner(z+1, x+1, quadrant.CORNER_COUNT);
-
-            const auto& corner         = quadrant.corners[quadrant.CORNER_COUNT-1][quadrant.CORNER_COUNT-1]; 
-            const auto& cornerNeighbor = neighborQuadrant.corners[0][0]; 
-
-            stichFn(quadrant, neighborQuadrant, corner, cornerNeighbor);
+            StichCorner(z+1, x+1, quadrant.CORNER_COUNT);
         }
 
         if (hasNeighborSW)
@@ -340,13 +334,7 @@ struct Terrain
             auto& neighborQuadrant = quadrants[z+1][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x-1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
-
-            GetQuadrantsByQCorner(z+1, x-1, quadrant.CORNER_COUNT);
-
-            const auto& corner         = quadrant.corners[quadrant.CORNER_COUNT-1][0]; 
-            const auto& cornerNeighbor = neighborQuadrant.corners[0][quadrant.CORNER_COUNT-1]; 
-
-            stichFn(quadrant, neighborQuadrant, corner, cornerNeighbor);
+            StichCorner(z+1, x-1, quadrant.CORNER_COUNT);
         }
 
         //recalc normals

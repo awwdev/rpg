@@ -18,11 +18,21 @@ struct PlayerController
     utils::Vec3f position {};
     utils::Vec3f rotation {};
 
+    static constexpr float S = 0.2f;
+    static constexpr float H = 0.5f;
+    static constexpr float Ypos = -0.5f;
+    static constexpr float HEAD = -1.0f;
 
     void Create(ecs::ECS& ecs)
     {
+        using namespace utils;
         playerID = ecs.AddEntity();
-        ecs.arrays.AddComponent<ecs::ComponentType::Transform>(playerID, utils::Identity4());
+        ecs.arrays.AddComponent<ecs::ComponentType::Transform>(playerID, utils::Mat4f{
+            S, 0, 0, 0,
+            0, H, 0, 0,
+            0, 0, S, 0,
+            position[X], Ypos, position[Z], 1,
+        });
         ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::MeshType::PrimitiveCube);
     }
 
@@ -40,11 +50,6 @@ struct PlayerController
         NormalizeThis(moveNorm);
         const auto movDir = utils::QuatMultVec(camera.qRot, moveNorm);
         auto move = movDir * speed * (float)dt;
-
-        constexpr float S = 0.2f;
-        constexpr float H = 0.5f;
-        constexpr float Ypos = -0.5f;
-        constexpr float HEAD = -1.0f;
 
         position = position + move;
         utils::Mat4f mTransform = {
