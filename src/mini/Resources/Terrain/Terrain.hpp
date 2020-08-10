@@ -246,30 +246,51 @@ struct Terrain
 
         if (hasNeighborNE)
         {
-            auto& neighborQuadrant = quadrants[z-1][x-1];
-            const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x-1);
+            auto& neighborQuadrant = quadrants[z-1][x+1];
+            const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x+1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+
+            const auto& corner         = quadrant.corners[0][quadrant.CORNER_COUNT-1]; 
+            const auto& cornerNeighbor = neighborQuadrant.corners[quadrant.CORNER_COUNT-1][0]; 
+
+            stichFn(quadrant, neighborQuadrant, corner, cornerNeighbor);
         }
 
         if (hasNeighborNW)
         {
-            auto& neighborQuadrant = quadrants[z-1][x+1];
-            const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x+1);
+            auto& neighborQuadrant = quadrants[z-1][x-1];
+            const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x-1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+
+            const auto& corner         = quadrant.corners[0][0]; 
+            const auto& cornerNeighbor = neighborQuadrant.corners[quadrant.CORNER_COUNT-1][quadrant.CORNER_COUNT-1]; 
+
+            stichFn(quadrant, neighborQuadrant, corner, cornerNeighbor);
+
         }
 
         if (hasNeighborSE)
         {
-            auto& neighborQuadrant = quadrants[z+1][x-1];
-            const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x-1);
+            auto& neighborQuadrant = quadrants[z+1][x+1];
+            const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x+1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+
+            const auto& corner         = quadrant.corners[quadrant.CORNER_COUNT-1][quadrant.CORNER_COUNT-1]; 
+            const auto& cornerNeighbor = neighborQuadrant.corners[0][0]; 
+
+            stichFn(quadrant, neighborQuadrant, corner, cornerNeighbor);
         }
 
         if (hasNeighborSW)
         {
-            auto& neighborQuadrant = quadrants[z+1][x+1];
-            const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x+1);
+            auto& neighborQuadrant = quadrants[z+1][x-1];
+            const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x-1);
             editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+
+            const auto& corner         = quadrant.corners[quadrant.CORNER_COUNT-1][0]; 
+            const auto& cornerNeighbor = neighborQuadrant.corners[0][quadrant.CORNER_COUNT-1]; 
+
+            stichFn(quadrant, neighborQuadrant, corner, cornerNeighbor);
         }
 
         //recalc normals
@@ -328,5 +349,4 @@ struct Terrain
 };
 
 }//ns
-        
-//TODO: recalculate normals extra function, needs to be called after stiching
+    
