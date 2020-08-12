@@ -6,8 +6,8 @@
 #include "mini/ECS/ECS.hpp"
 #include "mini/Rendering/Cameras.hpp"
 #include "mini/Resources/Terrain/TerrainQuadrant.hpp"
-
-#include <fstream>
+#include "mini/Resources/Terrain/TerrainSerialization.hpp"
+#include "mini/Resources/Terrain/TerrainStiching.hpp"
 
 namespace mini::res {
 
@@ -20,24 +20,58 @@ struct Terrain
     static constexpr idx_t QUAD_COUNT = (idx_t)QUAD_COUNT_T;
     static constexpr idx_t QUAD_LEN   = (idx_t)QUAD_LEN_T;
 
-    static constexpr idx_t QUADRANT_COUNT = (idx_t)QUADRANT_COUNT_T;
-    static constexpr idx_t QUADRANT_LEN   = QUAD_COUNT * QUAD_LEN;
-
+    static constexpr idx_t QUADRANT_COUNT       = (idx_t)QUADRANT_COUNT_T;
+    static constexpr idx_t QUADRANT_LEN         = QUAD_COUNT * QUAD_LEN;
     static constexpr idx_t QUADRANT_COUNT_TOTAL = QUADRANT_COUNT * QUADRANT_COUNT;
     static constexpr idx_t QUADRANT_LEN_TOTAL   = QUADRANT_LEN * QUADRANT_COUNT;
 
-    using QUADRANT_T = Quadrant<QUAD_COUNT_T, QUADRANT_LEN>;
+    using QUADRANT_T = Quadrant<QUAD_COUNT, QUADRANT_LEN>;
     QUADRANT_T quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
 
-    struct 
+    //? MAIN
+
+    void Create()
     {
-        box::Array<idx_t, 6> draggingVertIndices;
-        bool isDragging = false;
-        f32  yDragPoint = 0;
-        f32  dragScale = 0.05f;
-        u32  quadrantIdx = 0;
-        box::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
-    } editing;
+        for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
+        for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
+            quadrants[z][x].Create(
+                (f32)z * QUADRANT_LEN - QUADRANT_LEN_TOTAL * 0.5f, 
+                (f32)x * QUADRANT_LEN - QUADRANT_LEN_TOTAL * 0.5f);
+        }}
+    }
+
+    void Update(const double dt, const rendering::EgoCamera& camera, ecs::ECS& ecs)
+    {   
+        if (app::global::inputMode != app::global::UI_Mode)
+            return;
+
+        editing.dirtyQuadrants.Clear();
+
+        if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
+            editing.isDragging = false;
+
+        if (editing.isDragging == false)
+            TestIntersectionAndPressed(camera);
+
+        if (editing.isDragging == true)
+            Dragging();
+
+        if (wnd::HasEvent<wnd::F5, wnd::Pressed>())
+            SaveTerrain(quadrants);
+        if (wnd::HasEvent<wnd::F6, wnd::Pressed>()){
+            LoadTerrain(quadrants);
+            MarkAllDirty();
+        }
+        if (wnd::HasEvent<wnd::F7, wnd::Pressed>())
+            Stiching();
+
+        if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) editing.quadrantIdx = 0;
+        if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) editing.quadrantIdx = 1;
+        if (wnd::HasEvent<wnd::N2, wnd::Pressed>()) editing.quadrantIdx = 2;
+        if (wnd::HasEvent<wnd::N3, wnd::Pressed>()) editing.quadrantIdx = 3;
+    }
+
+    //? HELPER
 
     const QUADRANT_T& GetQuadrant(const idx_t i) const
     {
@@ -58,7 +92,84 @@ struct Terrain
         return z * QUADRANT_COUNT + x;
     }
 
-    auto StichCorner(const idx_t qcz, const idx_t qcx, const idx_t cornerCount) 
+    //? EDITING
+
+    struct 
+    {
+        box::Array<idx_t, 6> draggingVertIndices;
+        box::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
+        bool isDragging  = false;
+        f32  yDragPoint  = 0;
+        f32  dragScale   = 0.05f;
+        u32  quadrantIdx = 0;
+    } editing;
+
+    void MarkAllDirty(){ //could be done better 
+        editing.dirtyQuadrants.Clear();
+        for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
+        for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
+            editing.dirtyQuadrants.Append(GetQuadrantIndex(z, x));
+        }}
+    }
+
+    //? INTERACTION
+
+    void TestIntersectionAndPressed(const rendering::EgoCamera& camera)
+    {
+        auto& quadrant = GetQuadrant(editing.quadrantIdx);
+        const auto ray = ScreenRay(camera);
+
+        for(idx_t i = 0; i < quadrant.VERT_COUNT_TOTAL; i+=3)
+        {
+            auto& v0 = quadrant.verts[i+0].pos;
+            auto& v1 = quadrant.verts[i+1].pos;
+            auto& v2 = quadrant.verts[i+2].pos;
+
+            const box::Optional<utils::Intersection> intersection = 
+                utils::RayTriangleIntersection(camera.position, ray, v0, v1, v2);
+            if (intersection)
+            {
+                const auto ix = intersection->pos[X];
+                const auto iy = intersection->pos[Y];
+                const auto iz = intersection->pos[Z];
+                //visualize
+                const auto closestVertex = intersection->GetClosestVertex(i);
+
+                if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
+                    editing.draggingVertIndices.Clear();
+                    const auto corner   = quadrant.GetCornerByVertex(closestVertex);
+                    const auto vertices = quadrant.GetVerticesByCorner(corner);
+                    editing.draggingVertIndices.AppendArray(vertices);
+                    editing.yDragPoint = (f32)wnd::global::mouse_wy;
+                    editing.isDragging = true;
+                }
+            }
+        }
+    }
+
+    void Dragging()
+    {
+        using namespace utils;
+        auto& quadrant = GetQuadrant(editing.quadrantIdx);
+        editing.dirtyQuadrants.Append(editing.quadrantIdx);
+
+        const f32 yDelta = wnd::global::mouse_wy - editing.yDragPoint;
+        editing.yDragPoint = (f32)wnd::global::mouse_wy;
+        
+        const auto& vertIndices = editing.draggingVertIndices;
+        FOR_ARRAY(vertIndices, i){
+            const auto idx = vertIndices[i];
+            quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale;
+
+            const auto triangleIdx = (idx / 3) * 3;
+            quadrant.RecalculateNormalsOfTriangle(triangleIdx);
+        }
+    }
+
+
+    //? STICHING
+
+    void StichCorner(const idx_t qcz, const idx_t qcx, const idx_t cornerCount) 
     {
         box::Array<utils::Vec3f, 4> positions;
         box::Array<utils::Common_Vertex*, 6> verts;
@@ -112,98 +223,6 @@ struct Terrain
 
         FOR_ARRAY(verts, i){
             verts[i]->pos = avgPos;
-        }
-
-    }
-
-    void Create()
-    {
-        for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
-        for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
-            quadrants[z][x].Create(
-                (f32)z * QUADRANT_LEN - QUADRANT_LEN_TOTAL * 0.5f, 
-                (f32)x * QUADRANT_LEN - QUADRANT_LEN_TOTAL * 0.5f);
-        }}
-    }
-
-    void Update(const double dt, const rendering::EgoCamera& camera, ecs::ECS& ecs)
-    {   
-        if (app::global::inputMode != app::global::UI_Mode)
-            return;
-
-        editing.dirtyQuadrants.Clear();
-
-        if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
-            editing.isDragging = false;
-
-        if (editing.isDragging == false)
-            TestIntersectionAndPressed(camera);
-
-        if (editing.isDragging == true)
-            Dragging();
-
-        if (wnd::HasEvent<wnd::F5, wnd::Pressed>())
-            Save();
-        if (wnd::HasEvent<wnd::F6, wnd::Pressed>())
-            Load();
-        if (wnd::HasEvent<wnd::F7, wnd::Pressed>())
-            Stiching();
-
-        if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) editing.quadrantIdx = 0;
-        if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) editing.quadrantIdx = 1;
-        if (wnd::HasEvent<wnd::N2, wnd::Pressed>()) editing.quadrantIdx = 2;
-        if (wnd::HasEvent<wnd::N3, wnd::Pressed>()) editing.quadrantIdx = 3;
-    }
-
-    void TestIntersectionAndPressed(const rendering::EgoCamera& camera)
-    {
-        auto& quadrant = GetQuadrant(editing.quadrantIdx);
-        const auto ray = ScreenRay(camera);
-
-        for(idx_t i = 0; i < quadrant.VERT_COUNT_TOTAL; i+=3)
-        {
-            auto& v0 = quadrant.verts[i+0].pos;
-            auto& v1 = quadrant.verts[i+1].pos;
-            auto& v2 = quadrant.verts[i+2].pos;
-
-            const box::Optional<utils::Intersection> intersection = 
-                utils::RayTriangleIntersection(camera.position, ray, v0, v1, v2);
-            if (intersection)
-            {
-                const auto ix = intersection->pos[X];
-                const auto iy = intersection->pos[Y];
-                const auto iz = intersection->pos[Z];
-                //visualize
-                const auto closestVertex = intersection->GetClosestVertex(i);
-
-                if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
-                    editing.draggingVertIndices.Clear();
-                    const auto corner   = quadrant.GetCornerByVertex(closestVertex);
-                    const auto vertices = quadrant.GetVerticesByCorner(corner);
-                    editing.draggingVertIndices.AppendArray(vertices);
-                    editing.yDragPoint = (f32)wnd::global::mouse_wy;
-                    editing.isDragging = true;
-                }
-            }
-        }
-    }
-
-    void Dragging()
-    {
-        using namespace utils;
-        auto& quadrant = GetQuadrant(editing.quadrantIdx);
-        editing.dirtyQuadrants.Append(editing.quadrantIdx);
-
-        const f32 yDelta = wnd::global::mouse_wy - editing.yDragPoint;
-        editing.yDragPoint = (f32)wnd::global::mouse_wy;
-        
-        const auto& vertIndices = editing.draggingVertIndices;
-        FOR_ARRAY(vertIndices, i){
-            const auto idx = vertIndices[i];
-            quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale;
-
-            const auto triangleIdx = (idx / 3) * 3;
-            quadrant.RecalculateNormalsOfTriangle(triangleIdx);
         }
     }
 
@@ -311,8 +330,6 @@ struct Terrain
             }
         }
 
-
-
         if (hasNeighborNE)
         {
             auto& neighborQuadrant = quadrants[z-1][x+1];
@@ -354,51 +371,6 @@ struct Terrain
 
     }
 
-    void Save() const
-    {
-        using namespace utils;
-        dbg::LogInfo("saving terrain");
-
-        for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
-        for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
-
-            char path2[] { "res/xxx" };
-            path2[4] = 't';
-            path2[5] = (char)(48 + z);
-            path2[6] = (char)(48 + x);
-            
-            std::ofstream file(path2, std::ios::binary);
-            if (!file) dbg::LogError("cannot open file");
-
-            const auto& quadrant = quadrants[z][x];
-            file.write((const char*)quadrant.verts, sizeof(utils::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);
-        }}
-    }
-
-    void Load(chars_t path = "res/terrain.txt")
-    {
-        using namespace utils;
-        dbg::LogInfo("loading terrain");
-
-        for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
-        for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
-
-            char path2[] { "res/xxx" };
-            path2[4] = 't';
-            path2[5] = (char)(48 + z);
-            path2[6] = (char)(48 + x);
-                
-            std::ifstream file(path2, std::ios::binary);
-            if (!file) dbg::LogError("cannot open file");
-
-            const auto& quadrant = quadrants[z][x];
-            file.read((char*)quadrant.verts, sizeof(utils::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);
-
-            editing.dirtyQuadrants.Append(GetQuadrantIndex(z, x));
-        }}
-
-    }
 };
 
-}//ns
-    
+}//ns    
