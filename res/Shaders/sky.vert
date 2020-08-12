@@ -9,7 +9,7 @@ layout(push_constant) uniform Push {
 
 layout (location = 0) out vec4 outCol;
 
-const float S = 100;
+const float S = 200;
 const float H =  20;
 const float Y = -10;
 const vec4 skybox [] = {
