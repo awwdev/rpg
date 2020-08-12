@@ -6,13 +6,13 @@
 
 namespace mini::res {
 
-template<auto QUAD_COUNT_T, auto QUADRANT_LENGTH_T>
+template<auto QUAD_COUNT_T, auto QUADRANT_LEN_T>
 struct Quadrant
 {
-    static constexpr auto LENGTH = QUADRANT_LENGTH_T; 
+    static constexpr auto QUADRANT_LEN = QUADRANT_LEN_T; 
 
     static constexpr auto QUAD_COUNT       = QUAD_COUNT_T; 
-    static constexpr auto QUAD_LENGTH      = LENGTH / (float)QUAD_COUNT_T;
+    static constexpr auto QUAD_LENGTH      = QUADRANT_LEN / (float)QUAD_COUNT_T;
     static constexpr auto CORNER_COUNT     = QUAD_COUNT + 1;
     static constexpr auto QUAD_COUNT_TOTAL = QUAD_COUNT * QUAD_COUNT;
     static constexpr auto VERT_COUNT_TOTAL = QUAD_COUNT_TOTAL * 6;
@@ -76,7 +76,7 @@ struct Quadrant
     box::Array<idx_t, 6> GetVerticesByCorner(const utils::Vec2u& pair) const
     {
         using namespace utils;
-        return corners[pair[X]][pair[Y]];
+        return corners[pair[X]][pair[Y]]; //zx
     }
 
     void RecalculateNormalsOfTriangle(const idx_t triangleIdx)

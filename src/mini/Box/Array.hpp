@@ -32,12 +32,8 @@ struct Array
 
     //? ACCESS
 
-    #define IDX_T template<class IDX>
-
-    IDX_T T&       operator[](const IDX idx)       { return reinterpret_cast<T&>      (bytes[sizeof(T) * (idx_t)idx]); }
-    IDX_T const T& operator[](const IDX idx) const { return reinterpret_cast<const T&>(bytes[sizeof(T) * (idx_t)idx]); }
-
-    #undef IDX_T
+    template<class IDX> T&       operator[](const IDX idx)       { return reinterpret_cast<T&>      (bytes[sizeof(T) * (idx_t)idx]); }
+    template<class IDX> const T& operator[](const IDX idx) const { return reinterpret_cast<const T&>(bytes[sizeof(T) * (idx_t)idx]); }
 
     T&       Last()       { ArrayAssert(count > 0); this->operator[count - 1]; }
     const T& Last() const { ArrayAssert(count > 0); this->operator[count - 1]; }
@@ -49,7 +45,7 @@ struct Array
     template<class... ARGS>
     T* Append(ARGS&&... args)
     {
-        ArrayAssert(count <= CAPACITY, "array capacity exhausted");
+        ArrayAssert(count < CAPACITY, "array capacity exhausted");
         auto* ptr = PlacementNew(std::forward<ARGS>(args)...);
         ++count;
         return ptr;

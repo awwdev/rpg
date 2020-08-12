@@ -23,21 +23,21 @@ struct Sun
 
     void Update(ecs::ECS& ecs, const double dt)
     {
-        /*
+        
         using namespace utils;
         t += (float)dt * speed;
         constexpr auto A = 2;
         pos[X] = std::sinf(t) * A;
         pos[Z] = std::cosf(t) * A;
 
-        auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
+        /*auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
         cubeTrans.transform = {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
             pos[X], pos[Y], pos[Z], 1,
-        };
-        */
+        };*/
+        
     }
 
     utils::Mat4f GetView() const
@@ -48,8 +48,8 @@ struct Sun
     utils::Mat4f GetOrthographic() const 
     {
         //TODO: solve how the values correlate
-        const float W = 0.04f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
-        const float H = 0.04f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
+        const float W = 0.01f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
+        const float H = 0.01f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
         const float D = 0.00001f; 
         const float Z = 0.01f;
 

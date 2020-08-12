@@ -5,20 +5,28 @@
 #include "mini/Box/Array.hpp"
 #include "mini/ECS/ECS.hpp"
 #include "mini/Rendering/Cameras.hpp"
-#include "mini/Resources/Terrain/Terrain_Quadrant.hpp"
+#include "mini/Resources/Terrain/TerrainQuadrant.hpp"
 
 #include <fstream>
 
 namespace mini::res {
 
-template<auto QUAD_COUNT, auto QUADRANT_LENGTH, auto QUADRANT_COUNT_T>
+template<
+    auto QUAD_COUNT_T, 
+    auto QUAD_LEN_T, 
+    auto QUADRANT_COUNT_T>
 struct Terrain
 {
-    using QUADRANT_T = Quadrant<QUAD_COUNT, QUADRANT_LENGTH>;
+    static constexpr idx_t QUAD_COUNT = (idx_t)QUAD_COUNT_T;
+    static constexpr idx_t QUAD_LEN   = (idx_t)QUAD_LEN_T;
 
-    static constexpr auto QUADRANT_COUNT = QUADRANT_COUNT_T;
-    static constexpr auto TOTAL_QUADRANT_COUNT = QUADRANT_COUNT * QUADRANT_COUNT;
-    static constexpr auto TOTAL_LENGTH   = QUADRANT_COUNT * QUADRANT_LENGTH;
+    static constexpr idx_t QUADRANT_COUNT = (idx_t)QUADRANT_COUNT_T;
+    static constexpr idx_t QUADRANT_LEN   = QUAD_COUNT * QUAD_LEN;
+
+    static constexpr idx_t QUADRANT_COUNT_TOTAL = QUADRANT_COUNT * QUADRANT_COUNT;
+    static constexpr idx_t QUADRANT_LEN_TOTAL   = QUADRANT_LEN * QUADRANT_COUNT;
+
+    using QUADRANT_T = Quadrant<QUAD_COUNT_T, QUADRANT_LEN>;
     QUADRANT_T quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
 
     struct 
@@ -28,7 +36,7 @@ struct Terrain
         f32  yDragPoint = 0;
         f32  dragScale = 0.05f;
         u32  quadrantIdx = 0;
-        box::Array<idx_t, TOTAL_QUADRANT_COUNT> dirtyQuadrants; //!cleared by renderer
+        box::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
     } editing;
 
     const QUADRANT_T& GetQuadrant(const idx_t i) const
@@ -113,8 +121,8 @@ struct Terrain
         for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
         for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
             quadrants[z][x].Create(
-                (f32)z * QUADRANT_LENGTH - TOTAL_LENGTH * 0.5f, 
-                (f32)x * QUADRANT_LENGTH - TOTAL_LENGTH * 0.5f);
+                (f32)z * QUADRANT_LEN - QUADRANT_LEN_TOTAL * 0.5f, 
+                (f32)x * QUADRANT_LEN - QUADRANT_LEN_TOTAL * 0.5f);
         }}
     }
 
@@ -346,7 +354,7 @@ struct Terrain
 
     }
 
-    void Save(chars_t path = "res/terrain.txt")
+    void Save() const
     {
         using namespace utils;
         dbg::LogInfo("saving terrain");
