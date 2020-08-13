@@ -7,7 +7,6 @@
 #include "mini/Rendering/Cameras.hpp"
 #include "mini/Resources/Terrain/TerrainQuadrant.hpp"
 #include "mini/Resources/Terrain/TerrainSerialization.hpp"
-#include "mini/Resources/Terrain/TerrainStiching.hpp"
 
 namespace mini::res {
 
@@ -27,6 +26,8 @@ struct Terrain
 
     using QUADRANT_T = Quadrant<QUAD_COUNT, QUADRANT_LEN>;
     QUADRANT_T quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
+
+    enum EditMode { VertexGrab, VertexPaint } mode = VertexGrab;
 
     //? MAIN
 
@@ -135,14 +136,24 @@ struct Terrain
                 //visualize
                 const auto closestVertex = intersection->GetClosestVertex(i);
 
-                if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
-                    editing.draggingVertIndices.Clear();
-                    const auto corner   = quadrant.GetCornerByVertex(closestVertex);
-                    const auto vertices = quadrant.GetVerticesByCorner(corner);
-                    editing.draggingVertIndices.AppendArray(vertices);
-                    editing.yDragPoint = (f32)wnd::global::mouse_wy;
-                    editing.isDragging = true;
+                if (mode == VertexGrab)
+                {
+                    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
+                        editing.draggingVertIndices.Clear();
+                        const auto corner   = quadrant.GetCornerByVertex(closestVertex);
+                        const auto vertices = quadrant.GetVerticesByCorner(corner);
+                        editing.draggingVertIndices.AppendArray(vertices);
+                        editing.yDragPoint = (f32)wnd::global::mouse_wy;
+                        editing.isDragging = true; 
+                    }
                 }
+
+                if (mode == VertexPaint)
+                {
+                    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::PressedOrHeld){
+
+                    }
+                }                
             }
         }
     }
