@@ -6,17 +6,16 @@
 #include "mini/Utils/Algorithms.hpp"
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Utils/Structs.hpp"
+#include "mini/Utils/Matrix.hpp"
 #include "mini/Utils/PrimitiveMeshes.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/ECS/ComponentArray.hpp"
 #include "mini/App/InputMode.hpp"
 
-#include "mini/Resources/Terrain/Terrain.hpp"
-
 #include <charconv>
 #undef DrawText
 
-namespace mini::app::ui {
+namespace mini::ui {
     
 using namespace rendering;
 
@@ -39,6 +38,23 @@ enum Colors : u32
     BLACK3,
     BLACK4,
     BLACK5,
+};
+
+struct Window
+{
+    utils::Rect<f32> rect;
+    utils::Rect<f32> limits = { rect.w, rect.h, f32max, f32max };
+    box::String<20>  title;
+    bool isDragged;
+    bool isResizing;
+    s32 dragX, dragY;
+    idx_t line = 0;
+    
+    static constexpr u32 BAR_H  = 20;
+    static constexpr u32 LINE_H = 16;
+
+    void ResetLines() { line  = BAR_H + 4; }
+    void NextLine()   { line += LINE_H; }
 };
 
 inline void DrawTextCentered(
@@ -69,7 +85,7 @@ inline void DrawText(
     chars_t str, const u32 len, 
     const Colors col = WHITE)
 {
-    for(u32 i = 0; i < len; ++i) {
+    for(idx_t i = 0; i < len; ++i) {
         renderGraph.ui_ubo.AppendData(
             UI_UniformData { 
                 .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
@@ -78,6 +94,24 @@ inline void DrawText(
             }
         );
     }
+}
+
+inline void DrawText(
+    Window* const wnd,
+    chars_t str, const u32 len, 
+    RenderGraph& renderGraph,  
+    const Colors col = WHITE)
+{
+    for(idx_t i = 0; i < len; ++i) {
+        renderGraph.ui_ubo.AppendData(
+            UI_UniformData { 
+                .rect         = { wnd->rect.x + LETTER_SPACE * i, wnd->rect.y + wnd->line, LETTER_SIZE, LETTER_SIZE },
+                .colorIndex   = col,
+                .textureIndex = str[i] != '\0' ? str[i] - ASCII_OFFSET : ' ' - ASCII_OFFSET
+            }
+        );
+    }
+    wnd->NextLine();
 }
 
 inline void DrawFPS(RenderGraph& renderGraph, const utils::Rect<float>& rect = { 0, 0, 48, 20 })
@@ -94,18 +128,6 @@ inline void DrawFPS(RenderGraph& renderGraph, const utils::Rect<float>& rect = {
     const auto res = std::to_chars(fpsStr, fpsStr + 10, dt::fps);
     DrawTextCentered(renderGraph, rect, fpsStr, (u32)strlen(fpsStr), GREEN);
 }
-
-struct Window
-{
-    utils::Rect<float> rect;
-    utils::Rect<float> limits;
-    box::String<20>    title;
-    bool isDragged;
-    bool isResizing;
-    s32 dragX, dragY;
-    
-    static constexpr u32 BAR_H = 20;
-};
 
 inline void DrawWindow(RenderGraph& renderGraph, Window& wnd)
 {
@@ -360,17 +382,6 @@ inline void DrawCameraPos(RenderGraph& renderGraph, const EgoCamera& camera)
     std::to_chars(ch_camera + 22, ch_camera + 34, camera.position[Y]);
     std::to_chars(ch_camera + 36, ch_camera + 48, camera.position[Z]);
     DrawText(renderGraph, 8, 20+8+36, ch_camera, 100);
-}
-
-//TODO: MOVE STUFF INTO SEPERATE HEADERS AND TO THE ACCORDING
-template<
-    auto QUAD_COUNT_T, 
-    auto QUAD_LEN_T, 
-    auto QUADRANT_COUNT_T>
-inline void DrawTerrainData(RenderGraph& renderGraph, const res::Terrain<QUAD_COUNT_T, QUAD_LEN_T, QUADRANT_COUNT_T>& terrain)
-{
-
-
 }
 
 }//ns

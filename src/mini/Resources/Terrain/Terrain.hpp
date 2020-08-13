@@ -150,7 +150,7 @@ struct Terrain
 
                 if (mode == VertexPaint)
                 {
-                    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::PressedOrHeld){
+                    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::PressedOrHeld>()){
 
                     }
                 }                

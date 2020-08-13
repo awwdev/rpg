@@ -21,7 +21,7 @@ namespace mini::res
     struct MeshVertexView
     {
         const utils::Common_Vertex* begin;
-        u32 count;
+        idx_t count;
     };
 
     /*

@@ -11,6 +11,7 @@
 #include "mini/Box/String.hpp"
 #include "mini/Rendering/RenderGraph.hpp"
 #include "mini/Rendering/UI.hpp"
+#include "mini/Resources/Terrain/TerrainUI.hpp"
 #include "mini/Resources/Terrain/Terrain.hpp"
 #include "mini/Rendering/Sun.hpp"
 

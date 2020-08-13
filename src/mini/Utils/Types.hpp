@@ -19,6 +19,7 @@ using f32 = float;
 
 constexpr auto u16max = std::numeric_limits<u16>::max();
 constexpr auto u32max = std::numeric_limits<u32>::max();
+constexpr auto f32max = std::numeric_limits<f32>::max();
 
 using idx_t   = u32; //default index type
 using chars_t = const char* const;
@@ -71,7 +72,7 @@ template<typename T>
 using IsPointer = std::enable_if_t<std::is_pointer_v<T>>;
 
 template<class T, idx_t N>
-constexpr u32 ArrayCount(const T (&arr)[N])
+constexpr idx_t ArrayCount(const T (&arr)[N])
 {
     return sizeof(arr) / sizeof(arr[0]);
 }
