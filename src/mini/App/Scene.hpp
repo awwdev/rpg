@@ -58,6 +58,7 @@ struct GameScene
             ui::DrawConsole(renderGraph);
             ui::DrawRenderStats(renderGraph);
             ui::DrawCameraPos(renderGraph, editorController.camera);
+            ui::DrawTerrainData(renderGraph, hostRes.terrain);
         }
         
     }

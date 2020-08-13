@@ -11,6 +11,8 @@
 #include "mini/ECS/ComponentArray.hpp"
 #include "mini/App/InputMode.hpp"
 
+#include "mini/Resources/Terrain/Terrain.hpp"
+
 #include <charconv>
 #undef DrawText
 
@@ -358,6 +360,17 @@ inline void DrawCameraPos(RenderGraph& renderGraph, const EgoCamera& camera)
     std::to_chars(ch_camera + 22, ch_camera + 34, camera.position[Y]);
     std::to_chars(ch_camera + 36, ch_camera + 48, camera.position[Z]);
     DrawText(renderGraph, 8, 20+8+36, ch_camera, 100);
+}
+
+//TODO: MOVE STUFF INTO SEPERATE HEADERS AND TO THE ACCORDING
+template<
+    auto QUAD_COUNT_T, 
+    auto QUAD_LEN_T, 
+    auto QUADRANT_COUNT_T>
+inline void DrawTerrainData(RenderGraph& renderGraph, const res::Terrain<QUAD_COUNT_T, QUAD_LEN_T, QUADRANT_COUNT_T>& terrain)
+{
+
+
 }
 
 }//ns
