@@ -28,12 +28,13 @@ inline void DrawTerrainData(
     DrawWindow(renderGraph, wnd);
     wnd.ResetLines();
 
-    const char str1 [] = "Terrain";
-    const char str2 [] = "Some Data";
-    const char str3 [] = "Even More Data";
-    DrawText(&wnd, str1, sizeof(str1), renderGraph, ui::RED);
-    DrawText(&wnd, str2, sizeof(str2), renderGraph);
-    DrawText(&wnd, str3, sizeof(str3), renderGraph);
+    box::String<100> str = "Mode: ";
+    if (terrain.mode == std::decay_t<decltype(terrain)>::VertexGrab)
+        str.Append("VertexGrab");
+    if (terrain.mode == std::decay_t<decltype(terrain)>::VertexPaint)
+        str.Append("VertexPaint");
+
+    DrawText(&wnd, str.data, str.Length(), renderGraph);
 }
 
 }//ns

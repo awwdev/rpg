@@ -43,6 +43,8 @@ struct Terrain
 
     void Update(const double dt, const rendering::EgoCamera& camera, ecs::ECS& ecs)
     {   
+        //TODO: if inside ui window return too
+
         if (app::global::inputMode != app::global::UI_Mode)
             return;
 
@@ -65,6 +67,8 @@ struct Terrain
         }
         if (wnd::HasEvent<wnd::F7, wnd::Pressed>())
             Stiching();
+        if (wnd::HasEvent<wnd::F8, wnd::Pressed>())
+            mode = (mode == VertexGrab) ? VertexPaint : VertexGrab;
 
         if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) editing.quadrantIdx = 0;
         if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) editing.quadrantIdx = 1;
