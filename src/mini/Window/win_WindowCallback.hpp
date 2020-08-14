@@ -128,6 +128,20 @@ namespace mini::wnd
         global::mouse_wy = GET_Y_LPARAM(lParam);
     }
 
+    inline void WmRButtonDown(WPARAM wParam, LPARAM lParam)
+    {
+        AddEvent<Mouse_ButtonRight, Pressed>();
+        global::mouse_wx = GET_X_LPARAM(lParam);
+        global::mouse_wy = GET_Y_LPARAM(lParam);
+    }
+
+    inline void WmRButtonUp(WPARAM wParam, LPARAM lParam)
+    {
+        AddEvent<Mouse_ButtonRight, Released>();
+        global::mouse_wx = GET_X_LPARAM(lParam);
+        global::mouse_wy = GET_Y_LPARAM(lParam);
+    }
+
     inline void WmKeyDown(WPARAM wParam, LPARAM lParam, HWND hWnd)
     {
         global::events[wParam] = Pressed;
@@ -156,6 +170,8 @@ namespace mini::wnd
             case WM_MOUSEWHEEL:  WmMouseWheel(wParam, lParam);          break;
             case WM_LBUTTONDOWN: WmLButtonDown(wParam, lParam);         break;
             case WM_LBUTTONUP:   WmLButtonUp(wParam, lParam);           break;
+            case WM_RBUTTONDOWN: WmRButtonDown(wParam, lParam);         break;
+            case WM_RBUTTONUP:   WmRButtonUp(wParam, lParam);           break;
             case WM_CHAR:        WmChar(wParam, lParam);                break;
             case WM_KEYDOWN:     WmKeyDown(wParam, lParam, hWnd);       break;
             case WM_KEYUP:       WmKeyUp(wParam, lParam);               break;

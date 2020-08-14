@@ -28,13 +28,20 @@ inline void DrawTerrainData(
     DrawWindow(renderGraph, wnd);
     wnd.ResetLines();
 
-    box::String<100> str = "Mode: ";
-    if (terrain.mode == std::decay_t<decltype(terrain)>::VertexGrab)
-        str.Append("VertexGrab");
-    if (terrain.mode == std::decay_t<decltype(terrain)>::VertexPaint)
-        str.Append("VertexPaint");
-
-    DrawText(&wnd, str.data, str.Length(), renderGraph);
+    {
+        box::String<100> str = "Mode: ";
+        if (terrain.mode == std::decay_t<decltype(terrain)>::VertexGrab)
+            str.Append("VertexGrab");
+        if (terrain.mode == std::decay_t<decltype(terrain)>::VertexPaint)
+            str.Append("VertexPaint");
+        DrawText(&wnd, str.data, str.Length(), renderGraph);
+    }
+    {
+        box::String<100> str = "Quadrant: ";
+        str.Append(terrain.editing.quadrantIdx);
+        DrawText(&wnd, str.data, str.Length(), renderGraph);
+    }
+    
 }
 
 }//ns

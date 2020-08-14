@@ -4,7 +4,9 @@
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Assert.hpp"
 #include "mini/Debug/Logger.hpp"
+
 #include <iostream>
+#include <charconv>
 
 //! warning this class supports 1 byte chars only for now
 
@@ -71,7 +73,7 @@ struct String
         return *this;
     }
 
-    //? MODIFICATION
+    //? MODIFICATION 
 
     constexpr void Clear()
     {
@@ -82,13 +84,22 @@ struct String
     template<idx_t N> constexpr void Append(const String<N, CHAR_T>& str)   { Append(str.data, str.count); }
     template<idx_t N> constexpr void Append(const CHAR_T (&arr)[N])         { Append(arr, N); }
     constexpr void Append(const CHAR_T ch)                                  { Append(&ch, 2); }
-
+    
     template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
     constexpr void Append(const PTR ptr, const idx_t countNotLength) //!has to be CHAR_T
     {
         StringAssert(count + countNotLength - 1 <= CAPACITY, "str capacity exhausted");
         std::memcpy(&data[count-1], ptr, countNotLength * sizeof(CHAR_T));
         count = count + countNotLength - 1;
+    }
+
+    //allow fundemental types
+    template<class T>
+    void Append(T&& fundemental)
+    {
+        char buffer[30] {};
+        std::to_chars(buffer, &buffer[30], fundemental);
+        Append(&buffer, (idx_t)std::strlen(buffer) + 1);
     }
 
     constexpr void Pop()

@@ -14,6 +14,11 @@ struct EditorController
     rendering::EgoCamera camera;
     bool terrainWireMode = true;
 
+    EditorController()
+    {
+        camera.Update(0);
+    }
+
     void Update(const double dt, ecs::ECS& ecs)
     {
         if (app::global::inputMode == app::global::FlyMode)
