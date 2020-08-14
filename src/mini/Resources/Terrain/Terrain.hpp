@@ -107,6 +107,7 @@ struct Terrain
         f32  yDragPoint  = 0;
         f32  dragScale   = 0.05f;
         u32  quadrantIdx = 0;
+        f32  brushSize   = 1;
     } editing;
 
     void MarkAllDirty(){ //could be done better 

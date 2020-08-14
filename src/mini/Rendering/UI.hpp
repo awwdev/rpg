@@ -90,6 +90,7 @@ inline void DrawText(
             UI_UniformData { 
                 .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
                 .colorIndex   = col,
+                //.textureIndex = str[i] - ASCII_OFFSET
                 .textureIndex = str[i] != '\0' ? str[i] - ASCII_OFFSET : ' ' - ASCII_OFFSET
             }
         );
@@ -111,7 +112,6 @@ inline void DrawText(
             }
         );
     }
-    wnd->NextLine();
 }
 
 inline void DrawFPS(RenderGraph& renderGraph, const utils::Rect<float>& rect = { 0, 0, 48, 20 })
@@ -382,6 +382,72 @@ inline void DrawCameraPos(RenderGraph& renderGraph, const EgoCamera& camera)
     std::to_chars(ch_camera + 22, ch_camera + 34, camera.position[Y]);
     std::to_chars(ch_camera + 36, ch_camera + 48, camera.position[Z]);
     DrawText(renderGraph, 8, 20+8+36, ch_camera, 100);
+}
+
+inline bool DrawSlider(chars_t name, Window* wnd, RenderGraph& renderGraph, const f32 min, const f32 max, f32& sliderVal, bool& sliderDragging, f32& sliderX)
+{
+    bool changed = false;
+
+    DrawText(wnd, name, (u32)strlen(name), renderGraph);
+    wnd->NextLine();
+
+    const utils::Rect<f32> rect = { 
+        wnd->rect.x + 4, 
+        wnd->rect.y + wnd->line, 
+        wnd->rect.w - 8, 
+        16 
+    };
+
+    const auto knobX = sliderVal * rect.w;
+    const utils::Rect<f32> knob = { 
+        wnd->rect.x + 4 + 2 + knobX, 
+        wnd->rect.y + wnd->line + 2, 
+        12, 
+        12 
+    };
+
+    const bool isMouseInside = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, knob);
+
+    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>() && isMouseInside) {
+        sliderX = (f32)wnd::global::mouse_wx;
+        sliderDragging = true;
+    }
+        
+    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
+        sliderDragging = false;
+
+    if (sliderDragging){
+        sliderVal = (f32)wnd::global::mouse_wx - sliderX;
+        utils::Clamp(sliderVal, (f32)0, (f32)rect.w);
+        sliderVal /= rect.w;
+        changed = true;
+    }
+
+    renderGraph.ui_ubo.AppendData(
+        rendering::UI_UniformData { 
+            .rect           = rect, 
+            .colorIndex     = Colors::BLACK1,
+            .textureIndex   = FULL_OPAQUE
+        }
+    );
+
+    renderGraph.ui_ubo.AppendData(
+        rendering::UI_UniformData { 
+            .rect           = knob, 
+            .colorIndex     = isMouseInside ? Colors::RED : Colors::WHITE,
+            .textureIndex   = FULL_OPAQUE
+        }
+    );
+
+    box::String<10> minStr;  minStr.Append(min);
+    box::String<10> maxStr;  maxStr.Append(max);
+    DrawText(renderGraph, rect.x, rect.y, minStr.data, minStr.Length(), Colors::WHITE);
+    DrawText(renderGraph, rect.x + rect.w - 8, rect.y, maxStr.data, minStr.Length(), Colors::WHITE);
+
+    box::String<20> valStr;  valStr.Append(sliderVal * max);
+    DrawTextCentered(renderGraph, rect, valStr.data, valStr.Length(), Colors::RED);
+
+    return changed;
 }
 
 }//ns
