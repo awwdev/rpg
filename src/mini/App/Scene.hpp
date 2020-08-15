@@ -64,11 +64,12 @@ struct GameScene
         ui2::DrawWindow(renderGraph, testWnd);
         testWnd.ResetLine();
 
-        ui2::DrawTextCentered(renderGraph, "Test", 4, testWnd);
+        ui2::DrawText(renderGraph, "Some Info", testWnd);
         testWnd.NextLine();
 
         static ui2::Slider<float> slider {
             .name = "slider",
+            .refWidth = testWnd.rect.w,
             .min  = 0,
             .max  = 100,
         };

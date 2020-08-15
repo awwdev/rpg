@@ -44,7 +44,6 @@ struct Window
     utils::Rect<f32> limits = { rect.w, rect.h, f32max, f32max };
 
     enum Mode { None, Resize, Move } mode = None;
-    u32  dragStartX {}, dragStartY {}; 
 
     f32  line = 0; //offset
     void ResetLine() { line  = TOP_BAR_H + 4; }   
@@ -62,6 +61,7 @@ struct Slider
     utils::Rect<float> back { 0, 0, 0, BACK_H };
     bool isDragging = false;
     f32 knobPos = 0;
+    f32 refWidth = 0; //important for window resize
 
     T min {}, max {}; 
     T GetValue() const { return (knobPos / (back.w - KNOB_SIZE - PADDING * 2)) * (max - min); }
@@ -71,11 +71,11 @@ struct Slider
 
 inline void DrawText(
     rendering::RenderGraph& renderGraph, 
-    chars_t str, const idx_t len,
+    chars_t str,
     const f32 x, const f32 y, 
     const Colors col = Colors::WHITE)
 {
-    for(idx_t i = 0; i < len; ++i) {
+    for(idx_t i = 0; i < std::strlen(str); ++i) {
         renderGraph.ui_ubo.AppendData({ 
             .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
             .colorIndex   = col,
@@ -86,11 +86,11 @@ inline void DrawText(
 
 inline void DrawText(
     rendering::RenderGraph& renderGraph, 
-    chars_t str, const idx_t len,
+    chars_t str,
     const Window& wnd,  
     const Colors col = Colors::WHITE)
 {
-    DrawText(renderGraph, str, len, wnd.rect.x, wnd.rect.y + wnd.line, col);
+    DrawText(renderGraph, str, wnd.rect.x, wnd.rect.y + wnd.line, col);
 }
 
 inline void DrawRectangle(rendering::RenderGraph& renderGraph, utils::Rect<f32> rect, const Colors col)
@@ -106,24 +106,25 @@ inline void DrawRectangle(rendering::RenderGraph& renderGraph, utils::Rect<f32> 
 
 inline void DrawTextCentered(
     rendering::RenderGraph& renderGraph,
-    chars_t str, const idx_t len, 
+    chars_t str,
     const utils::Rect<f32>& rect, 
     const Colors col = WHITE)
 {
+    const auto len = std::strlen(str);
     const auto TOTAL_STR_W = (len + 1) * LETTER_SPACE;
     const auto cx = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
     const auto cy = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
 
-    DrawText(renderGraph, str, len, cx, cy, col);
+    DrawText(renderGraph, str, cx, cy, col);
 }
 
 inline void DrawTextCentered(
     rendering::RenderGraph& renderGraph,
-    chars_t str, const idx_t len, 
+    chars_t str, 
     const Window& wnd, 
     const Colors col = WHITE)
 {
-    DrawTextCentered(renderGraph, str, len, { wnd.rect.x, wnd.rect.y + wnd.line, wnd.rect.w, LINE_HEIGHT }, col);
+    DrawTextCentered(renderGraph, str, { wnd.rect.x, wnd.rect.y + wnd.line, wnd.rect.w, LINE_HEIGHT }, col);
 }
 
 //! WINDOW
@@ -145,9 +146,6 @@ inline void DrawWindow(rendering::RenderGraph& renderGraph, Window& wnd)
         wnd.mode = Window::Mode::None;
 
     if (HasEvent<Mouse_ButtonLeft, Pressed>()) {        
-        wnd.dragStartX = global::mouse_wx;
-        wnd.dragStartY = global::mouse_wy;
-
         if (isMouseOnBar)      
             wnd.mode = Window::Mode::Move;
         if (isMouseOnResizer)  
@@ -156,19 +154,14 @@ inline void DrawWindow(rendering::RenderGraph& renderGraph, Window& wnd)
 
     if (wnd.mode == Window::Move || wnd.mode == Window::Resize)  
     {
-        const s32 deltaX = wnd::global::mouse_wx - wnd.dragStartX;
-        const s32 deltaY = wnd::global::mouse_wy - wnd.dragStartY;
-        wnd.dragStartX = wnd::global::mouse_wx;
-        wnd.dragStartY = wnd::global::mouse_wy;
-
         if (wnd.mode == Window::Move) {
-            wnd.rect.x += deltaX;
-            wnd.rect.y += deltaY;
+            wnd.rect.x += global::mouse_dx;
+            wnd.rect.y += global::mouse_dy;
         }
 
         if (wnd.mode == Window::Resize) {
-            wnd.rect.w += deltaX;
-            wnd.rect.h += deltaY;
+            wnd.rect.w += global::mouse_dx;
+            wnd.rect.h += global::mouse_dy;
             Clamp(wnd.rect.w, wnd.limits.x, wnd.limits.w);
             Clamp(wnd.rect.h, wnd.limits.y, wnd.limits.h);
         }  
@@ -178,7 +171,7 @@ inline void DrawWindow(rendering::RenderGraph& renderGraph, Window& wnd)
     DrawRectangle(renderGraph, wnd.rect, BLACK2);
     DrawRectangle(renderGraph, bar, isMouseOnBar ? BLACK3 : BLACK1);
     DrawRectangle(renderGraph, resizer, isMouseOnResizer ? RED : BLACK3);
-    DrawTextCentered(renderGraph, wnd.title.data, wnd.title.Length(), bar);
+    DrawTextCentered(renderGraph, wnd.title.data, bar);
 }
 
 //! SLIDER
@@ -217,11 +210,11 @@ inline bool DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider)
     //DRAW
     DrawRectangle(renderGraph, slider.back, BLACK1);
     DrawRectangle(renderGraph, knob, (isMouseOnKnob || slider.isDragging) ? RED : WHITE);
-    DrawTextCentered(renderGraph, slider.name.data, slider.name.Length(), slider.back, GREEN); 
+    DrawTextCentered(renderGraph, slider.name.data, slider.back, GREEN); 
 
     box::String<30> valueStr; 
     valueStr.Append(slider.GetValue());
-    DrawText(renderGraph, valueStr.data, valueStr.Length(), slider.back.x, slider.back.y, RED); 
+    DrawText(renderGraph, valueStr.data, slider.back.x, slider.back.y, RED); 
 
     return hasChanged;
 }
@@ -232,6 +225,9 @@ inline bool DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider, c
     slider.back.x = wnd.rect.x + slider.PADDING;
     slider.back.y = wnd.rect.y + wnd.line;
     slider.back.w = wnd.rect.w - slider.PADDING * 2;
+    //account for window resize
+    slider.knobPos *= wnd.rect.w / slider.refWidth; 
+    slider.refWidth = wnd.rect.w;
     return DrawSlider(renderGraph, slider);
 }
 
@@ -243,8 +239,7 @@ inline void DrawFPS(rendering::RenderGraph& renderGraph, const utils::Rect<f32>&
 
     char fpsStr [10] {};
     const auto res = std::to_chars(fpsStr, fpsStr + 10, dt::fps);
-    const auto len = (idx_t)std::distance(fpsStr, res.ptr);
-    DrawTextCentered(renderGraph, fpsStr, len, rect, GREEN);
+    DrawTextCentered(renderGraph, fpsStr, rect, GREEN);
 }
 
 } //ns
