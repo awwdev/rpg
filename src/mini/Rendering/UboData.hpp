@@ -8,11 +8,11 @@ namespace mini::rendering {
 
 struct UI_UniformData
 {
-    utils::Rect<float> rect;
-    uint32_t colorIndex;
-    uint32_t textureIndex; 
-    uint32_t padding1;
-    uint32_t padding2;
+    utils::Rect<f32> rect;
+    u32 colorIndex;
+    u32 textureIndex; 
+    u32 padding1;
+    u32 padding2;
 };
 
 struct UniformGroup

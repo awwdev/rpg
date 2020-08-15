@@ -11,6 +11,7 @@
 #include "mini/Box/String.hpp"
 #include "mini/Rendering/RenderGraph.hpp"
 #include "mini/Rendering/UI.hpp"
+#include "mini/Rendering/UI2.hpp"
 #include "mini/Resources/Terrain/TerrainUI.hpp"
 #include "mini/Resources/Terrain/Terrain.hpp"
 #include "mini/Rendering/Sun.hpp"
@@ -54,7 +55,14 @@ struct GameScene
         ecs::S_Render(ecs.arrays, dt, renderGraph);
 
         //? UI
-        ui::DrawFPS(renderGraph); 
+        ui2::DrawFPS(renderGraph); 
+
+        static ui2::Window testWnd {
+            .title = "TestWindow",
+            .rect = { 32, 32, 100, 100 },
+        };
+        ui2::DrawWindow(renderGraph, testWnd);
+
         if (app::global::UI_Mode)  {
             ui::DrawConsole(renderGraph);
             ui::DrawRenderStats(renderGraph);

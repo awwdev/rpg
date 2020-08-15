@@ -91,7 +91,7 @@ inline void DrawText(
                 .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
                 .colorIndex   = col,
                 //.textureIndex = str[i] - ASCII_OFFSET
-                .textureIndex = str[i] != '\0' ? str[i] - ASCII_OFFSET : ' ' - ASCII_OFFSET
+                .textureIndex = (u32)str[i]
             }
         );
     }
