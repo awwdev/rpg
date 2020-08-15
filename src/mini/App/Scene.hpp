@@ -62,6 +62,17 @@ struct GameScene
             .rect = { 32, 32, 100, 100 },
         };
         ui2::DrawWindow(renderGraph, testWnd);
+        testWnd.ResetLine();
+
+        ui2::DrawTextCentered(renderGraph, "Test", 4, testWnd);
+        testWnd.NextLine();
+
+        static ui2::Slider<float> slider {
+            .name = "slider",
+            .min  = 0,
+            .max  = 100,
+        };
+        ui2::DrawSlider(renderGraph, slider, testWnd);
 
         if (app::global::UI_Mode)  {
             ui::DrawConsole(renderGraph);

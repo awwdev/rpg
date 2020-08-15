@@ -42,6 +42,20 @@ void Clamp(T& val, const MIN min, const MAX max)
     }
 }
 
+template<typename MIN, typename MAX, typename T>
+bool ClampReturnBool(T& val, const MIN min, const MAX max)
+{
+    if (val > max) {
+        val = max;
+        return true;
+    }
+    else if (val < min) {
+        val = min;
+        return true;
+    }
+    return false;
+}
+
 struct Intersection
 {
     utils::Vec3f pos;
