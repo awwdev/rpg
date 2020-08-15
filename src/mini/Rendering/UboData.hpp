@@ -2,6 +2,7 @@
 #pragma once
 #include "mini/Utils/Matrix.hpp"
 #include "mini/box/Array.hpp"
+#include "mini/Utils/Structs.hpp"
 
 namespace mini::rendering {
 

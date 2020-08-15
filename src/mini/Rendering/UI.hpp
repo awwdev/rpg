@@ -25,8 +25,8 @@ constexpr float LETTER_SPACE = 8;
 
 //TODO: if branch in shader (if usesTexture) or just opaque and always sampling
 //TODO: use all textures of ascii even if never used (no ascii offset necessary then)
-constexpr u32 FULL_OPAQUE  = 95;
-constexpr u32 ASCII_OFFSET = 32; //texture begins at 0 with usable letters
+constexpr u32 FULL_OPAQUE  = 95 + 32;
+constexpr u32 ASCII_OFFSET = 0; //texture begins at 0 with usable letters
 
 enum Colors : u32
 {
@@ -133,13 +133,14 @@ inline void DrawWindow(RenderGraph& renderGraph, Window& wnd)
 {
     using namespace wnd;
 
-    const utils::Rect<float> bar     = { wnd.rect.x, wnd.rect.y, wnd.rect.w, wnd.BAR_H };
-    const utils::Rect<float> resizer = { wnd.rect.x + wnd.rect.w - 8, wnd.rect.y + wnd.rect.h - 8, 8, 8 };
+    const utils::Rect<f32> bar     = { wnd.rect.x, wnd.rect.y, wnd.rect.w, wnd.BAR_H };
+    const utils::Rect<f32> resizer = { wnd.rect.x + wnd.rect.w - 8, wnd.rect.y + wnd.rect.h - 8, 8, 8 };
 
     const bool isMouseOnBar    = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, bar);
     const bool isMouseOnResizer= utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, resizer);
 
     //? DRAGGING
+    /* HELLO */
     if (HasEvent<Mouse_ButtonLeft, Released>())
     {
         wnd.isDragged  = false;
@@ -178,7 +179,7 @@ inline void DrawWindow(RenderGraph& renderGraph, Window& wnd)
         }
     }
 
-    //? WINDOW
+    /*WINDOW*/
     renderGraph.ui_ubo.AppendData(
         rendering::UI_UniformData { 
             .rect           = wnd.rect,

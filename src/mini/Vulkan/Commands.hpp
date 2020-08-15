@@ -28,11 +28,11 @@ namespace mini::vk
             cmdBuffers.count = g_contextPtr->swapImages.count;
             const VkCommandBufferAllocateInfo allocInfo
             {
-             .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-             .pNext              = nullptr,
-             .commandPool        = cmdPool,
-             .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-             .commandBufferCount = cmdBuffers.count
+                .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+                .pNext              = nullptr,
+                .commandPool        = cmdPool,
+                .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+                .commandBufferCount = cmdBuffers.count
             };
             VK_CHECK(vkAllocateCommandBuffers(g_contextPtr->device, &allocInfo, cmdBuffers.data));
         }

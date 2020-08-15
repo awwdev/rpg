@@ -15,7 +15,7 @@ namespace mini::res {
     
 struct Textures
 {
-    TextureArray<96, 16, 16, 1> monospaceFont; // added one texture that is all FF which can be used for blank quad () 
+    TextureArray<128, 16, 16, 1> monospaceFont;
 
     void Load()
     {

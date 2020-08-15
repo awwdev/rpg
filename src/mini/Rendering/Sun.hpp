@@ -30,13 +30,13 @@ struct Sun
         pos[X] = std::sinf(t) * A;
         pos[Z] = std::cosf(t) * A;
 
-        /*auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
-        cubeTrans.transform = {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            pos[X], pos[Y], pos[Z], 1,
-        };*/
+        //auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
+        //cubeTrans.transform = {
+        //    1, 0, 0, 0,
+        //    0, 1, 0, 0,
+        //    0, 0, 1, 0,
+        //    pos[X], pos[Y], pos[Z], 1,
+        //};
         
     }
 

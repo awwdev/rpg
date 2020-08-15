@@ -3,6 +3,7 @@
   "key": "f4",
   "command": "workbench.action.tasks.runTask",
   "args": "build_debug"
- }
+ },
+
 ]
 //overwrite the on in your user folder
