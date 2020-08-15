@@ -326,15 +326,21 @@
 
 	//!HIGHLIGHT
 	"highlight.regexes": {
-		"((.*)//!(.*))": [
+		"((.*)//\\?(.*))": [
 			{ 
 				"color": "#ffee90",
 				"backgroundColor": "#ffd39010",
 			},
 		],
-		"((.*)//TODO(.*))": [ // A regex will be created from this string, don't forget to double escape it
+		"(//TODO(.*))": [
 			{ 
 				"color": "#3caf3c",
+				//"backgroundColor": "#ffd39007",
+			},
+		],
+		"((.*)//BUG(.*))": [
+			{ 
+				"color": "#ff0000",
 				//"backgroundColor": "#ffd39007",
 			},
 		]

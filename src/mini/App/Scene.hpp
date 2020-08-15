@@ -31,7 +31,7 @@ struct GameScene
 
     app::PlayerController playerController;
     app::EditorController editorController;
-    
+
     GameScene()
     {
         //TODO: move into some resource manager an load at loading scene
@@ -56,30 +56,36 @@ struct GameScene
 
         //? UI
         ui2::DrawFPS(renderGraph); 
+        //Terrain
+        {
+            static ui2::Window terrainWindow {
+                .title = "Terrain",
+                .rect = { wnd::global::window_w - 100.f, 0.f, 100.f, 100.f },
+            };
+            ui2::DrawWindow(renderGraph, terrainWindow);
+            terrainWindow.ResetLine();
+            ui2::DrawText(renderGraph, "This is terrain!", terrainWindow);
+            terrainWindow.NextLine();
 
-        static ui2::Window testWnd {
-            .title = "TestWindow",
-            .rect = { 32, 32, 100, 100 },
-        };
-        ui2::DrawWindow(renderGraph, testWnd);
-        testWnd.ResetLine();
+            static ui2::Slider<float> sunRotSlider {
+                .name = "sun rot",
+                .min  = 0,
+                .max  = 6.28f,
+            };
+            sun.t = ui2::DrawSlider(renderGraph, sunRotSlider, terrainWindow);
+        }
+        //Stats
+        {
+            static ui2::Window statsWindow {
+                .title = "Stats",
+                .rect = { 0, 20.f, 100.f, 100.f },
+            };
+            ui2::DrawWindow(renderGraph, statsWindow);
+            statsWindow.ResetLine();
+            ui2::DrawText(renderGraph, "Stats", statsWindow);
 
-        ui2::DrawText(renderGraph, "Some Info", testWnd);
-        testWnd.NextLine();
-
-        static ui2::Slider<float> slider {
-            .name = "slider",
-            .refWidth = testWnd.rect.w,
-            .min  = 0,
-            .max  = 100,
-        };
-        ui2::DrawSlider(renderGraph, slider, testWnd);
-
-        if (app::global::UI_Mode)  {
-            ui::DrawConsole(renderGraph);
-            ui::DrawRenderStats(renderGraph);
-            ui::DrawCameraPos(renderGraph, editorController.camera);
-            ui::DrawTerrainData(renderGraph, hostRes.terrain, sun);
+            //render stats
+            //camera position
         }
         
     }

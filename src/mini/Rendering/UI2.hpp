@@ -13,7 +13,7 @@
 
 namespace mini::ui2 {
 
-//! GLOBAL CONSISTENCY
+//? GLOBAL CONSISTENCY
 
 //analog to the shader color lookup table
 enum Colors : u32
@@ -33,7 +33,7 @@ constexpr idx_t LETTER_SPACE = 8;
 constexpr idx_t FULL_OPAQUE_NO_TEXTURE = 21; //using NAK ascii code 
 constexpr f32   LINE_HEIGHT = 16;
 
-//! STRUCTS
+//? STRUCTS
 
 struct Window
 {
@@ -61,13 +61,24 @@ struct Slider
     utils::Rect<float> back { 0, 0, 0, BACK_H };
     bool isDragging = false;
     f32 knobPos = 0;
-    f32 refWidth = 0; //important for window resize
+    f32 wref = 1; //important for window resize
 
     T min {}, max {}; 
     T GetValue() const { return (knobPos / (back.w - KNOB_SIZE - PADDING * 2)) * (max - min); }
 };
 
-//! BASIC
+template<class T>
+struct InputField
+{
+    static constexpr f32 BACK_H = 16;
+    static constexpr f32 KNOB_SIZE = 12;
+    static constexpr f32 PADDING = 2;
+
+    box::String<20> name;
+    utils::Rect<float> back { 0, 0, 0, BACK_H };
+};
+
+//? BASIC
 
 inline void DrawText(
     rendering::RenderGraph& renderGraph, 
@@ -102,7 +113,7 @@ inline void DrawRectangle(rendering::RenderGraph& renderGraph, utils::Rect<f32> 
     });
 }
 
-//! ADVANCED
+//? ADVANCED
 
 inline void DrawTextCentered(
     rendering::RenderGraph& renderGraph,
@@ -127,7 +138,7 @@ inline void DrawTextCentered(
     DrawTextCentered(renderGraph, str, { wnd.rect.x, wnd.rect.y + wnd.line, wnd.rect.w, LINE_HEIGHT }, col);
 }
 
-//! WINDOW
+//? WINDOW
 
 inline void DrawWindow(rendering::RenderGraph& renderGraph, Window& wnd)
 {
@@ -174,10 +185,10 @@ inline void DrawWindow(rendering::RenderGraph& renderGraph, Window& wnd)
     DrawTextCentered(renderGraph, wnd.title.data, bar);
 }
 
-//! SLIDER
+//? SLIDER
 
 template<class T>
-inline bool DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider)
+inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider)
 {
     using namespace utils;
     using namespace wnd;
@@ -200,7 +211,6 @@ inline bool DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider)
     }
 
     if (slider.isDragging){
-        hasChanged = true;
         slider.knobPos += global::mouse_dx;
     }
 
@@ -216,22 +226,29 @@ inline bool DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider)
     valueStr.Append(slider.GetValue());
     DrawText(renderGraph, valueStr.data, slider.back.x, slider.back.y, RED); 
 
-    return hasChanged;
+    return slider.GetValue();
 }
 
 template<class T>
-inline bool DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider, const Window& wnd)
+inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider, const Window& wnd)
 {
     slider.back.x = wnd.rect.x + slider.PADDING;
     slider.back.y = wnd.rect.y + wnd.line;
     slider.back.w = wnd.rect.w - slider.PADDING * 2;
     //account for window resize
-    slider.knobPos *= wnd.rect.w / slider.refWidth; 
-    slider.refWidth = wnd.rect.w;
+    slider.knobPos *= wnd.rect.w / slider.wref;  //BUG somewhere (scale is not accurate)
+    slider.wref = wnd.rect.w;
     return DrawSlider(renderGraph, slider);
 }
 
-//! SPECIFIC
+//? INPUT FIELD
+
+inline void DrawInputField(rendering::RenderGraph& renderGraph)
+{
+
+}
+
+//? SPECIFIC
 
 inline void DrawFPS(rendering::RenderGraph& renderGraph, const utils::Rect<f32>& rect = { 0, 0, 48, 20 })
 {
