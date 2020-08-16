@@ -126,8 +126,8 @@ struct Terrain
     void InitGizmos(ecs::ECS& ecs)
     {
         editing.gizmoID = ecs.AddEntity();
-        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(editing.gizmoID, res::MeshType::PrimitiveCube);
-        constexpr auto S = 0.1f;
+        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(editing.gizmoID, res::MeshType::PrimitiveRing8);
+        constexpr auto S = 1.f;
         ecs.arrays.AddComponent<ecs::ComponentType::Transform> (editing.gizmoID, utils::Mat4f{
             S, 0, 0, 0,
             0, S, 0, 0,
@@ -141,7 +141,7 @@ struct Terrain
         using namespace utils;
         auto& transform = ecs.arrays.transforms.Get(editing.gizmoID);
         transform.transform[3][0] = editing.gizmoPos[X];
-        transform.transform[3][1] = editing.gizmoPos[Y];
+        transform.transform[3][1] = editing.gizmoPos[Y] - 0.1f; //z fighting
         transform.transform[3][2] = editing.gizmoPos[Z];
     }
 
@@ -165,9 +165,14 @@ struct Terrain
                 const auto ix = intersection->pos[X];
                 const auto iy = intersection->pos[Y];
                 const auto iz = intersection->pos[Z];
+
+                //TODO: add vertices based on radius
+                //TODO: visualize the radius
+
                 //visualize
                 const auto closestVertex = intersection->GetClosestVertex(i);
-                editing.gizmoPos = quadrant.verts[closestVertex].pos;
+                //editing.gizmoPos = quadrant.verts[closestVertex].pos;
+                editing.gizmoPos = intersection->pos;
 
                 if (mode == VertexGrab)
                 {

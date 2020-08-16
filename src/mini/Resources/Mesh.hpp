@@ -13,7 +13,7 @@ namespace mini::res
         PrimitiveCube,
         PrimitiveQuad,
         PrimitiveTriangle,
-        //TerrainStatic,
+        PrimitiveRing8, 
         Sword,
         ENUM_END
     };

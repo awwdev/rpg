@@ -14,6 +14,17 @@ struct Common_Vertex
     alignas(16) utils::Vec3f nor;
     alignas(16) utils::Vec4f col;
     alignas(16) utils::Vec2f tex;
+
+    constexpr Common_Vertex(
+        const utils::Vec3f pPos = {},
+        const utils::Vec3f pNor = {},
+        const utils::Vec4f pCol = {},
+        const utils::Vec2f pTex = {})
+        : pos { pPos }
+        , nor { pNor }
+        , col { pCol }
+        , tex { pTex }
+    {}
 };
 
 std::ostream& operator<<(std::ostream& os, const Common_Vertex& vert)

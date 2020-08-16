@@ -32,10 +32,11 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, Vk
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
     FOR_ARRAY(scene.renderGraph.default_ubo.groups.usedIndices, i)
     {
-        const auto vertOff   = resources.default.vbo.vertexGroups[i].begin;
-        const auto vertCount = resources.default.vbo.vertexGroups[i].count;
-        const auto instOff   = scene.renderGraph.default_ubo.groups.Get(i).begin;
-        const auto instCount = scene.renderGraph.default_ubo.groups.Get(i).count;
+        const auto idx       = scene.renderGraph.default_ubo.groups.usedIndices[i];
+        const auto vertOff   = resources.default.vbo.vertexGroups[idx].begin;
+        const auto vertCount = resources.default.vbo.vertexGroups[idx].count;
+        const auto instOff   = scene.renderGraph.default_ubo.groups.Get(idx).begin;
+        const auto instCount = scene.renderGraph.default_ubo.groups.Get(idx).count;
         vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
     }
 
@@ -78,10 +79,11 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
     FOR_ARRAY(scene.renderGraph.default_ubo.groups.usedIndices, i)
     {
-        const auto vertOff   = resources.default.vbo.vertexGroups[i].begin;
-        const auto vertCount = resources.default.vbo.vertexGroups[i].count;
-        const auto instOff   = scene.renderGraph.default_ubo.groups.Get(i).begin;
-        const auto instCount = scene.renderGraph.default_ubo.groups.Get(i).count;
+        const auto idx = scene.renderGraph.default_ubo.groups.usedIndices[i];
+        const auto vertOff   = resources.default.vbo.vertexGroups[idx].begin;
+        const auto vertCount = resources.default.vbo.vertexGroups[idx].count;
+        const auto instOff   = scene.renderGraph.default_ubo.groups.Get(idx).begin;
+        const auto instCount = scene.renderGraph.default_ubo.groups.Get(idx).count;
         vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
     }
 

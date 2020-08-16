@@ -111,4 +111,19 @@ box::Optional<Intersection> RayTriangleIntersection(
     return {};
 }
 
+template<class T>
+constexpr T Sin(T val)
+{
+    return T{2}*val / (T{1} + val*val);
+}
+
+template<class T>
+constexpr T Cos(T val)
+{
+    return (T{1} - val*val) / (T{1} + val*val);
+}
+
+
+
+
 }//ns
