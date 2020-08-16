@@ -55,7 +55,6 @@ struct GameScene
         ecs::S_Render(ecs.arrays, dt, renderGraph);
 
         //? UI
-        ui2::DrawFPS(renderGraph); 
         //Terrain
         {
             static ui2::Window terrainWnd {
@@ -63,9 +62,7 @@ struct GameScene
                 .rect = { wnd::global::window_w - 100.f, 0.f, 100.f, 100.f },
             };
             ui2::DrawWindow(renderGraph, terrainWnd);
-            terrainWnd.ResetLine();
             ui2::DrawText(renderGraph, "This is terrain!", terrainWnd);
-            terrainWnd.NextLine();
 
             static ui2::Slider<f32> sunRotSlider {
                 .name = "sun rot",
@@ -73,7 +70,6 @@ struct GameScene
                 .max  = 6.28f,
             };
             sun.t = ui2::DrawSlider(renderGraph, sunRotSlider, terrainWnd);
-            terrainWnd.NextLine();
 
             static ui2::InputField<f32> brushInput {
                 .name  = "brush size",
@@ -85,15 +81,27 @@ struct GameScene
         {
             static ui2::Window statsWindow {
                 .title = "Stats",
-                .rect = { 0, 20.f, 100.f, 100.f },
+                .rect = { 0, 0.f, 100.f, 100.f },
             };
             ui2::DrawWindow(renderGraph, statsWindow);
-            statsWindow.ResetLine();
-            ui2::DrawText(renderGraph, "Stats", statsWindow);
-            
 
-            //render stats
-            //camera position
+            static box::String<20> fpsStr;
+            if (dt::secondHasPassed) {
+                fpsStr.Clear();
+                fpsStr.Append("fps: ");
+                fpsStr.Append(dt::fps);
+            }
+            static box::String<20> dtStr;
+            if (dt::secondHasPassed) {
+                dtStr.Clear();
+                dtStr.Append("dt: ");
+                dtStr.Append(dt::seconds);
+            }
+
+            ui2::DrawText(renderGraph, fpsStr, statsWindow); 
+            ui2::DrawText(renderGraph, dtStr, statsWindow); 
+
+            //TODO drawing camera pos could be done with a vector widget            
         }
         
     }

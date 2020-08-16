@@ -120,10 +120,11 @@ template<idx_t N>
 inline void DrawText(
     rendering::RenderGraph& renderGraph, 
     const box::String<N>& str,
-    const Window& wnd,  
+    Window& wnd,  
     const Colors col = Colors::WHITE)
 {
     DrawText(renderGraph, str.data, str.Length(), wnd.rect.x, wnd.rect.y + wnd.line, col);
+    wnd.NextLine();
 }
 
 template<idx_t N>
@@ -164,9 +165,10 @@ inline void DrawTextCentered(
 inline void DrawTextCentered(
     rendering::RenderGraph& renderGraph,
     chars_t str, 
-    const Window& wnd, 
+    Window& wnd, 
     const Colors col = WHITE)
 {
+    wnd.NextLine();
     DrawTextCentered(renderGraph, str, { wnd.rect.x, wnd.rect.y + wnd.line, wnd.rect.w, LINE_HEIGHT }, col);
 }
 
@@ -176,6 +178,8 @@ inline void DrawWindow(rendering::RenderGraph& renderGraph, Window& wnd)
 {
     using namespace utils;
     using namespace wnd;
+
+    wnd.ResetLine();
 
     const utils::Rect<f32> bar     = { wnd.rect.x, wnd.rect.y, wnd.rect.w, wnd.TOP_BAR_H };
     const utils::Rect<f32> resizer = { wnd.rect.x + wnd.rect.w - 8, wnd.rect.y + wnd.rect.h - 8, 8, 8 };
@@ -261,7 +265,7 @@ inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider)
 }
 
 template<class T>
-inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider, const Window& wnd)
+inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider, Window& wnd)
 {
     slider.back.x = wnd.rect.x + PADDING;
     slider.back.y = wnd.rect.y + wnd.line;
@@ -269,6 +273,7 @@ inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider, c
     //account for window resize
     slider.knobPos *= wnd.rect.w / slider.wref;  //BUG somewhere (scale is not accurate)
     slider.wref = wnd.rect.w;
+    wnd.NextLine();
     return DrawSlider(renderGraph, slider);
 }
 
@@ -308,7 +313,6 @@ inline void DrawInputField(rendering::RenderGraph& renderGraph, InputField<T>& i
                 inputField.value.Append(global::chars[i]);
         }
     }
-    dbg::LogInfo(inputField.GetValue());
 
     //DRAW
     DrawRectangle(renderGraph, back, (isMouseOnInput || inputField.isActive) ? BLACK3 : BLACK1);
@@ -317,11 +321,12 @@ inline void DrawInputField(rendering::RenderGraph& renderGraph, InputField<T>& i
 }
 
 template<class T>
-inline void DrawInputField(rendering::RenderGraph& renderGraph, InputField<T>& inputField, const Window& wnd)
+inline void DrawInputField(rendering::RenderGraph& renderGraph, InputField<T>& inputField, Window& wnd)
 {
     inputField.rect.x = wnd.rect.x + PADDING;
     inputField.rect.y = wnd.rect.y + wnd.line;
     inputField.rect.w = wnd.rect.w - PADDING * 2;
+    wnd.NextLine();
     DrawInputField(renderGraph, inputField);
 }
 
