@@ -20,7 +20,7 @@ template<
     auto QUAD_LEN, 
     auto QUADRANT_COUNT>
 inline void DrawUI_Terrain(
-    const res::Terrain<QUAD_COUNT, QUAD_LEN, QUADRANT_COUNT>& terrain,
+    res::Terrain<QUAD_COUNT, QUAD_LEN, QUADRANT_COUNT>& terrain,
     rendering::Sun& sun)
 {
     static ui::Window terrainWnd {
@@ -37,11 +37,12 @@ inline void DrawUI_Terrain(
     };
     sun.t = ui::DrawSlider(sunRotSlider, terrainWnd);
 
-    static ui::InputField<f32> brushInput {
+    static ui::Slider<f32> brushSlider {
         .name  = "brush size",
-        .value = { "1" }
+        .min   = 1.f,
+        .max   = 10.f,
     };
-    ui::DrawInputField(brushInput, terrainWnd);
+    terrain.editing.brushSize = ui::DrawSlider(brushSlider, terrainWnd);
 }
 
 }//ns

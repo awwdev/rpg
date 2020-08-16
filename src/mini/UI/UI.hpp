@@ -68,7 +68,7 @@ struct Slider
 
     T min {}, max {}; 
     T GetValue() const { 
-         return (knobPos / (back.w - (back.h - PADDING * 2) - PADDING * 2)) * (max - min); 
+         return min + (knobPos / (back.w - (back.h - PADDING * 2) - PADDING * 2)) * (max - min); 
          //back.h - PADDING * 2 == knob size
     }
 };
@@ -277,7 +277,7 @@ inline auto DrawSlider(Slider<T>& slider, Window& wnd)
 //? INPUT FIELD
 
 template<class T>
-inline void DrawInputField(InputField<T>& inputField)
+inline auto DrawInputField(InputField<T>& inputField)
 {
     using namespace utils;
     using namespace wnd;
@@ -315,16 +315,18 @@ inline void DrawInputField(InputField<T>& inputField)
     DrawRectangle(back, (isMouseOnInput || inputField.isActive) ? BLACK3 : BLACK1);
     DrawText(inputField.name, inputField.rect.x, inputField.rect.y);
     DrawText(inputField.value, back.x, back.y, GREEN);
+
+    return inputField.GetValue();
 }
 
 template<class T>
-inline void DrawInputField(InputField<T>& inputField, Window& wnd)
+inline auto DrawInputField(InputField<T>& inputField, Window& wnd)
 {
     inputField.rect.x = wnd.rect.x + PADDING;
     inputField.rect.y = wnd.rect.y + wnd.line;
     inputField.rect.w = wnd.rect.w - PADDING * 2;
     wnd.NextLine();
-    DrawInputField(inputField);
+    return DrawInputField(inputField);
 }
 
 //? SPECIFIC

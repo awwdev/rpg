@@ -127,19 +127,20 @@ struct Terrain
     {
         editing.gizmoID = ecs.AddEntity();
         ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(editing.gizmoID, res::MeshType::PrimitiveRing8);
-        constexpr auto S = 1.f;
-        ecs.arrays.AddComponent<ecs::ComponentType::Transform> (editing.gizmoID, utils::Mat4f{
-            S, 0, 0, 0,
-            0, S, 0, 0,
-            0, 0, S, 0,
-            0, 0, 0, 1,
-        });
+        ecs.arrays.AddComponent<ecs::ComponentType::Transform> (editing.gizmoID, utils::Identity4());
     }
 
     void UpdateGizmos(ecs::ECS& ecs)
     {
         using namespace utils;
         auto& transform = ecs.arrays.transforms.Get(editing.gizmoID);
+        const auto S = editing.brushSize;
+        transform.transform = {
+            S, 0, 0, 0,
+            0, S, 0, 0,
+            0, 0, S, 0,
+            0, 0, 0, 1,
+        };
         transform.transform[3][0] = editing.gizmoPos[X];
         transform.transform[3][1] = editing.gizmoPos[Y] - 0.1f; //z fighting
         transform.transform[3][2] = editing.gizmoPos[Z];

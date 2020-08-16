@@ -81,7 +81,7 @@ auto GetRingVertex(const u32 current, const u32 max, const f32 radius)
 
 //ring sizes
 constexpr f32 R1 = 1.0f;
-constexpr f32 R2 = 0.99f;
+constexpr f32 R2 = 0.95f;
 
 #define RING_SEGMENT(n, C)      \
 GetRingVertex(n, C, R1),        \
