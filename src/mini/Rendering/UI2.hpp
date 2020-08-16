@@ -7,8 +7,10 @@
 #include "mini/Utils/Algorithms.hpp"
 #include "mini/Window/WindowEvents.hpp"
 #include "mini/Box/String.hpp"
+#include "mini/Debug/Logger.hpp"
 
 #include <charconv>
+#include <cstdlib>
 #undef DrawText
 
 namespace mini::ui2 {
@@ -31,7 +33,8 @@ enum Colors : u32
 constexpr idx_t LETTER_SIZE  = 16; //monospace
 constexpr idx_t LETTER_SPACE = 8;
 constexpr idx_t FULL_OPAQUE_NO_TEXTURE = 21; //using NAK ascii code 
-constexpr f32   LINE_HEIGHT = 16;
+constexpr f32   LINE_HEIGHT = 18;
+constexpr f32   PADDING = 4;
 
 //? STRUCTS
 
@@ -50,12 +53,10 @@ struct Window
     void NextLine()  { line += LINE_HEIGHT; }   
 };
 
-template<class T>
+template<class T, class = IsArithmetic<T>>
 struct Slider
 {
     static constexpr f32 BACK_H = 16;
-    static constexpr f32 KNOB_SIZE = 12;
-    static constexpr f32 PADDING = 2;
 
     box::String<20> name;
     utils::Rect<float> back { 0, 0, 0, BACK_H };
@@ -64,29 +65,40 @@ struct Slider
     f32 wref = 1; //important for window resize
 
     T min {}, max {}; 
-    T GetValue() const { return (knobPos / (back.w - KNOB_SIZE - PADDING * 2)) * (max - min); }
+    T GetValue() const { 
+         return (knobPos / (back.w - (back.h - PADDING * 2) - PADDING * 2)) * (max - min); 
+         //back.h - PADDING * 2 == knob size
+    }
 };
 
-template<class T>
+template<class T, class = IsArithmetic<T>>
 struct InputField
 {
     static constexpr f32 BACK_H = 16;
-    static constexpr f32 KNOB_SIZE = 12;
-    static constexpr f32 PADDING = 2;
+    utils::Rect<float> rect { 0, 0, 0, BACK_H };
 
     box::String<20> name;
-    utils::Rect<float> back { 0, 0, 0, BACK_H };
+    box::String<20> value;
+    bool isActive = false;
+
+    T GetValue() const {
+        if (value.Empty()) 
+            return {};
+        return (T) std::atof(value.data);
+    }
 };
+
+//TODO: InputField str
 
 //? BASIC
 
 inline void DrawText(
     rendering::RenderGraph& renderGraph, 
-    chars_t str,
+    chars_t str, const idx_t len,
     const f32 x, const f32 y, 
     const Colors col = Colors::WHITE)
 {
-    for(idx_t i = 0; i < std::strlen(str); ++i) {
+    for(idx_t i = 0; i < len; ++i) {
         renderGraph.ui_ubo.AppendData({ 
             .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
             .colorIndex   = col,
@@ -101,7 +113,27 @@ inline void DrawText(
     const Window& wnd,  
     const Colors col = Colors::WHITE)
 {
-    DrawText(renderGraph, str, wnd.rect.x, wnd.rect.y + wnd.line, col);
+    DrawText(renderGraph, str, (idx_t)std::strlen(str), wnd.rect.x, wnd.rect.y + wnd.line, col);
+}
+
+template<idx_t N>
+inline void DrawText(
+    rendering::RenderGraph& renderGraph, 
+    const box::String<N>& str,
+    const Window& wnd,  
+    const Colors col = Colors::WHITE)
+{
+    DrawText(renderGraph, str.data, str.Length(), wnd.rect.x, wnd.rect.y + wnd.line, col);
+}
+
+template<idx_t N>
+inline void DrawText(
+    rendering::RenderGraph& renderGraph, 
+    const box::String<N>& str,
+    const f32 x, const f32 y, 
+    const Colors col = Colors::WHITE)
+{
+    DrawText(renderGraph, str.data, str.Length(), x, y, col);
 }
 
 inline void DrawRectangle(rendering::RenderGraph& renderGraph, utils::Rect<f32> rect, const Colors col)
@@ -121,12 +153,12 @@ inline void DrawTextCentered(
     const utils::Rect<f32>& rect, 
     const Colors col = WHITE)
 {
-    const auto len = std::strlen(str);
+    const auto len = (idx_t)std::strlen(str);
     const auto TOTAL_STR_W = (len + 1) * LETTER_SPACE;
     const auto cx = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
     const auto cy = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
 
-    DrawText(renderGraph, str, cx, cy, col);
+    DrawText(renderGraph, str, len, cx, cy, col);
 }
 
 inline void DrawTextCentered(
@@ -194,9 +226,10 @@ inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider)
     using namespace wnd;
 
     const Rect<f32> knob { 
-        slider.back.x + slider.PADDING + slider.knobPos, 
-        slider.back.y + slider.PADDING, 
-        slider.KNOB_SIZE, slider.KNOB_SIZE 
+        slider.back.x + PADDING + slider.knobPos, 
+        slider.back.y + PADDING, 
+        slider.back.h - PADDING * 2, 
+        slider.back.h - PADDING * 2
     };
 
     //INTERACTION
@@ -206,25 +239,23 @@ inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider)
     if(HasEvent<Mouse_ButtonLeft, Released>())
         slider.isDragging = false;
 
-    if(isMouseOnKnob && HasEvent<Mouse_ButtonLeft, Pressed>()){
+    if(isMouseOnKnob && HasEvent<Mouse_ButtonLeft, Pressed>())
         slider.isDragging = true;
-    }
 
-    if (slider.isDragging){
+    if (slider.isDragging)
         slider.knobPos += global::mouse_dx;
-    }
 
-    if (ClampReturnBool(slider.knobPos, 0.f, slider.back.w - slider.KNOB_SIZE - slider.PADDING * 2)) //padding for both slider and knob
+    if (ClampReturnBool(slider.knobPos, 0.f, slider.back.w - knob.w - PADDING * 2)) //padding for both slider and knob
         slider.isDragging = false;
 
     //DRAW
     DrawRectangle(renderGraph, slider.back, BLACK1);
-    DrawRectangle(renderGraph, knob, (isMouseOnKnob || slider.isDragging) ? RED : WHITE);
-    DrawTextCentered(renderGraph, slider.name.data, slider.back, GREEN); 
+    DrawRectangle(renderGraph, knob, (isMouseOnKnob || slider.isDragging) ? GREEN : WHITE);
+    DrawTextCentered(renderGraph, slider.name.data, slider.back); 
 
     box::String<30> valueStr; 
     valueStr.Append(slider.GetValue());
-    DrawText(renderGraph, valueStr.data, slider.back.x, slider.back.y, RED); 
+    DrawText(renderGraph, valueStr, slider.back.x, slider.back.y, WHITE); 
 
     return slider.GetValue();
 }
@@ -232,9 +263,9 @@ inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider)
 template<class T>
 inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider, const Window& wnd)
 {
-    slider.back.x = wnd.rect.x + slider.PADDING;
+    slider.back.x = wnd.rect.x + PADDING;
     slider.back.y = wnd.rect.y + wnd.line;
-    slider.back.w = wnd.rect.w - slider.PADDING * 2;
+    slider.back.w = wnd.rect.w - PADDING * 2;
     //account for window resize
     slider.knobPos *= wnd.rect.w / slider.wref;  //BUG somewhere (scale is not accurate)
     slider.wref = wnd.rect.w;
@@ -243,9 +274,55 @@ inline auto DrawSlider(rendering::RenderGraph& renderGraph, Slider<T>& slider, c
 
 //? INPUT FIELD
 
-inline void DrawInputField(rendering::RenderGraph& renderGraph)
+template<class T>
+inline void DrawInputField(rendering::RenderGraph& renderGraph, InputField<T>& inputField)
 {
+    using namespace utils;
+    using namespace wnd;
 
+    const auto textSize = LETTER_SPACE * inputField.name.Length() + LETTER_SPACE;
+
+    const utils::Rect<f32> back { 
+        inputField.rect.x + textSize,
+        inputField.rect.y,
+        inputField.rect.w - textSize,
+        inputField.rect.h
+    };
+
+    //INTERACTION
+    const bool isMouseOnInput = utils::IsPointInsideRect(global::mouse_wx, global::mouse_wy, back);
+
+    if(isMouseOnInput && HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
+        inputField.isActive = true;
+    }
+
+    if(!isMouseOnInput && HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>()){
+        inputField.isActive = false;
+    }
+
+    if (inputField.isActive){
+        FOR_STRING(global::chars, i) {
+            if (global::chars[i] == '\b')
+                inputField.value.Pop();
+            else
+                inputField.value.Append(global::chars[i]);
+        }
+    }
+    dbg::LogInfo(inputField.GetValue());
+
+    //DRAW
+    DrawRectangle(renderGraph, back, (isMouseOnInput || inputField.isActive) ? BLACK3 : BLACK1);
+    DrawText(renderGraph, inputField.name, inputField.rect.x, inputField.rect.y);
+    DrawText(renderGraph, inputField.value, back.x, back.y, GREEN);
+}
+
+template<class T>
+inline void DrawInputField(rendering::RenderGraph& renderGraph, InputField<T>& inputField, const Window& wnd)
+{
+    inputField.rect.x = wnd.rect.x + PADDING;
+    inputField.rect.y = wnd.rect.y + wnd.line;
+    inputField.rect.w = wnd.rect.w - PADDING * 2;
+    DrawInputField(renderGraph, inputField);
 }
 
 //? SPECIFIC

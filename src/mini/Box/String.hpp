@@ -27,6 +27,8 @@ constexpr void StringAssert(const bool condition, chars_t msg = "string assertio
     }
 }
 
+#define FOR_STRING(str, i) for(idx_t i = 0; i < str.Length(); ++i)
+
 template<idx_t CAPACITY_T, typename CHAR_T = char>
 struct String
 {

@@ -58,21 +58,28 @@ struct GameScene
         ui2::DrawFPS(renderGraph); 
         //Terrain
         {
-            static ui2::Window terrainWindow {
+            static ui2::Window terrainWnd {
                 .title = "Terrain",
                 .rect = { wnd::global::window_w - 100.f, 0.f, 100.f, 100.f },
             };
-            ui2::DrawWindow(renderGraph, terrainWindow);
-            terrainWindow.ResetLine();
-            ui2::DrawText(renderGraph, "This is terrain!", terrainWindow);
-            terrainWindow.NextLine();
+            ui2::DrawWindow(renderGraph, terrainWnd);
+            terrainWnd.ResetLine();
+            ui2::DrawText(renderGraph, "This is terrain!", terrainWnd);
+            terrainWnd.NextLine();
 
-            static ui2::Slider<float> sunRotSlider {
+            static ui2::Slider<f32> sunRotSlider {
                 .name = "sun rot",
                 .min  = 0,
                 .max  = 6.28f,
             };
-            sun.t = ui2::DrawSlider(renderGraph, sunRotSlider, terrainWindow);
+            sun.t = ui2::DrawSlider(renderGraph, sunRotSlider, terrainWnd);
+            terrainWnd.NextLine();
+
+            static ui2::InputField<f32> brushInput {
+                .name  = "brush size",
+                .value = { "1" }
+            };
+            ui2::DrawInputField(renderGraph, brushInput, terrainWnd);
         }
         //Stats
         {
@@ -83,6 +90,7 @@ struct GameScene
             ui2::DrawWindow(renderGraph, statsWindow);
             statsWindow.ResetLine();
             ui2::DrawText(renderGraph, "Stats", statsWindow);
+            
 
             //render stats
             //camera position
