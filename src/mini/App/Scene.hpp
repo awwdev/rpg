@@ -10,8 +10,11 @@
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Rendering/RenderGraph.hpp"
-#include "mini/Rendering/UI.hpp"
-#include "mini/Resources/Terrain/TerrainUI.hpp"
+
+#include "mini/UI/UI.hpp"
+#include "mini/UI/UI_Terrain.hpp"
+#include "mini/UI/UI_Stats.hpp"
+
 #include "mini/Resources/Terrain/Terrain.hpp"
 #include "mini/Rendering/Sun.hpp"
 
@@ -31,13 +34,14 @@ struct GameScene
     app::PlayerController playerController;
     app::EditorController editorController;
 
-    GameScene()
+    void Create(res::HostResources& hostRes)
     {
         //TODO: move into some resource manager an load at loading scene
         //ecs.prefabs.Parse("res/prefabs.txt"); 
         sun.Create(ecs);
         playerController.Create(ecs);
-
+        
+        hostRes.terrain.InitGizmos(ecs); //TODO: not really good flow
         ui::g_aciveRenderGraph = &renderGraph;
     }
 
@@ -56,55 +60,8 @@ struct GameScene
         ecs::S_Render(ecs.arrays, dt, renderGraph);
 
         //? UI
-        //Terrain
-        {
-            static ui::Window terrainWnd {
-                .title = "Terrain",
-                .rect = { wnd::global::window_w - 100.f, 0.f, 100.f, 100.f },
-            };
-            ui::DrawWindow(terrainWnd);
-            ui::DrawText("This is terrain!", terrainWnd);
-
-            static ui::Slider<f32> sunRotSlider {
-                .name = "sun rot",
-                .min  = 0,
-                .max  = 6.28f,
-            };
-            sun.t = ui::DrawSlider(sunRotSlider, terrainWnd);
-
-            static ui::InputField<f32> brushInput {
-                .name  = "brush size",
-                .value = { "1" }
-            };
-            ui::DrawInputField(brushInput, terrainWnd);
-        }
-        //Stats
-        {
-            static ui::Window statsWindow {
-                .title = "Stats",
-                .rect = { 0, 0.f, 100.f, 100.f },
-            };
-            ui::DrawWindow(statsWindow);
-
-            static box::String<20> fpsStr;
-            if (dt::secondHasPassed) {
-                fpsStr.Clear();
-                fpsStr.Append("fps: ");
-                fpsStr.Append(dt::fps);
-            }
-            static box::String<20> dtStr;
-            if (dt::secondHasPassed) {
-                dtStr.Clear();
-                dtStr.Append("dt: ");
-                dtStr.Append(dt::seconds);
-            }
-
-            ui::DrawText(fpsStr, statsWindow); 
-            ui::DrawText(dtStr, statsWindow); 
-
-            //TODO drawing camera pos could be done with a vector widget            
-        }
-        
+        ui::DrawUI_Terrain(hostRes.terrain, sun);
+        ui::DrawUI_Stats();
     }
 
 };

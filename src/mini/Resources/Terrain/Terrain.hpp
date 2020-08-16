@@ -48,6 +48,8 @@ struct Terrain
         if (app::global::inputMode != app::global::UI_Mode)
             return;
 
+        UpdateGizmos(ecs);
+
         editing.dirtyQuadrants.Clear();
 
         if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
@@ -108,6 +110,9 @@ struct Terrain
         f32  dragScale   = 0.05f;
         u32  quadrantIdx = 0;
         f32  brushSize   = 1;
+
+        ecs::ID gizmoID;
+        utils::Vec3f gizmoPos;
     } editing;
 
     void MarkAllDirty(){ //could be done better 
@@ -116,6 +121,28 @@ struct Terrain
         for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
             editing.dirtyQuadrants.Append(GetQuadrantIndex(z, x));
         }}
+    }
+
+    void InitGizmos(ecs::ECS& ecs)
+    {
+        editing.gizmoID = ecs.AddEntity();
+        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(editing.gizmoID, res::MeshType::PrimitiveCube);
+        constexpr auto S = 0.1f;
+        ecs.arrays.AddComponent<ecs::ComponentType::Transform> (editing.gizmoID, utils::Mat4f{
+            S, 0, 0, 0,
+            0, S, 0, 0,
+            0, 0, S, 0,
+            0, 0, 0, 1,
+        });
+    }
+
+    void UpdateGizmos(ecs::ECS& ecs)
+    {
+        using namespace utils;
+        auto& transform = ecs.arrays.transforms.Get(editing.gizmoID);
+        transform.transform[3][0] = editing.gizmoPos[X];
+        transform.transform[3][1] = editing.gizmoPos[Y];
+        transform.transform[3][2] = editing.gizmoPos[Z];
     }
 
     //? INTERACTION
@@ -140,6 +167,7 @@ struct Terrain
                 const auto iz = intersection->pos[Z];
                 //visualize
                 const auto closestVertex = intersection->GetClosestVertex(i);
+                editing.gizmoPos = quadrant.verts[closestVertex].pos;
 
                 if (mode == VertexGrab)
                 {
@@ -180,6 +208,8 @@ struct Terrain
             const auto triangleIdx = (idx / 3) * 3;
             quadrant.RecalculateNormalsOfTriangle(triangleIdx);
         }
+
+        editing.gizmoPos[Y] += yDelta * editing.dragScale;
     }
 
 

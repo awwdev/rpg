@@ -113,8 +113,8 @@ inline void DrawText(
     Window& wnd,  
     const Colors col = Colors::WHITE)
 {
-    wnd.NextLine();
     DrawText(str, (idx_t)std::strlen(str), wnd.rect.x, wnd.rect.y + wnd.line, col);
+    wnd.NextLine();
 }
 
 template<idx_t N>

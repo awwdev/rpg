@@ -37,6 +37,7 @@ int WINAPI wWinMain(
 
         //TODO: make stack for each scene type instead of one generic scene
         auto ptrGameScenes = mem::ClaimBlock<app::GameScene>();
+        ptrGameScenes->Create(*ptrHostResources);
 
         while (wnd::global::events[wnd::Window_Close] == wnd::None && wnd::global::events[wnd::ESC] == wnd::None)
         {
