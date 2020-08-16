@@ -1,33 +1,23 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/Window/WindowEvents.hpp"
-#include "mini/Utils/Types.hpp"
-#include "mini/Utils/Algorithms.hpp"
-#include "mini/Utils/DeltaTime.hpp"
+#include "mini/Rendering/RenderGraph.hpp"
 #include "mini/Utils/Structs.hpp"
-#include "mini/Utils/Matrix.hpp"
-#include "mini/Utils/PrimitiveMeshes.hpp"
+#include "mini/Utils/DeltaTime.hpp"
+#include "mini/Utils/Algorithms.hpp"
+#include "mini/Window/WindowEvents.hpp"
 #include "mini/Box/String.hpp"
-#include "mini/ECS/ComponentArray.hpp"
-#include "mini/App/InputMode.hpp"
+#include "mini/Debug/Logger.hpp"
 
 #include <charconv>
+#include <cstdlib>
 #undef DrawText
 
 namespace mini::ui {
-    
-using namespace rendering;
 
-//? CONST (consistency)
-constexpr float LETTER_SIZE  = 16;
-constexpr float LETTER_SPACE = 8;
+//? GLOBAL CONSISTENCY
 
-//TODO: if branch in shader (if usesTexture) or just opaque and always sampling
-//TODO: use all textures of ascii even if never used (no ascii offset necessary then)
-constexpr u32 FULL_OPAQUE  = 95 + 32;
-constexpr u32 ASCII_OFFSET = 0; //texture begins at 0 with usable letters
-
+//analog to the shader color lookup table
 enum Colors : u32
 {
     WHITE,
@@ -40,415 +30,312 @@ enum Colors : u32
     BLACK5,
 };
 
+constexpr idx_t LETTER_SIZE  = 16; //monospace
+constexpr idx_t LETTER_SPACE = 8;
+constexpr idx_t FULL_OPAQUE_NO_TEXTURE = 21; //using NAK ascii code 
+constexpr f32   LINE_HEIGHT = 18;
+constexpr f32   PADDING = 4;
+
+inline rendering::RenderGraph* g_aciveRenderGraph = nullptr;
+
+//? STRUCTS
+
 struct Window
 {
-    utils::Rect<f32> rect;
-    utils::Rect<f32> limits = { rect.w, rect.h, f32max, f32max };
-    box::String<20>  title;
-    bool isDragged;
-    bool isResizing;
-    s32 dragX, dragY;
-    idx_t line = 0;
-    
-    static constexpr u32 BAR_H  = 20;
-    static constexpr u32 LINE_H = 16;
+    static constexpr auto TOP_BAR_H = 20;
 
-    void ResetLines() { line  = BAR_H + 4; }
-    void NextLine()   { line += LINE_H; }
+    box::String<20>  title;
+    utils::Rect<f32> rect {};
+    utils::Rect<f32> limits = { rect.w, rect.h, f32max, f32max };
+
+    enum Mode { None, Resize, Move } mode = None;
+
+    f32  line = 0; //offset
+    void ResetLine() { line  = TOP_BAR_H + 4; }   
+    void NextLine()  { line += LINE_HEIGHT; }   
 };
 
-inline void DrawTextCentered(
-    RenderGraph& renderGraph,
-    const utils::Rect<float>& rect, 
-    chars_t str, const u32 len, 
-    const Colors col = WHITE)
+template<class T, class = IsArithmetic<T>>
+struct Slider
 {
-    const auto STRLEN = len;
-    const auto TOTAL_STR_W = (STRLEN + 1) * LETTER_SPACE;
-    const auto str_x  = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
-    const auto str_y  = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
+    static constexpr f32 BACK_H = 16;
 
-    for(u32 i = 0; i < STRLEN; ++i) {
-        renderGraph.ui_ubo.AppendData(
-            UI_UniformData { 
-                .rect         = { str_x + LETTER_SPACE * i, str_y, LETTER_SIZE, LETTER_SIZE },
-                .colorIndex   = col,
-                .textureIndex = str[i] - ASCII_OFFSET
-            }
-        );
+    box::String<20> name;
+    utils::Rect<float> back { 0, 0, 0, BACK_H };
+    bool isDragging = false;
+    f32 knobPos = 0;
+    f32 wref = 1; //important for window resize
+
+    T min {}, max {}; 
+    T GetValue() const { 
+         return (knobPos / (back.w - (back.h - PADDING * 2) - PADDING * 2)) * (max - min); 
+         //back.h - PADDING * 2 == knob size
     }
-}
+};
 
-inline void DrawText(
-    RenderGraph& renderGraph,
-    const float x, const float y,
-    chars_t str, const u32 len, 
-    const Colors col = WHITE)
-{
-    for(idx_t i = 0; i < len; ++i) {
-        renderGraph.ui_ubo.AppendData(
-            UI_UniformData { 
-                .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
-                .colorIndex   = col,
-                //.textureIndex = str[i] - ASCII_OFFSET
-                .textureIndex = (u32)str[i]
-            }
-        );
-    }
-}
-
-inline void DrawText(
-    Window* const wnd,
-    chars_t str, const u32 len, 
-    RenderGraph& renderGraph,  
-    const Colors col = WHITE)
-{
-    for(idx_t i = 0; i < len; ++i) {
-        renderGraph.ui_ubo.AppendData(
-            UI_UniformData { 
-                .rect         = { wnd->rect.x + LETTER_SPACE * i, wnd->rect.y + wnd->line, LETTER_SIZE, LETTER_SIZE },
-                .colorIndex   = col,
-                .textureIndex = str[i] != '\0' ? str[i] - ASCII_OFFSET : ' ' - ASCII_OFFSET
-            }
-        );
-    }
-}
-
-inline void DrawFPS(RenderGraph& renderGraph, const utils::Rect<float>& rect = { 0, 0, 48, 20 })
-{
-    renderGraph.ui_ubo.AppendData(
-        rendering::UI_UniformData { 
-            .rect           = rect,
-            .colorIndex     = BLACK1, 
-            .textureIndex   = FULL_OPAQUE
-        }
-    );
-
-    char fpsStr [10] { '\0 '};
-    const auto res = std::to_chars(fpsStr, fpsStr + 10, dt::fps);
-    DrawTextCentered(renderGraph, rect, fpsStr, (u32)strlen(fpsStr), GREEN);
-}
-
-inline void DrawWindow(RenderGraph& renderGraph, Window& wnd)
-{
-    using namespace wnd;
-
-    const utils::Rect<f32> bar     = { wnd.rect.x, wnd.rect.y, wnd.rect.w, wnd.BAR_H };
-    const utils::Rect<f32> resizer = { wnd.rect.x + wnd.rect.w - 8, wnd.rect.y + wnd.rect.h - 8, 8, 8 };
-
-    const bool isMouseOnBar    = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, bar);
-    const bool isMouseOnResizer= utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, resizer);
-
-    //? DRAGGING
-    /* HELLO */
-    if (HasEvent<Mouse_ButtonLeft, Released>())
-    {
-        wnd.isDragged  = false;
-        wnd.isResizing = false;
-    }
-    if (HasEvent<Mouse_ButtonLeft, Pressed>())
-    {
-        wnd.dragX = wnd::global::mouse_wx;
-        wnd.dragY = wnd::global::mouse_wy;
-    }
-    if (HasEvent<Mouse_ButtonLeft, Held>() && isMouseOnBar) {
-        wnd.isDragged = true;    
-    }
-    if (HasEvent<Mouse_ButtonLeft, Held>() && isMouseOnResizer) {
-        wnd.isResizing = true;    
-    }
-
-    if (wnd.isDragged || wnd.isResizing)
-    {
-        const s32 deltaX = wnd::global::mouse_wx - wnd.dragX;
-        const s32 deltaY = wnd::global::mouse_wy - wnd.dragY;
-        wnd.dragX = wnd::global::mouse_wx;
-        wnd.dragY = wnd::global::mouse_wy;
-
-        if (wnd.isDragged)
-        {
-            wnd.rect.x += deltaX;
-            wnd.rect.y += deltaY;
-        }
-        if (wnd.isResizing)
-        {
-            wnd.rect.w += deltaX;
-            wnd.rect.h += deltaY;
-            utils::Clamp(wnd.rect.w, wnd.limits.x, wnd.limits.w);
-            utils::Clamp(wnd.rect.h, wnd.limits.y, wnd.limits.h);
-        }
-    }
-
-    /*WINDOW*/
-    renderGraph.ui_ubo.AppendData(
-        rendering::UI_UniformData { 
-            .rect           = wnd.rect,
-            .colorIndex     = BLACK2,
-            .textureIndex   = FULL_OPAQUE,
-        }
-    );
-    //? TITLE BAR
-    renderGraph.ui_ubo.AppendData(
-        rendering::UI_UniformData { 
-            .rect           = bar,
-            .colorIndex     = BLACK1,
-            .textureIndex   = FULL_OPAQUE,
-        }
-    );
-    //? RESIZER
-    renderGraph.ui_ubo.AppendData(
-        rendering::UI_UniformData { 
-            .rect           = resizer, 
-            .colorIndex     = isMouseOnResizer ? RED : BLACK3,
-            .textureIndex   = FULL_OPAQUE,
-        }
-    );
-
-    //? TITLE TEXT
-    DrawTextCentered(renderGraph,bar, wnd.title.data, wnd.title.Length());
-}
-
-
-
-
+template<class T, class = IsArithmetic<T>>
 struct InputField
 {
-    box::String<100> str;
+    static constexpr f32 BACK_H = 16;
+    utils::Rect<float> rect { 0, 0, 0, BACK_H };
+
+    box::String<20> name;
+    box::String<20> value;
     bool isActive = false;
-    s32 GetInt() const { return std::atoi(str.data); }
+
+    T GetValue() const {
+        if (value.Empty()) 
+            return {};
+        return (T) std::atof(value.data);
+    }
 };
 
+//TODO: InputField str
 
+//? BASIC
 
-template<u32 STRLEN_0>
-bool DrawButton(RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
+inline void DrawText(
+    chars_t str, const idx_t len,
+    const f32 x, const f32 y, 
+    const Colors col = Colors::WHITE)
 {
-    return DrawButton(renderGraph, str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
+    for(idx_t i = 0; i < len; ++i) {
+        g_aciveRenderGraph->ui_ubo.AppendData({ 
+            .rect         = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
+            .colorIndex   = col,
+            .textureIndex = (u32)str[i]
+        });
+    }
 }
 
-template<u32 STRLEN_0>
-bool DrawButton(RenderGraph& renderGraph, const char(&str)[STRLEN_0], const utils::Rect<float>& rect)
+inline void DrawText(
+    chars_t str,
+    Window& wnd,  
+    const Colors col = Colors::WHITE)
 {
-    using namespace wnd;
-    const bool isMouseInside = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, rect);
-
-    //? QUAD
-    uint32_t btnColorIdx;
-    if (isMouseInside && HasEvent<Mouse_ButtonLeft, Pressed>()) btnColorIdx = BLACK5;
-    else btnColorIdx = isMouseInside ? BLACK4 : BLACK3;
-
-    renderGraph.ui_ubo.AppendData(
-        rendering::UI_UniformData { 
-            .rect           = rect, 
-            .colorIndex     = btnColorIdx,
-            .textureIndex   = FULL_OPAQUE
-        }
-    );
-
-    //? TEXT
-    DrawTextCentered(renderGraph, rect, str, STRLEN_0 - 1);
-
-    return isMouseInside && HasEvent<Mouse_ButtonLeft, Released>();
+    wnd.NextLine();
+    DrawText(str, (idx_t)std::strlen(str), wnd.rect.x, wnd.rect.y + wnd.line, col);
 }
 
-template<u32 STRLEN_0>
-bool DrawInputField(RenderGraph& renderGraph, InputField& inputField, const char(&str)[STRLEN_0], const utils::Rect<float>& pRect, const Window& wnd)
+template<idx_t N>
+inline void DrawText(
+    const box::String<N>& str,
+    Window& wnd,  
+    const Colors col = Colors::WHITE)
 {
-    return DrawInputField(renderGraph, inputField, str, { wnd.rect.x + pRect.x, wnd.rect.y + wnd.BAR_H + pRect.y, pRect.w, pRect.h });
+    DrawText(str.data, str.Length(), wnd.rect.x, wnd.rect.y + wnd.line, col);
+    wnd.NextLine();
 }
 
-template<u32 STRLEN_0>
-bool DrawInputField(
-    RenderGraph& renderGraph,
-    InputField& inputField,
-    const char(&str)[STRLEN_0],
-    const utils::Rect<float>& rect = { 0, 0, 64, 24 })
+template<idx_t N>
+inline void DrawText(
+    const box::String<N>& str,
+    const f32 x, const f32 y, 
+    const Colors col = Colors::WHITE)
 {
-    using namespace wnd;
-
-    const auto STRLEN = STRLEN_0 - 1; //don't consider \0 for rendering
-    const auto TOTAL_STR_W  = (STRLEN_0 + 1) * LETTER_SPACE; //not sure why strlen0 works (+1)
-    const utils::Rect<float> inputRect { rect.x + TOTAL_STR_W, rect.y, rect.w - TOTAL_STR_W, rect.h };
-    const utils::Rect<float> labelRect { rect.x, rect.y, TOTAL_STR_W, rect.h };
-
-    const bool isMouseOnInput = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, inputRect);
-
-    if (isMouseOnInput && HasEvent<Mouse_ButtonLeft, Pressed>()) {
-        inputField.isActive = true;
-    }
-    if (!isMouseOnInput && HasEvent<Mouse_ButtonLeft, Pressed>()) {
-        inputField.isActive = false; //probably does not cover all cases
-    }
-
-    if (inputField.isActive) {
-        if (!wnd::global::chars.Empty()){
-            for(u32 i = 0; i < wnd::global::chars.Length(); ++i)
-            {
-                if (wnd::global::chars[i] == '\b')
-                    inputField.str.Pop();
-                else if (wnd::global::chars[i] != '\r')
-                    inputField.str.Append(wnd::global::chars[i]);
-            }
-        }
-    }
-
-    //? INPUT FIELD
-    renderGraph.ui_ubo.AppendData(
-        rendering::UI_UniformData { 
-            .rect           = inputRect, 
-            .colorIndex     = isMouseOnInput ? BLACK4 : BLACK3,
-            .textureIndex   = FULL_OPAQUE,
-        }
-    );
-
-    //? LABEL
-    DrawTextCentered(renderGraph, labelRect, str, STRLEN_0 - 1);
-
-    //? INPUT
-    DrawTextCentered(renderGraph, inputRect, inputField.input.dataPtr, inputField.input.Length());
-    
-    return false;
+    DrawText(str.data, str.Length(), x, y, col);
 }
 
-inline void DrawConsole(RenderGraph& renderGraph)
+inline void DrawRectangle(utils::Rect<f32> rect, const Colors col)
 {
-    using namespace wnd;
-
-    static Window wnd {
-        .rect   = { 8, wnd::global::window_h - 8 - 100.f, wnd::global::window_w * 0.75f, 100 },
-        .limits = { 100, 100, 800, 300 },
-        .title  = "Console",
-    };
-    static InputField inputField {};
-
-    DrawWindow(renderGraph, wnd);
-
-    //? INPUT
-    const utils::Rect<float> inputRect { 
-        wnd.rect.x, 
-        wnd.rect.y + wnd.rect.h - 20  , 
-        wnd.rect.w - 8, 
-        20 
-    };
-    auto input = ">>";
-    DrawText(renderGraph, inputRect.x, inputRect.y, input, (u32)strlen(input));
-
-    const bool isMouseOnInput = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, inputRect);
-
-    if (isMouseOnInput && HasEvent<Mouse_ButtonLeft, Pressed>()) {
-        inputField.isActive = true;
-    }
-    if (!isMouseOnInput && HasEvent<Mouse_ButtonLeft, Pressed>()) {
-        inputField.isActive = false; //probably does not cover all cases
-    }
-    if (inputField.isActive) {
-        if (!wnd::global::chars.Empty()){
-            for(u32 i = 0; i < wnd::global::chars.Length(); ++i)
-            {
-                if (wnd::global::chars[i] == '\b')
-                    inputField.str.Pop();
-                else if (wnd::global::chars[i] != '\r')
-                    inputField.str.Append(wnd::global::chars[i]);
-            }
-        }
-    }
-    DrawText(renderGraph, inputRect.x + 32, inputRect.y, inputField.str.data, inputField.str.Length());
+    g_aciveRenderGraph->ui_ubo.AppendData({ 
+        .rect         = rect,
+        .colorIndex   = col,
+        .textureIndex = FULL_OPAQUE_NO_TEXTURE
+    });
 }
 
-inline void DrawRenderStats(RenderGraph& renderGraph)
+//? ADVANCED
+
+inline void DrawTextCentered(
+    chars_t str,
+    const utils::Rect<f32>& rect, 
+    const Colors col = WHITE)
 {
-    const auto totalInstCount = renderGraph.default_ubo.data.count;
-    const auto drawCount      = renderGraph.default_ubo.groups.usedIndices.count;
-    const auto totalUICount   = renderGraph.ui_ubo.data.count;
+    const auto len = (idx_t)std::strlen(str);
+    const auto TOTAL_STR_W = (len + 1) * LETTER_SPACE;
+    const auto cx = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
+    const auto cy = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
 
-    char ch_totalInstCount [] = "inst count:     ";
-    char ch_drawCount []      = "draw calls:     ";
-    char ch_totalUICount []   = "ui count:       ";
-
-    std::to_chars(ch_totalInstCount + 12, ch_totalInstCount+16, totalInstCount);
-    std::to_chars(ch_drawCount + 12, ch_drawCount+16, drawCount);
-    std::to_chars(ch_totalUICount +12, ch_totalUICount+16, totalUICount);
-
-    DrawText(renderGraph, 8, 20+8+ 0, ch_totalInstCount, 16);
-    DrawText(renderGraph, 8, 20+8+12, ch_drawCount, 16);
-    DrawText(renderGraph, 8, 20+8+24, ch_totalUICount, 16);
-
+    DrawText(str, len, cx, cy, col);
 }
 
-inline void DrawCameraPos(RenderGraph& renderGraph, const EgoCamera& camera)
+inline void DrawTextCentered(
+    chars_t str, 
+    Window& wnd, 
+    const Colors col = WHITE)
+{
+    wnd.NextLine();
+    DrawTextCentered(str, { wnd.rect.x, wnd.rect.y + wnd.line, wnd.rect.w, LINE_HEIGHT }, col);
+}
+
+//? WINDOW
+
+inline void DrawWindow(Window& wnd)
 {
     using namespace utils;
-    char ch_camera [100] = "camera:";
-    std::to_chars(ch_camera +  8, ch_camera + 20, camera.position[X]);
-    std::to_chars(ch_camera + 22, ch_camera + 34, camera.position[Y]);
-    std::to_chars(ch_camera + 36, ch_camera + 48, camera.position[Z]);
-    DrawText(renderGraph, 8, 20+8+36, ch_camera, 100);
+    using namespace wnd;
+
+    wnd.ResetLine();
+
+    const utils::Rect<f32> bar     = { wnd.rect.x, wnd.rect.y, wnd.rect.w, wnd.TOP_BAR_H };
+    const utils::Rect<f32> resizer = { wnd.rect.x + wnd.rect.w - 8, wnd.rect.y + wnd.rect.h - 8, 8, 8 };
+
+    const bool isMouseOnBar     = IsPointInsideRect(global::mouse_wx, global::mouse_wy, bar);
+    const bool isMouseOnResizer = IsPointInsideRect(global::mouse_wx, global::mouse_wy, resizer);
+
+    //INTERACTION
+
+    if (HasEvent<Mouse_ButtonLeft, Released>())
+        wnd.mode = Window::Mode::None;
+
+    if (HasEvent<Mouse_ButtonLeft, Pressed>()) {        
+        if (isMouseOnBar)      
+            wnd.mode = Window::Mode::Move;
+        if (isMouseOnResizer)  
+            wnd.mode = Window::Mode::Resize;
+    }
+
+    if (wnd.mode == Window::Move || wnd.mode == Window::Resize)  
+    {
+        if (wnd.mode == Window::Move) {
+            wnd.rect.x += global::mouse_dx;
+            wnd.rect.y += global::mouse_dy;
+        }
+
+        if (wnd.mode == Window::Resize) {
+            wnd.rect.w += global::mouse_dx;
+            wnd.rect.h += global::mouse_dy;
+            Clamp(wnd.rect.w, wnd.limits.x, wnd.limits.w);
+            Clamp(wnd.rect.h, wnd.limits.y, wnd.limits.h);
+        }  
+    }
+
+    //DRAWING
+    DrawRectangle(wnd.rect, BLACK2);
+    DrawRectangle(bar, isMouseOnBar ? BLACK3 : BLACK1);
+    DrawRectangle(resizer, isMouseOnResizer ? RED : BLACK3);
+    DrawTextCentered(wnd.title.data, bar);
 }
 
-inline bool DrawSlider(chars_t name, Window* wnd, RenderGraph& renderGraph, const f32 min, const f32 max, f32& sliderVal, bool& sliderDragging, f32& sliderX)
+//? SLIDER
+
+template<class T>
+inline auto DrawSlider(Slider<T>& slider)
 {
-    bool changed = false;
+    using namespace utils;
+    using namespace wnd;
 
-    DrawText(wnd, name, (u32)strlen(name), renderGraph);
-    wnd->NextLine();
-
-    const utils::Rect<f32> rect = { 
-        wnd->rect.x + 4, 
-        wnd->rect.y + wnd->line, 
-        wnd->rect.w - 8, 
-        16 
+    const Rect<f32> knob { 
+        slider.back.x + PADDING + slider.knobPos, 
+        slider.back.y + PADDING, 
+        slider.back.h - PADDING * 2, 
+        slider.back.h - PADDING * 2
     };
 
-    const auto knobX = sliderVal * rect.w;
-    const utils::Rect<f32> knob = { 
-        wnd->rect.x + 4 + 2 + knobX, 
-        wnd->rect.y + wnd->line + 2, 
-        12, 
-        12 
-    };
+    //INTERACTION
+    bool hasChanged = false;
+    const bool isMouseOnKnob = IsPointInsideRect(global::mouse_wx, global::mouse_wy, knob);
 
-    const bool isMouseInside = utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, knob);
+    if(HasEvent<Mouse_ButtonLeft, Released>())
+        slider.isDragging = false;
 
-    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>() && isMouseInside) {
-        sliderX = (f32)wnd::global::mouse_wx;
-        sliderDragging = true;
-    }
-        
-    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
-        sliderDragging = false;
+    if(isMouseOnKnob && HasEvent<Mouse_ButtonLeft, Pressed>())
+        slider.isDragging = true;
 
-    if (sliderDragging){
-        sliderVal = (f32)wnd::global::mouse_wx - sliderX;
-        utils::Clamp(sliderVal, (f32)0, (f32)rect.w);
-        sliderVal /= rect.w;
-        changed = true;
-    }
+    if (slider.isDragging)
+        slider.knobPos += global::mouse_dx;
 
-    renderGraph.ui_ubo.AppendData(
-        rendering::UI_UniformData { 
-            .rect           = rect, 
-            .colorIndex     = Colors::BLACK1,
-            .textureIndex   = FULL_OPAQUE
-        }
-    );
+    if (ClampReturnBool(slider.knobPos, 0.f, slider.back.w - knob.w - PADDING * 2)) //padding for both slider and knob
+        slider.isDragging = false;
 
-    renderGraph.ui_ubo.AppendData(
-        rendering::UI_UniformData { 
-            .rect           = knob, 
-            .colorIndex     = isMouseInside ? Colors::RED : Colors::WHITE,
-            .textureIndex   = FULL_OPAQUE
-        }
-    );
+    //DRAW
+    DrawRectangle(slider.back, BLACK1);
+    DrawRectangle(knob, (isMouseOnKnob || slider.isDragging) ? GREEN : WHITE);
+    DrawTextCentered(slider.name.data, slider.back); 
 
-    box::String<10> minStr;  minStr.Append(min);
-    box::String<10> maxStr;  maxStr.Append(max);
-    DrawText(renderGraph, rect.x, rect.y, minStr.data, minStr.Length(), Colors::WHITE);
-    DrawText(renderGraph, rect.x + rect.w - 8, rect.y, maxStr.data, minStr.Length(), Colors::WHITE);
+    box::String<30> valueStr; 
+    valueStr.Append(slider.GetValue());
+    DrawText(valueStr, slider.back.x, slider.back.y, WHITE); 
 
-    box::String<20> valStr;  valStr.Append(sliderVal * max);
-    DrawTextCentered(renderGraph, rect, valStr.data, valStr.Length(), Colors::RED);
-
-    return changed;
+    return slider.GetValue();
 }
 
-}//ns
+template<class T>
+inline auto DrawSlider(Slider<T>& slider, Window& wnd)
+{
+    slider.back.x = wnd.rect.x + PADDING;
+    slider.back.y = wnd.rect.y + wnd.line;
+    slider.back.w = wnd.rect.w - PADDING * 2;
+    //account for window resize
+    slider.knobPos *= wnd.rect.w / slider.wref;  //BUG somewhere (scale is not accurate)
+    slider.wref = wnd.rect.w;
+    wnd.NextLine();
+    return DrawSlider(slider);
+}
+
+//? INPUT FIELD
+
+template<class T>
+inline void DrawInputField(InputField<T>& inputField)
+{
+    using namespace utils;
+    using namespace wnd;
+
+    const auto textSize = LETTER_SPACE * inputField.name.Length() + LETTER_SPACE;
+
+    const utils::Rect<f32> back { 
+        inputField.rect.x + textSize,
+        inputField.rect.y,
+        inputField.rect.w - textSize,
+        inputField.rect.h
+    };
+
+    //INTERACTION
+    const bool isMouseOnInput = utils::IsPointInsideRect(global::mouse_wx, global::mouse_wy, back);
+
+    if(isMouseOnInput && HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
+        inputField.isActive = true;
+    }
+
+    if(!isMouseOnInput && HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>()){
+        inputField.isActive = false;
+    }
+
+    if (inputField.isActive){
+        FOR_STRING(global::chars, i) {
+            if (global::chars[i] == '\b')
+                inputField.value.Pop();
+            else
+                inputField.value.Append(global::chars[i]);
+        }
+    }
+
+    //DRAW
+    DrawRectangle(back, (isMouseOnInput || inputField.isActive) ? BLACK3 : BLACK1);
+    DrawText(inputField.name, inputField.rect.x, inputField.rect.y);
+    DrawText(inputField.value, back.x, back.y, GREEN);
+}
+
+template<class T>
+inline void DrawInputField(InputField<T>& inputField, Window& wnd)
+{
+    inputField.rect.x = wnd.rect.x + PADDING;
+    inputField.rect.y = wnd.rect.y + wnd.line;
+    inputField.rect.w = wnd.rect.w - PADDING * 2;
+    wnd.NextLine();
+    DrawInputField(inputField);
+}
+
+//? SPECIFIC
+
+inline void DrawFPS(const utils::Rect<f32>& rect = { 0, 0, 48, 20 })
+{
+    DrawRectangle(rect, Colors::BLACK1);
+
+    char fpsStr [10] {};
+    const auto res = std::to_chars(fpsStr, fpsStr + 10, dt::fps);
+    DrawTextCentered(fpsStr, rect, GREEN);
+}
+
+} //ns

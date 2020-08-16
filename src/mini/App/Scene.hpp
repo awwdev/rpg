@@ -11,7 +11,6 @@
 #include "mini/Box/String.hpp"
 #include "mini/Rendering/RenderGraph.hpp"
 #include "mini/Rendering/UI.hpp"
-#include "mini/Rendering/UI2.hpp"
 #include "mini/Resources/Terrain/TerrainUI.hpp"
 #include "mini/Resources/Terrain/Terrain.hpp"
 #include "mini/Rendering/Sun.hpp"
@@ -38,6 +37,8 @@ struct GameScene
         //ecs.prefabs.Parse("res/prefabs.txt"); 
         sun.Create(ecs);
         playerController.Create(ecs);
+
+        ui::g_aciveRenderGraph = &renderGraph;
     }
 
 
@@ -57,33 +58,33 @@ struct GameScene
         //? UI
         //Terrain
         {
-            static ui2::Window terrainWnd {
+            static ui::Window terrainWnd {
                 .title = "Terrain",
                 .rect = { wnd::global::window_w - 100.f, 0.f, 100.f, 100.f },
             };
-            ui2::DrawWindow(renderGraph, terrainWnd);
-            ui2::DrawText(renderGraph, "This is terrain!", terrainWnd);
+            ui::DrawWindow(terrainWnd);
+            ui::DrawText("This is terrain!", terrainWnd);
 
-            static ui2::Slider<f32> sunRotSlider {
+            static ui::Slider<f32> sunRotSlider {
                 .name = "sun rot",
                 .min  = 0,
                 .max  = 6.28f,
             };
-            sun.t = ui2::DrawSlider(renderGraph, sunRotSlider, terrainWnd);
+            sun.t = ui::DrawSlider(sunRotSlider, terrainWnd);
 
-            static ui2::InputField<f32> brushInput {
+            static ui::InputField<f32> brushInput {
                 .name  = "brush size",
                 .value = { "1" }
             };
-            ui2::DrawInputField(renderGraph, brushInput, terrainWnd);
+            ui::DrawInputField(brushInput, terrainWnd);
         }
         //Stats
         {
-            static ui2::Window statsWindow {
+            static ui::Window statsWindow {
                 .title = "Stats",
                 .rect = { 0, 0.f, 100.f, 100.f },
             };
-            ui2::DrawWindow(renderGraph, statsWindow);
+            ui::DrawWindow(statsWindow);
 
             static box::String<20> fpsStr;
             if (dt::secondHasPassed) {
@@ -98,8 +99,8 @@ struct GameScene
                 dtStr.Append(dt::seconds);
             }
 
-            ui2::DrawText(renderGraph, fpsStr, statsWindow); 
-            ui2::DrawText(renderGraph, dtStr, statsWindow); 
+            ui::DrawText(fpsStr, statsWindow); 
+            ui::DrawText(dtStr, statsWindow); 
 
             //TODO drawing camera pos could be done with a vector widget            
         }
