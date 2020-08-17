@@ -56,7 +56,27 @@ inline void DrawUI_Terrain(
     if (terrain.editing.mode == TERRAIN_T::Editing::VertexPaint)
         vertModeStr.Append("VertexPaint");
     DrawText(vertModeStr, terrainWnd);
-    
+
+    //VERTEX COLOR
+    static Slider<f32> rSlider {
+        .name  = "R",
+        .min   = 0.f,
+        .max   = 1.f,
+    };
+    static Slider<f32> gSlider {
+        .name  = "G",
+        .min   = 0.f,
+        .max   = 1.f,
+    };
+    static Slider<f32> bSlider {
+        .name  = "B",
+        .min   = 0.f,
+        .max   = 1.f,
+    };
+    using namespace utils;
+    terrain.editing.vertexColor[X] = DrawSlider(rSlider, terrainWnd);
+    terrain.editing.vertexColor[Y] = DrawSlider(gSlider, terrainWnd);
+    terrain.editing.vertexColor[Z] = DrawSlider(bSlider, terrainWnd);
 }
 
 }//ns

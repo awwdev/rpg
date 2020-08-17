@@ -111,6 +111,8 @@ struct Terrain
         u32  quadrantIdx = 0;
         f32  brushSize   = 1;
 
+        utils::Vec4f vertexColor { 1, 1, 1, 1 };
+
         ecs::ID gizmoID;
         utils::Vec3f intersectionPos;
     } editing;
@@ -196,7 +198,9 @@ struct Terrain
                 FOR_ARRAY(editing.editingVertIndices, i){
                     const auto idx     = editing.editingVertIndices[i].idx;
                     const auto falloff = editing.editingVertIndices[i].falloff;
-                    quadrant.verts[idx].col[X] = 1;
+                    quadrant.verts[idx].col[X] = editing.vertexColor[X];
+                    quadrant.verts[idx].col[Y] = editing.vertexColor[Y];
+                    quadrant.verts[idx].col[Z] = editing.vertexColor[Z];
                 }
 
                 editing.dirtyQuadrants.Append(editing.quadrantIdx);
