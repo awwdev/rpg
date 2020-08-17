@@ -27,8 +27,6 @@ struct Terrain
     using QUADRANT_T = Quadrant<QUAD_COUNT, QUADRANT_LEN>;
     QUADRANT_T quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
 
-    enum EditMode { VertexGrab, VertexPaint } mode = VertexGrab;
-
     //? MAIN
 
     void Create()
@@ -43,8 +41,7 @@ struct Terrain
 
     void Update(const double dt, const rendering::EgoCamera& camera, ecs::ECS& ecs)
     {   
-        //TODO: if inside ui window return too
-
+        //? META
         if (app::global::inputMode != app::global::Edit_Mode)
             return;
 
@@ -52,15 +49,13 @@ struct Terrain
 
         editing.dirtyQuadrants.Clear();
 
-        if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
-            editing.isDragging = false;
+        //? INTERACTION
+        if (editing.mode == Editing::EditMode::VertexGrab)
+            Grabbing(camera);
+        if (editing.mode == Editing::EditMode::VertexPaint)
+            Painting(camera);
 
-        if (editing.isDragging == false)
-            TestIntersectionAndPressed(camera);
-
-        if (editing.isDragging == true)
-            Dragging();
-
+        //? MODES
         if (wnd::HasEvent<wnd::F5, wnd::Pressed>())
             SaveTerrain(quadrants);
         if (wnd::HasEvent<wnd::F6, wnd::Pressed>()){
@@ -69,8 +64,8 @@ struct Terrain
         }
         if (wnd::HasEvent<wnd::F7, wnd::Pressed>())
             Stiching();
-        if (wnd::HasEvent<wnd::F8, wnd::Pressed>())
-            mode = (mode == VertexGrab) ? VertexPaint : VertexGrab;
+        if (wnd::HasEvent<wnd::F2, wnd::Pressed>())
+            editing.mode = (editing.mode == Editing::VertexGrab) ? Editing::VertexPaint : Editing::VertexGrab;
 
         if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) editing.quadrantIdx = 0;
         if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) editing.quadrantIdx = 1;
@@ -101,14 +96,17 @@ struct Terrain
 
     //? EDITING
 
-    struct 
+    struct Editing
     {
+        enum EditMode { VertexGrab, VertexPaint } mode = VertexGrab;
+        box::Optional<utils::Intersection> intersection {};
+
         struct VertexBrushInfo { idx_t idx; f32 falloff; };
-        box::Array<VertexBrushInfo, QUADRANT_T::VERT_COUNT_TOTAL> draggingVertIndices;
+        box::Array<VertexBrushInfo, QUADRANT_T::VERT_COUNT_TOTAL> editingVertIndices;
 
         box::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
         bool isDragging  = false;
-        f32  yDragPoint  = 0;
+        f32  yGrabRef  = 0;
         f32  dragScale   = 0.05f;
         u32  quadrantIdx = 0;
         f32  brushSize   = 1;
@@ -150,7 +148,7 @@ struct Terrain
 
     //? INTERACTION
 
-    void TestIntersectionAndPressed(const rendering::EgoCamera& camera)
+    box::Optional<utils::Intersection> CheckIntersection(const rendering::EgoCamera& camera)
     {
         auto& quadrant = GetQuadrant(editing.quadrantIdx);
         const auto ray = ScreenRay(camera);
@@ -161,72 +159,92 @@ struct Terrain
             auto& v1 = quadrant.verts[i+1].pos;
             auto& v2 = quadrant.verts[i+2].pos;
 
-            const box::Optional<utils::Intersection> intersection = 
-                utils::RayTriangleIntersection(camera.position, ray, v0, v1, v2);
-            if (intersection)
-            {
-                const auto closestVertex = intersection->GetClosestVertex(i);
-                editing.intersectionPos = intersection->pos;
-
-                //TODO: add vertices based on radius
-                //TODO: visualize the radius
-                //TODO: ui list 
-                //TODO: env models and finally building something :)
-
-
-                //visualize
-                
-                //editing.gizmoPos = quadrant.verts[closestVertex].pos;
-                
-                if (mode == VertexGrab)
-                {
-                    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
-                        editing.yDragPoint = (f32)wnd::global::mouse_wy;
-                        editing.isDragging = true; 
-
-                        //brush circle 
-                        editing.draggingVertIndices.Clear();
-                        FOR_CARRAY(quadrant.verts, i){
-                            const auto& vec1 = editing.intersectionPos;
-                            const auto& vec2 = quadrant.verts[i].pos;
-                            const auto  dist = utils::Distance(vec2, vec1);
-
-                            if(dist < editing.brushSize)
-                               editing.draggingVertIndices.Append(i, 1 - utils::Ease(dist/editing.brushSize));
-                        }
-                    }
-                }
-
-                if (mode == VertexPaint)
-                {
-                    if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::PressedOrHeld>()){
-
-                    }
-                }                
-            }
+            if (const auto intersection = utils::RayTriangleIntersection(camera.position, ray, v0, v1, v2))
+                return intersection;
         }
+
+        return {};
     }
 
-    void Dragging()
+    void Painting(const rendering::EgoCamera& camera)
     {
         using namespace utils;
         auto& quadrant = GetQuadrant(editing.quadrantIdx);
-        editing.dirtyQuadrants.Append(editing.quadrantIdx);
 
-        const f32 yDelta = wnd::global::mouse_wy - editing.yDragPoint;
-        editing.yDragPoint = (f32)wnd::global::mouse_wy;
-        
-        const auto& vertIndices = editing.draggingVertIndices;
-        FOR_ARRAY(vertIndices, i){
-            const auto idx     = vertIndices[i].idx;
-            const auto falloff = vertIndices[i].falloff;
-            quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale * (falloff);
+        if (const auto intersection = CheckIntersection(camera)){
+            editing.intersectionPos = intersection->pos;
+            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>())
+            {
+                editing.dirtyQuadrants.Clear();
+                editing.editingVertIndices.Clear();
+                FOR_CARRAY(quadrant.verts, i){
+                    const auto& vec1 = editing.intersectionPos;
+                    const auto& vec2 = quadrant.verts[i].pos;
+                    const auto  dist = utils::Distance(vec2, vec1);
 
-            const auto triangleIdx = (idx / 3) * 3;
-            quadrant.RecalculateNormalsOfTriangle(triangleIdx);
+                    if(dist < editing.brushSize)
+                        editing.editingVertIndices.Append(i, 1 - utils::Ease(dist/editing.brushSize));
+                }
+
+                const auto& vertIndices = editing.editingVertIndices;
+                FOR_ARRAY(vertIndices, i){
+                    const auto idx     = vertIndices[i].idx;
+                    const auto falloff = vertIndices[i].falloff;
+                    quadrant.verts[idx].col[X] = 1;
+                }
+
+                editing.dirtyQuadrants.Append(editing.quadrantIdx);
+            }
         }
 
-        editing.intersectionPos[Y] += yDelta * editing.dragScale;
+        
+    }
+
+    void Grabbing(const rendering::EgoCamera& camera)
+    {
+        using namespace utils;
+        auto& quadrant = GetQuadrant(editing.quadrantIdx);
+
+        if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
+            editing.intersection = {};
+
+        if (const auto intersection = CheckIntersection(camera)){
+            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
+                editing.yGrabRef = (f32)wnd::global::mouse_wy;
+                editing.intersection = intersection;
+
+                //brush circle 
+                editing.editingVertIndices.Clear();
+                FOR_CARRAY(quadrant.verts, i){
+                    const auto& vec1 = editing.intersectionPos;
+                    const auto& vec2 = quadrant.verts[i].pos;
+                    const auto  dist = utils::Distance(vec2, vec1);
+
+                    if(dist < editing.brushSize)
+                        editing.editingVertIndices.Append(i, 1 - utils::Ease(dist/editing.brushSize));
+                }
+            }
+            if (!wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>())
+                editing.intersectionPos = intersection->pos;
+        }
+
+        if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>() && editing.intersection){
+            const f32 yDelta = wnd::global::mouse_wy - editing.yGrabRef;
+            editing.yGrabRef = (f32)wnd::global::mouse_wy;
+        
+            const auto& vertIndices = editing.editingVertIndices;
+            FOR_ARRAY(vertIndices, i){
+                const auto idx     = vertIndices[i].idx;
+                const auto falloff = vertIndices[i].falloff;
+                quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale * (falloff);
+
+                const auto triangleIdx = (idx / 3) * 3;
+                quadrant.RecalculateNormalsOfTriangle(triangleIdx);
+            }
+
+            editing.intersectionPos[Y] += yDelta * editing.dragScale;
+            editing.dirtyQuadrants.Append(editing.quadrantIdx);
+        }        
     }
 
 

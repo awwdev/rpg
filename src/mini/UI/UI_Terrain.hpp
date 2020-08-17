@@ -23,28 +23,43 @@ inline void DrawUI_Terrain(
     res::Terrain<QUAD_COUNT, QUAD_LEN, QUADRANT_COUNT>& terrain,
     rendering::Sun& sun)
 {
-    static ui::Window terrainWnd {
-        .title = "Terrain",
-        .rect = { wnd::global::window_w - 100.f, 0.f, 100.f, 100.f },
-    };
-    ui::DrawWindow(terrainWnd);
-    ui::DrawText("This is terrain!", terrainWnd);
+    using TERRAIN_T = res::Terrain<QUAD_COUNT, QUAD_LEN, QUADRANT_COUNT>;
 
-    static ui::Slider<f32> sunRotSlider {
+    //WINDOW
+    static Window terrainWnd {
+        .title = "Terrain",
+        .rect = { wnd::global::window_w - 200.f, 0.f, 200.f, 200.f },
+    };
+    DrawWindow(terrainWnd);
+    terrainWnd.UpdateInputMode();
+
+    //SUN
+    static Slider<f32> sunRotSlider {
         .name = "sun rot",
         .min  = 0,
         .max  = 6.28f,
     };
-    sun.t = ui::DrawSlider(sunRotSlider, terrainWnd);
+    sun.t = DrawSlider(sunRotSlider, terrainWnd);
 
-    static ui::Slider<f32> brushSlider {
+    //BRUSH
+    static Slider<f32> brushSlider {
         .name  = "brush size",
         .min   = 1.f,
         .max   = 10.f,
     };
-    terrain.editing.brushSize = ui::DrawSlider(brushSlider, terrainWnd);
+    terrain.editing.brushSize = DrawSlider(brushSlider, terrainWnd);
 
-    terrainWnd.UpdateInputMode();
+    //VERTEX MODE
+    box::String<50> vertModeStr = "Vertex Mode: ";
+    if (terrain.editing.mode == TERRAIN_T::Editing::VertexGrab)
+        vertModeStr.Append("VertexGrab");
+    if (terrain.editing.mode == TERRAIN_T::Editing::VertexPaint)
+        vertModeStr.Append("VertexPaint");
+    DrawText(vertModeStr, terrainWnd);
+    
 }
 
 }//ns
+
+//TODO: ui list 
+//TODO: env models and finally building something :)

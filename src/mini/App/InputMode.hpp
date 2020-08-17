@@ -11,7 +11,7 @@ namespace global
     InputMode prev = Edit_Mode;
 }
 
-inline void UpdateInputMode()
+inline void ResetUpdateInputMode()
 {
     //reset and set on UI update
     if (global::inputMode == global::UI_Mode)

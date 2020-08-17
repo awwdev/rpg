@@ -51,7 +51,7 @@ struct GameScene
         renderGraph.Clear();
 
         //? UI
-        app::UpdateInputMode();
+        app::ResetUpdateInputMode();
         ui::DrawUI_Terrain(hostRes.terrain, sun);
         ui::DrawUI_Stats();
 
@@ -63,8 +63,6 @@ struct GameScene
 
         //? ECS
         ecs::S_Render(ecs.arrays, dt, renderGraph);
-
-
     }
 
 };
