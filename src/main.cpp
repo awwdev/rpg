@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #include "mini/Window/win_Window.hpp"
-#include "mini/Window/win_WindowCallback.hpp"
+#include "mini/Window/win_WindowProcedure.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Debug/Console.hpp"
 #include "mini/Box/Array.hpp"
@@ -61,4 +61,3 @@ int WINAPI wWinMain(
 } //main end
 
 //TODO: draw stuff on render target for post fx
-//TODO: terrain refactor

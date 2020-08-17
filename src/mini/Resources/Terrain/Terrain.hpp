@@ -103,7 +103,9 @@ struct Terrain
 
     struct 
     {
-        box::Array<idx_t, 6> draggingVertIndices;
+        struct VertexBrushInfo { idx_t idx; f32 falloff; };
+        box::Array<VertexBrushInfo, QUADRANT_T::VERT_COUNT_TOTAL> draggingVertIndices;
+
         box::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
         bool isDragging  = false;
         f32  yDragPoint  = 0;
@@ -112,7 +114,7 @@ struct Terrain
         f32  brushSize   = 1;
 
         ecs::ID gizmoID;
-        utils::Vec3f gizmoPos;
+        utils::Vec3f intersectionPos;
     } editing;
 
     void MarkAllDirty(){ //could be done better 
@@ -126,7 +128,7 @@ struct Terrain
     void InitGizmos(ecs::ECS& ecs)
     {
         editing.gizmoID = ecs.AddEntity();
-        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(editing.gizmoID, res::MeshType::PrimitiveRing8);
+        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(editing.gizmoID, res::MeshType::PrimitiveRing16);
         ecs.arrays.AddComponent<ecs::ComponentType::Transform> (editing.gizmoID, utils::Identity4());
     }
 
@@ -141,9 +143,9 @@ struct Terrain
             0, 0, S, 0,
             0, 0, 0, 1,
         };
-        transform.transform[3][0] = editing.gizmoPos[X];
-        transform.transform[3][1] = editing.gizmoPos[Y] - 0.1f; //z fighting
-        transform.transform[3][2] = editing.gizmoPos[Z];
+        transform.transform[3][0] = editing.intersectionPos[X];
+        transform.transform[3][1] = editing.intersectionPos[Y] - 0.1f; //z fighting
+        transform.transform[3][2] = editing.intersectionPos[Z];
     }
 
     //? INTERACTION
@@ -163,27 +165,35 @@ struct Terrain
                 utils::RayTriangleIntersection(camera.position, ray, v0, v1, v2);
             if (intersection)
             {
-                const auto ix = intersection->pos[X];
-                const auto iy = intersection->pos[Y];
-                const auto iz = intersection->pos[Z];
+                const auto closestVertex = intersection->GetClosestVertex(i);
+                editing.intersectionPos = intersection->pos;
 
                 //TODO: add vertices based on radius
                 //TODO: visualize the radius
+                //TODO: ui list 
+                //TODO: env models and finally building something :)
+
 
                 //visualize
-                const auto closestVertex = intersection->GetClosestVertex(i);
+                
                 //editing.gizmoPos = quadrant.verts[closestVertex].pos;
-                editing.gizmoPos = intersection->pos;
-
+                
                 if (mode == VertexGrab)
                 {
                     if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
-                        editing.draggingVertIndices.Clear();
-                        const auto corner   = quadrant.GetCornerByVertex(closestVertex);
-                        const auto vertices = quadrant.GetVerticesByCorner(corner);
-                        editing.draggingVertIndices.AppendArray(vertices);
                         editing.yDragPoint = (f32)wnd::global::mouse_wy;
                         editing.isDragging = true; 
+
+                        //brush circle 
+                        editing.draggingVertIndices.Clear();
+                        FOR_CARRAY(quadrant.verts, i){
+                            const auto& vec1 = editing.intersectionPos;
+                            const auto& vec2 = quadrant.verts[i].pos;
+                            const auto  dist = utils::Distance(vec2, vec1);
+
+                            if(dist < editing.brushSize)
+                               editing.draggingVertIndices.Append(i, 1 - utils::Ease(dist/editing.brushSize));
+                        }
                     }
                 }
 
@@ -208,14 +218,15 @@ struct Terrain
         
         const auto& vertIndices = editing.draggingVertIndices;
         FOR_ARRAY(vertIndices, i){
-            const auto idx = vertIndices[i];
-            quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale;
+            const auto idx     = vertIndices[i].idx;
+            const auto falloff = vertIndices[i].falloff;
+            quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale * (falloff);
 
             const auto triangleIdx = (idx / 3) * 3;
             quadrant.RecalculateNormalsOfTriangle(triangleIdx);
         }
 
-        editing.gizmoPos[Y] += yDelta * editing.dragScale;
+        editing.intersectionPos[Y] += yDelta * editing.dragScale;
     }
 
 

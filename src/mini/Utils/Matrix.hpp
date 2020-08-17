@@ -19,6 +19,7 @@ template<class T, auto Y, auto X>
 struct Mat
 {
     T data[Y][X];
+    //TODO making additional union (even if it would be UB)
 
     T*       operator[](const u8 y)       { return data[y]; } 
     const T* operator[](const u8 y) const { return data[y]; } 
@@ -132,6 +133,12 @@ auto Cross(const Vec<T, 4>& v1, const Vec<T, 4>& v2)
         v1[X] * v2[Y] - v1[Y] * v2[X],
         1
     };
+}
+
+template<class T>
+auto Distance(const Vec<T, 3>& v2, const Vec<T, 3>& v1)
+{
+    return Magnitude(v2 - v1);
 }
 
 //? MAT MULT

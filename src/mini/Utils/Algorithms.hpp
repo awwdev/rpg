@@ -112,18 +112,23 @@ box::Optional<Intersection> RayTriangleIntersection(
 }
 
 template<class T>
-constexpr T Sin(T val)
+constexpr T Sin(const T val)
 {
     return T{2}*val / (T{1} + val*val);
 }
 
 template<class T>
-constexpr T Cos(T val)
+constexpr T Cos(const T val)
 {
     return (T{1} - val*val) / (T{1} + val*val);
 }
 
+//? EASING
 
-
+template<class T>
+constexpr T Ease(const T val, const T p = 2)
+{
+    return (T)std::pow(val, p);
+}
 
 }//ns

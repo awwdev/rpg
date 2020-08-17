@@ -48,8 +48,9 @@ struct EgoCamera
         const auto qY = QuatAngleAxis(-rotation[Y], utils::Vec3f{0, 1, 0});
         const auto qRot = utils::QuatMultQuat(qY, qX);
 
-        const auto movDir = utils::QuatMultVec(qRot, movNorm);
-        position = position + (movDir * moveSpeed * (float)dt);
+        const auto movDir  = utils::QuatMultVec(qRot, movNorm);
+        const auto moveAcc = wnd::HasEvent<wnd::Shift, wnd::PressedOrHeld>() ? 3.f : 1.f;
+        position = position + (movDir * moveSpeed * moveAcc * (float)dt);
 
         if (wnd::HasEvent<wnd::Mouse_Scroll>()) {
             fov -= wnd::global::mouse_scroll_delta * scrollSpd;

@@ -92,15 +92,23 @@ GetRingVertex(n, C, R1),        \
     GetRingVertex(n+1, C, R2)
      
 
-const utils::Common_Vertex MESH_RING_8 [] {
-    RING_SEGMENT(0, 8),
-    RING_SEGMENT(1, 8),
-    RING_SEGMENT(2, 8),
-    RING_SEGMENT(3, 8),
-    RING_SEGMENT(4, 8),
-    RING_SEGMENT(5, 8),
-    RING_SEGMENT(6, 8),
-    RING_SEGMENT(7, 8),
+const utils::Common_Vertex MESH_RING_16 [] {
+    RING_SEGMENT( 0, 16),
+    RING_SEGMENT( 1, 16),
+    RING_SEGMENT( 2, 16),
+    RING_SEGMENT( 3, 16),
+    RING_SEGMENT( 4, 16),
+    RING_SEGMENT( 5, 16),
+    RING_SEGMENT( 6, 16),
+    RING_SEGMENT( 7, 16),
+    RING_SEGMENT( 8, 16),
+    RING_SEGMENT( 9, 16),
+    RING_SEGMENT(10, 16),
+    RING_SEGMENT(11, 16),
+    RING_SEGMENT(12, 16),
+    RING_SEGMENT(13, 16),
+    RING_SEGMENT(14, 16),
+    RING_SEGMENT(15, 16),
 };
 
 }//ns
