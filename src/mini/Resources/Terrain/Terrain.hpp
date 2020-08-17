@@ -45,7 +45,7 @@ struct Terrain
     {   
         //TODO: if inside ui window return too
 
-        if (app::global::inputMode != app::global::UI_Mode)
+        if (app::global::inputMode != app::global::Edit_Mode)
             return;
 
         UpdateGizmos(ecs);

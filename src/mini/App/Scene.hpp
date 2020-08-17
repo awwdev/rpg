@@ -50,7 +50,12 @@ struct GameScene
     {
         renderGraph.Clear();
 
+        //? UI
         app::UpdateInputMode();
+        ui::DrawUI_Terrain(hostRes.terrain, sun);
+        ui::DrawUI_Stats();
+
+        //? META
         playerController.Update(dt, ecs);
         editorController.Update(dt, ecs);
         hostRes.terrain.Update(dt, editorController.camera, ecs); //move into editor?
@@ -59,9 +64,7 @@ struct GameScene
         //? ECS
         ecs::S_Render(ecs.arrays, dt, renderGraph);
 
-        //? UI
-        ui::DrawUI_Terrain(hostRes.terrain, sun);
-        ui::DrawUI_Stats();
+
     }
 
 };

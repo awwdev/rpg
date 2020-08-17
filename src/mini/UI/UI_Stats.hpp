@@ -38,6 +38,8 @@ void DrawUI_Stats()
 
     ui::DrawText(fpsStr, statsWindow); 
     ui::DrawText(dtStr, statsWindow); 
+
+    statsWindow.UpdateInputMode();
 }
 
 }//ns

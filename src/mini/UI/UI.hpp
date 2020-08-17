@@ -8,6 +8,7 @@
 #include "mini/Window/WindowEvents.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Debug/Logger.hpp"
+#include "mini/App/InputMode.hpp"
 
 #include <charconv>
 #include <cstdlib>
@@ -53,6 +54,15 @@ struct Window
     f32  line = 0; //offset
     void ResetLine() { line  = TOP_BAR_H + 4; }   
     void NextLine()  { line += LINE_HEIGHT; }   
+
+    void UpdateInputMode()
+    {
+        if (app::global::inputMode != app::global::Edit_Mode)
+            return;
+
+        if (utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, rect))
+            app::global::inputMode = app::global::UI_Mode; 
+    }
 };
 
 template<class T, class = IsArithmetic<T>>

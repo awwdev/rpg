@@ -43,6 +43,8 @@ inline void DrawUI_Terrain(
         .max   = 10.f,
     };
     terrain.editing.brushSize = ui::DrawSlider(brushSlider, terrainWnd);
+
+    terrainWnd.UpdateInputMode();
 }
 
 }//ns
