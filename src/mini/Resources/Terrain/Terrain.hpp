@@ -166,38 +166,42 @@ struct Terrain
         return {};
     }
 
+    void CollectVertsInBrushCircle()
+    {
+        auto& quadrant = GetQuadrant(editing.quadrantIdx);
+        editing.editingVertIndices.Clear();
+
+        FOR_CARRAY(quadrant.verts, i){
+            const auto& vec1 = editing.intersectionPos;
+            const auto& vec2 = quadrant.verts[i].pos;
+            const auto  dist = utils::Distance(vec2, vec1);
+
+            if(dist < editing.brushSize)
+                editing.editingVertIndices.Append(i, 1 - utils::Ease(dist/editing.brushSize));
+        }
+    }
+
     void Painting(const rendering::EgoCamera& camera)
     {
         using namespace utils;
         auto& quadrant = GetQuadrant(editing.quadrantIdx);
 
-        if (const auto intersection = CheckIntersection(camera)){
+        if (const auto intersection = CheckIntersection(camera))
+        {
             editing.intersectionPos = intersection->pos;
             if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>())
             {
-                editing.dirtyQuadrants.Clear();
-                editing.editingVertIndices.Clear();
-                FOR_CARRAY(quadrant.verts, i){
-                    const auto& vec1 = editing.intersectionPos;
-                    const auto& vec2 = quadrant.verts[i].pos;
-                    const auto  dist = utils::Distance(vec2, vec1);
+                CollectVertsInBrushCircle(); //TODO: do at lower frequency
 
-                    if(dist < editing.brushSize)
-                        editing.editingVertIndices.Append(i, 1 - utils::Ease(dist/editing.brushSize));
-                }
-
-                const auto& vertIndices = editing.editingVertIndices;
-                FOR_ARRAY(vertIndices, i){
-                    const auto idx     = vertIndices[i].idx;
-                    const auto falloff = vertIndices[i].falloff;
+                FOR_ARRAY(editing.editingVertIndices, i){
+                    const auto idx     = editing.editingVertIndices[i].idx;
+                    const auto falloff = editing.editingVertIndices[i].falloff;
                     quadrant.verts[idx].col[X] = 1;
                 }
 
                 editing.dirtyQuadrants.Append(editing.quadrantIdx);
             }
         }
-
-        
     }
 
     void Grabbing(const rendering::EgoCamera& camera)
@@ -208,23 +212,14 @@ struct Terrain
         if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
             editing.intersection = {};
 
-        if (const auto intersection = CheckIntersection(camera)){
+        if (const auto intersection = CheckIntersection(camera))
+        {
             if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
                 editing.yGrabRef = (f32)wnd::global::mouse_wy;
                 editing.intersection = intersection;
-
-                //brush circle 
-                editing.editingVertIndices.Clear();
-                FOR_CARRAY(quadrant.verts, i){
-                    const auto& vec1 = editing.intersectionPos;
-                    const auto& vec2 = quadrant.verts[i].pos;
-                    const auto  dist = utils::Distance(vec2, vec1);
-
-                    if(dist < editing.brushSize)
-                        editing.editingVertIndices.Append(i, 1 - utils::Ease(dist/editing.brushSize));
-                }
+                CollectVertsInBrushCircle();
             }
-            if (!wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>())
+            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>() == false)
                 editing.intersectionPos = intersection->pos;
         }
 
@@ -232,17 +227,16 @@ struct Terrain
             const f32 yDelta = wnd::global::mouse_wy - editing.yGrabRef;
             editing.yGrabRef = (f32)wnd::global::mouse_wy;
         
-            const auto& vertIndices = editing.editingVertIndices;
-            FOR_ARRAY(vertIndices, i){
-                const auto idx     = vertIndices[i].idx;
-                const auto falloff = vertIndices[i].falloff;
-                quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale * (falloff);
+            FOR_ARRAY(editing.editingVertIndices, i){
+                const auto idx     = editing.editingVertIndices[i].idx;
+                const auto falloff = editing.editingVertIndices[i].falloff;
+                quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale * falloff;
 
                 const auto triangleIdx = (idx / 3) * 3;
                 quadrant.RecalculateNormalsOfTriangle(triangleIdx);
             }
 
-            editing.intersectionPos[Y] += yDelta * editing.dragScale;
+            editing.intersectionPos[Y] += yDelta * editing.dragScale; //TODO: would need falloff of closest intersection vertex
             editing.dirtyQuadrants.Append(editing.quadrantIdx);
         }        
     }
