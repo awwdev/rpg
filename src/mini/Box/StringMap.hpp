@@ -9,6 +9,14 @@ namespace mini::box {
 
 //TODO: same keys are not considered yet
 
+#define FOR_STRING_MAP_BEGIN_CONST(map, item) \
+for(idx_t bucketIdx = 0; bucketIdx < map.BUCKET_COUNT; ++bucketIdx){ \
+    const auto& bucket = map.buckets[bucketIdx]; \
+    for(idx_t contentIdx = 0; contentIdx < bucket.count; ++contentIdx){ \
+        const auto& item = bucket.content[contentIdx];
+#define FOR_STRING_MAP_END }}
+
+
 template<class VAL, auto STRING_CAPACITY>
 struct StringMap
 {
@@ -87,18 +95,14 @@ void PrintStringMap(const StringMap<VAL, STRING_CAPACITY>& map)
         << std::setw(W) << "VALUE"
         << '\n';
 
-    for(idx_t bucketIdx = 0; bucketIdx < map.BUCKET_COUNT; ++bucketIdx)
-    {
-        const auto& bucket = map.buckets[bucketIdx];
-        for(idx_t contentIdx = 0; contentIdx < bucket.count; ++contentIdx){
-            std::cout << std::left 
-                << std::setw(W) << bucketIdx
-                << std::setw(W) << contentIdx
-                << std::setw(W) << bucket.content[contentIdx].key
-                << std::setw(W) << bucket.content[contentIdx].val
-                << '\n';
-        }
-    }
+    FOR_STRING_MAP_BEGIN_CONST(map, item)
+    std::cout << std::left 
+        << std::setw(W) << bucketIdx
+        << std::setw(W) << contentIdx
+        << std::setw(W) << item.key
+        << std::setw(W) << item.val
+        << '\n';
+    FOR_STRING_MAP_END
 }
 
 } //NS

@@ -16,6 +16,54 @@
 
 namespace mini::ui {
 
+struct TerrainUI
+{
+    Window wnd {
+        .title = "Terrain",
+        .rect = { wnd::global::window_w - 200.f, 0.f, 200.f, 300.f },
+    };
+
+    Slider<f32> sunRotSlider {
+        .name = "sun rot",
+        .min  = 0,
+        .max  = 6.28f,
+    };
+
+    Slider<f32> brushSlider {
+        .name  = "brush size",
+        .min   = 1.f,
+        .max   = 10.f,
+    };
+
+    Slider<f32> rSlider {
+        .name  = "R",
+        .min   = 0.f,
+        .max   = 1.f,
+    };
+    Slider<f32> gSlider {
+        .name  = "G",
+        .min   = 0.f,
+        .max   = 1.f,
+    };
+    Slider<f32> bSlider {
+        .name  = "B",
+        .min   = 0.f,
+        .max   = 1.f,
+    };
+
+    List<box::String<20>, 10> prefabList {
+        .name  = "Prefabs",
+        .rect  = { 0, 0, 0, 100 },
+    };
+
+    TerrainUI()
+    {
+        FOR_STRING_MAP_BEGIN_CONST(ecs::PREFAB_STRINGS, item)
+            prefabList.items.Append(item.key);
+        FOR_STRING_MAP_END
+    }
+};
+
 template<
     auto QUAD_COUNT, 
     auto QUAD_LEN, 
@@ -26,29 +74,17 @@ inline void DrawUI_Terrain(
 {
     using TERRAIN_T = res::Terrain<QUAD_COUNT, QUAD_LEN, QUADRANT_COUNT>;
 
+    static TerrainUI ui {};
+
     //WINDOW
-    static Window terrainWnd {
-        .title = "Terrain",
-        .rect = { wnd::global::window_w - 200.f, 0.f, 200.f, 300.f },
-    };
-    DrawWindow(terrainWnd);
-    terrainWnd.UpdateInputMode();
+    DrawWindow(ui.wnd);
+    ui.wnd.UpdateInputMode();
 
     //SUN
-    static Slider<f32> sunRotSlider {
-        .name = "sun rot",
-        .min  = 0,
-        .max  = 6.28f,
-    };
-    sun.t = DrawSlider(sunRotSlider, terrainWnd);
+    sun.t = DrawSlider(ui.sunRotSlider, ui.wnd);
 
     //BRUSH
-    static Slider<f32> brushSlider {
-        .name  = "brush size",
-        .min   = 1.f,
-        .max   = 10.f,
-    };
-    terrain.editing.brushSize = DrawSlider(brushSlider, terrainWnd);
+    terrain.editing.brushSize = DrawSlider(ui.brushSlider, ui.wnd);
 
     //VERTEX MODE
     box::String<50> vertModeStr = "Vertex Mode: ";
@@ -56,41 +92,16 @@ inline void DrawUI_Terrain(
         vertModeStr.Append("VertexGrab");
     if (terrain.editing.mode == TERRAIN_T::Editing::VertexPaint)
         vertModeStr.Append("VertexPaint");
-    DrawText(vertModeStr, terrainWnd);
+    DrawText(vertModeStr, ui.wnd);
 
     //VERTEX COLOR
-    static Slider<f32> rSlider {
-        .name  = "R",
-        .min   = 0.f,
-        .max   = 1.f,
-    };
-    static Slider<f32> gSlider {
-        .name  = "G",
-        .min   = 0.f,
-        .max   = 1.f,
-    };
-    static Slider<f32> bSlider {
-        .name  = "B",
-        .min   = 0.f,
-        .max   = 1.f,
-    };
     using namespace utils;
-    terrain.editing.vertexColor[X] = DrawSlider(rSlider, terrainWnd);
-    terrain.editing.vertexColor[Y] = DrawSlider(gSlider, terrainWnd);
-    terrain.editing.vertexColor[Z] = DrawSlider(bSlider, terrainWnd);
+    terrain.editing.vertexColor[X] = DrawSlider(ui.rSlider, ui.wnd);
+    terrain.editing.vertexColor[Y] = DrawSlider(ui.gSlider, ui.wnd);
+    terrain.editing.vertexColor[Z] = DrawSlider(ui.bSlider, ui.wnd);
 
     //LIST
-    static List<box::String<20>, 10> propsList {
-        .name  = "Props",
-        .rect  = { 0, 0, 0, 100 },
-        .items = { "sword", "stone", "grass" }
-    };
-    if (DrawList(propsList, terrainWnd)){
-
-    }
+    DrawList(ui.prefabList, ui.wnd);
 }
 
 }//ns
-
-//TODO: ui list 
-//TODO: env models and finally building something :)

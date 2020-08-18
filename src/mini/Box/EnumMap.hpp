@@ -6,7 +6,6 @@
 #include "mini/Box/Array.hpp"
 
 namespace mini::box {
-
     
 template<class KEY, class VAL, typename = IsIntegralOrEnum<KEY>>
 struct EnumPair
@@ -14,6 +13,9 @@ struct EnumPair
     KEY key;
     VAL val;
 };
+
+//wrapper over array that uses enum for max count and index
+//the wrapper allows for order independent init, removal, add, and is capacity based (last enum item)
 
 template<auto ENUM_END, class VAL>
 struct EnumMap
