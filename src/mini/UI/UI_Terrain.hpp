@@ -84,21 +84,21 @@ inline void DrawUI_Terrain(
     sun.t = DrawSlider(ui.sunRotSlider, ui.wnd);
 
     //BRUSH
-    terrain.editing.brushSize = DrawSlider(ui.brushSlider, ui.wnd);
+    terrain.settings.brushSize = DrawSlider(ui.brushSlider, ui.wnd);
 
     //VERTEX MODE
     box::String<50> vertModeStr = "Vertex Mode: ";
-    if (terrain.editing.mode == TERRAIN_T::Editing::VertexGrab)
+    if (terrain.settings.mode == res::EditMode::VertexGrab)
         vertModeStr.Append("VertexGrab");
-    if (terrain.editing.mode == TERRAIN_T::Editing::VertexPaint)
+    if (terrain.settings.mode == res::EditMode::VertexPaint)
         vertModeStr.Append("VertexPaint");
     DrawText(vertModeStr, ui.wnd);
 
     //VERTEX COLOR
     using namespace utils;
-    terrain.editing.vertexColor[X] = DrawSlider(ui.rSlider, ui.wnd);
-    terrain.editing.vertexColor[Y] = DrawSlider(ui.gSlider, ui.wnd);
-    terrain.editing.vertexColor[Z] = DrawSlider(ui.bSlider, ui.wnd);
+    terrain.settings.vertexColor[X] = DrawSlider(ui.rSlider, ui.wnd);
+    terrain.settings.vertexColor[Y] = DrawSlider(ui.gSlider, ui.wnd);
+    terrain.settings.vertexColor[Z] = DrawSlider(ui.bSlider, ui.wnd);
 
     //LIST
     DrawList(ui.prefabList, ui.wnd);

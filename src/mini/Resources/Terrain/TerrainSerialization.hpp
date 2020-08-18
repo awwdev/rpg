@@ -45,7 +45,7 @@ void SaveTerrain(const QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
 template<class QUADRANT_T, auto QUADRANT_COUNT>
 void LoadTerrain(QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
 {
-    dbg::LogInfo("saving terrain");
+    dbg::LogInfo("loading terrain");
     WriteOrRead<false>(quadrants);
 }
 

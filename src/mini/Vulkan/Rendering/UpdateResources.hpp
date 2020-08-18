@@ -43,8 +43,8 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
     resources.default.ubo.Store(scene.renderGraph.default_ubo);
 
     //update terrain quadrant that is edited
-    FOR_ARRAY(hostRes.terrain.editing.dirtyQuadrants, i){
-        const auto quadrantIdx = hostRes.terrain.editing.dirtyQuadrants[i];
+    FOR_ARRAY(hostRes.terrain.settings.dirtyQuadrants, i){
+        const auto quadrantIdx = hostRes.terrain.settings.dirtyQuadrants[i];
         resources.terrain.vbo.UpdateGroup(quadrantIdx, hostRes.terrain.GetQuadrant(quadrantIdx).verts);
     }
    

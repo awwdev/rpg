@@ -47,7 +47,7 @@ struct Quadrant
             verts[v+5] = { {  qX + 0.0f * QUAD_LENGTH, 0, qZ + 1.0f * QUAD_LENGTH }, NORMAL_UP, COLOR };
         }}
 
-        //? CREATE CORNER DATA (for editing)
+        //? CREATE CORNER DATA (for settings)
         FOR_CARRAY(verts, i) {
             const auto corner = GetCornerByVertex(i);
             corners[corner[X]][corner[Y]].Append(i); //zx

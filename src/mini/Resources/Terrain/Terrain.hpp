@@ -11,6 +11,31 @@
 
 namespace mini::res {
 
+enum EditMode { VertexGrab, VertexPaint, PropPlacement };
+
+//used by UI to set stuff
+template<auto VERT_COUNT_TOTAL, auto QUADRANT_COUNT_TOTAL>
+struct Settings
+{
+    EditMode mode = VertexGrab;
+    box::Optional<utils::Intersection> intersection {};
+
+    struct VertexBrushInfo { idx_t idx; f32 falloff; };
+    box::Array<VertexBrushInfo, VERT_COUNT_TOTAL> editingVertIndices;
+
+    box::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
+    bool isDragging  = false;
+    f32  yGrabRef  = 0;
+    f32  dragScale   = 0.05f;
+    u32  quadrantIdx = 0;
+    f32  brushSize   = 1;
+
+    utils::Vec4f vertexColor { 1, 1, 1, 1 };
+
+    ecs::ID gizmoID;
+    utils::Vec3f intersectionPos;
+};
+
 template<
     auto QUAD_COUNT_T, 
     auto QUAD_LEN_T, 
@@ -26,7 +51,10 @@ struct Terrain
     static constexpr idx_t QUADRANT_LEN_TOTAL   = QUADRANT_LEN * QUADRANT_COUNT;
 
     using QUADRANT_T = Quadrant<QUAD_COUNT, QUADRANT_LEN>;
+    using SETTINGS_T = Settings<QUADRANT_T::VERT_COUNT_TOTAL, QUADRANT_COUNT_TOTAL>;
+
     QUADRANT_T quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
+    SETTINGS_T settings {};
 
     //? MAIN
 
@@ -48,15 +76,15 @@ struct Terrain
 
         UpdateGizmos(ecs);
 
-        editing.dirtyQuadrants.Clear();
+        settings.dirtyQuadrants.Clear();
 
         //? INTERACTION
-        if (editing.mode == Editing::EditMode::VertexGrab)
+        if (settings.mode == EditMode::VertexGrab)
             Grabbing(camera);
-        if (editing.mode == Editing::EditMode::VertexPaint)
+        if (settings.mode == EditMode::VertexPaint)
             Painting(camera);
-        if (editing.mode == Editing::EditMode::PropPlacement)
-            Placing(camera);
+        if (settings.mode == EditMode::PropPlacement)
+            Placing(camera, ecs);
 
         //? MODES
         if (wnd::HasEvent<wnd::F5, wnd::Pressed>())
@@ -68,14 +96,14 @@ struct Terrain
         if (wnd::HasEvent<wnd::F7, wnd::Pressed>())
             Stiching();
         if (wnd::HasEvent<wnd::F2, wnd::Pressed>())
-            editing.mode = (editing.mode == Editing::VertexGrab) ? Editing::VertexPaint : Editing::VertexGrab;
+            settings.mode = (settings.mode == EditMode::VertexGrab) ? EditMode::VertexPaint : EditMode::VertexGrab;
         if (wnd::HasEvent<wnd::F3, wnd::Pressed>())
-            editing.mode = Editing::PropPlacement;
+            settings.mode = EditMode::PropPlacement;
 
-        if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) editing.quadrantIdx = 0;
-        if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) editing.quadrantIdx = 1;
-        if (wnd::HasEvent<wnd::N2, wnd::Pressed>()) editing.quadrantIdx = 2;
-        if (wnd::HasEvent<wnd::N3, wnd::Pressed>()) editing.quadrantIdx = 3;
+        if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) settings.quadrantIdx = 0;
+        if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) settings.quadrantIdx = 1;
+        if (wnd::HasEvent<wnd::N2, wnd::Pressed>()) settings.quadrantIdx = 2;
+        if (wnd::HasEvent<wnd::N3, wnd::Pressed>()) settings.quadrantIdx = 3;
     }
 
     //? HELPER
@@ -101,63 +129,42 @@ struct Terrain
 
     //? EDITING
 
-    struct Editing
-    {
-        enum EditMode { VertexGrab, VertexPaint, PropPlacement } mode = VertexGrab;
-        box::Optional<utils::Intersection> intersection {};
-
-        struct VertexBrushInfo { idx_t idx; f32 falloff; };
-        box::Array<VertexBrushInfo, QUADRANT_T::VERT_COUNT_TOTAL> editingVertIndices;
-
-        box::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
-        bool isDragging  = false;
-        f32  yGrabRef  = 0;
-        f32  dragScale   = 0.05f;
-        u32  quadrantIdx = 0;
-        f32  brushSize   = 1;
-
-        utils::Vec4f vertexColor { 1, 1, 1, 1 };
-
-        ecs::ID gizmoID;
-        utils::Vec3f intersectionPos;
-    } editing;
-
     void MarkAllDirty(){ //could be done better 
-        editing.dirtyQuadrants.Clear();
+        settings.dirtyQuadrants.Clear();
         for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
         for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
-            editing.dirtyQuadrants.Append(GetQuadrantIndex(z, x));
+            settings.dirtyQuadrants.Append(GetQuadrantIndex(z, x));
         }}
     }
 
     void InitGizmos(ecs::ECS& ecs)
     {
-        editing.gizmoID = ecs.AddEntity();
-        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(editing.gizmoID, res::MeshType::PrimitiveRing16);
-        ecs.arrays.AddComponent<ecs::ComponentType::Transform> (editing.gizmoID, utils::Identity4());
+        settings.gizmoID = ecs.AddEntity();
+        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(settings.gizmoID, res::MeshType::PrimitiveRing16);
+        ecs.arrays.AddComponent<ecs::ComponentType::Transform> (settings.gizmoID, utils::Identity4());
     }
 
     void UpdateGizmos(ecs::ECS& ecs)
     {
         using namespace utils;
-        auto& transform = ecs.arrays.transforms.Get(editing.gizmoID);
-        const auto S = editing.brushSize;
+        auto& transform = ecs.arrays.transforms.Get(settings.gizmoID);
+        const auto S = settings.brushSize;
         transform.transform = {
             S, 0, 0, 0,
             0, S, 0, 0,
             0, 0, S, 0,
             0, 0, 0, 1,
         };
-        transform.transform[3][0] = editing.intersectionPos[X];
-        transform.transform[3][1] = editing.intersectionPos[Y] - 0.1f; //z fighting
-        transform.transform[3][2] = editing.intersectionPos[Z];
+        transform.transform[3][0] = settings.intersectionPos[X];
+        transform.transform[3][1] = settings.intersectionPos[Y] - 0.1f; //z fighting
+        transform.transform[3][2] = settings.intersectionPos[Z];
     }
 
     //? INTERACTION
 
     box::Optional<utils::Intersection> CheckIntersection(const rendering::EgoCamera& camera)
     {
-        auto& quadrant = GetQuadrant(editing.quadrantIdx);
+        auto& quadrant = GetQuadrant(settings.quadrantIdx);
         const auto ray = ScreenRay(camera);
 
         for(idx_t i = 0; i < quadrant.VERT_COUNT_TOTAL; i+=3)
@@ -175,40 +182,40 @@ struct Terrain
 
     void CollectVertsInBrushCircle()
     {
-        auto& quadrant = GetQuadrant(editing.quadrantIdx);
-        editing.editingVertIndices.Clear();
+        auto& quadrant = GetQuadrant(settings.quadrantIdx);
+        settings.editingVertIndices.Clear();
 
         FOR_CARRAY(quadrant.verts, i){
-            const auto& vec1 = editing.intersectionPos;
+            const auto& vec1 = settings.intersectionPos;
             const auto& vec2 = quadrant.verts[i].pos;
             const auto  dist = utils::Distance(vec2, vec1);
 
-            if(dist < editing.brushSize)
-                editing.editingVertIndices.Append(i, 1 - utils::Ease(dist/editing.brushSize));
+            if(dist < settings.brushSize)
+                settings.editingVertIndices.Append(i, 1 - utils::Ease(dist/settings.brushSize));
         }
     }
 
     void Painting(const rendering::EgoCamera& camera)
     {
         using namespace utils;
-        auto& quadrant = GetQuadrant(editing.quadrantIdx);
+        auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
         if (const auto intersection = CheckIntersection(camera))
         {
-            editing.intersectionPos = intersection->pos;
+            settings.intersectionPos = intersection->pos;
             if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>())
             {
                 CollectVertsInBrushCircle(); //TODO: do at lower frequency
 
-                FOR_ARRAY(editing.editingVertIndices, i){
-                    const auto idx     = editing.editingVertIndices[i].idx;
-                    const auto falloff = editing.editingVertIndices[i].falloff;
-                    quadrant.verts[idx].col[X] = editing.vertexColor[X];
-                    quadrant.verts[idx].col[Y] = editing.vertexColor[Y];
-                    quadrant.verts[idx].col[Z] = editing.vertexColor[Z];
+                FOR_ARRAY(settings.editingVertIndices, i){
+                    const auto idx     = settings.editingVertIndices[i].idx;
+                    const auto falloff = settings.editingVertIndices[i].falloff;
+                    quadrant.verts[idx].col[X] = settings.vertexColor[X];
+                    quadrant.verts[idx].col[Y] = settings.vertexColor[Y];
+                    quadrant.verts[idx].col[Z] = settings.vertexColor[Z];
                 }
 
-                editing.dirtyQuadrants.Append(editing.quadrantIdx);
+                settings.dirtyQuadrants.Append(settings.quadrantIdx);
             }
         }
     }
@@ -216,41 +223,41 @@ struct Terrain
     void Grabbing(const rendering::EgoCamera& camera)
     {
         using namespace utils;
-        auto& quadrant = GetQuadrant(editing.quadrantIdx);
+        auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
         if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
-            editing.intersection = {};
+            settings.intersection = {};
 
         if (const auto intersection = CheckIntersection(camera))
         {
             if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
-                editing.yGrabRef = (f32)wnd::global::mouse_wy;
-                editing.intersection = intersection;
+                settings.yGrabRef = (f32)wnd::global::mouse_wy;
+                settings.intersection = intersection;
                 CollectVertsInBrushCircle();
             }
             if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>() == false)
-                editing.intersectionPos = intersection->pos;
+                settings.intersectionPos = intersection->pos;
         }
 
-        if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>() && editing.intersection){
-            const f32 yDelta = wnd::global::mouse_wy - editing.yGrabRef;
-            editing.yGrabRef = (f32)wnd::global::mouse_wy;
+        if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>() && settings.intersection){
+            const f32 yDelta = wnd::global::mouse_wy - settings.yGrabRef;
+            settings.yGrabRef = (f32)wnd::global::mouse_wy;
         
-            FOR_ARRAY(editing.editingVertIndices, i){
-                const auto idx     = editing.editingVertIndices[i].idx;
-                const auto falloff = editing.editingVertIndices[i].falloff;
-                quadrant.verts[idx].pos[Y] += yDelta * editing.dragScale * falloff;
+            FOR_ARRAY(settings.editingVertIndices, i){
+                const auto idx     = settings.editingVertIndices[i].idx;
+                const auto falloff = settings.editingVertIndices[i].falloff;
+                quadrant.verts[idx].pos[Y] += yDelta * settings.dragScale * falloff;
 
                 const auto triangleIdx = (idx / 3) * 3;
                 quadrant.RecalculateNormalsOfTriangle(triangleIdx);
             }
 
-            editing.intersectionPos[Y] += yDelta * editing.dragScale; //TODO: would need falloff of closest intersection vertex
-            editing.dirtyQuadrants.Append(editing.quadrantIdx);
+            settings.intersectionPos[Y] += yDelta * settings.dragScale; //TODO: would need falloff of closest intersection vertex
+            settings.dirtyQuadrants.Append(settings.quadrantIdx);
         }        
     }
 
-    void Placing(const rendering::EgoCamera& camera)
+    void Placing(const rendering::EgoCamera& camera, ecs::ECS& ecs)
     {
 
     }
@@ -319,9 +326,9 @@ struct Terrain
         dbg::LogInfo("stiching terrain");
 
         //current coord of active editing quadrant
-        const auto z = editing.quadrantIdx / QUADRANT_COUNT;
-        const auto x = editing.quadrantIdx % QUADRANT_COUNT;
-        editing.dirtyQuadrants.Append(editing.quadrantIdx); //!cleared by renderer
+        const auto z = settings.quadrantIdx / QUADRANT_COUNT;
+        const auto x = settings.quadrantIdx % QUADRANT_COUNT;
+        settings.dirtyQuadrants.Append(settings.quadrantIdx); //!cleared by renderer
         auto& quadrant = quadrants[z][x]; //current active one
 
         //neighbors
@@ -370,7 +377,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z][x+1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z, x+1);
-            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
 
             for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
                 auto& edgeVerts         = quadrant.corners[z][quadrant.CORNER_COUNT - 1]; //right edge
@@ -383,7 +390,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z+1][x];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x);
-            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
 
             for(idx_t x = 0; x < quadrant.CORNER_COUNT; ++x){
                 auto& edgeVerts         = quadrant.corners[quadrant.CORNER_COUNT - 1][x]; //bottom edge
@@ -396,7 +403,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z, x-1);
-            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
 
             for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
                 auto& edgeVerts         = quadrant.corners[z][0]; //left edge
@@ -409,7 +416,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z-1][x];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x);
-            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
 
             for(idx_t x = 0; x < quadrant.CORNER_COUNT; ++x){
                 auto& edgeVerts         = quadrant.corners[0][x]; //top edge
@@ -422,7 +429,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z-1][x+1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x+1);
-            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
             StichCorner(z-1, x+1, quadrant.CORNER_COUNT);
         }
 
@@ -430,7 +437,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z-1][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x-1);
-            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
             StichCorner(z-1, x-1, quadrant.CORNER_COUNT);
         }
 
@@ -438,7 +445,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z+1][x+1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x+1);
-            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
             StichCorner(z+1, x+1, quadrant.CORNER_COUNT);
         }
 
@@ -446,14 +453,14 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z+1][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x-1);
-            editing.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
             StichCorner(z+1, x-1, quadrant.CORNER_COUNT);
         }
 
         //recalc normals
-        FOR_ARRAY(editing.dirtyQuadrants, i)
+        FOR_ARRAY(settings.dirtyQuadrants, i)
         {
-            const auto quadrantIdx = editing.dirtyQuadrants[i];
+            const auto quadrantIdx = settings.dirtyQuadrants[i];
             GetQuadrant(quadrantIdx).RecalculateNormals();
         }
 
