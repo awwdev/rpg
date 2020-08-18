@@ -3,140 +3,102 @@
 #pragma once
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
-#include "mini/Debug/Assert.hpp"
-#include "mini/Utils/CharsView.hpp"
+#include "mini/Box/String.hpp"
 
-namespace mini::box
+namespace mini::box {
+
+//TODO: same keys are not considered yet
+
+template<class VAL, auto STRING_CAPACITY>
+struct StringMap
 {
-    constexpr bool AreStringsEqual(const char* a, const char* b, u8 count)
+    using KEY_T = box::String<STRING_CAPACITY>;
+    using VAL_T = VAL;
+
+    static constexpr auto BUCKET_COUNT    = 20;
+    static constexpr auto BUCKET_CAPACITY = 20;
+
+    //? STRUCTS
+
+    struct Pair
     {
-        for(u8 i = 0; i < count; ++i)
-        {
-            if (*a != *b) return false;
-            ++a; ++b;
-        }
-        return true;
-    }
-
-    constexpr bool AreStringsEqual(const char* a, const char* b)
-    {
-        while (*a && *a == *b) { ++a; ++b; }
-        return *a == *b;
-    }
-
-    template<class VALUE>
-    struct StringMap
-    {
-        constexpr static auto BUCKET_COUNT    = 20;
-        constexpr static auto BUCKET_LENGTH   = 20;
-        constexpr static auto STRING_CAPACITY = 20;
-
-        struct Pair 
-        {
-            char   str[STRING_CAPACITY]; //key
-            VALUE  val;
-
-            constexpr Pair() = default;
-
-            template<u8 SIZE>
-            constexpr Pair(const char(&pStr)[SIZE], const VALUE pVal) 
-                : str { }
-                , val { pVal } 
-            {
-                static_assert(SIZE <= STRING_CAPACITY);
-                for(u8 i = 0; i < SIZE; ++i)
-                    str[i] = pStr[i];
-            }
-
-            constexpr void operator=(const Pair& other)
-            { 
-                val = other.val;
-                for(u8 i = 0; i < STRING_CAPACITY; ++i)
-                    str[i] = other.str[i];
-            }
-        };
-
-        struct Bucket
-        {
-            u8   count = 0;
-            Pair content[BUCKET_LENGTH] {};
-
-            constexpr void Add(const Pair& pair)
-            {
-                content[count] = pair;
-                ++count;
-            }
-        };
-
-
-        constexpr u8 Hash(chars_t str) const
-        {
-            return (str[0] + (str[1] != '\0' ? str[1] : 0)) % BUCKET_COUNT;
-        }
-
-        constexpr StringMap(std::initializer_list<Pair> pairs)
-        {
-            for(const auto& pair : pairs) {
-                const auto hash = Hash(pair.str);
-                if (GetOptional(pair.str) != nullptr) {
-                    //!on compile time you get this error:
-                    //!error C2131: expression did not evaluate to a constant
-                    dbg::LogWarning("StringMap: key already exists (needs unique key)");
-                }       
-                buckets[hash].Add(pair);
-            }
-        }
-
-        constexpr const VALUE* GetOptional(chars_t str) const
-        {
-            const auto hash = Hash(str);
-            const auto& bucket = buckets[hash];
-            for(u8 contentIdx = 0; contentIdx < bucket.count; ++contentIdx) {
-                if (AreStringsEqual(bucket.content[contentIdx].str, str))
-                    return &(bucket.content[contentIdx].val);
-            }
-            return nullptr;
-        }
-
-        constexpr const VALUE* GetOptional(const utils::CharsView& view) const
-        {
-            const auto hash = Hash(view.beginPtr);
-            const auto& bucket = buckets[hash];
-            for(u8 contentIdx = 0; contentIdx < bucket.count; ++contentIdx) {
-                if (AreStringsEqual(bucket.content[contentIdx].str, view.beginPtr, view.count))
-                    return &(bucket.content[contentIdx].val);
-            }
-            return nullptr;
-        }
-
-        //const VALUE& Get(chars_t str) const
-        //{
-        //    const auto hash = Hash(str);
-        //    const auto& bucket = buckets[hash];
-        //    for(u8 contentIdx = 0; contentIdx < bucket.count; ++contentIdx) {
-        //        if (AreStringsEqual(bucket.content[contentIdx].str, str))
-        //            return &ucket.content[contentIdx].val);
-        //    }
-        //    Assert(false, "Key not found but expected");
-        //}
-
-        //TODO: non const version
-
-        Bucket buckets[BUCKET_COUNT];
+        KEY_T key;
+        VAL_T val;
     };
 
-
-    template<class VALUE>
-    inline void PrintStringMap(const StringMap<VALUE>& map)
+    struct Bucket
     {
-        for(u8 bucketIdx = 0; bucketIdx < map.BUCKET_COUNT; ++bucketIdx)
-        {
-            const auto& bucket = map.buckets[bucketIdx];
-            for(u8 contentIdx = 0; contentIdx < bucket.count; ++contentIdx)
-            {
-                dbg::LogInfo((int)bucketIdx, bucket.content[contentIdx].val, bucket.content[contentIdx].str);
-            }
+        idx_t count = 0;
+        Pair  content [BUCKET_CAPACITY];
+
+        void Add(const Pair& pair) {
+            content[count] = pair;
+            ++count;
+        }
+    };
+
+    //? DATA AND CTOR
+
+    Bucket buckets [BUCKET_COUNT];
+
+    StringMap() = default;
+    StringMap(std::initializer_list<Pair> pairs)
+    {
+        for(auto&& pair : pairs) {
+            const auto hash = SimpleHash(pair.key.data);
+            buckets[hash].Add(pair);
         }
     }
 
-}//ns
+    //? GET
+
+    VAL* GetOptional(chars_t key) 
+    {
+        const auto hash = SimpleHash(key);
+        auto& bucket = buckets[hash];
+        FOR_CARRAY(bucket.content, i){
+            auto& pair = bucket.content[i];
+            if (pair.key == key)
+                return &pair.val;
+        }
+        return nullptr;
+    }
+
+    //? INTERNAL
+
+    idx_t SimpleHash(chars_t str) const
+    {
+        const auto c1 = str[0];
+        const auto c2 = str[std::strlen(str)];
+        return (c1 + c2) % BUCKET_COUNT;
+    }
+
+};
+
+template<class VAL, auto STRING_CAPACITY>
+void PrintStringMap(const StringMap<VAL, STRING_CAPACITY>& map)
+{
+    constexpr auto W = 20;
+
+    std::cout << std::left 
+        << std::setw(W) << "BUCKET"
+        << std::setw(W) << "BUCKET IDX"
+        << std::setw(W) << "KEY"
+        << std::setw(W) << "VALUE"
+        << '\n';
+
+    for(idx_t bucketIdx = 0; bucketIdx < map.BUCKET_COUNT; ++bucketIdx)
+    {
+        const auto& bucket = map.buckets[bucketIdx];
+        for(idx_t contentIdx = 0; contentIdx < bucket.count; ++contentIdx){
+            std::cout << std::left 
+                << std::setw(W) << bucketIdx
+                << std::setw(W) << contentIdx
+                << std::setw(W) << bucket.content[contentIdx].key
+                << std::setw(W) << bucket.content[contentIdx].val
+                << '\n';
+        }
+    }
+}
+
+} //NS

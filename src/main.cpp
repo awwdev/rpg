@@ -15,6 +15,7 @@
 #include "mini/Resources/HostResources.hpp"
 
 #include "mini/Box/String.hpp"
+#include "mini/Box/StringMap.hpp"
 
 using namespace mini;
 using namespace mini::wnd;

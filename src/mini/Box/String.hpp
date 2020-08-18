@@ -111,6 +111,18 @@ struct String
         --count;
     }
 
+    //? COMPARSION
+
+    constexpr bool operator==(const String& other) const
+    {
+        return std::strcmp(this->data, other.data) == 0;
+    }
+
+    constexpr bool operator==(chars_t other) const
+    {
+        return std::strcmp(this->data, other) == 0;
+    }
+
 };
 
 template<class... STRINGS>

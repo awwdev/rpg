@@ -30,6 +30,13 @@ struct Array
     static constexpr idx_t CAPACITY = (idx_t)N;
     alignas(T) u8 bytes[sizeof(T) * CAPACITY]; //don't init
 
+    Array() = default;
+    Array(std::initializer_list<T> list) {
+        for(auto&& element : list){
+            Append(element);
+        }
+    }
+
     //? ACCESS
 
     template<class IDX> T&       operator[](const IDX idx)       { return reinterpret_cast<T&>      (bytes[sizeof(T) * (idx_t)idx]); }

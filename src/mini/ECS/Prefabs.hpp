@@ -33,6 +33,7 @@ namespace mini::ecs
 
    //!atoi could be UB here
 
+/*
     enum class PrefabType
     {
         UI_FpsMonitor,
@@ -188,7 +189,7 @@ namespace mini::ecs
                 }
             } 
         }
-
+*/
         /*
         void ParseComponentData(const ComponentType& componentType, const utils::CharsView& key, const utils::CharsView& value)
         {
@@ -238,6 +239,6 @@ namespace mini::ecs
         }
         */
 
-    };  
+    //};  
 
 }//ns

@@ -10,9 +10,9 @@ namespace mini::ecs {
 
 struct ECS
 {
-    box::Bitset<MAX_ENTITY_COUNT>    entities;
+    box::Bitset<MAX_ENTITY_COUNT>     entities;
     ComponentArrays<MAX_ENTITY_COUNT> arrays;
-    Prefabs                           prefabs;
+    //Prefabs                           prefabs;
     
     ID AddEntity()
     {
@@ -25,12 +25,12 @@ struct ECS
         return freeId;
     }
 
-    ID AddEntity(const PrefabType& prefabType)
-    {
-        ID id = AddEntity();
-        arrays.CopyComponents(id, (ID)prefabType, prefabs.arrays);
-        return id;
-    }
+    //ID AddEntity(const PrefabType& prefabType)
+    //{
+    //    ID id = AddEntity();
+    //    arrays.CopyComponents(id, (ID)prefabType, prefabs.arrays);
+    //    return id;
+    //}
 
     //ID AddEntity(const PrefabType& prefab)
     //{

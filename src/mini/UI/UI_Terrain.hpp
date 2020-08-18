@@ -10,6 +10,7 @@
 #include "mini/UI/UI_Terrain.hpp"
 #include "mini/UI/UI_Stats.hpp"
 #include "mini/Rendering/Sun.hpp"
+#include "mini/ECS/Prefabs2.hpp"
 
 #include <charconv>
 
@@ -82,12 +83,11 @@ inline void DrawUI_Terrain(
     static List<box::String<20>, 10> propsList {
         .name  = "Props",
         .rect  = { 0, 0, 0, 100 },
+        .items = { "sword", "stone", "grass" }
     };
-    propsList.items.Clear();
-    propsList.items.Append("sword");
-    propsList.items.Append("stone");
-    propsList.items.Append("grass");
-    DrawList(propsList, terrainWnd);
+    if (DrawList(propsList, terrainWnd)){
+
+    }
 }
 
 }//ns

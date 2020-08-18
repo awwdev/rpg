@@ -26,7 +26,7 @@ namespace mini::ecs
     };
 
     //?PARSING
-
+/*
     const box::EnumMap<ComponentType::ENUM_END, box::String<20>> componentTypeToStr
     {
         { ComponentType::Transform,     "Transform"   },
@@ -45,7 +45,7 @@ namespace mini::ecs
         ENUM_END
     };
 
-    const box::StringMap<ComponentData> componentDataToStr
+    const box::StringMap<ComponentData, 100> componentDataToStr
     {
         { "pos"   ,     ComponentData::pos          },
         { "box"   ,     ComponentData::box          },
@@ -74,6 +74,7 @@ namespace mini::ecs
         dbg::LogWarning("str to enum: invalid component data type");
         return ComponentData::ENUM_END;
     }
+*/
 
     //? COMPONENT STRUCTS
 

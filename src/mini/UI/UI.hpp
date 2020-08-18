@@ -352,10 +352,12 @@ inline auto DrawInputField(InputField<T>& inputField, Window& wnd)
 //? LIST
 
 template<class T, auto MAX_ITEM_COUNT>
-inline auto DrawList(List<T, MAX_ITEM_COUNT>& list)
+inline bool DrawList(List<T, MAX_ITEM_COUNT>& list)
 {
     using namespace utils;
     using namespace wnd;
+
+    bool hasChanged = false;
 
     //META
     DrawText(list.name, list.rect.x, list.rect.y);
@@ -378,28 +380,29 @@ inline auto DrawList(List<T, MAX_ITEM_COUNT>& list)
         const bool isMouseOnItem = IsPointInsideRect(global::mouse_wx, global::mouse_wy, itemRect);
 
         if (isMouseOnItem) {
-            if (HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>())
+            if (HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
+                hasChanged = true;
                 list.activeIndex = i;
+            }
             DrawRectangle(itemRect, BLACK3);
         }
 
         if (list.activeIndex == i)
             DrawRectangle(itemRect, BLACK4);
 
-        //box::String<20> itemStr;
-        //itemStr.Append(list.items[i]);
         DrawText(list.items[i], itemRect.x, itemRect.y);
     }
+    return hasChanged;
 }
 
 template<class T, auto MAX_ITEM_COUNT>
-inline auto DrawList(List<T, MAX_ITEM_COUNT>& list, Window& wnd)
+inline bool DrawList(List<T, MAX_ITEM_COUNT>& list, Window& wnd)
 {
     list.rect.x = wnd.rect.x + PADDING;
     list.rect.w = wnd.rect.w - PADDING * 2;
     list.rect.y = wnd.rect.y + wnd.line;
-    DrawList(list);
     wnd.line += list.rect.h;
+    return DrawList(list);
 }
 
 //? SPECIFIC

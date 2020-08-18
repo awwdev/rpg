@@ -7,6 +7,7 @@
 #include "mini/Rendering/Cameras.hpp"
 #include "mini/Resources/Terrain/TerrainQuadrant.hpp"
 #include "mini/Resources/Terrain/TerrainSerialization.hpp"
+#include "mini/ECS/Prefabs2.hpp"
 
 namespace mini::res {
 
@@ -54,6 +55,8 @@ struct Terrain
             Grabbing(camera);
         if (editing.mode == Editing::EditMode::VertexPaint)
             Painting(camera);
+        if (editing.mode == Editing::EditMode::PropPlacement)
+            Placing(camera);
 
         //? MODES
         if (wnd::HasEvent<wnd::F5, wnd::Pressed>())
@@ -66,6 +69,8 @@ struct Terrain
             Stiching();
         if (wnd::HasEvent<wnd::F2, wnd::Pressed>())
             editing.mode = (editing.mode == Editing::VertexGrab) ? Editing::VertexPaint : Editing::VertexGrab;
+        if (wnd::HasEvent<wnd::F3, wnd::Pressed>())
+            editing.mode = Editing::PropPlacement;
 
         if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) editing.quadrantIdx = 0;
         if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) editing.quadrantIdx = 1;
@@ -98,7 +103,7 @@ struct Terrain
 
     struct Editing
     {
-        enum EditMode { VertexGrab, VertexPaint } mode = VertexGrab;
+        enum EditMode { VertexGrab, VertexPaint, PropPlacement } mode = VertexGrab;
         box::Optional<utils::Intersection> intersection {};
 
         struct VertexBrushInfo { idx_t idx; f32 falloff; };
@@ -245,6 +250,10 @@ struct Terrain
         }        
     }
 
+    void Placing(const rendering::EgoCamera& camera)
+    {
+
+    }
 
     //? STICHING
 
