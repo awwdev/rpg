@@ -28,7 +28,7 @@ inline void DrawUI_Terrain(
     //WINDOW
     static Window terrainWnd {
         .title = "Terrain",
-        .rect = { wnd::global::window_w - 200.f, 0.f, 200.f, 200.f },
+        .rect = { wnd::global::window_w - 200.f, 0.f, 200.f, 300.f },
     };
     DrawWindow(terrainWnd);
     terrainWnd.UpdateInputMode();
@@ -77,6 +77,17 @@ inline void DrawUI_Terrain(
     terrain.editing.vertexColor[X] = DrawSlider(rSlider, terrainWnd);
     terrain.editing.vertexColor[Y] = DrawSlider(gSlider, terrainWnd);
     terrain.editing.vertexColor[Z] = DrawSlider(bSlider, terrainWnd);
+
+    //LIST
+    static List<box::String<20>, 10> propsList {
+        .name  = "Props",
+        .rect  = { 0, 0, 0, 100 },
+    };
+    propsList.items.Clear();
+    propsList.items.Append("sword");
+    propsList.items.Append("stone");
+    propsList.items.Append("grass");
+    DrawList(propsList, terrainWnd);
 }
 
 }//ns

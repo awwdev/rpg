@@ -10,7 +10,7 @@ layout(push_constant) uniform Push {
 layout (location = 0) out vec4 outCol;
 
 const float S = 200;
-const float H =  20;
+const float H =  50;
 const float Y = -10;
 const vec4 skybox [] = {
     vec4(-S, -( H) + Y,  S,  1),   // Front-top-left

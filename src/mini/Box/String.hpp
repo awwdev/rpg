@@ -96,7 +96,7 @@ struct String
     }
 
     //allow fundemental types
-    template<class T>
+    template<class T>//, typename = std::enable_if_t<!std::is_array_v<std::remove_cvref_t<T>>>>
     void Append(T&& fundemental)
     {
         char buffer[30] {};

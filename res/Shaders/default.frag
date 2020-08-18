@@ -8,6 +8,8 @@ layout(location = 1) in vec4 inShadowCoord;
 
 layout(binding  = 1) uniform sampler2D shadowMap;
 
+////https://github.com/SaschaWillems/Vulkan/tree/master/data/shaders/glsl/shadowmapping
+
 float textureProj(vec4 shadowCoord, vec2 off)
 {
 	float shadow = 0.1f;

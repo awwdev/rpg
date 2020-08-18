@@ -10,6 +10,8 @@ layout(binding  = 0) uniform sampler2D shadowMap;
 
 const float AMBIENT = 0.1;
 
+//https://github.com/SaschaWillems/Vulkan/tree/master/data/shaders/glsl/shadowmapping
+
 float textureProj(vec4 shadowCoord, vec2 off)
 {
 	if (shadowCoord.z > -1.0 && shadowCoord.z < 1.0) 

@@ -102,6 +102,16 @@ struct InputField
 
 //TODO: InputField str
 
+template<class T, auto MAX_ITEM_COUNT>
+struct List
+{
+    box::String<20> name;
+    utils::Rect<f32> rect;
+    box::Array<T, MAX_ITEM_COUNT> items;
+    static constexpr s32 NO_ACTIVE_INDEX = -1;
+    s32 activeIndex = NO_ACTIVE_INDEX; 
+};
+
 //? BASIC
 
 inline void DrawText(
@@ -337,6 +347,59 @@ inline auto DrawInputField(InputField<T>& inputField, Window& wnd)
     inputField.rect.w = wnd.rect.w - PADDING * 2;
     wnd.NextLine();
     return DrawInputField(inputField);
+}
+
+//? LIST
+
+template<class T, auto MAX_ITEM_COUNT>
+inline auto DrawList(List<T, MAX_ITEM_COUNT>& list)
+{
+    using namespace utils;
+    using namespace wnd;
+
+    //META
+    DrawText(list.name, list.rect.x, list.rect.y);
+    const utils::Rect<f32> back{
+        list.rect.x,
+        list.rect.y + LINE_HEIGHT,
+        list.rect.w,
+        list.rect.h - LINE_HEIGHT,
+    };
+    DrawRectangle(back, BLACK1);
+
+    //ITEMS
+    FOR_ARRAY(list.items, i){
+        const Rect<f32> itemRect {
+            back.x + PADDING,
+            back.y + i * LINE_HEIGHT + PADDING,
+            back.w - PADDING * 2,
+            LINE_HEIGHT
+        };
+        const bool isMouseOnItem = IsPointInsideRect(global::mouse_wx, global::mouse_wy, itemRect);
+
+        if (isMouseOnItem) {
+            if (HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>())
+                list.activeIndex = i;
+            DrawRectangle(itemRect, BLACK3);
+        }
+
+        if (list.activeIndex == i)
+            DrawRectangle(itemRect, BLACK4);
+
+        //box::String<20> itemStr;
+        //itemStr.Append(list.items[i]);
+        DrawText(list.items[i], itemRect.x, itemRect.y);
+    }
+}
+
+template<class T, auto MAX_ITEM_COUNT>
+inline auto DrawList(List<T, MAX_ITEM_COUNT>& list, Window& wnd)
+{
+    list.rect.x = wnd.rect.x + PADDING;
+    list.rect.w = wnd.rect.w - PADDING * 2;
+    list.rect.y = wnd.rect.y + wnd.line;
+    DrawList(list);
+    wnd.line += list.rect.h;
 }
 
 //? SPECIFIC
