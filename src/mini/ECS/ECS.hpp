@@ -4,7 +4,7 @@
 #include "mini/Box/Bitset.hpp"
 #include "mini/ECS/EntityID.hpp"
 #include "mini/ECS/ComponentArray.hpp"
-#include "mini/ECS/Prefabs2.hpp"
+#include "mini/ECS/PrefabTypes.hpp"
 
 namespace mini::ecs {
 

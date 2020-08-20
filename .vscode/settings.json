@@ -1,16 +1,17 @@
 {
-	//!SPYING
+	//? SPY
 	"telemetry.enableTelemetry": false,
 	"telemetry.enableCrashReporter": false,
 
-	//!FONT
+	//? FONT
 	"editor.fontFamily": "Cousine",
 	"editor.fontSize": 12,
 	"editor.fontWeight": "100",
 	"editor.fontLigatures": true,
 	"editor.lineHeight": 22,
-
 	"editor.tabSize": 4,
+
+	//? EDITOR	
 	"editor.lineNumbers": "on",
 	"editor.renderIndentGuides": false,
 	"editor.renderWhitespace": "none",
@@ -70,14 +71,14 @@
 	"git.decorations.enabled": false,
 	"scm.diffDecorations": "none",
 
-	//!COLOR CODING
+	//? COLOR CODING	
 	"editor.tokenColorCustomizations": {
 		"textMateRules":
 		 [
 			//!ALL TOKENS 
 			{
 				"scope": [
-					//"comment",
+					"comment",
 					"comment.block",
 					"comment.block.documentation",
 					"comment.line",
@@ -210,7 +211,7 @@
 				}
 			},
 
-			//!COMMON
+			//? COMMON
 			{
 				"scope": [
 					"meta",
@@ -251,7 +252,7 @@
 					"fontStyle": ""
 				}
 			},
-			//!MODIFIERS
+			//?MODIFIERS
 			{
 				"scope": [
 					"storage.modifier",
@@ -263,7 +264,7 @@
 					"fontStyle": ""
 				}
 			},
-			//!TYPE
+			//?TYPE
 			{
 				"scope": [
 					"entity.name.type",
@@ -274,7 +275,7 @@
 					"fontStyle": "bold"
 				}
 			},
-			//!LITERAL
+			//?LITERAL
 			{
 				"scope": [
 					"constant",
@@ -290,7 +291,7 @@
 					"foreground": "#a66db9",
 				}
 			},
-			//!FUNCTION
+			//?FUNCTION
 			{
 				"scope": [
 					"entity.name.function",
@@ -309,7 +310,7 @@
 					"fontStyle": "bold"
 				}
 			},
-			//!COMMENT
+			//?COMMENT
 			{
 				"scope": [
 					"comment",
@@ -324,27 +325,51 @@
 		]
 	},
 
-	//!HIGHLIGHT
-	"highlight.regexes": {
-		"((.*)//\\?(.*))": [
-			{ 
-				"color": "#ffee90",
-				"backgroundColor": "#ffd39010",
-			},
-		],
-		"(//TODO(.*))": [
-			{ 
-				"color": "#3caf3c",
-				//"backgroundColor": "#ffd39007",
-			},
-		],
-		"((.*)//BUG(.*))": [
-			{ 
-				"color": "#ff0000",
-				//"backgroundColor": "#ffd39007",
-			},
-		]
+	//?HIGHLIGHT
+	"highlight.regexes":
+	 {
+		"(//\\?.*)": {
+			"regexFlags": "g", 
+			"decorations": [
+				{ 
+					"color": "#ffee90",
+					"backgroundColor": "#ffd39010", 
+				},
+			]
+		},
+		//? MINI LANGUAGE
+		"(#.*)": {
+			"regexFlags": "g", 
+			"filterFileRegex": ".*\\.mini", 
+			"decorations": [
+				{ "color": "#005500" },
+			]
+		},
+		"(@.*)": {
+			"regexFlags": "g", 
+			"filterFileRegex": ".*\\.mini", 
+			"decorations": [
+				{ "color": "#CC5555" },
+			]
+		},
+		"(.*)(=)": {
+			"regexFlags": "g", 
+			"filterFileRegex": ".*\\.mini", 
+			"decorations": [
+				{ "color": "#7777AA" },
+				{ "color": "#7777AA" },
+			]
+		},
+		"(\\+.*)": {
+			"regexFlags": "g", 
+			"filterFileRegex": ".*\\.mini", 
+			"decorations": [
+				{ "color": "#5555CC" },
+			]
+		},
 	},
+
+
 
 	"files.associations": {
 		"xutility": "cpp",

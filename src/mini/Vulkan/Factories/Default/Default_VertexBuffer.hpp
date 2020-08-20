@@ -4,7 +4,7 @@
 #include "mini/Vulkan/Objects/VertexBuffer.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/Utils/PrimitiveMeshes.hpp"
-#include "mini/Resources/Mesh.hpp"
+#include "mini/Resources/MeshTypes.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/Debug/Assert.hpp"
 

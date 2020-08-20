@@ -10,7 +10,7 @@
 #include "mini/UI/UI_Terrain.hpp"
 #include "mini/UI/UI_Stats.hpp"
 #include "mini/Rendering/Sun.hpp"
-#include "mini/ECS/Prefabs2.hpp"
+#include "mini/ECS/PrefabTypes.hpp"
 
 #include <charconv>
 

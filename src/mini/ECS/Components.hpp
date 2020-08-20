@@ -7,7 +7,7 @@
 #include "mini/Box/String.hpp"
 #include "mini/Utils/CharsView.hpp"
 #include "mini/Utils/Structs.hpp"
-#include "mini/Resources/Mesh.hpp"
+#include "mini/Resources/MeshTypes.hpp"
 
 namespace mini::ecs
 {

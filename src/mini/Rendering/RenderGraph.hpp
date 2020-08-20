@@ -3,7 +3,7 @@
 #pragma once
 #include "mini/Rendering/UboData.hpp"
 #include "mini/Utils/Structs.hpp"
-#include "mini/Resources/Mesh.hpp"
+#include "mini/Resources/MeshTypes.hpp"
 
 namespace mini::rendering
 {

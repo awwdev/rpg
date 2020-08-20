@@ -7,7 +7,7 @@
 #include "mini/Rendering/Cameras.hpp"
 #include "mini/Resources/Terrain/TerrainQuadrant.hpp"
 #include "mini/Resources/Terrain/TerrainSerialization.hpp"
-#include "mini/ECS/Prefabs2.hpp"
+#include "mini/ECS/PrefabTypes.hpp"
 
 namespace mini::res {
 

@@ -6,17 +6,15 @@
 #include "mini/ECS/Prefabs.hpp"
 #include "mini/ECS/Systems/S_Render.hpp"
 
-#include "mini/Utils/Types.hpp"
-#include "mini/Debug/Logger.hpp"
-#include "mini/Box/String.hpp"
 #include "mini/Rendering/RenderGraph.hpp"
+#include "mini/Rendering/Sun.hpp"
 
 #include "mini/UI/UI.hpp"
 #include "mini/UI/UI_Terrain.hpp"
 #include "mini/UI/UI_Stats.hpp"
 
 #include "mini/Resources/Terrain/Terrain.hpp"
-#include "mini/Rendering/Sun.hpp"
+#include "mini/Resources/PrefabLoader.hpp"
 
 #include "mini/App/PlayerController.hpp"
 #include "mini/App/EditorController.hpp"
@@ -36,12 +34,11 @@ struct GameScene
 
     void Create(res::HostResources& hostRes)
     {
-        //TODO: move into some resource manager an load at loading scene
-        //ecs.prefabs.Parse("res/prefabs.txt"); 
+        //TODO: resource manager, init gizmos? find better place!
+        res::LoadPrefabs(ecs.prefabsArrays);
         sun.Create(ecs);
         playerController.Create(ecs);
-        
-        hostRes.terrain.InitGizmos(ecs); //TODO: not really good flow
+        hostRes.terrain.InitGizmos(ecs);
         ui::g_aciveRenderGraph = &renderGraph;
     }
 

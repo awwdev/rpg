@@ -7,7 +7,7 @@
 #include "mini/Resources/TextureLoader.hpp"
 #include "mini/Resources/TextureArray.hpp"
 #include "mini/Resources/ModelLoader.hpp"
-#include "mini/Resources/Mesh.hpp"
+#include "mini/Resources/MeshTypes.hpp"
 #include "mini/Resources/Terrain/Terrain.hpp"
 #include "mini/Rendering/RenderGraph.hpp"
 
@@ -25,7 +25,13 @@ struct Textures
 
 struct Models
 {
-    box::EnumMap<res::MeshType::ENUM_END, res::MeshVertexView> vertexLookup
+    struct MeshVertexView
+    {
+        const utils::Common_Vertex* begin;
+        idx_t count;
+    };
+
+    box::EnumMap<res::MeshType::ENUM_END, MeshVertexView> vertexLookup
     {
         //hardcoded primitives
         { res::MeshType::PrimitiveCube,      { utils::MESH_CUBE,     ArrayCount(utils::MESH_CUBE)       } },
@@ -40,7 +46,7 @@ struct Models
     void Load()
     {
         LoadModel(vertices, "res/Models/sword.txt");
-        vertexLookup.Set(res::MeshType::Sword, res::MeshVertexView{(utils::Common_Vertex*)vertices.bytes, vertices.count});
+        vertexLookup.Set(res::MeshType::Sword, MeshVertexView{(utils::Common_Vertex*)vertices.bytes, vertices.count});
     }
 };
 
