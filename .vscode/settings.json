@@ -4,9 +4,9 @@
 	"telemetry.enableCrashReporter": false,
 
 	//? FONT
-	"editor.fontFamily": "Cousine",
+	"editor.fontFamily": "Fira Code",
 	"editor.fontSize": 12,
-	"editor.fontWeight": "100",
+	"editor.fontWeight": "500",
 	"editor.fontLigatures": true,
 	"editor.lineHeight": 22,
 	"editor.tabSize": 4,
@@ -54,15 +54,15 @@
 	// VS Colors
 	"workbench.colorCustomizations": {
 		"scrollbar.shadow": "#00000000",
-		"editor.background": "#222224",
+		"editor.background": "#2A2A30",
 		"panel.border": "#222",
 		"tab.border": "#222",
 		"contrastBorder": "#222",
 		"editorGroup.border": "#333",
-		"panel.background": "#272424",
-		"editorLineNumber.foreground": "#444444",
-		"editorLineNumber.activeForeground": "#0F0",
-		"editor.lineHighlightBorder": "#242627",
+		"panel.background": "#000000",
+		"editorLineNumber.foreground": "#555561",
+		"editorLineNumber.activeForeground": "#e4c727",
+		"editor.lineHighlightBorder": "#2A2A30",
 		"sideBar.background": "#000",
 	},
 	"editor.scrollbar.horizontal": "hidden",
@@ -232,7 +232,7 @@
 					"variable.other",
 					"variable.language",
 					"variable.name",
-					
+					"entity.name.namespace",
 					"entity.name.type.class.templated",
 				],
 				"settings": {
@@ -245,7 +245,8 @@
 					"punctuation.terminator",
 					"punctuation.separator",
 					"punctuation.separator.continuation",
-					"entity.name.namespace",
+					"punctuation",
+					
 				],
 				"settings": {
 					"foreground": "#d1d1d1",
@@ -260,7 +261,7 @@
 					"keyword.control",
 				],
 				"settings": {
-					"foreground": "#c46767",
+					"foreground": "#d693d6",
 					"fontStyle": ""
 				}
 			},
@@ -271,8 +272,8 @@
 					"entity.name.type.class.templated",			
 				],
 				"settings": {
-					"foreground": "#f3a52f",
-					"fontStyle": "bold"
+					"foreground": "#e7ce8a",
+					//"fontStyle": "bold"
 				}
 			},
 			//?LITERAL
@@ -288,7 +289,7 @@
 					"variable.other.enummember",
 				],
 				"settings": {
-					"foreground": "#a66db9",
+					"foreground": "#d1d1d1",
 				}
 			},
 			//?FUNCTION
@@ -306,8 +307,8 @@
 					//"entity.name.function.operator.member",
 				],
 				"settings": {
-					"foreground": "#e04d4d",
-					"fontStyle": "bold"
+					"foreground": "#6f96df",
+					//"fontStyle": "bold"
 				}
 			},
 			//?COMMENT
@@ -319,7 +320,7 @@
 					"comment.block.documentation",		
 				],
 				"settings": {
-					"foreground": "#696368",
+					"foreground": "#555561",
 				}
 			},
 		]
@@ -342,7 +343,7 @@
 			"regexFlags": "g", 
 			"filterFileRegex": ".*\\.mini", 
 			"decorations": [
-				{ "color": "#005500" },
+				{ "color": "#555561" },
 			]
 		},
 		"(@.*)": {
@@ -356,15 +357,15 @@
 			"regexFlags": "g", 
 			"filterFileRegex": ".*\\.mini", 
 			"decorations": [
-				{ "color": "#7777AA" },
-				{ "color": "#7777AA" },
+				{ "color": "#6f96df" },
+				{ "color": "#6f96df" },
 			]
 		},
 		"(\\+.*)": {
 			"regexFlags": "g", 
 			"filterFileRegex": ".*\\.mini", 
 			"decorations": [
-				{ "color": "#5555CC" },
+				{ "color": "#e7ce8a" },
 			]
 		},
 	},

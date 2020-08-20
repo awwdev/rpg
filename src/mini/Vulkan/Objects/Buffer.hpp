@@ -45,7 +45,7 @@ namespace mini::vk
 
         void Store(const void* const data, const size_t size, const size_t offset = 0)
         {
-            Assert(data != nullptr, "data is nullptr"); //UB on memcpy
+            dbg::Assert(data != nullptr, "data is nullptr"); //UB on memcpy
             std::memcpy((char*)memPtr + offset, data, size);
         }
 

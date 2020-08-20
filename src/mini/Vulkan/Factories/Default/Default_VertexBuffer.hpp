@@ -19,7 +19,7 @@ namespace mini::vk
 
         //order matters
         for(u32 i = 0; i < (u32)res::MeshType::ENUM_END; ++i){
-            Assert(res.models.vertexLookup.Contains(i), "mesh type not existent");
+            dbg::Assert(res.models.vertexLookup.Contains(i), "mesh type not existent");
             const auto& mesh = res.models.vertexLookup.Get(i);
             vbo.StoreGroup(mesh.begin, mesh.count);
         }

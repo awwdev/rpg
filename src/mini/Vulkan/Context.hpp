@@ -23,7 +23,7 @@ namespace mini::vk
 
         if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
         {
-            mini::Assert(false, pCallbackData->pMessage);
+            mini::dbg::Assert(false, pCallbackData->pMessage);
         }
 
         return VK_FALSE;

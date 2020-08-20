@@ -34,7 +34,7 @@ namespace mini::vk
         void CreateShaderModule(chars_t path, const VkShaderStageFlagBits stage)
         {
             std::ifstream file(path, std::ios::ate | std::ios::binary);
-            mini::Assert(file.is_open(), "cannot open shader file");
+            mini::dbg::Assert(file.is_open(), "cannot open shader file");
 
             const uint32_t size = (uint32_t)file.tellg();
             auto ptrBuffer = mem::ClaimBlock<char[BUFFER_SIZE]>();

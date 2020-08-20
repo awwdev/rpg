@@ -15,9 +15,10 @@ namespace mini::res
         PrimitiveTriangle,
         PrimitiveRing16, 
         Sword,
+
+        //could add Custom1 and so on for user mod mesh later
         ENUM_END
         
-        //could add Custom1 and so on for user mod mesh later
     };
 
 }//NS

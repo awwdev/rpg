@@ -16,7 +16,7 @@ namespace mini::res
     void LoadTexture(chars_t path, char* const data)
     {
         //std::ifstream file(path, std::ios::ate | std::ios::binary);
-        //mini::Assert(file.is_open(), "cannot open file");
+        //mini::dbg::Assert(file.is_open(), "cannot open file");
 
         ////!in this function we assuem we know the size upfront
         //const auto size = file.tellg();
@@ -26,7 +26,7 @@ namespace mini::res
         ////? BM HEADER CHECK
 
         //if (data[0] != 'B' && data[1] == 'M'){
-        //    mini::Assert(false, "unknown bmp format");
+        //    mini::dbg::Assert(false, "unknown bmp format");
         //}
 
         //const auto bmSize     = *(mini::u32*)&data[2];
@@ -36,8 +36,8 @@ namespace mini::res
         //const auto bmBitCount = *(mini::u16*)&data[28];
 
 
-        //mini::Assert(bmWidth <= width && bmHeight <= height, "bm dimensions not sufficient");
-        //mini::Assert(bmBitCount <= channels * 8, "bm channels not sufficient");
+        //mini::dbg::Assert(bmWidth <= width && bmHeight <= height, "bm dimensions not sufficient");
+        //mini::dbg::Assert(bmBitCount <= channels * 8, "bm channels not sufficient");
         //
         //width    = bmWidth;
         //height   = bmHeight;
@@ -71,7 +71,7 @@ namespace mini::res
         void LoadFrom_BMP(chars_t path)
         {
             std::ifstream file(path, std::ios::ate | std::ios::binary);
-            mini::Assert(file.is_open(), "cannot open file");
+            mini::dbg::Assert(file.is_open(), "cannot open file");
 
             const auto size = file.tellg();
             file.seekg(std::ios::beg);
@@ -80,7 +80,7 @@ namespace mini::res
             //? BM HEADER CHECK
 
             if (filePtr[0] != 'B' && filePtr[1] == 'M'){
-                mini::Assert(false, "unknown bmp format");
+                mini::dbg::Assert(false, "unknown bmp format");
             }
 
             const auto bmSize     = *(mini::u32*)&filePtr[2];
@@ -90,8 +90,8 @@ namespace mini::res
             const auto bmBitCount = *(mini::u16*)&filePtr[28];
 
 
-            mini::Assert(bmWidth <= width && bmHeight <= height, "bm dimensions not sufficient");
-            mini::Assert(bmBitCount <= channels * 8, "bm channels not sufficient");
+            mini::dbg::Assert(bmWidth <= width && bmHeight <= height, "bm dimensions not sufficient");
+            mini::dbg::Assert(bmBitCount <= channels * 8, "bm channels not sufficient");
 
             width    = bmWidth;
             height   = bmHeight;
