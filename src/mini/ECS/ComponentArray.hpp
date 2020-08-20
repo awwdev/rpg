@@ -12,7 +12,7 @@
 
 namespace mini::ecs
 {
-    template<class COMPONENT, u32 MAX_COUNT = MAX_ENTITY_COUNT>
+    template<class COMPONENT, auto MAX_COUNT = MAX_ENTITY_COUNT>
     struct ComponentArray
     {
         box::Array<COMPONENT, MAX_COUNT> dense;
@@ -24,19 +24,18 @@ namespace mini::ecs
         auto&       Get        (const ID entityID)       { return dense[componentLookup[entityID]]; }
         const auto& Get        (const ID entityID) const { return dense[componentLookup[entityID]]; }
 
-        ComponentArray()
+        void SetAllToNone()
         {
             FOR_CARRAY(componentLookup, i) componentLookup[i] = NONE;
             FOR_CARRAY(entityLookup, i)    entityLookup[i]    = NONE;
         }
 
-        //TODO: args... do not work yet
         template<class... CtorArgs>
         void AddComponent(const ID entityID, CtorArgs&&... args)
         {
             if (componentLookup[entityID] != NONE) {
                 dbg::LogWarning("add component that alread exists");
-                dense[componentLookup[entityID]] = { args... };
+                dense[componentLookup[entityID]] = { std::forward<CtorArgs>(args)... };
                 return;
             }
             
@@ -45,58 +44,64 @@ namespace mini::ecs
             entityLookup[dense.count - 1] = entityID;
         }
 
-        void CopyComponentOptional(const ID entityID, const COMPONENT* other)
+        void CopyComponent(const ID entityID, const COMPONENT& other)
         {
-            if (other == nullptr) return; //if nullptr do nothing (the optional part)
-
             if (componentLookup[entityID] != NONE) {
-                dense[componentLookup[entityID]] = *other; 
+                dense[componentLookup[entityID]] = other; 
                 return;
             }
-            
-            dense.Append(*other);
+
+            dense.Append(other);
             componentLookup[entityID] = dense.count - 1;
             entityLookup[dense.count - 1] = entityID;
         }
 
-        void RemoveComponent(const ID entityID)
-        {
-            if (componentLookup[entityID] == NONE) {
-                dbg::LogWarning("removing component that does not exist");
-                return;
-            }
-            //TODO:
-            static_assert(false, "no impl yet");
-        }
     };
 
-    template<u32 MAX_COUNT = MAX_ENTITY_COUNT>
+
+    template<auto MAX_COUNT = MAX_ENTITY_COUNT>
     struct ComponentArrays
     {
         box::Bitset<ComponentType::ENUM_END> signatures[MAX_COUNT];
 
+        //? COMPONENT ARRAYS
         ComponentArray<C_Transform, MAX_COUNT>  transforms;
         ComponentArray<C_RenderData, MAX_COUNT> renderData;
 
-        template<ComponentType Type, class... CtorArgs>
-        void AddComponent(const ID entityID, CtorArgs&&... args)
+        ComponentArrays()
         {
-            signatures[entityID].Set(Type, true);
-            if constexpr(Type == ComponentType::Transform)  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
-            if constexpr(Type == ComponentType::RenderData) renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+            //? COMPONENT CLEARING
+            transforms.SetAllToNone();
+            renderData.SetAllToNone();
         }
 
-        template<u32 OTHER_MAX_COUNT>
+        template<ComponentType TYPE, class... CtorArgs>
+        void AddComponent(const ID entityID, CtorArgs&&... args)
+        {
+            //keep using enum and not struct type, for the bitset:
+            signatures[entityID].Set(TYPE, true);
+
+            //? COMPONENT ADDING
+            if constexpr(TYPE == ComponentType::Transform)  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+            if constexpr(TYPE == ComponentType::RenderData) renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+        }
+
+        template<auto OTHER_MAX_COUNT>
         void CopyComponents(
             const ID entityID, 
             const ID otherEntityID, 
             const ComponentArrays<OTHER_MAX_COUNT>& other)
         {
-            transforms.CopyComponentOptional (entityID, other.transforms.GetOptional(otherEntityID));
-            renderData.CopyComponentOptional (entityID, other.renderData.GetOptional(otherEntityID));
+            const auto CopyOptional = [&](auto& dst, const auto& src){
+                if (const auto ptr = src.GetOptional(otherEntityID))
+                    dst.CopyComponent(entityID, *ptr);
+            };
+
+            //? COMPONENT COPYING
+            CopyOptional(transforms, other.transforms);
+            CopyOptional(renderData, other.renderData);
         }
+
     };
 
-}//ns
-
-//TODO: make 0 the default for non existent lookup value (NONE)
+}//NS

@@ -101,7 +101,12 @@ inline void DrawUI_Terrain(
     terrain.settings.vertexColor[Z] = DrawSlider(ui.bSlider, ui.wnd);
 
     //LIST
-    DrawList(ui.prefabList, ui.wnd);
+    if (DrawList(ui.prefabList, ui.wnd)){
+        const auto& str  = ui.prefabList.items[ui.prefabList.activeIndex];
+        const auto* type = ecs::PREFAB_STRINGS.GetOptional(str);
+        terrain.settings.prefabType = *type;
+    }
+
 }
 
 }//ns

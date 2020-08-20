@@ -60,9 +60,10 @@ struct StringMap
 
     //? GET
 
-    VAL* GetOptional(chars_t key) 
+    template<auto N>
+    const VAL* GetOptional(const box::String<N>& key) const
     {
-        const auto hash = SimpleHash(key);
+        const auto hash = SimpleHash(key.data);
         auto& bucket = buckets[hash];
         FOR_CARRAY(bucket.content, i){
             auto& pair = bucket.content[i];

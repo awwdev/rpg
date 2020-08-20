@@ -25,7 +25,7 @@ struct Settings
 
     box::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
     bool isDragging  = false;
-    f32  yGrabRef  = 0;
+    f32  yGrabRef    = 0;
     f32  dragScale   = 0.05f;
     u32  quadrantIdx = 0;
     f32  brushSize   = 1;
@@ -34,7 +34,10 @@ struct Settings
 
     ecs::ID gizmoID;
     utils::Vec3f intersectionPos;
+
+    ecs::PrefabType prefabType; 
 };
+
 
 template<
     auto QUAD_COUNT_T, 
@@ -259,7 +262,16 @@ struct Terrain
 
     void Placing(const rendering::EgoCamera& camera, ecs::ECS& ecs)
     {
+        using namespace utils;
+        auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
+        if (const auto intersection = CheckIntersection(camera))
+        {
+            settings.intersectionPos = intersection->pos;
+            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()) {
+                const auto ID = ecs.AddEntity(settings.prefabType);
+            }
+        }
     }
 
     //? STICHING
