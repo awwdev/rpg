@@ -70,6 +70,10 @@ struct StringMap
     {
         const auto hash = SimpleHash(key);
         auto& bucket = buckets[hash];
+        
+        if (bucket.count == 0)
+            return nullptr;
+
         FOR_CARRAY(bucket.content, i){
             auto& pair = bucket.content[i];
             if (pair.key == key) //str operator==

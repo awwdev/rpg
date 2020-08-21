@@ -5,7 +5,7 @@
 #include "mini/Box/Bitset.hpp"
 
 #include "mini/ECS/EntityID.hpp"
-#include "mini/ECS/Components.hpp"
+#include "mini/ECS/ComponentTypes.hpp"
 #include "mini/ECS/Components/C_RenderData.hpp"
 #include "mini/ECS/Components/C_Transform.hpp"
 

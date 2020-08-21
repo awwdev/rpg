@@ -18,7 +18,7 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     std::ifstream file(path, std::ios::beg);
     dbg::Assert(file.is_open(), "cannot open file");
 
-    ComponentDataStrings intermediateData [PrefabType::ENUM_END][ComponentType::ENUM_END];    
+    ComponentDataStringArray intermediateData [PrefabType::ENUM_END][ComponentType::ENUM_END];    
 
     auto currentPrefab    = PrefabType::ENUM_END;
     auto currentComponent = ComponentType::ENUM_END;
@@ -28,7 +28,6 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     while(file.getline(line, COMPONENT_MAX_STR_LEN))  
     {
         enum LineType { Comment, PrefabName, ComponentName, ComponentData, Empty, Invalid } lineType;
-        constexpr auto IDENTIFIER_START = 2;
 
         switch(line[0])
         {
@@ -82,7 +81,7 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
 
     }
 
-    //? SPECIFIC PARSING
+    //? INSTANTIATION AND COMPONENT DATA PARSING
     //PrintParsedData(intermediateData);
     for(idx_t p = 0; p < (idx_t)PrefabType::ENUM_END; ++p) {
     for(idx_t c = 0; c < (idx_t)ComponentType::ENUM_END; ++c) {
@@ -93,7 +92,7 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
 }
 
 inline void PrintParsedData(
-    const ecs::ComponentDataStrings (&intermediateData) [ecs::PrefabType::ENUM_END][ecs::ComponentType::ENUM_END])
+    const ecs::ComponentDataStringArray (&intermediateData) [ecs::PrefabType::ENUM_END][ecs::ComponentType::ENUM_END])
 {
     using namespace ecs;
 
