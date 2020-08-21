@@ -9,8 +9,11 @@ namespace mini::box {
 
 constexpr bool USE_ARRAY_ASSERTS = true;
 
-inline void ArrayAssert(const bool condition, chars_t msg = "array assertion failed")
+constexpr void ArrayAssert(const bool condition, chars_t msg = "array assertion failed")
 {
+    if (std::is_constant_evaluated())
+        return;
+
     if constexpr(USE_ARRAY_ASSERTS) {
         if (condition == false){
             dbg::LogError(msg);

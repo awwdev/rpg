@@ -58,7 +58,7 @@ struct TerrainUI
 
     TerrainUI()
     {
-        FOR_STRING_MAP_BEGIN_CONST(ecs::PREFAB_STRINGS, item)
+        FOR_STRING_MAP_BEGIN_CONST(ecs::PREFAB_STR_TO_ENUM, item)
             prefabList.items.Append(item.key);
         FOR_STRING_MAP_END
     }
@@ -103,7 +103,7 @@ inline void DrawUI_Terrain(
     //LIST
     if (DrawList(ui.prefabList, ui.wnd)){
         const auto& str  = ui.prefabList.items[ui.prefabList.activeIndex];
-        const auto* type = ecs::PREFAB_STRINGS.GetOptional(str);
+        const auto* type = ecs::PREFAB_STR_TO_ENUM.GetOptional(str.data);
         terrain.settings.prefabType = *type;
     }
 

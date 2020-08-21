@@ -2,28 +2,33 @@
 
 #pragma once
 #include "mini/Utils/Matrix.hpp"
-#include "mini/Box/EnumMap.hpp"
 #include "mini/Box/StringMap.hpp"
-#include "mini/Box/String.hpp"
-#include "mini/Utils/CharsView.hpp"
 #include "mini/Utils/Structs.hpp"
 #include "mini/Resources/MeshTypes.hpp"
 
-namespace mini::ecs
-{
-    //? WORKFLOW:
-    //1) add enum
-    //2) add string 
-    //3) add struct
-    //4) add to ComponentArrays
-    //5) add parsing (prefabs)
+namespace mini::ecs {
 
-    enum class ComponentType
-    {
-        Transform, 
-        RenderData,
-        ENUM_END
-    };
+enum class ComponentType
+{
+    Transform, 
+    RenderData,
+    ENUM_END
+};
+
+constexpr auto COMPONENT_DATA_COUNT_MAX = 20; //how many data entries (for parsing)
+constexpr auto COMPONENT_MAX_STR_LEN = 100;
+
+const box::EnumMap<ComponentType::ENUM_END, box::String<COMPONENT_MAX_STR_LEN>> COMPONENT_ENUM_TO_STR
+{
+    { ComponentType::Transform, "Transform" },
+    { ComponentType::RenderData, "RenderData" },
+};
+const auto COMPONENT_STR_TO_ENUM = box::StringMapFromEnumMap<ComponentType, COMPONENT_MAX_STR_LEN>(COMPONENT_ENUM_TO_STR);
+
+
+
+
+
 
     //?PARSING
 /*

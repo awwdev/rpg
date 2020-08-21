@@ -61,14 +61,20 @@ struct String
     }
 
     template<idx_t N>
-    constexpr String(const String<N, CHAR_T>& str)
+    String(const String<N, CHAR_T>& str)
     {
         Clear(); 
         Append(str);
     }
 
+    String(chars_t ptr)
+    {
+        Clear(); 
+        Append(ptr, (idx_t)std::strlen(ptr) + 1);
+    }
+
     template<idx_t N>
-    constexpr String& operator=(const String<N, CHAR_T>& str)
+    String& operator=(const String<N, CHAR_T>& str)
     {
         Clear(); 
         Append(str);
@@ -83,20 +89,19 @@ struct String
         data[0] = '\0';
     }
 
-    template<idx_t N> constexpr void Append(const String<N, CHAR_T>& str)   { Append(str.data, str.count); }
-    template<idx_t N> constexpr void Append(const CHAR_T (&arr)[N])         { Append(arr, N); }
-    constexpr void Append(const CHAR_T ch)                                  { Append(&ch, 2); }
+    template<idx_t N> void Append(const String<N, CHAR_T>& str)   { Append(str.data, str.count); }
+    template<idx_t N> void Append(const CHAR_T (&arr)[N])         { Append(arr, N); }
+    void Append(const CHAR_T ch)                                  { Append(&ch, 2); }
     
     template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
-    constexpr void Append(const PTR ptr, const idx_t countNotLength) //!has to be CHAR_T
+    void Append(const PTR ptr, const idx_t countNotLength) //has to be CHAR_T
     {
         StringAssert(count + countNotLength - 1 <= CAPACITY, "str capacity exhausted");
         std::memcpy(&data[count-1], ptr, countNotLength * sizeof(CHAR_T));
         count = count + countNotLength - 1;
     }
 
-    //allow fundemental types
-    template<class T>//, typename = std::enable_if_t<!std::is_array_v<std::remove_cvref_t<T>>>>
+    template<class T>
     void Append(T&& fundemental)
     {
         char buffer[30] {};
@@ -126,7 +131,7 @@ struct String
 };
 
 template<class... STRINGS>
-constexpr auto ConcatStrings(const STRINGS&... strs)
+auto ConcatStrings(const STRINGS&... strs)
 {
     static_assert(sizeof...(STRINGS) > 0);
 

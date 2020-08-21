@@ -5,21 +5,23 @@
 
 namespace mini::ecs {
 
-enum PrefabType
+enum class PrefabType
 {
     Sword,
     Stone,
     Grass,
-    ENUM_MAX
+    ENUM_END
 };
 
-constexpr ID PREFAB_COUNT_MAX = (ID)PrefabType::ENUM_MAX;
+constexpr ID PREFAB_COUNT_MAX = (ID)PrefabType::ENUM_END;
+constexpr auto PREFAB_MAX_STR_LEN = 100;
 
-const box::StringMap<PrefabType, 100> PREFAB_STRINGS
+const box::EnumMap<PrefabType::ENUM_END, box::String<PREFAB_MAX_STR_LEN>> PREFAB_ENUM_TO_STR
 {
-    { "Sword", PrefabType::Sword },
-    { "Stone", PrefabType::Stone },
-    { "Grass", PrefabType::Grass },
+    { PrefabType::Sword, "Sword" },
+    { PrefabType::Stone, "Stone" },
+    { PrefabType::Grass, "Grass" },
 };
+const auto PREFAB_STR_TO_ENUM = box::StringMapFromEnumMap<PrefabType, PREFAB_MAX_STR_LEN>(PREFAB_ENUM_TO_STR);
 
 }//NS

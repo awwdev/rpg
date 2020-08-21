@@ -4,12 +4,15 @@
 	"telemetry.enableCrashReporter": false,
 
 	//? FONT
-	"editor.fontFamily": "Fira Code",
+	//"editor.fontFamily": "Fira Code",
+	//"editor.fontFamily": "Consolas",
+	"editor.fontFamily": "Cousine",
 	"editor.fontSize": 12,
-	"editor.fontWeight": "500",
-	"editor.fontLigatures": true,
-	"editor.lineHeight": 22,
+	"editor.fontWeight": "100",
+	"editor.fontLigatures": false,
+	"editor.lineHeight": 24,
 	"editor.tabSize": 4,
+	"editor.letterSpacing": -0.15,
 
 	//? EDITOR	
 	"editor.lineNumbers": "on",
@@ -236,7 +239,7 @@
 					"entity.name.type.class.templated",
 				],
 				"settings": {
-					"foreground": "#d1d1d1",
+					"foreground": "#d3d3d3",
 					"fontStyle": ""
 				}
 			},
@@ -249,7 +252,7 @@
 					
 				],
 				"settings": {
-					"foreground": "#d1d1d1",
+					"foreground": "#797979",
 					"fontStyle": ""
 				}
 			},
@@ -261,8 +264,8 @@
 					"keyword.control",
 				],
 				"settings": {
-					"foreground": "#d693d6",
-					"fontStyle": ""
+					"foreground": "#df5050",
+					//"fontStyle": "bold"
 				}
 			},
 			//?TYPE
@@ -272,7 +275,7 @@
 					"entity.name.type.class.templated",			
 				],
 				"settings": {
-					"foreground": "#e7ce8a",
+					"foreground": "#ffdb66",
 					//"fontStyle": "bold"
 				}
 			},
@@ -307,7 +310,7 @@
 					//"entity.name.function.operator.member",
 				],
 				"settings": {
-					"foreground": "#6f96df",
+					"foreground": "#5492ee",
 					//"fontStyle": "bold"
 				}
 			},
@@ -353,15 +356,16 @@
 				{ "color": "#CC5555" },
 			]
 		},
-		"(.*)(=)": {
+		"(\\+.*=)": {
 			"regexFlags": "g", 
 			"filterFileRegex": ".*\\.mini", 
 			"decorations": [
 				{ "color": "#6f96df" },
 				{ "color": "#6f96df" },
+				{ "color": "#6f96df" },
 			]
 		},
-		"(\\+.*)": {
+		"(\\?.*)": {
 			"regexFlags": "g", 
 			"filterFileRegex": ".*\\.mini", 
 			"decorations": [

@@ -4,6 +4,7 @@
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
+#include "mini/Box/EnumMap.hpp"
 
 namespace mini::box {
 
@@ -52,22 +53,26 @@ struct StringMap
     StringMap() = default;
     StringMap(std::initializer_list<Pair> pairs)
     {
-        for(auto&& pair : pairs) {
-            const auto hash = SimpleHash(pair.key.data);
-            buckets[hash].Add(pair);
+        for(const auto& pair : pairs) {
+            Insert(pair);
         }
+    }
+
+    void Insert(const Pair& pair)
+    {
+        const auto hash = SimpleHash(pair.key.data);
+        buckets[hash].Add(pair);
     }
 
     //? GET
 
-    template<auto N>
-    const VAL* GetOptional(const box::String<N>& key) const
+    const VAL* GetOptional(chars_t key) const
     {
-        const auto hash = SimpleHash(key.data);
+        const auto hash = SimpleHash(key);
         auto& bucket = buckets[hash];
         FOR_CARRAY(bucket.content, i){
             auto& pair = bucket.content[i];
-            if (pair.key == key)
+            if (pair.key == key) //str operator==
                 return &pair.val;
         }
         return nullptr;
@@ -104,6 +109,16 @@ void PrintStringMap(const StringMap<VAL, STRING_CAPACITY>& map)
         << std::setw(W) << item.val
         << '\n';
     FOR_STRING_MAP_END
+}
+
+template<class VAL, auto STRING_CAPACITY, auto ENUM_END_T>
+auto StringMapFromEnumMap(const box::EnumMap<ENUM_END_T, box::String<STRING_CAPACITY>>& enumMap)
+{
+    StringMap<VAL, STRING_CAPACITY> strMap;
+    FOR_ENUM_MAP(enumMap, i){
+        strMap.Insert({enumMap.Get(i), (VAL)i});
+    }
+    return strMap;
 }
 
 } //NS

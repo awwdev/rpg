@@ -17,16 +17,19 @@ struct EnumPair
 //wrapper over array that uses enum for max count and index
 //the wrapper allows for order independent init, removal, add, and is capacity based (last enum item)
 
-template<auto ENUM_END, class VAL>
+#define FOR_ENUM_MAP(map, i) for(idx_t i = 0; i < map.ENUM_END; ++i)
+
+template<auto ENUM_END_T, class VAL>
 struct EnumMap
 {
     //? DATA
+    static constexpr auto ENUM_END = (idx_t)ENUM_END_T;
 
-    using PAIR = EnumPair<decltype(ENUM_END), VAL>;
-    using KEY  = decltype(ENUM_END);
+    using PAIR = EnumPair<decltype(ENUM_END_T), VAL>;
+    using KEY  = decltype(ENUM_END_T);
 
     VAL data [ENUM_END];
-    box::Array<idx_t, (idx_t)ENUM_END> usedIndices; //for iteration
+    box::Array<idx_t, ENUM_END> usedIndices; //for iteration
     box::Bitset<ENUM_END> bitset;
 
     EnumMap() = default;

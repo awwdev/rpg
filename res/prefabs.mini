@@ -1,23 +1,24 @@
 # MINI LANGUAGE FORMAT
+# THE PARSER IS VERY ERROR-PRONE, SO WATCH WHITESPACE
 #   # comment
 #   @ prefab 
 #   = key value pair
 #   , multiple values
 
-@Sword
-+ RenderData
-mesh = Sword
-+ Transform
-scale = 1,1,1
+@ Sword
+? RenderData
++ mesh = Sword
+? Transform
++ scale = 1,1,1
 
-@Stone
-+ RenderData
-mesh = Stone
-+ Transform
-scale = 1,1,1
+@ Stone
+? RenderData
++ mesh = Stone
+? Transform
++ scale = 1,1,1
 
-@Grass
-+ RenderData
-mesh = Grass
-+ Transform
-scale = 1,1,1
+@ Grass
+? RenderData
++ mesh = Grass
+? Transform
++ scale = 1,1,1
