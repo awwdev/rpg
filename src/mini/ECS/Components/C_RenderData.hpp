@@ -3,12 +3,21 @@
 #pragma once
 #include "mini/ECS/Components.hpp"
 #include "mini/Resources/MeshTypes.hpp"
+#include "mini/Debug/Logger.hpp"
 
 namespace mini::ecs {
 
 struct C_RenderData
 {
-     res::MeshType meshType;
+    res::MeshType meshType;
+
+    C_RenderData() = default;
+    C_RenderData(const res::MeshType& pMeshType)
+        : meshType { pMeshType }
+    {}
+
+    C_RenderData(const ComponentDataStrings& str)
+    {}
 };
 
 }//NS

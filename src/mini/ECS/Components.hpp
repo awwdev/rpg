@@ -2,8 +2,6 @@
 
 #pragma once
 #include "mini/Box/StringMap.hpp"
-#include "mini/ECS/Components/C_RenderData.hpp"
-#include "mini/ECS/Components/C_Transform.hpp"
 
 namespace mini::ecs {
 

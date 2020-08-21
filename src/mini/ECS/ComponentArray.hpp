@@ -2,13 +2,12 @@
 
 #pragma once
 #include "mini/Box/Array.hpp"
-#include "mini/Box/EnumMap.hpp"
 #include "mini/Box/Bitset.hpp"
-#include "mini/Box/String.hpp"
 
-#include "mini/ECS/Components.hpp"
 #include "mini/ECS/EntityID.hpp"
-#include "mini/Utils/CharsView.hpp"
+#include "mini/ECS/Components.hpp"
+#include "mini/ECS/Components/C_RenderData.hpp"
+#include "mini/ECS/Components/C_Transform.hpp"
 
 namespace mini::ecs
 {
