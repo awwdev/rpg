@@ -9,24 +9,21 @@
 
 namespace mini::res {
 
-constexpr auto LINE_CHARS_MAX = 100;
-using ComponentDataStrings = box::Array<box::String<LINE_CHARS_MAX>, ecs::COMPONENT_DATA_COUNT_MAX>;
-
 template<auto MAX_COUNT>
 void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
 {
     std::ifstream file(path, std::ios::beg);
     dbg::Assert(file.is_open(), "cannot open file");
 
-    ComponentDataStrings intermediateData [ecs::PrefabType::ENUM_END][ecs::ComponentType::ENUM_END];    
+    ecs::ComponentDataStrings intermediateData [ecs::PrefabType::ENUM_END][ecs::ComponentType::ENUM_END];    
 
     auto currentPrefab    = ecs::PrefabType::ENUM_END;
     auto currentComponent = ecs::ComponentType::ENUM_END;
 
-    char line [LINE_CHARS_MAX];
-    while(file.getline(line, LINE_CHARS_MAX))  
+    //? META PARSE
+    char line [ecs::COMPONENT_MAX_STR_LEN];
+    while(file.getline(line, ecs::COMPONENT_MAX_STR_LEN))  
     {
-        //? LINE TYPES
         enum LineType { Comment, PrefabName, ComponentName, ComponentData, Empty, Invalid } lineType;
         constexpr auto IDENTIFIER_START = 2;
 
@@ -75,17 +72,24 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
             continue;
         }
 
+        //? COMPONENT DATA
         if (lineType == ComponentData){
             intermediateData[(idx_t)currentPrefab][(idx_t)currentComponent].Append(&line[IDENTIFIER_START]);
         }
 
     }
 
+    //? SPECIFIC PARSING
     PrintParsedData(intermediateData);
+    for(idx_t p = 0; p < (idx_t)ecs::PrefabType::ENUM_END; ++p) {
+    for(idx_t c = 0; c < (idx_t)ecs::ComponentType::ENUM_END; ++c) {
+        const auto& componentData = intermediateData[p][c];
+        //componentArrays.AddComponent((ID)p, (ComponentType)c, componentData);
+    }}
 
 }
 
-inline void PrintParsedData(const ComponentDataStrings (&intermediateData) [ecs::PrefabType::ENUM_END][ecs::ComponentType::ENUM_END])
+inline void PrintParsedData(const ecs::ComponentDataStrings (&intermediateData) [ecs::PrefabType::ENUM_END][ecs::ComponentType::ENUM_END])
 {
     for(idx_t p = 0; p < (idx_t)ecs::PrefabType::ENUM_END; ++p) {
         dbg::LogInfo("PrefabType", ecs::PREFAB_ENUM_TO_STR.Get(p));

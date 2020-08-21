@@ -86,6 +86,20 @@ namespace mini::ecs
             if constexpr(TYPE == ComponentType::RenderData) renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
         }
 
+        template<class... CtorArgs>
+        void AddComponent(const ID entityID, const ComponentType componentType, CtorArgs&&... args)
+        {
+            //keep using enum and not struct type, for the bitset:
+            signatures[entityID].Set(componentType, true);
+
+            //? COMPONENT ADDING
+            switch(componentType)
+            {
+                case ComponentType::Transform:  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
+                case ComponentType::RenderData: renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
+            }
+        }
+
         template<auto OTHER_MAX_COUNT>
         void CopyComponents(
             const ID entityID, 
