@@ -3,27 +3,27 @@
 #pragma once
 #include "mini/Utils/Types.hpp"
 
-//TODO: remove!
+namespace mini::utils {
 
-namespace mini::utils
+struct CharsView
 {
-    struct CharsView
+    const char* beginPtr;
+    idx_t len;
+};
+
+inline bool CharsCompare(const CharsView& view, chars_t chars)
+{   
+    for(idx_t i = 0; i < view.len; ++i)
     {
-        const char* beginPtr;
-        const u32   count;
-    };
-
-    inline bool CharsCompare(const CharsView& view, chars_t chars)
-    {   
-        for(u32 i = 0; i < view.count; ++i)
-        {
-            if (*(view.beginPtr + i) != *(chars + i))
-                return false;
-        }
-        return true;
+        if (*(view.beginPtr + i) != *(chars + i))
+            return false;
     }
+    return true;
+}
 
-    //TODO: more variants: view view, chars chars, str view, ...
-    //TODO: maybe rename the header to CharAlgorithms.hpp
-
-}//ns
+std::ostream& operator<<(std::ostream& os, const CharsView& view)
+{
+    os.write(view.beginPtr, view.len);
+    return os;
+}
+}//NS

@@ -5,6 +5,7 @@
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Box/EnumMap.hpp"
+#include "mini/Utils/CharsView.hpp"
 
 namespace mini::box {
 
@@ -82,12 +83,36 @@ struct StringMap
         return nullptr;
     }
 
+    const VAL* GetOptional(const utils::CharsView& key) const
+    {
+        const auto hash = SimpleHash(key);
+        auto& bucket = buckets[hash];
+        
+        if (bucket.count == 0)
+            return nullptr;
+
+        FOR_CARRAY(bucket.content, i){
+            auto& pair = bucket.content[i];
+            if (CharsCompare(key, pair.key.data)) 
+                return &pair.val;
+        }
+        return nullptr;
+    }
+
     //? INTERNAL
 
     idx_t SimpleHash(chars_t str) const
     {
         const auto c1 = str[0];
-        const auto c2 = str[std::strlen(str)];
+        const auto c2 = str[std::strlen(str) - 1];
+        return (c1 + c2) % BUCKET_COUNT;
+    }
+
+    idx_t SimpleHash(const utils::CharsView& view) const
+    {
+        dbg::Assert(view.len > 0, "chars view count is not greater than 0");
+        const auto c1 = *(view.beginPtr);
+        const auto c2 = *(view.beginPtr + view.len - 1);
         return (c1 + c2) % BUCKET_COUNT;
     }
 

@@ -16,7 +16,7 @@ struct C_RenderData
         : meshType { pMeshType }
     {}
 
-    C_RenderData(const ComponentDataStringArray& str)
+    C_RenderData(const ComponentDataKeyValueArray& str)
     {}
 };
 

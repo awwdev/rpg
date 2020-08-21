@@ -18,7 +18,8 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     std::ifstream file(path, std::ios::beg);
     dbg::Assert(file.is_open(), "cannot open file");
 
-    ComponentDataStringArray intermediateData [PrefabType::ENUM_END][ComponentType::ENUM_END];    
+    //TODO: put on heap
+    ComponentDataKeyValueArray componentDataKeyValueArray [PrefabType::ENUM_END][ComponentType::ENUM_END];    
 
     auto currentPrefab    = PrefabType::ENUM_END;
     auto currentComponent = ComponentType::ENUM_END;
@@ -76,23 +77,24 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
 
         //? COMPONENT DATA
         if (lineType == ComponentData){
-            intermediateData[(idx_t)currentPrefab][(idx_t)currentComponent].Append(&line[IDENTIFIER_START]);
+            const auto pair = GetComponentDataKeyValue(line);
+            componentDataKeyValueArray[(idx_t)currentPrefab][(idx_t)currentComponent].Append(pair);
         }
 
     }
 
     //? INSTANTIATION AND COMPONENT DATA PARSING
-    //PrintParsedData(intermediateData);
+    PrintParsedData(componentDataKeyValueArray);
     for(idx_t p = 0; p < (idx_t)PrefabType::ENUM_END; ++p) {
     for(idx_t c = 0; c < (idx_t)ComponentType::ENUM_END; ++c) {
-        const auto& componentDataStr = intermediateData[p][c];
-        componentArrays.AddComponent((ID)p, (ComponentType)c, componentDataStr);
+        const auto& pairs = componentDataKeyValueArray[p][c];
+        componentArrays.AddComponent((ID)p, (ComponentType)c, pairs);
     }}
 
 }
 
 inline void PrintParsedData(
-    const ecs::ComponentDataStringArray (&intermediateData) [ecs::PrefabType::ENUM_END][ecs::ComponentType::ENUM_END])
+    const ecs::ComponentDataKeyValueArray (&componentDataKeyValueArray) [ecs::PrefabType::ENUM_END][ecs::ComponentType::ENUM_END])
 {
     using namespace ecs;
 
@@ -100,9 +102,9 @@ inline void PrintParsedData(
         dbg::LogInfo("PrefabType", PREFAB_ENUM_TO_STR.Get(p));
         for(idx_t c = 0; c < (idx_t)ComponentType::ENUM_END; ++c) {
             dbg::LogInfo("ComponentType", COMPONENT_ENUM_TO_STR.Get(c));
-            const auto& arr = intermediateData[p][c];
+            const auto& arr = componentDataKeyValueArray[p][c];
             FOR_ARRAY(arr, i){
-                dbg::LogInfo(arr[i]);
+                dbg::LogInfo(arr[i].keyView, arr[i].valView);
             }
         }
     }

@@ -19,13 +19,24 @@ struct C_Transform
         , scale     { pScale }
     {}
 
-    C_Transform(const ComponentDataStringArray& str)
+    C_Transform(const ComponentDataKeyValueArray& pairs)
     {
-        FOR_ARRAY(str, i){
-            const auto comopnentDataType = GetComponentDataType(str[i]);
+        FOR_ARRAY(pairs, i) {
+            //dbg::LogInfo(pairs[i].keyView, pairs[i].valView);
+            const auto& pair = pairs[i];
+            const ComponentDataType* dataType = COMPONENTDATA_STR_TO_ENUM.GetOptional(pair.keyView);
+            dbg::Assert(dataType, "no component data type found");
+            
+            switch(*dataType)
+            {
+                case ComponentDataType::scale: scale = ParseComponentData<utils::Vec3f>(pair.valView); break;
+                default: dbg::LogWarning("component data type not defined for this component");
+            }
+
+            utils::PrintMatrix(scale);
         }
-        
     }
+
 };
 
 }//NS

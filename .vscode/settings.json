@@ -341,6 +341,14 @@
 				},
 			]
 		},
+		"(//TODO.*)": {
+			"regexFlags": "g", 
+			"decorations": [
+				{ 
+					"color": "#00ff00",
+				},
+			]
+		},
 		//? MINI LANGUAGE
 		"(#.*)": {
 			"regexFlags": "g", 
