@@ -28,17 +28,18 @@ struct ComponentArray
     }
 
     template<class... CtorArgs>
-    void AddComponent(const ID entityID, CtorArgs&&... args)
+    COMPONENT& AddComponent(const ID entityID, CtorArgs&&... args)
     {
         if (componentLookup[entityID] != NONE) {
             dbg::LogWarning("add component that alread exists");
             dense[componentLookup[entityID]] = { std::forward<CtorArgs>(args)... };
-            return;
+            return dense[componentLookup[entityID]];
         }
         
         dense.Append(std::forward<CtorArgs>(args)...);
         componentLookup[entityID] = dense.count - 1;
         entityLookup[dense.count - 1] = entityID;
+        return dense.Last();
     }
 
     void CopyComponent(const ID entityID, const COMPONENT& other)

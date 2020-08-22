@@ -45,8 +45,8 @@ struct Array
     template<class IDX> T&       operator[](const IDX idx)       { return reinterpret_cast<T&>      (bytes[sizeof(T) * (idx_t)idx]); }
     template<class IDX> const T& operator[](const IDX idx) const { return reinterpret_cast<const T&>(bytes[sizeof(T) * (idx_t)idx]); }
 
-    T&       Last()       { ArrayAssert(count > 0); this->operator[count - 1]; }
-    const T& Last() const { ArrayAssert(count > 0); this->operator[count - 1]; }
+    T&       Last()       { ArrayAssert(count > 0); return this->operator[](count - 1); }
+    const T& Last() const { ArrayAssert(count > 0); return this->operator[](count - 1); }
     T*       Data()       { return &(this->operator[](0)); }
     const T* Data() const { return &(this->operator[](0)); }
 

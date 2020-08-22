@@ -24,15 +24,15 @@ struct ComponentArrays
     }
 
     template<ComponentType TYPE, class... CtorArgs>
-    void AddComponent(const ID entityID, CtorArgs&&... args)
+    auto& AddComponent(const ID entityID, CtorArgs&&... args)
     {
         //this method is somewhat needed, I get compiler error if I use the runtime version of this method
         //I actually don't really comprehend why 
         signatures[entityID].Set(TYPE, true);
 
         //? COMPONENT ADDING
-        if constexpr(TYPE == ComponentType::Transform)  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
-        if constexpr(TYPE == ComponentType::RenderData) renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+        if constexpr(TYPE == ComponentType::Transform)  return transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+        if constexpr(TYPE == ComponentType::RenderData) return renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
     }
 
     template<class... CtorArgs>

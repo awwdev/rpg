@@ -27,13 +27,10 @@ struct PlayerController
     {
         using namespace utils;
         playerID = ecs.AddEntity();
-        //ecs.arrays.AddComponent<ecs::ComponentType::Transform>(playerID, utils::Mat4f{
-        //    S, 0, 0, 0,
-        //    0, H, 0, 0,
-        //    0, 0, S, 0,
-        //    position[X], Ypos, position[Z], 1,
-        //});
-        //ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::MeshType::PrimitiveCube);
+        auto& transform = ecs.arrays.AddComponent<ecs::ComponentType::Transform>(playerID);
+        transform.scale = { S, H, S };
+        transform.translation = { 0, Ypos, 0 };
+        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::MeshType::PrimitiveCube);
     }
 
     void Update(const double dt, ecs::ECS& ecs)
@@ -52,19 +49,10 @@ struct PlayerController
         auto move = movDir * speed * (float)dt;
 
         position = position + move;
-        utils::Mat4f mTransform = {
-            S, 0, 0, 0,
-            0, H, 0, 0,
-            0, 0, S, 0,
-            position[X], Ypos, position[Z], 1,
-        };
-        const auto qY = QuatAngleAxis(camera.rotation[Y], utils::Vec3f{0, 1, 0});
-        const auto mRot = QuatToMat(qY);
-        const auto mOrient = mTransform * mRot;
 
         auto& playerTransform = ecs.arrays.transforms.Get(playerID);
-        //playerTransform.transform = mOrient;
-        //TODO: rotation
+        playerTransform.translation = { position[X], Ypos, position[Z] };
+        playerTransform.rotation    = { 0, camera.rotation[Y], 0 };
         
         const utils::Vec3f pos = { position[X], HEAD, position[Z] };
         camera.Update(orientation, pos, dt);
