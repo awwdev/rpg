@@ -83,22 +83,6 @@ struct StringMap
         return nullptr;
     }
 
-    const VAL* GetOptional(const utils::CharsView& key) const
-    {
-        const auto hash = SimpleHash(key);
-        auto& bucket = buckets[hash];
-        
-        if (bucket.count == 0)
-            return nullptr;
-
-        FOR_CARRAY(bucket.content, i){
-            auto& pair = bucket.content[i];
-            if (CharsCompare(key, pair.key.data)) 
-                return &pair.val;
-        }
-        return nullptr;
-    }
-
     //? INTERNAL
 
     idx_t SimpleHash(chars_t str) const

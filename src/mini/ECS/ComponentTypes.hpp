@@ -11,13 +11,10 @@ constexpr auto COMPONENT_DATA_COUNT_MAX = 20; //how many data entries (for parsi
 constexpr auto COMPONENT_MAX_STR_LEN = 100;
 constexpr auto IDENTIFIER_START = 2;
 
-using ComponentDataString  = box::String<COMPONENT_MAX_STR_LEN>;
-using ComponentDataStringArray = box::Array<ComponentDataString, ecs::COMPONENT_DATA_COUNT_MAX>;
-
 struct ComponentDataKeyValue
 {
-    utils::CharsView keyView;
-    utils::CharsView valView;
+    box::String<COMPONENT_MAX_STR_LEN> key;
+    box::String<COMPONENT_MAX_STR_LEN> val;
 };
 
 using ComponentDataKeyValueArray = box::Array<ComponentDataKeyValue, ecs::COMPONENT_DATA_COUNT_MAX>;
@@ -55,26 +52,27 @@ const box::EnumMap<ComponentDataType::ENUM_END, box::String<COMPONENT_MAX_STR_LE
 };
 const auto COMPONENTDATA_STR_TO_ENUM = box::StringMapFromEnumMap<ComponentDataType, COMPONENT_MAX_STR_LEN>(COMPONENTDATA_ENUM_TO_STR);
 
-inline const ComponentDataKeyValue GetComponentDataKeyValue(const ComponentDataString& str)
+inline const ComponentDataKeyValue GetComponentDataKeyValue(chars_t str)
 {
     using namespace ecs;
 
-    const char* beg = &str.data[IDENTIFIER_START];
+    const char* beg = &str[IDENTIFIER_START];
     const char* end = [&, end = beg]() mutable {
         while(*end != '=' && std::distance(beg, end) < COMPONENT_MAX_STR_LEN) 
             ++end;
         dbg::Assert(std::distance(beg, end) < COMPONENT_MAX_STR_LEN, "component data has no assignment operator");
         return end;
     }();
-    const auto len1 = (idx_t)std::distance(beg, end) - 1;
-    const auto len2 = (idx_t)std::distance(end, &str[str.Length()-1]) - 1;
+    const auto len  = std::strlen(str);
+    const auto len1 = (idx_t)std::distance(beg, end);
+    const auto len2 = (idx_t)std::distance(end, &str[len]) - 1;
 
-    const ComponentDataKeyValue keyValue { { &str.data[IDENTIFIER_START], len1 }, { end + 2, len2 } };
+    const ComponentDataKeyValue keyValue { { &str[IDENTIFIER_START], len1 }, { end + 2, len2 } };
     return keyValue;
 }
 
 template<class T>
-inline T ParseComponentData(const utils::CharsView& view)
+T ParseComponentData(const box::String<COMPONENT_MAX_STR_LEN>& str)
 {
     T data {};
 
@@ -82,9 +80,9 @@ inline T ParseComponentData(const utils::CharsView& view)
     {
         idx_t comma = 0;
         idx_t x = 0;
-        for(idx_t i = 0; i < view.len && x < 3; ++i){
-            if (view.beginPtr[i] == ','){
-                data[0][x] = (f32)std::atof(view.beginPtr + comma);
+        for(idx_t i = 0; i < str.Length() && x < 3; ++i){
+            if (str[i] == ','){
+                data[0][x] = (f32)std::atof(str.data + comma);
                 comma = i + 1;
                 ++x;
             }  

@@ -73,6 +73,14 @@ struct String
         Append(ptr, (idx_t)std::strlen(ptr) + 1);
     }
 
+    String(chars_t ptr, const idx_t range)
+    {
+        //construct from existing chars array but with a range, so no '\0'
+        Clear(); 
+        Append(ptr, range);
+        Append('\0');
+    }
+
     template<idx_t N>
     String& operator=(const String<N, CHAR_T>& str)
     {

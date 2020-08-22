@@ -24,12 +24,12 @@ struct C_Transform
         FOR_ARRAY(pairs, i) {
             //dbg::LogInfo(pairs[i].keyView, pairs[i].valView);
             const auto& pair = pairs[i];
-            const ComponentDataType* dataType = COMPONENTDATA_STR_TO_ENUM.GetOptional(pair.keyView);
+            const ComponentDataType* dataType = COMPONENTDATA_STR_TO_ENUM.GetOptional(pair.key.data);
             dbg::Assert(dataType, "no component data type found");
             
             switch(*dataType)
             {
-                case ComponentDataType::scale: scale = ParseComponentData<utils::Vec3f>(pair.valView); break;
+                case ComponentDataType::scale: scale = ParseComponentData<utils::Vec3f>(pair.val); break;
                 default: dbg::LogWarning("component data type not defined for this component");
             }
 

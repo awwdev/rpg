@@ -88,7 +88,8 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     for(idx_t p = 0; p < (idx_t)PrefabType::ENUM_END; ++p) {
     for(idx_t c = 0; c < (idx_t)ComponentType::ENUM_END; ++c) {
         const auto& pairs = componentDataKeyValueArray[p][c];
-        componentArrays.AddComponent((ID)p, (ComponentType)c, pairs);
+        if (pairs.Empty() == false)
+            componentArrays.AddComponent((ID)p, (ComponentType)c, pairs);
     }}
 
 }
@@ -104,7 +105,7 @@ inline void PrintParsedData(
             dbg::LogInfo("ComponentType", COMPONENT_ENUM_TO_STR.Get(c));
             const auto& arr = componentDataKeyValueArray[p][c];
             FOR_ARRAY(arr, i){
-                dbg::LogInfo(arr[i].keyView, arr[i].valView);
+                dbg::LogInfo(arr[i].key, arr[i].val);
             }
         }
     }
