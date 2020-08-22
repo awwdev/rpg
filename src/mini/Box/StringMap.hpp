@@ -2,6 +2,7 @@
 
 #pragma once
 #include "mini/Utils/Types.hpp"
+#include "mini/Utils/Algorithms.hpp"
 #include "mini/Debug/Logger.hpp"
 #include "mini/Box/String.hpp"
 #include "mini/Box/EnumMap.hpp"
@@ -88,7 +89,7 @@ struct StringMap
     idx_t SimpleHash(chars_t str) const
     {
         const auto c1 = str[0];
-        const auto c2 = str[std::strlen(str) - 1];
+        const auto c2 = str[utils::StrLen(str) - 1];
         return (c1 + c2) % BUCKET_COUNT;
     }
 

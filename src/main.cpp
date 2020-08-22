@@ -62,3 +62,7 @@ int WINAPI wWinMain(
 } //main end
 
 //TODO: draw stuff on render target for post fx
+//TODO: create grass, stone mesh, tree
+//TODO: texture pipeline
+//TODO: ECS serialization
+//TODO: word building

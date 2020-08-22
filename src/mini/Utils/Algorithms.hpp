@@ -131,4 +131,13 @@ constexpr T Ease(const T val, const T p = 2)
     return (T)std::pow(val, p);
 }
 
+//? STRLEN
+
+idx_t StrLen(chars_t str)
+{
+    idx_t i = 0;
+    while(str[i] != '\0') ++i;
+    return i;
+}
+
 }//ns

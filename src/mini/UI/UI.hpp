@@ -133,7 +133,7 @@ inline void DrawText(
     Window& wnd,  
     const Colors col = Colors::WHITE)
 {
-    DrawText(str, (idx_t)std::strlen(str), wnd.rect.x, wnd.rect.y + wnd.line, col);
+    DrawText(str, (idx_t)utils::StrLen(str), wnd.rect.x, wnd.rect.y + wnd.line, col);
     wnd.NextLine();
 }
 
@@ -172,7 +172,7 @@ inline void DrawTextCentered(
     const utils::Rect<f32>& rect, 
     const Colors col = WHITE)
 {
-    const auto len = (idx_t)std::strlen(str);
+    const auto len = (idx_t)utils::StrLen(str);
     const auto TOTAL_STR_W = (len + 1) * LETTER_SPACE;
     const auto cx = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
     const auto cy = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;

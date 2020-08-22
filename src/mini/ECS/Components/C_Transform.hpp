@@ -13,6 +13,7 @@ struct C_Transform
     utils::Vec3f rotation; 
     utils::Vec3f translation; 
 
+    //defaults
     C_Transform( 
         const utils::Vec3f pScale       = { 1, 1, 1 },
         const utils::Vec3f pRotation    = { 0, 0, 0 },
@@ -22,10 +23,8 @@ struct C_Transform
         , translation  { pTranslation }
     {}
 
-    C_Transform(const ComponentDataStringPairs& pairs)
-        : scale        { 1, 1, 1 }
-        , rotation     { 0, 0, 0 }
-        , translation  { 0, 0, 0 }
+    //parsing
+    C_Transform(const ComponentDataStringPairs& pairs) : C_Transform()
     {
         FOR_ARRAY(pairs, i) {
             const auto& pair = pairs[i];

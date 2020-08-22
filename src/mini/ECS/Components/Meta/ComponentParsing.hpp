@@ -3,6 +3,7 @@
 #pragma once
 #include "mini/Box/StringMap.hpp"
 #include "mini/Debug/Assert.hpp"
+#include "mini/Utils/Algorithms.hpp"
 
 namespace mini::ecs {
 
@@ -25,14 +26,14 @@ inline const auto ConvertToComponentDataStringPair(chars_t str)
 
     const char* beg = &str[IDENTIFIER_START];
     const char* end = [&, end = beg]() mutable {
-        while(*end != '=' && std::distance(beg, end) < COMPONENT_MAX_STR_LEN) 
+        while(*end != '=' && (end - beg) < COMPONENT_MAX_STR_LEN) 
             ++end;
-        dbg::Assert(std::distance(beg, end) < COMPONENT_MAX_STR_LEN, "component data has no assignment operator");
+        dbg::Assert((end - beg) < COMPONENT_MAX_STR_LEN, "component data has no assignment operator");
         return end;
     }();
-    const auto len  = std::strlen(str);
-    const auto len1 = (idx_t)std::distance(beg, end) - 1; //rm whitspace
-    const auto len2 = (idx_t)std::distance(end + 1, &str[len-1]);
+    const auto len  = utils::StrLen(str);
+    const auto len1 = (idx_t)(end - beg) - 1; //rm whitspace
+    const auto len2 = (idx_t)(&str[len-1] - (end + 1));
 
     return ComponentDataStringPair { { &str[IDENTIFIER_START], len1 }, { end + 2, len2 } };;
 }

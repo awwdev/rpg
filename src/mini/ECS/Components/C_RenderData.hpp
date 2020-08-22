@@ -11,13 +11,14 @@ struct C_RenderData
 {
     res::MeshType meshType;
 
+    //defaults
     C_RenderData(
         const res::MeshType& pMeshType = {})
         : meshType { pMeshType }
     {}
 
-    C_RenderData(const ComponentDataStringPairs& pairs)
-        : meshType { res::MeshType::PrimitiveCube }
+     //parsing
+    C_RenderData(const ComponentDataStringPairs& pairs) : C_RenderData()
     {
         FOR_ARRAY(pairs, i) {
             const auto& pair = pairs[i];

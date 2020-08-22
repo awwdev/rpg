@@ -3,6 +3,7 @@
 #pragma once
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Assert.hpp"
+#include "mini/Utils/Algorithms.hpp"
 
 #include <iostream>
 #include <charconv>
@@ -69,7 +70,7 @@ struct String
     String(chars_t ptr)
     {
         Clear(); 
-        Append(ptr, (idx_t)std::strlen(ptr) + 1);
+        Append(ptr, utils::StrLen(ptr) + 1);
     }
 
     String(chars_t ptr, const idx_t range)
@@ -113,7 +114,7 @@ struct String
     {
         char buffer[30] {};
         std::to_chars(buffer, &buffer[30], fundemental);
-        Append(&buffer, (idx_t)std::strlen(buffer) + 1);
+        Append(&buffer, (idx_t)utils::StrLen(buffer) + 1);
     }
 
     constexpr void Pop()
