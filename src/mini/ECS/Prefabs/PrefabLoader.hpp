@@ -85,7 +85,7 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     }
 
     //? INSTANTIATION AND COMPONENT DATA PARSING
-    PrintParsedData(componentDataKeyValueArray);
+    //PrintParsedData(componentDataKeyValueArray);
     for(idx_t p = 0; p < (idx_t)PrefabType::ENUM_END; ++p) {
     for(idx_t c = 0; c < (idx_t)ComponentType::ENUM_END; ++c) {
         const auto& pairs = componentDataKeyValueArray[p][c];

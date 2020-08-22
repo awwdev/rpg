@@ -10,10 +10,11 @@ constexpr auto COMPONENT_DATA_COUNT_MAX = 20;
 constexpr auto COMPONENT_MAX_STR_LEN = 100;
 constexpr auto IDENTIFIER_START = 2;
 
+using ComponentDataString = box::String<COMPONENT_MAX_STR_LEN>;
 struct ComponentDataStringPair
 {
-    box::String<COMPONENT_MAX_STR_LEN> key;
-    box::String<COMPONENT_MAX_STR_LEN> val;
+    ComponentDataString key;
+    ComponentDataString val;
 };
 
 using ComponentDataStringPairs = box::Array<ComponentDataStringPair, ecs::COMPONENT_DATA_COUNT_MAX>;

@@ -8,6 +8,7 @@
 #include "mini/Resources/Terrain/TerrainQuadrant.hpp"
 #include "mini/Resources/Terrain/TerrainSerialization.hpp"
 #include "mini/ECS/Prefabs/PrefabTypes.hpp"
+#include "mini/Utils/Algorithms.hpp"
 
 namespace mini::res {
 

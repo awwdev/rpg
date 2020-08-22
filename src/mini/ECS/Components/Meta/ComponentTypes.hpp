@@ -36,4 +36,11 @@ const box::EnumMap<ComponentDataType::ENUM_END, box::String<COMPONENT_MAX_STR_LE
 };
 const auto COMPONENTDATA_STR_TO_ENUM = box::StringMapFromEnumMap<ComponentDataType, COMPONENT_MAX_STR_LEN>(COMPONENTDATA_ENUM_TO_STR);
 
+inline ComponentDataType GetComponentDataType(const ComponentDataString& str)
+{
+    const ComponentDataType* dataType = COMPONENTDATA_STR_TO_ENUM.GetOptional(str.data);
+    dbg::Assert(dataType, "no component data type found");
+    return *dataType;
+}
+
 }//NS

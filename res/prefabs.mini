@@ -13,12 +13,12 @@
 
 @ Stone
 ? RenderData
-+ meshType = Stone
++ meshType = Sword
 ? Transform
 + scale = 4,4,4
 
 @ Grass
 ? RenderData
-+ meshType = Grass
++ meshType = Sword
 ? Transform
 + scale = 123,0,1

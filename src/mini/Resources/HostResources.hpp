@@ -10,6 +10,7 @@
 #include "mini/Resources/MeshTypes.hpp"
 #include "mini/Resources/Terrain/Terrain.hpp"
 #include "mini/Rendering/RenderGraph.hpp"
+#include "mini/utils/PrimitiveMeshes.hpp"
 
 namespace mini::res {
     
