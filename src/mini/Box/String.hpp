@@ -77,8 +77,8 @@ struct String
     {
         //construct from existing chars array but with a range, so no '\0'
         Clear(); 
-        Append(ptr, range);
-        Append('\0');
+        Append(ptr, range + 1); //as if there would trailing 0 (but there is not)
+        data[range] = '\0';
     }
 
     template<idx_t N>
