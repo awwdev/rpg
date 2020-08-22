@@ -3,7 +3,6 @@
 #pragma once
 
 #include "mini/ECS/ECS.hpp"
-#include "mini/ECS/Prefabs.hpp"
 #include "mini/ECS/Systems/S_Render.hpp"
 
 #include "mini/Rendering/RenderGraph.hpp"
@@ -14,7 +13,7 @@
 #include "mini/UI/UI_Stats.hpp"
 
 #include "mini/Resources/Terrain/Terrain.hpp"
-#include "mini/Resources/PrefabLoader.hpp"
+#include "mini/ECS/Prefabs/PrefabLoader.hpp"
 
 #include "mini/App/PlayerController.hpp"
 #include "mini/App/EditorController.hpp"

@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/ECS/EntityID.hpp"
-#include "mini/ECS/PrefabTypes.hpp"
+#include "mini/ECS/Prefabs/PrefabTypes.hpp"
 #include "mini/ECS/ComponentArray.hpp"
 #include "mini/Debug/Assert.hpp"
 

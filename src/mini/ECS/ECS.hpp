@@ -3,8 +3,8 @@
 #pragma once
 #include "mini/Box/Bitset.hpp"
 #include "mini/ECS/EntityID.hpp"
-#include "mini/ECS/ComponentArray.hpp"
-#include "mini/ECS/PrefabTypes.hpp"
+#include "mini/ECS/ComponentArrays.hpp"
+#include "mini/ECS/Prefabs/PrefabTypes.hpp"
 
 namespace mini::ecs {
 

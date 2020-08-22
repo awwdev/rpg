@@ -336,8 +336,8 @@
 			"regexFlags": "g", 
 			"decorations": [
 				{ 
-					"color": "#ffee90",
-					"backgroundColor": "#ffd39010", 
+					"color": "#eebb99",
+					"backgroundColor": "#ff773310", 
 				},
 			]
 		},
