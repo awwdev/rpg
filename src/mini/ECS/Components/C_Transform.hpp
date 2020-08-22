@@ -23,6 +23,9 @@ struct C_Transform
     {}
 
     C_Transform(const ComponentDataStringPairs& pairs)
+        : scale        { 1, 1, 1 }
+        , rotation     { 0, 0, 0 }
+        , translation  { 0, 0, 0 }
     {
         FOR_ARRAY(pairs, i) {
             const auto& pair = pairs[i];

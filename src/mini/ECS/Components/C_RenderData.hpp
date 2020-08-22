@@ -17,6 +17,7 @@ struct C_RenderData
     {}
 
     C_RenderData(const ComponentDataStringPairs& pairs)
+        : meshType { res::MeshType::PrimitiveCube }
     {
         FOR_ARRAY(pairs, i) {
             const auto& pair = pairs[i];

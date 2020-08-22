@@ -265,7 +265,8 @@ struct Terrain
             settings.intersectionPos = intersection->pos;
             if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()) {
                 const auto ID = ecs.AddEntity(settings.prefabType);
-
+                auto& t = ecs.arrays.transforms.Get(ID);
+                t.translation = intersection->pos;
             }
         }
     }
