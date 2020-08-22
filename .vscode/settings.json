@@ -35,6 +35,7 @@
 	"explorer.decorations.badges": false,
 	"problems.decorations.enabled": false,
 	"workbench.sideBar.location": "left",
+	"workbench.tree.indent": 16,
 	// UI Settings
 	"window.zoomLevel": 0,
 	"window.menuBarVisibility": "toggle",

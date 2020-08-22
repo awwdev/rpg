@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/ECS/ComponentArray.hpp"
+#include "mini/ECS/Components/Meta/ComponentArray.hpp"
 #include "mini/ECS/Components/C_RenderData.hpp"
 #include "mini/ECS/Components/C_Transform.hpp"
 

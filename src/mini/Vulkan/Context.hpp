@@ -157,7 +157,7 @@ namespace mini::vk
             vkGetPhysicalDeviceProperties(physical, &physicalProps);
             vkGetPhysicalDeviceMemoryProperties(physical, &physicalMemProps);
 
-            dbg::LogInfo("Vulkan physical API version", 
+            dbg::LogColor(dbg::ConsoleColors::BrightCyan, "Vulkan physical API version", 
                 VK_VERSION_MAJOR(physicalProps.apiVersion),
                 VK_VERSION_MINOR(physicalProps.apiVersion), 
                 VK_VERSION_PATCH(physicalProps.apiVersion)

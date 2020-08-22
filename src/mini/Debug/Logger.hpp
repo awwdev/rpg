@@ -7,55 +7,55 @@
 
 namespace mini::dbg {
 
-constexpr bool LOG_ERRORS   = true;
-constexpr bool LOG_WARNINGS = true;
-constexpr bool LOG_INFO     = true;
+constexpr bool IS_LOGGING_INFOS    = true;
+constexpr bool IS_LOGGING_WARNINGS = true;
+constexpr bool IS_LOGGING_ERRORS   = true;
 
-//windows console 
-constexpr auto CONSOLE_DEFAULT = "\x1b[0m" ;
-constexpr auto CONSOLE_RED     = "\x1b[91m";
-constexpr auto CONSOLE_GREEN   = "\x1b[92m";
-constexpr auto CONSOLE_YELLOW  = "\x1b[93m";
-constexpr auto CONSOLE_CYAN    = "\x1b[96m";
+enum ConsoleColors
+{
+    White,
+    BrightRed,
+    Red,
+    BrightGreen,
+    BrightYellow,
+    BrightCyan,
+};
 
 template<class... T>
-inline void LogInfo(T&&... args)
+void LogColor(const ConsoleColors color, T&&... args)
 {
-    if constexpr(!LOG_INFO) return;
+    switch(color)
+    {
+        case ConsoleColors::White        : std::cout << "\x1b[0m" ; break;
+        case ConsoleColors::BrightRed    : std::cout << "\x1b[91m"; break;
+        case ConsoleColors::Red          : std::cout << "\x1b[31m"; break;
+        case ConsoleColors::BrightGreen  : std::cout << "\x1b[92m"; break;
+        case ConsoleColors::BrightYellow : std::cout << "\x1b[93m"; break;
+        case ConsoleColors::BrightCyan   : std::cout << "\x1b[96m"; break;
+    }
 
-    std::cout << CONSOLE_DEFAULT;
-    ((std::cout << args << " " ), ...);
-    std::cout << CONSOLE_DEFAULT << '\n';
+  ((std::cout << args << " " ), ...);
+    std::cout << "\x1b[0m" << '\n'; //white
 }
 
-template<class... T>
-inline void LogHighlight(T&&... args)
-{
-    if constexpr(!LOG_INFO) return;
+//? COMMON
 
-    std::cout << CONSOLE_CYAN;
-    ((std::cout << args << " " ), ...);
-    std::cout << CONSOLE_DEFAULT << '\n';
+template<class... T> void LogInfo(T&&... args)
+{
+    if constexpr(!IS_LOGGING_INFOS) return;
+    LogColor(ConsoleColors::White, std::forward<T>(args)...);
 }
 
-template<class... T>
-inline void LogWarning(T&&... args)
+template<class... T> void LogWarning(T&&... args)
 {
-    if constexpr(!LOG_WARNINGS) return;
-
-    std::cout << CONSOLE_YELLOW;
-    ((std::cout << args << " " ), ...);
-    std::cout << CONSOLE_DEFAULT << '\n';
+    if constexpr(!IS_LOGGING_WARNINGS) return;
+    LogColor(ConsoleColors::BrightYellow, std::forward<T>(args)...);
 }
 
-template<class... T>
-inline void LogError(T&&... args)
+template<class... T> void LogError(T&&... args)
 {
-    if constexpr(!LOG_ERRORS) return;
-
-    std::cout << CONSOLE_RED;
-    ((std::cout << args << " " ), ...);
-    std::cout << CONSOLE_DEFAULT << '\n';
+    if constexpr(!IS_LOGGING_ERRORS) return;
+    LogColor(ConsoleColors::BrightRed, std::forward<T>(args)...);
 }
 
-}//ns
+} //NS

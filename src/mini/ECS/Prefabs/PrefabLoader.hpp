@@ -3,8 +3,9 @@
 #pragma once
 #include "mini/ECS/EntityID.hpp"
 #include "mini/ECS/Prefabs/PrefabTypes.hpp"
-#include "mini/ECS/ComponentArray.hpp"
+#include "mini/ECS/Components/Meta/ComponentArray.hpp"
 #include "mini/Debug/Assert.hpp"
+#include "mini/Memory/Allocator.hpp"
 
 #include <fstream>
 
@@ -18,8 +19,8 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     std::ifstream file(path, std::ios::beg);
     dbg::Assert(file.is_open(), "cannot open file");
 
-    //TODO: put on heap
-    ComponentDataKeyValueArray componentDataKeyValueArray [PrefabType::ENUM_END][ComponentType::ENUM_END];    
+    auto blockPtr = mini::mem::ClaimBlock<ComponentDataStringPairs [PrefabType::ENUM_END][ComponentType::ENUM_END]>();
+    auto& componentDataKeyValueArray = *blockPtr;
 
     auto currentPrefab    = PrefabType::ENUM_END;
     auto currentComponent = ComponentType::ENUM_END;
@@ -77,7 +78,7 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
 
         //? COMPONENT DATA
         if (lineType == ComponentData){
-            const auto pair = GetComponentDataKeyValue(line);
+            const auto pair = ConvertToComponentDataStringPair(line);
             componentDataKeyValueArray[(idx_t)currentPrefab][(idx_t)currentComponent].Append(pair);
         }
 
@@ -95,7 +96,7 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
 }
 
 inline void PrintParsedData(
-    const ecs::ComponentDataKeyValueArray (&componentDataKeyValueArray) [ecs::PrefabType::ENUM_END][ecs::ComponentType::ENUM_END])
+    const ecs::ComponentDataStringPairs (&componentDataKeyValueArray) [ecs::PrefabType::ENUM_END][ecs::ComponentType::ENUM_END])
 {
     using namespace ecs;
 

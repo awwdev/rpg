@@ -14,6 +14,8 @@
 
 namespace mini::mem {
 
+constexpr auto DO_LOG_BLOCKS = false;
+
 struct BlockArray
 {
     u32 size;
@@ -65,8 +67,10 @@ namespace priv
     {
         priv::blocksUsed.Flip(blockId);
         priv::blockInfos[blockId].Clear();
-        //dbg::LogInfo("FreeBlock", blockId);
         //dtor call of object is done in BlockPtr
+
+        if constexpr(DO_LOG_BLOCKS)
+            dbg::LogColor(dbg::ConsoleColors::Red, "FreeBlock", blockId);
     }
 }
 
@@ -163,7 +167,12 @@ auto ClaimBlock(CtorArgs&&... args)
     //? debug info
     priv::blockInfos[freeBlockId] = __FUNCSIG__;
 
-    //dbg::LogInfo("ClaimBlock", FITTING_BLOCK_ARRAY.arrayIdx, freeBlockId - FITTING_BLOCK_ARRAY.blockId, freeBlockId);
+    if constexpr(DO_LOG_BLOCKS)
+        dbg::LogColor(dbg::ConsoleColors::Red, "ClaimBlock", 
+            "arr idx ", FITTING_BLOCK_ARRAY.arrayIdx, 
+            "block id ", freeBlockId - FITTING_BLOCK_ARRAY.blockId, 
+            "freeBlockId ", freeBlockId);
+            
     return BlockPtr<T> { obj, freeBlockId };
 }
 

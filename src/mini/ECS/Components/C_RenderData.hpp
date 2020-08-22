@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/ECS/ComponentTypes.hpp"
+#include "mini/ECS/Components/Meta/ComponentTypes.hpp"
 #include "mini/Resources/MeshTypes.hpp"
 #include "mini/Debug/Logger.hpp"
 
@@ -16,7 +16,7 @@ struct C_RenderData
         : meshType { pMeshType }
     {}
 
-    C_RenderData(const ComponentDataKeyValueArray& str)
+    C_RenderData(const ComponentDataStringPairs& str)
     {}
 };
 

@@ -3,6 +3,7 @@
 #pragma once
 #include "mini/Utils/Types.hpp"
 #include "mini/Debug/Assert.hpp"
+#include "mini/Debug/Logger.hpp"
 
 namespace mini::box {
 

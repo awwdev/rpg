@@ -5,7 +5,7 @@
 #include "mini/Box/Bitset.hpp"
 
 #include "mini/ECS/EntityID.hpp"
-#include "mini/ECS/ComponentTypes.hpp"
+#include "mini/ECS/Components/Meta/ComponentTypes.hpp"
 
 namespace mini::ecs
 {

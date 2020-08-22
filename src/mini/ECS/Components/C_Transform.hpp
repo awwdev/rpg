@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "mini/ECS/ComponentTypes.hpp"
+#include "mini/ECS/Components/Meta/ComponentTypes.hpp"
 #include "mini/Utils/Matrix.hpp"
 #include "mini/Debug/Logger.hpp"
 
@@ -19,7 +19,7 @@ struct C_Transform
         , scale     { pScale }
     {}
 
-    C_Transform(const ComponentDataKeyValueArray& pairs)
+    C_Transform(const ComponentDataStringPairs& pairs)
     {
         FOR_ARRAY(pairs, i) {
             //dbg::LogInfo(pairs[i].keyView, pairs[i].valView);

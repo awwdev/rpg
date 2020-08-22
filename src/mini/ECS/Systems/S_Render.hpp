@@ -2,8 +2,8 @@
 
 #pragma once
 #include "mini/Utils/Matrix.hpp"
-#include "mini/ECS/ComponentTypes.hpp"
-#include "mini/ECS/ComponentArray.hpp"
+#include "mini/ECS/Components/Meta/ComponentTypes.hpp"
+#include "mini/ECS/Components/Meta/ComponentArrays.hpp"
 #include "mini/Rendering/RenderGraph.hpp"
 
 namespace mini::ecs {
