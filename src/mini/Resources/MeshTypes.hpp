@@ -21,7 +21,11 @@ enum class MeshType
 constexpr auto MESHTYPE_MAX_STR_LEN = 100;
 const box::EnumMap<MeshType::ENUM_END, box::String<MESHTYPE_MAX_STR_LEN>> MESHTYPE_ENUM_TO_STR
 {
-    { MeshType::Sword, "Sword" },
+    { MeshType::PrimitiveCube,      "PrimitiveCube" },
+    { MeshType::PrimitiveQuad,      "PrimitiveQuad" },
+    { MeshType::PrimitiveTriangle,  "PrimitiveTriangle" },
+    { MeshType::PrimitiveRing16,    "PrimitiveRing16" },
+    { MeshType::Sword,              "Sword" },
 };
 const auto MESHTYPE_STR_TO_ENUM = box::StringMapFromEnumMap<MeshType, MESHTYPE_MAX_STR_LEN>(MESHTYPE_ENUM_TO_STR);
 

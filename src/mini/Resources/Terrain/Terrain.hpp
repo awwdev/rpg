@@ -145,7 +145,7 @@ struct Terrain
     {
         settings.gizmoID = ecs.AddEntity();
         ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(settings.gizmoID, res::MeshType::PrimitiveRing16);
-        ecs.arrays.AddComponent<ecs::ComponentType::Transform> (settings.gizmoID, utils::Identity4());
+        ecs.arrays.AddComponent<ecs::ComponentType::Transform> (settings.gizmoID);
     }
 
     void UpdateGizmos(ecs::ECS& ecs)
@@ -153,15 +153,9 @@ struct Terrain
         using namespace utils;
         auto& transform = ecs.arrays.transforms.Get(settings.gizmoID);
         const auto S = settings.brushSize;
-        transform.transform = {
-            S, 0, 0, 0,
-            0, S, 0, 0,
-            0, 0, S, 0,
-            0, 0, 0, 1,
-        };
-        transform.transform[3][0] = settings.intersectionPos[X];
-        transform.transform[3][1] = settings.intersectionPos[Y] - 0.1f; //z fighting
-        transform.transform[3][2] = settings.intersectionPos[Z];
+        transform.scale = { S, S, S };
+        transform.translation = settings.intersectionPos;
+        transform.translation[Y] -= 0.1f; //z-fighting
     }
 
     //? INTERACTION
@@ -271,6 +265,7 @@ struct Terrain
             settings.intersectionPos = intersection->pos;
             if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()) {
                 const auto ID = ecs.AddEntity(settings.prefabType);
+
             }
         }
     }

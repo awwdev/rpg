@@ -23,11 +23,8 @@ struct C_RenderData
             const auto dataType = GetComponentDataType(pair.key);           
             switch(dataType)
             {
-                case ComponentDataType::meshType: 
-                {
-                    const auto meshType = res::GetMeshType(pair.val);  
-                    dbg::LogInfo(res::MESHTYPE_ENUM_TO_STR.Get(meshType));
-                }
+                case ComponentDataType::meshType:  
+                meshType = res::GetMeshType(pair.val);  
                 break;
 
                 default: dbg::LogWarning("component data type not defined for this component");

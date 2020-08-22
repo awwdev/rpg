@@ -9,14 +9,17 @@ namespace mini::ecs {
 
 struct C_Transform
 {
-    utils::Mat4f transform;
     utils::Vec3f scale; 
+    utils::Vec3f rotation; 
+    utils::Vec3f translation; 
 
-    C_Transform(
-        const utils::Mat4f& pTransform = {}, 
-        const utils::Vec3f pScale = {})
-        : transform { pTransform }
-        , scale     { pScale }
+    C_Transform( 
+        const utils::Vec3f pScale       = { 1, 1, 1 },
+        const utils::Vec3f pRotation    = { 0, 0, 0 },
+        const utils::Vec3f pTranslation = { 0, 0, 0 })
+        : scale        { pScale }
+        , rotation     { pRotation }
+        , translation  { pTranslation }
     {}
 
     C_Transform(const ComponentDataStringPairs& pairs)

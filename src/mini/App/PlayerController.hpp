@@ -27,13 +27,13 @@ struct PlayerController
     {
         using namespace utils;
         playerID = ecs.AddEntity();
-        ecs.arrays.AddComponent<ecs::ComponentType::Transform>(playerID, utils::Mat4f{
-            S, 0, 0, 0,
-            0, H, 0, 0,
-            0, 0, S, 0,
-            position[X], Ypos, position[Z], 1,
-        });
-        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::MeshType::PrimitiveCube);
+        //ecs.arrays.AddComponent<ecs::ComponentType::Transform>(playerID, utils::Mat4f{
+        //    S, 0, 0, 0,
+        //    0, H, 0, 0,
+        //    0, 0, S, 0,
+        //    position[X], Ypos, position[Z], 1,
+        //});
+        //ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::MeshType::PrimitiveCube);
     }
 
     void Update(const double dt, ecs::ECS& ecs)
@@ -63,7 +63,8 @@ struct PlayerController
         const auto mOrient = mTransform * mRot;
 
         auto& playerTransform = ecs.arrays.transforms.Get(playerID);
-        playerTransform.transform = mOrient;
+        //playerTransform.transform = mOrient;
+        //TODO: rotation
         
         const utils::Vec3f pos = { position[X], HEAD, position[Z] };
         camera.Update(orientation, pos, dt);
