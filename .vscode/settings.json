@@ -333,7 +333,7 @@
 	//?HIGHLIGHT
 	"highlight.regexes":
 	 {
-		"(//\\?.*)": {
+		"(.*//\\?.*)": {
 			"regexFlags": "g", 
 			"decorations": [
 				{ 

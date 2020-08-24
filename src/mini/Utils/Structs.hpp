@@ -13,7 +13,7 @@ struct Common_Vertex
     alignas(16) utils::Vec3f pos;
     alignas(16) utils::Vec3f nor;
     alignas(16) utils::Vec4f col;
-    alignas(16) utils::Vec2f tex;
+    alignas(16) utils::Vec2f tex; //TODO: rename to uv?
 
     constexpr Common_Vertex(
         const utils::Vec3f pPos = {},

@@ -61,8 +61,15 @@ int WINAPI wWinMain(
 
 } //main end
 
+//TODO: add index buffer regardless of usage, so you can use it when needed
+
 //TODO: draw stuff on render target for post fx
 //TODO: create grass, stone mesh, tree
 //TODO: texture pipeline
 //TODO: ECS serialization
 //TODO: word building
+
+//TODO: join transform and render component
+//TODO: use block ptr for s render function 
+//TODO: add static flag to render component, so ubo data is not updated
+
