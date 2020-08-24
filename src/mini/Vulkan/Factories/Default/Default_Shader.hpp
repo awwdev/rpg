@@ -9,7 +9,7 @@
 
 namespace mini::vk
 {
-    inline void Default_CreateShader(Shader& shader, RenderPassDepth& rp)
+    inline void Default_CreateShaderVertexColor(Shader& shader, RenderPassDepth& rp)
     {  
         shader.CreateShaderModule("res/Shaders/spv/defaultVertexColor.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         shader.CreateShaderModule("res/Shaders/spv/defaultVertexColor.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -36,24 +36,29 @@ namespace mini::vk
         };
         VK_CHECK(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, shader.samplers.Append()));
 
-        shader.info.type = UniformInfo::Image;
-        shader.info.layout =
         {
-            .binding            = 1,
-            .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount    = 1,
-            .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .pImmutableSamplers = nullptr,
-        };
-        shader.info.imageInfo = 
-        {
-            .sampler        = shader.samplers[0],
-            .imageView      = rp.depthImage.view, 
-            .imageLayout    = rp.depthImage.layout
-        };
+            shader.infos.Append();
+            auto& info = shader.infos.Last();
+
+            info.type = UniformInfo::Image;
+            info.layout =
+            {
+                .binding            = 1,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+                .pImmutableSamplers = nullptr,
+            };
+            info.imageInfo = 
+            {
+                .sampler        = shader.samplers[0],
+                .imageView      = rp.depthImage.view, 
+                .imageLayout    = rp.depthImage.layout
+            };
+        }
     }
 
-    inline void Default_CreateShaderTexture(Shader& shader, RenderPassDepth& rp)
+    inline void Default_CreateShaderTexture(Shader& shader, RenderPassDepth& rp, ImageArray& imageArray)
     {  
         shader.CreateShaderModule("res/Shaders/spv/defaultTexture.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
         shader.CreateShaderModule("res/Shaders/spv/defaultTexture.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -80,21 +85,49 @@ namespace mini::vk
         };
         VK_CHECK(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, shader.samplers.Append()));
 
-        shader.info.type = UniformInfo::Image;
-        shader.info.layout =
+        //SHADOW MAP
         {
-            .binding            = 1,
-            .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount    = 1,
-            .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .pImmutableSamplers = nullptr,
-        };
-        shader.info.imageInfo = 
+            shader.infos.Append();
+            auto& info = shader.infos.Last();
+
+            info.type = UniformInfo::Image;
+            info.layout =
+            {
+                .binding            = 1,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+                .pImmutableSamplers = nullptr,
+            };
+            info.imageInfo = 
+            {
+                .sampler        = shader.samplers[0],
+                .imageView      = imageArray.view, 
+                .imageLayout    = imageArray.layout
+            };
+        }
+        //TEXTURE
         {
-            .sampler        = shader.samplers[0],
-            .imageView      = rp.depthImage.view, 
-            .imageLayout    = rp.depthImage.layout
-        };
+            shader.infos.Append();
+            auto& info = shader.infos.Last();
+
+            info.type = UniformInfo::Image;
+            info.layout =
+            {
+                .binding            = 2,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+                .pImmutableSamplers = nullptr,
+            };
+            info.imageInfo = 
+            {
+                .sampler        = shader.samplers[0],
+                .imageView      = rp.depthImage.view, 
+                .imageLayout    = rp.depthImage.layout
+            };
+        }
+
     }
 
     inline void Default_CreateShaderShadow(Shader& shader)

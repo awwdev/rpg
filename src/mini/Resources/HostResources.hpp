@@ -17,10 +17,12 @@ namespace mini::res {
 struct Textures
 {
     TextureArray<128, 16, 16, 1> monospaceFont;
+    TextureArray<512, 1, 1, 4>   default;
 
     void Load()
     {
-        monospaceFont.LoadArray("res/TextureArray"); //RLE would be nice
+        monospaceFont.LoadArray("res/TextureArrays/MonospaceFont"); //RLE would be nice
+        default.LoadArray("res/TextureArrays/Default");
     }
 };
 

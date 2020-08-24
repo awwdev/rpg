@@ -23,7 +23,7 @@ namespace mini::vk
         const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
         UniformInfo* uniformInfos [] = {
-            &shader.info,
+            &shader.infos[0],
         };
         WriteDescriptors(pipeline, uniformInfos);
 

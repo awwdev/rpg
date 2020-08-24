@@ -36,21 +36,26 @@ namespace mini::vk
         };
         VK_CHECK(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, shader.samplers.Append()));
 
-        shader.info.type = UniformInfo::Image;
-        shader.info.layout =
         {
-            .binding            = 0,
-            .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount    = 1,
-            .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .pImmutableSamplers = nullptr,
-        };
-        shader.info.imageInfo = 
-        {
-            .sampler        = shader.samplers[0],
-            .imageView      = rp.depthImage.view, 
-            .imageLayout    = rp.depthImage.layout
-        };
+            shader.infos.Append();
+            auto& info = shader.infos.Last();
+
+            info.type = UniformInfo::Image;
+            info.layout =
+            {
+                .binding            = 0,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+                .pImmutableSamplers = nullptr,
+            };
+            info.imageInfo = 
+            {
+                .sampler        = shader.samplers[0],
+                .imageView      = rp.depthImage.view, 
+                .imageLayout    = rp.depthImage.layout
+            };
+        }
     }
 
     inline void Terrain_CreateShaderWire(Shader& shader)

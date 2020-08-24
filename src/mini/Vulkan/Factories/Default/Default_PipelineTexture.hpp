@@ -24,7 +24,8 @@ void Default_CreatePipelineTexture(
     const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
     UniformInfo* uniformInfos [] = {
-        &shader.info,
+        &shader.infos[0],
+        &shader.infos[1],
         &ubo.info,
     };
     WriteDescriptors(pipeline, uniformInfos);

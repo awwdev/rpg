@@ -30,7 +30,7 @@ namespace mini::vk
         };
 
         UniformInfo* uniformInfos [] = {
-            &shader.info,
+            &shader.infos[0],
             &uboText.info,
         };
         WriteDescriptors(pipeline, uniformInfos);

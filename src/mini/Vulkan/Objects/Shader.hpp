@@ -18,8 +18,8 @@ namespace mini::vk
         box::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
 
         //uniform data
-        UniformInfo info; //! probably need array?
-        box::Array<VkSampler, 4> samplers; //just some capacity
+        box::Array<UniformInfo,4>  infos;
+        box::Array<VkSampler, 4>   samplers;
 
         ~Shader()
         {

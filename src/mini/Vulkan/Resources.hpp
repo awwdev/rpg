@@ -13,7 +13,7 @@
 #include "mini/Vulkan/Factories/UI/UI_UniformBuffer.hpp"
 
 #include "mini/Vulkan/Factories/Default/Default_RenderPass.hpp"
-#include "mini/Vulkan/Factories/Default/Default_Pipeline.hpp"
+#include "mini/Vulkan/Factories/Default/Default_PipelineVertexColor.hpp"
 #include "mini/Vulkan/Factories/Default/Default_PipelineTexture.hpp"
 #include "mini/Vulkan/Factories/Default/Default_PipelineShadow.hpp"
 #include "mini/Vulkan/Factories/Default/Default_Shader.hpp" //includes shadow
@@ -92,6 +92,7 @@ namespace mini::vk
     struct Resources_Default
     {
         RenderPass  renderPass;
+        ImageArray  textures;
 
         Shader      shaderVertexColor;
         Shader      shaderTexture;
@@ -106,15 +107,17 @@ namespace mini::vk
 
         void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow& shadow)
         {
-            Default_CreateVertexBuffer   (vbo, cmdPool, hostRes);
-            Default_CreateUniformBuffer  (ubo);
-            Default_CreateShader         (shaderVertexColor, shadow.renderPass);
-            Default_CreateShaderTexture  (shaderTexture, shadow.renderPass);
-            Default_CreateShaderShadow   (shaderShadow);
-            Default_CreateRenderPass     (renderPass, cmdPool);
-            Default_CreatePipeline       (pipelineVertexColor, shaderVertexColor, renderPass, vbo, ubo);
-            Default_CreatePipelineTexture(pipelineTexture, shaderTexture, renderPass, vbo, ubo);
-            Default_CreatePipelineShadow (pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
+            textures.Create(hostRes.textures.default, cmdPool);
+
+            Default_CreateVertexBuffer      (vbo, cmdPool, hostRes);
+            Default_CreateUniformBuffer     (ubo);
+            Default_CreateShaderVertexColor (shaderVertexColor, shadow.renderPass);
+            Default_CreateShaderTexture     (shaderTexture, shadow.renderPass, textures);
+            Default_CreateShaderShadow      (shaderShadow);
+            Default_CreateRenderPass        (renderPass, cmdPool);
+            Default_CreatePipeline          (pipelineVertexColor, shaderVertexColor, renderPass, vbo, ubo);
+            Default_CreatePipelineTexture   (pipelineTexture, shaderTexture, renderPass, vbo, ubo);
+            Default_CreatePipelineShadow    (pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
         }
 
         void Recreate(VkCommandPool cmdPool, Resources_Shadow& shadow)
@@ -126,12 +129,12 @@ namespace mini::vk
             renderPass.~RenderPass();
 
             //TODO: recreate whole shader is wrong, only sampler needs recreation (due to img resize)
-            Default_CreateShader         (shaderVertexColor, shadow.renderPass);
-            Default_CreateShaderTexture  (shaderTexture, shadow.renderPass);
-            Default_CreateRenderPass     (renderPass, cmdPool);
-            Default_CreatePipeline       (pipelineVertexColor, shaderVertexColor, renderPass, vbo, ubo);
-            Default_CreatePipelineTexture(pipelineTexture, shaderTexture, renderPass, vbo, ubo);
-            Default_CreatePipelineShadow (pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
+            Default_CreateShaderVertexColor (shaderVertexColor, shadow.renderPass);
+            Default_CreateShaderTexture     (shaderTexture, shadow.renderPass, textures);
+            Default_CreateRenderPass        (renderPass, cmdPool);
+            Default_CreatePipeline          (pipelineVertexColor, shaderVertexColor, renderPass, vbo, ubo);
+            Default_CreatePipelineTexture   (pipelineTexture, shaderTexture, renderPass, vbo, ubo);
+            Default_CreatePipelineShadow    (pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
         }
     };
 
