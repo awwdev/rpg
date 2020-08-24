@@ -28,15 +28,15 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, Vk
 
     //DEFAULT
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.layout, 0, 1, &resources.default.pipelineShadow.sets[cmdBufferIdx], 0, nullptr); 
-    vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.pipeline);
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
-    FOR_ARRAY(scene.renderGraph.default_ubo.groups.usedIndices, i)
+    vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.pipeline);
+    FOR_ARRAY(scene.renderGraph.default_ubo.groupsVertexColor.usedIndices, i)
     {
-        const auto idx       = scene.renderGraph.default_ubo.groups.usedIndices[i];
+        const auto idx       = scene.renderGraph.default_ubo.groupsVertexColor.usedIndices[i];
         const auto vertOff   = resources.default.vbo.vertexGroups[idx].begin;
         const auto vertCount = resources.default.vbo.vertexGroups[idx].count;
-        const auto instOff   = scene.renderGraph.default_ubo.groups.Get(idx).begin;
-        const auto instCount = scene.renderGraph.default_ubo.groups.Get(idx).count;
+        const auto instOff   = scene.renderGraph.default_ubo.groupsVertexColor.Get(idx).begin;
+        const auto instCount = scene.renderGraph.default_ubo.groupsVertexColor.Get(idx).count;
         vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
     }
 
@@ -74,16 +74,30 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
     }
 
     //DEFAULT
-    vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.layout, 0, 1, &resources.default.pipeline.sets[cmdBufferIdx], 0, nullptr); 
-    vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipeline.pipeline);
+    vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineVertexColor.layout, 0, 1, &resources.default.pipelineVertexColor.sets[cmdBufferIdx], 0, nullptr); 
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
-    FOR_ARRAY(scene.renderGraph.default_ubo.groups.usedIndices, i)
+
+    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineVertexColor.pipeline);
+    FOR_ARRAY(scene.renderGraph.default_ubo.groupsVertexColor.usedIndices, i)
     {
-        const auto idx = scene.renderGraph.default_ubo.groups.usedIndices[i];
+        const auto& ubo = scene.renderGraph.default_ubo.groupsVertexColor;
+        const auto idx  = ubo.usedIndices[i];
         const auto vertOff   = resources.default.vbo.vertexGroups[idx].begin;
         const auto vertCount = resources.default.vbo.vertexGroups[idx].count;
-        const auto instOff   = scene.renderGraph.default_ubo.groups.Get(idx).begin;
-        const auto instCount = scene.renderGraph.default_ubo.groups.Get(idx).count;
+        const auto instOff   = ubo.Get(idx).begin;
+        const auto instCount = ubo.Get(idx).count;
+        vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
+    }
+
+    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineVertexColor.pipeline);
+    FOR_ARRAY(scene.renderGraph.default_ubo.groupsTexture.usedIndices, i)
+    {
+        const auto& ubo = scene.renderGraph.default_ubo.groupsTexture;
+        const auto idx  = ubo.usedIndices[i];
+        const auto vertOff   = resources.default.vbo.vertexGroups[idx].begin;
+        const auto vertCount = resources.default.vbo.vertexGroups[idx].count;
+        const auto instOff   = ubo.Get(idx).begin;
+        const auto instCount = ubo.Get(idx).count;
         vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
     }
 

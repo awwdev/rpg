@@ -48,6 +48,13 @@ namespace mini::vk
             count = hostUBO.data.count;
         }
 
+        template<u32 GROUPS_COUNT>
+        void Store(const rendering::UniformDataGroupsMesh<T, MAX_COUNT_T, GROUPS_COUNT>& hostUBO)
+        {
+            buffer.Store(hostUBO.data.bytes, hostUBO.data.CurrentSize()); //no offset, all at once
+            count = hostUBO.data.count;
+        }
+
         void Clear()
         {
             count = 0;

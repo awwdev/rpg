@@ -10,14 +10,17 @@ namespace mini::ecs {
 struct C_RenderData
 {
     res::MeshType meshType;
+    bool useTexture;
 
     //defaults
     C_RenderData(
-        const res::MeshType& pMeshType = {})
-        : meshType { pMeshType }
+        const res::MeshType& pMeshType = {},
+        const bool pUseTexture = false)
+        : meshType      { pMeshType   }
+        , useTexture    { pUseTexture }
     {}
 
-     //parsing
+    //parsing
     C_RenderData(const ComponentDataStringPairs& pairs) : C_RenderData()
     {
         FOR_ARRAY(pairs, i) {

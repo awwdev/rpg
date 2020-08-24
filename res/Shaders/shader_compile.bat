@@ -1,8 +1,10 @@
 glslc ui.vert -o spv/ui.vert.spv
 glslc ui.frag -o spv/ui.frag.spv
 
-glslc default.frag -o spv/default.frag.spv
-glslc default.vert -o spv/default.vert.spv
+glslc defaultVertexColor.frag -o spv/defaultVertexColor.frag.spv
+glslc defaultVertexColor.vert -o spv/defaultVertexColor.vert.spv
+glslc defaultTexture.frag -o spv/defaultTexture.frag.spv
+glslc defaultTexture.vert -o spv/defaultTexture.vert.spv
 glslc defaultShadow.frag -o spv/defaultShadow.frag.spv
 glslc defaultShadow.vert -o spv/defaultShadow.vert.spv
 

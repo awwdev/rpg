@@ -8,7 +8,7 @@
 namespace mini::rendering
 {
     constexpr u32 UI_UBO_MAX_COUNT = 1000;
-    constexpr u32 DEFAULT_UBO_MAX_COUNT = 1000;
+    constexpr u32 DEFAULT_UBO_MAX_COUNT = 500;
     constexpr u32 DEFAULT_VERTEX_MAX_COUNT = 1000;
     constexpr u32 TERRAIN_VERTEX_MAX_COUNT = 1'000'000;
 
@@ -16,7 +16,7 @@ namespace mini::rendering
     struct RenderGraph
     {
         UniformDataGroups<UI_UniformData, UI_UBO_MAX_COUNT, 1>  ui_ubo; //1 group only
-        UniformDataGroups<Default_UniformData, DEFAULT_UBO_MAX_COUNT> default_ubo;
+        UniformDataGroupsMesh<Default_UniformData, DEFAULT_UBO_MAX_COUNT> default_ubo;
 
         void Clear()
         {
