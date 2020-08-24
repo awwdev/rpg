@@ -32,6 +32,10 @@ struct C_RenderData
                 meshType = res::GetMeshType(pair.val);  
                 break;
 
+                case ComponentDataType::useTexture:  
+                useTexture = (bool)std::atoi(pair.val.data);  
+                break;
+
                 default: dbg::LogWarning("component data type not defined for this component");
             }
         }

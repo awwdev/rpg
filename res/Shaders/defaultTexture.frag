@@ -51,5 +51,6 @@ void main()
 {
     float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
 
-    outColor = vec4(inColors.rgb * shadow, 1);
+    outColor = vec4(1,1,1,1); //TEST
+	// vec4(inColors.rgb * shadow, 1);
 }

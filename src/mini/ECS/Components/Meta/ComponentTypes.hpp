@@ -26,13 +26,15 @@ enum class ComponentDataType
 {
     scale,
     meshType,
+    useTexture,
     ENUM_END
 };
 
 const box::EnumMap<ComponentDataType::ENUM_END, box::String<COMPONENT_MAX_STR_LEN>> COMPONENTDATA_ENUM_TO_STR
 {
-    { ComponentDataType::scale,     "scale" },
-    { ComponentDataType::meshType,  "meshType" },
+    { ComponentDataType::scale,         "scale" },
+    { ComponentDataType::meshType,      "meshType" },
+    { ComponentDataType::useTexture,    "useTexture" },
 };
 const auto COMPONENTDATA_STR_TO_ENUM = box::StringMapFromEnumMap<ComponentDataType, COMPONENT_MAX_STR_LEN>(COMPONENTDATA_ENUM_TO_STR);
 

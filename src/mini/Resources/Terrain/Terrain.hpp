@@ -255,6 +255,7 @@ struct Terrain
         }        
     }
 
+    //TODO: we don't acutally place in terrain, but use terrain to cast ray against
     void Placing(const rendering::EgoCamera& camera, ecs::ECS& ecs)
     {
         using namespace utils;

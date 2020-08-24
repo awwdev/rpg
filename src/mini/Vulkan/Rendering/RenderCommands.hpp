@@ -89,7 +89,7 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
         vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
     }
 
-    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineVertexColor.pipeline);
+    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineTexture.pipeline);
     FOR_ARRAY(scene.renderGraph.default_ubo.groupsTexture.usedIndices, i)
     {
         const auto& ubo = scene.renderGraph.default_ubo.groupsTexture;

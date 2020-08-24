@@ -8,17 +8,20 @@
 @ Sword
 ? RenderData
 + meshType = Sword
++ useTexture = 1
 ? Transform
 + scale = 1,1,1
 
 @ Stone
 ? RenderData
 + meshType = Sword
++ useTexture = 0
 ? Transform
 + scale = 1,1,1
 
 @ Grass
 ? RenderData
 + meshType = Sword
++ useTexture = 1
 ? Transform
 + scale = 1,1,1
