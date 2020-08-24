@@ -89,6 +89,7 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
         vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
     }
 
+    vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineTexture.layout, 0, 1, &resources.default.pipelineTexture.sets[cmdBufferIdx], 0, nullptr); 
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineTexture.pipeline);
     FOR_ARRAY(scene.renderGraph.default_ubo.groupsTexture.usedIndices, i)
     {

@@ -5,8 +5,10 @@ layout(location = 0) out vec4 outColor;
 
 layout(location = 0) in vec4 inColors;
 layout(location = 1) in vec4 inShadowCoord;
+layout(location = 2) in vec3 inUV;
 
 layout(binding  = 1) uniform sampler2D shadowMap;
+layout(binding  = 2) uniform sampler2DArray textures;
 
 ////https://github.com/SaschaWillems/Vulkan/tree/master/data/shaders/glsl/shadowmapping
 
@@ -51,6 +53,6 @@ void main()
 {
     float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
 
-    outColor = vec4(1,1,1,1); //TEST
+    outColor = vec4(vec3(texture(textures, inUV).b), 1);
 	// vec4(inColors.rgb * shadow, 1);
 }

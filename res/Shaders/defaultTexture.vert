@@ -20,6 +20,7 @@ layout(binding = 0) uniform InstanceData {
 
 layout (location = 0) out vec4 outCol;
 layout (location = 1) out vec4 outShadowCoord;
+layout (location = 2) out vec4 outUV;
 
 const mat4 biasMat = mat4( 
 	0.5, 0.0, 0.0, 0.0,
@@ -32,6 +33,7 @@ void main()
 {
     gl_Position = push.camera * instanceData.arr[gl_InstanceIndex].transform * inPos;
     outCol      = inCol;
+    outUV       = inTex;
     vec4 shadowCoords = (biasMat * push.sun) * inPos;
     outShadowCoord    = shadowCoords;
 }

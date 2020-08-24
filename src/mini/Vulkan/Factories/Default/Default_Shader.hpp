@@ -102,8 +102,8 @@ namespace mini::vk
             info.imageInfo = 
             {
                 .sampler        = shader.samplers[0],
-                .imageView      = imageArray.view, 
-                .imageLayout    = imageArray.layout
+                .imageView      = rp.depthImage.view, 
+                .imageLayout    = rp.depthImage.layout
             };
         }
         //TEXTURE
@@ -123,8 +123,8 @@ namespace mini::vk
             info.imageInfo = 
             {
                 .sampler        = shader.samplers[0],
-                .imageView      = rp.depthImage.view, 
-                .imageLayout    = rp.depthImage.layout
+                .imageView      = imageArray.view, 
+                .imageLayout    = imageArray.layout
             };
         }
 
