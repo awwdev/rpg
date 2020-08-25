@@ -43,13 +43,21 @@ struct Models
         { res::MeshType::PrimitiveRing16,    { utils::MESH_RING_16,  ArrayCount(utils::MESH_RING_16)     } },
     }; 
 
-    //model data separated
-    box::Array<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT> vertices;
+    box::Array<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;
 
     void Load()
     {
-        LoadModel(vertices, "res/Models/sword.txt");
-        vertexLookup.Set(res::MeshType::Sword, MeshVertexView{(utils::Common_Vertex*)vertices.bytes, vertices.count});
+        box::Array<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT> tmp;
+
+        LoadModel(tmp, "res/Models/sword.txt");
+        vertexLookup.Set(res::MeshType::Sword, MeshVertexView{ &allModelVertices[allModelVertices.count], tmp.count });
+        allModelVertices.AppendArray(tmp);
+        tmp.Clear();
+
+        LoadModel(tmp, "res/Models/grass.txt");
+        vertexLookup.Set(res::MeshType::Grass, MeshVertexView{ &allModelVertices[allModelVertices.count], tmp.count });
+        allModelVertices.AppendArray(tmp);
+        tmp.Clear();
     }
 };
 

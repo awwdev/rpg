@@ -30,8 +30,8 @@ struct Common_Vertex
 std::ostream& operator<<(std::ostream& os, const Common_Vertex& vert)
 {
     PrintMatrix(vert.pos);
-    PrintMatrix(vert.nor);
     PrintMatrix(vert.col);
+    PrintMatrix(vert.nor);
     PrintMatrix(vert.tex);
     return os;
 }

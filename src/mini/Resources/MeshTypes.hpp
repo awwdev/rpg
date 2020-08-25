@@ -13,6 +13,7 @@ enum class MeshType
     PrimitiveTriangle,
     PrimitiveRing16, 
     Sword,
+    Grass,
 
     //could add Custom1 and so on for user mod mesh later
     ENUM_END
@@ -26,6 +27,7 @@ const box::EnumMap<MeshType::ENUM_END, box::String<MESHTYPE_MAX_STR_LEN>> MESHTY
     { MeshType::PrimitiveTriangle,  "PrimitiveTriangle" },
     { MeshType::PrimitiveRing16,    "PrimitiveRing16" },
     { MeshType::Sword,              "Sword" },
+    { MeshType::Grass,              "Grass" },
 };
 const auto MESHTYPE_STR_TO_ENUM = box::StringMapFromEnumMap<MeshType, MESHTYPE_MAX_STR_LEN>(MESHTYPE_ENUM_TO_STR);
 

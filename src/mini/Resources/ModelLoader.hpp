@@ -7,8 +7,7 @@
 #include <filesystem>
 
 namespace mini::res {
-    
-//specific blender export!
+
 template<auto N>
 void LoadModel(box::Array<utils::Common_Vertex, N>& vertices, chars_t path)
 {
@@ -17,54 +16,53 @@ void LoadModel(box::Array<utils::Common_Vertex, N>& vertices, chars_t path)
     std::ifstream file(path, std::ios::binary);
     if (!file) dbg::LogError("cannot open file");
 
-    char line [100];
-    while(file.getline(line, 100))
+    utils::Common_Vertex vertex {};
+
+    constexpr auto BUFFER_MAX = 150;
+    char line [BUFFER_MAX];
+    while(file.getline(line, BUFFER_MAX))
     {
-        u32 commaCount = 0;
-        u32 i1 = 0; 
+        idx_t beg = 0;
+        idx_t commaCount = 0;
 
-        utils::Vec3f position {};
-        position[0][3] = 1;
-        utils::Vec4f color {};
-        utils::Vec3f normals {};
+        auto parseFn = [&] {
+            f32 value = std::atof(&line[beg]);
+            switch(commaCount % 13){
+                //vert index
+                case  0: break;
+                //vert pos
+                case  1: vertex.pos[X] = value; break;
+                case  2: vertex.pos[Y] = value; break;
+                case  3: vertex.pos[Z] = value; break;
+                //vert col
+                case  4: vertex.col[X] = value; break;
+                case  5: vertex.col[Y] = value; break;
+                case  6: vertex.col[Z] = value; break;
+                case  7: vertex.col[W] = value; break;
+                //vert normals
+                case  8: vertex.nor[X] = value; break;
+                case  9: vertex.nor[Y] = value; break;
+                case 10: vertex.nor[Z] = value; break;
+                //vert uv
+                case 11: vertex.tex[X] = value; break;
+                case 12: vertex.tex[Y] = value; break;
+            }           
+        };
 
-        //POSITION
-        for(u32 i2 = 0; i2 < 100; ++i2){
-            if (commaCount < 3)
-            {
-                if(line[i2] == ','){
-                    if (commaCount == 0)
-                        position[X] = (float)std::atof(line+i1);
-                    if (commaCount == 1)
-                        position[Y] = (float)std::atof(line+i1);
-                    if (commaCount == 2)
-                        position[Z] = (float)std::atof(line+i1);
-                    i1 = i2+1;
-                    commaCount++;
-                }
+        for(idx_t i = 0; line[i] != '\n' && line[i] != '\0'; ++i)
+        {
+            const auto c = line[i];
+            if (c == ','){ 
+                parseFn();
+                beg = i + 1;
+                commaCount++;
+
+                //if (commaCount % 13 == 0)
+                //    dbg::LogInfo(vertex);
             }
-            else if (commaCount < 6) 
-            {
-                if(line[i2] == ','){
-                    color[0][commaCount-3] = (float)std::atof(line+i1);
-                    i1 = i2+1;
-                    commaCount++;
-                }
-            }
-            else if (commaCount < 9) 
-            {
-                if(line[i2] == ','){
-                    normals[0][commaCount-6] = (float)std::atof(line+i1);
-                    i1 = i2+1;
-                    commaCount++;
-                }
-            }
-            
         }
-
-        vertices.Append(position, normals, color);
     }
 
 }
 
-}//ns
+}//NS
