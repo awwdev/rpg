@@ -16,19 +16,27 @@ void LoadModel(box::Array<utils::Common_Vertex, N>& vertices, chars_t path)
     std::ifstream file(path, std::ios::binary);
     if (!file) dbg::LogError("cannot open file");
 
-    utils::Common_Vertex vertex {};
-
     constexpr auto BUFFER_MAX = 150;
+    constexpr auto COMMAS_MAX = 13;
+
     char line [BUFFER_MAX];
+    Common_Vertex vertex {};
+
     while(file.getline(line, BUFFER_MAX))
     {
         idx_t beg = 0;
         idx_t commaCount = 0;
 
-        auto parseFn = [&] {
-            f32 value = std::atof(&line[beg]);
-            switch(commaCount % 13){
-                //vert index
+        for(idx_t i = 0; line[i] != '\n' && line[i] != '\0'; ++i)
+        {
+            if (line[i] != ',')
+                continue;
+
+            const f32 value = (f32)std::atof(&line[beg]);
+            
+            switch(commaCount % COMMAS_MAX)
+            {
+                //vert idx
                 case  0: break;
                 //vert pos
                 case  1: vertex.pos[X] = value; break;
@@ -39,28 +47,22 @@ void LoadModel(box::Array<utils::Common_Vertex, N>& vertices, chars_t path)
                 case  5: vertex.col[Y] = value; break;
                 case  6: vertex.col[Z] = value; break;
                 case  7: vertex.col[W] = value; break;
-                //vert normals
+                //vert nor
                 case  8: vertex.nor[X] = value; break;
                 case  9: vertex.nor[Y] = value; break;
                 case 10: vertex.nor[Z] = value; break;
-                //vert uv
+                //vert tex
                 case 11: vertex.tex[X] = value; break;
                 case 12: vertex.tex[Y] = value; break;
-            }           
-        };
+            } 
 
-        for(idx_t i = 0; line[i] != '\n' && line[i] != '\0'; ++i)
-        {
-            const auto c = line[i];
-            if (c == ','){ 
-                parseFn();
-                beg = i + 1;
-                commaCount++;
-
-                //if (commaCount % 13 == 0)
-                //    dbg::LogInfo(vertex);
-            }
+            beg = i + 1;
+            commaCount++;    
         }
+
+        //dbg::LogInfo(vertex);
+        vertices.Append(vertex);
+        
     }
 
 }

@@ -10,6 +10,8 @@
 #include "mini/ECS/Prefabs/PrefabTypes.hpp"
 #include "mini/Utils/Algorithms.hpp"
 
+#include <cstdlib> //rand
+
 namespace mini::res {
 
 enum EditMode { VertexGrab, VertexPaint, PropPlacement };
@@ -268,6 +270,8 @@ struct Terrain
                 const auto ID = ecs.AddEntity(settings.prefabType);
                 auto& t = ecs.arrays.transforms.Get(ID);
                 t.translation = intersection->pos;
+                const f32 randY = (f32) (std::rand() % 360);
+                t.rotation = { 0, randY, 0 };
             }
         }
     }
