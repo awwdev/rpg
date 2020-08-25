@@ -123,6 +123,7 @@ namespace mini::vk
         void Recreate(VkCommandPool cmdPool, Resources_Shadow& shadow)
         {
             shaderVertexColor.~Shader();
+            shaderTexture.~Shader();
             pipelineVertexColor.~Pipeline();
             pipelineTexture.~Pipeline();
             pipelineShadow.~Pipeline();

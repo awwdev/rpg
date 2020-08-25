@@ -29,6 +29,10 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
         resources.common_pushConsts.camera = resources.sky.pushConsts.camera = scene.editorController.camera.perspective * scene.editorController.camera.view;
         //resources.common_pushConsts.camera = scene.sun.GetOrthographic() * scene.sun.GetView();
 
+    static float t = 0;
+    t+=(f32)dt;
+    resources.common_pushConsts.time = t;
+
     resources.common_pushConsts.sun    = scene.sun.GetOrthographic() * scene.sun.GetView(); //BIAS * 
     resources.common_pushConsts.sunDir = utils::Normalize(scene.sun.pos * 1);
     resources.ui.pushConsts.wnd_w = wnd::global::window_w;

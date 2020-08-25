@@ -13,6 +13,7 @@ namespace mini::vk
         utils::Mat4f camera;
         utils::Mat4f sun;
         utils::Vec3f sunDir;
+        float time;
     };
 
     struct Sky_PushConstants

@@ -272,6 +272,10 @@ struct Terrain
                 t.translation = intersection->pos;
                 const f32 randY = (f32) (std::rand() % 360);
                 t.rotation = { 0, randY, 0 };
+                const f32 SX = 0.5f + (std::rand() % 100) / 100.f;
+                const f32 SZ = 0.5f + (std::rand() % 100) / 100.f;
+                const f32 SY = 0.5f + (std::rand() % 100) / 100.f;
+                t.scale = { SX, SY, SZ };
             }
         }
     }

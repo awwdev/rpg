@@ -3,8 +3,11 @@
 layout(push_constant) uniform Push {
     mat4 camera;
     mat4 sun;
+    vec3 sunDir;
+    float time;
 } push;
 
+//TODO: vec 3 would be more correct, compiler will add vec4 anyways but set w to 1, right?
 layout(location = 0) in vec4 inPos;
 layout(location = 1) in vec4 inNor;
 layout(location = 2) in vec4 inCol;
@@ -31,7 +34,11 @@ const mat4 biasMat = mat4(
 
 void main() 
 {
-    gl_Position = push.camera * instanceData.arr[gl_InstanceIndex].transform * inPos;
+    vec4 _pos = inPos;
+    
+    _pos.x += sin(push.time * 1.0) * _pos.y * 0.1;
+    _pos.z += sin(push.time * 1.2) * _pos.y * 0.1;
+    gl_Position = push.camera * instanceData.arr[gl_InstanceIndex].transform * _pos;
     outCol      = inCol;
     outUV       = inTex;
     vec4 shadowCoords = (biasMat * push.sun) * inPos;
