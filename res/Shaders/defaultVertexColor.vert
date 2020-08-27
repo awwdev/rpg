@@ -32,6 +32,6 @@ void main()
 {
     gl_Position = push.camera * instanceData.arr[gl_InstanceIndex].transform * inPos;
     outCol      = inCol;
-    vec4 shadowCoords = (biasMat * push.sun) * inPos;
+    vec4 shadowCoords = (biasMat * push.sun) * (instanceData.arr[gl_InstanceIndex].transform * inPos);
     outShadowCoord    = shadowCoords;
 }

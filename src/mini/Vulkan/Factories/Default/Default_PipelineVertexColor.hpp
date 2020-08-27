@@ -13,7 +13,7 @@
 
 namespace mini::vk {
 
-void Default_CreatePipeline(
+void Default_CreatePipelineVertexColor(
     Pipeline& pipeline,
     Shader& shader, 
     RenderPass& renderPass,

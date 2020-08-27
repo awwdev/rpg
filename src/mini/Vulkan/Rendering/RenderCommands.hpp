@@ -91,6 +91,7 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
 
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineTexture.layout, 0, 1, &resources.default.pipelineTexture.sets[cmdBufferIdx], 0, nullptr); 
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineTexture.pipeline);
+    vkCmdPushConstants(cmdBuffer,resources.default.pipelineTexture.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
     FOR_ARRAY(scene.renderGraph.default_ubo.groupsTexture.usedIndices, i)
     {
         const auto& ubo = scene.renderGraph.default_ubo.groupsTexture;

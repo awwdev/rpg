@@ -109,15 +109,15 @@ namespace mini::vk
         {
             textures.Create(hostRes.textures.default, cmdPool);
 
-            Default_CreateVertexBuffer      (vbo, cmdPool, hostRes);
-            Default_CreateUniformBuffer     (ubo);
-            Default_CreateShaderVertexColor (shaderVertexColor, shadow.renderPass);
-            Default_CreateShaderTexture     (shaderTexture, shadow.renderPass, textures);
-            Default_CreateShaderShadow      (shaderShadow);
-            Default_CreateRenderPass        (renderPass, cmdPool);
-            Default_CreatePipeline          (pipelineVertexColor, shaderVertexColor, renderPass, vbo, ubo);
-            Default_CreatePipelineTexture   (pipelineTexture, shaderTexture, renderPass, vbo, ubo);
-            Default_CreatePipelineShadow    (pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
+            Default_CreateVertexBuffer      (   vbo, cmdPool, hostRes);
+            Default_CreateUniformBuffer         (ubo);
+            Default_CreateShaderVertexColor     (shaderVertexColor, shadow.renderPass);
+            Default_CreateShaderTexture         (shaderTexture, shadow.renderPass, textures);
+            Default_CreateShaderShadow          (shaderShadow);
+            Default_CreateRenderPass            (renderPass, cmdPool);
+            Default_CreatePipelineVertexColor   (pipelineVertexColor, shaderVertexColor, renderPass, vbo, ubo);
+            Default_CreatePipelineTexture       (pipelineTexture, shaderTexture, renderPass, vbo, ubo);
+            Default_CreatePipelineShadow        (pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
         }
 
         void Recreate(VkCommandPool cmdPool, Resources_Shadow& shadow)
@@ -133,7 +133,7 @@ namespace mini::vk
             Default_CreateShaderVertexColor (shaderVertexColor, shadow.renderPass);
             Default_CreateShaderTexture     (shaderTexture, shadow.renderPass, textures);
             Default_CreateRenderPass        (renderPass, cmdPool);
-            Default_CreatePipeline          (pipelineVertexColor, shaderVertexColor, renderPass, vbo, ubo);
+            Default_CreatePipelineVertexColor          (pipelineVertexColor, shaderVertexColor, renderPass, vbo, ubo);
             Default_CreatePipelineTexture   (pipelineTexture, shaderTexture, renderPass, vbo, ubo);
             Default_CreatePipelineShadow    (pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
         }

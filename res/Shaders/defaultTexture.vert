@@ -35,12 +35,13 @@ const mat4 biasMat = mat4(
 void main() 
 {
     vec4 _pos = inPos;
-    
     _pos.x += sin(push.time * 1.0) * _pos.y * 0.1;
     _pos.z += sin(push.time * 1.2) * _pos.y * 0.1;
     gl_Position = push.camera * instanceData.arr[gl_InstanceIndex].transform * _pos;
+
     outCol      = inCol;
     outUV       = inTex;
-    vec4 shadowCoords = (biasMat * push.sun) * inPos;
+    
+    vec4 shadowCoords = (biasMat * push.sun) * (instanceData.arr[gl_InstanceIndex].transform * _pos);
     outShadowCoord    = shadowCoords;
 }
