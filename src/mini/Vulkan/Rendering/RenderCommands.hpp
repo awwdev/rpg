@@ -108,13 +108,16 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
 
 inline void UI(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene& scene)
 {
+    
+
     const auto beginInfo_ui = resources.ui.renderPass.GetBeginInfo(cmdBufferIdx);
     vkCmdBeginRenderPass(cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
-
     vkCmdPushConstants      (cmdBuffer, resources.ui.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.ui.pushConsts), &resources.ui.pushConsts);
     vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.pipeline);
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.layout, 0, 1, &resources.ui.pipeline.sets[cmdBufferIdx], 0, nullptr); 
-    vkCmdDraw               (cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
+    
+    if (resources.ui.ubo.count > 0)
+        vkCmdDraw(cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
 
     vkCmdEndRenderPass(cmdBuffer);
 }

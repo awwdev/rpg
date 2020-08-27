@@ -48,8 +48,10 @@ struct GameScene
 
         //? UI
         app::ResetUpdateInputMode();
-        ui::DrawUI_Terrain(hostRes.terrain, sun);
-        ui::DrawUI_Stats();
+        if (app::global::inputMode != app::global::InputMode::PlayMode) {
+            ui::DrawUI_Terrain(hostRes.terrain, sun);
+            ui::DrawUI_Stats();
+        }   
 
         //? META
         playerController.Update(dt, ecs);
