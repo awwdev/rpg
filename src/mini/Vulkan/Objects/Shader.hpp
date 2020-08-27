@@ -28,6 +28,7 @@ namespace mini::vk
             modules.Clear(); //clear due to dtor call on recreation
             samplers.Clear();
             stageInfos.Clear();
+            infos.Clear();
         }
 
         template<auto BUFFER_SIZE = 8000u>

@@ -35,6 +35,9 @@ struct PlayerController
 
     void Update(const double dt, ecs::ECS& ecs)
     {
+        if (wnd::global::resizeState == wnd::global::ResizeState::End)
+            camera.UpdatePerspective();
+            
         if (app::global::inputMode != app::global::PlayMode) return;
 
         using namespace utils;

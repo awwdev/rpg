@@ -130,12 +130,12 @@ namespace mini::vk
             renderPass.~RenderPass();
 
             //TODO: recreate whole shader is wrong, only sampler needs recreation (due to img resize)
-            Default_CreateShaderVertexColor (shaderVertexColor, shadow.renderPass);
-            Default_CreateShaderTexture     (shaderTexture, shadow.renderPass, textures);
-            Default_CreateRenderPass        (renderPass, cmdPool);
-            Default_CreatePipelineVertexColor          (pipelineVertexColor, shaderVertexColor, renderPass, vbo, ubo);
-            Default_CreatePipelineTexture   (pipelineTexture, shaderTexture, renderPass, vbo, ubo);
-            Default_CreatePipelineShadow    (pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
+            Default_CreateShaderVertexColor     (shaderVertexColor, shadow.renderPass);
+            Default_CreateShaderTexture         (shaderTexture, shadow.renderPass, textures);
+            Default_CreateRenderPass            (renderPass, cmdPool);
+            Default_CreatePipelineVertexColor   (pipelineVertexColor, shaderVertexColor, renderPass, vbo, ubo);
+            Default_CreatePipelineTexture       (pipelineTexture, shaderTexture, renderPass, vbo, ubo);
+            Default_CreatePipelineShadow        (pipelineShadow, shaderShadow, shadow.renderPass, vbo, ubo);
         }
     };
 

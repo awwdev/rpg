@@ -52,6 +52,8 @@ namespace mini::wnd
         inline u32 mouse_wx, mouse_wy; //window
         inline s32 mouse_x,  mouse_y;  //screen
 
+        enum ResizeState { None, Begin, End } resizeState;
+
         inline box::Array<EventType, 10> frameEvents; //tmp (internal usage mostly)
     }
 

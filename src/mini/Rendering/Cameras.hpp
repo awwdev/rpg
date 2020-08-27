@@ -56,6 +56,7 @@ struct EgoCamera
             fov -= wnd::global::mouse_scroll_delta * scrollSpd;
             UpdatePerspective();
         }
+        
 
         view = {
             1, 0, 0, 0,
@@ -125,6 +126,7 @@ struct ThirdCamera
         if (wnd::HasEvent<wnd::Mouse_Scroll>()) {
             distance -= wnd::global::mouse_scroll_delta * scrollSpd;
         }
+        
 
         utils::Vec3f orientVec = (orientation * distance);
         utils::Mat4f mOrientation = {

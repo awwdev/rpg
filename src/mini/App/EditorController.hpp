@@ -23,6 +23,8 @@ struct EditorController
     {
         if (app::global::inputMode == app::global::FlyMode)
             camera.Update(dt);
+        if (wnd::global::resizeState == wnd::global::ResizeState::End)
+            camera.UpdatePerspective();
 
         if (wnd::HasEvent<wnd::F9, wnd::Pressed>())
             terrainWireMode = !terrainWireMode;

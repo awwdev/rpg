@@ -46,8 +46,9 @@ struct VkRenderer
 
     void Render(const double dt, app::GameScene& scene, res::HostResources& hostRes)
     {
-        if (wnd::global::events[wnd::Window_Resize] == wnd::Set){
-            RecreateScwapchain();
+        if (wnd::global::resizeState != wnd::global::ResizeState::None){
+            if (wnd::global::resizeState == wnd::global::ResizeState::End)
+                RecreateScwapchain();
             return;
         } //checking for size==0 is done previously (will also pause other logic)
 
