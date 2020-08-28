@@ -5,12 +5,13 @@
 
 	//? FONT
 	//"editor.fontFamily": "Fira Code",
+	//"editor.fontFamily": "Source Code Variable",
 	//"editor.fontFamily": "Consolas",
 	"editor.fontFamily": "Cousine",
 	"editor.fontSize": 12,
 	"editor.fontWeight": "100",
 	"editor.fontLigatures": false,
-	"editor.lineHeight": 24,
+	"editor.lineHeight": 22,
 	"editor.tabSize": 4,
 	"editor.letterSpacing": -0.15,
 
@@ -25,8 +26,8 @@
 	"editor.smoothScrolling": true,
 	"editor.mouseWheelScrollSensitivity": 2,
 	"editor.scrollBeyondLastLine": true,
-	"editor.cursorStyle": "block",
-	"editor.cursorBlinking": "phase",
+	"editor.cursorStyle": "line",
+	"editor.cursorBlinking": "smooth",
 	"editor.cursorSmoothCaretAnimation": true,
 	"editor.cursorWidth": 1,
 	// Explorer settings
@@ -67,7 +68,7 @@
 		"editorLineNumber.foreground": "#555561",
 		"editorLineNumber.activeForeground": "#e4c727",
 		"editor.lineHighlightBorder": "#2A2A30",
-		"sideBar.background": "#000",
+		"sideBar.background": "#000000",
 	},
 	"editor.scrollbar.horizontal": "hidden",
 	"editor.renderLineHighlight": "gutter",
@@ -250,18 +251,19 @@
 					"punctuation.separator",
 					"punctuation.separator.continuation",
 					"punctuation",
-					
+					"storage.modifier",
+					"storage.type",
 				],
 				"settings": {
-					"foreground": "#797979",
+					"foreground": "#71778a",
 					"fontStyle": ""
 				}
 			},
 			//?MODIFIERS
 			{
 				"scope": [
-					"storage.modifier",
-					"storage.type",
+					//"storage.modifier",
+					//"storage.type",
 					"keyword.control",
 				],
 				"settings": {
@@ -311,7 +313,7 @@
 					//"entity.name.function.operator.member",
 				],
 				"settings": {
-					"foreground": "#5492ee",
+					"foreground": "#57aeff",
 					//"fontStyle": "bold"
 				}
 			},

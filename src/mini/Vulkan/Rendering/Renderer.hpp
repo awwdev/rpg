@@ -2,7 +2,7 @@
 
 #pragma once
 #include "mini/Vulkan/Context.hpp"
-#include "mini/Vulkan/Resources.hpp"
+#include "mini/Vulkan/Resources/Resources.hpp"
 #include "mini/Resources/HostResources.hpp"
 #include "mini/App/Scene.hpp"
 #include "mini/Rendering/RenderGraph.hpp"

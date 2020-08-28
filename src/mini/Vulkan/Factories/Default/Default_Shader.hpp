@@ -72,7 +72,7 @@ namespace mini::vk
             .mipmapMode              = VK_SAMPLER_MIPMAP_MODE_LINEAR,
             .addressModeU            = VK_SAMPLER_ADDRESS_MODE_REPEAT, 
             .addressModeV            = VK_SAMPLER_ADDRESS_MODE_REPEAT, 
-            .addressModeW            = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+            .addressModeW            = VK_SAMPLER_ADDRESS_MODE_REPEAT,//VK_SAMPLER_ADDRESS_MODE_REPEAT
             .mipLodBias              = 0, 
             .anisotropyEnable        = VK_FALSE, 
             .maxAnisotropy           = 0, 

@@ -6,19 +6,17 @@
 #include "mini/Debug/Console.hpp"
 #include "mini/Box/Array.hpp"
 #include "mini/Utils/Types.hpp"
+
 #include "mini/Memory/Allocator.hpp"
 #include "mini/Memory/AllocatorPrint.hpp"
+
 #include "mini/Vulkan/Rendering/Renderer.hpp"
 
 #include "mini/App/Scene.hpp"
 #include "mini/Utils/DeltaTime.hpp"
 #include "mini/Resources/HostResources.hpp"
 
-#include "mini/Box/String.hpp"
-#include "mini/Box/StringMap.hpp"
-
 using namespace mini;
-using namespace mini::wnd;
 
 int WINAPI wWinMain(
     _In_ HINSTANCE hInstance,
@@ -62,14 +60,8 @@ int WINAPI wWinMain(
 } //main end
 
 //TODO: add index buffer regardless of usage, so you can use it when needed
-
 //TODO: draw stuff on render target for post fx
-//TODO: create grass, stone mesh, tree
-//TODO: texture pipeline
 //TODO: ECS serialization
-//TODO: word building
-
 //TODO: join transform and render component
 //TODO: use block ptr for s render function 
 //TODO: add static flag to render component, so ubo data is not updated
-
