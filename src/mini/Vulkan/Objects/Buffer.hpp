@@ -40,7 +40,7 @@ namespace mini::vk
         void*           memPtr;
         std::size_t     size;
 
-        void Map()   { VK_CHECK(vkMapMemory(g_contextPtr->device, memory, 0, size, 0, &memPtr)); }
+        void Map()   { VkCheck(vkMapMemory(g_contextPtr->device, memory, 0, size, 0, &memPtr)); }
         void Unmap() { vkUnmapMemory(g_contextPtr->device, memory); }
 
         void Store(const void* const data, const size_t size, const size_t offset = 0)
@@ -67,7 +67,7 @@ namespace mini::vk
                 .queueFamilyIndexCount  = 0,
                 .pQueueFamilyIndices    = nullptr
             };
-            VK_CHECK(vkCreateBuffer(g_contextPtr->device, &bufferInfo, nullptr, &buffer));
+            VkCheck(vkCreateBuffer(g_contextPtr->device, &bufferInfo, nullptr, &buffer));
 
             //? MEMORY
             VkMemoryRequirements memReqs;
@@ -75,8 +75,8 @@ namespace mini::vk
             size = memReqs.size; //render doc complains but not vulkan ?
 
             const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(g_contextPtr->physicalMemProps, memReqs, memProps));
-            VK_CHECK(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory)); //todo: allocate once for app and reuse memory pool
-            VK_CHECK(vkBindBufferMemory(g_contextPtr->device, buffer, memory, 0));
+            VkCheck(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory)); //todo: allocate once for app and reuse memory pool
+            VkCheck(vkBindBufferMemory(g_contextPtr->device, buffer, memory, 0));
         }
 
         ~Buffer()

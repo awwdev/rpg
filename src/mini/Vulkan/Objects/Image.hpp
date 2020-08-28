@@ -114,7 +114,7 @@ namespace mini::vk
                 .initialLayout          = VK_IMAGE_LAYOUT_UNDEFINED
             };
 
-            VK_CHECK(vkCreateImage(g_contextPtr->device, &imageInfo, nullptr, &image));
+            VkCheck(vkCreateImage(g_contextPtr->device, &imageInfo, nullptr, &image));
 
             //? MEMORY
             VkMemoryRequirements memReqs;
@@ -122,8 +122,8 @@ namespace mini::vk
 
             const VkMemoryPropertyFlags memProps { VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT };
             const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(g_contextPtr->physicalMemProps, memReqs, memProps));
-            VK_CHECK(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory)); //todo: allocate once for the app and use memory pool
-            VK_CHECK(vkBindImageMemory(g_contextPtr->device, image, memory, 0));
+            VkCheck(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory)); //todo: allocate once for the app and use memory pool
+            VkCheck(vkBindImageMemory(g_contextPtr->device, image, memory, 0));
 
             const VkImageViewCreateInfo viewInfo 
             {
@@ -150,7 +150,7 @@ namespace mini::vk
                 }
             };
 
-            VK_CHECK(vkCreateImageView(g_contextPtr->device, &viewInfo, nullptr, &view));
+            VkCheck(vkCreateImageView(g_contextPtr->device, &viewInfo, nullptr, &view));
 
             //? TRANSITION
 
@@ -234,7 +234,7 @@ namespace mini::vk
                 .initialLayout          = VK_IMAGE_LAYOUT_UNDEFINED
             };
 
-            VK_CHECK(vkCreateImage(g_contextPtr->device, &imageInfo, nullptr, &image));
+            VkCheck(vkCreateImage(g_contextPtr->device, &imageInfo, nullptr, &image));
 
             //? MEMORY
             VkMemoryRequirements memReqs;
@@ -242,8 +242,8 @@ namespace mini::vk
 
             const VkMemoryPropertyFlags memProps { VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT };
             const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(g_contextPtr->physicalMemProps, memReqs, memProps));
-            VK_CHECK(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory)); //todo: allocate once for the app and use memory pool
-            VK_CHECK(vkBindImageMemory(g_contextPtr->device, image, memory, 0));
+            VkCheck(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory)); //todo: allocate once for the app and use memory pool
+            VkCheck(vkBindImageMemory(g_contextPtr->device, image, memory, 0));
 
             const VkImageViewCreateInfo viewInfo 
             {
@@ -270,7 +270,7 @@ namespace mini::vk
                 }
             };
 
-            VK_CHECK(vkCreateImageView(g_contextPtr->device, &viewInfo, nullptr, &view));
+            VkCheck(vkCreateImageView(g_contextPtr->device, &viewInfo, nullptr, &view));
 
             //? TRANSITION
 

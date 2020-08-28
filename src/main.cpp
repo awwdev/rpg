@@ -50,7 +50,7 @@ int WINAPI wWinMain(
             }
         }
 
-        VK_CHECK(vkDeviceWaitIdle(vk::g_contextPtr->device));
+        vk::VkCheck(vkDeviceWaitIdle(vk::g_contextPtr->device));
         mem::PrintAllocationHTML();
     }
     

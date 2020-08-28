@@ -91,7 +91,7 @@ namespace mini::vk
             .pDependencies   = dependencies
         };
 
-        VK_CHECK(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &rp.renderPass));
+        VkCheck(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &rp.renderPass));
 
         //? framebuffer
 
@@ -111,7 +111,7 @@ namespace mini::vk
             .layers          = 1
         };
         
-        VK_CHECK(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &rp.framebuffer));
+        VkCheck(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &rp.framebuffer));
 
     }
     

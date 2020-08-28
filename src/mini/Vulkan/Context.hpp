@@ -22,9 +22,7 @@ namespace mini::vk
             dbg::LogWarning(pCallbackData->pMessage);
 
         if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
-        {
             mini::dbg::Assert(false, pCallbackData->pMessage);
-        }
 
         return VK_FALSE;
     }
@@ -124,13 +122,13 @@ namespace mini::vk
                 .ppEnabledExtensionNames = extensions
             };
 
-            VK_CHECK(vkCreateInstance(&instInfo, nullptr, &instance));
+            VkCheck(vkCreateInstance(&instInfo, nullptr, &instance));
 
             ((PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"))
                 (instance, &debugCreateInfo, nullptr, &debugMessenger);
 
             //VkArray<VkLayerProperties, 4> layerProps;
-            //VK_CHECK(vkEnumerateInstanceLayerProperties(&layerProps.count, layerProps.data));
+            //VkCheck(vkEnumerateInstanceLayerProperties(&layerProps.count, layerProps.data));
             //for(auto i = 0; i < layerProps.count; ++i)
             //{
             //    dbg::LogInfo(layerProps.data[i].layerName);
@@ -140,7 +138,7 @@ namespace mini::vk
         void CreatePhysical()
         {
             vk::VkArray<VkPhysicalDevice, 4> physicals { 4 };
-            VK_CHECK(vkEnumeratePhysicalDevices(instance, &physicals.count, physicals.data));
+            VkCheck(vkEnumeratePhysicalDevices(instance, &physicals.count, physicals.data));
             physical = physicals[0];
 
             vk::VkArray<VkQueueFamilyProperties, 10> famProps { 10 };
@@ -198,7 +196,7 @@ namespace mini::vk
                 .pEnabledFeatures           = &deviceFeatures
             };
 
-            VK_CHECK(vkCreateDevice(physical, &deviceInfo, nullptr, &device));
+            VkCheck(vkCreateDevice(physical, &deviceInfo, nullptr, &device));
             vkGetDeviceQueue(device, queueIndex, 0, &queue);
         }
 
@@ -212,16 +210,16 @@ namespace mini::vk
                 .hwnd       = (HWND)wndHandle.ptr2
             };
     
-            VK_CHECK(vkCreateWin32SurfaceKHR(instance, &surfInfo, nullptr, &surface));
+            VkCheck(vkCreateWin32SurfaceKHR(instance, &surfInfo, nullptr, &surface));
 
             VkBool32 supported {}; //todo: check for support
-            VK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(physical, queueIndex, surface, &supported));
-            VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
+            VkCheck(vkGetPhysicalDeviceSurfaceSupportKHR(physical, queueIndex, surface, &supported));
+            VkCheck(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
         }
 
         bool RecreateSwapchain()
         {
-            VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
+            VkCheck(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical, surface, &surfaceCapabilities));
             if (surfaceCapabilities.currentExtent.width == 0 || surfaceCapabilities.currentExtent.height == 0)
                 return false;
 
@@ -254,10 +252,10 @@ namespace mini::vk
                 .oldSwapchain           = nullptr
             };
 
-            VK_CHECK(vkCreateSwapchainKHR(device, &swapInfo, nullptr, &swapchain));
+            VkCheck(vkCreateSwapchainKHR(device, &swapInfo, nullptr, &swapchain));
             //expected to pass count first and get actual count:
-            VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapImages.count, nullptr));
-            VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapImages.count, swapImages.data));
+            VkCheck(vkGetSwapchainImagesKHR(device, swapchain, &swapImages.count, nullptr));
+            VkCheck(vkGetSwapchainImagesKHR(device, swapchain, &swapImages.count, swapImages.data));
 
             swapImageViews.count = swapImages.count;
             //dbg::LogInfo("swapchain count", images.count);
@@ -283,7 +281,7 @@ namespace mini::vk
                         .layerCount     = 1
                     }
                 };
-                VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &swapImageViews[i]));
+                VkCheck(vkCreateImageView(device, &viewInfo, nullptr, &swapImageViews[i]));
             }
         }
 

@@ -34,7 +34,7 @@ inline void UI_CreateShader(Shader& shader, ImageArray& imageArray)
         .borderColor             = VK_BORDER_COLOR_INT_OPAQUE_BLACK, 
         .unnormalizedCoordinates = VK_FALSE
     };
-    VK_CHECK(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, shader.samplers.Append()));
+    VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, shader.samplers.Append()));
 
     {
         shader.infos.Append();

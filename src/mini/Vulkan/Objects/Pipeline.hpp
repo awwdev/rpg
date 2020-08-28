@@ -52,7 +52,7 @@ namespace mini::vk
         };
 
         for(uint32_t i = 0; i < g_contextPtr->swapImages.count; ++i)
-            VK_CHECK(vkCreateDescriptorSetLayout(g_contextPtr->device, &setLayoutInfo, nullptr, pipeline.setLayouts.Append()));
+            VkCheck(vkCreateDescriptorSetLayout(g_contextPtr->device, &setLayoutInfo, nullptr, pipeline.setLayouts.Append()));
 
         box::Array<VkDescriptorPoolSize, 10> poolSizes;
         for(uint32_t i = 0; i < bindingsCount; ++i) {
@@ -70,7 +70,7 @@ namespace mini::vk
             .poolSizeCount  = poolSizes.count,
             .pPoolSizes     = poolSizes.Data()
         };
-        VK_CHECK(vkCreateDescriptorPool(g_contextPtr->device, &poolInfo, nullptr, &pipeline.descPool));
+        VkCheck(vkCreateDescriptorPool(g_contextPtr->device, &poolInfo, nullptr, &pipeline.descPool));
 
         const VkDescriptorSetAllocateInfo allocInfo {
             .sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -80,7 +80,7 @@ namespace mini::vk
             .pSetLayouts        = pipeline.setLayouts.Data()
         };
         pipeline.sets.count = pipeline.setLayouts.count;
-        VK_CHECK(vkAllocateDescriptorSets(g_contextPtr->device, &allocInfo, pipeline.sets.Data()));
+        VkCheck(vkAllocateDescriptorSets(g_contextPtr->device, &allocInfo, pipeline.sets.Data()));
 
         box::Array<VkWriteDescriptorSet, 10> writes;
         for(u32 i = 0; i < g_contextPtr->swapImages.count; ++i)

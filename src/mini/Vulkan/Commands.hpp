@@ -21,7 +21,7 @@ namespace mini::vk
                 .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
                 .queueFamilyIndex = g_contextPtr->queueIndex
             };
-            VK_CHECK(vkCreateCommandPool(g_contextPtr->device, &poolInfo, nullptr, &cmdPool));
+            VkCheck(vkCreateCommandPool(g_contextPtr->device, &poolInfo, nullptr, &cmdPool));
 
             //? CMD BUFFERS
 
@@ -34,7 +34,7 @@ namespace mini::vk
                 .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
                 .commandBufferCount = cmdBuffers.count
             };
-            VK_CHECK(vkAllocateCommandBuffers(g_contextPtr->device, &allocInfo, cmdBuffers.data));
+            VkCheck(vkAllocateCommandBuffers(g_contextPtr->device, &allocInfo, cmdBuffers.data));
         }
 
         ~Commands()
@@ -65,10 +65,10 @@ namespace mini::vk
             .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
             .commandBufferCount = 1
         };
-        VK_CHECK(vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer));
+        VkCheck(vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer));
 
         const auto beginInfo = CreateCmdBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-        VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+        VkCheck(vkBeginCommandBuffer(commandBuffer, &beginInfo));
         
         return commandBuffer;
     }
@@ -80,7 +80,7 @@ namespace mini::vk
         VkCommandPool cmdPool,
         VkQueue queue)
     {
-        VK_CHECK(vkEndCommandBuffer(cmdBuffer));
+        VkCheck(vkEndCommandBuffer(cmdBuffer));
 
         const VkSubmitInfo submitInfo {
             .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -94,8 +94,8 @@ namespace mini::vk
             .pSignalSemaphores    = nullptr
         };
 
-        VK_CHECK(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
-        VK_CHECK(vkQueueWaitIdle(queue));
+        VkCheck(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
+        VkCheck(vkQueueWaitIdle(queue));
         vkFreeCommandBuffers(device, cmdPool, 1, &cmdBuffer);
     }
 

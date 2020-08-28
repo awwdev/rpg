@@ -131,13 +131,13 @@ inline void RecordCommands(
 {
     auto cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
     const auto beginInfo = vk::CreateCmdBeginInfo();
-    VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+    VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
 
     ShadowMap   (cmdBuffer, cmdBufferIdx, resources, scene);
     Geometry    (cmdBuffer, cmdBufferIdx, resources, scene);
     UI          (cmdBuffer, cmdBufferIdx, resources, scene); 
 
-    VK_CHECK(vkEndCommandBuffer(cmdBuffer));
+    VkCheck(vkEndCommandBuffer(cmdBuffer));
 }
 
 } //ns

@@ -10,20 +10,26 @@
 #define VK_USE_PLATFORM_WIN32_KHR
 #include "../third/include/vulkan.h"
 
+namespace mini::vk {
 
-//#ifdef DEBUG
-#define VK_CHECK(fn) \
-if (const auto res = fn; res != VK_SUCCESS) \
-{ \
-    if (res > 0) \
-        dbg::LogWarning("VK RESULT", res); \
-    else \
-        mini::dbg::Assert(false, res); \
-} 
+    enum class VkErrorHandling { None, Warn, Assert };
+    constexpr auto VK_ERROR_HANDLING = VkErrorHandling::Warn;
 
-//#else
-//#   define VK_CHECK(fn) fn
-//#endif // DEBUG
+    inline void VkCheck(const VkResult result)
+    {
+        if constexpr(VK_ERROR_HANDLING == VkErrorHandling::Assert){
+            if (result != VK_SUCCESS)
+                dbg::Assert(false, result);
+            return;
+        }
+        if constexpr(VK_ERROR_HANDLING == VkErrorHandling::Warn){
+            if (result != VK_SUCCESS)
+                dbg::LogWarning("VK RESULT", result); 
+            return;
+        }
+    }
+
+}//NS
 
 /*
 use this to give a resource a name to view in renderdoc
@@ -38,9 +44,9 @@ const VkDebugUtilsObjectNameInfoEXT nameInfo
 };
 ((PFN_vkSetDebugUtilsObjectNameEXT) vkGetInstanceProcAddr(context.instance, "vkSetDebugUtilsObjectNameEXT"))
 (context.device, &nameInfo);
-
 */
 
+//TODO: remove this 
 namespace mini::vk 
 {
     #define FOR_VK_ARRAY(arr, i) for(u32 i = 0; i < arr.count; ++i)

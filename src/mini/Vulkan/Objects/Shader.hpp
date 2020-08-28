@@ -51,7 +51,7 @@ namespace mini::vk
             };
 
             auto* mod = modules.Append();
-            VK_CHECK(vkCreateShaderModule(g_contextPtr->device, &moduleInfo, nullptr, mod));
+            VkCheck(vkCreateShaderModule(g_contextPtr->device, &moduleInfo, nullptr, mod));
 
             stageInfos.Append(VkPipelineShaderStageCreateInfo{
                 .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,

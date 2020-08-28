@@ -76,7 +76,7 @@ struct VkRenderer
             vkWaitForFences(context.device, 1, &sync.inFlight[imageIndex], VK_FALSE, UINT64_MAX); //important to wait
         }
         sync.inFlight[imageIndex] = sync.fences[currentFrame];
-        VK_CHECK(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
+        VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
         //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
         UpdateVkResources_GameScene(resources, scene, hostRes, dt); //TODO: depends on scene
@@ -95,7 +95,7 @@ struct VkRenderer
             .signalSemaphoreCount   = 1,
             .pSignalSemaphores      = &sync.imageFinished[currentFrame],
         };
-        VK_CHECK(vkQueueSubmit(context.queue, 1, &submitInfo, sync.fences[currentFrame]));
+        VkCheck(vkQueueSubmit(context.queue, 1, &submitInfo, sync.fences[currentFrame]));
 
         const VkPresentInfoKHR presentInfo {
             .sType                  = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
@@ -107,7 +107,7 @@ struct VkRenderer
             .pImageIndices          = &imageIndex,
             .pResults               = nullptr
         };
-        VK_CHECK(vkQueuePresentKHR(context.queue, &presentInfo));
+        VkCheck(vkQueuePresentKHR(context.queue, &presentInfo));
 
         currentFrame = (currentFrame + 1) % (context.swapImages.count - 1);
     }

@@ -142,7 +142,7 @@ void Default_CreatePipelineTexture(
         .pushConstantRangeCount = 1,
         .pPushConstantRanges    = &constantRange,
     };
-    VK_CHECK(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &pipeline.layout));
+    VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &pipeline.layout));
 
     const VkGraphicsPipelineCreateInfo pipelineInfo {
         .sType                      = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -166,7 +166,7 @@ void Default_CreatePipelineTexture(
         .basePipelineIndex          = -1
     };
     
-    VK_CHECK(vkCreateGraphicsPipelines(g_contextPtr->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.pipeline));
+    VkCheck(vkCreateGraphicsPipelines(g_contextPtr->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.pipeline));
 }
 
 } //ns

@@ -61,13 +61,13 @@ namespace mini::vk
                 .commandBufferCount = 1
             };
             VkCommandBuffer commandBuffer;
-            VK_CHECK(vkAllocateCommandBuffers(g_contextPtr->device, &allocInfo, &commandBuffer));
+            VkCheck(vkAllocateCommandBuffers(g_contextPtr->device, &allocInfo, &commandBuffer));
 
             const VkCommandBufferBeginInfo beginInfo{
                 .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
                 .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
             };
-            VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+            VkCheck(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
             const VkBufferCopy copyRegion {
                 .srcOffset = 0,
@@ -76,15 +76,15 @@ namespace mini::vk
             };
             vkCmdCopyBuffer(commandBuffer, cpuBuffer.buffer, gpuBuffer.buffer, 1, &copyRegion);
 
-            VK_CHECK(vkEndCommandBuffer(commandBuffer));
+            VkCheck(vkEndCommandBuffer(commandBuffer));
 
             const VkSubmitInfo submitInfo {
                 .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
                 .commandBufferCount = 1,
                 .pCommandBuffers = &commandBuffer
             };
-            VK_CHECK(vkQueueSubmit(g_contextPtr->queue, 1, &submitInfo, VK_NULL_HANDLE));
-            VK_CHECK(vkQueueWaitIdle(g_contextPtr->queue));
+            VkCheck(vkQueueSubmit(g_contextPtr->queue, 1, &submitInfo, VK_NULL_HANDLE));
+            VkCheck(vkQueueWaitIdle(g_contextPtr->queue));
 
             vkFreeCommandBuffers(g_contextPtr->device, cmdPool, 1, &commandBuffer);
         }
