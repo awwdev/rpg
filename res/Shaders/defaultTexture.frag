@@ -5,8 +5,10 @@ layout(location = 0) out vec4 outColor;
 
 layout(location = 0) in vec4 inColors;
 layout(location = 1) in vec4 inShadowCoord;
-layout(location = 2) in vec3 inUV;
+layout(location = 2) in float inShadowDot;
+layout(location = 3) in vec3 inUV;
 
+//UBO has binding 0
 layout(binding  = 1) uniform sampler2D shadowMap;
 layout(binding  = 2) uniform sampler2DArray textures;
 
@@ -58,5 +60,5 @@ void main()
 	if (val < 0.1) 
 		discard;
 
-    outColor = vec4(inColors.rgb * (AMBIENT + shadow), 1);
+	outColor = vec4(inColors.rgb * (AMBIENT + shadow), 1);
 }

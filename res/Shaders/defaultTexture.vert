@@ -23,7 +23,8 @@ layout(binding = 0) uniform InstanceData {
 
 layout (location = 0) out vec4 outCol;
 layout (location = 1) out vec4 outShadowCoord;
-layout (location = 2) out vec4 outUV;
+layout (location = 2) out float outShadowDot;
+layout (location = 3) out vec4 outUV;
 
 const mat4 biasMat = mat4( 
 	0.5, 0.0, 0.0, 0.0,
@@ -42,6 +43,9 @@ void main()
     outCol      = inCol;
     outUV       = inTex;
     
+    vec3 sunPos  = vec3(push.sun[3][0], push.sun[3][1], push.sun[3][2]);
+    outShadowDot = dot(vec3(inNor), push.sunDir);
+
     vec4 shadowCoords = (biasMat * push.sun) * (instanceData.arr[gl_InstanceIndex].transform * _pos);
     outShadowCoord    = shadowCoords;
 }

@@ -62,7 +62,7 @@ namespace mini::vk
             .depthBiasEnable         = VK_TRUE,
             .depthBiasConstantFactor = -3.f,
             .depthBiasClamp          =  0.f,
-            .depthBiasSlopeFactor    = -2.f,
+            .depthBiasSlopeFactor    = -3.f,
             .lineWidth               =  1.f  
         };
 

@@ -21,5 +21,5 @@ layout(binding = 0) uniform InstanceData {
 
 void main() 
 {
-    gl_Position = push.camera * instanceData.arr[gl_InstanceIndex].transform * inPos;
+    gl_Position = push.sun * instanceData.arr[gl_InstanceIndex].transform * inPos;
 }

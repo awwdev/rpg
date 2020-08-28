@@ -21,7 +21,7 @@
 
 @ Stone
 ? RenderData
-+ meshType = Sword
++ meshType = Stone
 + useTexture = 0
 ? Transform
 + scale = 1,1,1

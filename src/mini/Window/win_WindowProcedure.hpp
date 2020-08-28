@@ -60,8 +60,6 @@ inline void UpdateEvents(HWND hWnd)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    if (global::resizeState == global::ResizeState::End)
-        AddEvent<wnd::Window_Resize>();
 }
 
 //? WINDOWS MESSAGES

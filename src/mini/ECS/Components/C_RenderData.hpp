@@ -11,13 +11,16 @@ struct C_RenderData
 {
     res::MeshType meshType;
     bool useTexture;
+    bool castShadows;
 
     //defaults
     C_RenderData(
-        const res::MeshType& pMeshType = {},
-        const bool pUseTexture = false)
+        const res::MeshType& pMeshType  = {},
+        const bool pUseTexture          = false,
+        const bool pCastShadows         = true)
         : meshType      { pMeshType   }
         , useTexture    { pUseTexture }
+        , castShadows   { pCastShadows }
     {}
 
     //parsing

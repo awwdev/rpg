@@ -49,15 +49,16 @@ struct Models
     {
         box::Array<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT> tmp;
 
-        LoadModel(tmp, "res/Models/sword.txt");
-        vertexLookup.Set(res::MeshType::Sword, MeshVertexView{ &allModelVertices[allModelVertices.count], tmp.count });
-        allModelVertices.AppendArray(tmp);
-        tmp.Clear();
+        const auto LoadModelFn = [&](chars_t path, const res::MeshType type){
+            LoadModel(tmp, path);
+            vertexLookup.Set(type, MeshVertexView{ &allModelVertices[allModelVertices.count], tmp.count });
+            allModelVertices.AppendArray(tmp);
+            tmp.Clear();
+        };
 
-        LoadModel(tmp, "res/Models/grass.txt");
-        vertexLookup.Set(res::MeshType::Grass, MeshVertexView{ &allModelVertices[allModelVertices.count], tmp.count });
-        allModelVertices.AppendArray(tmp);
-        tmp.Clear();
+        LoadModelFn("res/Models/sword.txt", res::MeshType::Sword);
+        LoadModelFn("res/Models/grass.txt", res::MeshType::Grass);
+        LoadModelFn("res/Models/stone.txt", res::MeshType::Stone);
     }
 };
 

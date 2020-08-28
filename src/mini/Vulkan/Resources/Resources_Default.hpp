@@ -35,7 +35,7 @@ struct Resources_Default
     {
         textures.Create(hostRes.textures.default, cmdPool);
 
-        Default_CreateVertexBuffer      (   vbo, cmdPool, hostRes);
+        Default_CreateVertexBuffer          (vbo, cmdPool, hostRes);
         Default_CreateUniformBuffer         (ubo);
         Default_CreateShaderVertexColor     (shaderVertexColor, shadow.renderPass);
         Default_CreateShaderTexture         (shaderTexture, shadow.renderPass, textures);
