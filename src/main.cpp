@@ -65,3 +65,5 @@ int WINAPI wWinMain(
 //TODO: join transform and render component
 //TODO: use block ptr for s render function 
 //TODO: add static flag to render component, so ubo data is not updated
+
+//TODO: SceneGraph!

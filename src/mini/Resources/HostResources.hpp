@@ -17,7 +17,7 @@ namespace mini::res {
 struct Textures
 {
     TextureArray<128, 16, 16, 1> monospaceFont;
-    TextureArray<1, 512, 512, 4>   default;
+    TextureArray<2, 512, 512, 1> default;
 
     void Load()
     {
@@ -59,6 +59,7 @@ struct Models
         LoadModelFn("res/Models/sword.txt", res::MeshType::Sword);
         LoadModelFn("res/Models/grass.txt", res::MeshType::Grass);
         LoadModelFn("res/Models/stone.txt", res::MeshType::Stone);
+        LoadModelFn("res/Models/tree.txt",  res::MeshType::Tree);
     }
 };
 

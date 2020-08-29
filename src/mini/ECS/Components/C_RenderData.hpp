@@ -11,16 +11,16 @@ struct C_RenderData
 {
     res::MeshType meshType;
     bool useTexture;
-    bool castShadows;
+    bool castShadow;
 
     //defaults
     C_RenderData(
         const res::MeshType& pMeshType  = {},
         const bool pUseTexture          = false,
-        const bool pCastShadows         = true)
+        const bool pCastShadow          = true)
         : meshType      { pMeshType   }
         , useTexture    { pUseTexture }
-        , castShadows   { pCastShadows }
+        , castShadow    { pCastShadow }
     {}
 
     //parsing
@@ -37,6 +37,10 @@ struct C_RenderData
 
                 case ComponentDataType::useTexture:  
                 useTexture = (bool)std::atoi(pair.val.data);  
+                break;
+
+                case ComponentDataType::castShadow:  
+                castShadow = (bool)std::atoi(pair.val.data);  
                 break;
 
                 default: dbg::LogWarning("component data type not defined for this component");

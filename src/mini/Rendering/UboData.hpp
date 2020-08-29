@@ -23,6 +23,7 @@ struct UniformGroup
 struct Default_UniformData
 {
     alignas(16) utils::Mat4f transform;
+    //alignas(16) int textureIndex;
 };
 
 template<class DATA_T, u32 DATA_COUNT, u32 GROUP_COUNT = DATA_COUNT>

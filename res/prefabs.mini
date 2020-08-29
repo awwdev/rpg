@@ -25,3 +25,11 @@
 + useTexture = 0
 ? Transform
 + scale = 1,1,1
+
+@ Tree
+? RenderData
++ meshType = Tree
++ useTexture = 1
++ castShadow = 1
+? Transform
++ scale = 0.3,0.3,0.3

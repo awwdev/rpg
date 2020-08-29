@@ -256,7 +256,7 @@
 				],
 				"settings": {
 					"foreground": "#71778a",
-					"fontStyle": ""
+					"fontStyle": "bold"
 				}
 			},
 			//?MODIFIERS
@@ -335,7 +335,7 @@
 	//?HIGHLIGHT
 	"highlight.regexes":
 	 {
-		"(.*//\\?.*)": {
+		"(//\\?.*)": {
 			"regexFlags": "g", 
 			"decorations": [
 				{ 
@@ -348,7 +348,7 @@
 			"regexFlags": "g", 
 			"decorations": [
 				{ 
-					"color": "#00ff00",
+					"color": "#00aa00",
 				},
 			]
 		},
