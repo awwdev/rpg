@@ -34,6 +34,7 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
     resources.common_pushConsts.time = t;
 
     resources.common_pushConsts.sun    = scene.sun.GetOrthographic() * scene.sun.GetView(); //BIAS * 
+    resources.common_pushConsts.sunBias= BIAS * scene.sun.GetOrthographic() * scene.sun.GetView();
     resources.common_pushConsts.sunDir = utils::Normalize(scene.sun.pos * 1);
     resources.ui.pushConsts.wnd_w = wnd::global::window_w;
     resources.ui.pushConsts.wnd_h = wnd::global::window_h;

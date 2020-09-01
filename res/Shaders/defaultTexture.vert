@@ -3,6 +3,7 @@
 layout(push_constant) uniform Push {
     mat4 camera;
     mat4 sun;
+    mat4 sunBias;
     vec3 sunDir;
     float time;
 } push;
@@ -26,13 +27,6 @@ layout (location = 1) out vec4 outShadowCoord;
 layout (location = 2) out float outShadowDot;
 layout (location = 3) out vec4 outUV;
 
-const mat4 biasMat = mat4( 
-	0.5, 0.0, 0.0, 0.0,
-	0.0, 0.5, 0.0, 0.0,
-	0.0, 0.0, 1.0, 0.0,
-	0.5, 0.5, 0.0, 1.0 
-);
-
 void main() 
 {
     vec4 _pos = inPos;
@@ -41,7 +35,7 @@ void main()
 
     gl_Position = push.camera * instanceData.arr[gl_InstanceIndex].transform * _pos;
 
-    vec4 shadowCoords = (biasMat * push.sun) * (instanceData.arr[gl_InstanceIndex].transform * _pos);
+    vec4 shadowCoords = push.sunBias * (instanceData.arr[gl_InstanceIndex].transform * _pos);
     outShadowCoord    = shadowCoords;
 
     outCol      = inCol;

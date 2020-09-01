@@ -12,6 +12,7 @@ namespace mini::vk
     {
         utils::Mat4f camera;
         utils::Mat4f sun;
+        utils::Mat4f sunBias;
         utils::Vec3f sunDir;
         float time;
     };
