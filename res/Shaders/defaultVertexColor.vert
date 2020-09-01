@@ -37,5 +37,12 @@ void main()
     vec4 shadowCoords = (biasMat * push.sun) * (instanceData.arr[gl_InstanceIndex].transform * inPos);
     outShadowCoord    = shadowCoords;
     vec3 sunPos  = vec3(push.sun[3][0], push.sun[3][1], push.sun[3][2]);
-    outShadowDot = dot(vec3(inNor), push.sunDir);
+
+    mat4 rot = instanceData.arr[gl_InstanceIndex].transform;
+    rot[3][0] = 0;
+    rot[3][1] = 0;
+    rot[3][2] = 0;
+
+    vec4 nor = normalize(rot * inNor);
+    outShadowDot = dot(vec3(nor), push.sunDir);
 }

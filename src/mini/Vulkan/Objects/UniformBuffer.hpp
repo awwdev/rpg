@@ -28,7 +28,7 @@ namespace mini::vk
         Buffer      buffer;
         UniformInfo info { .type = UniformInfo::Buffer }; //!complete in factory
 
-        u32 count;
+        u32 count = 0;
         u32 CurrentSize() const { return sizeof(T) * count; }
 
         void Create(VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)

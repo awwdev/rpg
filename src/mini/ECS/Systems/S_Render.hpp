@@ -60,10 +60,10 @@ inline void S_Render(ComponentArrays<>& arrays, const double dt, rendering::Rend
                 tMat[3][Z] = t[Z];
 
                 //TODO: REMOVE
-                //if (arr_render.Get(eID).meshType == res::MeshType::Tree){
-                //    group.Append(tMat, 1);
-                //    continue;
-                //}
+                if (arr_render.Get(eID).meshType == res::MeshType::Tree){
+                    group.Append(tMat);//, 1);
+                    continue;
+                }
 
                 group.Append(tMat);//, 0);
             }

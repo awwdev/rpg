@@ -52,8 +52,8 @@ float filterPCF(vec4 sc)
 void main() 
 {
     float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
-	if (inShadowDot>0.5)
+	if (inShadowDot>0.1)
 		outColor = vec4(inColors.rgb * (AMBIENT + shadow), 1);
 	else
-		outColor = vec4(inColors.rgb * (AMBIENT + (max(0, inShadowDot * 2) * shadow)), 1);
+		outColor = vec4(inColors.rgb * (AMBIENT + (max(0, inShadowDot * 10) * shadow)), 1);
 }
