@@ -62,7 +62,7 @@ namespace mini::vk
             .depthClampEnable        = VK_FALSE,
             .rasterizerDiscardEnable = VK_FALSE,
             .polygonMode             = VK_POLYGON_MODE_FILL,
-            .cullMode                = VK_CULL_MODE_NONE, //VK_CULL_MODE_BACK_BIT,
+            .cullMode                = VK_CULL_MODE_BACK_BIT, //VK_CULL_MODE_BACK_BIT,
             .frontFace               = VK_FRONT_FACE_CLOCKWISE,
             .depthBiasEnable         = VK_FALSE,
             .depthBiasConstantFactor = 1.f,
@@ -99,7 +99,7 @@ namespace mini::vk
         };
 
         const VkPipelineColorBlendAttachmentState colorBlend {
-            .blendEnable                = VK_TRUE,
+            .blendEnable                = VK_FALSE,
             .srcColorBlendFactor        = VK_BLEND_FACTOR_SRC_ALPHA,
             .dstColorBlendFactor        = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, 
             .colorBlendOp               = VK_BLEND_OP_ADD,

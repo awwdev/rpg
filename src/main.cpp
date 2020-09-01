@@ -59,16 +59,17 @@ int WINAPI wWinMain(
 
 } //main end
 
-//TODO: IBO (flag)
-//TODO: cast shadow or not (tree vs grass both texture )
-
-
-
-//TODO: add index buffer regardless of usage, so you can use it when needed
-//TODO: draw stuff on render target for post fx
+//TODO: terrain fill rate issue? lots of vertices?
+//TODO: IBO (flag) or new way to approach terrain?
+//TODO: cast shadow or not (tree vs grass both texture)
+//TODO: profiler
 //TODO: ECS serialization
+
+
+
+
+
+//TODO: draw stuff on render target for post fx
 //TODO: join transform and render component
 //TODO: use block ptr for s render function 
 //TODO: add static flag to render component, so ubo data is not updated
-
-//TODO: SceneGraph!
