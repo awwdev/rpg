@@ -79,10 +79,10 @@ void Default_CreatePipelineTexture(
         .pNext                 = nullptr,
         .flags                 = 0,
         .rasterizationSamples  = renderPass.sampleCount,
-        .sampleShadingEnable   = VK_FALSE,
-        .minSampleShading      = 1.f,
+        .sampleShadingEnable   = VK_TRUE,
+        .minSampleShading      = 0.5f,
         .pSampleMask           = nullptr,
-        .alphaToCoverageEnable = VK_FALSE,
+        .alphaToCoverageEnable = VK_TRUE,
         .alphaToOneEnable      = VK_FALSE
     };
 
