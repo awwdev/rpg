@@ -24,12 +24,28 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, Vk
     //TERRAIN
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
     vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipelineShadow.pipeline);
+    
+    //vkCmdSetDepthBias(
+    //    cmdBuffer, 
+    //    scene.renderGraph.depthBiasConstantFactor,
+    //    scene.renderGraph.depthBiasClamp,
+    //    scene.renderGraph.depthBiasSlopeFactor
+    //);
+    
     vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
   
     //DEFAULT
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.layout, 0, 1, &resources.default.pipelineShadow.sets[cmdBufferIdx], 0, nullptr); 
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.pipeline);
+    
+    //vkCmdSetDepthBias(
+    //    cmdBuffer, 
+    //    scene.renderGraph.depthBiasConstantFactor,
+    //    scene.renderGraph.depthBiasClamp,
+    //    scene.renderGraph.depthBiasSlopeFactor
+    //);
+    
     FOR_ARRAY(scene.renderGraph.default_ubo.groupsVertexColor.usedIndices, i)
     {
         const auto& ubo = scene.renderGraph.default_ubo.groupsVertexColor;
@@ -57,12 +73,12 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
 
     vkCmdBeginRenderPass(cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
 
-    //SKYDOME
+    //?SKYDOME
     vkCmdPushConstants      (cmdBuffer, resources.sky.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.sky.pushConsts), &resources.sky.pushConsts);
     vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.sky.pipeline.pipeline);
     vkCmdDraw               (cmdBuffer, 14, 1, 0, 0);
 
-    //TERRAIN
+    //?TERRAIN
     //TODO: culling (loops)
     vkCmdPushConstants      (cmdBuffer, resources.terrain.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
@@ -74,11 +90,15 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
         vkCmdDraw           (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
     }
 
-    //DEFAULT
+    //?DEFAULT
+    
+
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineVertexColor.layout, 0, 1, &resources.default.pipelineVertexColor.sets[cmdBufferIdx], 0, nullptr); 
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
-
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineVertexColor.pipeline);
+    
+    
+    
     FOR_ARRAY(scene.renderGraph.default_ubo.groupsVertexColor.usedIndices, i)
     {
         const auto& ubo = scene.renderGraph.default_ubo.groupsVertexColor;

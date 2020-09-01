@@ -29,6 +29,9 @@ void main()
 
     vec3 sunPos  = vec3(push.sun[3][0], push.sun[3][1], push.sun[3][2]);
     outShadowDot = dot(vec3(inNor), push.sunDir);
+    //outShadowDot = max(0, outShadowDot);
+    outShadowDot = (outShadowDot * 1000);
+    outShadowDot = clamp(outShadowDot, 0, 1);
 
     vec4 shadowCoords = (biasMat * push.sun) * inPos;
     outShadowCoord    = shadowCoords;

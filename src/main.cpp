@@ -59,6 +59,11 @@ int WINAPI wWinMain(
 
 } //main end
 
+//TODO: IBO (flag)
+//TODO: cast shadow or not (tree vs grass both texture )
+
+
+
 //TODO: add index buffer regardless of usage, so you can use it when needed
 //TODO: draw stuff on render target for post fx
 //TODO: ECS serialization

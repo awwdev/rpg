@@ -48,8 +48,9 @@ struct Sun
     utils::Mat4f GetOrthographic() const 
     {
         //TODO: solve how the values correlate
-        const float W = 0.01f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
-        const float H = 0.01f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
+        //TODO: cascades
+        const float W = 0.05f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
+        const float H = 0.05f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
         const float D = 0.00001f; 
         const float Z = 0.01f;
 

@@ -38,14 +38,12 @@ void main()
     vec4 _pos = inPos;
     _pos.x += sin(push.time * 1.0) * _pos.y * 0.1;
     _pos.z += sin(push.time * 1.2) * _pos.y * 0.1;
-    gl_Position = push.camera * instanceData.arr[gl_InstanceIndex].transform * _pos;
 
-    outCol      = inCol;
-    outUV       = inTex;
-    
-    vec3 sunPos  = vec3(push.sun[3][0], push.sun[3][1], push.sun[3][2]);
-    outShadowDot = dot(vec3(inNor), push.sunDir);
+    gl_Position = push.camera * instanceData.arr[gl_InstanceIndex].transform * _pos;
 
     vec4 shadowCoords = (biasMat * push.sun) * (instanceData.arr[gl_InstanceIndex].transform * _pos);
     outShadowCoord    = shadowCoords;
+
+    outCol      = inCol;
+    outUV       = inTex;
 }

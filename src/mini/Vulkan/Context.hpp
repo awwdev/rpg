@@ -178,10 +178,12 @@ namespace mini::vk
                 VK_KHR_SWAPCHAIN_EXTENSION_NAME
             };
 
-            VkPhysicalDeviceFeatures deviceFeatures {};
-            deviceFeatures.samplerAnisotropy = VK_TRUE;
-            deviceFeatures.fillModeNonSolid = VK_TRUE;
-            deviceFeatures.wideLines = VK_TRUE;
+            const VkPhysicalDeviceFeatures deviceFeatures {
+                .depthBiasClamp     = VK_TRUE,
+                .fillModeNonSolid   = VK_TRUE,
+                .wideLines          = VK_TRUE,
+                .samplerAnisotropy  = VK_TRUE,
+            };
 
             const VkDeviceCreateInfo deviceInfo {
                 .sType                      = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,

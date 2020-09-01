@@ -18,6 +18,10 @@ namespace mini::rendering
         UniformDataGroups<UI_UniformData, UI_UBO_MAX_COUNT, 1>  ui_ubo; //1 group only
         UniformDataGroupsMesh<Default_UniformData, DEFAULT_UBO_MAX_COUNT> default_ubo;
 
+        f32 depthBiasConstantFactor = 0;
+        f32 depthBiasClamp = 0;
+        f32 depthBiasSlopeFactor = 0;
+
         void Clear()
         {
             ui_ubo.Clear();

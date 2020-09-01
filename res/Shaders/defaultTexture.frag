@@ -52,13 +52,12 @@ float filterPCF(vec4 sc)
 
 void main() 
 {
-    float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
-
 	//TODO: why is it offsetted this way ?!?!?
 	vec3 _uv  = vec3(inUV.x + 0.25, inUV.y, 0);
 	float val = texture(textures, _uv).b;
 	if (val < 0.1) 
 		discard;
 
+	float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
 	outColor = vec4(inColors.rgb * (AMBIENT + shadow), 1);
 }

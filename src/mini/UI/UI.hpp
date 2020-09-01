@@ -70,7 +70,7 @@ struct Slider
 {
     static constexpr f32 BACK_H = 16;
 
-    box::String<20> name;
+    box::String<100> name;
     utils::Rect<float> back { 0, 0, 0, BACK_H };
     bool isDragging = false;
     f32 knobPos = 0;
