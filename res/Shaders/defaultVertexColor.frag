@@ -50,6 +50,7 @@ float filterPCF(vec4 sc)
 
 void main() 
 {
-	float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
+	//float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
+	float shadow = textureProj(inShadowCoord / inShadowCoord.w, vec2(0, 0));
 	outColor = vec4(inColors.rgb * (AMBIENT + shadow * inShadowDot), 1);
 }

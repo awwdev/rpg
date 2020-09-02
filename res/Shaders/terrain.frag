@@ -28,7 +28,7 @@ float filterPCF(vec4 sc)
 
 	float shadowFactor = 0.0;
 	int count = 0;
-	int range = 12;
+	int range = 2;
 	
 	for (int x = -range; x <= range; x++) {
 	for (int y = -range; y <= range; y++) {
@@ -43,7 +43,8 @@ const float AMBIENT = 0.1;
 
 void main() 
 {
-    float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
+    //float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
+    float shadow = textureProj(inShadowCoord / inShadowCoord.w, vec2(0, 0));
 	outColor = vec4(inColors.rgb * (AMBIENT + shadow * inShadowDot), 1);
 }
 

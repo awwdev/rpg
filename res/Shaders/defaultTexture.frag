@@ -55,6 +55,7 @@ void main()
 	if (val < 0.1) 
 		discard;
 
-	float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
+	float shadow = textureProj(inShadowCoord / inShadowCoord.w, vec2(0, 0));
+	//float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
 	outColor = vec4(inColors.rgb * (AMBIENT + shadow), 1);
 }
