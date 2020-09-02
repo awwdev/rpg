@@ -39,6 +39,7 @@ struct Settings
     utils::Vec3f intersectionPos;
 
     ecs::PrefabType prefabType; 
+    bool baked = false;
 };
 
 
@@ -101,6 +102,9 @@ struct Terrain
         }
         if (wnd::HasEvent<wnd::F7, wnd::Pressed>())
             Stiching();
+         if (wnd::HasEvent<wnd::F8, wnd::Pressed>())
+            Bake();
+
         if (wnd::HasEvent<wnd::F2, wnd::Pressed>())
             settings.mode = (settings.mode == EditMode::VertexGrab) ? EditMode::VertexPaint : EditMode::VertexGrab;
         if (wnd::HasEvent<wnd::F3, wnd::Pressed>())
@@ -337,6 +341,11 @@ struct Terrain
         FOR_ARRAY(verts, i){
             verts[i]->pos = avgPos;
         }
+    }
+
+    void Bake()
+    {
+        settings.baked = !settings.baked;
     }
 
     void Stiching()

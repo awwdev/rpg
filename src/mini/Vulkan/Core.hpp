@@ -19,12 +19,10 @@ inline void VkCheck(const VkResult result)
     if constexpr(VK_ERROR_HANDLING == VkErrorHandling::Assert){
         if (result != VK_SUCCESS)
             dbg::Assert(false, result);
-        return;
     }
     if constexpr(VK_ERROR_HANDLING == VkErrorHandling::Warn){
         if (result != VK_SUCCESS)
             dbg::LogWarning("VK RESULT", result); 
-        return;
     }
 }
 

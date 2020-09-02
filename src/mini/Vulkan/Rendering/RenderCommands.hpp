@@ -7,6 +7,13 @@
 #include "mini/App/Scene.hpp"
 #include "mini/Resources/HostResources.hpp"
 
+//vkCmdSetDepthBias(
+//    cmdBuffer, 
+//    scene.renderGraph.depthBiasConstantFactor,
+//    scene.renderGraph.depthBiasClamp,
+//    scene.renderGraph.depthBiasSlopeFactor
+//);
+
 namespace mini::vk {
 
 inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene& scene)
@@ -24,28 +31,12 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, Vk
     //TERRAIN
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
     vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipelineShadow.pipeline);
-    
-    //vkCmdSetDepthBias(
-    //    cmdBuffer, 
-    //    scene.renderGraph.depthBiasConstantFactor,
-    //    scene.renderGraph.depthBiasClamp,
-    //    scene.renderGraph.depthBiasSlopeFactor
-    //);
-    
     vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
   
     //DEFAULT
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.layout, 0, 1, &resources.default.pipelineShadow.sets[cmdBufferIdx], 0, nullptr); 
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.pipeline);
-    
-    //vkCmdSetDepthBias(
-    //    cmdBuffer, 
-    //    scene.renderGraph.depthBiasConstantFactor,
-    //    scene.renderGraph.depthBiasClamp,
-    //    scene.renderGraph.depthBiasSlopeFactor
-    //);
-    
     FOR_ARRAY(scene.renderGraph.default_ubo.groupsVertexColor.usedIndices, i)
     {
         const auto& ubo = scene.renderGraph.default_ubo.groupsVertexColor;
@@ -91,13 +82,9 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
     }
 
     //?DEFAULT
-    
-
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineVertexColor.layout, 0, 1, &resources.default.pipelineVertexColor.sets[cmdBufferIdx], 0, nullptr); 
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineVertexColor.pipeline);
-    
-    
     
     FOR_ARRAY(scene.renderGraph.default_ubo.groupsVertexColor.usedIndices, i)
     {

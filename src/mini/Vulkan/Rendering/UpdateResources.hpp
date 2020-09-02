@@ -4,12 +4,13 @@
 #include "mini/Vulkan/Core.hpp"
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Resources/Resources.hpp"
+#include "mini/Vulkan/Commands.hpp"
 #include "mini/App/Scene.hpp"
 #include "mini/Resources/HostResources.hpp"
 
 namespace mini::vk {
 
-void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& scene, res::HostResources& hostRes, double dt)
+void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& scene, res::HostResources& hostRes, double dt, Commands& commands)
 {
     const utils::Mat4f BIAS { 
         0.5, 0.0, 0.0, 0.0,
@@ -48,11 +49,20 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
     resources.default.ubo.Store(scene.renderGraph.default_ubo);
 
     //update terrain quadrant that is edited
-    FOR_ARRAY(hostRes.terrain.settings.dirtyQuadrants, i){
-        const auto quadrantIdx = hostRes.terrain.settings.dirtyQuadrants[i];
-        resources.terrain.vbo.UpdateGroup(quadrantIdx, hostRes.terrain.GetQuadrant(quadrantIdx).verts);
+    if (hostRes.terrain.settings.baked){
+        if (!resources.terrain.vbo.IsBaked())
+            resources.terrain.vbo.Bake(commands.cmdPool);
     }
-   
+    else
+    {
+        resources.terrain.vbo.activeBuffer = &resources.terrain.vbo.cpuBuffer;
+        FOR_ARRAY(hostRes.terrain.settings.dirtyQuadrants, i){
+            const auto quadrantIdx = hostRes.terrain.settings.dirtyQuadrants[i];
+            resources.terrain.vbo.UpdateGroup(quadrantIdx, hostRes.terrain.GetQuadrant(quadrantIdx).verts);
+        }
+    }
+    
+
 }
 
 } //ns

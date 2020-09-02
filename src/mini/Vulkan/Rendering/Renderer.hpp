@@ -79,7 +79,7 @@ struct VkRenderer
         VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
         //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-        UpdateVkResources_GameScene(resources, scene, hostRes, dt); //TODO: depends on scene
+        UpdateVkResources_GameScene(resources, scene, hostRes, dt, commands); //TODO: depends on scene
         RecordCommands(resources, commands, imageIndex, dt, scene);
         //!--------------------------------------------------
 

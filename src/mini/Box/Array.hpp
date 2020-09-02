@@ -17,7 +17,7 @@ constexpr void ArrayAssert(const bool condition, chars_t msg = "array assertion 
     if constexpr(USE_ARRAY_ASSERTS) {
         if (condition == false){
             dbg::LogError(msg);
-            DEBUG_BREAK();
+            dbg::DebugBreak();
         }
     }
 }

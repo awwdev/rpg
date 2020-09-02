@@ -16,7 +16,7 @@ inline void BitsetAssert(const bool condition, chars_t msg = "bitset assertion f
     if constexpr(USE_BITSET_ASSERTS) {
         if (condition == false){
             dbg::LogError(msg);
-            DEBUG_BREAK();
+            dbg::DebugBreak();
         }
     }
 }

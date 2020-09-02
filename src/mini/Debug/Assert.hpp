@@ -5,19 +5,23 @@
 #include <Windows.h>
 #undef max
 
-//win only
-#define DEBUG_BREAK() \
-    __debugbreak(); \
-    BringWindowToTop(GetConsoleWindow()); \
+#include <fstream>
 
 namespace mini::dbg {
+
+inline void DebugBreak()
+{
+    //win only
+    __debugbreak();
+    BringWindowToTop(GetConsoleWindow()); 
+}
 
 template<class T>
 inline void Assert(const bool expression, const T& msg) 
 { 
     if (!expression)  {
         dbg::LogError(msg);
-        DEBUG_BREAK();
+        dbg::DebugBreak();
     }
 } 
 

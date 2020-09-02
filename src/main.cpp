@@ -59,12 +59,12 @@ int WINAPI wWinMain(
 
 } //main end
 
+//TODO: reduce terrain and seek for the perf bottleneck
 //TODO: terrain fill rate issue? lots of vertices?
 //TODO: IBO (flag) or new way to approach terrain?
 //TODO: cast shadow or not (tree vs grass both texture)
 //TODO: profiler
 //TODO: ECS serialization
-
 
 
 
