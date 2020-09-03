@@ -9,7 +9,7 @@ namespace mini::vk {
 
 inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
 {  
-    rp.sampleCount = VK_SAMPLE_COUNT_1_BIT;
+    rp.sampleCount = VK_SAMPLE_COUNT_4_BIT;
     rp.width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
     rp.height = g_contextPtr->surfaceCapabilities.currentExtent.height;
 
@@ -80,7 +80,7 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
         .pInputAttachments       = nullptr,
         .colorAttachmentCount    = 1,
         .pColorAttachments       = &colorRef,
-        .pResolveAttachments     = nullptr,//&resolveRef,
+        .pResolveAttachments     = &resolveRef,
         .pDepthStencilAttachment = &depthRef,
         .preserveAttachmentCount = 0,
         .pPreserveAttachments    = nullptr
@@ -89,7 +89,7 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
     const VkAttachmentDescription descs [] {
         colorDesc,
         depthDesc,
-        //resolveDesc
+        resolveDesc
     };
 
     const VkSubpassDependency dependencies [] {
@@ -132,17 +132,16 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
     {
         rp.framebuffers.Append();
 
-        const VkImageView views [] {
-            //rp.msaaImage.view,
-            g_contextPtr->swapImageViews[i],
-            rp.depthImage.view,
-        };
-
         //const VkImageView views [] {
-        //    rp.msaaImage.view,
-        //    rp.depthImage.view,
         //    g_contextPtr->swapImageViews[i],
+        //    rp.depthImage.view,
         //};
+
+        const VkImageView views [] {
+            rp.msaaImage.view,
+            rp.depthImage.view,
+            g_contextPtr->swapImageViews[i],
+        };
 
         const VkFramebufferCreateInfo framebufferInfo{
             .sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,

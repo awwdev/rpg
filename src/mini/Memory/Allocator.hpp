@@ -25,12 +25,12 @@ struct BlockArray
 //?-------------------------------------
 //?DEFINE BLOCKS HERE (keep sorted for size!)
 constexpr BlockArray BLOCK_ARRAYS [] {
-    { .size =      1'000, .count = 5 },
-    { .size =     10'000, .count = 5 },
-    { .size =    100'000, .count = 5 },
-    { .size =  1'000'000, .count = 5 },
-    { .size = 10'000'000, .count = 5 },
-    { .size =100'000'000, .count = 5 },
+    { .size =        1'000, .count = 5 },
+    { .size =       10'000, .count = 5 },
+    { .size =      100'000, .count = 5 },
+    { .size =    1'000'000, .count = 5 },
+    { .size =   10'000'000, .count = 5 },
+    { .size =  100'000'000, .count = 5 },
 };
 //?-------------------------------------
 

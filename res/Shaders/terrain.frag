@@ -7,45 +7,27 @@ layout(location = 0) in vec4 inColors;
 layout(location = 1) in vec4 inShadowCoord;
 layout(location = 2) in float inShadowDot;
 
-layout(binding  = 0) uniform sampler2D shadowMap;
-
-float textureProj(vec4 shadowCoord, vec2 off)
-{
-	if (shadowCoord.z > -1.0 && shadowCoord.z < 1.0) {
-		float dist = texture(shadowMap, shadowCoord.st + off).r;
-		if (shadowCoord.w > 0.0 && dist < shadowCoord.z)
-			return 1.0f;
-	}
-	return 0.0f;
-}
-
-float filterPCF(vec4 sc)
-{
-	ivec2 texDim = textureSize(shadowMap, 0);
-	float scale = 0.2;
-	float dx = scale * 1.0 / float(texDim.x);
-	float dy = scale * 1.0 / float(texDim.y);
-
-	float shadowFactor = 0.0;
-	int count = 0;
-	int range = 2;
-	
-	for (int x = -range; x <= range; x++) {
-	for (int y = -range; y <= range; y++) {
-		shadowFactor += textureProj(sc, vec2(dx*x, dy*y));
-		count++;
-	}}
-
-	return shadowFactor / count;
-}
-
-const float AMBIENT = 0.1;
+//layout(binding  = 0) uniform sampler2D shadowMap;
+layout(binding  = 0) uniform sampler2DShadow shadowMap;
 
 void main() 
 {
-    //float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
-    float shadow = textureProj(inShadowCoord / inShadowCoord.w, vec2(0, 0));
+	//sampler2DShadow
+	float shadow = 0;
+	const float scale = 0.0002;
+	for(float y = -2; y <= 2; ++y) {
+	for(float x = -2; x <= 2; ++x) {
+		vec3 off = vec3(x * scale, y * scale, 0);
+		shadow += texture(shadowMap, inShadowCoord.xyz + off).r;
+	}}
+	shadow = 1 - (shadow / 25);
+
+	//sampler2DShadow
+
+	//float dist = 1 - texture(shadowMap, coords.st).r;
+	//if (dist < coords.z)
+	//	shadow = 1;
+
+	const float AMBIENT = 0.1;
 	outColor = vec4(inColors.rgb * (AMBIENT + shadow * inShadowDot), 1);
 }
-
-//https://github.com/SaschaWillems/Vulkan/tree/master/data/shaders/glsl/shadowmapping
