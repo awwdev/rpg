@@ -9,8 +9,8 @@ layout(location = 2) in float inShadowDot;
 layout(location = 3) in vec3 inUV;
 
 //UBO has binding 0
-layout(binding  = 1) uniform sampler2D shadowMap;
-layout(binding  = 2) uniform sampler2DArray textures;
+layout(binding  = 1) uniform sampler2DShadow shadowMap;
+layout(binding  = 2) uniform sampler2DArray  textures;
 
 void main() 
 {
@@ -20,8 +20,15 @@ void main()
 	if (val < 0.1) 
 		discard;
 
+	float shadow = 0;
+	const float scale = 0.0002;
+	for(float y = -1; y <= 1; ++y) {
+	for(float x = -1; x <= 1; ++x) {
+		vec3 off = vec3(x * scale, y * scale, 0);
+		shadow += texture(shadowMap, inShadowCoord.xyz + off).r;
+	}}
+	shadow = 1 - (shadow / 9);
+
 	const float AMBIENT = 0.1;
-	//float shadow = textureProj(inShadowCoord / inShadowCoord.w, vec2(0, 0));
-	//float shadow = filterPCF(inShadowCoord / inShadowCoord.w);
-	outColor = vec4(inColors.rgb * (AMBIENT + 1), 1);
+	outColor = vec4(inColors.rgb * (AMBIENT + shadow), 1);
 }

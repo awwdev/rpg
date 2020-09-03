@@ -31,6 +31,14 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, Vk
     //TERRAIN
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
     vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipelineShadow.pipeline);
+    
+    vkCmdSetDepthBias(
+        cmdBuffer, 
+        scene.renderGraph.depthBiasConstantFactor,
+        scene.renderGraph.depthBiasClamp,
+        scene.renderGraph.depthBiasSlopeFactor
+    );
+    
     vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
   
     //DEFAULT

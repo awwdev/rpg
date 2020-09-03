@@ -271,15 +271,27 @@ struct Terrain
         {
             settings.intersectionPos = intersection->pos;
             if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()) {
-                const auto ID = ecs.AddEntity(settings.prefabType);
-                auto& t = ecs.arrays.transforms.Get(ID);
-                t.translation = intersection->pos;
-                const f32 randY = (f32) (std::rand() % 360);
-                t.rotation = { 0, randY, 0 };
-                const f32 SX = 0.8f + (std::rand() % 40) / 40.f;
-                const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
-                const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
-                t.scale = { SX, SY, SZ };
+
+                for(auto i = 0; i < 10; ++i) //for grass test 
+                {
+                    const auto ID = ecs.AddEntity(settings.prefabType);
+                    auto& t = ecs.arrays.transforms.Get(ID);
+
+                    Vec3f pos = intersection->pos;
+                    pos[X] += ((std::rand() % 40) / 40.f) * 7;
+                    pos[Z] += ((std::rand() % 40) / 40.f) * 7;
+
+                    //t.translation = intersection->pos;
+                    t.translation = pos;
+                    const f32 randY = (f32) (std::rand() % 360);
+                    t.rotation = { 0, randY, 0 };
+                    const f32 SX = 0.8f + (std::rand() % 40) / 40.f;
+                    const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
+                    const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
+                    t.scale = { SX, SY, SZ };
+                }
+
+                
             }
         }
     }

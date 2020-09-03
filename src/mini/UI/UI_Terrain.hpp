@@ -54,7 +54,7 @@ struct TerrainUI
     Slider<f32> depthBiasConstantFactor {
         .name  = "fac",
         .knobPos = 0.5,
-        .min   =-3000.f,
+        .min   =-5000.f,
         .max   = 0.f,
     };
     Slider<f32> depthBiasClamp {
@@ -66,8 +66,8 @@ struct TerrainUI
     Slider<f32> depthBiasSlopeFactor {
         .name  = "slope",
         .knobPos = 0.5,
-        .min   =-5.f,
-        .max   = 1,
+        .min   =-10.f,
+        .max   =  2,
     };
 
     List<box::String<20>, 10> prefabList {
@@ -121,9 +121,9 @@ inline void DrawUI_Terrain(
     terrain.settings.vertexColor[Z] = DrawSlider(ui.bSlider, ui.wnd);
 
     //SHADOW ARTIFACTS
-    //g_aciveRenderGraph->depthBiasConstantFactor = DrawSlider(ui.depthBiasConstantFactor, ui.wnd);
-    //g_aciveRenderGraph->depthBiasClamp          = DrawSlider(ui.depthBiasClamp, ui.wnd);
-    //g_aciveRenderGraph->depthBiasSlopeFactor    = DrawSlider(ui.depthBiasSlopeFactor, ui.wnd);
+    g_aciveRenderGraph->depthBiasConstantFactor = DrawSlider(ui.depthBiasConstantFactor, ui.wnd);
+    g_aciveRenderGraph->depthBiasClamp          = DrawSlider(ui.depthBiasClamp, ui.wnd);
+    g_aciveRenderGraph->depthBiasSlopeFactor    = DrawSlider(ui.depthBiasSlopeFactor, ui.wnd);
 
     //LIST
     if (DrawList(ui.prefabList, ui.wnd)){
