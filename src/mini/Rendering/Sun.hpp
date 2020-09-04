@@ -49,14 +49,21 @@ struct Sun
     {
         //TODO: solve how the values correlate
         //TODO: cascades
-        const float W = 0.02f + ((f32)cascadeIdx * 0.01f);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
-        const float H = 0.02f + ((f32)cascadeIdx * 0.01f);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
+        float S {};
+        switch(cascadeIdx)
+        {
+            case 0: S = 0.010f; break;
+            case 1: S = 0.010f; break;
+            case 2: S = 0.100f; break;
+        }
+        //const float W = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
+        //const float H = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
         const float D = 0.00001f; 
         const float Z = 0.01f;
 
         return {
-            W, 0, 0, 0,
-            0, H, 0, 0,
+            S, 0, 0, 0,
+            0, S, 0, 0,
             0, 0, D, 0,
             0, 0, Z, 1,
         };

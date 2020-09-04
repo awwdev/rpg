@@ -15,20 +15,20 @@ struct Common_PushConstants
     utils::Mat4f sunBias;
     utils::Vec3f sunDir;
     float time;
-    //int cascadeIndex;
 };
 
 struct Common_PushConstants2
 {
     utils::Mat4f projection;
     utils::Mat4f view;
-    utils::Mat4f sunBias;
+    utils::Mat4f sunView;
     utils::Vec3f sunDir;
+    utils::Vec3f cascadeSplits;
 };
 
 struct Shadow_PushConstants
 {
-    utils::Mat4f sun [3];
+    utils::Mat4f sunView;
     uint32_t cascade;
 };
 

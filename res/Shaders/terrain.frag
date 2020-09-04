@@ -6,17 +6,55 @@ layout (location = 0) out vec4 outColor;
 layout (location = 0) in vec4  inColors;
 layout (location = 1) in vec4  inShadowCoord;
 layout (location = 2) in float inShadowDot;
+layout (location = 3) in vec3  inViewPos;
+layout (location = 4) in vec3  inCascadeSplits;
+layout (location = 5) in mat4  inSunView;
+layout (location = 12) in vec4  inPos;
 
 layout (binding  = 0) uniform sampler2DArrayShadow shadowMap;
 
+const mat4 biasMat = mat4( 
+	0.5, 0.0, 0.0, 0.0,
+	0.0, 0.5, 0.0, 0.0,
+	0.0, 0.0, 1.0, 0.0,
+	0.5, 0.5, 0.0, 1.0 
+);
+
 void main() 
 {
+	uint cascadeIndex = 2;
+
+	float S = 0.001 + (cascadeIndex * 0.01);
+    float D = 0.00001f; 
+    float Z = 0.01f;
+    mat4 sunProj = mat4( 
+        S, 0, 0, 0,
+        0, S, 0, 0,
+        0, 0, D, 0,
+        0, 0, Z, 1 
+    );
+
+	vec4 shadowCoords = (biasMat * sunProj * inSunView) * inPos;
+
+
+	//const float splits[3] =
+	//{
+	//	10,
+	//	100,
+	//	1000
+	//};
+	//for(uint i = 0; i < 2; ++i) {
+	//	if(inViewPos.z < splits[i]) {	
+	//		cascadeIndex--;
+	//	}
+	//}
+
 	float shadow = 0;
 	const float scale = 0.0002;
 	for(float y = -2; y <= 2; ++y) {
 	for(float x = -2; x <= 2; ++x) {
 		vec2 off = vec2(x * scale, y * scale);
-		vec4 coord = vec4(inShadowCoord.xy + off, 0, inShadowCoord.z);
+		vec4 coord = vec4(shadowCoords.xy + off, cascadeIndex, shadowCoords.z);
 		shadow += texture(shadowMap, coord).r;
 	}}
 	shadow = 1 - (shadow / 25);

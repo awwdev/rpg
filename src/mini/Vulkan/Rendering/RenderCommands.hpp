@@ -76,9 +76,9 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
     vkCmdBeginRenderPass(cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
 
     //?SKYDOME
-    vkCmdPushConstants      (cmdBuffer, resources.sky.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.sky.pushConsts), &resources.sky.pushConsts);
-    vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.sky.pipeline.pipeline);
-    vkCmdDraw               (cmdBuffer, 14, 1, 0, 0);
+    //vkCmdPushConstants      (cmdBuffer, resources.sky.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.sky.pushConsts), &resources.sky.pushConsts);
+    //vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.sky.pipeline.pipeline);
+    //vkCmdDraw               (cmdBuffer, 14, 1, 0, 0);
 
     //?TERRAIN
     //TODO: culling (loops)

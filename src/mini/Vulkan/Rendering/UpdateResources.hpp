@@ -39,18 +39,69 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
         resources.common_pushConsts2.view       = scene.editorController.camera.view;
     }
 
-    resources.common_pushConsts2.sunBias = BIAS * scene.sun.GetOrthographic(0) * scene.sun.GetView();
+    //TODO: THIS IS THE ISSUE !!! we would need the right sun persp
+    resources.common_pushConsts2.sunView = scene.sun.GetView();
     resources.common_pushConsts2.sunDir  = utils::Normalize(scene.sun.pos * 1);
-        
+    
+
+
+
+
+
+
+    //?CASCADE CALC
+
+    float cascadeSplits[3];
+
+    float nearClip = 0.01f;
+    float farClip  = 100.f;
+    float clipRange = farClip - nearClip;
+
+    float minZ = nearClip;
+    float maxZ = nearClip + clipRange;
+
+    float range = maxZ - minZ;
+    float ratio = maxZ / minZ;
+
+    float cascadeSplitLambda = 0.95f;
+
+    for (uint32_t i = 0; i < 3; i++) {
+        float p = (i + 1) / static_cast<float>(3);
+        float log = minZ * std::pow(ratio, p);
+        float uniform = minZ + range * p;
+        float d = cascadeSplitLambda * (log - uniform) + uniform;
+        cascadeSplits[i] = (d - nearClip) / clipRange;
+    }
+
+    resources.common_pushConsts2.cascadeSplits = { 
+        cascadeSplits[0] ,
+        cascadeSplits[1] ,
+        cascadeSplits[2] ,
+    };
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     static float t = 0;
     t+=(f32)dt;
     resources.common_pushConsts.time = t;
 
-    resources.common_pushConsts.sun    = scene.sun.GetOrthographic(0) * scene.sun.GetView(); //BIAS * 
-    resources.shadow.pushConsts.sun[0] = scene.sun.GetOrthographic(0) * scene.sun.GetView();
-    resources.shadow.pushConsts.sun[1] = scene.sun.GetOrthographic(1) * scene.sun.GetView();
-    resources.shadow.pushConsts.sun[2] = scene.sun.GetOrthographic(2) * scene.sun.GetView();
+    resources.common_pushConsts.sun    = {};//scene.sun.GetOrthographic(0) * scene.sun.GetView(); //BIAS * 
+    resources.shadow.pushConsts.sunView = scene.sun.GetView();
+    //resources.shadow.pushConsts.sun[1] = scene.sun.GetOrthographic(1) * scene.sun.GetView();
+    //resources.shadow.pushConsts.sun[2] = scene.sun.GetOrthographic(2) * scene.sun.GetView();
 
     resources.common_pushConsts.sunBias= BIAS * scene.sun.GetOrthographic(0) * scene.sun.GetView();
     resources.common_pushConsts.sunDir = utils::Normalize(scene.sun.pos * 1);
