@@ -45,12 +45,12 @@ struct Sun
         return utils::LookAt(pos, {0, 0, 0});
     }
 
-    utils::Mat4f GetOrthographic() const 
+    utils::Mat4f GetOrthographic(const u32 cascadeIdx) const 
     {
         //TODO: solve how the values correlate
         //TODO: cascades
-        const float W = 0.02f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
-        const float H = 0.02f;//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
+        const float W = 0.02f + (cascadeIdx * 0.01);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
+        const float H = 0.02f + (cascadeIdx * 0.01);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
         const float D = 0.00001f; 
         const float Z = 0.01f;
 

@@ -13,6 +13,7 @@ namespace mini::vk {
 struct Resources_Shadow
 {
     RenderPassDepth renderPass;
+    Shadow_PushConstants pushConsts;
 
     void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
     {

@@ -1,8 +1,8 @@
 #version 450
 
 layout(push_constant) uniform Push {
-    mat4 camera;
-    mat4 sun;
+    mat4 cascades [3];
+    uint cascadeIndex;
 } push;
 
 layout(location = 0) in vec4 inPos;
@@ -12,5 +12,5 @@ layout(location = 3) in vec4 inTex;
 
 void main() 
 {
-    gl_Position = push.sun * inPos;
+    gl_Position = push.cascades[push.cascadeIndex] * inPos;
 }

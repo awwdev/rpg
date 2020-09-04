@@ -25,13 +25,14 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, Vk
 
     auto& renderPassShadow = resources.shadow.renderPass;
     auto& pipelineTerrain  = resources.terrain.pipelineShadow;
-    auto& pushConsts       = resources.common_pushConsts;
+    auto& pushConsts       = resources.shadow.pushConsts;
 
     for(uint32_t cascadeIdx = 0; cascadeIdx < renderPassShadow.layerCount; ++cascadeIdx)
     {
         const auto beginInfo = renderPassShadow.GetBeginInfo(cascadeIdx, ArrayCount(clears_shadow), clears_shadow);
         vkCmdBeginRenderPass    (cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineTerrain.pipeline);
+        pushConsts.cascade = cascadeIdx;
         vkCmdPushConstants      (cmdBuffer, pipelineTerrain.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConsts), &pushConsts);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
         vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
