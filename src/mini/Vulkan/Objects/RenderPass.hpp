@@ -107,9 +107,11 @@ namespace mini::vk
 
             FOR_ARRAY(imageViews, i)
                 vkDestroyImageView(g_contextPtr->device, imageViews[i], nullptr);
+            imageViews.Clear();
 
-            FOR_ARRAY(imageViews, i)
+            FOR_ARRAY(framebuffers, i)
                 vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
+            framebuffers.Clear();
         }
     };
 

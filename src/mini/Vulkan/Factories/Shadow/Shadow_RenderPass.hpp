@@ -105,7 +105,7 @@ inline void Shadow_CreateRenderPass(RenderPassDepth& rp, VkCommandPool cmdPool)
             .pNext              = nullptr,
             .flags              = 0, 
             .image              = rp.depthImageArray.image, 
-            .viewType           = VK_IMAGE_VIEW_TYPE_2D, //!
+            .viewType           = VK_IMAGE_VIEW_TYPE_2D_ARRAY, //!
             .format             = DEPTH_FORMAT,
             .components         = 
             {

@@ -7,7 +7,7 @@ layout (location = 0) in vec4  inColors;
 layout (location = 1) in vec4  inShadowCoord;
 layout (location = 2) in float inShadowDot;
 
-layout (binding  = 0) uniform sampler2DShadow shadowMap;
+layout (binding  = 0) uniform sampler2DArrayShadow shadowMap;
 
 void main() 
 {
@@ -15,8 +15,9 @@ void main()
 	const float scale = 0.0002;
 	for(float y = -2; y <= 2; ++y) {
 	for(float x = -2; x <= 2; ++x) {
-		vec3 off = vec3(x * scale, y * scale, 0);
-		shadow += texture(shadowMap, inShadowCoord.xyz + off).r;
+		vec2 off = vec2(x * scale, y * scale);
+		vec4 coord = vec4(inShadowCoord.xy + off, inShadowCoord.w, inShadowCoord.z);
+		shadow += texture(shadowMap, coord).r;
 	}}
 	shadow = 1 - (shadow / 25);
 

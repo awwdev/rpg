@@ -9,8 +9,8 @@ layout(location = 2) in float inShadowDot;
 layout(location = 3) in vec3 inUV;
 
 //UBO has binding 0
-layout(binding  = 1) uniform sampler2DShadow shadowMap;
-layout(binding  = 2) uniform sampler2DArray  textures;
+layout(binding  = 1) uniform sampler2DArrayShadow shadowMap;
+layout(binding  = 2) uniform sampler2DArray textures;
 
 void main() 
 {
@@ -25,7 +25,8 @@ void main()
 	for(float y = -1; y <= 1; ++y) {
 	for(float x = -1; x <= 1; ++x) {
 		vec3 off = vec3(x * scale, y * scale, 0);
-		shadow += texture(shadowMap, inShadowCoord.xyz + off).r;
+		vec4 coord = vec4(inShadowCoord.xyz + off, 0);
+		shadow += texture(shadowMap, coord).r;
 	}}
 	shadow = 1 - (shadow / 9);
 

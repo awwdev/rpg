@@ -7,7 +7,7 @@ layout(location = 0) in vec4 inColors;
 layout(location = 1) in vec4 inShadowCoord;
 layout(location = 2) in float inShadowDot;
 
-layout(binding  = 1) uniform sampler2D shadowMap;
+layout(binding  = 1) uniform sampler2DArrayShadow shadowMap;
 
 void main() 
 {

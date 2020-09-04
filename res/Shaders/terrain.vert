@@ -25,5 +25,6 @@ void main()
     outShadowDot = outShadowDot * 3; //"fade speed"
     outShadowDot = clamp(outShadowDot, 0, 1);
 
-    outShadowCoord = push.sunBias * inPos;
+    outShadowCoord   = push.sunBias * inPos;
+    outShadowCoord.w = 0;
 }
