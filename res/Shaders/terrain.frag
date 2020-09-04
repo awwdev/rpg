@@ -16,7 +16,7 @@ void main()
 	for(float y = -2; y <= 2; ++y) {
 	for(float x = -2; x <= 2; ++x) {
 		vec2 off = vec2(x * scale, y * scale);
-		vec4 coord = vec4(inShadowCoord.xy + off, inShadowCoord.w, inShadowCoord.z);
+		vec4 coord = vec4(inShadowCoord.xy + off, 0, inShadowCoord.z);
 		shadow += texture(shadowMap, coord).r;
 	}}
 	shadow = 1 - (shadow / 25);

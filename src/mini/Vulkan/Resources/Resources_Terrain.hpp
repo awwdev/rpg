@@ -6,6 +6,7 @@
 #include "mini/Resources/HostResources.hpp"
 #include "mini/Vulkan/Resources/Resources_Default.hpp"
 #include "mini/Vulkan/Resources/Resources_Shadow.hpp"
+#include "mini/Vulkan/Objects/UniformBuffer.hpp"
 
 #include "mini/Vulkan/Factories/Terrain/Terrain_VertexBuffer.hpp"
 #include "mini/Vulkan/Factories/Terrain/Terrain_Pipeline.hpp"
@@ -23,6 +24,7 @@ struct Resources_Terrain
     Pipeline    pipeline;
     Pipeline    pipelineShadow;
     Pipeline    pipelineWire;
+
     VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT> vbo;
 
     void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow& shadow, Resources_Default& default)

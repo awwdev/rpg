@@ -127,7 +127,7 @@ inline void Terrain_CreatePipeline(
     const VkPushConstantRange constantRange {
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
         .offset     = 0,
-        .size       = (uint32_t)sizeof(Common_PushConstants)
+        .size       = (uint32_t)sizeof(Common_PushConstants2)
     };
 
     const VkPipelineLayoutCreateInfo layoutInfo {

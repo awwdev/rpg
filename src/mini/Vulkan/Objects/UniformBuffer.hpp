@@ -5,61 +5,61 @@
 #include "mini/Vulkan/Context.hpp"
 #include "mini/Vulkan/Objects/Buffer.hpp"
 
-namespace mini::vk
+namespace mini::vk {
+
+struct UniformInfo
 {
-    struct UniformInfo
-    {
-        enum Type { Buffer, Image } type;
-        VkDescriptorSetLayoutBinding layout; //includes binding
-        union {
-            VkDescriptorBufferInfo bufferInfo;
-            VkDescriptorImageInfo  imageInfo;
-        };
+    enum Type { Buffer, Image } type;
+    VkDescriptorSetLayoutBinding layout; //includes binding
+    union {
+        VkDescriptorBufferInfo bufferInfo;
+        VkDescriptorImageInfo  imageInfo;
     };
+};
 
-    //groups are only referenced from rendergraph!
-    template<class T, u32 MAX_COUNT_T>
-    struct UniformBuffer_Groups
+//groups are only referenced from rendergraph!
+template<class T, u32 MAX_COUNT_T>
+struct UniformBuffer_Groups
+{
+    static constexpr u32 MAX_COUNT  = MAX_COUNT_T;
+    static constexpr u32 TOTAL_SIZE = sizeof(T) * MAX_COUNT_T;
+    using  TYPE = T;
+
+    Buffer      buffer;
+    UniformInfo info { .type = UniformInfo::Buffer }; //!complete in factory
+
+    u32 count = 0;
+    u32 CurrentSize() const { return sizeof(T) * count; }
+
+    void Create(VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
     {
-        static constexpr u32 MAX_COUNT  = MAX_COUNT_T;
-        static constexpr u32 TOTAL_SIZE = sizeof(T) * MAX_COUNT_T;
-        using  TYPE = T;
+        buffer.Create(
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+            TOTAL_SIZE,
+            memFlags
+        );
+        buffer.Map();
+    }
 
-        Buffer      buffer;
-        UniformInfo info { .type = UniformInfo::Buffer }; //!complete in factory
+    template<u32 GROUPS_COUNT>
+    void Store(const rendering::UniformDataGroups<T, MAX_COUNT_T, GROUPS_COUNT>& hostUBO)
+    {
+        buffer.Store(hostUBO.data.bytes, hostUBO.data.CurrentSize()); //no offset, all at once
+        count = hostUBO.data.count;
+    }
 
-        u32 count = 0;
-        u32 CurrentSize() const { return sizeof(T) * count; }
+    template<u32 GROUPS_COUNT>
+    void Store(const rendering::UniformDataGroupsMesh<T, MAX_COUNT_T, GROUPS_COUNT>& hostUBO)
+    {
+        buffer.Store(hostUBO.data.bytes, hostUBO.data.CurrentSize()); //no offset, all at once
+        count = hostUBO.data.count;
+    }
 
-        void Create(VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
-        {
-            buffer.Create(
-                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                TOTAL_SIZE,
-                memFlags
-            );
-            buffer.Map();
-        }
+    void Clear()
+    {
+        count = 0;
+    }
 
-        template<u32 GROUPS_COUNT>
-        void Store(const rendering::UniformDataGroups<T, MAX_COUNT_T, GROUPS_COUNT>& hostUBO)
-        {
-            buffer.Store(hostUBO.data.bytes, hostUBO.data.CurrentSize()); //no offset, all at once
-            count = hostUBO.data.count;
-        }
-
-        template<u32 GROUPS_COUNT>
-        void Store(const rendering::UniformDataGroupsMesh<T, MAX_COUNT_T, GROUPS_COUNT>& hostUBO)
-        {
-            buffer.Store(hostUBO.data.bytes, hostUBO.data.CurrentSize()); //no offset, all at once
-            count = hostUBO.data.count;
-        }
-
-        void Clear()
-        {
-            count = 0;
-        }
-
-    };
+};
 
 }//ns

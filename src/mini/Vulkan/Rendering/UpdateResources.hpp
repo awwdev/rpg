@@ -24,18 +24,30 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
     //resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.camera.GetView();
 
     //TODO: this should be handled somewhere else which is active
-    if (app::global::inputMode == app::global::PlayMode)
+    if (app::global::inputMode == app::global::PlayMode){
         resources.common_pushConsts.camera = resources.sky.pushConsts.camera = scene.playerController.camera.perspective * scene.playerController.camera.view;
-    else
+
+        resources.common_pushConsts2.projection = scene.playerController.camera.perspective;
+        resources.common_pushConsts2.view       = scene.playerController.camera.view;
+    }
+        
+    else{
         resources.common_pushConsts.camera = resources.sky.pushConsts.camera = scene.editorController.camera.perspective * scene.editorController.camera.view;
         //resources.common_pushConsts.camera = scene.sun.GetOrthographic() * scene.sun.GetView();
+
+        resources.common_pushConsts2.projection = scene.editorController.camera.perspective;
+        resources.common_pushConsts2.view       = scene.editorController.camera.view;
+    }
+
+    resources.common_pushConsts2.sunBias = BIAS * scene.sun.GetOrthographic(0) * scene.sun.GetView();
+    resources.common_pushConsts2.sunDir  = utils::Normalize(scene.sun.pos * 1);
+        
 
     static float t = 0;
     t+=(f32)dt;
     resources.common_pushConsts.time = t;
 
     resources.common_pushConsts.sun    = scene.sun.GetOrthographic(0) * scene.sun.GetView(); //BIAS * 
-
     resources.shadow.pushConsts.sun[0] = scene.sun.GetOrthographic(0) * scene.sun.GetView();
     resources.shadow.pushConsts.sun[1] = scene.sun.GetOrthographic(1) * scene.sun.GetView();
     resources.shadow.pushConsts.sun[2] = scene.sun.GetOrthographic(2) * scene.sun.GetView();

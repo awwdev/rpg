@@ -1,8 +1,15 @@
 #version 450
 
+//layout(push_constant) uniform Push {
+//    mat4 camera;
+//    mat4 sun;
+//} push;
+
 layout(push_constant) uniform Push {
-    mat4 camera;
-    mat4 sun;
+    mat4 projection;
+    mat4 view;
+    mat4 sunBiased;
+    vec3 sunDir;
 } push;
 
 layout(location = 0) in vec4 inPos;
@@ -14,6 +21,6 @@ layout (location = 0) out vec4 outCol;
 
 void main() 
 {
-    gl_Position = push.camera * inPos;
+    gl_Position = push.projection * push.view * inPos;
     outCol      = vec4(1, 1, 1, 0.5);
 }

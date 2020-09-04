@@ -1,9 +1,16 @@
 #version 450
 
+//layout(push_constant) uniform Push {
+//    mat4 camera;
+//    mat4 sun;
+//    mat4 sunBias;
+//    vec3 sunDir;
+//} push;
+
 layout(push_constant) uniform Push {
-    mat4 camera;
-    mat4 sun;
-    mat4 sunBias;
+    mat4 projection;
+    mat4 view;
+    mat4 sunBiased;
     vec3 sunDir;
 } push;
 
@@ -18,13 +25,12 @@ layout (location = 2) out float outShadowDot;
 
 void main() 
 {
-    gl_Position = push.camera * inPos;
-    outCol      = inCol;
+    gl_Position  = push.projection * push.view * inPos;
+    outCol       = inCol;
 
     outShadowDot = dot(inNor, push.sunDir);
     outShadowDot = outShadowDot * 3; //"fade speed"
     outShadowDot = clamp(outShadowDot, 0, 1);
 
-    outShadowCoord   = push.sunBias * inPos;
-    outShadowCoord.w = 0;
+    outShadowCoord = push.sunBiased * inPos;
 }

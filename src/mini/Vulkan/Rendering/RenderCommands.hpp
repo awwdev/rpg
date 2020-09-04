@@ -82,7 +82,7 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
 
     //?TERRAIN
     //TODO: culling (loops)
-    vkCmdPushConstants      (cmdBuffer, resources.terrain.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
+    vkCmdPushConstants      (cmdBuffer, resources.terrain.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts2), &resources.common_pushConsts2);
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.layout, 0, 1, &resources.terrain.pipeline.sets[cmdBufferIdx], 0, nullptr); 
     vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.pipeline);
@@ -93,6 +93,7 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
     }
 
     //?DEFAULT
+    /*vkCmdPushConstants      (cmdBuffer, resources.terrain.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineVertexColor.layout, 0, 1, &resources.default.pipelineVertexColor.sets[cmdBufferIdx], 0, nullptr); 
     vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineVertexColor.pipeline);
@@ -106,8 +107,9 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
         const auto instOff   = ubo.Get(idx).begin;
         const auto instCount = ubo.Get(idx).count;
         vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
-    }
+    }*/
 
+    /*
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineTexture.layout, 0, 1, &resources.default.pipelineTexture.sets[cmdBufferIdx], 0, nullptr); 
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineTexture.pipeline);
     vkCmdPushConstants(cmdBuffer,resources.default.pipelineTexture.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
@@ -121,14 +123,13 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
         const auto instCount = ubo.Get(idx).count;
         vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
     }
+    */
 
     vkCmdEndRenderPass(cmdBuffer);
 }
 
 inline void UI(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene& scene)
 {
-    
-
     const auto beginInfo_ui = resources.ui.renderPass.GetBeginInfo(cmdBufferIdx);
     vkCmdBeginRenderPass(cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdPushConstants      (cmdBuffer, resources.ui.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.ui.pushConsts), &resources.ui.pushConsts);

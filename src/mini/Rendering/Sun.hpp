@@ -49,8 +49,8 @@ struct Sun
     {
         //TODO: solve how the values correlate
         //TODO: cascades
-        const float W = 0.02f + (cascadeIdx * 0.01);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
-        const float H = 0.02f + (cascadeIdx * 0.01);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
+        const float W = 0.02f + ((f32)cascadeIdx * 0.01f);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
+        const float H = 0.02f + ((f32)cascadeIdx * 0.01f);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
         const float D = 0.00001f; 
         const float Z = 0.01f;
 

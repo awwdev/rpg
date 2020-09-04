@@ -17,7 +17,8 @@ namespace mini::vk {
 
 struct VkResources
 {
-    Common_PushConstants common_pushConsts;
+    Common_PushConstants  common_pushConsts;
+    Common_PushConstants2 common_pushConsts2;
 
     Resources_Shadow  shadow;
     Resources_Sky     sky;
