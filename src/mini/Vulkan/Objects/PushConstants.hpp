@@ -15,6 +15,7 @@ namespace mini::vk
         utils::Mat4f sunBias;
         utils::Vec3f sunDir;
         float time;
+        int cascadeIndex;
     };
 
     struct Sky_PushConstants

@@ -52,8 +52,8 @@ inline void Default_CreateShaderVertexColor(Shader& shader, RenderPassDepth& rp)
         info.imageInfo = 
         {
             .sampler        = shader.samplers[0],
-            .imageView      = rp.depthImage.view, 
-            .imageLayout    = rp.depthImage.layout
+            .imageView      = rp.depthImageArray.view, 
+            .imageLayout    = rp.depthImageArray.layout
         };
     }
 }
@@ -102,8 +102,8 @@ inline void Default_CreateShaderTexture(Shader& shader, RenderPassDepth& rp, Ima
         info.imageInfo = 
         {
             .sampler        = shader.samplers.Last(),
-            .imageView      = rp.depthImage.view, 
-            .imageLayout    = rp.depthImage.layout
+            .imageView      = rp.depthImageArray.view, 
+            .imageLayout    = rp.depthImageArray.layout
         };
     }
     //TEXTURE

@@ -53,8 +53,8 @@ inline void Terrain_CreateShader(Shader& shader, RenderPassDepth& rp)
         info.imageInfo = 
         {
             .sampler        = shader.samplers[0],
-            .imageView      = rp.depthImage.view, 
-            .imageLayout    = rp.depthImage.layout
+            .imageView      = rp.depthImageArray.view, 
+            .imageLayout    = rp.depthImageArray.layout
         };
     }
 }

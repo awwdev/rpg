@@ -73,14 +73,17 @@ namespace mini::vk
     struct RenderPassDepth
     {
         VkRenderPass renderPass;
-        VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT; //!set in factory
-        VkRenderPassBeginInfo beginInfo; //!set in factory
+        VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT;
+        VkRenderPassBeginInfo beginInfo;
         uint32_t width, height;
+        uint32_t layerCount;
 
-        VkFramebuffer framebuffer;
-        DepthImage    depthImage;
+        DepthImageArray depthImageArray; //should really be the image array we already have
+        box::Array<VkImageView, 3>   imageViews;
+        box::Array<VkFramebuffer, 3> framebuffers;
 
-         VkRenderPassBeginInfo GetBeginInfo(
+        VkRenderPassBeginInfo GetBeginInfo(
+            const u32 layerIndex,
             const u32 clearCount = 0, 
             const VkClearValue* clears = nullptr) 
         {
@@ -88,7 +91,7 @@ namespace mini::vk
                 .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
                 .pNext          = nullptr,
                 .renderPass     = renderPass,
-                .framebuffer    = framebuffer,
+                .framebuffer    = framebuffers[layerIndex],
                 .renderArea     = {
                     .offset     = VkOffset2D {0, 0},
                     .extent     = { width, height }
@@ -101,7 +104,12 @@ namespace mini::vk
         ~RenderPassDepth()
         {
             vkDestroyRenderPass(g_contextPtr->device, renderPass, nullptr);
-            vkDestroyFramebuffer(g_contextPtr->device, framebuffer, nullptr);
+
+            FOR_ARRAY(imageViews, i)
+                vkDestroyImageView(g_contextPtr->device, imageViews[i], nullptr);
+
+            FOR_ARRAY(imageViews, i)
+                vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
         }
     };
 

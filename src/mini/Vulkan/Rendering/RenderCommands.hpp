@@ -19,44 +19,46 @@ namespace mini::vk {
 inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene& scene)
 {
     VkDeviceSize offsets {};
-
     const VkClearValue clears_shadow [] { 
         { .depthStencil = { 0, 0 } } //reversed z        
     };
-    const auto beginInfo_shadow = resources.shadow.renderPass.GetBeginInfo(ArrayCount(clears_shadow), clears_shadow);
 
-    vkCmdPushConstants(cmdBuffer, resources.terrain.pipelineShadow.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.common_pushConsts), &resources.common_pushConsts);
-    vkCmdBeginRenderPass(cmdBuffer, &beginInfo_shadow, VK_SUBPASS_CONTENTS_INLINE);
+    auto& renderPassShadow = resources.shadow.renderPass;
+    auto& pipelineTerrain  = resources.terrain.pipelineShadow;
+    auto& pushConsts       = resources.common_pushConsts;
 
-    //TERRAIN
-    vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
-    vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipelineShadow.pipeline);
-    
-    vkCmdSetDepthBias(
-        cmdBuffer, 
-        scene.renderGraph.depthBiasConstantFactor,
-        scene.renderGraph.depthBiasClamp,
-        scene.renderGraph.depthBiasSlopeFactor
-    );
-    
-    vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
-  
-    //DEFAULT
-    vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.layout, 0, 1, &resources.default.pipelineShadow.sets[cmdBufferIdx], 0, nullptr); 
-    vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
-    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.pipeline);
-    FOR_ARRAY(scene.renderGraph.default_ubo.groupsVertexColor.usedIndices, i)
+    for(uint32_t cascadeIdx = 0; cascadeIdx < renderPassShadow.layerCount; ++cascadeIdx)
     {
-        const auto& ubo = scene.renderGraph.default_ubo.groupsVertexColor;
-        const auto idx  = ubo.usedIndices[i];
-        const auto vertOff   = resources.default.vbo.vertexGroups[idx].begin;
-        const auto vertCount = resources.default.vbo.vertexGroups[idx].count;
-        const auto instOff   = ubo.Get(idx).begin;
-        const auto instCount = ubo.Get(idx).count;
-        vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
+        const auto beginInfo = renderPassShadow.GetBeginInfo(cascadeIdx, ArrayCount(clears_shadow), clears_shadow);
+        vkCmdBeginRenderPass    (cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineTerrain.pipeline);
+        vkCmdPushConstants      (cmdBuffer, pipelineTerrain.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConsts), &pushConsts);
+        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
+        vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
+        vkCmdEndRenderPass      (cmdBuffer);
     }
 
-    vkCmdEndRenderPass(cmdBuffer);
+    //vkCmdSetDepthBias(
+    //    cmdBuffer, 
+    //    scene.renderGraph.depthBiasConstantFactor,
+    //    scene.renderGraph.depthBiasClamp,
+    //    scene.renderGraph.depthBiasSlopeFactor
+    //);
+
+    //DEFAULT
+    //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.layout, 0, 1, &resources.default.pipelineShadow.sets[cmdBufferIdx], 0, nullptr); 
+    //vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.default.vbo.activeBuffer->buffer, &offsets);
+    //vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.default.pipelineShadow.pipeline);
+    //FOR_ARRAY(scene.renderGraph.default_ubo.groupsVertexColor.usedIndices, i)
+    //{
+    //    const auto& ubo = scene.renderGraph.default_ubo.groupsVertexColor;
+    //    const auto idx  = ubo.usedIndices[i];
+    //    const auto vertOff   = resources.default.vbo.vertexGroups[idx].begin;
+    //    const auto vertCount = resources.default.vbo.vertexGroups[idx].count;
+    //    const auto instOff   = ubo.Get(idx).begin;
+    //    const auto instCount = ubo.Get(idx).count;
+    //    vkCmdDraw (cmdBuffer, vertCount, instCount, vertOff, instOff); 
+    //}
 }
 
 inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene& scene)

@@ -60,6 +60,9 @@ int WINAPI wWinMain(
 } //main end
 
 
+//TODO: cascades
+//TODO: rework vk image obj
+
 //TODO: profiler
 
 //TODO: normal per triangle on terrain instead of 

@@ -352,6 +352,23 @@
 				},
 			]
 		},
+		"(.*//!)": {
+			"regexFlags": "g", 
+			"decorations": [
+				{ 
+					"backgroundColor": "#ff000020", 
+				},
+			]
+		},
+		"(//!.*)": {
+			"regexFlags": "g", 
+			"decorations": [
+				{ 
+					"color": "#ff0000",
+					"backgroundColor": "#ff000020", 
+				},
+			]
+		},
 		//? MINI LANGUAGE
 		"(#.*)": {
 			"regexFlags": "g", 
