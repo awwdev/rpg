@@ -23,7 +23,7 @@ layout (location = 3) in vec4 inTex;
 layout (location = 0) out vec4  outCol;
 layout (location = 1) out vec4  outShadowCoord;
 layout (location = 2) out float outShadowDot;
-layout (location = 3) out vec3  outViewPos;
+layout (location = 3) out vec4  outViewPos;
 layout (location = 4) out vec3  outCascadeSplits;
 layout (location = 5) out mat4  outSunView;
 layout (location = 12) out vec4  outPos;
@@ -54,6 +54,6 @@ void main()
     //outShadowCoord   = (biasMat * sunProj * push.sunView) * inPos;
     outSunView       = push.sunView;
     outPos           = inPos;
-    outViewPos       = (push.view * vec4(inPos.xyz, 1)).xyz;
+    outViewPos       = push.view * inPos;
     outCascadeSplits = push.cascadeSplits;
 }

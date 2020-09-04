@@ -6,7 +6,7 @@ layout (location = 0) out vec4 outColor;
 layout (location = 0) in vec4  inColors;
 layout (location = 1) in vec4  inShadowCoord;
 layout (location = 2) in float inShadowDot;
-layout (location = 3) in vec3  inViewPos;
+layout (location = 3) in vec4  inViewPos;
 layout (location = 4) in vec3  inCascadeSplits;
 layout (location = 5) in mat4  inSunView;
 layout (location = 12) in vec4  inPos;
@@ -22,9 +22,23 @@ const mat4 biasMat = mat4(
 
 void main() 
 {
-	uint cascadeIndex = 2;
+	const float splits[3] =
+	{
+		-1,
+		-10,
+		-20,
+	};
 
-	float S = 0.001 + (cascadeIndex * 0.01);
+	uint cascadeIndex = 0;
+	for(uint i = 0; i < 3; ++i) {
+		if(inViewPos.z > splits[i]) {	
+			++cascadeIndex;
+		}
+	}
+
+	
+
+	float S = 0.002 + (cascadeIndex * 0.01);
     float D = 0.00001f; 
     float Z = 0.01f;
     mat4 sunProj = mat4( 
@@ -37,17 +51,7 @@ void main()
 	vec4 shadowCoords = (biasMat * sunProj * inSunView) * inPos;
 
 
-	//const float splits[3] =
-	//{
-	//	10,
-	//	100,
-	//	1000
-	//};
-	//for(uint i = 0; i < 2; ++i) {
-	//	if(inViewPos.z < splits[i]) {	
-	//		cascadeIndex--;
-	//	}
-	//}
+	
 
 	float shadow = 0;
 	const float scale = 0.0002;
