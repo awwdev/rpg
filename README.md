@@ -10,7 +10,7 @@ It might get the base for some stylized low poly game in the future?
 ![](media/progress/2020_08_25_grass.gif)
 ![](media/progress/2020_08_14_terrainEdit.gif)
 ![](media/progress/2020_08_04_terrainStichPlayerMove.gif)
-![](media/progress/2020_07_15_msaa.gif)
+![](media/progress/2020_07_04_ui_wnd.gif)
 
 ### Contents
 - Custom "STL" (Array, String, Bitset, Maps)

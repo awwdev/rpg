@@ -59,17 +59,15 @@ int WINAPI wWinMain(
 
 } //main end
 
-//TODO: reduce terrain and seek for the perf bottleneck
-//TODO: terrain fill rate issue? lots of vertices?
-//TODO: IBO (flag) or new way to approach terrain?
-//TODO: cast shadow or not (tree vs grass both texture)
+
 //TODO: profiler
+
+//TODO: normal per triangle on terrain instead of 
+//TODO: IBO
+//TODO: cast shadow or not (tree vs grass both texture)
 //TODO: ECS serialization
 
-
-
-
-//TODO: draw stuff on render target for post fx
-//TODO: join transform and render component
-//TODO: use block ptr for s render function 
 //TODO: add static flag to render component, so ubo data is not updated
+//TODO: join transform and render component
+//TODO: draw stuff on render target for post fx
+//TODO: use block ptr for s render function 
