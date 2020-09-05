@@ -15,22 +15,15 @@ layout (set = 0, binding = 1) uniform UBO {
 	mat4 camProj;
     mat4 camView;
     mat4 sunView;
-	mat4 sunProjCasc [3];
+	mat4 sunCasc [3];
     vec3 sunDir;
 } ubo;
 
-const mat4 biasMat = mat4( 
-	0.5, 0.0, 0.0, 0.0,
-	0.0, 0.5, 0.0, 0.0,
-	0.0, 0.0, 1.0, 0.0,
-	0.5, 0.5, 0.0, 1.0 
-);
-
 void main() 
 {
-	vec4 shadowCoords0 = (biasMat * ubo.sunProjCasc[0] * ubo.sunView) * inPos;
-	vec4 shadowCoords1 = (biasMat * ubo.sunProjCasc[1] * ubo.sunView) * inPos;
-	vec4 shadowCoords2 = (biasMat * ubo.sunProjCasc[2] * ubo.sunView) * inPos;
+	vec4 shadowCoords0 = ubo.sunCasc[0] * inPos;
+	vec4 shadowCoords1 = ubo.sunCasc[1] * inPos;
+	vec4 shadowCoords2 = ubo.sunCasc[2] * inPos;
 
 	float shadow = 0;
 	const float scale = 0.0002;

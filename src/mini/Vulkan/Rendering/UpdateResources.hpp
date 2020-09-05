@@ -51,10 +51,14 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
         .sunView = scene.sun.GetView(),
         .sunDir  = utils::Normalize(scene.sun.pos),
     };
-    uboMeta.sunProjCasc[0] = scene.sun.GetOrthographic(0);
-    uboMeta.sunProjCasc[1] = scene.sun.GetOrthographic(1);
-    uboMeta.sunProjCasc[2] = scene.sun.GetOrthographic(2);
+    uboMeta.sunProjCasc[0] = BIAS * scene.sun.GetOrthographic(0) * scene.sun.GetView();
+    uboMeta.sunProjCasc[1] = BIAS * scene.sun.GetOrthographic(1) * scene.sun.GetView();
+    uboMeta.sunProjCasc[2] = BIAS * scene.sun.GetOrthographic(2) * scene.sun.GetView();
     resources.terrain.uboMeta.Store(uboMeta);
+
+    resources.shadow.pushConsts.sunCasc[0] = scene.sun.GetOrthographic(0) * scene.sun.GetView();
+    resources.shadow.pushConsts.sunCasc[1] = scene.sun.GetOrthographic(1) * scene.sun.GetView();
+    resources.shadow.pushConsts.sunCasc[2] = scene.sun.GetOrthographic(2) * scene.sun.GetView();
 
 
     static float t = 0;
@@ -62,7 +66,7 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
     resources.common_pushConsts.time = t;
 
     resources.common_pushConsts.sun    = {};//scene.sun.GetOrthographic(0) * scene.sun.GetView(); //BIAS * 
-    resources.shadow.pushConsts.sunView = scene.sun.GetView();
+    //resources.shadow.pushConsts.sunView = scene.sun.GetView();
     //resources.shadow.pushConsts.sun[1] = scene.sun.GetOrthographic(1) * scene.sun.GetView();
     //resources.shadow.pushConsts.sun[2] = scene.sun.GetOrthographic(2) * scene.sun.GetView();
 

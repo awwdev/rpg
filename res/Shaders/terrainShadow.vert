@@ -1,7 +1,7 @@
 #version 450
 
 layout(push_constant) uniform Push {
-    mat4 sunView;
+    mat4 sunCasc [3];
     uint cascadeIndex;
 } push;
 
@@ -12,21 +12,5 @@ layout(location = 3) in vec4 inTex;
 
 void main() 
 {
-    float S;
-    switch(push.cascadeIndex)
-    {
-        case 0: S = 0.005; break;
-        case 1: S = 0.050; break;
-        case 2: S = 0.100; break;
-    }
-    float D = 0.00001f; 
-    float Z = 0.01f;
-    mat4 sunProj = mat4( 
-        S, 0, 0, 0,
-        0, S, 0, 0,
-        0, 0, D, 0,
-        0, 0, Z, 1 
-    );
-
-    gl_Position = (sunProj * push.sunView) * inPos;
+    gl_Position = push.sunCasc[push.cascadeIndex] * inPos;
 }
