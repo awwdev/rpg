@@ -21,9 +21,9 @@ inline void Terrain_CreateShader(Shader& shader, RenderPassDepth& rp)
         .magFilter               = VK_FILTER_LINEAR,
         .minFilter               = VK_FILTER_LINEAR, 
         .mipmapMode              = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-        .addressModeU            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, 
-        .addressModeV            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, 
-        .addressModeW            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+        .addressModeU            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 
+        .addressModeV            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 
+        .addressModeW            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
         .mipLodBias              = 0, 
         .anisotropyEnable        = VK_FALSE, 
         .maxAnisotropy           = 0, 
@@ -32,7 +32,7 @@ inline void Terrain_CreateShader(Shader& shader, RenderPassDepth& rp)
         .compareOp               = VK_COMPARE_OP_LESS,
         .minLod                  = 0,
         .maxLod                  = 0, 
-        .borderColor             = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE, 
+        .borderColor             = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK,//reversed
         .unnormalizedCoordinates = VK_FALSE
     };
     VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, shader.samplers.Append()));

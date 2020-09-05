@@ -12,7 +12,15 @@ layout(location = 3) in vec4 inTex;
 
 void main() 
 {
-    float S = 0.002 + (push.cascadeIndex * 0.01);
+    float S;
+    switch(push.cascadeIndex)
+    {
+        case 0: S = 0.005; break;
+        case 1: S = 0.050; break;
+        case 2: S = 0.100; break;
+    }
+
+    //float S = 0.003 + (push.cascadeIndex * 0.01);
     float D = 0.00001f; 
     float Z = 0.01f;
     mat4 sunProj = mat4( 

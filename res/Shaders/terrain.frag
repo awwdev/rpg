@@ -22,44 +22,65 @@ const mat4 biasMat = mat4(
 
 void main() 
 {
-	const float splits[3] =
-	{
-		-1,
-		-10,
-		-20,
-	};
+	//const float splits[3] =
+	//{
+	//	-0,
+	//	-10,
+	//	-20,
+	//};
 
-	uint cascadeIndex = 0;
-	for(uint i = 0; i < 3; ++i) {
-		if(inViewPos.z > splits[i]) {	
-			++cascadeIndex;
-		}
-	}
+	//uint cascadeIndex = 0;
+	//for(uint i = 0; i < 3; ++i) {
+	//	if(inViewPos.z > splits[i]) {	
+	//		++cascadeIndex;
+	//	}
+	//}
 
-	
+	//float S;
+    //switch(cascadeIndex)
+    //{
+    //    case 0: S = 0.003; break;
+    //    case 1: S = 0.010; break;
+    //    case 2: S = 0.100; break;
+    //}
 
-	float S = 0.002 + (cascadeIndex * 0.01);
-    float D = 0.00001f; 
+	float D = 0.00001f; 
     float Z = 0.01f;
+
+	float S = 0.005;
     mat4 sunProj = mat4( 
         S, 0, 0, 0,
         0, S, 0, 0,
         0, 0, D, 0,
         0, 0, Z, 1 
     );
+	vec4 shadowCoords0 = (biasMat * sunProj * inSunView) * inPos;
 
-	vec4 shadowCoords = (biasMat * sunProj * inSunView) * inPos;
-
-
-	
+	S = 0.050;
+    sunProj = mat4( 
+        S, 0, 0, 0,
+        0, S, 0, 0,
+        0, 0, D, 0,
+        0, 0, Z, 1 
+    );
+	vec4 shadowCoords1 = (biasMat * sunProj * inSunView) * inPos;
 
 	float shadow = 0;
 	const float scale = 0.0002;
 	for(float y = -2; y <= 2; ++y) {
 	for(float x = -2; x <= 2; ++x) {
 		vec2 off = vec2(x * scale, y * scale);
-		vec4 coord = vec4(shadowCoords.xy + off, cascadeIndex, shadowCoords.z);
-		shadow += texture(shadowMap, coord).r;
+
+		vec4 coord0   = vec4(shadowCoords0.xy + off, 0, shadowCoords0.z);
+		vec4 coord1   = vec4(shadowCoords1.xy + off, 1, shadowCoords1.z);
+		float shadow0 = texture(shadowMap, coord0).r;
+		float shadow1 = texture(shadowMap, coord1).r;
+
+		float v0 = abs(inViewPos.z) / 50;
+		float n0 = clamp(v0, 0, 1);
+
+		float lerp0 = n0 * shadow0 + (1-n0) * shadow1; 
+		shadow += lerp0;
 	}}
 	shadow = 1 - (shadow / 25);
 
