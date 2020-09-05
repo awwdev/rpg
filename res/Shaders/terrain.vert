@@ -11,26 +11,23 @@ layout (location = 2) out float outShadowDot;
 layout (location = 3) out vec4  outViewPos;
 layout (location = 4) out vec4  outPos;
 
-layout(push_constant) uniform Push {
-    mat4 projection;
-    mat4 view;
-    mat4 sunView;
-    vec3 sunDir;
-} push;
-
 layout (set = 0, binding = 1) uniform UBO {
-	mat4 test;
+	mat4 camProj;
+    mat4 camView;
+    mat4 sunView;
+    mat4 sunProjCasc [3];
+    vec3 sunDir;
 } ubo;
 
 void main() 
 {
-    gl_Position  = push.projection * push.view * inPos;
+    gl_Position  = ubo.camProj * ubo.camView * inPos;
     outCol       = inCol;
 
-    outShadowDot = dot(inNor, push.sunDir);
+    outShadowDot = dot(inNor, ubo.sunDir);
     outShadowDot = outShadowDot * 3; //"fade speed"
     outShadowDot = clamp(outShadowDot, 0, 1);
 
-    outPos           = inPos;
-    outViewPos       = push.view * inPos;
+    outPos       = inPos;
+    outViewPos   = ubo.camView * inPos;
 }

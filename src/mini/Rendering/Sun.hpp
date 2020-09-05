@@ -52,8 +52,8 @@ struct Sun
         float S {};
         switch(cascadeIdx)
         {
-            case 0: S = 0.010f; break;
-            case 1: S = 0.010f; break;
+            case 0: S = 0.005f; break;
+            case 1: S = 0.050f; break;
             case 2: S = 0.100f; break;
         }
         //const float W = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;

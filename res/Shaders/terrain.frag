@@ -12,15 +12,12 @@ layout (location = 4) in vec4  inPos;
 layout (binding  = 0) uniform sampler2DArrayShadow shadowMap;
 
 layout (set = 0, binding = 1) uniform UBO {
-	mat4 test;
-} ubo;
-
-layout(push_constant) uniform Push {
-    mat4 projection;
-    mat4 view;
+	mat4 camProj;
+    mat4 camView;
     mat4 sunView;
+	mat4 sunProjCasc [3];
     vec3 sunDir;
-} push;
+} ubo;
 
 const mat4 biasMat = mat4( 
 	0.5, 0.0, 0.0, 0.0,
@@ -31,26 +28,9 @@ const mat4 biasMat = mat4(
 
 void main() 
 {
-	float D = 0.00001f; 
-    float Z = 0.01f;
-
-	float S = 0.005;
-    mat4 sunProj = mat4( 
-        S, 0, 0, 0,
-        0, S, 0, 0,
-        0, 0, D, 0,
-        0, 0, Z, 1 
-    );
-	vec4 shadowCoords0 = (biasMat * sunProj * push.sunView) * inPos;
-
-	S = 0.050;
-    sunProj = mat4( 
-        S, 0, 0, 0,
-        0, S, 0, 0,
-        0, 0, D, 0,
-        0, 0, Z, 1 
-    );
-	vec4 shadowCoords1 = (biasMat * sunProj * push.sunView) * inPos;
+	vec4 shadowCoords0 = (biasMat * ubo.sunProjCasc[0] * ubo.sunView) * inPos;
+	vec4 shadowCoords1 = (biasMat * ubo.sunProjCasc[1] * ubo.sunView) * inPos;
+	vec4 shadowCoords2 = (biasMat * ubo.sunProjCasc[2] * ubo.sunView) * inPos;
 
 	float shadow = 0;
 	const float scale = 0.0002;
@@ -72,8 +52,7 @@ void main()
 	shadow = 1 - (shadow / 25);
 
 	const float AMBIENT = 0.1;
-	//outColor = vec4(inColors.rgb * (AMBIENT + shadow * inShadowDot), 1);
-	outColor = vec4(ubo.test[0][0], ubo.test[0][1], ubo.test[0][2], 1);
+	outColor = vec4(inColors.rgb * (AMBIENT + shadow * inShadowDot), 1);
 }
 
 //layout(binding  = 0) uniform sampler2D shadowMap;

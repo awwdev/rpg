@@ -28,7 +28,13 @@ struct Default_UniformData
 
 struct Terrain_UniformData
 {
-    utils::Mat4f test;
+    alignas(64) utils::Mat4f camProj;
+    alignas(64) utils::Mat4f camView;
+    alignas(64) utils::Mat4f sunView;
+
+    utils::Mat4f sunProjCasc [3];
+
+    alignas(16) utils::Vec3f sunDir;
 };
 
 template<class DATA_T, u32 DATA_COUNT, u32 GROUP_COUNT = DATA_COUNT>

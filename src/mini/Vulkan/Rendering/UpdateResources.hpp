@@ -46,8 +46,14 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
 
     //? UBO META TEST
     rendering::Terrain_UniformData uboMeta {
-        { 1, 0, 0 }
+        .camProj = (app::global::inputMode == app::global::PlayMode ? scene.playerController.camera.perspective : scene.editorController.camera.perspective),
+        .camView = (app::global::inputMode == app::global::PlayMode ? scene.playerController.camera.view        : scene.editorController.camera.view),
+        .sunView = scene.sun.GetView(),
+        .sunDir  = utils::Normalize(scene.sun.pos),
     };
+    uboMeta.sunProjCasc[0] = scene.sun.GetOrthographic(0);
+    uboMeta.sunProjCasc[1] = scene.sun.GetOrthographic(1);
+    uboMeta.sunProjCasc[2] = scene.sun.GetOrthographic(2);
     resources.terrain.uboMeta.Store(uboMeta);
 
 

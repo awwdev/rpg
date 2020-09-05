@@ -19,8 +19,6 @@ void main()
         case 1: S = 0.050; break;
         case 2: S = 0.100; break;
     }
-
-    //float S = 0.003 + (push.cascadeIndex * 0.01);
     float D = 0.00001f; 
     float Z = 0.01f;
     mat4 sunProj = mat4( 
