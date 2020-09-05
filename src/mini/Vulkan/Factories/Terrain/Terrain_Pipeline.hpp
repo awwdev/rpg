@@ -17,13 +17,15 @@ inline void Terrain_CreatePipeline(
     Pipeline& pipeline,
     Shader& shader, 
     RenderPass& renderPass,
-    VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT>& vbo)
+    VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT>& vbo,
+    UniformBuffer<rendering::Terrain_UniformData, 1>& ubo)
 {
     const auto vertexInput   = CreatePipelineVertexInputInfo(vbo);
     const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
     UniformInfo* uniformInfos [] = {
         &shader.infos[0],
+        &ubo.info
     };
     WriteDescriptors(pipeline, uniformInfos);
 
@@ -125,7 +127,7 @@ inline void Terrain_CreatePipeline(
     };
 
     const VkPushConstantRange constantRange {
-        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
         .offset     = 0,
         .size       = (uint32_t)sizeof(Common_PushConstants2)
     };

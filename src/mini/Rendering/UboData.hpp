@@ -26,6 +26,11 @@ struct Default_UniformData
     //alignas(64) int textureIndex;
 };
 
+struct Terrain_UniformData
+{
+    utils::Mat4f test;
+};
+
 template<class DATA_T, u32 DATA_COUNT, u32 GROUP_COUNT = DATA_COUNT>
 struct UniformDataGroups
 {

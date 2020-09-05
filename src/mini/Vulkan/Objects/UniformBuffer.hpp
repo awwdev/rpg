@@ -62,4 +62,40 @@ struct UniformBuffer_Groups
 
 };
 
+template<class T, u32 MAX_COUNT_T>
+struct UniformBuffer
+{
+    static constexpr u32 MAX_COUNT  = MAX_COUNT_T;
+    static constexpr u32 TOTAL_SIZE = sizeof(T) * MAX_COUNT_T;
+    using  TYPE = T;
+
+    Buffer      buffer;
+    UniformInfo info { .type = UniformInfo::Buffer }; //!complete in factory
+
+    u32 count = 0;
+    u32 CurrentSize() const { return sizeof(T) * count; }
+
+    void Create(VkMemoryPropertyFlags memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+    {
+        buffer.Create(
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+            TOTAL_SIZE,
+            memFlags
+        );
+        buffer.Map();
+    }
+
+    void Store(const T& data)
+    {
+        buffer.Store(&data, sizeof(T), 0);
+        ++count;
+    }
+
+    void Clear()
+    {
+        count = 0;
+    }
+
+};
+
 }//ns

@@ -23,7 +23,6 @@ struct Common_PushConstants2
     utils::Mat4f view;
     utils::Mat4f sunView;
     utils::Vec3f sunDir;
-    utils::Vec3f cascadeSplits;
 };
 
 struct Shadow_PushConstants

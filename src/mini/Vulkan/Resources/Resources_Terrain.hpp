@@ -9,6 +9,7 @@
 #include "mini/Vulkan/Objects/UniformBuffer.hpp"
 
 #include "mini/Vulkan/Factories/Terrain/Terrain_VertexBuffer.hpp"
+#include "mini/Vulkan/Factories/Terrain/Terrain_UniformBuffer.hpp"
 #include "mini/Vulkan/Factories/Terrain/Terrain_Pipeline.hpp"
 #include "mini/Vulkan/Factories/Terrain/Terrain_PipelineWire.hpp"
 #include "mini/Vulkan/Factories/Terrain/Terrain_PipelineShadow.hpp"
@@ -26,15 +27,17 @@ struct Resources_Terrain
     Pipeline    pipelineWire;
 
     VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT> vbo;
+    UniformBuffer<rendering::Terrain_UniformData, 1> uboMeta;
 
     void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow& shadow, Resources_Default& default)
     {
         Terrain_CreateVertexBuffer  (vbo, cmdPool, hostRes);
+        Terrain_CreateUniformBuffer (uboMeta);
         Terrain_CreateShaderShadow  (shaderShadow);
         Terrain_CreateShader        (shader, shadow.renderPass);
         Terrain_CreateShaderWire    (shaderWire);
         Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);
-        Terrain_CreatePipeline      (pipeline, shader, default.renderPass, vbo);
+        Terrain_CreatePipeline      (pipeline, shader, default.renderPass, vbo, uboMeta);
         Terrain_CreatePipelineWire  (pipelineWire, shaderWire, default.renderPass, vbo);
     }
 
@@ -48,7 +51,7 @@ struct Resources_Terrain
         //TODO: recreate whole shader is wrong, only sampler needs recreation (due to img resize)
         Terrain_CreateShader        (shader, shadow.renderPass);
         Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);
-        Terrain_CreatePipeline      (pipeline, shader, default.renderPass, vbo);
+        Terrain_CreatePipeline      (pipeline, shader, default.renderPass, vbo, uboMeta);
         Terrain_CreatePipelineWire  (pipelineWire, shaderWire, default.renderPass, vbo);
     }
 };

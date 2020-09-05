@@ -44,54 +44,11 @@ void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& s
     resources.common_pushConsts2.sunDir  = utils::Normalize(scene.sun.pos * 1);
     
 
-
-
-
-
-
-    //?CASCADE CALC
-
-    float cascadeSplits[3];
-
-    float nearClip = 0.01f;
-    float farClip  = 100.f;
-    float clipRange = farClip - nearClip;
-
-    float minZ = nearClip;
-    float maxZ = nearClip + clipRange;
-
-    float range = maxZ - minZ;
-    float ratio = maxZ / minZ;
-
-    float cascadeSplitLambda = 0.95f;
-
-    for (uint32_t i = 0; i < 3; i++) {
-        float p = (i + 1) / static_cast<float>(3);
-        float log = minZ * std::pow(ratio, p);
-        float uniform = minZ + range * p;
-        float d = cascadeSplitLambda * (log - uniform) + uniform;
-        cascadeSplits[i] = (d - nearClip) / clipRange;
-    }
-
-    resources.common_pushConsts2.cascadeSplits = { 
-        cascadeSplits[0] ,
-        cascadeSplits[1] ,
-        cascadeSplits[2] ,
+    //? UBO META TEST
+    rendering::Terrain_UniformData uboMeta {
+        { 1, 0, 0 }
     };
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
+    resources.terrain.uboMeta.Store(uboMeta);
 
 
     static float t = 0;

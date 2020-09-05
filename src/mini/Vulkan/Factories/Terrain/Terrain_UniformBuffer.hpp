@@ -7,21 +7,20 @@
 
 namespace mini::vk {
 
-inline void UI_CreateUniformBuffer(
-    UniformBuffer_Groups<rendering::UI_UniformData, rendering::UI_UBO_MAX_COUNT>& ub)
+inline void Terrain_CreateUniformBuffer(UniformBuffer<rendering::Terrain_UniformData, 1>& ubo)
 {
-    ub.Create();
+    ubo.Create();
 
-    ub.info.type = UniformInfo::Buffer;
-    ub.info.layout = {
+    ubo.info.type = UniformInfo::Buffer;
+    ubo.info.layout = {
         .binding            = 1,
         .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .descriptorCount    = 1,
-        .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
+        .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
         .pImmutableSamplers = nullptr,
     };
-    ub.info.bufferInfo = {
-        .buffer = ub.buffer.buffer, //create buffer beforehand
+    ubo.info.bufferInfo = {
+        .buffer = ubo.buffer.buffer, //create buffer beforehand
         .offset = 0,
         .range  = VK_WHOLE_SIZE
     };
