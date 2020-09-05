@@ -15,7 +15,7 @@ layout (set = 0, binding = 1) uniform UBO {
 	mat4 camProj;
     mat4 camView;
     mat4 sunView;
-    mat4 sunProjCasc [3];
+    mat4 sunProjCasc [2];
     vec3 sunDir;
 } ubo;
 

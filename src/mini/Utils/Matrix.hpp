@@ -170,6 +170,17 @@ auto operator*(const Mat<T1, Y, X>& mat, const T2 scalar)
     return out;
 }
 
+template<class T1, class T2, auto Y, auto X>
+auto operator/(const Mat<T1, Y, X>& mat, const T2 scalar)
+{
+    Mat<T1, Y, X> out { mat };
+    for (u8 y = 0; y < Y; ++y) {
+    for (u8 x = 0; x < X; ++x) {
+        out[y][x] /=  scalar;
+    }}
+    return out;
+}
+
 template<class T, auto Y, auto X>
 auto operator+(const Mat<T, Y, X>& m1, const Mat<T, Y, X>& m2) 
 {

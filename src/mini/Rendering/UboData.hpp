@@ -31,10 +31,8 @@ struct Terrain_UniformData
     alignas(64) utils::Mat4f camProj;
     alignas(64) utils::Mat4f camView;
     alignas(64) utils::Mat4f sunView;
-
-    utils::Mat4f sunProjCasc [3];
-
-    alignas(16) utils::Vec3f sunDir;
+    utils::Mat4f sunProjCasc [2];
+    utils::Vec3f sunDir;
 };
 
 template<class DATA_T, u32 DATA_COUNT, u32 GROUP_COUNT = DATA_COUNT>

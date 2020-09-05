@@ -15,7 +15,7 @@ layout (set = 0, binding = 1) uniform UBO {
 	mat4 camProj;
     mat4 camView;
     mat4 sunView;
-	mat4 sunCasc [3];
+	mat4 sunCasc [2];
     vec3 sunDir;
 } ubo;
 
@@ -23,7 +23,7 @@ void main()
 {
 	vec4 shadowCoords0 = ubo.sunCasc[0] * inPos;
 	vec4 shadowCoords1 = ubo.sunCasc[1] * inPos;
-	vec4 shadowCoords2 = ubo.sunCasc[2] * inPos;
+	//vec4 shadowCoords2 = ubo.sunCasc[2] * inPos;
 
 	float shadow = 0;
 	const float scale = 0.0002;
@@ -36,7 +36,7 @@ void main()
 		float shadow0 = texture(shadowMap, coord0).r;
 		float shadow1 = texture(shadowMap, coord1).r;
 
-		float v0 = abs(inViewPos.z) / 50;
+		float v0 = abs(inViewPos.z) / 20;
 		float n0 = clamp(v0, 0, 1);
 
 		float lerp0 = n0 * shadow0 + (1-n0) * shadow1; 

@@ -6,7 +6,7 @@
 namespace mini::utils {
     
 template<typename VAL1, typename VAL2>
-bool Max(const VAL1& val1, const VAL2& val2)
+auto Max(const VAL1& val1, const VAL2& val2)
 {
     return (val1 > val2) ? val1 : val2;
 }
