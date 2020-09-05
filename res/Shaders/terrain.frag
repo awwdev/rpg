@@ -17,6 +17,7 @@ layout (set = 0, binding = 1) uniform UBO {
     mat4 sunView;
 	mat4 sunCasc [2];
     vec3 sunDir;
+	float cascadeFadeDist;
 } ubo;
 
 void main() 
@@ -36,7 +37,7 @@ void main()
 		float shadow0 = texture(shadowMap, coord0).r;
 		float shadow1 = texture(shadowMap, coord1).r;
 
-		float v0 = abs(inViewPos.z) / 20;
+		float v0 = abs(inViewPos.z) / ubo.cascadeFadeDist;
 		float n0 = clamp(v0, 0, 1);
 
 		float lerp0 = n0 * shadow0 + (1-n0) * shadow1; 

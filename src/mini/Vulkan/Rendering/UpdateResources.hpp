@@ -10,6 +10,14 @@
 
 namespace mini::vk {
 
+const utils::Mat4f BIAS { 
+    0.5, 0.0, 0.0, 0.0,
+    0.0, 0.5, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.5, 0.5, 0.0, 1.0 
+};
+
+/*
 inline void CreateCascades(utils::Mat4f (&cascades)[2], const app::GameScene& scene)
 {
     using namespace utils;
@@ -117,21 +125,68 @@ inline void CreateCascades(utils::Mat4f (&cascades)[2], const app::GameScene& sc
             0, 0, Z, 1,
         };
         //cascades[i].splitDepth = (camera.getNearClip() + splitDist * clipRange) * -1.0f;
-        */
+
         cascades[i] = lightOrthoMatrix * lightViewMatrix;
 
         lastSplitDist = cascadeSplits[i];
         }
 }
+*/
+inline void CreateCascades2(utils::Mat4f (&cascades)[2], const app::GameScene& scene, rendering::Terrain_UniformData& uboMeta)
+{
+    using namespace utils;
+
+    uboMeta = {
+        .camProj = (app::global::inputMode == app::global::PlayMode ? scene.playerController.camera.perspective : scene.editorController.camera.perspective),
+        .camView = (app::global::inputMode == app::global::PlayMode ? scene.playerController.camera.view        : scene.editorController.camera.view),
+        .sunView = scene.sun.GetView(),
+        .sunDir  = utils::Normalize(scene.sun.pos),
+        .cascadeFadeDist = 100
+    };
+
+    auto cascadeZoom0 = 1;
+    auto cascadeZoom1 = 5;
+
+    auto& camera = scene.editorController.camera;
+
+    auto farPlane = -100.f;
+    auto cascadeCenter0 = Vec2f{ camera.position[X], camera.position[Z] }  + (Normalize(Vec2f{ camera.rotation[X], camera.rotation[Z] }) * farPlane * 0.3f);
+    auto cascadeCenter1 = Vec2f{ camera.position[X], camera.position[Z] }  + (Normalize(Vec2f{ camera.rotation[X], camera.rotation[Z] }) * farPlane * 0.7f);
+    
+    auto sunDir  = utils::Normalize(scene.sun.pos) * -1;
+    auto sunPos0 = utils::Vec3f{ cascadeCenter0[X], scene.sun.pos[Y], cascadeCenter0[Z] } + (sunDir * -1 * cascadeZoom0);
+    auto sunPos1 = utils::Vec3f{ cascadeCenter1[X], scene.sun.pos[Y], cascadeCenter1[Z] } + (sunDir * -1 * cascadeZoom1);
+
+    auto view0 = utils::LookAt(sunPos0, utils::Vec3f{ cascadeCenter0[X], scene.sun.pos[Y], cascadeCenter0[Z] });
+    auto view1 = utils::LookAt(sunPos1, utils::Vec3f{ cascadeCenter1[X], scene.sun.pos[Y], cascadeCenter1[Z] });
+
+    float S;
+    const float D = 0.00001f; 
+    const float Z = 0.01f;
+
+    S  = 0.01f;
+    utils::Mat4f ortho0 ={
+        S, 0, 0, 0,
+        0, S, 0, 0,
+        0, 0, D, 0,
+        0, 0, Z, 1,
+    };
+
+    S  = 0.002f;
+    utils::Mat4f ortho1 ={
+        S, 0, 0, 0,
+        0, S, 0, 0,
+        0, 0, D, 0,
+        0, 0, Z, 1,
+    };
+
+    cascades[1] = ortho0 * view0;
+    cascades[0] = ortho1 * view1;
+}
 
 inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& scene, res::HostResources& hostRes, double dt, Commands& commands)
 {
-    const utils::Mat4f BIAS { 
-        0.5, 0.0, 0.0, 0.0,
-        0.0, 0.5, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0,
-        0.5, 0.5, 0.0, 1.0 
-    };
+    
 
     //resources.common_pushConsts.camera = scene.camera.GetOrthographic() * scene.sun.GetView();
     //resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.playerController.GetView(scene.ecs);
@@ -160,22 +215,17 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
 
     //? UBO META TEST
     utils::Mat4f cascades [2]{};
-    CreateCascades(cascades, scene);
+    rendering::Terrain_UniformData uboMeta {};
+    CreateCascades2(cascades, scene, uboMeta);
 
-    rendering::Terrain_UniformData uboMeta {
-        .camProj = (app::global::inputMode == app::global::PlayMode ? scene.playerController.camera.perspective : scene.editorController.camera.perspective),
-        .camView = (app::global::inputMode == app::global::PlayMode ? scene.playerController.camera.view        : scene.editorController.camera.view),
-        .sunView = scene.sun.GetView(),
-        .sunDir  = utils::Normalize(scene.sun.pos),
-    };
-    uboMeta.sunProjCasc[0] = BIAS * cascades[0];//scene.sun.GetOrthographic(0) * scene.sun.GetView();
-    uboMeta.sunProjCasc[1] = BIAS * cascades[1];//scene.sun.GetOrthographic(1) * scene.sun.GetView();
-    //uboMeta.sunProjCasc[2] = BIAS * cascades[2];//scene.sun.GetOrthographic(2) * scene.sun.GetView();
+    uboMeta.sunProjCasc[0] = BIAS * cascades[0];
+    uboMeta.sunProjCasc[1] = BIAS * cascades[1];
     resources.terrain.uboMeta.Store(uboMeta);
 
-    resources.shadow.pushConsts.sunCasc[0] = cascades[0]; //scene.sun.GetOrthographic(0) * scene.sun.GetView();
-    resources.shadow.pushConsts.sunCasc[1] = cascades[1]; //scene.sun.GetOrthographic(1) * scene.sun.GetView();
-    //resources.shadow.pushConsts.sunCasc[2] = cascades[2]; //scene.sun.GetOrthographic(2) * scene.sun.GetView();
+    resources.shadow.pushConsts.sunCasc[0] = cascades[0];
+    resources.shadow.pushConsts.sunCasc[1] = cascades[1];
+
+
 
 
     static float t = 0;
