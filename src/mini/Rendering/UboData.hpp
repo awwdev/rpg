@@ -33,7 +33,9 @@ struct Terrain_UniformData
     alignas(64) utils::Mat4f sunView;
     utils::Mat4f sunProjCasc [3];
     utils::Vec3f sunDir;
-    float cascadeFadeDist;
+    float cascadeFadeDist0;
+    float cascadeFadeDist1;
+    float cascadeFadeDist2;
 };
 
 template<class DATA_T, u32 DATA_COUNT, u32 GROUP_COUNT = DATA_COUNT>

@@ -15,8 +15,10 @@ layout (set = 0, binding = 1) uniform UBO {
 	mat4 camProj;
     mat4 camView;
     mat4 sunView;
-    mat4 sunProjCasc [3];
+	mat4 sunCasc [3];
     vec3 sunDir;
+	float cascadeFadeDist0;
+	float cascadeFadeDist1;
 } ubo;
 
 void main() 

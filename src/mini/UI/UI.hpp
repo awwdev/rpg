@@ -272,7 +272,7 @@ inline auto DrawSlider(Slider<T>& slider)
     //DRAW
     DrawRectangle(slider.back, BLACK1);
     DrawRectangle(knob, (isMouseOnKnob || slider.isDragging) ? GREEN : WHITE);
-    DrawTextCentered(slider.name.data, slider.back); 
+    DrawTextCentered(slider.name.data, slider.back, Colors::BLACK4); 
 
     box::String<30> valueStr; 
     valueStr.Append(slider.GetValue());

@@ -22,6 +22,13 @@ namespace mini::rendering
         f32 depthBiasClamp = 0;
         f32 depthBiasSlopeFactor = 0;
 
+        f32 cascadeZoom0 = 0;
+        f32 cascadeZoom1 = 0;
+        f32 cascadeZoom2 = 0;
+        f32 maxShadowDist0 = 0;
+        f32 maxShadowDist1 = 0;
+        f32 maxShadowDist2 = 0;
+
         void Clear()
         {
             ui_ubo.Clear();

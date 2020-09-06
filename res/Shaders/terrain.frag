@@ -17,7 +17,9 @@ layout (set = 0, binding = 1) uniform UBO {
     mat4 sunView;
 	mat4 sunCasc [3];
     vec3 sunDir;
-	float cascadeFadeDist;
+	float cascadeFadeDist0;
+	float cascadeFadeDist1;
+	float cascadeFadeDist2;
 } ubo;
 
 void main() 
@@ -39,19 +41,34 @@ void main()
 		float shadow1 = texture(shadowMap, coord1).r;
 		float shadow2 = texture(shadowMap, coord2).r;
 
-		float v = abs(inViewPos.z) / ubo.cascadeFadeDist;
-		float n = clamp(v, 0, 1);
+		float v0 = abs(inViewPos.z) / ubo.cascadeFadeDist0;
+		float v1 = abs(inViewPos.z) / ubo.cascadeFadeDist1;
+		float v2 = abs(inViewPos.z) / ubo.cascadeFadeDist2;
+		float n0 = clamp(v0, 0, 1);
+		float n1 = clamp(v1, 0, 1);
+		float n2 = clamp(v2, 0, 1);
 
-		float shadowLerp0 = shadow0 * clamp(1 - abs(4*n - 1), 0, 1);
-		if (n < 0.25) shadowLerp0 = shadow0;
-		float shadowLerp1 = shadow1 * clamp(1 - abs(4*n - 2), 0, 1);
-		float shadowLerp2 = shadow2 * clamp(1 - abs(4*n - 3), 0, 1);
+		//float shadowLerp0 = shadow0 * clamp(1 - abs(4*n - 1), 0, 1);
+		//if (n < 0.25) shadowLerp0 = shadow0;
+		//float shadowLerp1 = shadow1 * clamp(1 - abs(4*n - 2), 0, 1);
+		//float shadowLerp2 = shadow2 * clamp(1 - abs(4*n - 3), 0, 1);
+
+		//float shadowLerp0 = shadow0 * clamp(1 - 250*(pow(n-0.25, 4)), 0, 1);
+		//if (n < 0.25) shadowLerp0 = shadow0;
+		//float shadowLerp1 = shadow1 * clamp(1 - 250*(pow(n-0.50, 4)), 0, 1);
+		//float shadowLerp2 = shadow2 * clamp(1 - 250*(pow(n-0.75, 4)), 0, 1);
+
+		//1-250\left(x-0.25\right)^{4}
 
 		//1-abs(4x-1)
 		//1-abs(4x-2)
 		//1-abs(4x-3)
 
-		shadow += shadowLerp0 + shadowLerp1 + shadowLerp2;// + shadowLerp2;
+		float shadowLerp0 = shadow0 * (1-n0);
+		float shadowLerp1 = shadow1 * (1-n1);
+		float shadowLerp2 = shadow2 * (1-pow(n2,10));
+
+		shadow += clamp(shadowLerp0 + shadowLerp1 + shadowLerp2, 0, 1);
 	}}
 	shadow = 1 - (shadow / 25);
 
