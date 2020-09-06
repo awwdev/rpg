@@ -13,7 +13,7 @@ inline void Shadow_CreateRenderPass(RenderPassDepth& rp, VkCommandPool cmdPool)
     constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
     rp.width  = 2048*2;
     rp.height = 2048*2;
-    rp.layerCount = 2;
+    rp.layerCount = 3;
 
     rp.depthImageArray.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
     rp.depthImageArray.Create(

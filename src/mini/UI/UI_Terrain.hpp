@@ -32,7 +32,7 @@ struct TerrainUI
     Slider<f32> brushSlider {
         .name  = "brush size",
         .min   = 1.f,
-        .max   = 10.f,
+        .max   = 20.f,
     };
 
     Slider<f32> rSlider {

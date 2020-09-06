@@ -1,7 +1,7 @@
 #version 450
 
 layout(push_constant) uniform Push {
-    mat4 sunCasc [2];
+    mat4 sunCasc [3];
     uint cascadeIndex;
 } push;
 

@@ -27,7 +27,7 @@ struct Common_PushConstants2
 
 struct Shadow_PushConstants
 {
-    utils::Mat4f sunCasc [2];
+    utils::Mat4f sunCasc [3];
     uint32_t cascade;
 };
 

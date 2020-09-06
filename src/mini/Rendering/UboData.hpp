@@ -31,7 +31,7 @@ struct Terrain_UniformData
     alignas(64) utils::Mat4f camProj;
     alignas(64) utils::Mat4f camView;
     alignas(64) utils::Mat4f sunView;
-    utils::Mat4f sunProjCasc [2];
+    utils::Mat4f sunProjCasc [3];
     utils::Vec3f sunDir;
     float cascadeFadeDist;
 };

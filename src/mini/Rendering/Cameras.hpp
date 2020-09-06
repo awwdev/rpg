@@ -19,6 +19,7 @@ struct EgoCamera
     float fov        = 45;
     float scrollSpd  = 0.1f;
     float moveSpeed  = 10;
+    float acc        = 10;
 
     EgoCamera()
     {
@@ -49,7 +50,7 @@ struct EgoCamera
         const auto qRot = utils::QuatMultQuat(qY, qX);
 
         const auto movDir  = utils::QuatMultVec(qRot, movNorm);
-        const auto moveAcc = wnd::HasEvent<wnd::Shift, wnd::PressedOrHeld>() ? 3.f : 1.f;
+        const auto moveAcc = wnd::HasEvent<wnd::Shift, wnd::PressedOrHeld>() ? acc : 1.f;
         position = position + (movDir * moveSpeed * moveAcc * (float)dt);
 
         if (wnd::HasEvent<wnd::Mouse_Scroll>()) {
