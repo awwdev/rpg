@@ -157,12 +157,12 @@ inline void DrawUI_Terrain(
     //g_aciveRenderGraph->depthBiasSlopeFactor    = DrawSlider(ui.depthBiasSlopeFactor, ui.wnd);
 
     //CACADES
-    g_aciveRenderGraph->cascadeZoom0   = DrawSlider(ui.cascadeZoom0, ui.wnd);
-    g_aciveRenderGraph->cascadeZoom1   = DrawSlider(ui.cascadeZoom1, ui.wnd);
-    g_aciveRenderGraph->cascadeZoom2   = DrawSlider(ui.cascadeZoom2, ui.wnd);
-    g_aciveRenderGraph->maxShadowDist0 = DrawSlider(ui.maxShadowDist0, ui.wnd);
-    g_aciveRenderGraph->maxShadowDist1 = DrawSlider(ui.maxShadowDist1, ui.wnd);
-    g_aciveRenderGraph->maxShadowDist2 = DrawSlider(ui.maxShadowDist2, ui.wnd);
+    //g_aciveRenderGraph->cascadeZoom0   = DrawSlider(ui.cascadeZoom0, ui.wnd);
+    //g_aciveRenderGraph->cascadeZoom1   = DrawSlider(ui.cascadeZoom1, ui.wnd);
+    //g_aciveRenderGraph->cascadeZoom2   = DrawSlider(ui.cascadeZoom2, ui.wnd);
+    //g_aciveRenderGraph->maxShadowDist0 = DrawSlider(ui.maxShadowDist0, ui.wnd);
+    //g_aciveRenderGraph->maxShadowDist1 = DrawSlider(ui.maxShadowDist1, ui.wnd);
+    //g_aciveRenderGraph->maxShadowDist2 = DrawSlider(ui.maxShadowDist2, ui.wnd);
 
     //LIST
     if (DrawList(ui.prefabList, ui.wnd)){

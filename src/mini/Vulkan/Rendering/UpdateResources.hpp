@@ -24,7 +24,9 @@ inline void CreateCascades2(utils::Mat4f (&cascades)[3], const app::GameScene& s
     auto shadowDist0 = scene.renderGraph.maxShadowDist0;
     auto shadowDist1 = scene.renderGraph.maxShadowDist1;
     auto shadowDist2 = scene.renderGraph.maxShadowDist2;
-    //shadowDist = 30;
+    shadowDist0 =  10;
+    shadowDist1 =  90;
+    shadowDist2 = 500;
 
     uboMeta = {
         .camProj = (app::global::inputMode == app::global::PlayMode ? scene.playerController.camera.perspective : scene.editorController.camera.perspective),
@@ -36,14 +38,16 @@ inline void CreateCascades2(utils::Mat4f (&cascades)[3], const app::GameScene& s
         .cascadeFadeDist2 = shadowDist2,
     };
 
-    auto& camera = scene.editorController.camera;
-
     //auto farPlane = shadowDist;
     auto sunDir   = utils::Normalize(scene.sun.pos);
     auto sunDist  = 10;
 
-    Vec3f invCameraPos { -camera.position[X], camera.position[Y], -camera.position[Z] };
-    Vec3f cameraDir    { Sin(camera.rotation[Y] * 3.14f/180.f), 0, Cos(camera.rotation[Y] * 3.14f/180.f) };
+    Vec3f invCameraPos;
+    invCameraPos = { -scene.editorController.camera.position[X], scene.editorController.camera.position[Y], -scene.editorController.camera.position[Z] };
+    if (app::global::inputMode == app::global::PlayMode)
+        invCameraPos = { -scene.playerController.camera.view[3][0], scene.playerController.camera.view[3][1], -scene.playerController.camera.view[3][2] };
+
+    //Vec3f cameraDir    { Sin(camera.rotation[Y] * 3.14f/180.f), 0, Cos(camera.rotation[Y] * 3.14f/180.f) };
 
     auto cascadePos0 = invCameraPos;
     auto cascadePos1 = invCameraPos;// + (Normalize(cameraDir) * -farPlane);
@@ -64,7 +68,7 @@ inline void CreateCascades2(utils::Mat4f (&cascades)[3], const app::GameScene& s
     
 
     S = scene.renderGraph.cascadeZoom0;
-    //S = 0.07;
+    S = 0.075;
     utils::Mat4f ortho0 ={
         S, 0, 0, 0,
         0, S, 0, 0,
@@ -73,7 +77,7 @@ inline void CreateCascades2(utils::Mat4f (&cascades)[3], const app::GameScene& s
     };
 
     S = scene.renderGraph.cascadeZoom1;
-    //S = 0.010;
+    S = 0.014;
     utils::Mat4f ortho1 ={
         S, 0, 0, 0,
         0, S, 0, 0,
@@ -82,7 +86,7 @@ inline void CreateCascades2(utils::Mat4f (&cascades)[3], const app::GameScene& s
     };
 
     S = scene.renderGraph.cascadeZoom2;
-    //S = 0.002;
+    S = 0.0019;
     utils::Mat4f ortho2 ={
         S, 0, 0, 0,
         0, S, 0, 0,
