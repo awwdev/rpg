@@ -467,7 +467,20 @@
 		"array": "cpp",
 		"cstdarg": "cpp",
 		"sstream": "cpp",
-		"unordered_map": "cpp"
+		"unordered_map": "cpp",
+		"atomic": "cpp",
+		"bit": "cpp",
+		"*.tcc": "cpp",
+		"clocale": "cpp",
+		"compare": "cpp",
+		"cwctype": "cpp",
+		"deque": "cpp",
+		"memory_resource": "cpp",
+		"optional": "cpp",
+		"random": "cpp",
+		"string_view": "cpp",
+		"ranges": "cpp",
+		"codecvt": "cpp"
 	},
 
 }

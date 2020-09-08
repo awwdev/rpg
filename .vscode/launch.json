@@ -1,30 +1,24 @@
 {
-    //https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
-            "name": "DEBUG",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}\\build_debug\\main_debug.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": true,
-            "preLaunchTask": "build_debug",
-        },
-        {
-            "name": "RELEASE",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}\\build_release\\main_release.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": true,
-            "preLaunchTask": "build_release",
-        }
+      {
+        "name": "g++.exe - Build and debug active file",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}\\build_debug\\mini_rpg_debug.exe",
+        "stopAtEntry": true,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": true,
+        "MIMode": "gdb",
+        "miDebuggerPath": "G:\\DEV2020\\buildtools\\msys2\\mingw64\\bin\\gdb.exe",
+        "setupCommands": [
+          {
+            "description": "Enable pretty-printing for gdb",
+            "text": "-enable-pretty-printing",
+            "ignoreFailures": true
+          }
+        ],
+      }
     ]
-}
+  }

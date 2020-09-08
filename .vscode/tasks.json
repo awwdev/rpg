@@ -5,11 +5,13 @@
             "type": "shell",
             "label": "build_debug",
             "command": "${workspaceFolder}\\build_debug.bat",
+            "args": [
+                "${workspaceFolder}\\build_debug",                      //build dir
+                "${workspaceFolder}\\src",                              //include headers
+                "${workspaceFolder}\\build_debug\\mini_rpg_debug.exe",  //build name
+                "${workspaceFolder}\\src\\main.cpp",                    //cpp
+                "${workspaceFolder}\\third\\libs",                      //libs
+            ]
         },
-        {
-            "type": "shell",
-            "label": "build_release",
-            "command": "${workspaceFolder}\\build_release.bat",
-        }
     ]
 }
