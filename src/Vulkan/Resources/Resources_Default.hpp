@@ -48,12 +48,12 @@ struct Resources_Common
 
     void Recreate(VkCommandPool cmdPool, Resources_Shadow& shadow)
     {
-        shaderVertexColor.~Shader();
-        shaderTexture.~Shader();
+        shaderVertexColor.Clear();
+        shaderTexture.Clear();
         //pipelineVertexColor.~Pipeline();
         //pipelineTexture.~Pipeline();
         //pipelineShadow.~Pipeline();
-        renderPass.~RenderPass();
+        renderPass.Clear();
 
         //TODO: recreate whole shader is wrong, only sampler needs recreation (due to img resize)
         Default_CreateShaderVertexColor     (shaderVertexColor, shadow.renderPass);

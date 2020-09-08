@@ -34,8 +34,8 @@ struct Resources_UI
 
     void Recreate()
     {
-        renderPass.~RenderPass();
-        pipeline.~Pipeline();
+        renderPass.Clear();
+        pipeline.Clear();
         UI_CreateRenderPass       (renderPass);
         UI_CreatePipeline         (pipeline, shader, renderPass, ubo);
     }

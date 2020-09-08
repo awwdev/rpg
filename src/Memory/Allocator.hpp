@@ -174,7 +174,7 @@ auto ClaimBlock(CtorArgs&&... args)
     u8* aligned      = (u8*) (((std::uintptr_t)blockAddress + (alignof(T) - 1)) & ~(alignof(T) - 1));
     
     T* obj;
-    if constexpr(std::is_array_v<T>) obj = new (aligned) T [ ArrayCount<T>() ];
+    if constexpr(std::is_array_v<T>) obj = new (aligned) T [ ArrayCount<T>() ]{};
     else                             obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
 
     //? debug info

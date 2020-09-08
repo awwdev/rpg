@@ -13,5 +13,17 @@
                 "${workspaceFolder}\\third\\libs",                      //libs
             ]
         },
+        {
+            "type": "shell",
+            "label": "build_optimized",
+            "command": "${workspaceFolder}\\build_optimized.bat",
+            "args": [
+                "${workspaceFolder}\\build_optimized",                          //build dir
+                "${workspaceFolder}\\src",                                      //include headers
+                "${workspaceFolder}\\build_optimized\\mini_rpg_optimized.exe",  //build name
+                "${workspaceFolder}\\src\\main.cpp",                            //cpp
+                "${workspaceFolder}\\third\\libs",                              //libs
+            ]
+        },
     ]
 }

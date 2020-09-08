@@ -51,8 +51,8 @@ struct Context
 
     const VkFormat format = VK_FORMAT_B8G8R8A8_SRGB;//VK_FORMAT_B8G8R8A8_UNORM;
     const VkColorSpaceKHR COLOR_SPACE = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-    //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
-    const VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+    const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
+    //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
     //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
     //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
     
@@ -296,6 +296,11 @@ struct Context
 
     ~Context()
     {
+        Clear();
+    }
+
+    void Clear()
+    {
         FOR_VK_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
         vkDestroySwapchainKHR(device, swapchain, nullptr);
         vkDestroySurfaceKHR(instance, surface, nullptr);
@@ -304,6 +309,7 @@ struct Context
         vkDestroyInstance(instance, nullptr);
         g_contextPtr = nullptr;
     }
+
 };
 
 }//ns

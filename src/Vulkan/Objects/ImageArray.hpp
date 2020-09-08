@@ -122,6 +122,11 @@ struct ImageArray
 
     ~ImageArray()
     {
+        Clear();
+    }
+
+    void Clear()
+    {
         vkDestroyImage      (g_contextPtr->device, image, nullptr);
         vkFreeMemory        (g_contextPtr->device, memory, nullptr);
         vkDestroyImageView  (g_contextPtr->device, view, nullptr);

@@ -29,7 +29,7 @@ struct Array
 {
     using TYPE = T;
 
-    volatile idx_t count = 0; //! gcc aggressively optimizes this and this causes errors 
+    idx_t count = 0;
 
     static constexpr idx_t CAPACITY  = (idx_t)N;
     static constexpr idx_t BYTE_SIZE = sizeof(T) * CAPACITY;
@@ -75,7 +75,6 @@ struct Array
 
     void Clear()
     {
-        //std::cout << std::boolalpha << std::is_trivial_v<T> << '\n';
         if constexpr (!std::is_trivial_v<T>) 
         {
             while(count > 0){
@@ -84,7 +83,6 @@ struct Array
             }   
         }
         else count = 0;
-        //std::memset(bytes, 0, sizeof(T) * CAPACITY);
     }
 
     //? HELPER

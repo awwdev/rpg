@@ -10,14 +10,19 @@ namespace rpg::vk {
 
 struct Pipeline
 {
-    VkPipeline pipeline;
-    VkPipelineLayout layout;
+    VkPipeline pipeline {};
+    VkPipelineLayout layout {};
 
-    VkDescriptorPool descPool;
-    box::Array<VkDescriptorSetLayout, 10> setLayouts;
-    box::Array<VkDescriptorSet, 10> sets;
+    VkDescriptorPool descPool  {};
+    box::Array<VkDescriptorSetLayout, 10> setLayouts {};
+    box::Array<VkDescriptorSet, 10> sets {};
 
     ~Pipeline()
+    {
+        Clear();
+    }
+
+    void Clear()
     {
         vkDestroyPipelineLayout (g_contextPtr->device, layout, nullptr);
         vkDestroyPipeline       (g_contextPtr->device, pipeline, nullptr);
@@ -76,7 +81,6 @@ void WriteDescriptors(
     };
     VkCheck(vkCreateDescriptorPool(g_contextPtr->device, &poolInfo, nullptr, &pipeline.descPool));
 
-    std::cout << pipeline.setLayouts.count << '\n';
     const VkDescriptorSetAllocateInfo allocInfo {
         .sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext              = nullptr,

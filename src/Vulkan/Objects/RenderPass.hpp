@@ -43,6 +43,11 @@ struct RenderPass
 
     ~RenderPass()
     {
+        Clear();
+    }
+
+    void Clear()
+    {
         vkDestroyRenderPass(g_contextPtr->device, renderPass, nullptr);
         FOR_ARRAY(framebuffers, i) 
             vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
@@ -102,6 +107,11 @@ struct RenderPassDepth
     }
 
     ~RenderPassDepth()
+    {
+        Clear();
+    }
+
+    void Clear()
     {
         vkDestroyRenderPass(g_contextPtr->device, renderPass, nullptr);
 

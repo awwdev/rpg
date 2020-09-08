@@ -20,11 +20,11 @@ struct VkResources
     Common_PushConstants  common_pushConsts;
     Common_PushConstants2 common_pushConsts2;
 
-    Resources_Shadow  shadow;
-    Resources_Sky     sky;
-    Resources_Terrain terrain;
-    Resources_Common  common;
-    Resources_UI      ui;
+    Resources_Shadow  shadow    {};
+    Resources_Sky     sky       {};
+    Resources_Terrain terrain   {}; 
+    Resources_Common  common    {};
+    Resources_UI      ui        {};
 
     void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
     {

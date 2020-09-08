@@ -22,7 +22,7 @@ struct Resources_Shadow
 
     void Recreate(VkCommandPool cmdPool)
     {
-        renderPass.~RenderPassDepth();
+        renderPass.Clear();
         Shadow_CreateRenderPass(renderPass, cmdPool);
     }
 };

@@ -19,12 +19,12 @@ namespace rpg::vk {
 
 struct Resources_Terrain
 {
-    Shader      shader;
-    Shader      shaderShadow;
-    Shader      shaderWire;
-    Pipeline    pipeline;
-    Pipeline    pipelineShadow;
-    Pipeline    pipelineWire;
+    Shader      shader          {};
+    Shader      shaderShadow    {}; 
+    Shader      shaderWire      {};
+    Pipeline    pipeline        {};
+    Pipeline    pipelineShadow  {};
+    Pipeline    pipelineWire    {};
 
     VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT> vbo;
     UniformBuffer<rendering::Terrain_UniformData, 1> uboMeta;
@@ -43,11 +43,11 @@ struct Resources_Terrain
 
     void Recreate(VkCommandPool&, Resources_Shadow& shadow, Resources_Common& common)
     {
-        shader.~Shader();
-        pipeline.~Pipeline();
-        pipelineWire.~Pipeline();
-        pipelineShadow.~Pipeline();
-        
+        shader.Clear();
+        pipeline.Clear();
+        pipelineWire.Clear();
+        pipelineShadow.Clear();
+
         //TODO: recreate whole shader is wrong, only sampler needs recreation (due to img resize)
         Terrain_CreateShader        (shader, shadow.renderPass);
         Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);

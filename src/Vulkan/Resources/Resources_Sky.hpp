@@ -26,8 +26,8 @@ struct Resources_Sky
 
     void Recreate(VkCommandPool&, Resources_Common& common)
     {
-        shader.~Shader();
-        pipeline.~Pipeline();
+        shader.Clear();
+        pipeline.Clear();
 
         Sky_CreateShader        (shader);
         Sky_CreatePipeline      (pipeline, shader, common.renderPass);

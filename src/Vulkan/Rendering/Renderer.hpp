@@ -18,9 +18,9 @@ namespace rpg::vk {
 
 struct VkRenderer
 {
-    Context         context;
-    VkResources     resources;
-    Commands        commands;
+    Context         context     {};
+    VkResources     resources   {};
+    Commands        commands    {};
     Synchronization sync;
     uint32_t        currentFrame = 0;
     
@@ -40,7 +40,7 @@ struct VkRenderer
 
         resources.RecreateSwapchain(commands.cmdPool);
 
-        commands.~Commands();
+        commands.Clear();
         commands.Create();
     }
 
