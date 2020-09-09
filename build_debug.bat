@@ -8,7 +8,6 @@
 -I %2 ^
 -L %5 ^
 -Wall -Wpedantic -Wextra ^
--save-temps=obj ^
 -g ^
 -municode ^
 -std=c++2a ^

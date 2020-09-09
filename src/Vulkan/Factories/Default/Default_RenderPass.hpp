@@ -14,8 +14,14 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
     rp.height = g_contextPtr->surfaceCapabilities.currentExtent.height;
 
     constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
-    rp.msaaImage.Create(cmdPool, g_contextPtr->format, rp.sampleCount);
-    rp.depthImage.Create(
+    
+    rp.msaaImage.t = {};
+    rp.msaaImage.hasValue = true;
+    rp.depthImage.t = {};
+    rp.depthImage.hasValue = true;
+
+    rp.msaaImage->Create(cmdPool, g_contextPtr->format, rp.sampleCount);
+    rp.depthImage->Create(
         cmdPool, 
         DEPTH_FORMAT, 
         rp.width,
@@ -138,8 +144,8 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
         //};
 
         const VkImageView views [] {
-            rp.msaaImage.view,
-            rp.depthImage.view,
+            rp.msaaImage->view,
+            rp.depthImage->view,
             g_contextPtr->swapImageViews[i],
         };
 

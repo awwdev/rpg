@@ -9,91 +9,77 @@ namespace rpg::ui {
 
 struct UI_Shadow
 {
-
+    //? WINDOW
     ui::Window wnd {
         .title = "Shadow",
         .rect = { (f32)wnd::global::window_w - 400.f, 0.f, 200.f, 300.f },
     };
 
-    //Slider<f32> sunRotSlider {
-    //    .name = "sun rot",
-    //    .min  = 0,
-    //    .max  = 6.28f,
-    //};
+    //? SUN
+    Slider<f32> sunRotSlider {
+        .name = "sun rot",
+        .min  = 0,
+        .max  = 6.28f,
+    };
 
-    /*
-    Slider<f32> depthBiasConstantFactor {
+    //? DEPTH BIAS
+    const Slider<f32> fac {
         .name  = "fac",
         .knobPos = 0.5,
-        .min   =-5000.f,
-        .max   = 0.f,
+        .min   = -15000.f,
+        .max   =  0.f,
     };
-    Slider<f32> depthBiasClamp {
-        .name  = "clamp",
-        .knobPos = 0.5,
-        .min   =-100.f,
-        .max   = 100.f,
-    };
-    Slider<f32> depthBiasSlopeFactor {
+    Slider<f32> depthBiasConstantFactor[3] { fac, fac, fac };
+
+    const Slider<f32> slope {
         .name  = "slope",
         .knobPos = 0.5f,
-        .min   =-10.f,
-        .max   =  2,
+        .min   =-2.f,
+        .max   = 1,
     };
+    Slider<f32> depthBiasSlopeFactor[3] { slope, slope, slope };
 
     //? CASCADES
-    Slider<f32> cascadeZoom0 {
+    const Slider<f32> zoom {
         .name    = "cascadeZoom0",
         .min     = 0.0001f,
         .max     = 0.1f,
     };
-    Slider<f32> cascadeZoom1 {
-        .name    = "cascadeZoom1",
-        .min     = 0.0001f,
-        .max     = 0.1f,
-    };
-    Slider<f32> cascadeZoom2 {
-        .name    = "cascadeZoom2",
-        .min     = 0.0001f,
-        .max     = 0.1f,
-    };
-    Slider<f32> maxShadowDist0 {
+    Slider<f32> cascadeZoom[3] { zoom, zoom, zoom };
+
+    const Slider<f32> dist {
         .name    = "maxShadowDist0",
         .min     = 0,
         .max     = 50,
     };
-    Slider<f32> maxShadowDist1 {
-        .name    = "maxShadowDist1",
-        .min     = 30,
-        .max     = 300,
-    };
-    Slider<f32> maxShadowDist2 {
-        .name    = "maxShadowDist2",
-        .min     = 300,
-        .max     = 1000,
-    };
-    */
+    Slider<f32> maxShadowDist[3] { dist, dist, dist };
 };
 
-inline void DrawUI_Shadow(rendering::Sun&)
+inline void DrawUI_Shadow(rendering::Sun& sun)
 {
-    //static UI_Shadow ui {};
+    static UI_Shadow ui {};
+    DrawWindow(ui.wnd);
+
 
     //SUN
-    //sun.t = DrawSlider(ui.sunRotSlider, ui.wnd);
+    sun.t = DrawSlider(ui.sunRotSlider, ui.wnd);
 
     //SHADOW ARTIFACTS
-    //g_aciveRenderGraph->depthBiasConstantFactor = DrawSlider(ui.depthBiasConstantFactor, ui.wnd);
-    //g_aciveRenderGraph->depthBiasClamp          = DrawSlider(ui.depthBiasClamp, ui.wnd);
-    //g_aciveRenderGraph->depthBiasSlopeFactor    = DrawSlider(ui.depthBiasSlopeFactor, ui.wnd);
+    //g_aciveRenderGraph->depthBiasConstantFactor[0] = DrawSlider(ui.depthBiasConstantFactor[0], ui.wnd);
+    //g_aciveRenderGraph->depthBiasConstantFactor[1] = DrawSlider(ui.depthBiasConstantFactor[1], ui.wnd);
+    //g_aciveRenderGraph->depthBiasConstantFactor[2] = DrawSlider(ui.depthBiasConstantFactor[2], ui.wnd);
+    //g_aciveRenderGraph->depthBiasSlopeFactor[0]    = DrawSlider(ui.depthBiasSlopeFactor[0], ui.wnd);
+    //g_aciveRenderGraph->depthBiasSlopeFactor[1]    = DrawSlider(ui.depthBiasSlopeFactor[1], ui.wnd);
+    //g_aciveRenderGraph->depthBiasSlopeFactor[2]    = DrawSlider(ui.depthBiasSlopeFactor[2], ui.wnd);
 
     //CACADES
-    //g_aciveRenderGraph->cascadeZoom0   = DrawSlider(ui.cascadeZoom0, ui.wnd);
-    //g_aciveRenderGraph->cascadeZoom1   = DrawSlider(ui.cascadeZoom1, ui.wnd);
-    //g_aciveRenderGraph->cascadeZoom2   = DrawSlider(ui.cascadeZoom2, ui.wnd);
-    //g_aciveRenderGraph->maxShadowDist0 = DrawSlider(ui.maxShadowDist0, ui.wnd);
-    //g_aciveRenderGraph->maxShadowDist1 = DrawSlider(ui.maxShadowDist1, ui.wnd);
-    //g_aciveRenderGraph->maxShadowDist2 = DrawSlider(ui.maxShadowDist2, ui.wnd);
+    //overwritten currently
+    g_aciveRenderGraph->cascadeZoom[0]   = DrawSlider(ui.cascadeZoom[0], ui.wnd);
+    g_aciveRenderGraph->cascadeZoom[1]   = DrawSlider(ui.cascadeZoom[1], ui.wnd);
+    g_aciveRenderGraph->cascadeZoom[2]   = DrawSlider(ui.cascadeZoom[2], ui.wnd);
+    g_aciveRenderGraph->maxShadowDist[0] = DrawSlider(ui.maxShadowDist[0], ui.wnd);
+    g_aciveRenderGraph->maxShadowDist[1] = DrawSlider(ui.maxShadowDist[1], ui.wnd);
+    g_aciveRenderGraph->maxShadowDist[2] = DrawSlider(ui.maxShadowDist[2], ui.wnd);
 }
 
 }//ns

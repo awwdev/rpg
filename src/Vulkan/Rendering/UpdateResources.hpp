@@ -21,9 +21,9 @@ inline void CreateCascades2(utils::Mat4f (&cascades)[3], const app::GameScene& s
 {
     using namespace utils;
 
-    auto shadowDist0 = scene.renderGraph.maxShadowDist0;
-    auto shadowDist1 = scene.renderGraph.maxShadowDist1;
-    auto shadowDist2 = scene.renderGraph.maxShadowDist2;
+    auto shadowDist0 = scene.renderGraph.maxShadowDist[0];
+    auto shadowDist1 = scene.renderGraph.maxShadowDist[1];
+    auto shadowDist2 = scene.renderGraph.maxShadowDist[21];
     shadowDist0 =  10;
     shadowDist1 =  90;
     shadowDist2 = 500;
@@ -67,7 +67,7 @@ inline void CreateCascades2(utils::Mat4f (&cascades)[3], const app::GameScene& s
 
     
 
-    S = scene.renderGraph.cascadeZoom0;
+    S = scene.renderGraph.cascadeZoom[0];
     S = 0.075f;
     utils::Mat4f ortho0 ={
         S, 0, 0, 0,
@@ -76,7 +76,7 @@ inline void CreateCascades2(utils::Mat4f (&cascades)[3], const app::GameScene& s
         0, 0, Z, 1,
     };
 
-    S = scene.renderGraph.cascadeZoom1;
+    S = scene.renderGraph.cascadeZoom[1];
     S = 0.014f;
     utils::Mat4f ortho1 ={
         S, 0, 0, 0,
@@ -85,7 +85,7 @@ inline void CreateCascades2(utils::Mat4f (&cascades)[3], const app::GameScene& s
         0, 0, Z, 1,
     };
 
-    S = scene.renderGraph.cascadeZoom2;
+    S = scene.renderGraph.cascadeZoom[2];
     S = 0.0019f;
     utils::Mat4f ortho2 ={
         S, 0, 0, 0,

@@ -16,7 +16,7 @@
 
 namespace rpg::vk {
 
-inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t, VkResources& resources, const app::GameScene&)
+inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t, VkResources& resources, const app::GameScene& scene)
 {
     VkDeviceSize offsets {};
     const VkClearValue clears_shadow [] { 
@@ -33,6 +33,14 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t, VkResources& re
         vkCmdBeginRenderPass    (cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineTerrain.pipeline);
         pushConsts.cascade = cascadeIdx;
+     
+        vkCmdSetDepthBias(
+            cmdBuffer, 
+            scene.renderGraph.depthBiasConstantFactor[cascadeIdx],
+            scene.renderGraph.depthBiasClamp[cascadeIdx],
+            scene.renderGraph.depthBiasSlopeFactor[cascadeIdx]
+        );
+
         vkCmdPushConstants      (cmdBuffer, pipelineTerrain.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConsts), &pushConsts);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
         vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 

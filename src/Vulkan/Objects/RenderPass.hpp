@@ -38,8 +38,8 @@ struct RenderPass
     VkRenderPassBeginInfo beginInfo; //!set in factory
     uint32_t width, height;
 
-    DepthImage depthImage; //optional
-    MSAAImage  msaaImage;
+    box::Optional<DepthImage> depthImage;
+    box::Optional<MSAAImage>  msaaImage;
 
     ~RenderPass()
     {
@@ -52,6 +52,13 @@ struct RenderPass
         FOR_ARRAY(framebuffers, i) 
             vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
         framebuffers.Clear(); //clear because dtor is called on recreation
+
+        if(depthImage)
+           depthImage->Clear();
+
+        if (msaaImage)
+            msaaImage->Clear();
+            
     }
 
     VkRenderPassBeginInfo GetBeginInfo(
@@ -122,6 +129,8 @@ struct RenderPassDepth
         FOR_ARRAY(framebuffers, i)
             vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
         framebuffers.Clear();
+
+        depthImageArray.Clear();
     }
 };
 

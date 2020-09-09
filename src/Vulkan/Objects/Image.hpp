@@ -194,12 +194,19 @@ struct DepthImage
         EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
     }
 
+    void Clear()
+    {
+        if (image != VK_NULL_HANDLE){
+            vkDestroyImage      (g_contextPtr->device, image, nullptr);
+            vkFreeMemory        (g_contextPtr->device, memory, nullptr);
+            vkDestroyImageView  (g_contextPtr->device, view, nullptr);
+        }
+        image = VK_NULL_HANDLE;
+    }
 
     ~DepthImage()
     {
-        vkDestroyImage      (g_contextPtr->device, image, nullptr);
-        vkFreeMemory        (g_contextPtr->device, memory, nullptr);
-        vkDestroyImageView  (g_contextPtr->device, view, nullptr);
+        Clear();
     }
 };
 
@@ -322,15 +329,23 @@ struct DepthImageArray
 
     ~DepthImageArray()
     {
-        vkDestroyImage      (g_contextPtr->device, image, nullptr);
-        vkFreeMemory        (g_contextPtr->device, memory, nullptr);
-        vkDestroyImageView  (g_contextPtr->device, view, nullptr);
+        Clear();
+    }
+
+    void Clear()
+    {
+        if (image != VK_NULL_HANDLE){
+            vkDestroyImage      (g_contextPtr->device, image, nullptr);
+            vkFreeMemory        (g_contextPtr->device, memory, nullptr);
+            vkDestroyImageView  (g_contextPtr->device, view, nullptr);
+        }
+        image = VK_NULL_HANDLE;
     }
 };
 
 struct MSAAImage
 {
-    VkImage         image;
+    VkImage         image { VK_NULL_HANDLE };
     VkDeviceMemory  memory;
     VkImageView     view;
     uint32_t        width, height;
@@ -440,9 +455,17 @@ struct MSAAImage
 
     ~MSAAImage()
     {
-        vkDestroyImage      (g_contextPtr->device, image, nullptr);
-        vkFreeMemory        (g_contextPtr->device, memory, nullptr);
-        vkDestroyImageView  (g_contextPtr->device, view, nullptr);
+        Clear();
+    }
+
+    void Clear()
+    {
+        if(image != VK_NULL_HANDLE) { 
+            vkDestroyImage      (g_contextPtr->device, image, nullptr);
+            vkFreeMemory        (g_contextPtr->device, memory, nullptr);
+            vkDestroyImageView  (g_contextPtr->device, view, nullptr);
+        }
+        image = VK_NULL_HANDLE;
     }
 };
 
