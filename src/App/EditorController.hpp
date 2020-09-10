@@ -11,7 +11,7 @@ namespace rpg::app {
 
 struct EditorController
 {
-    rendering::EgoCamera camera;
+    gpu::EgoCamera camera;
     bool terrainWireMode = true;
 
     EditorController()
@@ -23,10 +23,10 @@ struct EditorController
     {
         if (app::global::inputMode == app::global::FlyMode)
             camera.Update(dt);
-        if (wnd::global::resizeState == wnd::global::ResizeState::End)
+        if (wnd::glo::resizeState == wnd::glo::ResizeState::End)
             camera.UpdatePerspective();
 
-        if (wnd::HasEvent<wnd::F9, wnd::Pressed>())
+        if (wnd::HasEvent<wnd::EventType::F9, wnd::EventState::Pressed>())
             terrainWireMode = !terrainWireMode;
 
     }

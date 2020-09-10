@@ -71,7 +71,7 @@ struct String
     String(chars_t ptr)
     {
         Clear(); 
-        Append(ptr, utils::StrLen(ptr) + 1);
+        Append(ptr, use::StrLen(ptr) + 1);
     }
 
     String(chars_t ptr, const idx_t range)
@@ -124,7 +124,7 @@ struct String
         //std::to_chars(buffer, &buffer[30], fundamental);
         //gcvt(fundamental, 30, buffer); 
         auto str = std::to_string(fundamental);
-        //Append(&buffer, (idx_t)utils::StrLen(buffer) + 1);
+        //Append(&buffer, (idx_t)use::StrLen(buffer) + 1);
         Append(str.c_str(), (idx_t)str.length() + 1);
     }
 

@@ -9,8 +9,8 @@
 namespace rpg::vk
 {
     void Default_CreateUniformBuffer(
-        UniformBuffer_Groups<rendering::Default_UniformData, 
-        rendering::DEFAULT_UBO_MAX_COUNT>& ubo)
+        UniformBuffer_Groups<gpu::Default_UniformData, 
+        gpu::DEFAULT_UBO_MAX_COUNT>& ubo)
     {  
         ubo.Create();
 

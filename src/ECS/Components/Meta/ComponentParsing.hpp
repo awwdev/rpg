@@ -31,7 +31,7 @@ inline const auto ConvertToComponentDataStringPair(chars_t str)
         dbg::Assert((end - beg) < COMPONENT_MAX_STR_LEN, "component data has no assignment operator");
         return end;
     }();
-    const auto len  = utils::StrLen(str);
+    const auto len  = use::StrLen(str);
     const auto len1 = (idx_t)(end - beg) - 1; //rm whitspace
     const auto len2 = (idx_t)(&str[len-1] - (end + 1));
 
@@ -43,7 +43,7 @@ T ParseComponentData(const box::String<COMPONENT_MAX_STR_LEN>& str)
 {
     T data {};
 
-    if constexpr(std::is_same_v<T, utils::Vec3f>)
+    if constexpr(std::is_same_v<T, use::Vec3f>)
     {
         idx_t comma = 0;
         idx_t x = 0;

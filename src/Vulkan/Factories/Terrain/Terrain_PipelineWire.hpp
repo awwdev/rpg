@@ -17,7 +17,7 @@ inline void Terrain_CreatePipelineWire(
     Pipeline& pipeline,
     Shader& shader, 
     RenderPass& renderPass,
-    VertexBuffer<utils::Common_Vertex, rendering::TERRAIN_VERTEX_MAX_COUNT>& vbo)
+    VertexBuffer<use::Common_Vertex, gpu::TERRAIN_VERTEX_MAX_COUNT>& vbo)
 {
     const auto vertexInput   = CreatePipelineVertexInputInfo(vbo);
     const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);

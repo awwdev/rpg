@@ -58,15 +58,15 @@ struct Window
         const auto cx = wndRect.left + (wndRect.right - wndRect.left)/2;
         const auto cy = wndRect.top  + (wndRect.bottom - wndRect.top)/2;
         SetCursorPos(cx, cy);
-        wnd::global::mouse_dx = wnd::global::mouse_dy = 0;
+        wnd::glo::mouse_dx = wnd::glo::mouse_dy = 0;
 
         POINT point;
         GetCursorPos(&point);
-        wnd::global::mouse_x = point.x;
-        wnd::global::mouse_y = point.y;
+        wnd::glo::mouse_x = point.x;
+        wnd::glo::mouse_y = point.y;
 
-        wnd::global::window_x = (s32)wndRect.left;
-        wnd::global::window_y = (s32)wndRect.top;
+        wnd::glo::window_x = (s32)wndRect.left;
+        wnd::glo::window_y = (s32)wndRect.top;
         //window size and window screen size are not same
     }
 

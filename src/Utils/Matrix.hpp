@@ -10,7 +10,7 @@
 
 //! quaternion calculations have dedicated methods, do not use e.g. operator* 
 
-namespace rpg::utils {
+namespace rpg::use {
 
 enum V { X, Y, Z, W }; //vector access of Mat, e.g. vec[X]
 constexpr float PI  = 3.14159265359f;

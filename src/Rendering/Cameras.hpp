@@ -5,15 +5,15 @@
 #include "Utils/Matrix.hpp"
 #include "window/WindowEvents.hpp"
 
-namespace rpg::rendering
+namespace rpg::gpu
 {
 struct EgoCamera
 {
-    utils::Vec3f position { 0,  4, -4 };
-    utils::Vec3f rotation {45,  0,  0 };
+    use::Vec3f position { 0,  4, -4 };
+    use::Vec3f rotation {45,  0,  0 };
 
-    utils::Mat4f perspective;
-    utils::Mat4f view;
+    use::Mat4f perspective;
+    use::Mat4f view;
 
     float mouseSpeed = 0.3f;
     float fov        = 45;
@@ -28,33 +28,33 @@ struct EgoCamera
 
     void Update(const double dt)
     {
-        using namespace utils;
+        using namespace use;
 
-        utils::Vec3f movNorm {};
-        if(wnd::HasEvent<wnd::D, wnd::PressedOrHeld>()) { movNorm[X] -= 1; }
-        if(wnd::HasEvent<wnd::A, wnd::PressedOrHeld>()) { movNorm[X] += 1; }
-        if(wnd::HasEvent<wnd::W, wnd::PressedOrHeld>()) { movNorm[Z] += 1; }
-        if(wnd::HasEvent<wnd::S, wnd::PressedOrHeld>()) { movNorm[Z] -= 1; }
+        use::Vec3f movNorm {};
+        if(wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) { movNorm[X] -= 1; }
+        if(wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>()) { movNorm[X] += 1; }
+        if(wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) { movNorm[Z] += 1; }
+        if(wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>()) { movNorm[Z] -= 1; }
         NormalizeThis(movNorm);
 
-        rotation[Y] += wnd::global::mouse_dx * mouseSpeed; //!need of dt ?
-        rotation[X] += wnd::global::mouse_dy * mouseSpeed;
+        rotation[Y] += wnd::glo::mouse_dx * mouseSpeed; //!need of dt ?
+        rotation[X] += wnd::glo::mouse_dy * mouseSpeed;
 
         if (rotation[X] >=  360) rotation[X] -= 360;
         if (rotation[Y] >=  360) rotation[Y] -= 360;
         if (rotation[X] <= -360) rotation[X] += 360;
         if (rotation[Y] <= -360) rotation[Y] += 360;
 
-        const auto qX = QuatAngleAxis(+rotation[X], utils::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation[Y], utils::Vec3f{0, 1, 0});
-        const auto qRot = utils::QuatMultQuat(qY, qX);
+        const auto qX = QuatAngleAxis(+rotation[X], use::Vec3f{1, 0, 0});
+        const auto qY = QuatAngleAxis(-rotation[Y], use::Vec3f{0, 1, 0});
+        const auto qRot = use::QuatMultQuat(qY, qX);
 
-        const auto movDir  = utils::QuatMultVec(qRot, movNorm);
-        const auto moveAcc = wnd::HasEvent<wnd::Shift, wnd::PressedOrHeld>() ? acc : 1.f;
+        const auto movDir  = use::QuatMultVec(qRot, movNorm);
+        const auto moveAcc = wnd::HasEvent<wnd::EventType::Shift, wnd::EventState::PressedOrHeld>() ? acc : 1.f;
         position = position + (movDir * moveSpeed * moveAcc * (float)dt);
 
-        if (wnd::HasEvent<wnd::Mouse_Scroll>()) {
-            fov -= wnd::global::mouse_scroll_delta * scrollSpd;
+        if (wnd::HasEvent<wnd::EventType::Mouse_Scroll>()) {
+            fov -= wnd::glo::mouse_scroll_delta * scrollSpd;
             UpdatePerspective();
         }
         
@@ -72,7 +72,7 @@ struct EgoCamera
 
     void UpdatePerspective()
     {
-        const float aspect = (float)wnd::global::window_w / (float)wnd::global::window_h;
+        const float aspect = (float)wnd::glo::window_w / (float)wnd::glo::window_h;
         const float fovRad = fov * (3.14f / 180.f);
         const float n = 0.01f;
         const float f = 0; //infinity
@@ -90,13 +90,13 @@ struct EgoCamera
 
 struct ThirdCamera
 {
-    utils::Vec3f rotation;
+    use::Vec3f rotation;
     float distance = 7;
 
-    utils::Mat4f perspective;
-    utils::Mat4f view;
-    utils::Mat4f mRot;
-    utils::Quatf qRot;
+    use::Mat4f perspective;
+    use::Mat4f view;
+    use::Mat4f mRot;
+    use::Quatf qRot;
 
     float mouseSpeed = 0.1f;
     float fov        = 45;
@@ -107,30 +107,30 @@ struct ThirdCamera
         UpdatePerspective();
     }
 
-    void Update(const utils::Vec3f orientation, const utils::Vec3f position, const double)
+    void Update(const use::Vec3f orientation, const use::Vec3f position, const double)
     {
-        using namespace utils;
+        using namespace use;
 
-        rotation[Y] += wnd::global::mouse_dx * mouseSpeed; //!need of dt ?
-        rotation[X] += wnd::global::mouse_dy * mouseSpeed;
+        rotation[Y] += wnd::glo::mouse_dx * mouseSpeed; //!need of dt ?
+        rotation[X] += wnd::glo::mouse_dy * mouseSpeed;
 
         if (rotation[X] >=  360) rotation[X] -= 360;
         if (rotation[Y] >=  360) rotation[Y] -= 360;
         if (rotation[X] <= -360) rotation[X] += 360;
         if (rotation[Y] <= -360) rotation[Y] += 360;
 
-        const auto qX = QuatAngleAxis(+rotation[X], utils::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation[Y], utils::Vec3f{0, 1, 0});
-        qRot = utils::QuatMultQuat(qY, qX);
+        const auto qX = QuatAngleAxis(+rotation[X], use::Vec3f{1, 0, 0});
+        const auto qY = QuatAngleAxis(-rotation[Y], use::Vec3f{0, 1, 0});
+        qRot = use::QuatMultQuat(qY, qX);
         mRot = QuatToMat(qRot);
 
-        if (wnd::HasEvent<wnd::Mouse_Scroll>()) {
-            distance -= wnd::global::mouse_scroll_delta * scrollSpd;
+        if (wnd::HasEvent<wnd::EventType::Mouse_Scroll>()) {
+            distance -= wnd::glo::mouse_scroll_delta * scrollSpd;
         }
         
 
-        utils::Vec3f orientVec = (orientation * distance);
-        utils::Mat4f mOrientation = {
+        use::Vec3f orientVec = (orientation * distance);
+        use::Mat4f mOrientation = {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -149,7 +149,7 @@ struct ThirdCamera
 
     void UpdatePerspective()
     {
-        const float aspect = (float)wnd::global::window_w / (float)wnd::global::window_h;
+        const float aspect = (float)wnd::glo::window_w / (float)wnd::glo::window_h;
         const float fovRad = fov * (3.14f / 180.f);
         const float n = 0.01f;
         const float f = 0; //infinity
@@ -166,16 +166,16 @@ struct ThirdCamera
 };
 
 template<class CAMERA>
-utils::Vec3f ScreenRay(const CAMERA& camera)
+use::Vec3f ScreenRay(const CAMERA& camera)
 {
-    using namespace utils;
+    using namespace use;
 
-    const auto mx = (f32)wnd::global::mouse_wx;
-    const auto my = (f32)wnd::global::mouse_wy;
-    const auto ww = (f32)wnd::global::window_w;
-    const auto wh = (f32)wnd::global::window_h;
+    const auto mx = (f32)wnd::glo::mouse_wx;
+    const auto my = (f32)wnd::glo::mouse_wy;
+    const auto ww = (f32)wnd::glo::window_w;
+    const auto wh = (f32)wnd::glo::window_h;
 
-    const utils::Vec4f homo {
+    const use::Vec4f homo {
         ((mx / ww) * 2) - 1,
         ((my / wh) * 2) - 1,
         -1,                

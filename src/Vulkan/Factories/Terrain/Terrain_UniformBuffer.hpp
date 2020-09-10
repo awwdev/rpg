@@ -7,7 +7,7 @@
 
 namespace rpg::vk {
 
-inline void Terrain_CreateUniformBuffer(UniformBuffer<rendering::Terrain_UniformData, 1>& ubo)
+inline void Terrain_CreateUniformBuffer(UniformBuffer<gpu::Terrain_UniformData, 1>& ubo)
 {
     ubo.Create();
 

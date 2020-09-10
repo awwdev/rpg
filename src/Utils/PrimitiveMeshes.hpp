@@ -4,16 +4,16 @@
 #include "Utils/Structs.hpp"
 #include "Utils/Algorithms.hpp"
 
-namespace rpg::utils {
+namespace rpg::use {
     
-constexpr utils::Vec4f GREEN = { 0, 1, 0, 1 };
-constexpr utils::Vec4f BLUE  = { 0, 0, 1, 1 };
-constexpr utils::Vec4f RED   = { 1, 0, 0, 1 };
-constexpr utils::Vec4f RED2  = { 1, .3f, .3f, 1 };
-constexpr utils::Vec4f WHITE = { 1, 1, 1, 1 };
+constexpr use::Vec4f GREEN = { 0, 1, 0, 1 };
+constexpr use::Vec4f BLUE  = { 0, 0, 1, 1 };
+constexpr use::Vec4f RED   = { 1, 0, 0, 1 };
+constexpr use::Vec4f RED2  = { 1, .3f, .3f, 1 };
+constexpr use::Vec4f WHITE = { 1, 1, 1, 1 };
 
 
-const utils::Common_Vertex MESH_CUBE [] {
+const use::Common_Vertex MESH_CUBE [] {
     { { -1, 1, 1 }, {}, RED, {} },
     { {  1, 1, 1 }, {}, RED, {} },
     { {  1, 1,-1 }, {}, RED, {} },
@@ -52,7 +52,7 @@ const utils::Common_Vertex MESH_CUBE [] {
     { { -1, 1,-1 }, {}, RED, {} },
 };
 
-const utils::Common_Vertex MESH_QUAD [] {
+const use::Common_Vertex MESH_QUAD [] {
     { { -1.0f, -1.0f, 0 }, {}, { GREEN }, {} },
     { {  1.0f, -1.0f, 0 }, {}, { GREEN }, {} },
     { {  1.0f,  1.0f, 0 }, {}, { GREEN }, {} },
@@ -61,7 +61,7 @@ const utils::Common_Vertex MESH_QUAD [] {
     { { -1.0f,  1.0f, 0 }, {}, { RED }, {} },
 };
 
-const utils::Common_Vertex MESH_TRIANGLE [] {
+const use::Common_Vertex MESH_TRIANGLE [] {
     { {  0.0f, -1.0f, 0 }, {}, { .8f, .2f, .2f, 1 }, {} },
     { {  1.0f,  1.0f, 0 }, {}, { .8f, .2f, .2f, 1 }, {} },
     { { -1.0f,  1.0f, 0 }, {}, { .8f, .2f, .2f, 1 }, {} },
@@ -74,7 +74,7 @@ auto GetRingVertex(const u32 current, const u32 max, const f32 radius)
     const f32 norm = current / (f32)max;
     const f32 x = sinf(norm * 6.283f) * radius;
     const f32 z = cosf(norm * 6.283f) * radius;
-    return utils::Common_Vertex {
+    return use::Common_Vertex {
         { x, 0, z }, { 0, 1, 0 }, { 1, 1, 1, 1 }, {}
     };
 }
@@ -92,7 +92,7 @@ GetRingVertex(n, C, R1),        \
     GetRingVertex(n+1, C, R2)
      
 
-const utils::Common_Vertex MESH_RING_16 [] {
+const use::Common_Vertex MESH_RING_16 [] {
     RING_SEGMENT( 0, 16),
     RING_SEGMENT( 1, 16),
     RING_SEGMENT( 2, 16),

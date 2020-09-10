@@ -36,9 +36,9 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t, VkResources& re
      
         vkCmdSetDepthBias(
             cmdBuffer, 
-            scene.renderGraph.depthBiasConstantFactor[cascadeIdx],
-            scene.renderGraph.depthBiasClamp[cascadeIdx],
-            scene.renderGraph.depthBiasSlopeFactor[cascadeIdx]
+            scene.renderData.depthBiasConstantFactor[cascadeIdx],
+            scene.renderData.depthBiasClamp[cascadeIdx],
+            scene.renderData.depthBiasSlopeFactor[cascadeIdx]
         );
 
         vkCmdPushConstants      (cmdBuffer, pipelineTerrain.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConsts), &pushConsts);

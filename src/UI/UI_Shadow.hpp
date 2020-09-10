@@ -12,7 +12,7 @@ struct UI_Shadow
     //? WINDOW
     ui::Window wnd {
         .title = "Shadow",
-        .rect = { (f32)wnd::global::window_w - 400.f, 0.f, 200.f, 300.f },
+        .rect  = { (f32)wnd::glo::window_w - 400.f, 0.f, 200.f, 300.f },
     };
 
     //? SUN
@@ -55,7 +55,7 @@ struct UI_Shadow
     Slider<f32> maxShadowDist[3] { dist, dist, dist };
 };
 
-inline void DrawUI_Shadow(rendering::Sun& sun)
+inline void DrawUI_Shadow(gpu::Sun& sun)
 {
     static UI_Shadow ui {};
     DrawWindow(ui.wnd);

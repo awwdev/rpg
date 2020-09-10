@@ -7,13 +7,14 @@
  & gcc ^
 -I %2 ^
 -L %5 ^
--Wall -Wpedantic -Wextra ^
+-Wno-missing-field-initializers ^
 -g ^
 -municode ^
 -std=c++2a ^
 -o %3 ^
 %4 ^
--static ^
--lstdc++ ^
--lvulkan-1 ^
+-static -lpthread ^
+-static -lstdc++ ^
+-static -lVkLayer_utils ^
+-static -lvulkan-1 ^
  & popd

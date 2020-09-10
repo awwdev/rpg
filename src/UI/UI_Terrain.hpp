@@ -15,7 +15,7 @@ struct UI_Terrain
     //? WINDOW
     Window wnd {
         .title = "Terrain",
-        .rect = { wnd::global::window_w - 200.f, 0.f, 200.f, 300.f },
+        .rect = { wnd::glo::window_w - 200.f, 0.f, 200.f, 300.f },
     };
 
     //? VERTEX COLOR
@@ -77,7 +77,7 @@ inline void DrawUI_Terrain(res::Terrain<QUAD_COUNT, QUAD_LEN, QUADRANT_COUNT>& t
     DrawText(vertModeStr, ui.wnd);
 
     //VERTEX COLOR
-    using namespace utils;
+    using namespace use;
     terrain.settings.vertexColor[X] = DrawSlider(ui.rSlider, ui.wnd);
     terrain.settings.vertexColor[Y] = DrawSlider(ui.gSlider, ui.wnd);
     terrain.settings.vertexColor[Z] = DrawSlider(ui.bSlider, ui.wnd);

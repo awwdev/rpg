@@ -42,14 +42,14 @@ struct UniformBuffer_Groups
     }
 
     template<u32 GROUPS_COUNT>
-    void Store(const rendering::UniformDataGroups<T, MAX_COUNT_T, GROUPS_COUNT>& hostUBO)
+    void Store(const gpu::UniformDataGroups<T, MAX_COUNT_T, GROUPS_COUNT>& hostUBO)
     {
         buffer.Store(hostUBO.data.bytes, hostUBO.data.CurrentSize()); //no offset, all at once
         count = hostUBO.data.count;
     }
 
     template<u32 GROUPS_COUNT>
-    void Store(const rendering::UniformDataGroupsMesh<T, MAX_COUNT_T, GROUPS_COUNT>& hostUBO)
+    void Store(const gpu::UniformDataGroupsMesh<T, MAX_COUNT_T, GROUPS_COUNT>& hostUBO)
     {
         buffer.Store(hostUBO.data.bytes, hostUBO.data.CurrentSize()); //no offset, all at once
         count = hostUBO.data.count;

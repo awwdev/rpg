@@ -10,33 +10,33 @@ namespace rpg::vk {
 
 struct Common_PushConstants
 {
-    utils::Mat4f camera;
-    utils::Mat4f sun;
-    utils::Mat4f sunBias;
-    utils::Vec3f sunDir;
+    use::Mat4f camera;
+    use::Mat4f sun;
+    use::Mat4f sunBias;
+    use::Vec3f sunDir;
     float time;
 };
 
 struct Common_PushConstants2
 {
-    utils::Mat4f projection;
-    utils::Mat4f view;
-    utils::Mat4f sunView;
-    utils::Vec3f sunDir;
+    use::Mat4f projection;
+    use::Mat4f view;
+    use::Mat4f sunView;
+    use::Vec3f sunDir;
 };
 
 struct Shadow_PushConstants
 {
-    utils::Mat4f sunCasc [3];
+    use::Mat4f sunCasc [3];
     uint32_t cascade;
 };
 
 struct Sky_PushConstants
 {
-    utils::Mat4f camera;
-    utils::Mat4f sun;
-    utils::Vec4f topColor;
-    utils::Vec4f botColor;
+    use::Mat4f camera;
+    use::Mat4f sun;
+    use::Vec4f topColor;
+    use::Vec4f botColor;
 };
 
 struct UI_PushConstants

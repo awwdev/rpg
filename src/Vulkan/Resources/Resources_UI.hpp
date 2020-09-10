@@ -20,7 +20,7 @@ struct Resources_UI
     RenderPass       renderPass;
     Shader           shader;
     Pipeline         pipeline;
-    UniformBuffer_Groups<rendering::UI_UniformData, rendering::UI_UBO_MAX_COUNT> ubo; //one group only
+    UniformBuffer_Groups<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT> ubo; //one group only
 
     void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
     {

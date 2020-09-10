@@ -9,9 +9,9 @@
 namespace rpg::res {
 
 template<auto N>
-void LoadModel(box::Array<utils::Common_Vertex, N>& vertices, chars_t path)
+void LoadModel(box::Array<use::Common_Vertex, N>& vertices, chars_t path)
 {
-    using namespace utils;
+    using namespace use;
     
     std::ifstream file(path, std::ios::binary);
     if (!file) dbg::LogError("cannot open file");

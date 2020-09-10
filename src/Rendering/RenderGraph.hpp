@@ -5,15 +5,15 @@
 #include "Utils/Structs.hpp"
 #include "Resources/MeshTypes.hpp"
 
-namespace rpg::rendering {
+namespace rpg::gpu {
 
-constexpr u32 UI_UBO_MAX_COUNT = 1000;
-constexpr u32 DEFAULT_UBO_MAX_COUNT = 1000;
+constexpr u32 UI_UBO_MAX_COUNT = 2'000; //8*4*2000 < 65.000
+constexpr u32 DEFAULT_UBO_MAX_COUNT = 1'000;
 constexpr u32 DEFAULT_VERTEX_MAX_COUNT = 5000;
 constexpr u32 TERRAIN_VERTEX_MAX_COUNT = 1'000'000;
 
 //keep rendergraph intact until all rendering (since it will be referenced on draw too)
-struct RenderGraph
+struct RenderData
 {
     UniformDataGroups<UI_UniformData, UI_UBO_MAX_COUNT, 1>  ui_ubo; //1 group only
     UniformDataGroupsMesh<Default_UniformData, DEFAULT_UBO_MAX_COUNT> common_ubo;

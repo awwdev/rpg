@@ -9,15 +9,15 @@ namespace rpg::ecs {
 
 struct C_Transform
 {
-    utils::Vec3f scale; 
-    utils::Vec3f rotation; 
-    utils::Vec3f translation; 
+    use::Vec3f scale; 
+    use::Vec3f rotation; 
+    use::Vec3f translation; 
 
     //defaults
     C_Transform( 
-        const utils::Vec3f pScale       = { 1, 1, 1 },
-        const utils::Vec3f pRotation    = { 0, 0, 0 },
-        const utils::Vec3f pTranslation = { 0, 0, 0 })
+        const use::Vec3f pScale       = { 1, 1, 1 },
+        const use::Vec3f pRotation    = { 0, 0, 0 },
+        const use::Vec3f pTranslation = { 0, 0, 0 })
         : scale        { pScale }
         , rotation     { pRotation }
         , translation  { pTranslation }
@@ -32,7 +32,7 @@ struct C_Transform
             switch(dataType)
             {
                 case ComponentDataType::scale: 
-                scale = ParseComponentData<utils::Vec3f>(pair.val); 
+                scale = ParseComponentData<use::Vec3f>(pair.val); 
                 break;
 
                 default: dbg::LogWarning("component data type not defined for this component");

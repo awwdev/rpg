@@ -5,11 +5,11 @@
 #include "Utils/Algorithms.hpp"
 #include "ECS/ECS.hpp"
 
-namespace rpg::rendering {
+namespace rpg::gpu {
 
 struct Sun
 {
-    utils::Vec3f pos { 0, -1, 0 }; //xz controlled by sin
+    use::Vec3f pos { 0, -1, 0 }; //xz controlled by sin
     float t = 0;
     ecs::ID gizmoID = 0;
     float speed = 0.001f;
@@ -17,14 +17,14 @@ struct Sun
     void Create(ecs::ECS&)
     {
         //gizmoID = ecs.AddEntity();
-        //ecs.arrays.AddComponent<ecs::ComponentType::Transform> (gizmoID, utils::Identity4());
+        //ecs.arrays.AddComponent<ecs::ComponentType::Transform> (gizmoID, use::Identity4());
         //ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(gizmoID, res::MeshType::PrimitiveCube);
     }
 
     void Update(ecs::ECS&, const double dt)
     {
         
-        using namespace utils;
+        using namespace use;
         t += (float)dt * speed;
         constexpr auto A = 2;
         pos[X] = sinf(t) * A;
@@ -40,12 +40,12 @@ struct Sun
         
     }
 
-    utils::Mat4f GetView() const
+    use::Mat4f GetView() const
     {
-        return utils::LookAt(pos, {0, 0, 0});
+        return use::LookAt(pos, {0, 0, 0});
     }
 
-    utils::Mat4f GetOrthographic(const u32 cascadeIdx) const 
+    use::Mat4f GetOrthographic(const u32 cascadeIdx) const 
     {
         //TODO: solve how the values correlate
         //TODO: cascades

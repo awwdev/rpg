@@ -3,7 +3,7 @@
 #include "Utils/Structs.hpp"
 #include "Box/Optional.hpp"
 
-namespace rpg::utils {
+namespace rpg::use {
     
 template<typename VAL1, typename VAL2>
 auto Max(const VAL1& val1, const VAL2& val2)
@@ -14,7 +14,7 @@ auto Max(const VAL1& val1, const VAL2& val2)
 template<class POINT, class RECT, 
     typename = IsArithmetic<POINT>, 
     typename = IsArithmetic<RECT>>
-bool IsPointInsideRect(const POINT x, const POINT y, const utils::Rect<RECT>& rect)
+bool IsPointInsideRect(const POINT x, const POINT y, const use::Rect<RECT>& rect)
 {
     return (x > rect.x && x < rect.x + rect.w &&
             y > rect.y && y < rect.y + rect.h);
@@ -58,7 +58,7 @@ bool ClampReturnBool(T& val, const MIN min, const MAX max)
 
 struct Intersection
 {
-    utils::Vec3f pos;
+    use::Vec3f pos;
     float u, v;
 
     //TODO: write better
@@ -76,13 +76,13 @@ struct Intersection
 };
 
 box::Optional<Intersection> RayTriangleIntersection(
-    const utils::Vec3f& rayOrigin, 
-    const utils::Vec3f& rayDir, 
-    const utils::Vec3f& v0,
-    const utils::Vec3f& v1,
-    const utils::Vec3f& v2)
+    const use::Vec3f& rayOrigin, 
+    const use::Vec3f& rayDir, 
+    const use::Vec3f& v0,
+    const use::Vec3f& v1,
+    const use::Vec3f& v2)
 {
-    using namespace utils;
+    using namespace use;
     constexpr float EPSILON = 0.0000001f;
 
     const auto edge1 = v1 - v0;

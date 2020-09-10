@@ -18,36 +18,36 @@ namespace priv
     inline void ResetEvents(HWND) 
     {
         //"advance" or reset input
-        FOR_ARRAY(global::frameEvents, i)
+        FOR_ARRAY(glo::frameEvents, i)
         {
-            const auto t = global::frameEvents[i];
-            if  (global::events[t] == Pressed) 
-                 global::events[t] = Held;
-            else global::events[t] = None;   
+            const auto t = glo::frameEvents[i];
+            if  (glo::events[(idx_t)t] == wnd::EventState::Pressed) 
+                 glo::events[(idx_t)t] = EventState::Held;
+            else glo::events[(idx_t)t] = EventState::None;   
         }
-        global::chars.Clear();
-        global::frameEvents.Clear();
+        glo::chars.Clear();
+        glo::frameEvents.Clear();
 
-        if (global::resizeState == global::ResizeState::Begin)
-            global::resizeState  = global::ResizeState::End;
+        if (glo::resizeState == glo::ResizeState::Begin)
+            glo::resizeState  = glo::ResizeState::End;
         else 
-            global::resizeState  = global::ResizeState::None;
+            glo::resizeState  = glo::ResizeState::None;
 
-        const auto cx = global::window_x + global::window_w/2;
-        const auto cy = global::window_y + global::window_h/2;
+        const auto cx = glo::window_x + glo::window_w/2;
+        const auto cy = glo::window_y + glo::window_h/2;
 
         POINT point;
         GetCursorPos(&point);
-        global::mouse_dx = (s32)point.x - global::mouse_x; 
-        global::mouse_dy = (s32)point.y - global::mouse_y;
-        global::mouse_x  = (s32)point.x;
-        global::mouse_y  = (s32)point.y;
+        glo::mouse_dx = (s32)point.x - glo::mouse_x; 
+        glo::mouse_dy = (s32)point.y - glo::mouse_y;
+        glo::mouse_x  = (s32)point.x;
+        glo::mouse_y  = (s32)point.y;
 
         if (app::global::inputMode == app::global::FlyMode ||
             app::global::inputMode == app::global::PlayMode) {
             SetCursorPos(cx, cy);
-            global::mouse_x = cx;
-            global::mouse_y = cy;
+            glo::mouse_x = cx;
+            glo::mouse_y = cy;
         }
 
     }
@@ -66,35 +66,35 @@ inline void UpdateEvents(HWND hWnd)
 
 inline void WmSize(WPARAM, LPARAM lParam)
 {
-    global::resizeState = global::ResizeState::Begin;
-    global::window_w = LOWORD(lParam);
-    global::window_h = HIWORD(lParam);
+    glo::resizeState = glo::ResizeState::Begin;
+    glo::window_w = LOWORD(lParam);
+    glo::window_h = HIWORD(lParam);
 }
 
 inline void WmMove(WPARAM, LPARAM lParam)
 {
-    if (!wnd::global::frameEvents.Contains(Window_Move))
-        AddEvent<Window_Move>();
-    wnd::global::window_x = (s32) LOWORD(lParam); 
-    wnd::global::window_y = (s32) HIWORD(lParam);
+    if (!wnd::glo::frameEvents.Contains(EventType::Window_Move))
+        AddEvent<EventType::Window_Move>();
+    wnd::glo::window_x = (s32) LOWORD(lParam); 
+    wnd::glo::window_y = (s32) HIWORD(lParam);
 }
 
 inline void WmClose(WPARAM, WPARAM)
 {
-    AddEvent<Window_Close>();
+    AddEvent<EventType::Window_Close>();
 }
 
 inline void WmMouseMove(WPARAM, LPARAM lParam)
 {
-    AddEvent<Mouse_Move>();
-    global::mouse_wx = GET_X_LPARAM(lParam);
-    global::mouse_wy = GET_Y_LPARAM(lParam);
+    AddEvent<EventType::Mouse_Move>();
+    glo::mouse_wx = GET_X_LPARAM(lParam);
+    glo::mouse_wy = GET_Y_LPARAM(lParam);
 }
 
 inline void WmMouseWheel(WPARAM wParam, LPARAM)
 {
-    AddEvent<Mouse_Scroll>();
-    global::mouse_scroll_delta = GET_WHEEL_DELTA_WPARAM(wParam);
+    AddEvent<EventType::Mouse_Scroll>();
+    glo::mouse_scroll_delta = GET_WHEEL_DELTA_WPARAM(wParam);
 }
 
 inline auto WmSetCursor(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> LRESULT
@@ -110,47 +110,47 @@ inline auto WmSetCursor(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> L
 
 inline void WmLButtonDown(WPARAM, LPARAM lParam)
 {
-    AddEvent<Mouse_ButtonLeft, Pressed>();
-    global::mouse_wx = GET_X_LPARAM(lParam);
-    global::mouse_wy = GET_Y_LPARAM(lParam);
+    AddEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>();
+    glo::mouse_wx = GET_X_LPARAM(lParam);
+    glo::mouse_wy = GET_Y_LPARAM(lParam);
 }
 
 inline void WmLButtonUp(WPARAM, LPARAM lParam)
 {
-    AddEvent<Mouse_ButtonLeft, Released>();
-    global::mouse_wx = GET_X_LPARAM(lParam);
-    global::mouse_wy = GET_Y_LPARAM(lParam);
+    AddEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>();
+    glo::mouse_wx = GET_X_LPARAM(lParam);
+    glo::mouse_wy = GET_Y_LPARAM(lParam);
 }
 
 inline void WmRButtonDown(WPARAM, LPARAM lParam)
 {
-    AddEvent<Mouse_ButtonRight, Pressed>();
-    global::mouse_wx = GET_X_LPARAM(lParam);
-    global::mouse_wy = GET_Y_LPARAM(lParam);
+    AddEvent<wnd::EventType::Mouse_ButtonRight, wnd::EventState::Pressed>();
+    glo::mouse_wx = GET_X_LPARAM(lParam);
+    glo::mouse_wy = GET_Y_LPARAM(lParam);
 }
 
 inline void WmRButtonUp(WPARAM, LPARAM lParam)
 {
-    AddEvent<Mouse_ButtonRight, Released>();
-    global::mouse_wx = GET_X_LPARAM(lParam);
-    global::mouse_wy = GET_Y_LPARAM(lParam);
+    AddEvent<wnd::EventType::Mouse_ButtonRight, wnd::EventState::Released>();
+    glo::mouse_wx = GET_X_LPARAM(lParam);
+    glo::mouse_wy = GET_Y_LPARAM(lParam);
 }
 
 inline void WmKeyDown(WPARAM wParam, LPARAM)
 {
-    global::events[wParam] = Pressed;
-    global::frameEvents.Append((EventType)wParam);
+    glo::events[wParam] = wnd::EventState::Pressed;
+    glo::frameEvents.Append((EventType)wParam);
 }
 
 inline void WmKeyUp(WPARAM wParam, LPARAM)
 {
-    global::events[wParam] = Released;
-    global::frameEvents.Append((EventType)wParam);
+    glo::events[wParam] = wnd::EventState::Released;
+    glo::frameEvents.Append((EventType)wParam);
 }
 
 inline void WmChar(WPARAM wParam, LPARAM)
 {
-    global::chars.Append((char)wParam);        
+    glo::chars.Append((char)wParam);        
 }
 
 inline LRESULT CALLBACK CustomWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

@@ -11,7 +11,7 @@
 namespace rpg::vk
 {
     inline void Default_CreateVertexBuffer(
-        VertexBuffer<utils::Common_Vertex, rendering::DEFAULT_VERTEX_MAX_COUNT>& vbo, 
+        VertexBuffer<use::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT>& vbo, 
         VkCommandPool cmdPool,
         res::HostResources& res)
     {  
@@ -27,7 +27,7 @@ namespace rpg::vk
 
         vbo.bindings.Append(VkVertexInputBindingDescription{
             .binding    = 0,
-            .stride     = sizeof(utils::Common_Vertex),
+            .stride     = sizeof(use::Common_Vertex),
             .inputRate  = VK_VERTEX_INPUT_RATE_VERTEX
         });
 
@@ -35,25 +35,25 @@ namespace rpg::vk
             .location   = 0,
             .binding    = 0, 
             .format     = VK_FORMAT_R32G32B32_SFLOAT,
-            .offset     = offsetof(utils::Common_Vertex, pos),
+            .offset     = offsetof(use::Common_Vertex, pos),
         });
         vbo.attributes.Append(VkVertexInputAttributeDescription{
             .location   = 1,
             .binding    = 0, 
             .format     = VK_FORMAT_R32G32B32_SFLOAT,
-            .offset     = offsetof(utils::Common_Vertex, nor),
+            .offset     = offsetof(use::Common_Vertex, nor),
         });
         vbo.attributes.Append(VkVertexInputAttributeDescription{
             .location   = 2,
             .binding    = 0, 
             .format     = VK_FORMAT_R32G32B32A32_SFLOAT,
-            .offset     = offsetof(utils::Common_Vertex, col),
+            .offset     = offsetof(use::Common_Vertex, col),
         });
         vbo.attributes.Append(VkVertexInputAttributeDescription{
             .location   = 3,
             .binding    = 0, 
             .format     = VK_FORMAT_R32G32_SFLOAT,
-            .offset     = offsetof(utils::Common_Vertex, tex),
+            .offset     = offsetof(use::Common_Vertex, tex),
         });
     }
 

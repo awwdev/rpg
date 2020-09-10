@@ -40,12 +40,13 @@ const vec2 uv [6] = {
 };
 
 //alpha does not matter
+//could do an UBO
 const vec4 colors[] = {
     vec4(0.90, 0.90, 0.90, 1.0), //WHITE
     vec4(0.01, 0.90, 0.01, 1.0), //GREEN
     vec4(0.90, 0.01, 0.01, 1.0), //RED
     vec4(0.01, 0.01, 0.01, 1.0), //BLACK1
-    vec4(0.02, 0.02, 0.02, 0.5), //BLACK2
+    vec4(0.02, 0.02, 0.02, 0.5), //BLACK2_ALPHA
     vec4(0.03, 0.03, 0.03, 1.0), //BLACK3
     vec4(0.04, 0.04, 0.04, 1.0), //BLACK4
     vec4(0.05, 0.05, 0.05, 1.0), //BLACK5

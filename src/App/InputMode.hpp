@@ -17,16 +17,16 @@ inline void ResetUpdateInputMode()
     if (global::inputMode == global::UI_Mode)
         global::inputMode = global::Edit_Mode;
 
-    if (wnd::HasEvent<wnd::F1, wnd::Pressed>()){
+    if (wnd::HasEvent<wnd::EventType::F1, wnd::EventState::Pressed>()){
         if (global::inputMode == global::PlayMode)
             global::prev = global::inputMode = global::Edit_Mode;
         else    
             global::prev = global::inputMode = global::PlayMode;
     }
 
-    if (wnd::HasEvent<wnd::Mouse_ButtonRight, wnd::PressedOrHeld>()) 
+    if (wnd::HasEvent<wnd::EventType::Mouse_ButtonRight, wnd::EventState::PressedOrHeld>()) 
         global::inputMode = global::FlyMode;
-    if (wnd::HasEvent<wnd::Mouse_ButtonRight, wnd::Released>()) 
+    if (wnd::HasEvent<wnd::EventType::Mouse_ButtonRight, wnd::EventState::Released>()) 
         global::inputMode = global::prev;
 }
 

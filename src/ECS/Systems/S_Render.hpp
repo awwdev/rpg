@@ -8,9 +8,9 @@
 
 namespace rpg::ecs {
     
-inline void S_Render(ComponentArrays<>& arrays, const double, rendering::RenderGraph& renderGraph)
+inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& renderGraph)
 {
-    using namespace utils;
+    using namespace use;
 
     auto& arr_render    = arrays.renderData;
     auto& arr_transform = arrays.transforms;
@@ -28,7 +28,7 @@ inline void S_Render(ComponentArrays<>& arrays, const double, rendering::RenderG
     }   
 
     auto loop = [&](bool useTexture, auto& arr) {
-        box::Array<rendering::Default_UniformData, rendering::DEFAULT_UBO_MAX_COUNT> group;
+        box::Array<gpu::Default_UniformData, gpu::DEFAULT_UBO_MAX_COUNT> group;
 
         FOR_CARRAY(arr, i){ // meshType == group
             group.Clear();

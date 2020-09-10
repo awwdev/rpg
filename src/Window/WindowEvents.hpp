@@ -6,7 +6,7 @@
 
 namespace rpg::wnd {
 
-enum EventType
+enum class EventType
 {
     //ascii
     Shift = 16,
@@ -30,7 +30,7 @@ enum EventType
     ENUM_END
 };
 
-enum EventState : u8
+enum class EventState : u8
 {
     None,     
     Pressed,        //once 
@@ -40,9 +40,9 @@ enum EventState : u8
     Set,            //misc like wnd
 };
 
-namespace global
+namespace glo
 {
-    inline EventState events [EventType::ENUM_END];
+    inline EventState events [(idx_t)EventType::ENUM_END];
     inline box::String<10> chars;
 
     inline s32 window_x, window_y;
@@ -60,19 +60,19 @@ namespace global
 //abstraction over global access
 template<auto type, auto state = EventState::Set> bool HasEvent()
 {
-            if constexpr (state == EventState::None)            return global::events[type] == None;
-    else if constexpr (state == EventState::Pressed)         return global::events[type] == Pressed;
-    else if constexpr (state == EventState::Released)        return global::events[type] == Released;
-    else if constexpr (state == EventState::Held)            return global::events[type] == Held;
-    else if constexpr (state == EventState::PressedOrHeld)   return global::events[type] == Pressed || global::events[type] == Held;
-    else if constexpr (state == EventState::Set)             return global::events[type] == Set;
+         if constexpr (state == EventState::None)            return glo::events[(idx_t)type] == EventState::None;
+    else if constexpr (state == EventState::Pressed)         return glo::events[(idx_t)type] == EventState::Pressed;
+    else if constexpr (state == EventState::Released)        return glo::events[(idx_t)type] == EventState::Released;
+    else if constexpr (state == EventState::Held)            return glo::events[(idx_t)type] == EventState::Held;
+    else if constexpr (state == EventState::PressedOrHeld)   return glo::events[(idx_t)type] == EventState::Pressed || glo::events[(idx_t)type] == EventState::Held;
+    else if constexpr (state == EventState::Set)             return glo::events[(idx_t)type] == EventState::Set;
 }
 
-template<auto TYPE, auto STATE = Set>
+template<auto TYPE, auto STATE = EventState::Set>
 void AddEvent()
 {
-    global::events[TYPE] = STATE;
-    global::frameEvents.Append(TYPE);
+    glo::events[(idx_t)TYPE] = STATE;
+    glo::frameEvents.Append(TYPE);
 }
 
 }//NS

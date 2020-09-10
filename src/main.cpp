@@ -18,30 +18,25 @@
 
 using namespace rpg;
 
-int WINAPI wWinMain(
-    _In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE,
-    _In_ PWSTR,
-    _In_ int)
+int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int)
 {
     dbg::Console console{};
     mem::GlobalAllocate();
 
     {
         wnd::Window  window { hInstance, 800, 600 };
-        auto ptrHostResources = mem::ClaimBlock<res::HostResources>(); //will load immediately for now
-        auto ptrRenderer = mem::ClaimBlock<vk::VkRenderer>(
-            vk::WindowHandle{window.hInstance, window.hWnd},
-            *ptrHostResources);
-        auto ptrGameScenes = mem::ClaimBlock<app::GameScene>();
+        auto ptrHostResources  = mem::ClaimBlock<res::HostResources>();
+        auto ptrRenderer       = mem::ClaimBlock<vk::VkRenderer>(vk::WindowHandle{window.hInstance, window.hWnd}, *ptrHostResources);
+        auto ptrGameScenes     = mem::ClaimBlock<app::GameScene>();
         ptrGameScenes->Create(*ptrHostResources);
 
-        while (wnd::global::events[wnd::Window_Close] == wnd::None && wnd::global::events[wnd::ESC] == wnd::None)
+        while (wnd::glo::events[(idx_t)wnd::EventType::Window_Close] == wnd::EventState::None && 
+               wnd::glo::events[(idx_t)wnd::EventType::ESC] == wnd::EventState::None)
         {
             wnd::UpdateEvents(window.hWnd);
             dt::UpdateFPS();
 
-            if (wnd::global::window_h != 0 && wnd::global::window_w != 0)
+            if (wnd::glo::window_h != 0 && wnd::glo::window_w != 0)
             {
                 ptrGameScenes->Update(rpg::dt::seconds, *ptrHostResources);
                 ptrRenderer->Render(rpg::dt::seconds, *ptrGameScenes, *ptrHostResources);
@@ -54,8 +49,9 @@ int WINAPI wWinMain(
     
     mem::GlobalDeallocate();
     system("pause");
+
     return 0;
-} //main end
+}
 
 
 //TODO: rework vk image obj

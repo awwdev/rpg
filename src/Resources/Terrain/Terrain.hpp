@@ -21,7 +21,7 @@ template<auto VERT_COUNT_TOTAL, auto QUADRANT_COUNT_TOTAL>
 struct Settings
 {
     EditMode mode = VertexGrab;
-    box::Optional<utils::Intersection> intersection {};
+    box::Optional<use::Intersection> intersection {};
 
     struct VertexBrushInfo { idx_t idx; f32 falloff; };
     box::Array<VertexBrushInfo, VERT_COUNT_TOTAL> editingVertIndices;
@@ -33,10 +33,10 @@ struct Settings
     u32  quadrantIdx = 0;
     f32  brushSize   = 1;
 
-    utils::Vec4f vertexColor { 1, 1, 1, 1 };
+    use::Vec4f vertexColor { 1, 1, 1, 1 };
 
     ecs::ID gizmoID;
-    utils::Vec3f intersectionPos;
+    use::Vec3f intersectionPos;
 
     ecs::PrefabType prefabType; 
     bool baked = false;
@@ -75,7 +75,7 @@ struct Terrain
         }}
     }
 
-    void Update(const double, const rendering::EgoCamera& camera, ecs::ECS& ecs)
+    void Update(const double, const gpu::EgoCamera& camera, ecs::ECS& ecs)
     {   
         //? META
         if (app::global::inputMode != app::global::Edit_Mode)
@@ -94,26 +94,26 @@ struct Terrain
             Placing(camera, ecs);
 
         //? MODES
-        if (wnd::HasEvent<wnd::F5, wnd::Pressed>())
+        if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
             SaveTerrain(quadrants);
-        if (wnd::HasEvent<wnd::F6, wnd::Pressed>()){
+        if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>()){
             LoadTerrain(quadrants);
             MarkAllDirty();
         }
-        if (wnd::HasEvent<wnd::F7, wnd::Pressed>())
+        if (wnd::HasEvent<wnd::EventType::F7, wnd::EventState::Pressed>())
             Stiching();
-         if (wnd::HasEvent<wnd::F8, wnd::Pressed>())
+         if (wnd::HasEvent<wnd::EventType::F8, wnd::EventState::Pressed>())
             Bake();
 
-        if (wnd::HasEvent<wnd::F2, wnd::Pressed>())
+        if (wnd::HasEvent<wnd::EventType::F2, wnd::EventState::Pressed>())
             settings.mode = (settings.mode == EditMode::VertexGrab) ? EditMode::VertexPaint : EditMode::VertexGrab;
-        if (wnd::HasEvent<wnd::F3, wnd::Pressed>())
+        if (wnd::HasEvent<wnd::EventType::F3, wnd::EventState::Pressed>())
             settings.mode = EditMode::PropPlacement;
 
-        if (wnd::HasEvent<wnd::N0, wnd::Pressed>()) settings.quadrantIdx = 0;
-        if (wnd::HasEvent<wnd::N1, wnd::Pressed>()) settings.quadrantIdx = 1;
-        if (wnd::HasEvent<wnd::N2, wnd::Pressed>()) settings.quadrantIdx = 2;
-        if (wnd::HasEvent<wnd::N3, wnd::Pressed>()) settings.quadrantIdx = 3;
+        if (wnd::HasEvent<wnd::EventType::N0, wnd::EventState::Pressed>()) settings.quadrantIdx = 0;
+        if (wnd::HasEvent<wnd::EventType::N1, wnd::EventState::Pressed>()) settings.quadrantIdx = 1;
+        if (wnd::HasEvent<wnd::EventType::N2, wnd::EventState::Pressed>()) settings.quadrantIdx = 2;
+        if (wnd::HasEvent<wnd::EventType::N3, wnd::EventState::Pressed>()) settings.quadrantIdx = 3;
     }
 
     //? HELPER
@@ -156,7 +156,7 @@ struct Terrain
 
     void UpdateGizmos(ecs::ECS& ecs)
     {
-        using namespace utils;
+        using namespace use;
         auto& transform = ecs.arrays.transforms.Get(settings.gizmoID);
         const auto S = settings.brushSize;
         transform.scale = { S, S, S };
@@ -166,7 +166,7 @@ struct Terrain
 
     //? INTERACTION
 
-    box::Optional<utils::Intersection> CheckIntersection(const rendering::EgoCamera& camera)
+    box::Optional<use::Intersection> CheckIntersection(const gpu::EgoCamera& camera)
     {
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
         const auto ray = ScreenRay(camera);
@@ -177,7 +177,7 @@ struct Terrain
             auto& v1 = quadrant.verts[i+1].pos;
             auto& v2 = quadrant.verts[i+2].pos;
 
-            if (const auto intersection = utils::RayTriangleIntersection(camera.position, ray, v0, v1, v2))
+            if (const auto intersection = use::RayTriangleIntersection(camera.position, ray, v0, v1, v2))
                 return intersection;
         }
 
@@ -192,22 +192,22 @@ struct Terrain
         FOR_CARRAY(quadrant.verts, i){
             const auto& vec1 = settings.intersectionPos;
             const auto& vec2 = quadrant.verts[i].pos;
-            const auto  dist = utils::Distance(vec2, vec1);
+            const auto  dist = use::Distance(vec2, vec1);
 
             if(dist < settings.brushSize)
-                settings.editingVertIndices.Append(i, 1 - utils::Ease(dist/settings.brushSize));
+                settings.editingVertIndices.Append(i, 1 - use::Ease(dist/settings.brushSize));
         }
     }
 
-    void Painting(const rendering::EgoCamera& camera)
+    void Painting(const gpu::EgoCamera& camera)
     {
-        using namespace utils;
+        using namespace use;
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
         if (const auto intersection = CheckIntersection(camera))
         {
             settings.intersectionPos = intersection->pos;
-            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>())
+            if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Held>())
             {
                 CollectVertsInBrushCircle(); //TODO: do at lower frequency
 
@@ -224,28 +224,28 @@ struct Terrain
         }
     }
 
-    void Grabbing(const rendering::EgoCamera& camera)
+    void Grabbing(const gpu::EgoCamera& camera)
     {
-        using namespace utils;
+        using namespace use;
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
-        if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>())
+        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>())
             settings.intersection = {};
 
         if (const auto intersection = CheckIntersection(camera))
         {
-            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
-                settings.yGrabRef = (f32)wnd::global::mouse_wy;
+            if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
+                settings.yGrabRef = (f32)wnd::glo::mouse_wy;
                 settings.intersection = intersection;
                 CollectVertsInBrushCircle();
             }
-            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>() == false)
+            if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Held>() == false)
                 settings.intersectionPos = intersection->pos;
         }
 
-        if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Held>() && settings.intersection){
-            const f32 yDelta = wnd::global::mouse_wy - settings.yGrabRef;
-            settings.yGrabRef = (f32)wnd::global::mouse_wy;
+        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Held>() && settings.intersection){
+            const f32 yDelta = wnd::glo::mouse_wy - settings.yGrabRef;
+            settings.yGrabRef = (f32)wnd::glo::mouse_wy;
         
             FOR_ARRAY(settings.editingVertIndices, i){
                 const auto idx     = settings.editingVertIndices[i].idx;
@@ -262,15 +262,15 @@ struct Terrain
     }
 
     //TODO: we don't acutally place in terrain, but use terrain to cast ray against
-    void Placing(const rendering::EgoCamera& camera, ecs::ECS& ecs)
+    void Placing(const gpu::EgoCamera& camera, ecs::ECS& ecs)
     {
-        using namespace utils;
+        using namespace use;
         //auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
         if (const auto intersection = CheckIntersection(camera))
         {
             settings.intersectionPos = intersection->pos;
-            if (wnd::HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()) {
+            if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) {
 
                 for(auto i = 0; i < 10; ++i) //for grass test 
                 {
@@ -300,8 +300,8 @@ struct Terrain
 
     void StichCorner(const idx_t qcz, const idx_t qcx, const idx_t cornerCount) 
     {
-        box::Array<utils::Vec3f, 4> positions;
-        box::Array<utils::Common_Vertex*, 6> verts;
+        box::Array<use::Vec3f, 4> positions;
+        box::Array<use::Common_Vertex*, 6> verts;
 
         //TL
         if (qcx > 0 && qcz > 0){
@@ -344,7 +344,7 @@ struct Terrain
         }
 
         const auto avgPos = [&]{
-            utils::Vec3f pos {};
+            use::Vec3f pos {};
             FOR_ARRAY(positions, i) pos = pos + positions[i];
             pos = pos * (1/(float)positions.count);
             return pos;

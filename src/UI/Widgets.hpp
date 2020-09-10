@@ -37,7 +37,7 @@ constexpr idx_t FULL_OPAQUE_NO_TEXTURE = 21; //using NAK ascii code
 constexpr f32   LINE_HEIGHT = 18;
 constexpr f32   PADDING = 4;
 
-inline rendering::RenderGraph* g_aciveRenderGraph = nullptr;
+inline gpu::RenderData* g_aciveRenderGraph = nullptr;
 
 //? STRUCTS
 
@@ -46,8 +46,8 @@ struct Window
     static constexpr auto TOP_BAR_H = 20;
 
     box::String<20>  title;
-    utils::Rect<f32> rect {};
-    utils::Rect<f32> limits = { rect.w, rect.h, f32max, f32max };
+    use::Rect<f32> rect {};
+    use::Rect<f32> limits = { rect.w, rect.h, f32max, f32max };
 
     enum Mode { None, Resize, Move } mode = None;
 
@@ -57,11 +57,15 @@ struct Window
 
     void UpdateInputMode()
     {
-        if (app::global::inputMode != app::global::Edit_Mode)
+        using namespace app::global;
+        using namespace wnd::glo;
+        using namespace use;
+
+        if (inputMode != Edit_Mode)
             return;
 
-        if (utils::IsPointInsideRect(wnd::global::mouse_wx, wnd::global::mouse_wy, rect))
-            app::global::inputMode = app::global::UI_Mode; 
+        if (IsPointInsideRect(mouse_wx, mouse_wy, rect))
+            inputMode = UI_Mode; 
     }
 };
 
@@ -71,7 +75,7 @@ struct Slider
     static constexpr f32 BACK_H = 16;
 
     box::String<100> name {};
-    utils::Rect<float> back { 0, 0, 0, BACK_H };
+    use::Rect<float> back { 0, 0, 0, BACK_H };
     bool isDragging = false;
     f32 knobPos = 0;
     f32 wref = 1; //important for window resize
@@ -87,7 +91,7 @@ template<class T, class = IsArithmetic<T>>
 struct InputField
 {
     static constexpr f32 BACK_H = 16;
-    utils::Rect<float> rect { 0, 0, 0, BACK_H };
+    use::Rect<float> rect { 0, 0, 0, BACK_H };
 
     box::String<20> name;
     box::String<20> value;
@@ -106,7 +110,7 @@ template<class T, auto MAX_ITEM_COUNT>
 struct List
 {
     box::String<20> name                    {};
-    utils::Rect<f32> rect                   {};
+    use::Rect<f32> rect                   {};
     box::Array<T, MAX_ITEM_COUNT> items     {};
     static constexpr s32 NO_ACTIVE_INDEX  = -1;
     s32 activeIndex                       = NO_ACTIVE_INDEX; 
@@ -135,7 +139,7 @@ inline void DrawText(
     Window& wnd,  
     const Colors col = Colors::WHITE)
 {
-    DrawText(str, (idx_t)utils::StrLen(str), wnd.rect.x, wnd.rect.y + wnd.line, col);
+    DrawText(str, (idx_t)use::StrLen(str), wnd.rect.x, wnd.rect.y + wnd.line, col);
     wnd.NextLine();
 }
 
@@ -158,7 +162,7 @@ inline void DrawText(
     DrawText(str.data, str.Length(), x, y, col);
 }
 
-inline void DrawRectangle(utils::Rect<f32> rect, const Colors col)
+inline void DrawRectangle(use::Rect<f32> rect, const Colors col)
 {
     g_aciveRenderGraph->ui_ubo.AppendData({ 
         .rect           = rect,
@@ -173,10 +177,10 @@ inline void DrawRectangle(utils::Rect<f32> rect, const Colors col)
 
 inline void DrawTextCentered(
     chars_t str,
-    const utils::Rect<f32>& rect, 
+    const use::Rect<f32>& rect, 
     const Colors col = WHITE)
 {
-    const auto len = (idx_t)utils::StrLen(str);
+    const auto len = (idx_t)use::StrLen(str);
     const auto TOTAL_STR_W = (len + 1) * LETTER_SPACE;
     const auto cx = rect.x + rect.w * 0.5f - TOTAL_STR_W * 0.5f;
     const auto cy = rect.y + rect.h * 0.5f - LETTER_SIZE * 0.5f;
@@ -197,23 +201,23 @@ inline void DrawTextCentered(
 
 inline void DrawWindow(Window& wnd)
 {
-    using namespace utils;
+    using namespace use;
     using namespace wnd;
 
     wnd.ResetLine();
 
-    const utils::Rect<f32> bar     = { wnd.rect.x, wnd.rect.y, wnd.rect.w, wnd.TOP_BAR_H };
-    const utils::Rect<f32> resizer = { wnd.rect.x + wnd.rect.w - 8, wnd.rect.y + wnd.rect.h - 8, 8, 8 };
+    const use::Rect<f32> bar     = { wnd.rect.x, wnd.rect.y, wnd.rect.w, wnd.TOP_BAR_H };
+    const use::Rect<f32> resizer = { wnd.rect.x + wnd.rect.w - 8, wnd.rect.y + wnd.rect.h - 8, 8, 8 };
 
-    const bool isMouseOnBar     = IsPointInsideRect(global::mouse_wx, global::mouse_wy, bar);
-    const bool isMouseOnResizer = IsPointInsideRect(global::mouse_wx, global::mouse_wy, resizer);
+    const bool isMouseOnBar     = IsPointInsideRect(glo::mouse_wx, glo::mouse_wy, bar);
+    const bool isMouseOnResizer = IsPointInsideRect(glo::mouse_wx, glo::mouse_wy, resizer);
 
     //INTERACTION
 
-    if (HasEvent<Mouse_ButtonLeft, Released>())
+    if (HasEvent<EventType::Mouse_ButtonLeft, wnd::EventState::Released>())
         wnd.mode = Window::Mode::None;
 
-    if (HasEvent<Mouse_ButtonLeft, Pressed>()) {        
+    if (HasEvent<EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) {        
         if (isMouseOnBar)      
             wnd.mode = Window::Mode::Move;
         if (isMouseOnResizer)  
@@ -223,13 +227,13 @@ inline void DrawWindow(Window& wnd)
     if (wnd.mode == Window::Move || wnd.mode == Window::Resize)  
     {
         if (wnd.mode == Window::Move) {
-            wnd.rect.x += global::mouse_dx;
-            wnd.rect.y += global::mouse_dy;
+            wnd.rect.x += glo::mouse_dx;
+            wnd.rect.y += glo::mouse_dy;
         }
 
         if (wnd.mode == Window::Resize) {
-            wnd.rect.w += global::mouse_dx;
-            wnd.rect.h += global::mouse_dy;
+            wnd.rect.w += glo::mouse_dx;
+            wnd.rect.h += glo::mouse_dy;
             Clamp(wnd.rect.w, wnd.limits.x, wnd.limits.w);
             Clamp(wnd.rect.h, wnd.limits.y, wnd.limits.h);
         }  
@@ -247,7 +251,7 @@ inline void DrawWindow(Window& wnd)
 template<class T>
 inline auto DrawSlider(Slider<T>& slider)
 {
-    using namespace utils;
+    using namespace use;
     using namespace wnd;
 
     const Rect<f32> knob { 
@@ -259,16 +263,16 @@ inline auto DrawSlider(Slider<T>& slider)
 
     //INTERACTION
     //bool hasChanged = false;
-    const bool isMouseOnKnob = IsPointInsideRect(global::mouse_wx, global::mouse_wy, knob);
+    const bool isMouseOnKnob = IsPointInsideRect(glo::mouse_wx, glo::mouse_wy, knob);
 
-    if(HasEvent<Mouse_ButtonLeft, Released>())
+    if(HasEvent<EventType::Mouse_ButtonLeft, wnd::EventState::Released>())
         slider.isDragging = false;
 
-    if(isMouseOnKnob && HasEvent<Mouse_ButtonLeft, Pressed>())
+    if(isMouseOnKnob && HasEvent<EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>())
         slider.isDragging = true;
 
     if (slider.isDragging)
-        slider.knobPos += global::mouse_dx;
+        slider.knobPos += glo::mouse_dx;
 
     if (ClampReturnBool(slider.knobPos, 0.f, slider.back.w - knob.w - PADDING * 2)) //padding for both slider and knob
         slider.isDragging = false;
@@ -303,12 +307,12 @@ inline auto DrawSlider(Slider<T>& slider, Window& wnd)
 template<class T>
 inline auto DrawInputField(InputField<T>& inputField)
 {
-    using namespace utils;
+    using namespace use;
     using namespace wnd;
 
     const auto textSize = LETTER_SPACE * inputField.name.Length() + LETTER_SPACE;
 
-    const utils::Rect<f32> back { 
+    const use::Rect<f32> back { 
         inputField.rect.x + textSize,
         inputField.rect.y,
         inputField.rect.w - textSize,
@@ -316,22 +320,22 @@ inline auto DrawInputField(InputField<T>& inputField)
     };
 
     //INTERACTION
-    const bool isMouseOnInput = utils::IsPointInsideRect(global::mouse_wx, global::mouse_wy, back);
+    const bool isMouseOnInput = use::IsPointInsideRect(glo::mouse_wx, glo::mouse_wy, back);
 
-    if(isMouseOnInput && HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
+    if(isMouseOnInput && HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
         inputField.isActive = true;
     }
 
-    if(!isMouseOnInput && HasEvent<wnd::Mouse_ButtonLeft, wnd::Released>()){
+    if(!isMouseOnInput && HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>()){
         inputField.isActive = false;
     }
 
     if (inputField.isActive){
-        FOR_STRING(global::chars, i) {
-            if (global::chars[i] == '\b')
+        FOR_STRING(glo::chars, i) {
+            if (glo::chars[i] == '\b')
                 inputField.value.Pop();
             else
-                inputField.value.Append(global::chars[i]);
+                inputField.value.Append(glo::chars[i]);
         }
     }
 
@@ -358,14 +362,14 @@ inline auto DrawInputField(InputField<T>& inputField, Window& wnd)
 template<class T, auto MAX_ITEM_COUNT>
 inline bool DrawList(List<T, MAX_ITEM_COUNT>& list)
 {
-    using namespace utils;
+    using namespace use;
     using namespace wnd;
 
     bool hasChanged = false;
 
     //META
     DrawText(list.name, list.rect.x, list.rect.y);
-    const utils::Rect<f32> back{
+    const use::Rect<f32> back{
         list.rect.x,
         list.rect.y + LINE_HEIGHT,
         list.rect.w,
@@ -381,10 +385,10 @@ inline bool DrawList(List<T, MAX_ITEM_COUNT>& list)
             back.w - PADDING * 2,
             LINE_HEIGHT
         };
-        const bool isMouseOnItem = IsPointInsideRect(global::mouse_wx, global::mouse_wy, itemRect);
+        const bool isMouseOnItem = IsPointInsideRect(glo::mouse_wx, glo::mouse_wy, itemRect);
 
         if (isMouseOnItem) {
-            if (HasEvent<wnd::Mouse_ButtonLeft, wnd::Pressed>()){
+            if (HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
                 hasChanged = true;
                 list.activeIndex = i;
             }
@@ -411,7 +415,7 @@ inline bool DrawList(List<T, MAX_ITEM_COUNT>& list, Window& wnd)
 
 //? SPECIFIC
 
-inline void DrawFPS(const utils::Rect<f32>& rect = { 0, 0, 48, 20 })
+inline void DrawFPS(const use::Rect<f32>& rect = { 0, 0, 48, 20 })
 {
     DrawRectangle(rect, Colors::BLACK1);
 
