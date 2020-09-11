@@ -39,11 +39,11 @@ struct String
     DATA_T data [CAPACITY] { '\0' };
     idx_t  length = 0;
 
-    constexpr       DATA_T& operator[] (const idx_t i)       { return data[i]; }
-    constexpr const DATA_T& operator[] (const idx_t i) const { return data[i]; }
+          DATA_T& operator[] (const idx_t i)       { return data[i]; }
+    const DATA_T& operator[] (const idx_t i) const { return data[i]; }
 
-    constexpr bool  Empty()  const { return length == 0; }
-    constexpr bool  Full()   const { return length > CAPACITY; } 
+    bool Empty()  const { return length == 0; }
+    bool Full()   const { return length >= (CAPACITY-1); } 
 
     //? CTOR
 
@@ -52,6 +52,9 @@ struct String
     template<idx_t N> String(const String<N>& str)    { Append(str.data, str.length); }
     String(chars_t ptr)                               { Append(ptr, use::StrLen(ptr)); }
     String(chars_t ptr, const idx_t range)            { Append(ptr, range); }
+
+    template<class T, typename = std::enable_if_t<!std::is_same_v<std::decay_t<T>, DATA_T>>>
+    String(T&& arithemtic) { Append(std::forward<T>(arithemtic)); }
 
     //? MODIFICATION 
 
@@ -65,7 +68,7 @@ struct String
     template<idx_t N> void Append(const DATA_T (&arr)[N]) { Append(arr, N); }
     void Append(const DATA_T ch)                          { Append(&ch, 1); }
         
-    void Append(chars_t ptr, const idx_t pLength)
+    void Append(const DATA_T* const ptr, const idx_t pLength)
     {
         StringAssert(length + pLength < CAPACITY, "str capacity exhausted");
         std::memcpy(&data[length], ptr, pLength * sizeof(DATA_T));
@@ -73,11 +76,11 @@ struct String
         data[length + 1] = '\0';       
     }
 
-    template<class T, typename = std::enable_if_t<std::is_arithmetic_v<T> && !std::is_same_v<T, DATA_T>>>
-    void Append(T&& arithmetic)
+    template<class T, typename = std::enable_if_t<!std::is_same_v<std::decay_t<T>, DATA_T>>>
+    void Append(T&& t)
     {
         //charsconv is not implemented in gcc STL
-        const auto str = std::to_string(arithmetic); 
+        const auto str = std::to_string(t); 
         Append(str.c_str(), (idx_t)str.length());
     }
 

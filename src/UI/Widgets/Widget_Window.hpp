@@ -19,12 +19,11 @@ struct Widget_Window
 
     void Update(gpu::RenderData& renderData)
     {
-        rowY = rect.y + BAR_H + PADDING; //reset 
+        rowY = rect.y + BAR_H + PADDING; //reset (will be increased externally)
 
         const use::Rect<f32> bar     { rect.x, rect.y, rect.w, BAR_H };
         const use::Rect<f32> resizer { rect.x + rect.w - 8, rect.y + rect.h - 8, 8, 8 };
 
-        //INTERACTION
         const bool isMouseOnBar     = use::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, bar);
         const bool isMouseOnResizer = use::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, resizer);
         
@@ -48,7 +47,6 @@ struct Widget_Window
             use::Clamp(rect.h, limits.y, limits.h);
         }
 
-        //ADD TO RENDER DATA
         AddRect(renderData, rect, Colors::Black2_Alpha);
         AddRect(renderData, bar, isMouseOnBar ? Colors::Black4 : Colors::Black1);
         AddRect(renderData, resizer, isMouseOnResizer ? Colors::Red : Colors::Black3);

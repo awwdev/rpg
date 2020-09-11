@@ -15,6 +15,7 @@
 #include "UI/Widgets/Widget_Window.hpp"
 #include "UI/Widgets/Widget_List.hpp"
 #include "UI/Widgets/Widget_InputField.hpp"
+#include "UI/Widgets/Widget_Slider.hpp"
 
 #include "Resources/Terrain/Terrain.hpp"
 #include "ECS/Prefabs/PrefabLoader.hpp"
@@ -28,8 +29,8 @@ namespace rpg::app {
 struct GameScene
 {
     //TODO: not every Scene will have those members
-    ecs::ECS                ecs {};
-    gpu::RenderData  renderData;
+    ecs::ECS          ecs {};
+    gpu::RenderData   renderData;
     gpu::Sun          sun;
 
     app::PlayerController playerController;
@@ -69,12 +70,14 @@ struct GameScene
                 "Item7",
             } };
             static dbg::gui::Widget_InputField<float> field { .label = "Label", .value = "value" };
+            static dbg::gui::Widget_Slider<float> slider { .label = "Slider", .value = 50.f, .min = 0.f, .max = 100.f };
 
 
 
             wnd.Update(renderData);
             list.Update(renderData, wnd);
             field.Update(renderData, wnd);
+            slider.Update(renderData, wnd);
         }   
 
         //? META
@@ -89,4 +92,4 @@ struct GameScene
 
 };
 
-}//ns
+}//nsooo

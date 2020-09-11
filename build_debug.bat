@@ -10,6 +10,7 @@
 -Wall -Wpedantic -Wextra ^
 -Wno-missing-field-initializers ^
 -Wno-unused-variable ^
+-Wno-unused-parameter ^
 -g ^
 -municode ^
 -std=c++2a ^

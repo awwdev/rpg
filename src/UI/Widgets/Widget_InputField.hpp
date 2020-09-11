@@ -9,15 +9,13 @@ namespace rpg::dbg::gui {
 template<class T>
 struct Widget_InputField
 {
-    static constexpr f32 maxHeight = LINE_HEIGHT;
     use::Rect<f32>  rect;
     box::String<30> label;
     box::String<30> value;
     bool isActive = false;
 
-    void Update(gpu::RenderData& renderData)
+    auto Update(gpu::RenderData& renderData)
     {
-        //DEFINITIONS
         const use::Rect<f32> back { 
             rect.x + rect.w/2,
             rect.y,
@@ -25,7 +23,6 @@ struct Widget_InputField
             rect.h
         };
 
-        //INTERACTION
         const bool isMouseOnInput = use::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
             isActive = isMouseOnInput;
@@ -34,7 +31,7 @@ struct Widget_InputField
         if (isActive)
         {
             FOR_STRING(wnd::glo::chars, i) {
-                dbg::LogInfo(wnd::glo::chars[i]);
+
                 if (wnd::glo::chars[i] == '\b'){
                     value.Pop();
                     continue;
@@ -45,19 +42,26 @@ struct Widget_InputField
             }
         }
 
-        //RENDER DATA
         AddText(renderData, label, rect.x, rect.y);
         AddRect(renderData, back, Colors::Black2_Alpha);
         if (isActive)
             AddRectOutline(renderData, back, Colors::Black3);
         AddText(renderData, value, back.x, back.y);
+
+        return GetValue();
     }
 
-    void Update(gpu::RenderData& renderData, Widget_Window& wnd)
+    auto Update(gpu::RenderData& renderData, Widget_Window& wnd)
     {
-        wnd.CalculateRow(rect, maxHeight);
-        Update(renderData);
+        wnd.CalculateRow(rect, LINE_HEIGHT);
+        return Update(renderData);
     }
+
+    T GetValue() const
+    {
+        return (T) std::atof(value.data);
+    }
+
 };
 
 }//ns
