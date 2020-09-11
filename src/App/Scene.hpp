@@ -5,7 +5,7 @@
 #include "ECS/ECS.hpp"
 #include "ECS/Systems/S_Render.hpp"
 
-#include "Rendering/RenderGraph.hpp"
+#include "Rendering/RenderData.hpp"
 #include "Rendering/Sun.hpp"
 
 #include "UI/UI_Shadow.hpp"
@@ -14,6 +14,7 @@
 
 #include "UI/Widgets/Widget_Window.hpp"
 #include "UI/Widgets/Widget_List.hpp"
+#include "UI/Widgets/Widget_InputField.hpp"
 
 #include "Resources/Terrain/Terrain.hpp"
 #include "ECS/Prefabs/PrefabLoader.hpp"
@@ -51,23 +52,29 @@ struct GameScene
 
         //? UI
         app::ResetUpdateInputMode();
-        if (app::global::inputMode != app::global::InputMode::PlayMode) {
-            ui::DrawUI_Terrain(hostRes.terrain);
-            ui::DrawUI_Stats();
-            ui::DrawUI_Shadow(sun);
+        if (app::glo::inputMode != app::glo::InputMode::PlayMode) {
+            //ui::DrawUI_Terrain(hostRes.terrain);
+            //ui::DrawUI_Stats();
+            //ui::DrawUI_Shadow(sun);
 
-            static dbg::gui::Widget_Window wnd { .title = "Test", .rect { 100, 100, 300, 300 }};
-            static dbg::gui::Widget_List<100> list { .name = "List", .rect { 100, 100, 300, 300 } };
-            list.items.Clear();
+            static dbg::gui::Widget_Window wnd     { .title = "Test", .rect { 100, 100, 300, 300 }};
+            static dbg::gui::Widget_List<100> list { .name  = "List", .rect { 100, 100, 300, 100 }, .items {
+                "Item0",
+                "Item1",
+                "Item2",
+                "Item3",
+                "Item4",
+                "Item5",
+                "Item6",
+                "Item7",
+            } };
+            static dbg::gui::Widget_InputField<float> field { .label = "Label", .value = "value" };
 
-            for(auto i = 0; i < 2; ++i) {
-                decltype(list.items)::TYPE str { "Item " };
-                str.Append(i);
-                list.items.Append(str);
-            }
+
 
             wnd.Update(renderData);
             list.Update(renderData, wnd);
+            field.Update(renderData, wnd);
         }   
 
         //? META

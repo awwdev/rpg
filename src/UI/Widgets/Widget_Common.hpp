@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Rendering/RenderGraph.hpp"
+#include "Rendering/RenderData.hpp"
 
 #include "Utils/Structs.hpp"
 #include "Utils/DeltaTime.hpp"
@@ -22,14 +22,14 @@ constexpr f32   PADDING = 4;
 
 enum class Colors : u32
 {
-    WHITE,
-    GREEN,
-    RED,
-    BLACK1,
-    BLACK2_ALPHA,
-    BLACK3,
-    BLACK4,
-    BLACK5,
+    White,
+    Green,
+    Red,
+    Black1,
+    Black2_Alpha,
+    Black3,
+    Black4,
+    Black5,
 };
 
 //? RECTANGLE
@@ -37,7 +37,7 @@ enum class Colors : u32
 inline void AddRect(gpu::RenderData& renderData, 
 const use::Rect<f32>& rect, const Colors col, const u32 texIdx = FULL_OPAQUE_NO_TEXTURE)
 {
-    renderData.ui_ubo.AppendData({ 
+    renderData.gui_ubo.AppendData({ 
         .rect         = rect,
         .colorIndex   = (u32)col,
         .textureIndex = texIdx,
@@ -62,7 +62,7 @@ const use::Rect<f32>& rect, const Colors col, const f32 thickness = 1)
 //? TEXT 
 
 inline void AddText(gpu::RenderData& renderData, 
-chars_t str, const idx_t len, const f32 x, const f32 y, const Colors col = Colors::WHITE)
+chars_t str, const idx_t len, const f32 x, const f32 y, const Colors col = Colors::White)
 {
     for(idx_t i = 0; i < len; ++i) {
         const use::Rect<f32> rect = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE };
@@ -71,7 +71,7 @@ chars_t str, const idx_t len, const f32 x, const f32 y, const Colors col = Color
 }
 
 inline void AddTextCentered(gpu::RenderData& renderData, 
-chars_t str, const idx_t len, const use::Rect<f32>& center, const Colors col = Colors::WHITE)
+chars_t str, const idx_t len, const use::Rect<f32>& center, const Colors col = Colors::White)
 {
     const auto strWidth = len * LETTER_SPACE; //+1 ?
     const auto x = center.x + center.w * 0.5f - strWidth    * 0.5f;
@@ -81,16 +81,16 @@ chars_t str, const idx_t len, const use::Rect<f32>& center, const Colors col = C
 
 template<idx_t N>
 inline void AddText(gpu::RenderData& renderData, 
-const box::String<N>& str, const f32 x, const f32 y, const Colors col = Colors::WHITE)
+const box::String<N>& str, const f32 x, const f32 y, const Colors col = Colors::White)
 {
-    AddText(renderData, str.data, str.Length(), x, y, col);
+    AddText(renderData, str.data, str.length, x, y, col);
 }
 
 template<idx_t N>
 inline void AddTextCentered(gpu::RenderData& renderData, 
-const box::String<N>& str, const use::Rect<f32>& center, const Colors col = Colors::WHITE)
+const box::String<N>& str, const use::Rect<f32>& center, const Colors col = Colors::White)
 {
-    AddTextCentered(renderData, str.data, str.Length(), center, col);
+    AddTextCentered(renderData, str.data, str.length, center, col);
 }
 
 }//ns

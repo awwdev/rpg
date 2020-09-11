@@ -47,8 +47,8 @@ T ParseComponentData(const box::String<COMPONENT_MAX_STR_LEN>& str)
     {
         idx_t comma = 0;
         idx_t x = 0;
-        for(idx_t i = 0; i < str.Length() && x < 3; ++i){
-            if (str[i] == ',' || i == str.Length() - 1){
+        for(idx_t i = 0; i < str.length && x < 3; ++i){
+            if (str[i] == ',' || i == str.length - 1){
                 data[0][x] = (f32)std::atof(str.data + comma);
                 comma = i + 1;
                 ++x;

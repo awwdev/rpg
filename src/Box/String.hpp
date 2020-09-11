@@ -9,8 +9,6 @@
 #include <charconv>
 #include <string>
 
-//! warning this class supports 1 byte chars only for now
-
 namespace rpg::box {
 
 constexpr bool USE_STRING_ASSERTS = true;
@@ -28,111 +26,66 @@ constexpr void StringAssert(const bool condition, chars_t msg = "string assertio
     }
 }
 
-#define FOR_STRING(str, i) for(idx_t i = 0; i < str.Length(); ++i)
+#define FOR_STRING(str, i) for(idx_t i = 0; i < str.length; ++i)
 
-template<idx_t CAPACITY_T, typename CHAR_T = char>
+//not a wide string
+template<idx_t CAPACITY_T>
 struct String
 {
     //? DATA
-
-    using DATA_T = CHAR_T;
+    using DATA_T = char;
     static constexpr idx_t CAPACITY = (idx_t)CAPACITY_T;
 
-    CHAR_T data [CAPACITY] { 0 };
-    idx_t  count = 1; //! does include \0
+    DATA_T data [CAPACITY] { '\0' };
+    idx_t  length = 0;
 
-    constexpr       CHAR_T& operator[] (const idx_t i)       { return data[i]; }
-    constexpr const CHAR_T& operator[] (const idx_t i) const { return data[i]; }
+    constexpr       DATA_T& operator[] (const idx_t i)       { return data[i]; }
+    constexpr const DATA_T& operator[] (const idx_t i) const { return data[i]; }
 
-    constexpr idx_t Length() const { return count - 1;  }
-    constexpr bool  Empty()  const { return count <= 1; }
+    constexpr bool  Empty()  const { return length == 0; }
+    constexpr bool  Full()   const { return length > CAPACITY; } 
 
     //? CTOR
 
-    constexpr String() = default;
-
-    template<idx_t N>
-    constexpr String(const CHAR_T (&arr)[N])
-        : data  {}
-        , count { N }
-    {
-        StringAssert(N <= CAPACITY, "str capacity exhausted");
-        FOR_CARRAY(arr, i)
-            data[i] = arr[i];
-    }
-
-    template<idx_t N>
-    String(const String<N, CHAR_T>& str)
-    {
-        Clear(); 
-        Append(str);
-    }
-
-    String(chars_t ptr)
-    {
-        Clear(); 
-        Append(ptr, use::StrLen(ptr) + 1);
-    }
-
-    String(chars_t ptr, const idx_t range)
-    {
-        //construct from existing chars array but with a range, so no '\0'
-        Clear(); 
-        Append(ptr, range + 1); //as if there would trailing 0 (but there is not)
-        data[range] = '\0';
-    }
-
-    template<idx_t N>
-    String& operator=(const String<N, CHAR_T>& str)
-    {
-        Clear(); 
-        Append(str);
-        return *this;
-    }
+    String() = default;
+    template<idx_t N> String(const DATA_T (&arr)[N])  { Append(arr, N); }
+    template<idx_t N> String(const String<N>& str)    { Append(str.data, str.length); }
+    String(chars_t ptr)                               { Append(ptr, use::StrLen(ptr)); }
+    String(chars_t ptr, const idx_t range)            { Append(ptr, range); }
 
     //? MODIFICATION 
 
-    constexpr void Clear()
+    void Clear()
     {
-        count = 1;
+        length  = 0;
         data[0] = '\0';
     }
 
-    template<idx_t N> void Append(const String<N, CHAR_T>& str)   { Append(str.data, str.count); }
-    template<idx_t N> void Append(const CHAR_T (&arr)[N])         { Append(arr, N); }
-
-    void Append(const CHAR_T ch) 
+    template<idx_t N> void Append(const String<N>& str)   { Append(str.data, str.length); }
+    template<idx_t N> void Append(const DATA_T (&arr)[N]) { Append(arr, N); }
+    void Append(const DATA_T ch)                          { Append(&ch, 1); }
+        
+    void Append(chars_t ptr, const idx_t pLength)
     {
-        StringAssert(count + 1 <= CAPACITY, "str capacity exhausted");
-        data[count]   = ch;
-        data[count+1] = '\0';
-        ++count;
-    }
-    
-    template<class PTR, typename = IsNoArray<PTR>, typename = IsPointer<PTR>>
-    void Append(const PTR ptr, const idx_t countNotLength) //has to be CHAR_T
-    {
-        StringAssert(count + countNotLength - 1 <= CAPACITY, "str capacity exhausted");
-        std::memcpy(&data[count-1], ptr, countNotLength * sizeof(CHAR_T));
-        count = count + countNotLength - 1;
+        StringAssert(length + pLength < CAPACITY, "str capacity exhausted");
+        std::memcpy(&data[length], ptr, pLength * sizeof(DATA_T));
+        length += pLength;
+        data[length + 1] = '\0';       
     }
 
-    template<class T>
-    void Append(T&& fundamental)
+    template<class T, typename = std::enable_if_t<std::is_arithmetic_v<T> && !std::is_same_v<T, DATA_T>>>
+    void Append(T&& arithmetic)
     {
-        //char buffer[30] {};
-        //std::to_chars(buffer, &buffer[30], fundamental);
-        //gcvt(fundamental, 30, buffer); 
-        auto str = std::to_string(fundamental);
-        //Append(&buffer, (idx_t)use::StrLen(buffer) + 1);
-        Append(str.c_str(), (idx_t)str.length() + 1);
+        //charsconv is not implemented in gcc STL
+        const auto str = std::to_string(arithmetic); 
+        Append(str.c_str(), (idx_t)str.length());
     }
 
     constexpr void Pop()
     {
         if (Empty()) return;
-        data[count-1] = '\0';
-        --count;
+        --length;
+        data[length] = '\0';
     }
 
     //? COMPARSION
@@ -154,14 +107,14 @@ auto ConcatStrings(const STRINGS&... strs)
 {
     static_assert(sizeof...(STRINGS) > 0);
 
-    const auto TOTAL_COUNT = []() constexpr {
-        idx_t count = 0;
-        ((count += STRINGS::CAPACITY), ...);
-        return count;
+    constexpr auto TOTAL_CAPACITY = []() constexpr {
+        idx_t cap = 0;
+        ((cap += STRINGS::CAPACITY), ...);
+        return cap;
     }();
 
-    String<TOTAL_COUNT> str;
-    ((str.Append(strs.data, strs.count)), ...);
+    String<TOTAL_CAPACITY> str;
+    (str.Append(strs), ...);
 
     return str;
 }

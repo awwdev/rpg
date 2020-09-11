@@ -7,7 +7,9 @@
  & gcc ^
 -I %2 ^
 -L %5 ^
+-Wall -Wpedantic -Wextra ^
 -Wno-missing-field-initializers ^
+-Wno-unused-variable ^
 -g ^
 -municode ^
 -std=c++2a ^

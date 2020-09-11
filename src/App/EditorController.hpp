@@ -21,7 +21,7 @@ struct EditorController
 
     void Update(const double dt, ecs::ECS&)
     {
-        if (app::global::inputMode == app::global::FlyMode)
+        if (app::glo::inputMode == app::glo::FlyMode)
             camera.Update(dt);
         if (wnd::glo::resizeState == wnd::glo::ResizeState::End)
             camera.UpdatePerspective();

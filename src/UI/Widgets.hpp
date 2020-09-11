@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Rendering/RenderGraph.hpp"
+#include "Rendering/RenderData.hpp"
 #include "Utils/Structs.hpp"
 #include "Utils/DeltaTime.hpp"
 #include "Utils/Algorithms.hpp"
@@ -57,7 +57,7 @@ struct Window
 
     void UpdateInputMode()
     {
-        using namespace app::global;
+        using namespace app::glo;
         using namespace wnd::glo;
         using namespace use;
 
@@ -124,7 +124,7 @@ inline void DrawText(
     const Colors col = Colors::WHITE)
 {
     for(idx_t i = 0; i < len; ++i) {
-        g_aciveRenderGraph->ui_ubo.AppendData({ 
+        g_aciveRenderGraph->gui_ubo.AppendData({ 
             .rect           = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE },
             .colorIndex     = col,
             .textureIndex   = (u32)str[i],
@@ -149,7 +149,7 @@ inline void DrawText(
     Window& wnd,  
     const Colors col = Colors::WHITE)
 {
-    DrawText(str.data, str.Length(), wnd.rect.x, wnd.rect.y + wnd.line, col);
+    DrawText(str.data, str.length, wnd.rect.x, wnd.rect.y + wnd.line, col);
     wnd.NextLine();
 }
 
@@ -159,12 +159,12 @@ inline void DrawText(
     const f32 x, const f32 y, 
     const Colors col = Colors::WHITE)
 {
-    DrawText(str.data, str.Length(), x, y, col);
+    DrawText(str.data, str.length, x, y, col);
 }
 
 inline void DrawRectangle(use::Rect<f32> rect, const Colors col)
 {
-    g_aciveRenderGraph->ui_ubo.AppendData({ 
+    g_aciveRenderGraph->gui_ubo.AppendData({ 
         .rect           = rect,
         .colorIndex     = col,
         .textureIndex   = FULL_OPAQUE_NO_TEXTURE,
@@ -310,7 +310,7 @@ inline auto DrawInputField(InputField<T>& inputField)
     using namespace use;
     using namespace wnd;
 
-    const auto textSize = LETTER_SPACE * inputField.name.Length() + LETTER_SPACE;
+    const auto textSize = LETTER_SPACE * inputField.name.length + LETTER_SPACE;
 
     const use::Rect<f32> back { 
         inputField.rect.x + textSize,

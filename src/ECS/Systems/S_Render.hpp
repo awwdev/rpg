@@ -4,7 +4,7 @@
 #include "Utils/Matrix.hpp"
 #include "ECS/Components/Meta/ComponentTypes.hpp"
 #include "ECS/Components/Meta/ComponentArrays.hpp"
-#include "Rendering/RenderGraph.hpp"
+#include "Rendering/RenderData.hpp"
 
 namespace rpg::ecs {
     

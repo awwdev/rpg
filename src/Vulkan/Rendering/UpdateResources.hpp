@@ -29,8 +29,8 @@ inline void CreateCascades2(use::Mat4f (&cascades)[3], const app::GameScene& sce
     shadowDist2 = 500;
 
     uboMeta = {
-        .camProj = (app::global::inputMode == app::global::PlayMode ? scene.playerController.camera.perspective : scene.editorController.camera.perspective),
-        .camView = (app::global::inputMode == app::global::PlayMode ? scene.playerController.camera.view        : scene.editorController.camera.view),
+        .camProj = (app::glo::inputMode == app::glo::PlayMode ? scene.playerController.camera.perspective : scene.editorController.camera.perspective),
+        .camView = (app::glo::inputMode == app::glo::PlayMode ? scene.playerController.camera.view        : scene.editorController.camera.view),
         .sunView = scene.sun.GetView(),
         .sunDir  = use::Normalize(scene.sun.pos),
         .cascadeFadeDist0 = shadowDist0,
@@ -44,7 +44,7 @@ inline void CreateCascades2(use::Mat4f (&cascades)[3], const app::GameScene& sce
 
     Vec3f invCameraPos;
     invCameraPos = { -scene.editorController.camera.position[X], scene.editorController.camera.position[Y], -scene.editorController.camera.position[Z] };
-    if (app::global::inputMode == app::global::PlayMode)
+    if (app::glo::inputMode == app::glo::PlayMode)
         invCameraPos = { -scene.playerController.camera.view[3][0], scene.playerController.camera.view[3][1], -scene.playerController.camera.view[3][2] };
 
     //Vec3f cameraDir    { Sin(camera.rotation[Y] * 3.14f/180.f), 0, Cos(camera.rotation[Y] * 3.14f/180.f) };
@@ -108,7 +108,7 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
     //resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.camera.GetView();
 
     //TODO: this should be handled somewhere else which is active
-    if (app::global::inputMode == app::global::PlayMode){
+    if (app::glo::inputMode == app::glo::PlayMode){
         resources.common_pushConsts.camera = resources.sky.pushConsts.camera = scene.playerController.camera.perspective * scene.playerController.camera.view;
 
         resources.common_pushConsts2.projection = scene.playerController.camera.perspective;
@@ -159,7 +159,7 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
     resources.sky.pushConsts.botColor = { 1.0f, 1.0f, 1.0f, 1 };
 
     resources.ui.ubo.Clear();
-    resources.ui.ubo.Store(scene.renderData.ui_ubo);
+    resources.ui.ubo.Store(scene.renderData.gui_ubo);
 
     resources.common.ubo.Clear();
     resources.common.ubo.Store(scene.renderData.common_ubo);

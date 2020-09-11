@@ -3,7 +3,7 @@
 #pragma once
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Objects/UniformBuffer.hpp"
-#include "Rendering/RenderGraph.hpp"
+#include "Rendering/RenderData.hpp"
 
 namespace rpg::vk {
 

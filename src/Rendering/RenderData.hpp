@@ -15,7 +15,7 @@ constexpr u32 TERRAIN_VERTEX_MAX_COUNT = 1'000'000;
 //keep rendergraph intact until all rendering (since it will be referenced on draw too)
 struct RenderData
 {
-    UniformDataGroups<UI_UniformData, UI_UBO_MAX_COUNT, 1>  ui_ubo; //1 group only
+    UniformDataGroups<UI_UniformData, UI_UBO_MAX_COUNT, 1>  gui_ubo; //1 group only
     UniformDataGroupsMesh<Default_UniformData, DEFAULT_UBO_MAX_COUNT> common_ubo;
 
     static auto constexpr CASCADE_COUNT = 3;
@@ -29,7 +29,7 @@ struct RenderData
 
     void Clear()
     {
-        ui_ubo.Clear();
+        gui_ubo.Clear();
         common_ubo.Clear();
     }
 };

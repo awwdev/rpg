@@ -19,8 +19,6 @@ struct Widget_Window
 
     void Update(gpu::RenderData& renderData)
     {
-        using namespace wnd;
-
         rowY = rect.y + BAR_H + PADDING; //reset 
 
         const use::Rect<f32> bar     { rect.x, rect.y, rect.w, BAR_H };
@@ -39,21 +37,21 @@ struct Widget_Window
         }
 
         if (mode == Widget_Window::Mode::Move) {
-            rect.x += glo::mouse_dx;
-            rect.y += glo::mouse_dy;
+            rect.x += wnd::glo::mouse_dx;
+            rect.y += wnd::glo::mouse_dy;
         }
 
         else if (mode == Widget_Window::Mode::Resize) {
-            rect.w += glo::mouse_dx;
-            rect.h += glo::mouse_dy;
+            rect.w += wnd::glo::mouse_dx;
+            rect.h += wnd::glo::mouse_dy;
             use::Clamp(rect.w, limits.x, limits.w);
             use::Clamp(rect.h, limits.y, limits.h);
         }
 
         //ADD TO RENDER DATA
-        AddRect(renderData, rect, Colors::BLACK2_ALPHA);
-        AddRect(renderData, bar, isMouseOnBar ? Colors::BLACK4 : Colors::BLACK1);
-        AddRect(renderData, resizer, isMouseOnResizer ? Colors::RED : Colors::BLACK3);
+        AddRect(renderData, rect, Colors::Black2_Alpha);
+        AddRect(renderData, bar, isMouseOnBar ? Colors::Black4 : Colors::Black1);
+        AddRect(renderData, resizer, isMouseOnResizer ? Colors::Red : Colors::Black3);
         AddTextCentered(renderData, title, bar);
     }
 

@@ -38,7 +38,7 @@ struct PlayerController
         if (wnd::glo::resizeState == wnd::glo::ResizeState::End)
             camera.UpdatePerspective();
             
-        if (app::global::inputMode != app::global::PlayMode) return;
+        if (app::glo::inputMode != app::glo::PlayMode) return;
 
         using namespace use;
 

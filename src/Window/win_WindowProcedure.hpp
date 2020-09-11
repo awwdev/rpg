@@ -27,6 +27,7 @@ namespace priv
         }
         glo::chars.Clear();
         glo::frameEvents.Clear();
+        glo::mouse_scroll_delta = 0;
 
         if (glo::resizeState == glo::ResizeState::Begin)
             glo::resizeState  = glo::ResizeState::End;
@@ -43,8 +44,8 @@ namespace priv
         glo::mouse_x  = (s32)point.x;
         glo::mouse_y  = (s32)point.y;
 
-        if (app::global::inputMode == app::global::FlyMode ||
-            app::global::inputMode == app::global::PlayMode) {
+        if (app::glo::inputMode == app::glo::FlyMode ||
+            app::glo::inputMode == app::glo::PlayMode) {
             SetCursorPos(cx, cy);
             glo::mouse_x = cx;
             glo::mouse_y = cy;

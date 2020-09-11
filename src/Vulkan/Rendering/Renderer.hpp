@@ -5,7 +5,7 @@
 #include "Vulkan/Resources/Resources.hpp"
 #include "Resources/HostResources.hpp"
 #include "App/Scene.hpp"
-#include "Rendering/RenderGraph.hpp"
+#include "Rendering/RenderData.hpp"
 #include "Utils/Structs.hpp"
 #include "Box/String.hpp"
 #include "Window/WindowEvents.hpp"

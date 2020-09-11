@@ -78,7 +78,7 @@ struct Terrain
     void Update(const double, const gpu::EgoCamera& camera, ecs::ECS& ecs)
     {   
         //? META
-        if (app::global::inputMode != app::global::Edit_Mode)
+        if (app::glo::inputMode != app::glo::Edit_Mode)
             return;
 
         UpdateGizmos(ecs);

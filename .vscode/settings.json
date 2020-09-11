@@ -59,7 +59,7 @@
 	// VS Colors
 	"workbench.colorCustomizations": {
 		"scrollbar.shadow": "#00000000",
-		"editor.background": "#282c36",
+		"editor.background": "#36393f",
 		"panel.border": "#222",
 		"tab.border": "#222",
 		"contrastBorder": "#222",
@@ -67,7 +67,7 @@
 		"panel.background": "#000000",
 		"editorLineNumber.foreground": "#555561",
 		"editorLineNumber.activeForeground": "#e4c727",
-		"editor.lineHighlightBorder": "#2A2A30",
+		"editor.lineHighlightBorder": "#36393f",
 		"sideBar.background": "#000000",
 	},
 	"editor.scrollbar.horizontal": "visible",
@@ -80,7 +80,7 @@
 	"editor.tokenColorCustomizations": {
 		"textMateRules":
 		 [
-			//!ALL TOKENS 
+			//? ALL TOKENS 
 			{
 				"scope": [
 					"comment",
@@ -212,26 +212,11 @@
 					"entity.name.type.class.value",
 				],
 				"settings": {
-					"foreground": "#6e6e7c",
+					"foreground": "#8493a5",
 				}
 			},
 
 			//? COMMON
-			{
-				"scope": [
-					"meta",
-					"meta.block",
-					"variable.language",
-					"variable.name",
-					"entity.name.type.class.templated",
-					"punctuation.separator.continuation",
-					"punctuation",
-				],
-				"settings": {
-					"foreground": "#d1d5db",
-					"fontStyle": ""
-				}
-			},
 			{
 				"scope": [
 					"variable",
@@ -241,36 +226,50 @@
 					"variable.other.property.static",
 					"variable.other.local",
 					"variable.other.event",
-					"variable.other.enummember",
 					"variable.other.readwrite",
-					"variable.other.global",
 					"variable.other",
 					"variable.parameter",
+
+					"variable.other.global",
+					
+					"variable.other.enummember",
+
+					"variable.other.property",
+					"variable.other.property.static",
+
+					"meta",
+					"meta.block",
+					"variable.language",
+					"variable.name",
+					"entity.name.type.class.templated",
+					"punctuation.separator.continuation",
 				],
 				"settings": {
-					"foreground": "#d1d5db",
+					"foreground": "#f5f5f5",
 					"fontStyle": ""
 				}
-			},
+			},		
+			//? MODIFIERS
 			{
 				"scope": [
+					"punctuation",
+					"punctuation.terminator",
 					"punctuation.separator",
 					"entity.name.namespace",
 				],
 				"settings": {
-					"foreground": "#d1d5db",
+					"foreground": "#8a93a0",
 					"fontStyle": ""
 				}
 			},
-			//? MODIFIERS
 			{
 				"scope": [
 					"storage",
 					"storage.modifier",
-					"storage.type",
+					"storage.type",	
 				],
 				"settings": {
-					"foreground": "#6a7685",
+					"foreground": "#8a93a0",
 					"fontStyle": "bold"
 				}
 			},
@@ -280,7 +279,7 @@
 					"keyword.control",
 				],
 				"settings": {
-					"foreground": "#e74a4a",
+					"foreground": "#ff4f4f",
 					"fontStyle": ""
 				}
 			},
@@ -288,10 +287,10 @@
 			{
 				"scope": [
 					"entity.name.type",
-					"entity.name.type.class.templated",			
+					"entity.name.type.class.templated",
 				],
 				"settings": {
-					"foreground": "#e7a34a",
+					"foreground": "#ffbc58",
 					"fontStyle": "bold"
 				}
 			},
@@ -307,25 +306,12 @@
 					"entity.name.function.templated",
 					"entity.name.function.preprocessor",
 					"entity.name.function.operator",
-					//"entity.name.function.operator.member",
+					"entity.name.function.operator.member",
+					
 				],
 				"settings": {
-					"foreground": "#50a1fd",
-					"fontStyle": ""
-				}
-			},
-			//?LITERAL
-			{
-				"scope": [
-					"keyword",
-					"keyword.operator",
-					"keyword.operator.assignment",
-					"keyword.operator.logical",
-					"punctuation.terminator",
-				],
-				"settings": {
-					"foreground": "#e7a34a",
-					"fontStyle": ""
+					"foreground": "#ffbc58",
+					"fontStyle": "bold"
 				}
 			},
 			{
@@ -337,10 +323,22 @@
 					"string.quoted.single",
 					"punctuation.definition.string.begin",
 					"punctuation.definition.string.end",
-					"variable.other.enummember",
 				],
 				"settings": {
-					"foreground": "#e7a34a",
+					"foreground": "#95bcf0",
+					"fontStyle": ""
+				}
+			},
+			//? KEYWORD
+			{
+				"scope": [
+					"keyword",
+					"keyword.operator",
+					"keyword.operator.assignment",
+					"keyword.operator.logical",
+				],
+				"settings": {
+					"foreground": "#ffbc58",
 					"fontStyle": ""
 				}
 			},
@@ -353,12 +351,14 @@
 					"comment.block.documentation",		
 				],
 				"settings": {
-					"foreground": "#f9e8fd6b",
+					"foreground": "#5a6068",
 					"fontStyle": ""
 				}
 			},
 		]
 	},
+
+
 
 	//?HIGHLIGHT
 	"highlight.regexes":
@@ -367,8 +367,8 @@
 			"regexFlags": "g", 
 			"decorations": [
 				{ 
-					"color": "#fcff2eee",
-					"backgroundColor": "#fcff2e0b", 
+					"color": "#ffa",
+					"backgroundColor": "#ffa1", 
 				},
 			]
 		},

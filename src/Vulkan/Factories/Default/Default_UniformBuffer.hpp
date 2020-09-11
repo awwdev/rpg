@@ -4,7 +4,7 @@
 #include "Vulkan/Objects/UniformBuffer.hpp"
 #include "Rendering/UboData.hpp"
 #include "Utils/Structs.hpp"
-#include "Rendering/RenderGraph.hpp"
+#include "Rendering/RenderData.hpp"
 
 namespace rpg::vk
 {

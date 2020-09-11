@@ -5,7 +5,7 @@
 
 namespace rpg::app {
     
-namespace global  
+namespace glo  
 {
     enum InputMode { PlayMode, Edit_Mode, UI_Mode, FlyMode } inputMode = Edit_Mode;
     InputMode prev = Edit_Mode;
@@ -14,20 +14,20 @@ namespace global
 inline void ResetUpdateInputMode()
 {
     //reset and set on UI update
-    if (global::inputMode == global::UI_Mode)
-        global::inputMode = global::Edit_Mode;
+    if (glo::inputMode == glo::UI_Mode)
+        glo::inputMode = glo::Edit_Mode;
 
     if (wnd::HasEvent<wnd::EventType::F1, wnd::EventState::Pressed>()){
-        if (global::inputMode == global::PlayMode)
-            global::prev = global::inputMode = global::Edit_Mode;
+        if (glo::inputMode == glo::PlayMode)
+            glo::prev = glo::inputMode = glo::Edit_Mode;
         else    
-            global::prev = global::inputMode = global::PlayMode;
+            glo::prev = glo::inputMode = glo::PlayMode;
     }
 
     if (wnd::HasEvent<wnd::EventType::Mouse_ButtonRight, wnd::EventState::PressedOrHeld>()) 
-        global::inputMode = global::FlyMode;
+        glo::inputMode = glo::FlyMode;
     if (wnd::HasEvent<wnd::EventType::Mouse_ButtonRight, wnd::EventState::Released>()) 
-        global::inputMode = global::prev;
+        glo::inputMode = glo::prev;
 }
 
 }//ns

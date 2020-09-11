@@ -9,7 +9,7 @@
 #include "Resources/ModelLoader.hpp"
 #include "Resources/MeshTypes.hpp"
 #include "Resources/Terrain/Terrain.hpp"
-#include "Rendering/RenderGraph.hpp"
+#include "Rendering/RenderData.hpp"
 #include "utils/PrimitiveMeshes.hpp"
 
 namespace rpg::res {
