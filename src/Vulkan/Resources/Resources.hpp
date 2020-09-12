@@ -11,6 +11,7 @@
 #include "Vulkan/Resources/Resources_Default.hpp"
 #include "Vulkan/Resources/Resources_Terrain.hpp"
 #include "Vulkan/Resources/Resources_Sky.hpp"
+#include "Vulkan/Resources/Resources_Post.hpp"
 #include "Vulkan/Resources/Resources_UI.hpp"
 
 namespace rpg::vk {
@@ -20,11 +21,12 @@ struct VkResources
     Common_PushConstants  common_pushConsts;
     Common_PushConstants2 common_pushConsts2;
 
-    Resources_Shadow  shadow    {};
-    Resources_Sky     sky       {};
-    Resources_Terrain terrain   {}; 
-    Resources_Common  common    {};
-    Resources_UI      ui        {};
+    Resources_Shadow  shadow;
+    Resources_Sky     sky;
+    Resources_Terrain terrain; 
+    Resources_Common  common;
+    Resources_Post    post;
+    Resources_UI      ui;
 
     void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
     {
@@ -32,6 +34,7 @@ struct VkResources
         common.Create(hostRes, cmdPool, shadow);
         terrain.Create(hostRes, cmdPool, shadow, common);
         sky.Create(cmdPool, common);
+        post.Create(cmdPool, common);
         ui.Create(hostRes, cmdPool);
     }
 
@@ -41,6 +44,7 @@ struct VkResources
         common.Recreate(cmdPool, shadow);
         terrain.Recreate(cmdPool, shadow, common);    
         sky.Recreate(cmdPool, common);        
+        post.Recreate(common);       
         ui.Recreate();
     } 
 };

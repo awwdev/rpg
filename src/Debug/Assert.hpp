@@ -12,8 +12,8 @@ namespace rpg::dbg {
 inline void DebugBreak()
 {
     //win only
-    __debugbreak();
-    BringWindowToTop(GetConsoleWindow()); 
+    //__debugbreak();
+    //BringWindowToTop(GetConsoleWindow()); 
 }
 
 template<class T>

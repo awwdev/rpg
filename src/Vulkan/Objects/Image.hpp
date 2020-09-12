@@ -475,7 +475,7 @@ struct RenderImage
     VkDeviceMemory  memory;
     VkImageView     view;
     uint32_t        width, height;
-    VkImageLayout   layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    VkImageLayout   layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
     void Create(VkCommandPool cmdPool, VkFormat format, VkSampleCountFlagBits sampleCount)
     {
@@ -493,7 +493,7 @@ struct RenderImage
             .arrayLayers            = 1,
             .samples                = sampleCount,
             .tiling                 = VK_IMAGE_TILING_OPTIMAL,
-            .usage                  = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+            .usage                  = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             .sharingMode            = VK_SHARING_MODE_EXCLUSIVE,
             .queueFamilyIndexCount  = 0,
             .pQueueFamilyIndices    = 0,
@@ -538,6 +538,7 @@ struct RenderImage
 
         VkCheck(vkCreateImageView(g_contextPtr->device, &viewInfo, nullptr, &view));
 
+/*
         //? TRANSITION
 
         auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
@@ -576,6 +577,7 @@ struct RenderImage
         );
 
         EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
+*/
     }
 
     ~RenderImage()
