@@ -16,8 +16,9 @@
 -std=c++2a ^
 -o %3 ^
 %4 ^
--static -lpthread ^
--static -lstdc++ ^
--static -lVkLayer_utils ^
--static -lvulkan-1 ^
+-static ^
+-lpthread ^
+-lstdc++ ^
+-lVkLayer_utils ^
+-lvulkan-1 ^
  & popd

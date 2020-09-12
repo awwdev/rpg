@@ -38,8 +38,9 @@ struct RenderPass
     VkRenderPassBeginInfo beginInfo; //!set in factory
     uint32_t width, height;
 
-    com::Optional<DepthImage> depthImage;
-    com::Optional<MSAAImage>  msaaImage;
+    com::Optional<DepthImage>  depthImage;
+    com::Optional<MSAAImage>   msaaImage;
+    com::Optional<RenderImage> renderImage;
 
     ~RenderPass()
     {
@@ -58,7 +59,9 @@ struct RenderPass
 
         if (msaaImage)
             msaaImage->Clear();
-            
+
+        if (renderImage)
+            renderImage->Clear();
     }
 
     VkRenderPassBeginInfo GetBeginInfo(

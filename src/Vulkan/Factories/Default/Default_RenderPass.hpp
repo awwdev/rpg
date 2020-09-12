@@ -19,6 +19,8 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
     rp.msaaImage.hasValue = true;
     rp.depthImage.t = {};
     rp.depthImage.hasValue = true;
+    rp.renderImage.t = {};
+    rp.renderImage.hasValue = true;
 
     rp.msaaImage->Create(cmdPool, g_contextPtr->format, rp.sampleCount);
     rp.depthImage->Create(
@@ -28,6 +30,7 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
         rp.height,
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
         rp.sampleCount);
+    rp.renderImage->Create(cmdPool, g_contextPtr->format, VK_SAMPLE_COUNT_1_BIT);
 
 
     const VkAttachmentDescription colorDesc {
@@ -146,7 +149,8 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
         const VkImageView views [] {
             rp.msaaImage->view,
             rp.depthImage->view,
-            g_contextPtr->swapImageViews[i],
+            rp.renderImage->view,
+            //g_contextPtr->swapImageViews[i],
         };
 
         const VkFramebufferCreateInfo framebufferInfo{

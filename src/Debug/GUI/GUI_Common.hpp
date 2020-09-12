@@ -30,6 +30,7 @@ enum class Colors : u32
     Black3,
     Black4,
     Black5,
+    Orange,
 };
 
 //? RECTANGLE

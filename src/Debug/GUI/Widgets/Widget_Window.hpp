@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Debug/GUI/Widgets/Widget_Common.hpp"
+#include "Debug/GUI/GUI_Common.hpp"
 
 namespace rpg::dbg::gui {
 
@@ -50,7 +50,7 @@ struct Widget_Window
         AddRect(renderData, rect, Colors::Black2_Alpha);
         AddRect(renderData, bar, isMouseOnBar ? Colors::Black4 : Colors::Black1);
         AddRect(renderData, resizer, isMouseOnResizer ? Colors::Red : Colors::Black3);
-        AddTextCentered(renderData, title, bar);
+        AddTextCentered(renderData, title, bar, Colors::Orange);
     }
 
     void CalculateRow(f32& pX, f32& pY)

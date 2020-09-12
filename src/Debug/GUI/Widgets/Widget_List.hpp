@@ -1,7 +1,6 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Debug/GUI/Widgets/Widget_Common.hpp"
 #include "Debug/GUI/Widgets/Widget_Window.hpp"
 
 namespace rpg::dbg::gui {
