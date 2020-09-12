@@ -8,7 +8,7 @@ namespace rpg::gpu {
 
 struct UI_UniformData
 {
-    use::Rect<f32> rect;
+    com::Rect<f32> rect;
     u32 colorIndex;
     u32 textureIndex;
     u32 padding1;
@@ -22,17 +22,17 @@ struct UniformGroup
 
 struct Default_UniformData
 {
-    alignas(64) use::Mat4f transform;
+    alignas(64) com::Mat4f transform;
     //alignas(64) int textureIndex;
 };
 
 struct Terrain_UniformData
 {
-    alignas(64) use::Mat4f camProj    {};
-    alignas(64) use::Mat4f camView    {};
-    alignas(64) use::Mat4f sunView    {};
-    use::Mat4f sunProjCasc [3]        {};
-    use::Vec3f sunDir                 {};
+    alignas(64) com::Mat4f camProj    {};
+    alignas(64) com::Mat4f camView    {};
+    alignas(64) com::Mat4f sunView    {};
+    com::Mat4f sunProjCasc [3]        {};
+    com::Vec3f sunDir                 {};
     float cascadeFadeDist0              {};
     float cascadeFadeDist1              {};
     float cascadeFadeDist2              {};

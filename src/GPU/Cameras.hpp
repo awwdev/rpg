@@ -9,11 +9,11 @@ namespace rpg::gpu
 {
 struct EgoCamera
 {
-    use::Vec3f position { 0,  4, -4 };
-    use::Vec3f rotation {45,  0,  0 };
+    com::Vec3f position { 0,  4, -4 };
+    com::Vec3f rotation {45,  0,  0 };
 
-    use::Mat4f perspective;
-    use::Mat4f view;
+    com::Mat4f perspective;
+    com::Mat4f view;
 
     float mouseSpeed = 0.3f;
     float fov        = 45;
@@ -28,9 +28,9 @@ struct EgoCamera
 
     void Update(const double dt)
     {
-        using namespace use;
+        using namespace com;
 
-        use::Vec3f movNorm {};
+        com::Vec3f movNorm {};
         if(wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) { movNorm[X] -= 1; }
         if(wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>()) { movNorm[X] += 1; }
         if(wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) { movNorm[Z] += 1; }
@@ -45,11 +45,11 @@ struct EgoCamera
         if (rotation[X] <= -360) rotation[X] += 360;
         if (rotation[Y] <= -360) rotation[Y] += 360;
 
-        const auto qX = QuatAngleAxis(+rotation[X], use::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation[Y], use::Vec3f{0, 1, 0});
-        const auto qRot = use::QuatMultQuat(qY, qX);
+        const auto qX = QuatAngleAxis(+rotation[X], com::Vec3f{1, 0, 0});
+        const auto qY = QuatAngleAxis(-rotation[Y], com::Vec3f{0, 1, 0});
+        const auto qRot = com::QuatMultQuat(qY, qX);
 
-        const auto movDir  = use::QuatMultVec(qRot, movNorm);
+        const auto movDir  = com::QuatMultVec(qRot, movNorm);
         const auto moveAcc = wnd::HasEvent<wnd::EventType::Shift, wnd::EventState::PressedOrHeld>() ? acc : 1.f;
         position = position + (movDir * moveSpeed * moveAcc * (float)dt);
 
@@ -90,13 +90,13 @@ struct EgoCamera
 
 struct ThirdCamera
 {
-    use::Vec3f rotation;
+    com::Vec3f rotation;
     float distance = 7;
 
-    use::Mat4f perspective;
-    use::Mat4f view;
-    use::Mat4f mRot;
-    use::Quatf qRot;
+    com::Mat4f perspective;
+    com::Mat4f view;
+    com::Mat4f mRot;
+    com::Quatf qRot;
 
     float mouseSpeed = 0.1f;
     float fov        = 45;
@@ -107,9 +107,9 @@ struct ThirdCamera
         UpdatePerspective();
     }
 
-    void Update(const use::Vec3f orientation, const use::Vec3f position, const double)
+    void Update(const com::Vec3f orientation, const com::Vec3f position, const double)
     {
-        using namespace use;
+        using namespace com;
 
         rotation[Y] += wnd::glo::mouse_dx * mouseSpeed; //!need of dt ?
         rotation[X] += wnd::glo::mouse_dy * mouseSpeed;
@@ -119,9 +119,9 @@ struct ThirdCamera
         if (rotation[X] <= -360) rotation[X] += 360;
         if (rotation[Y] <= -360) rotation[Y] += 360;
 
-        const auto qX = QuatAngleAxis(+rotation[X], use::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation[Y], use::Vec3f{0, 1, 0});
-        qRot = use::QuatMultQuat(qY, qX);
+        const auto qX = QuatAngleAxis(+rotation[X], com::Vec3f{1, 0, 0});
+        const auto qY = QuatAngleAxis(-rotation[Y], com::Vec3f{0, 1, 0});
+        qRot = com::QuatMultQuat(qY, qX);
         mRot = QuatToMat(qRot);
 
         if (wnd::HasEvent<wnd::EventType::Mouse_Scroll>()) {
@@ -129,8 +129,8 @@ struct ThirdCamera
         }
         
 
-        use::Vec3f orientVec = (orientation * distance);
-        use::Mat4f mOrientation = {
+        com::Vec3f orientVec = (orientation * distance);
+        com::Mat4f mOrientation = {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -166,16 +166,16 @@ struct ThirdCamera
 };
 
 template<class CAMERA>
-use::Vec3f ScreenRay(const CAMERA& camera)
+com::Vec3f ScreenRay(const CAMERA& camera)
 {
-    using namespace use;
+    using namespace com;
 
     const auto mx = (f32)wnd::glo::mouse_wx;
     const auto my = (f32)wnd::glo::mouse_wy;
     const auto ww = (f32)wnd::glo::window_w;
     const auto wh = (f32)wnd::glo::window_h;
 
-    const use::Vec4f homo {
+    const com::Vec4f homo {
         ((mx / ww) * 2) - 1,
         ((my / wh) * 2) - 1,
         -1,                

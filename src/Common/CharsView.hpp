@@ -3,7 +3,7 @@
 #pragma once
 #include "Common/Types.hpp"
 
-namespace rpg::use {
+namespace rpg::com {
 
 struct CharsView
 {

@@ -21,7 +21,7 @@ template<auto VERT_COUNT_TOTAL, auto QUADRANT_COUNT_TOTAL>
 struct Settings
 {
     EditMode mode = VertexGrab;
-    com::Optional<use::Intersection> intersection {};
+    com::Optional<com::Intersection> intersection {};
 
     struct VertexBrushInfo { idx_t idx; f32 falloff; };
     com::Array<VertexBrushInfo, VERT_COUNT_TOTAL> editingVertIndices;
@@ -33,10 +33,10 @@ struct Settings
     u32  quadrantIdx = 0;
     f32  brushSize   = 1;
 
-    use::Vec4f vertexColor { 1, 1, 1, 1 };
+    com::Vec4f vertexColor { 1, 1, 1, 1 };
 
     ecs::ID gizmoID;
-    use::Vec3f intersectionPos;
+    com::Vec3f intersectionPos;
 
     ecs::PrefabType prefabType; 
     bool baked = false;
@@ -156,7 +156,7 @@ struct Terrain
 
     void UpdateGizmos(ecs::ECS& ecs)
     {
-        using namespace use;
+        using namespace com;
         auto& transform = ecs.arrays.transforms.Get(settings.gizmoID);
         const auto S = settings.brushSize;
         transform.scale = { S, S, S };
@@ -166,7 +166,7 @@ struct Terrain
 
     //? INTERACTION
 
-    com::Optional<use::Intersection> CheckIntersection(const gpu::EgoCamera& camera)
+    com::Optional<com::Intersection> CheckIntersection(const gpu::EgoCamera& camera)
     {
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
         const auto ray = ScreenRay(camera);
@@ -177,7 +177,7 @@ struct Terrain
             auto& v1 = quadrant.verts[i+1].pos;
             auto& v2 = quadrant.verts[i+2].pos;
 
-            if (const auto intersection = use::RayTriangleIntersection(camera.position, ray, v0, v1, v2))
+            if (const auto intersection = com::RayTriangleIntersection(camera.position, ray, v0, v1, v2))
                 return intersection;
         }
 
@@ -192,16 +192,16 @@ struct Terrain
         FOR_CARRAY(quadrant.verts, i){
             const auto& vec1 = settings.intersectionPos;
             const auto& vec2 = quadrant.verts[i].pos;
-            const auto  dist = use::Distance(vec2, vec1);
+            const auto  dist = com::Distance(vec2, vec1);
 
             if(dist < settings.brushSize)
-                settings.editingVertIndices.Append(i, 1 - use::Ease(dist/settings.brushSize));
+                settings.editingVertIndices.Append(i, 1 - com::Ease(dist/settings.brushSize));
         }
     }
 
     void Painting(const gpu::EgoCamera& camera)
     {
-        using namespace use;
+        using namespace com;
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
         if (const auto intersection = CheckIntersection(camera))
@@ -226,7 +226,7 @@ struct Terrain
 
     void Grabbing(const gpu::EgoCamera& camera)
     {
-        using namespace use;
+        using namespace com;
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>())
@@ -264,7 +264,7 @@ struct Terrain
     //TODO: we don't acutally place in terrain, but use terrain to cast ray against
     void Placing(const gpu::EgoCamera& camera, ecs::ECS& ecs)
     {
-        using namespace use;
+        using namespace com;
         //auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
         if (const auto intersection = CheckIntersection(camera))
@@ -300,8 +300,8 @@ struct Terrain
 
     void StichCorner(const idx_t qcz, const idx_t qcx, const idx_t cornerCount) 
     {
-        com::Array<use::Vec3f, 4> positions;
-        com::Array<use::Common_Vertex*, 6> verts;
+        com::Array<com::Vec3f, 4> positions;
+        com::Array<com::Common_Vertex*, 6> verts;
 
         //TL
         if (qcx > 0 && qcz > 0){
@@ -344,7 +344,7 @@ struct Terrain
         }
 
         const auto avgPos = [&]{
-            use::Vec3f pos {};
+            com::Vec3f pos {};
             FOR_ARRAY(positions, i) pos = pos + positions[i];
             pos = pos * (1/(float)positions.count);
             return pos;

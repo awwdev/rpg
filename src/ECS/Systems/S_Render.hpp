@@ -10,7 +10,7 @@ namespace rpg::ecs {
     
 inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& renderGraph)
 {
-    using namespace use;
+    using namespace com;
 
     auto& arr_render    = arrays.renderData;
     auto& arr_transform = arrays.transforms;

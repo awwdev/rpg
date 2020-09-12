@@ -50,7 +50,7 @@ struct String
     String() = default;
     template<idx_t N> String(const DATA_T (&arr)[N])  { Append(arr, N); }
     template<idx_t N> String(const String<N>& str)    { Append(str.data, str.length); }
-    String(chars_t ptr)                               { Append(ptr, use::StrLen(ptr)); }
+    String(chars_t ptr)                               { Append(ptr, com::StrLen(ptr)); }
     String(chars_t ptr, const idx_t range)            { Append(ptr, range); }
 
     template<class T, typename = std::enable_if_t<!std::is_same_v<std::decay_t<T>, DATA_T>>>

@@ -30,24 +30,24 @@ struct Models
 {
     struct MeshVertexView
     {
-        const use::Common_Vertex* begin;
+        const com::Common_Vertex* begin;
         idx_t count;
     };
 
     com::EnumMap<res::MeshType::ENUM_END, MeshVertexView> vertexLookup
     {
         //hardcoded primitives
-        { res::MeshType::PrimitiveCube,      { use::MESH_CUBE,     ArrayCount(use::MESH_CUBE)       } },
-        { res::MeshType::PrimitiveQuad,      { use::MESH_QUAD,     ArrayCount(use::MESH_QUAD)       } },
-        { res::MeshType::PrimitiveTriangle,  { use::MESH_TRIANGLE, ArrayCount(use::MESH_TRIANGLE)   } },
-        { res::MeshType::PrimitiveRing16,    { use::MESH_RING_16,  ArrayCount(use::MESH_RING_16)     } },
+        { res::MeshType::PrimitiveCube,      { com::MESH_CUBE,     ArrayCount(com::MESH_CUBE)       } },
+        { res::MeshType::PrimitiveQuad,      { com::MESH_QUAD,     ArrayCount(com::MESH_QUAD)       } },
+        { res::MeshType::PrimitiveTriangle,  { com::MESH_TRIANGLE, ArrayCount(com::MESH_TRIANGLE)   } },
+        { res::MeshType::PrimitiveRing16,    { com::MESH_RING_16,  ArrayCount(com::MESH_RING_16)     } },
     }; 
 
-    com::Array<use::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;
+    com::Array<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;
 
     void Load()
     {
-        com::Array<use::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> tmp;
+        com::Array<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> tmp;
 
         const auto LoadModelFn = [&](chars_t path, const res::MeshType type){
             LoadModel(tmp, path);

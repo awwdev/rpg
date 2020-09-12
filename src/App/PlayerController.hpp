@@ -14,9 +14,9 @@ struct PlayerController
 
     ecs::ID playerID = 0;
     float speed = 5.f;
-    use::Vec3f orientation { 0, 0, -1 };
-    use::Vec3f position {};
-    use::Vec3f rotation {};
+    com::Vec3f orientation { 0, 0, -1 };
+    com::Vec3f position {};
+    com::Vec3f rotation {};
 
     static constexpr float S = 0.2f;
     static constexpr float H = 0.5f;
@@ -25,7 +25,7 @@ struct PlayerController
 
     void Create(ecs::ECS& ecs)
     {
-        using namespace use;
+        using namespace com;
         playerID = ecs.AddEntity();
         auto& transform = ecs.arrays.AddComponent<ecs::ComponentType::Transform>(playerID);
         transform.scale = { S, H, S };
@@ -40,7 +40,7 @@ struct PlayerController
             
         if (app::glo::inputMode != app::glo::PlayMode) return;
 
-        using namespace use;
+        using namespace com;
 
         Vec3f moveNorm {};
         if (wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) moveNorm[Z] -= 1;
@@ -48,7 +48,7 @@ struct PlayerController
         if (wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>()) moveNorm[Z] += 1;
         if (wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) moveNorm[X] += 1;
         NormalizeThis(moveNorm);
-        const auto movDir = use::QuatMultVec(camera.qRot, moveNorm);
+        const auto movDir = com::QuatMultVec(camera.qRot, moveNorm);
         auto move = movDir * speed * (float)dt;
 
         position = position + move;
@@ -57,7 +57,7 @@ struct PlayerController
         playerTransform.translation = { position[X], Ypos, position[Z] };
         playerTransform.rotation    = { 0, camera.rotation[Y], 0 };
         
-        const use::Vec3f pos = { position[X], HEAD, position[Z] };
+        const com::Vec3f pos = { position[X], HEAD, position[Z] };
         camera.Update(orientation, pos, dt);
     }
 };

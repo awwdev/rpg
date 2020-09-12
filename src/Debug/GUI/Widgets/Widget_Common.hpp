@@ -35,7 +35,7 @@ enum class Colors : u32
 //? RECTANGLE
 
 inline void AddRect(gpu::RenderData& renderData, 
-const use::Rect<f32>& rect, const Colors col, const u32 texIdx = FULL_OPAQUE_NO_TEXTURE)
+const com::Rect<f32>& rect, const Colors col, const u32 texIdx = FULL_OPAQUE_NO_TEXTURE)
 {
     renderData.gui_ubo.AppendData({ 
         .rect         = rect,
@@ -45,13 +45,13 @@ const use::Rect<f32>& rect, const Colors col, const u32 texIdx = FULL_OPAQUE_NO_
 }
 
 inline void AddRectOutline(gpu::RenderData& renderData, 
-const use::Rect<f32>& rect, const Colors col, const f32 thickness = 1)
+const com::Rect<f32>& rect, const Colors col, const f32 thickness = 1)
 {
     //lines
-    const use::Rect<f32> t { rect.x, rect.y, rect.w, thickness };
-    const use::Rect<f32> r { rect.x + rect.w, rect.y, thickness, rect.h };
-    const use::Rect<f32> b { rect.x, rect.y + rect.h, rect.w, thickness };
-    const use::Rect<f32> l { rect.x, rect.y, thickness, rect.h };
+    const com::Rect<f32> t { rect.x, rect.y, rect.w, thickness };
+    const com::Rect<f32> r { rect.x + rect.w, rect.y, thickness, rect.h };
+    const com::Rect<f32> b { rect.x, rect.y + rect.h, rect.w, thickness };
+    const com::Rect<f32> l { rect.x, rect.y, thickness, rect.h };
 
     AddRect(renderData, t, col);
     AddRect(renderData, r, col);
@@ -65,13 +65,13 @@ inline void AddText(gpu::RenderData& renderData,
 chars_t str, const idx_t len, const f32 x, const f32 y, const Colors col = Colors::White)
 {
     for(idx_t i = 0; i < len; ++i) {
-        const use::Rect<f32> rect = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE };
+        const com::Rect<f32> rect = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE };
         AddRect(renderData, rect, col, (u32)str[i]);
     }
 }
 
 inline void AddTextCentered(gpu::RenderData& renderData, 
-chars_t str, const idx_t len, const use::Rect<f32>& center, const Colors col = Colors::White)
+chars_t str, const idx_t len, const com::Rect<f32>& center, const Colors col = Colors::White)
 {
     const auto strWidth = len * LETTER_SPACE; //+1 ?
     const auto x = center.x + center.w * 0.5f - strWidth    * 0.5f;
@@ -88,7 +88,7 @@ const com::String<N>& str, const f32 x, const f32 y, const Colors col = Colors::
 
 template<idx_t N>
 inline void AddTextCentered(gpu::RenderData& renderData, 
-const com::String<N>& str, const use::Rect<f32>& center, const Colors col = Colors::White)
+const com::String<N>& str, const com::Rect<f32>& center, const Colors col = Colors::White)
 {
     AddTextCentered(renderData, str.data, str.length, center, col);
 }

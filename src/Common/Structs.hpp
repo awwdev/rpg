@@ -3,23 +3,23 @@
 #include "Common/Matrix.hpp"
 #include <iostream>
 
-namespace rpg::use {
+namespace rpg::com {
     
-using NormColor4f = use::Vec4f;
-using RGBAColor4u = use::Vec<u8, 4>;
+using NormColor4f = com::Vec4f;
+using RGBAColor4u = com::Vec<u8, 4>;
 
 struct Common_Vertex 
 {
-    alignas(16) use::Vec3f pos;
-    alignas(16) use::Vec3f nor;
-    alignas(16) use::Vec4f col;
-    alignas(16) use::Vec2f tex; //TODO: rename to uv?
+    alignas(16) com::Vec3f pos;
+    alignas(16) com::Vec3f nor;
+    alignas(16) com::Vec4f col;
+    alignas(16) com::Vec2f tex; //TODO: rename to uv?
 
     constexpr Common_Vertex(
-        const use::Vec3f pPos = {},
-        const use::Vec3f pNor = {},
-        const use::Vec4f pCol = {},
-        const use::Vec2f pTex = {})
+        const com::Vec3f pPos = {},
+        const com::Vec3f pNor = {},
+        const com::Vec4f pCol = {},
+        const com::Vec2f pTex = {})
         : pos { pPos }
         , nor { pNor }
         , col { pCol }
@@ -37,7 +37,7 @@ std::ostream& operator<<(std::ostream& os, const Common_Vertex& vert)
 }
 
 inline NormColor4f NormaliseColor(const RGBAColor4u& col) { 
-    using namespace use;
+    using namespace com;
     return { //normalise on gpu always instead??
         col[X] / 255.f, 
         col[Y] / 255.f, 
@@ -48,7 +48,7 @@ inline NormColor4f NormaliseColor(const RGBAColor4u& col) {
 
 inline RGBAColor4u HighlightColor(const RGBAColor4u& col, const u8 amount)
 {
-    using namespace use;
+    using namespace com;
     RGBAColor4u out { col };
     out[X] += amount;
     out[Y] += amount;

@@ -9,21 +9,21 @@ namespace rpg::dbg::gui {
 template<class T>
 struct Widget_InputField
 {
-    use::Rect<f32>  rect;
+    com::Rect<f32>  rect;
     com::String<30> label;
     com::String<30> value;
     bool isActive = false;
 
     auto Update(gpu::RenderData& renderData)
     {
-        const use::Rect<f32> back { 
+        const com::Rect<f32> back { 
             rect.x + rect.w/2,
             rect.y,
             rect.w/2,
             rect.h
         };
 
-        const bool isMouseOnInput = use::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);
+        const bool isMouseOnInput = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
             isActive = isMouseOnInput;
         }

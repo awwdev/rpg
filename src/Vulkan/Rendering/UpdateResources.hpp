@@ -10,16 +10,16 @@
 
 namespace rpg::vk {
 
-const use::Mat4f BIAS { 
+const com::Mat4f BIAS { 
     0.5, 0.0, 0.0, 0.0,
     0.0, 0.5, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0,
     0.5, 0.5, 0.0, 1.0 
 };
 
-inline void CreateCascades2(use::Mat4f (&cascades)[3], const app::GameScene& scene, gpu::Terrain_UniformData& uboMeta)
+inline void CreateCascades2(com::Mat4f (&cascades)[3], const app::GameScene& scene, gpu::Terrain_UniformData& uboMeta)
 {
-    using namespace use;
+    using namespace com;
 
     auto shadowDist0 = scene.renderData.maxShadowDist[0];
     auto shadowDist1 = scene.renderData.maxShadowDist[1];
@@ -32,14 +32,14 @@ inline void CreateCascades2(use::Mat4f (&cascades)[3], const app::GameScene& sce
         .camProj = (app::glo::inputMode == app::glo::PlayMode ? scene.playerController.camera.perspective : scene.editorController.camera.perspective),
         .camView = (app::glo::inputMode == app::glo::PlayMode ? scene.playerController.camera.view        : scene.editorController.camera.view),
         .sunView = scene.sun.GetView(),
-        .sunDir  = use::Normalize(scene.sun.pos),
+        .sunDir  = com::Normalize(scene.sun.pos),
         .cascadeFadeDist0 = shadowDist0,
         .cascadeFadeDist1 = shadowDist1,
         .cascadeFadeDist2 = shadowDist2,
     };
 
     //auto farPlane = shadowDist;
-    auto sunDir   = use::Normalize(scene.sun.pos);
+    auto sunDir   = com::Normalize(scene.sun.pos);
     auto sunDist  = 10;
 
     Vec3f invCameraPos;
@@ -57,9 +57,9 @@ inline void CreateCascades2(use::Mat4f (&cascades)[3], const app::GameScene& sce
     auto sunPos1 = cascadePos1 + (sunDir * sunDist);
     auto sunPos2 = cascadePos2 + (sunDir * sunDist);
 
-    auto view0 = use::LookAt(sunPos0, cascadePos0);
-    auto view1 = use::LookAt(sunPos1, cascadePos1);
-    auto view2 = use::LookAt(sunPos2, cascadePos2);
+    auto view0 = com::LookAt(sunPos0, cascadePos0);
+    auto view1 = com::LookAt(sunPos1, cascadePos1);
+    auto view2 = com::LookAt(sunPos2, cascadePos2);
 
     float S;
     const float D = 0.00001f; 
@@ -69,7 +69,7 @@ inline void CreateCascades2(use::Mat4f (&cascades)[3], const app::GameScene& sce
 
     S = scene.renderData.cascadeZoom[0];
     S = 0.075f;
-    use::Mat4f ortho0 ={
+    com::Mat4f ortho0 ={
         S, 0, 0, 0,
         0, S, 0, 0,
         0, 0, D, 0,
@@ -78,7 +78,7 @@ inline void CreateCascades2(use::Mat4f (&cascades)[3], const app::GameScene& sce
 
     S = scene.renderData.cascadeZoom[1];
     S = 0.014f;
-    use::Mat4f ortho1 ={
+    com::Mat4f ortho1 ={
         S, 0, 0, 0,
         0, S, 0, 0,
         0, 0, D, 0,
@@ -87,7 +87,7 @@ inline void CreateCascades2(use::Mat4f (&cascades)[3], const app::GameScene& sce
 
     S = scene.renderData.cascadeZoom[2];
     S = 0.0019f;
-    use::Mat4f ortho2 ={
+    com::Mat4f ortho2 ={
         S, 0, 0, 0,
         0, S, 0, 0,
         0, 0, D, 0,
@@ -125,11 +125,11 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
 
     //TODO: THIS IS THE ISSUE !!! we would need the right sun persp
     resources.common_pushConsts2.sunView = scene.sun.GetView();
-    resources.common_pushConsts2.sunDir  = use::Normalize(scene.sun.pos * 1);
+    resources.common_pushConsts2.sunDir  = com::Normalize(scene.sun.pos * 1);
     
 
     //? UBO META TEST
-    static use::Mat4f cascades [3]{};
+    static com::Mat4f cascades [3]{};
     gpu::Terrain_UniformData uboMeta {};
     CreateCascades2(cascades, scene, uboMeta);
 
@@ -152,7 +152,7 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
 
 
     resources.common_pushConsts.sunBias= BIAS * scene.sun.GetOrthographic(0) * scene.sun.GetView();
-    resources.common_pushConsts.sunDir = use::Normalize(scene.sun.pos * 1);
+    resources.common_pushConsts.sunDir = com::Normalize(scene.sun.pos * 1);
     resources.ui.pushConsts.wnd_w = wnd::glo::window_w;
     resources.ui.pushConsts.wnd_h = wnd::glo::window_h;
     resources.sky.pushConsts.topColor = { 0.1f, 0.1f, 1.0f, 1 };

@@ -29,7 +29,7 @@ struct Resources_Common
     Pipeline    pipelineShadow;
 
     UniformBuffer_Groups<gpu::Default_UniformData, gpu::DEFAULT_UBO_MAX_COUNT> ubo;
-    VertexBuffer<use::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> vbo;
+    VertexBuffer<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> vbo;
 
     void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow&)
     {

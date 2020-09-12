@@ -20,12 +20,12 @@ struct Quadrant
     float quadrantX;
     float quadrantZ;
 
-    use::Common_Vertex verts   [VERT_COUNT_TOTAL];
+    com::Common_Vertex verts   [VERT_COUNT_TOTAL];
     com::Array<u32, 6>   corners [CORNER_COUNT][CORNER_COUNT];
 
     void Create(const float pZ, const float pX)
     {
-        using namespace use;
+        using namespace com;
 
         quadrantX = pX;
         quadrantZ = pZ;
@@ -55,7 +55,7 @@ struct Quadrant
 
     }
 
-    use::Vec2u GetCornerByVertex(const idx_t i) const
+    com::Vec2u GetCornerByVertex(const idx_t i) const
     {
         const auto vIdx = i % 6;
         const auto qIdx = i / 6; //quad
@@ -73,9 +73,9 @@ struct Quadrant
         return { cZ, cX };
     }
 
-    com::Array<idx_t, 6> GetVerticesByCorner(const use::Vec2u& pair) const
+    com::Array<idx_t, 6> GetVerticesByCorner(const com::Vec2u& pair) const
     {
-        using namespace use;
+        using namespace com;
         return corners[pair[X]][pair[Y]]; //zx
     }
 

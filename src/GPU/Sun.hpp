@@ -9,7 +9,7 @@ namespace rpg::gpu {
 
 struct Sun
 {
-    use::Vec3f pos { 0, -1, 0 }; //xz controlled by sin
+    com::Vec3f pos { 0, -1, 0 }; //xz controlled by sin
     float t = 0;
     ecs::ID gizmoID = 0;
     float speed = 0.001f;
@@ -24,7 +24,7 @@ struct Sun
     void Update(ecs::ECS&, const double dt)
     {
         
-        using namespace use;
+        using namespace com;
         t += (float)dt * speed;
         constexpr auto A = 2;
         pos[X] = sinf(t) * A;
@@ -40,12 +40,12 @@ struct Sun
         
     }
 
-    use::Mat4f GetView() const
+    com::Mat4f GetView() const
     {
-        return use::LookAt(pos, {0, 0, 0});
+        return com::LookAt(pos, {0, 0, 0});
     }
 
-    use::Mat4f GetOrthographic(const u32 cascadeIdx) const 
+    com::Mat4f GetOrthographic(const u32 cascadeIdx) const 
     {
         //TODO: solve how the values correlate
         //TODO: cascades

@@ -12,7 +12,7 @@ namespace rpg::res {
 template<bool DoSave, class QUADRANT_T, auto QUADRANT_COUNT>
 void WriteOrRead(QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
 {
-    using namespace use;
+    using namespace com;
 
     char path[] { "res/Terrain/txx" };
 
@@ -30,8 +30,8 @@ void WriteOrRead(QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
         
         if (!file) dbg::LogError("cannot open file");
 
-        if constexpr (DoSave)  file.write((const char*)quadrant.verts, sizeof(use::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);
-        else                   file.read((char*)quadrant.verts, sizeof(use::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);
+        if constexpr (DoSave)  file.write((const char*)quadrant.verts, sizeof(com::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);
+        else                   file.read((char*)quadrant.verts, sizeof(com::Common_Vertex) * quadrant.VERT_COUNT_TOTAL);
     }}
 }
 

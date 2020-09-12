@@ -89,11 +89,11 @@ struct StringMap
     idx_t SimpleHash(chars_t str) const
     {
         const auto c1 = str[0];
-        const auto c2 = str[use::StrLen(str) - 1];
+        const auto c2 = str[com::StrLen(str) - 1];
         return (c1 + c2) % BUCKET_COUNT;
     }
 
-    idx_t SimpleHash(const use::CharsView& view) const
+    idx_t SimpleHash(const com::CharsView& view) const
     {
         dbg::Assert(view.len > 0, "chars view count is not greater than 0");
         const auto c1 = *(view.beginPtr);

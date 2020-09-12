@@ -9,7 +9,7 @@ namespace rpg::dbg::gui {
 template<class T>
 struct Widget_Slider
 {
-    use::Rect<f32>  rect;
+    com::Rect<f32>  rect;
     com::String<30> label;
     T value;
     T min, max;
@@ -19,7 +19,7 @@ struct Widget_Slider
 
     auto Update(gpu::RenderData& renderData)
     {
-        const use::Rect<f32> back { 
+        const com::Rect<f32> back { 
             rect.x + rect.w/2,
             rect.y,
             rect.w/2,
@@ -30,14 +30,14 @@ struct Widget_Slider
         const f32 knobXNorm = (value - min) / (max - min);
         const f32 knobX = knobXNorm * (back.w - KNOB_SIZE);
 
-        const use::Rect<f32> knob { 
+        const com::Rect<f32> knob { 
             back.x + 1 + knobX,
             back.y + 1,
             KNOB_SIZE - 2,
             KNOB_SIZE - 2
         };
 
-        const bool isMouseOnKnob = use::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, knob);
+        const bool isMouseOnKnob = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, knob);
         if (isMouseOnKnob && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
             isDragging = true;
             dragInitX = (f32)wnd::glo::mouse_wx;
@@ -51,7 +51,7 @@ struct Widget_Slider
             dragInitX = (f32)wnd::glo::mouse_wx;
             const f32 pxVal = (max-min) / (back.w - KNOB_SIZE);
             value += delta * pxVal;
-            use::Clamp(value, min, max);
+            com::Clamp(value, min, max);
         }
 
         AddRect(renderData, back, Colors::Black2_Alpha);
