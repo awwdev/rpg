@@ -5,7 +5,7 @@
 #include "Vulkan/Objects/UniformBuffer.hpp"
 #include "Vulkan/Objects/ImageArray.hpp"
 #include "Resources/HostResources.hpp"
-#include "Utils/Structs.hpp"
+#include "Common/Structs.hpp"
 #include "Vulkan/Factories/Shadow/Shadow_RenderPass.hpp"
 
 namespace rpg::vk {

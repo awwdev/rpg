@@ -3,8 +3,8 @@
 #pragma once
 
 #include "Vulkan/Context.hpp"
-#include "Utils/Structs.hpp"
-#include "Box/Array.hpp"
+#include "Common/Structs.hpp"
+#include "Common/Container/Array.hpp"
 
 namespace rpg::vk {
 
@@ -14,8 +14,8 @@ struct Pipeline
     VkPipelineLayout layout {};
 
     VkDescriptorPool descPool  {};
-    box::Array<VkDescriptorSetLayout, 10> setLayouts {};
-    box::Array<VkDescriptorSet, 10> sets {};
+    com::Array<VkDescriptorSetLayout, 10> setLayouts {};
+    com::Array<VkDescriptorSet, 10> sets {};
 
     ~Pipeline()
     {
@@ -63,7 +63,7 @@ void WriteDescriptors(
     }
         
 
-    box::Array<VkDescriptorPoolSize, 10> poolSizes;
+    com::Array<VkDescriptorPoolSize, 10> poolSizes;
     for(uint32_t i = 0; i < bindingsCount; ++i) {
         poolSizes.Append(VkDescriptorPoolSize{
             .type = bindings[i].descriptorType,
@@ -91,7 +91,7 @@ void WriteDescriptors(
     pipeline.sets.count = pipeline.setLayouts.count;
     VkCheck(vkAllocateDescriptorSets(g_contextPtr->device, &allocInfo, pipeline.sets.Data()));
 
-    box::Array<VkWriteDescriptorSet, 10> writes;
+    com::Array<VkWriteDescriptorSet, 10> writes;
     for(u32 i = 0; i < g_contextPtr->swapImages.count; ++i)
     {
         FOR_CARRAY(uniformInfos, j)

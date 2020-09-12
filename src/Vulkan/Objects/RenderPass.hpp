@@ -5,7 +5,7 @@
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Objects/Image.hpp"
 
-#include "Box/Array.hpp"
+#include "Common/Container/Array.hpp"
 
 namespace rpg::vk {
 
@@ -33,13 +33,13 @@ inline VkRenderPassBeginInfo CreateRenderPassBeginInfo(
 struct RenderPass
 {
     VkRenderPass renderPass;
-    box::Array<VkFramebuffer, 4> framebuffers;
+    com::Array<VkFramebuffer, 4> framebuffers;
     VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT; //!set in factory
     VkRenderPassBeginInfo beginInfo; //!set in factory
     uint32_t width, height;
 
-    box::Optional<DepthImage> depthImage;
-    box::Optional<MSAAImage>  msaaImage;
+    com::Optional<DepthImage> depthImage;
+    com::Optional<MSAAImage>  msaaImage;
 
     ~RenderPass()
     {
@@ -91,8 +91,8 @@ struct RenderPassDepth
     uint32_t layerCount;
 
     DepthImageArray depthImageArray; //should really be the image array we already have
-    box::Array<VkImageView, 3>   imageViews;
-    box::Array<VkFramebuffer, 3> framebuffers;
+    com::Array<VkImageView, 3>   imageViews;
+    com::Array<VkFramebuffer, 3> framebuffers;
 
     VkRenderPassBeginInfo GetBeginInfo(
         const u32 layerIndex,

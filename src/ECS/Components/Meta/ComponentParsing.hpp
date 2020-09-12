@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Box/StringMap.hpp"
+#include "Common/Container/StringMap.hpp"
 #include "Debug/Assert.hpp"
-#include "Utils/Algorithms.hpp"
+#include "Common/Algorithms.hpp"
 
 namespace rpg::ecs {
 
@@ -11,14 +11,14 @@ constexpr auto COMPONENT_DATA_COUNT_MAX = 20;
 constexpr auto COMPONENT_MAX_STR_LEN = 100;
 constexpr auto IDENTIFIER_START = 2;
 
-using ComponentDataString = box::String<COMPONENT_MAX_STR_LEN>;
+using ComponentDataString = com::String<COMPONENT_MAX_STR_LEN>;
 struct ComponentDataStringPair
 {
     ComponentDataString key;
     ComponentDataString val;
 };
 
-using ComponentDataStringPairs = box::Array<ComponentDataStringPair, ecs::COMPONENT_DATA_COUNT_MAX>;
+using ComponentDataStringPairs = com::Array<ComponentDataStringPair, ecs::COMPONENT_DATA_COUNT_MAX>;
 
 inline const auto ConvertToComponentDataStringPair(chars_t str)
 {
@@ -39,7 +39,7 @@ inline const auto ConvertToComponentDataStringPair(chars_t str)
 }
 
 template<class T>
-T ParseComponentData(const box::String<COMPONENT_MAX_STR_LEN>& str)
+T ParseComponentData(const com::String<COMPONENT_MAX_STR_LEN>& str)
 {
     T data {};
 

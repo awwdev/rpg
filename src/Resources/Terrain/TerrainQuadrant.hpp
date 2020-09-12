@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Utils/Structs.hpp"
-#include "Box/Array.hpp"
+#include "Common/Structs.hpp"
+#include "Common/Container/Array.hpp"
 
 namespace rpg::res {
 
@@ -21,7 +21,7 @@ struct Quadrant
     float quadrantZ;
 
     use::Common_Vertex verts   [VERT_COUNT_TOTAL];
-    box::Array<u32, 6>   corners [CORNER_COUNT][CORNER_COUNT];
+    com::Array<u32, 6>   corners [CORNER_COUNT][CORNER_COUNT];
 
     void Create(const float pZ, const float pX)
     {
@@ -73,7 +73,7 @@ struct Quadrant
         return { cZ, cX };
     }
 
-    box::Array<idx_t, 6> GetVerticesByCorner(const use::Vec2u& pair) const
+    com::Array<idx_t, 6> GetVerticesByCorner(const use::Vec2u& pair) const
     {
         using namespace use;
         return corners[pair[X]][pair[Y]]; //zx

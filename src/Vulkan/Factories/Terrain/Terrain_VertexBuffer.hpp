@@ -2,8 +2,8 @@
 
 #pragma once
 #include "Vulkan/Objects/VertexBuffer.hpp"
-#include "Utils/Structs.hpp"
-#include "Utils/PrimitiveMeshes.hpp"
+#include "Common/Structs.hpp"
+#include "Common/PrimitiveMeshes.hpp"
 #include "Resources/MeshTypes.hpp"
 #include "Resources/HostResources.hpp"
 #include "Debug/Assert.hpp"

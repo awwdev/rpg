@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "box/StringMap.hpp"
+#include "Common/Container/StringMap.hpp"
 #include "ECS/Components/Meta/ComponentParsing.hpp"
 
 namespace rpg::res {
@@ -22,7 +22,7 @@ enum class MeshType
 };
 
 constexpr auto MESHTYPE_MAX_STR_LEN = 100;
-const box::EnumMap<MeshType::ENUM_END, box::String<MESHTYPE_MAX_STR_LEN>> MESHTYPE_ENUM_TO_STR
+const com::EnumMap<MeshType::ENUM_END, com::String<MESHTYPE_MAX_STR_LEN>> MESHTYPE_ENUM_TO_STR
 {
     { MeshType::PrimitiveCube,      "PrimitiveCube" },
     { MeshType::PrimitiveQuad,      "PrimitiveQuad" },
@@ -33,7 +33,7 @@ const box::EnumMap<MeshType::ENUM_END, box::String<MESHTYPE_MAX_STR_LEN>> MESHTY
     { MeshType::Stone,              "Stone" },
     { MeshType::Tree,               "Tree" },
 };
-const auto MESHTYPE_STR_TO_ENUM = box::StringMapFromEnumMap<MeshType, MESHTYPE_MAX_STR_LEN>(MESHTYPE_ENUM_TO_STR);
+const auto MESHTYPE_STR_TO_ENUM = com::StringMapFromEnumMap<MeshType, MESHTYPE_MAX_STR_LEN>(MESHTYPE_ENUM_TO_STR);
 
 inline MeshType GetMeshType(const ecs::ComponentDataString& str)
 {

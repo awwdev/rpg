@@ -2,9 +2,9 @@
 
 #pragma once
 #include "ECS/ECS.hpp"
-#include "Utils/Matrix.hpp"
+#include "Common/Matrix.hpp"
 #include "window/WindowEvents.hpp"
-#include "Rendering/Cameras.hpp"
+#include "GPU/Cameras.hpp"
 
 namespace rpg::app {
     

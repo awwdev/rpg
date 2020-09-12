@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Vulkan/Context.hpp"
-#include "Utils/Structs.hpp"
+#include "Common/Structs.hpp"
 #include "Debug/Assert.hpp"
 
 namespace rpg::vk {

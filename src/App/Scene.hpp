@@ -5,17 +5,12 @@
 #include "ECS/ECS.hpp"
 #include "ECS/Systems/S_Render.hpp"
 
-#include "Rendering/RenderData.hpp"
-#include "Rendering/Sun.hpp"
+#include "GPU/RenderData.hpp"
+#include "GPU/Sun.hpp"
 
-#include "UI/UI_Shadow.hpp"
-#include "UI/UI_Terrain.hpp"
-#include "UI/UI_Stats.hpp"
-
-#include "UI/Widgets/Widget_Window.hpp"
-#include "UI/Widgets/Widget_List.hpp"
-#include "UI/Widgets/Widget_InputField.hpp"
-#include "UI/Widgets/Widget_Slider.hpp"
+#include "Debug/GUI/Composed/GUI_Stats.hpp"
+#include "Debug/GUI/Composed/GUI_Shadow.hpp"
+#include "Debug/GUI/Composed/GUI_Level.hpp"
 
 #include "Resources/Terrain/Terrain.hpp"
 #include "ECS/Prefabs/PrefabLoader.hpp"
@@ -36,6 +31,10 @@ struct GameScene
     app::PlayerController playerController;
     app::EditorController editorController;
 
+    dbg::gui::GUI_Level  guiLevel;
+    dbg::gui::GUI_Shadow guiShadow;
+    dbg::gui::GUI_Stats  guiStats;
+
     void Create(res::HostResources& hostRes)
     {
         //TODO: resource manager, init gizmos? find better place!
@@ -43,7 +42,6 @@ struct GameScene
         sun.Create(ecs);
         playerController.Create(ecs);
         hostRes.terrain.InitGizmos(ecs);
-        ui::g_aciveRenderGraph = &renderData;
     }
 
 
@@ -54,30 +52,9 @@ struct GameScene
         //? UI
         app::ResetUpdateInputMode();
         if (app::glo::inputMode != app::glo::InputMode::PlayMode) {
-            //ui::DrawUI_Terrain(hostRes.terrain);
-            //ui::DrawUI_Stats();
-            //ui::DrawUI_Shadow(sun);
-
-            static dbg::gui::Widget_Window wnd     { .title = "Test", .rect { 100, 100, 300, 300 }};
-            static dbg::gui::Widget_List<100> list { .name  = "List", .rect { 100, 100, 300, 100 }, .items {
-                "Item0",
-                "Item1",
-                "Item2",
-                "Item3",
-                "Item4",
-                "Item5",
-                "Item6",
-                "Item7",
-            } };
-            static dbg::gui::Widget_InputField<float> field { .label = "Label", .value = "value" };
-            static dbg::gui::Widget_Slider<float> slider { .label = "Slider", .value = 50.f, .min = 0.f, .max = 100.f };
-
-
-
-            wnd.Update(renderData);
-            list.Update(renderData, wnd);
-            field.Update(renderData, wnd);
-            slider.Update(renderData, wnd);
+            guiLevel.Update(renderData);
+            guiStats.Update(renderData);
+            guiShadow.Update(renderData);
         }   
 
         //? META

@@ -4,16 +4,16 @@
 #include "Window/win_WindowProcedure.hpp"
 #include "Debug/Logger.hpp"
 #include "Debug/Console.hpp"
-#include "Box/Array.hpp"
-#include "Utils/Types.hpp"
+#include "Common/Container/Array.hpp"
+#include "Common/Types.hpp"
 
-#include "Memory/Allocator.hpp"
-#include "Memory/AllocatorPrint.hpp"
+#include "Common/Memory/Allocator.hpp"
+#include "Common/Memory/AllocatorPrint.hpp"
 
 #include "Vulkan/Rendering/Renderer.hpp"
 
 #include "App/Scene.hpp"
-#include "Utils/DeltaTime.hpp"
+#include "Common/DeltaTime.hpp"
 #include "Resources/HostResources.hpp"
 
 using namespace rpg;
@@ -21,13 +21,13 @@ using namespace rpg;
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int)
 {
     dbg::Console console{};
-    mem::GlobalAllocate();
+    com::mem::GlobalAllocate();
 
     {
         wnd::Window  window { hInstance, 800, 600 };
-        auto ptrHostResources  = mem::ClaimBlock<res::HostResources>();
-        auto ptrRenderer       = mem::ClaimBlock<vk::VkRenderer>(vk::WindowHandle{window.hInstance, window.hWnd}, *ptrHostResources);
-        auto ptrGameScenes     = mem::ClaimBlock<app::GameScene>();
+        auto ptrHostResources  = com::mem::ClaimBlock<res::HostResources>();
+        auto ptrRenderer       = com::mem::ClaimBlock<vk::VkRenderer>(vk::WindowHandle{window.hInstance, window.hWnd}, *ptrHostResources);
+        auto ptrGameScenes     = com::mem::ClaimBlock<app::GameScene>();
         ptrGameScenes->Create(*ptrHostResources);
 
         while (wnd::glo::events[(idx_t)wnd::EventType::Window_Close] == wnd::EventState::None && 
@@ -44,10 +44,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
         }
 
         vk::VkCheck(vkDeviceWaitIdle(vk::g_contextPtr->device));
-        mem::PrintAllocationHTML();
+        com::mem::PrintAllocationHTML();
     }
     
-    mem::GlobalDeallocate();
+    com::mem::GlobalDeallocate();
     system("pause");
 
     return 0;

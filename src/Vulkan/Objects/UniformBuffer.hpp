@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Rendering/UboData.hpp"
+#include "GPU/UboData.hpp"
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Objects/Buffer.hpp"
 

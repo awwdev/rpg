@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Box/Array.hpp"
-#include "Box/String.hpp"
+#include "Common/Container/Array.hpp"
+#include "Common/Container/String.hpp"
 
 namespace rpg::wnd {
 
@@ -43,7 +43,7 @@ enum class EventState : u8
 namespace glo
 {
     inline EventState events [(idx_t)EventType::ENUM_END];
-    inline box::String<10> chars;
+    inline com::String<10> chars;
 
     inline s32 window_x, window_y;
     inline u32 window_w, window_h;
@@ -54,7 +54,7 @@ namespace glo
 
     enum ResizeState { None, Begin, End } resizeState;
 
-    inline box::Array<EventType, 10> frameEvents; //tmp (internal usage mostly)
+    inline com::Array<EventType, 10> frameEvents; //tmp (internal usage mostly)
 }
 
 //abstraction over global access

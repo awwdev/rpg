@@ -9,7 +9,7 @@
 #include "Vulkan/Objects/PushConstants.hpp"
 #include "Vulkan/Objects/Pipeline.hpp"
 #include "Vulkan/Objects/RenderPass.hpp"
-#include "Rendering/RenderData.hpp"
+#include "GPU/RenderData.hpp"
 
 namespace rpg::vk
 {

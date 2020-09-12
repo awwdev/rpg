@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Utils/Types.hpp"
+#include "Common/Types.hpp"
 #include "Debug/Logger.hpp"
 #include "Debug/Assert.hpp"
 

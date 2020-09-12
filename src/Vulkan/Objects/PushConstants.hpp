@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "Utils/Types.hpp"
-#include "Utils/Matrix.hpp"
+#include "Common/Types.hpp"
+#include "Common/Matrix.hpp"
 #include "Vulkan/Context.hpp"
 
 namespace rpg::vk {

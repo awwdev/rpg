@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Utils/Matrix.hpp"
+#include "Common/Matrix.hpp"
 #include "ECS/Components/Meta/ComponentTypes.hpp"
 #include "ECS/Components/Meta/ComponentArrays.hpp"
-#include "Rendering/RenderData.hpp"
+#include "GPU/RenderData.hpp"
 
 namespace rpg::ecs {
     
@@ -16,8 +16,8 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
     auto& arr_transform = arrays.transforms;
 
     //? SORTING (for mesh type)(so instancing can be used)
-    box::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypesVertexColor [(u32)res::MeshType::ENUM_END];
-    box::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypesTextures    [(u32)res::MeshType::ENUM_END];
+    com::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypesVertexColor [(u32)res::MeshType::ENUM_END];
+    com::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypesTextures    [(u32)res::MeshType::ENUM_END];
 
     FOR_ARRAY(arr_render.dense, i) {
         const auto idx = (idx_t)arr_render.dense[i].meshType;
@@ -28,7 +28,7 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
     }   
 
     auto loop = [&](bool useTexture, auto& arr) {
-        box::Array<gpu::Default_UniformData, gpu::DEFAULT_UBO_MAX_COUNT> group;
+        com::Array<gpu::Default_UniformData, gpu::DEFAULT_UBO_MAX_COUNT> group;
 
         FOR_CARRAY(arr, i){ // meshType == group
             group.Clear();

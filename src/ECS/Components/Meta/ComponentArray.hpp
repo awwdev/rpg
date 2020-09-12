@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Box/Array.hpp"
-#include "Box/Bitset.hpp"
+#include "Common/Container/Array.hpp"
+#include "Common/Container/Bitset.hpp"
 
 #include "ECS/EntityID.hpp"
 #include "ECS/Components/Meta/ComponentTypes.hpp"
@@ -12,7 +12,7 @@ namespace rpg::ecs
 template<class COMPONENT, auto MAX_COUNT = MAX_ENTITY_COUNT>
 struct ComponentArray
 {
-    box::Array<COMPONENT, MAX_COUNT> dense;
+    com::Array<COMPONENT, MAX_COUNT> dense;
     ID componentLookup [MAX_COUNT];
     ID entityLookup    [MAX_COUNT];
 

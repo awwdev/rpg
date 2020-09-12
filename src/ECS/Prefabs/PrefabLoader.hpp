@@ -5,7 +5,7 @@
 #include "ECS/Prefabs/PrefabTypes.hpp"
 #include "ECS/Components/Meta/ComponentArray.hpp"
 #include "Debug/Assert.hpp"
-#include "Memory/Allocator.hpp"
+#include "Common/Memory/Allocator.hpp"
 
 #include <fstream>
 
@@ -19,7 +19,7 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     std::ifstream file(path);//, std::ios::beg
     dbg::Assert(file.is_open(), "cannot open file");
 
-    auto blockPtr = rpg::mem::ClaimBlock<ComponentDataStringPairs [(idx_t)PrefabType::ENUM_END][(idx_t)ComponentType::ENUM_END]>();
+    auto blockPtr = rpg::com::mem::ClaimBlock<ComponentDataStringPairs [(idx_t)PrefabType::ENUM_END][(idx_t)ComponentType::ENUM_END]>();
     auto& componentDataKeyValueArray = *blockPtr;
 
     auto currentPrefab    = PrefabType::ENUM_END;

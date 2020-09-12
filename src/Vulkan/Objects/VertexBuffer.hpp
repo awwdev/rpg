@@ -3,8 +3,8 @@
 #pragma once
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Objects/Buffer.hpp"
-#include "Box/Array.hpp"
-#include "Utils/Structs.hpp"
+#include "Common/Container/Array.hpp"
+#include "Common/Structs.hpp"
 
 namespace rpg::vk {
 
@@ -27,13 +27,13 @@ struct VertexBuffer
 
     bool IsBaked() const { return activeBuffer == &gpuBuffer; }
 
-    box::Array<VertexGroup, 100> vertexGroups;
+    com::Array<VertexGroup, 100> vertexGroups;
     u32 count = 0;
     u32 CurrentSize() const { return sizeof(T) * count; }
 
     //? need to be filled by "factory" method
-    box::Array<VkVertexInputBindingDescription, 2>   bindings;
-    box::Array<VkVertexInputAttributeDescription, 4> attributes;
+    com::Array<VkVertexInputBindingDescription, 2>   bindings;
+    com::Array<VkVertexInputAttributeDescription, 4> attributes;
     
     void Create()
     {

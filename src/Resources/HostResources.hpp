@@ -1,16 +1,16 @@
 //https://github.com/awwdev
 #pragma once
 
-#include "Box/Array.hpp"
-#include "Box/EnumMap.hpp"
+#include "Common/Container/Array.hpp"
+#include "Common/Container/EnumMap.hpp"
 #include "Debug/Logger.hpp"
 #include "Resources/TextureLoader.hpp"
 #include "Resources/TextureArray.hpp"
 #include "Resources/ModelLoader.hpp"
 #include "Resources/MeshTypes.hpp"
 #include "Resources/Terrain/Terrain.hpp"
-#include "Rendering/RenderData.hpp"
-#include "utils/PrimitiveMeshes.hpp"
+#include "GPU/RenderData.hpp"
+#include "Common/PrimitiveMeshes.hpp"
 
 namespace rpg::res {
     
@@ -34,7 +34,7 @@ struct Models
         idx_t count;
     };
 
-    box::EnumMap<res::MeshType::ENUM_END, MeshVertexView> vertexLookup
+    com::EnumMap<res::MeshType::ENUM_END, MeshVertexView> vertexLookup
     {
         //hardcoded primitives
         { res::MeshType::PrimitiveCube,      { use::MESH_CUBE,     ArrayCount(use::MESH_CUBE)       } },
@@ -43,11 +43,11 @@ struct Models
         { res::MeshType::PrimitiveRing16,    { use::MESH_RING_16,  ArrayCount(use::MESH_RING_16)     } },
     }; 
 
-    box::Array<use::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;
+    com::Array<use::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;
 
     void Load()
     {
-        box::Array<use::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> tmp;
+        com::Array<use::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> tmp;
 
         const auto LoadModelFn = [&](chars_t path, const res::MeshType type){
             LoadModel(tmp, path);

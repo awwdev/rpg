@@ -7,19 +7,19 @@
 #include "Vulkan/Objects/Image.hpp"
 #include "Vulkan/Objects/UniformBuffer.hpp"
 
-#include "Memory/Allocator.hpp"
-#include "Box/Array.hpp"
+#include "Common/Memory/Allocator.hpp"
+#include "Common/Container/Array.hpp"
 
 namespace rpg::vk {
 
 struct Shader
 {
-    box::Array<VkShaderModule, 4> modules;
-    box::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
+    com::Array<VkShaderModule, 4> modules;
+    com::Array<VkPipelineShaderStageCreateInfo, 4> stageInfos;
 
     //uniform data
-    box::Array<UniformInfo,4>  infos;
-    box::Array<VkSampler, 4>   samplers;
+    com::Array<UniformInfo,4>  infos;
+    com::Array<VkSampler, 4>   samplers;
 
     ~Shader()
     {
@@ -43,7 +43,7 @@ struct Shader
         rpg::dbg::Assert(file.is_open(), "cannot open shader file");
 
         const uint32_t size = (uint32_t)file.tellg();
-        //auto ptrBuffer = mem::ClaimBlock<char[BUFFER_SIZE]>();
+        //auto ptrBuffer = com::mem::ClaimBlock<char[BUFFER_SIZE]>();
         char buffer [BUFFER_SIZE];
         file.seekg(std::ios::beg);
         //file.read(*ptrBuffer, size);

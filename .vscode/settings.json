@@ -461,7 +461,7 @@
 		"list": "cpp",
 		"locale": "cpp",
 		"map": "cpp",
-		"memory": "cpp",
+		"Common/Memory": "cpp",
 		"new": "cpp",
 		"numeric": "cpp",
 		"ostream": "cpp",
@@ -503,12 +503,13 @@
 		"compare": "cpp",
 		"cwctype": "cpp",
 		"deque": "cpp",
-		"memory_resource": "cpp",
+		"Common/Memory_resource": "cpp",
 		"optional": "cpp",
 		"random": "cpp",
 		"string_view": "cpp",
 		"ranges": "cpp",
-		"codecvt": "cpp"
+		"codecvt": "cpp",
+		"queue": "cpp"
 	},
 
 }

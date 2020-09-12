@@ -1,14 +1,14 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Utils/Structs.hpp"
-#include "Box/Array.hpp"
+#include "Common/Structs.hpp"
+#include "Common/Container/Array.hpp"
 #include "ECS/ECS.hpp"
-#include "Rendering/Cameras.hpp"
+#include "GPU/Cameras.hpp"
 #include "Resources/Terrain/TerrainQuadrant.hpp"
 #include "Resources/Terrain/TerrainSerialization.hpp"
 #include "ECS/Prefabs/PrefabTypes.hpp"
-#include "Utils/Algorithms.hpp"
+#include "Common/Algorithms.hpp"
 
 #include <cstdlib> //rand
 
@@ -21,12 +21,12 @@ template<auto VERT_COUNT_TOTAL, auto QUADRANT_COUNT_TOTAL>
 struct Settings
 {
     EditMode mode = VertexGrab;
-    box::Optional<use::Intersection> intersection {};
+    com::Optional<use::Intersection> intersection {};
 
     struct VertexBrushInfo { idx_t idx; f32 falloff; };
-    box::Array<VertexBrushInfo, VERT_COUNT_TOTAL> editingVertIndices;
+    com::Array<VertexBrushInfo, VERT_COUNT_TOTAL> editingVertIndices;
 
-    box::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
+    com::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
     bool isDragging  = false;
     f32  yGrabRef    = 0;
     f32  dragScale   = 0.3f;
@@ -166,7 +166,7 @@ struct Terrain
 
     //? INTERACTION
 
-    box::Optional<use::Intersection> CheckIntersection(const gpu::EgoCamera& camera)
+    com::Optional<use::Intersection> CheckIntersection(const gpu::EgoCamera& camera)
     {
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
         const auto ray = ScreenRay(camera);
@@ -300,8 +300,8 @@ struct Terrain
 
     void StichCorner(const idx_t qcz, const idx_t qcx, const idx_t cornerCount) 
     {
-        box::Array<use::Vec3f, 4> positions;
-        box::Array<use::Common_Vertex*, 6> verts;
+        com::Array<use::Vec3f, 4> positions;
+        com::Array<use::Common_Vertex*, 6> verts;
 
         //TL
         if (qcx > 0 && qcz > 0){
@@ -385,8 +385,8 @@ struct Terrain
         auto stichFn = [&](
             QUADRANT_T& quadrant,
             QUADRANT_T& neighborQuadrant,
-            const box::Array<u32, 6>& edgeVerts, 
-            const box::Array<u32, 6>& edgeVertsNeighbor)
+            const com::Array<u32, 6>& edgeVerts, 
+            const com::Array<u32, 6>& edgeVertsNeighbor)
         {
             const auto averagePos = [&]
             { 

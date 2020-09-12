@@ -2,9 +2,9 @@
 
 #pragma once
 #include "Vulkan/Objects/UniformBuffer.hpp"
-#include "Rendering/UboData.hpp"
-#include "Utils/Structs.hpp"
-#include "Rendering/RenderData.hpp"
+#include "GPU/UboData.hpp"
+#include "Common/Structs.hpp"
+#include "GPU/RenderData.hpp"
 
 namespace rpg::vk
 {

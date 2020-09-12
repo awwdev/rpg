@@ -1,15 +1,15 @@
 //https://github.com/awwdev
 #pragma once
 
-#include "Utils/Types.hpp"
-#include "Utils/Structs.hpp"
+#include "Common/Types.hpp"
+#include "Common/Structs.hpp"
 #include <fstream>
 #include <filesystem>
 
 namespace rpg::res {
 
 template<auto N>
-void LoadModel(box::Array<use::Common_Vertex, N>& vertices, chars_t path)
+void LoadModel(com::Array<use::Common_Vertex, N>& vertices, chars_t path)
 {
     using namespace use;
     
