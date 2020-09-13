@@ -75,12 +75,13 @@ using IsPointer = std::enable_if_t<std::is_pointer_v<T>>;
 template<class T, idx_t N>
 constexpr idx_t ArrayCount(const T (&arr)[N])
 {
-    return sizeof(arr) / sizeof(arr[0]);
+    return N;
 }
 
 template<class ARR>
 constexpr idx_t ArrayCount() 
 { 
+    //return (idx_t) std::extent_v<ARR>;
     using ELEMENT_T = std::remove_all_extents_t<ARR>;
     return sizeof(ARR) / sizeof(ELEMENT_T); 
 }

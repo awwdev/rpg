@@ -33,7 +33,6 @@ inline VkRenderPassBeginInfo CreateRenderPassBeginInfo(
 struct RenderPass
 {
     VkRenderPass renderPass;
-    com::Array<VkFramebuffer, 4> framebuffers;
     VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT; //!set in factory
     VkRenderPassBeginInfo beginInfo; //!set in factory
     uint32_t width, height;
@@ -41,6 +40,9 @@ struct RenderPass
     com::Optional<DepthImage>  depthImage;
     com::Optional<MSAAImage>   msaaImage;
     com::Optional<RenderImage> renderImage;
+
+    com::Array<VkFramebuffer, 4> framebuffers;
+    com::Optional<VkFramebuffer> framebuffer;
 
     ~RenderPass()
     {
@@ -53,6 +55,9 @@ struct RenderPass
         FOR_ARRAY(framebuffers, i) 
             vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
         framebuffers.Clear(); //clear because dtor is called on recreation
+        
+        if (framebuffer)
+            vkDestroyFramebuffer(g_contextPtr->device, framebuffer.t, nullptr);
 
         if(depthImage)
            depthImage->Clear();
@@ -61,7 +66,7 @@ struct RenderPass
             msaaImage->Clear();
 
         if (renderImage)
-            renderImage->Clear();
+            renderImage->Clear();            
     }
 
     VkRenderPassBeginInfo GetBeginInfo(
@@ -73,7 +78,8 @@ struct RenderPass
             .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
             .pNext          = nullptr,
             .renderPass     = renderPass,
-            .framebuffer    = framebuffers[framBufferIdx],
+            //.framebuffer    = framebuffers[framBufferIdx],
+            .framebuffer    = framebuffer.t,
             .renderArea     = {
                 .offset     = VkOffset2D {0, 0},
                 .extent     = { width, height }

@@ -165,7 +165,8 @@ struct DepthImage
                 VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
                 VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
             .oldLayout           = VK_IMAGE_LAYOUT_UNDEFINED,
-            .newLayout           = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+            //.newLayout           = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+            .newLayout           = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
             .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             .image               = image,
@@ -297,6 +298,7 @@ struct DepthImageArray
                 VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
                 VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
             .oldLayout           = VK_IMAGE_LAYOUT_UNDEFINED,
+            //.newLayout           = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
             .newLayout           = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
             .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
@@ -477,7 +479,7 @@ struct RenderImage
     uint32_t        width, height;
     VkImageLayout   layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-    void Create(VkCommandPool cmdPool, VkFormat format, VkSampleCountFlagBits sampleCount)
+    void Create(VkCommandPool cmdPool)
     {
         width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
         height = g_contextPtr->surfaceCapabilities.currentExtent.height;
@@ -487,11 +489,11 @@ struct RenderImage
             .pNext                  = nullptr,
             .flags                  = 0,
             .imageType              = VK_IMAGE_TYPE_2D,
-            .format                 = format,
+            .format                 = g_contextPtr->format,
             .extent                 = VkExtent3D { width, height, 1 },
             .mipLevels              = 1,
             .arrayLayers            = 1,
-            .samples                = sampleCount,
+            .samples                = VK_SAMPLE_COUNT_1_BIT,
             .tiling                 = VK_IMAGE_TILING_OPTIMAL,
             .usage                  = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             .sharingMode            = VK_SHARING_MODE_EXCLUSIVE,
@@ -518,7 +520,7 @@ struct RenderImage
             .flags              = 0, 
             .image              = image, 
             .viewType           = VK_IMAGE_VIEW_TYPE_2D, 
-            .format             = format,
+            .format             = g_contextPtr->format,
             .components         = 
             {
                 .r = VK_COMPONENT_SWIZZLE_R,

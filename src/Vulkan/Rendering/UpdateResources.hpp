@@ -107,6 +107,7 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
     //resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.playerController.GetView(scene.ecs);
     //resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.camera.GetView();
 
+    /*
     //TODO: this should be handled somewhere else which is active
     if (app::glo::inputMode == app::glo::PlayMode){
         resources.common_pushConsts.camera = resources.sky.pushConsts.camera = scene.playerController.camera.perspective * scene.playerController.camera.view;
@@ -177,8 +178,7 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
             resources.terrain.vbo.UpdateGroup(quadrantIdx, hostRes.terrain.GetQuadrant(quadrantIdx).verts);
         }
     }
-    
-
+    */
 }
 
 } //ns

@@ -20,3 +20,6 @@ glslc terrainShadow.vert -o spv/terrainShadow.vert.spv
 
 glslc sky.frag -o spv/sky.frag.spv
 glslc sky.vert -o spv/sky.vert.spv
+
+glslc test.frag -o spv/test.frag.spv
+glslc test.vert -o spv/test.vert.spv

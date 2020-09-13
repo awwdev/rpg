@@ -30,9 +30,8 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
         rp.height,
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
         rp.sampleCount);
-    rp.renderImage->Create(cmdPool, g_contextPtr->format, VK_SAMPLE_COUNT_1_BIT);
-
-
+    rp.renderImage->Create(cmdPool);
+    
     const VkAttachmentDescription colorDesc {
         .flags          = 0 ,
         .format         = g_contextPtr->format, 
@@ -54,7 +53,8 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
         .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
         .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
         .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
-        .finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+        //.finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+        .finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,        
     };
 
     const VkAttachmentDescription resolveDesc {
@@ -75,7 +75,8 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
     };
     const VkAttachmentReference depthRef {
         .attachment = 1,
-        .layout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+        //.layout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+        .layout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL
     };
     const VkAttachmentReference resolveRef {
         .attachment = 2,
@@ -137,19 +138,36 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
     VkCheck(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &rp.renderPass));
 
     //? framebuffers
+    const VkImageView views [] {
+        rp.msaaImage->view,
+        rp.depthImage->view,
+        rp.renderImage->view,
+        //g_contextPtr->swapImageViews[i],
+    };
+
+    const VkFramebufferCreateInfo framebufferInfo{
+        .sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+        .pNext           = nullptr,
+        .flags           = 0,
+        .renderPass      = rp.renderPass,
+        .attachmentCount = ArrayCount(views),
+        .pAttachments    = views,
+        .width           = rp.width,
+        .height          = rp.height,
+        .layers          = 1
+    };
+    
+    VkCheck(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &rp.framebuffer.t));
+    /*
     for (u32 i = 0; i < g_contextPtr->swapImages.count; ++i)
     {
         rp.framebuffers.Append();
-
-        //const VkImageView views [] {
-        //    g_contextPtr->swapImageViews[i],
-        //    rp.depthImage.view,
-        //};
+        rp.renderImages[i].Create(cmdPool, g_contextPtr->format, VK_SAMPLE_COUNT_1_BIT);
 
         const VkImageView views [] {
             rp.msaaImage->view,
             rp.depthImage->view,
-            rp.renderImage->view,
+            rp.renderImages[i].view
             //g_contextPtr->swapImageViews[i],
         };
 
@@ -167,6 +185,7 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
         
         VkCheck(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &rp.framebuffers[i]));
     }
+    */
 }
 
 }//ns
