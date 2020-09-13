@@ -16,4 +16,6 @@ void main()
         outColor += texture(tex, inUV + off);
     }}
     outColor /= 25;
+
+    //outColor = texture(tex, inUV);
 }

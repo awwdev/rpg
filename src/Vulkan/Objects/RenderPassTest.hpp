@@ -14,7 +14,10 @@ struct RenderPassTest
     VkRenderPassBeginInfo beginInfo;
     uint32_t width, height;
 
+    DepthImage    depthImage;
     RenderImage   renderImage;
+    MSAAImage     msaaImage;
+
     VkFramebuffer framebuffer;
 
     ~RenderPassTest()
@@ -27,6 +30,8 @@ struct RenderPassTest
         vkDestroyRenderPass (g_contextPtr->device, renderPass, nullptr);
         vkDestroyFramebuffer(g_contextPtr->device, framebuffer, nullptr);
         renderImage.Clear();    
+        depthImage.Clear();    
+        msaaImage.Clear();
     }
 
     template<idx_t N>

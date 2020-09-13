@@ -9,13 +9,16 @@ namespace rpg::vk {
 
 inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
 {  
+    rp.sampleCount = VK_SAMPLE_COUNT_4_BIT;
     rp.width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
     rp.height = g_contextPtr->surfaceCapabilities.currentExtent.height;
+    constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
+    constexpr VkFormat COLOR_FORMAT = VK_FORMAT_R8G8B8A8_UNORM;
 
     const VkAttachmentDescription colorDesc {
         .flags          = 0 ,
-        .format         = VK_FORMAT_R8G8B8A8_UNORM, 
-        .samples        = VK_SAMPLE_COUNT_1_BIT,
+        .format         = COLOR_FORMAT, 
+        .samples        = rp.sampleCount,
         .loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
         .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -24,8 +27,40 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         .finalLayout    = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
     };
 
+    const VkAttachmentDescription depthDesc {
+        .flags          = 0 ,
+        .format         = DEPTH_FORMAT, 
+        .samples        = rp.sampleCount,
+        .loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
+        .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,        
+    };
+
+    const VkAttachmentDescription resolveDesc {
+        .flags          = 0 ,
+        .format         = COLOR_FORMAT, 
+        .samples        = VK_SAMPLE_COUNT_1_BIT,
+        .loadOp         = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
+        .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout    = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,        
+    };
+
     const VkAttachmentReference colorRef {
         .attachment = 0,
+        .layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+    };
+    const VkAttachmentReference depthRef {
+        .attachment = 1,
+        .layout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+    };
+    const VkAttachmentReference resolveRef {
+        .attachment = 2,
         .layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
     
@@ -36,8 +71,8 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         .pInputAttachments       = nullptr,
         .colorAttachmentCount    = 1,
         .pColorAttachments       = &colorRef,
-        .pResolveAttachments     = nullptr,
-        .pDepthStencilAttachment = nullptr,
+        .pResolveAttachments     = &resolveRef,
+        .pDepthStencilAttachment = &depthRef,
         .preserveAttachmentCount = 0,
         .pPreserveAttachments    = nullptr
     };
@@ -64,12 +99,18 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         }
     };
 
+    const VkAttachmentDescription descs [] {
+        colorDesc,
+        depthDesc,
+        resolveDesc,
+    };
+
     const VkRenderPassCreateInfo renderPassInfo {
         .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
         .pNext           = nullptr,
         .flags           = 0,
-        .attachmentCount = 1,
-        .pAttachments    = &colorDesc,
+        .attachmentCount = ArrayCount(descs),
+        .pAttachments    = descs,
         .subpassCount    = 1,
         .pSubpasses      = &subpassDesc,
         .dependencyCount = ArrayCount(dependencies),
@@ -80,10 +121,14 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
 
     //? framebuffer
 
-    rp.renderImage.Create(cmdPool);
+    rp.renderImage.Create(cmdPool, COLOR_FORMAT);
+    rp.depthImage.Create(cmdPool, DEPTH_FORMAT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, rp.sampleCount);
+    rp.msaaImage.Create(cmdPool, COLOR_FORMAT, rp.sampleCount);
 
     const VkImageView views [] {
-        rp.renderImage.view
+        rp.msaaImage.view,
+        rp.depthImage.view,
+        rp.renderImage.view,
     };
 
     const VkFramebufferCreateInfo framebufferInfo{

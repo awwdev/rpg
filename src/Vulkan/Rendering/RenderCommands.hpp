@@ -168,9 +168,8 @@ inline void Test(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResou
     auto& pi = resources.test.pipeline;
     
     VkClearValue clears [] {
-        {
-            .color { 0, 0, 0, 0 }
-        }
+        { .color { 0, 0, 0, 0 } },
+        { .depthStencil { 0, 0 } },
     };
 
     const auto beginInfo = rp.GetBeginInfo(clears);

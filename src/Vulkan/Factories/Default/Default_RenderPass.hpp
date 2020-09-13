@@ -26,11 +26,11 @@ inline void Default_CreateRenderPass(RenderPass& rp, VkCommandPool cmdPool)
     rp.depthImage->Create(
         cmdPool, 
         DEPTH_FORMAT, 
-        rp.width,
-        rp.height,
+        //rp.width,
+        //rp.height,
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
         rp.sampleCount);
-    rp.renderImage->Create(cmdPool);
+    rp.renderImage->Create(cmdPool, g_contextPtr->format);
     
     const VkAttachmentDescription colorDesc {
         .flags          = 0 ,

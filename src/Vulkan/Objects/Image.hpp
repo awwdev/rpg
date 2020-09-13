@@ -84,17 +84,15 @@ struct DepthImage
     VkImageView     view;
     uint32_t        width, height;
     VkImageLayout   layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    //TODO: probably also move into ctor since shadowMapImg is not same with usual depthImg
 
     void Create(
         VkCommandPool cmdPool, 
         VkFormat format, 
-        uint32_t pWidth, uint32_t pHeight,
         VkImageUsageFlags usage,
         VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT)
     {
-        width  = pWidth; //g_contextPtr->surfaceCapabilities.currentExtent.width;
-        height = pHeight;//g_contextPtr->surfaceCapabilities.currentExtent.height;
+        width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
+        height = g_contextPtr->surfaceCapabilities.currentExtent.height;
 
         const VkImageCreateInfo imageInfo {
             .sType                  = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -369,7 +367,7 @@ struct MSAAImage
             .arrayLayers            = 1,
             .samples                = sampleCount,
             .tiling                 = VK_IMAGE_TILING_OPTIMAL,
-            .usage                  = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+            .usage                  = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
             .sharingMode            = VK_SHARING_MODE_EXCLUSIVE,
             .queueFamilyIndexCount  = 0,
             .pQueueFamilyIndices    = 0,
@@ -479,7 +477,7 @@ struct RenderImage
     uint32_t        width, height;
     VkImageLayout   layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-    void Create(VkCommandPool cmdPool)
+    void Create(VkCommandPool cmdPool, VkFormat format)
     {
         width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
         height = g_contextPtr->surfaceCapabilities.currentExtent.height;
@@ -489,7 +487,7 @@ struct RenderImage
             .pNext                  = nullptr,
             .flags                  = 0,
             .imageType              = VK_IMAGE_TYPE_2D,
-            .format                 = VK_FORMAT_R8G8B8A8_UNORM,
+            .format                 = format,
             .extent                 = VkExtent3D { width, height, 1 },
             .mipLevels              = 1,
             .arrayLayers            = 1,
@@ -520,7 +518,7 @@ struct RenderImage
             .flags              = 0, 
             .image              = image, 
             .viewType           = VK_IMAGE_VIEW_TYPE_2D, 
-            .format             = VK_FORMAT_R8G8B8A8_UNORM,
+            .format             = format,
             .components         = 
             {
                 .r = VK_COMPONENT_SWIZZLE_R,
@@ -539,47 +537,6 @@ struct RenderImage
         };
 
         VkCheck(vkCreateImageView(g_contextPtr->device, &viewInfo, nullptr, &view));
-
-/*
-        //? TRANSITION
-
-        auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
-
-        const VkImageMemoryBarrier barrier
-        {
-            .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-            .pNext               = nullptr,
-            .srcAccessMask       = 0,
-            .dstAccessMask       = VK_ACCESS_TRANSFER_WRITE_BIT,
-            .oldLayout           = VK_IMAGE_LAYOUT_UNDEFINED,
-            .newLayout           = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-            .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-            .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-            .image               = image,
-            .subresourceRange    = 
-            {
-                .aspectMask      = VK_IMAGE_ASPECT_COLOR_BIT,
-                .baseMipLevel    = 0,
-                .levelCount      = 1,
-                .baseArrayLayer  = 0,
-                .layerCount      = 1
-            }
-        };
-
-        //image.layout = newLayout;
-
-        vkCmdPipelineBarrier(
-            cmdBuffer,
-            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-            VK_PIPELINE_STAGE_TRANSFER_BIT,
-            0,
-            0, nullptr,
-            0, nullptr,
-            1, &barrier
-        );
-
-        EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
-*/
     }
 
     ~RenderImage()
