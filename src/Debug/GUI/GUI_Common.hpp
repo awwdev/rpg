@@ -45,22 +45,26 @@ const com::Rect<f32>& rect, const Colors col, const u32 texIdx = FULL_OPAQUE_NO_
     });
     if (blur) {
         using namespace com;
-        com::Vec3f v1 = { rect.x, rect.y, 0 };
-        com::Vec3f v2 = { rect.x + rect.w, rect.y, 0 };
-        com::Vec3f v3 = { rect.x + rect.w, rect.y + rect.h, 0 };
-        com::Vec3f v4 = { rect.x, rect.y + rect.h, 0 };
-        v1 = com::Vec3f{ v1[X] / wnd::glo::window_w, v1[Y] / wnd::glo::window_h, 0.5 } * 2 - 1;
-        v2 = com::Vec3f{ v2[X] / wnd::glo::window_w, v2[Y] / wnd::glo::window_h, 0.5 } * 2 - 1;
-        v3 = com::Vec3f{ v3[X] / wnd::glo::window_w, v3[Y] / wnd::glo::window_h, 0.5 } * 2 - 1;
-        v4 = com::Vec3f{ v4[X] / wnd::glo::window_w, v4[Y] / wnd::glo::window_h, 0.5 } * 2 - 1;
+        com::Vec2f v1 = { rect.x, rect.y };
+        com::Vec2f v2 = { rect.x + rect.w, rect.y };
+        com::Vec2f v3 = { rect.x + rect.w, rect.y + rect.h };
+        com::Vec2f v4 = { rect.x, rect.y + rect.h };
+        const auto uv1 = com::Vec2f{ v1[X] / wnd::glo::window_w, v1[Y] / wnd::glo::window_h };
+        const auto uv2 = com::Vec2f{ v2[X] / wnd::glo::window_w, v2[Y] / wnd::glo::window_h };
+        const auto uv3 = com::Vec2f{ v3[X] / wnd::glo::window_w, v3[Y] / wnd::glo::window_h };
+        const auto uv4 = com::Vec2f{ v4[X] / wnd::glo::window_w, v4[Y] / wnd::glo::window_h };
+        v1 = uv1 * 2 - 1;
+        v2 = uv2 * 2 - 1;
+        v3 = uv3 * 2 - 1;
+        v4 = uv4 * 2 - 1;
 
         com::Post_Vertex verts [] {
-            {v1, {0, 0} , 1},
-            {v2, {1, 0} , 1},
-            {v3, {1, 1} , 1},
-            {v1, {0, 0} , 1},
-            {v3, {1, 1} , 1},
-            {v4, {0, 1} , 1},
+            {v1, uv1, 1},
+            {v2, uv2, 1},
+            {v3, uv3, 1},
+            {v1, uv1, 1},
+            {v3, uv3, 1},
+            {v4, uv4, 1},
         };
         renderData.gui_vbo_blur.AppendArray(verts);
     }

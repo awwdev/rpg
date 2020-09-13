@@ -29,7 +29,7 @@ struct Common_Vertex
 
 struct Post_Vertex
 {
-    alignas(16) com::Vec3f pos;
+    alignas(16) com::Vec2f pos;
     alignas(16) com::Vec2f tex;
     alignas(16) int32_t blur;
 };

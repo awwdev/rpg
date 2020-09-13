@@ -21,9 +21,9 @@ struct RenderData
 
     com::Array<com::Post_Vertex, UI_VBO_BLUR_COUNT> gui_vbo_blur {
         //first 3 vertices used to draw stuff from previous offscreen (full screen tris)
-        com::Post_Vertex{ {-1,-1, 0}, {0, 0}, 0},
-        com::Post_Vertex{ { 3,-1, 0}, {2, 0}, 0},
-        com::Post_Vertex{ {-1, 3, 0}, {0, 2}, 0},
+        com::Post_Vertex{ {-1,-1 }, {0, 0}, 0},
+        com::Post_Vertex{ { 3,-1 }, {2, 0}, 0},
+        com::Post_Vertex{ {-1, 3 }, {0, 2}, 0},
     };
     
     static auto constexpr CASCADE_COUNT = 3;

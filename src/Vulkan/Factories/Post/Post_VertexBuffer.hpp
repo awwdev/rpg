@@ -25,7 +25,7 @@ inline void Post_CreateVertexBuffer(Post_VertexBuffer& vbo, VkCommandPool cmdPoo
     vbo.attributes.Append(VkVertexInputAttributeDescription{
         .location   = 0,
         .binding    = 0, 
-        .format     = VK_FORMAT_R32G32B32_SFLOAT,
+        .format     = VK_FORMAT_R32G32_SFLOAT,
         .offset     = offsetof(com::Post_Vertex, pos),
     });
     vbo.attributes.Append(VkVertexInputAttributeDescription{
