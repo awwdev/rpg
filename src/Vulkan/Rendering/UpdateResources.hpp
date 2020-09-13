@@ -154,14 +154,17 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
 
     resources.common_pushConsts.sunBias= BIAS * scene.sun.GetOrthographic(0) * scene.sun.GetView();
     resources.common_pushConsts.sunDir = com::Normalize(scene.sun.pos * 1);
-    resources.ui.pushConsts.wnd_w = wnd::glo::window_w;
-    resources.ui.pushConsts.wnd_h = wnd::glo::window_h;
+    
     resources.sky.pushConsts.topColor = { 0.1f, 0.1f, 1.0f, 1 };
     resources.sky.pushConsts.botColor = { 1.0f, 1.0f, 1.0f, 1 };
+    */
 
+    resources.ui.pushConsts.wnd_w = wnd::glo::window_w;
+    resources.ui.pushConsts.wnd_h = wnd::glo::window_h;
     resources.ui.ubo.Clear();
     resources.ui.ubo.Store(scene.renderData.gui_ubo);
 
+    /*
     resources.common.ubo.Clear();
     resources.common.ubo.Store(scene.renderData.common_ubo);
 
@@ -179,6 +182,7 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
         }
     }
     */
+    
 }
 
 } //ns

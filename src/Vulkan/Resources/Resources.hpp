@@ -39,7 +39,7 @@ struct VkResources
         //sky.Create(cmdPool, common);
         test.Create(cmdPool);
         //post.Create(cmdPool);
-        //ui.Create(hostRes, cmdPool);
+        ui.Create(hostRes, cmdPool);
     }
 
     void RecreateSwapchain(VkCommandPool cmdPool)
@@ -50,7 +50,7 @@ struct VkResources
         //sky.Recreate(cmdPool, common);    
         test.Recreate(cmdPool);    
         //post.Recreate();       
-        //ui.Recreate();
+        ui.Recreate();
     } 
 };
 

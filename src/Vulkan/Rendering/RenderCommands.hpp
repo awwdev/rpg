@@ -148,12 +148,12 @@ inline void Post(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResou
 
 inline void UI(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene&)
 {
-    const auto beginInfo_ui = resources.ui.renderPass.GetBeginInfo(cmdBufferIdx);
-    vkCmdBeginRenderPass(cmdBuffer, &beginInfo_ui, VK_SUBPASS_CONTENTS_INLINE);
+    const auto beginInfo = resources.ui.renderPass.GetBeginInfo(cmdBufferIdx);
+
+    vkCmdBeginRenderPass    (cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdPushConstants      (cmdBuffer, resources.ui.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.ui.pushConsts), &resources.ui.pushConsts);
     vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.pipeline);
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.ui.pipeline.layout, 0, 1, &resources.ui.pipeline.sets[cmdBufferIdx], 0, nullptr); 
-    
     if (resources.ui.ubo.count > 0)
         vkCmdDraw(cmdBuffer, resources.ui.ubo.count * 6, 1, 0, 0); 
 
@@ -173,6 +173,8 @@ inline void Test(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResou
 
     const auto beginInfo = rp.GetBeginInfo(clears);
     vkCmdBeginRenderPass(cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBindPipeline   (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pi.pipeline);
+    vkCmdDraw           (cmdBuffer, 3, 1, 0, 0);
     vkCmdEndRenderPass  (cmdBuffer);
 }
 
@@ -187,11 +189,12 @@ inline void RecordCommands(
     const auto beginInfo = vk::CreateCmdBeginInfo();
     VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
 
-    Test(cmdBuffer, cmdBufferIdx, resources, scene);
     //ShadowMap   (cmdBuffer, cmdBufferIdx, resources, scene);
     //Geometry    (cmdBuffer, cmdBufferIdx, resources, scene);
     //Post        (cmdBuffer, cmdBufferIdx, resources, scene);
-    //UI          (cmdBuffer, cmdBufferIdx, resources, scene); 
+
+    Test(cmdBuffer, cmdBufferIdx, resources, scene);
+    UI(cmdBuffer, cmdBufferIdx, resources, scene); 
 
     VkCheck(vkEndCommandBuffer(cmdBuffer));
 }

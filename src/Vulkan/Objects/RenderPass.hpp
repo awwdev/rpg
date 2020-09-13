@@ -78,8 +78,7 @@ struct RenderPass
             .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
             .pNext          = nullptr,
             .renderPass     = renderPass,
-            //.framebuffer    = framebuffers[framBufferIdx],
-            .framebuffer    = framebuffer.t,
+            .framebuffer    = framebuffers[framBufferIdx],
             .renderArea     = {
                 .offset     = VkOffset2D {0, 0},
                 .extent     = { width, height }
