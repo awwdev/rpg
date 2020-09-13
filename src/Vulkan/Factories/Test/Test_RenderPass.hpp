@@ -14,7 +14,7 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
 
     const VkAttachmentDescription colorDesc {
         .flags          = 0 ,
-        .format         = g_contextPtr->format, 
+        .format         = VK_FORMAT_R8G8B8A8_UNORM, 
         .samples        = VK_SAMPLE_COUNT_1_BIT,
         .loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,

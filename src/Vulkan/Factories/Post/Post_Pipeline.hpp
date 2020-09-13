@@ -71,7 +71,7 @@ void Post_CreatePipeline(
         .depthClampEnable        = VK_FALSE,
         .rasterizerDiscardEnable = VK_FALSE,
         .polygonMode             = VK_POLYGON_MODE_FILL,
-        .cullMode                = VK_CULL_MODE_BACK_BIT,
+        .cullMode                = VK_CULL_MODE_NONE,
         .frontFace               = VK_FRONT_FACE_CLOCKWISE,
         .depthBiasEnable         = VK_FALSE,
         .depthBiasConstantFactor = 0.f,
@@ -108,9 +108,9 @@ void Post_CreatePipeline(
     };
 
     const VkPipelineColorBlendAttachmentState colorBlend {
-        .blendEnable                = VK_TRUE,
-        .srcColorBlendFactor        = VK_BLEND_FACTOR_SRC_ALPHA,
-        .dstColorBlendFactor        = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, 
+        .blendEnable                = VK_FALSE,
+        .srcColorBlendFactor        = VK_BLEND_FACTOR_ONE,
+        .dstColorBlendFactor        = VK_BLEND_FACTOR_ZERO, 
         .colorBlendOp               = VK_BLEND_OP_ADD,
         .srcAlphaBlendFactor        = VK_BLEND_FACTOR_ONE,
         .dstAlphaBlendFactor        = VK_BLEND_FACTOR_ZERO,
@@ -130,7 +130,7 @@ void Post_CreatePipeline(
         .logicOp         = VK_LOGIC_OP_COPY,
         .attachmentCount = 1,
         .pAttachments    = &colorBlend,
-        .blendConstants  = { 0.f, 0.f, 0.f, 0.f }
+        .blendConstants  = { 1.f, 1.f, 1.f, 1.f }
     };
 
     const VkPushConstantRange constantRange {

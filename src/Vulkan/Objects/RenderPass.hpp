@@ -69,10 +69,8 @@ struct RenderPass
             renderImage->Clear();            
     }
 
-    VkRenderPassBeginInfo GetBeginInfo(
-        const u32 framBufferIdx, 
-        const u32 clearCount = 0, 
-        const VkClearValue* clears = nullptr) 
+    template<idx_t N>
+    VkRenderPassBeginInfo GetBeginInfo(const u32 framBufferIdx, const VkClearValue (&clears) [N]) 
     {
         return {
             .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
@@ -83,8 +81,24 @@ struct RenderPass
                 .offset     = VkOffset2D {0, 0},
                 .extent     = { width, height }
             },
-            .clearValueCount= clearCount,
+            .clearValueCount= N,
             .pClearValues   = clears
+        };
+    }
+
+    VkRenderPassBeginInfo GetBeginInfo(const u32 framBufferIdx) 
+    {
+        return {
+            .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            .pNext          = nullptr,
+            .renderPass     = renderPass,
+            .framebuffer    = framebuffers[framBufferIdx],
+            .renderArea     = {
+                .offset     = VkOffset2D {0, 0},
+                .extent     = { width, height }
+            },
+            .clearValueCount= 0,
+            .pClearValues   = nullptr
         };
     }
     

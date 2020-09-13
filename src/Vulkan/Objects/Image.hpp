@@ -489,7 +489,7 @@ struct RenderImage
             .pNext                  = nullptr,
             .flags                  = 0,
             .imageType              = VK_IMAGE_TYPE_2D,
-            .format                 = g_contextPtr->format,
+            .format                 = VK_FORMAT_R8G8B8A8_UNORM,
             .extent                 = VkExtent3D { width, height, 1 },
             .mipLevels              = 1,
             .arrayLayers            = 1,
@@ -520,7 +520,7 @@ struct RenderImage
             .flags              = 0, 
             .image              = image, 
             .viewType           = VK_IMAGE_VIEW_TYPE_2D, 
-            .format             = g_contextPtr->format,
+            .format             = VK_FORMAT_R8G8B8A8_UNORM,
             .components         = 
             {
                 .r = VK_COMPONENT_SWIZZLE_R,

@@ -19,7 +19,7 @@ namespace rpg::vk {
 inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t, VkResources& resources, const app::GameScene& scene)
 {
     VkDeviceSize offsets {};
-    const VkClearValue clears_shadow [] { 
+    const VkClearValue clears [] { 
         { .depthStencil = { 0, 0 } } //reversed z        
     };
 
@@ -29,7 +29,7 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t, VkResources& re
 
     for(uint32_t cascadeIdx = 0; cascadeIdx < renderPassShadow.layerCount; ++cascadeIdx)
     {
-        const auto beginInfo = renderPassShadow.GetBeginInfo(cascadeIdx, ArrayCount(clears_shadow), clears_shadow);
+        const auto beginInfo = renderPassShadow.GetBeginInfo(cascadeIdx, ArrayCount(clears), clears);
         vkCmdBeginRenderPass    (cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineTerrain.pipeline);
         pushConsts.cascade = cascadeIdx;
@@ -72,13 +72,13 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t, VkResources& re
 
 inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene& scene)
 {
-    const VkClearValue clears_default [] { 
+    const VkClearValue clears [] { 
         { .color = { 0.0f, 0.0f, 0.0f, 0.0f } },
         { .depthStencil = { 0, 0 } }, //reversed z
         { .color = { 1.0f, 1.0f, 1.0f, 1.0f } },//ignored
     };
 
-    const auto beginInfo_default = resources.common.renderPass.GetBeginInfo(cmdBufferIdx, ArrayCount(clears_default), clears_default);
+    const auto beginInfo_default = resources.common.renderPass.GetBeginInfo(cmdBufferIdx, clears);
     VkDeviceSize offsets {};
 
     vkCmdBeginRenderPass(cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
@@ -138,7 +138,9 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
 
 inline void Post(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene&)
 {
-    const auto beginInfo = resources.post.renderPass.GetBeginInfo(cmdBufferIdx);
+    VkClearValue clears [] { { .color { 0, 0, 0, 0 } } };
+
+    const auto beginInfo = resources.post.renderPass.GetBeginInfo(cmdBufferIdx, clears);
     vkCmdBeginRenderPass    (cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.post.pipeline.pipeline);
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.post.pipeline.layout, 0, 1, &resources.post.pipeline.sets[cmdBufferIdx], 0, nullptr); 
@@ -167,7 +169,7 @@ inline void Test(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResou
     
     VkClearValue clears [] {
         {
-            .color { 0, 0, 0, 1 }
+            .color { 0, 0, 0, 0 }
         }
     };
 
@@ -191,10 +193,10 @@ inline void RecordCommands(
 
     //ShadowMap   (cmdBuffer, cmdBufferIdx, resources, scene);
     //Geometry    (cmdBuffer, cmdBufferIdx, resources, scene);
-    //Post        (cmdBuffer, cmdBufferIdx, resources, scene);
 
-    Test(cmdBuffer, cmdBufferIdx, resources, scene);
-    UI(cmdBuffer, cmdBufferIdx, resources, scene); 
+    Test    (cmdBuffer, cmdBufferIdx, resources, scene);
+    Post    (cmdBuffer, cmdBufferIdx, resources, scene);
+    UI      (cmdBuffer, cmdBufferIdx, resources, scene); 
 
     VkCheck(vkEndCommandBuffer(cmdBuffer));
 }
