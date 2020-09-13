@@ -101,17 +101,9 @@ inline void CreateCascades2(com::Mat4f (&cascades)[3], const app::GameScene& sce
 
 inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& scene, res::HostResources& hostRes, double dt, Commands& commands)
 {
-    constexpr auto x = (2 << 1) & 2;
-    constexpr auto y = 2 & 2;
-
     //? POST
-    com::Array<com::Post_Vertex, 100> postVertices;
-    postVertices.Append(com::Post_Vertex{ {-1,-1, 0}, {0, 0}, 1});
-    postVertices.Append(com::Post_Vertex{ { 3,-1, 0}, {2, 0}, 1});
-    postVertices.Append(com::Post_Vertex{ {-1, 3, 0}, {0, 2}, 1});
-
     resources.post.vbo.Clear();
-    resources.post.vbo.StoreGroup(postVertices.Data(), postVertices.count);
+    resources.post.vbo.StoreGroup(scene.renderData.gui_vbo_blur.Data(), scene.renderData.gui_vbo_blur.count);
 
     //? UI
     resources.ui.pushConsts.wnd_w = wnd::glo::window_w;

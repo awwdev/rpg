@@ -66,23 +66,34 @@ struct Array
     template<auto OTHER_N>
     void AppendArray(const Array<T, OTHER_N>& other)
     {
-        ArrayAssert((count + other.count) <= CAPACITY, "array capacity exhausted");
+        ArrayAssert(count + other.count <= CAPACITY, "array capacity exhausted");
         FOR_ARRAY(other, i) {
             PlacementNew(other[i]);
             ++count;
         }
     }
 
-    void Clear()
+    template<auto OTHER_N>
+    void AppendArray(const T (&arr)[OTHER_N])
     {
+        ArrayAssert(count + OTHER_N <= CAPACITY, "array capacity exhausted");
+        FOR_CARRAY(arr, i) {
+            PlacementNew(arr[i]);
+            ++count;
+        }
+    }
+
+    void Clear(const idx_t begin = 0)
+    {
+        ArrayAssert(begin <= count, "clear begin idx is bigger than array count");
         if constexpr (!std::is_trivial_v<T>) 
         {
-            while(count > 0){
+            while(count > begin){
                 --count;
                 this->operator[](count).~T();
             }   
         }
-        else count = 0;
+        else count = begin;
     }
 
     //? HELPER

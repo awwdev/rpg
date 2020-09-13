@@ -10,7 +10,7 @@
 
 namespace rpg::vk {
 
-using Post_VertexBuffer = VertexBuffer<com::Post_Vertex, 100>;
+using Post_VertexBuffer = VertexBuffer<com::Post_Vertex, gpu::UI_VBO_BLUR_COUNT>;
 
 inline void Post_CreateVertexBuffer(Post_VertexBuffer& vbo, VkCommandPool cmdPool)
 {  

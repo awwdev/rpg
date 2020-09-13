@@ -204,6 +204,17 @@ auto operator-(const Mat<T, Y, X>& m1, const Mat<T, Y, X>& m2)
     return out;
 }
 
+template<class T, auto Y, auto X, class SCALAR>
+auto operator-(const Mat<T, Y, X>& m1, const SCALAR scalar) 
+{
+    Mat<T, Y, X> out;
+    for (u8 y = 0; y < Y; ++y) {
+    for (u8 x = 0; x < X; ++x) {
+        out[y][x] = m1[y][x] - scalar;
+    }}
+    return out;
+}
+
 //? MAT INVERSE
 
 template<class T, auto Y, auto X>

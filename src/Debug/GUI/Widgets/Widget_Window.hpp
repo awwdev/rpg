@@ -47,7 +47,7 @@ struct Widget_Window
             com::Clamp(rect.h, limits.y, limits.h);
         }
 
-        AddRect(renderData, rect, Colors::Black2_Alpha);
+        AddRect(renderData, rect, Colors::Black2_Alpha, FULL_OPAQUE_NO_TEXTURE, true);
         AddRect(renderData, bar, isMouseOnBar ? Colors::Black4 : Colors::Black1);
         AddRect(renderData, resizer, isMouseOnResizer ? Colors::Red : Colors::Black3);
         AddTextCentered(renderData, title, bar, Colors::Orange);
