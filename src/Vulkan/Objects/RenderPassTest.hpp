@@ -4,7 +4,6 @@
 #include "Vulkan/Core.hpp"
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Objects/Image.hpp"
-#include "Vulkan/Objects/Image2.hpp"
 
 namespace rpg::vk {
 
@@ -15,9 +14,9 @@ struct RenderPassTest
     VkRenderPassBeginInfo beginInfo;
     uint32_t width, height;
 
-    DepthImage    depthImage;
-    Image2        renderImage;
-    Image2        msaaImage;
+    Image depthImage;
+    Image renderImage;
+    Image msaaImage;
 
     VkFramebuffer framebuffer;
 

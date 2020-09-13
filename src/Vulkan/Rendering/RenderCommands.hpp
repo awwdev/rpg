@@ -139,11 +139,13 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
 inline void Post(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene&)
 {
     VkClearValue clears [] { { .color { 0, 0, 0, 0 } } };
+    VkDeviceSize offsets [1] {0};
 
     const auto beginInfo = resources.post.renderPass.GetBeginInfo(cmdBufferIdx, clears);
     vkCmdBeginRenderPass    (cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.post.pipeline.pipeline);
     vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.post.pipeline.layout, 0, 1, &resources.post.pipeline.sets[cmdBufferIdx], 0, nullptr); 
+    vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.post.vbo.activeBuffer->buffer, offsets);
     vkCmdDraw               (cmdBuffer, 3, 1, 0, 0); 
     vkCmdEndRenderPass      (cmdBuffer);
 }

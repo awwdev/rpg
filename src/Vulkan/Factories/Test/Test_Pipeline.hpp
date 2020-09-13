@@ -10,7 +10,7 @@
 
 namespace rpg::vk {
 
-void Test_CreatePipeline(
+inline void Test_CreatePipeline(
     Pipeline& pipeline,
     Shader& shader, 
     RenderPassTest& renderPass)
@@ -62,7 +62,7 @@ void Test_CreatePipeline(
         .depthClampEnable        = VK_FALSE,
         .rasterizerDiscardEnable = VK_FALSE,
         .polygonMode             = VK_POLYGON_MODE_FILL,
-        .cullMode                = VK_CULL_MODE_NONE,
+        .cullMode                = VK_CULL_MODE_BACK_BIT,
         .frontFace               = VK_FRONT_FACE_CLOCKWISE,
         .depthBiasEnable         = VK_FALSE,
         .depthBiasConstantFactor = 0.f,

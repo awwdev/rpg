@@ -141,7 +141,17 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
     );
 
-    rp.depthImage.Create(cmdPool, DEPTH_FORMAT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, rp.sampleCount);
+    rp.depthImage.Create(
+        DEPTH_FORMAT,
+        extent.width, extent.height,
+        rp.sampleCount,
+        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+        VK_IMAGE_ASPECT_DEPTH_BIT,
+        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    );
+    rp.depthImage.Transition(cmdPool, VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_DEPTH_BIT);
+
+    //rp.depthImage.Create(cmdPool, DEPTH_FORMAT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, rp.sampleCount);
 
     const VkImageView views [] {
         rp.msaaImage.view,

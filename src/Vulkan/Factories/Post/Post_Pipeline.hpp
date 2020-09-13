@@ -1,31 +1,27 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Vulkan/Core.hpp"
-#include "Vulkan/Context.hpp"
-#include "Vulkan/Objects/Shader.hpp"
-#include "Vulkan/Objects/VertexBuffer.hpp"
-#include "Vulkan/Objects/UniformBuffer.hpp"
-#include "Vulkan/Objects/PushConstants.hpp"
 #include "Vulkan/Objects/Pipeline.hpp"
 #include "Vulkan/Objects/RenderPass.hpp"
-#include "GPU/RenderData.hpp"
+#include "Vulkan/Factories/Post/Post_VertexBuffer.hpp"
+
 
 namespace rpg::vk {
 
 void Post_CreatePipeline(
     Pipeline& pipeline,
     Shader& shader, 
-    RenderPass& renderPass)
+    RenderPass& renderPass,
+    Post_VertexBuffer& vbo)
 {
     const VkPipelineVertexInputStateCreateInfo vertexInput {
         .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .pNext                           = nullptr,
         .flags                           = 0,
-        .vertexBindingDescriptionCount   = 0,
-        .pVertexBindingDescriptions      = nullptr,
-        .vertexAttributeDescriptionCount = 0,
-        .pVertexAttributeDescriptions    = nullptr
+        .vertexBindingDescriptionCount   = vbo.bindings.count,
+        .pVertexBindingDescriptions      = vbo.bindings.Data(),
+        .vertexAttributeDescriptionCount = vbo.attributes.count,
+        .pVertexAttributeDescriptions    = vbo.attributes.Data()
     };
 
     //! MIS MATCH

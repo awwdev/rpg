@@ -101,7 +101,38 @@ inline void CreateCascades2(com::Mat4f (&cascades)[3], const app::GameScene& sce
 
 inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& scene, res::HostResources& hostRes, double dt, Commands& commands)
 {
-    
+    constexpr auto x = (2 << 1) & 2;
+    constexpr auto y = 2 & 2;
+
+    //? POST
+    com::Array<com::Post_Vertex, 100> postVertices;
+    postVertices.Append(com::Post_Vertex{ {-1,-1, 0}, {0, 0}, 1});
+    postVertices.Append(com::Post_Vertex{ { 3,-1, 0}, {2, 0}, 1});
+    postVertices.Append(com::Post_Vertex{ {-1, 3, 0}, {0, 2}, 1});
+
+    resources.post.vbo.Clear();
+    resources.post.vbo.StoreGroup(postVertices.Data(), postVertices.count);
+
+    //? UI
+    resources.ui.pushConsts.wnd_w = wnd::glo::window_w;
+    resources.ui.pushConsts.wnd_h = wnd::glo::window_h;
+    resources.ui.ubo.Clear();
+    resources.ui.ubo.Store(scene.renderData.gui_ubo);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //resources.common_pushConsts.camera = scene.camera.GetOrthographic() * scene.sun.GetView();
     //resources.common_pushConsts.camera = scene.camera.GetPerspective()  * scene.playerController.GetView(scene.ecs);
@@ -159,10 +190,7 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
     resources.sky.pushConsts.botColor = { 1.0f, 1.0f, 1.0f, 1 };
     */
 
-    resources.ui.pushConsts.wnd_w = wnd::glo::window_w;
-    resources.ui.pushConsts.wnd_h = wnd::glo::window_h;
-    resources.ui.ubo.Clear();
-    resources.ui.ubo.Store(scene.renderData.gui_ubo);
+   
 
     /*
     resources.common.ubo.Clear();

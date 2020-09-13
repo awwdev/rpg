@@ -3,7 +3,7 @@
 #pragma once
 #include "Vulkan/Core.hpp"
 #include "Vulkan/Context.hpp"
-#include "Vulkan/Objects/Image.hpp"
+#include "Vulkan/Objects/ImageOld.hpp"
 
 #include "Common/Container/Array.hpp"
 
@@ -37,9 +37,9 @@ struct RenderPass
     VkRenderPassBeginInfo beginInfo; //!set in factory
     uint32_t width, height;
 
-    com::Optional<DepthImage>  depthImage;
-    com::Optional<MSAAImage>   msaaImage;
-    com::Optional<RenderImage> renderImage;
+    com::Optional<DepthImage2>  depthImage;
+    com::Optional<MSAAImage2>   msaaImage;
+    com::Optional<RenderImage2> renderImage;
 
     com::Array<VkFramebuffer, 4> framebuffers;
     com::Optional<VkFramebuffer> framebuffer;

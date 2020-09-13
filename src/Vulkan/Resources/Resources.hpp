@@ -38,7 +38,7 @@ struct VkResources
         //terrain.Create(hostRes, cmdPool, shadow, common);
         //sky.Create(cmdPool, common);
         test.Create(cmdPool);
-        post.Create(test);
+        post.Create(test, cmdPool);
         ui.Create(hostRes, cmdPool);
     }
 

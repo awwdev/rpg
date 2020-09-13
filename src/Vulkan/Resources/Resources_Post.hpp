@@ -8,20 +8,23 @@
 #include "Vulkan/Factories/Post/Post_RenderPass.hpp"
 #include "Vulkan/Factories/Post/Post_Pipeline.hpp"
 #include "Vulkan/Factories/Post/Post_Shader.hpp"
+#include "Vulkan/Factories/Post/Post_VertexBuffer.hpp"
 
 namespace rpg::vk {
 
 struct Resources_Post
 {
-    RenderPass       renderPass;
-    Shader           shader;
-    Pipeline         pipeline;
+    RenderPass        renderPass;
+    Shader            shader;
+    Pipeline          pipeline;
+    Post_VertexBuffer vbo;
 
-    void Create(vk::Resources_Test& test)
+    void Create(vk::Resources_Test& test, VkCommandPool cmdPool)
     {
+        Post_CreateVertexBuffer     (vbo, cmdPool);
         Post_CreateShader           (shader, test.renderPass.renderImage);
         Post_CreateRenderPass       (renderPass);
-        Post_CreatePipeline         (pipeline, shader, renderPass);
+        Post_CreatePipeline         (pipeline, shader, renderPass, vbo);
     }
 
     void Recreate(vk::Resources_Test& test)
@@ -31,7 +34,7 @@ struct Resources_Post
         shader.Clear();
         Post_CreateShader           (shader, test.renderPass.renderImage);
         Post_CreateRenderPass       (renderPass);
-        Post_CreatePipeline         (pipeline, shader, renderPass);
+        Post_CreatePipeline         (pipeline, shader, renderPass, vbo);
     }
 };
 
