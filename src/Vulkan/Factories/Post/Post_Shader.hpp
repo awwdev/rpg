@@ -10,7 +10,7 @@
 
 namespace rpg::vk {
     
-inline void Post_CreateShader(Shader& shader, RenderImage& renderImage)
+inline void Post_CreateShader(Shader& shader, Image2& renderImage)
 {  
     shader.CreateShaderModule("res/Shaders/spv/post.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
     shader.CreateShaderModule("res/Shaders/spv/post.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);

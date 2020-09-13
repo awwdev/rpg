@@ -15,6 +15,7 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
     constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
     constexpr VkFormat COLOR_FORMAT = VK_FORMAT_R8G8B8A8_UNORM;
 
+    //? ATTACHMENTS
     const VkAttachmentDescription colorDesc {
         .flags          = 0 ,
         .format         = COLOR_FORMAT, 
@@ -51,6 +52,12 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         .finalLayout    = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,        
     };
 
+    const VkAttachmentDescription descs [] {
+        colorDesc,
+        depthDesc,
+        resolveDesc,
+    };
+
     const VkAttachmentReference colorRef {
         .attachment = 0,
         .layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
@@ -64,6 +71,7 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         .layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
     
+    //? SUBPASS
     const VkSubpassDescription subpassDesc {
         .flags                   = 0,
         .pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -76,7 +84,6 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         .preserveAttachmentCount = 0,
         .pPreserveAttachments    = nullptr
     };
-
     VkSubpassDependency dependencies []
     {
         {
@@ -99,12 +106,7 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         }
     };
 
-    const VkAttachmentDescription descs [] {
-        colorDesc,
-        depthDesc,
-        resolveDesc,
-    };
-
+    //? RENDERPASS
     const VkRenderPassCreateInfo renderPassInfo {
         .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
         .pNext           = nullptr,
@@ -116,14 +118,30 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         .dependencyCount = ArrayCount(dependencies),
         .pDependencies   = dependencies
     };
-
     VkCheck(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &rp.renderPass));
 
-    //? framebuffer
+    //? IMAGES
+    const auto& extent = g_contextPtr->surfaceCapabilities.currentExtent;
+    rp.msaaImage.Create(
+        COLOR_FORMAT,
+        extent.width, extent.height,
+        rp.sampleCount,
+        VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
+        VK_IMAGE_ASPECT_COLOR_BIT,
+        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+    );
+    rp.msaaImage.Transition(cmdPool, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT);
 
-    rp.renderImage.Create(cmdPool, COLOR_FORMAT);
+    rp.renderImage.Create(
+        COLOR_FORMAT,
+        extent.width, extent.height,
+        VK_SAMPLE_COUNT_1_BIT,
+        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+        VK_IMAGE_ASPECT_COLOR_BIT,
+        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    );
+
     rp.depthImage.Create(cmdPool, DEPTH_FORMAT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, rp.sampleCount);
-    rp.msaaImage.Create(cmdPool, COLOR_FORMAT, rp.sampleCount);
 
     const VkImageView views [] {
         rp.msaaImage.view,
@@ -131,6 +149,7 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         rp.renderImage.view,
     };
 
+    //? FRAMEBUFFER
     const VkFramebufferCreateInfo framebufferInfo{
         .sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
         .pNext           = nullptr,
@@ -142,7 +161,6 @@ inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         .height          = rp.height,
         .layers          = 1
     };
-    
     VkCheck(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &rp.framebuffer));
 
 }    

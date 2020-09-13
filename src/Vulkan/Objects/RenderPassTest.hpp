@@ -4,19 +4,20 @@
 #include "Vulkan/Core.hpp"
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Objects/Image.hpp"
+#include "Vulkan/Objects/Image2.hpp"
 
 namespace rpg::vk {
 
 struct RenderPassTest
 {
     VkRenderPass renderPass;
-    VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT;
+    VkSampleCountFlagBits sampleCount;
     VkRenderPassBeginInfo beginInfo;
     uint32_t width, height;
 
     DepthImage    depthImage;
-    RenderImage   renderImage;
-    MSAAImage     msaaImage;
+    Image2        renderImage;
+    Image2        msaaImage;
 
     VkFramebuffer framebuffer;
 
