@@ -40,6 +40,14 @@ struct States
         post.Record();
         gui.Record();
     }
+
+    void Clear()
+    {
+        shadow.Clear();
+        general.Clear();
+        post.Clear();
+        gui.Clear();
+    }
 };
 
 } //ns

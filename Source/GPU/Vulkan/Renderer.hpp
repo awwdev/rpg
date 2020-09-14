@@ -2,26 +2,19 @@
 
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources.hpp"
+#include "GPU/Vulkan/States/States.hpp"
+#include "GPU/Vulkan/Meta/Synchronization.hpp"
+
 #include "Resources/CpuResources.hpp"
 #include "App/Scene.hpp"
 #include "GPU/RenderData.hpp"
-#include "Common/Structs.hpp"
-#include "Common/Container/String.hpp"
 #include "Window/WindowEvents.hpp"
-#include "Common/DeltaTime.hpp"
-
-#include "GPU/Vulkan/_Old/Transfer/RenderCommands.hpp"
-#include "GPU/Vulkan/_Old/Transfer/UpdateGpuResources.hpp"
-
-#include "GPU/Vulkan/States/States.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct Renderer
 {
     Context         context;
-    VkResources     resources;
     States          states;
     Commands        commands;
     Synchronization sync;
@@ -32,26 +25,27 @@ struct Renderer
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
-        resources.Create(hostResources, commands.cmdPool);
+        //resources.Create(hostResources, commands.cmdPool);
+        states.Create(hostResources, commands.cmdPool);
     }
 
-    void RecreateScwapchain()
+    void RecreateScwapchain(res::HostResources& hostResources)
     {
         vkDeviceWaitIdle(context.device);
         if (!context.RecreateSwapchain())
             return;
 
-        resources.RecreateSwapchain(commands.cmdPool);
-
         commands.Clear();
         commands.Create();
+        states.Clear();
+        states.Create(hostResources, commands.cmdPool);
     }
 
     void Render(const double dt, app::GameScene& scene, res::HostResources& hostRes)
     {
         if (wnd::glo::resizeState != wnd::glo::ResizeState::None){
             if (wnd::glo::resizeState == wnd::glo::ResizeState::End)
-                RecreateScwapchain();
+                RecreateScwapchain(hostRes);
             return;
         } //checking for size==0 is done previously (will also pause other logic)
 
@@ -71,7 +65,7 @@ struct Renderer
         switch(acquireRes)
         {
             case VK_SUCCESS: break;
-            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(); return; //when?!
+            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(hostRes); return; //when?!
             default: return;
         }
 
@@ -84,8 +78,6 @@ struct Renderer
         //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
         states.Update();
         states.Record();
-        //UpdateVkResources_GameScene(resources, scene, hostRes, dt, commands); //TODO: depends on scene
-        //RecordCommands(resources, commands, imageIndex, dt, scene);
         //!--------------------------------------------------
 
         const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
