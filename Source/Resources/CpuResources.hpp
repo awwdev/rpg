@@ -21,8 +21,8 @@ struct Textures
 
     void Load()
     {
-        monospaceFont.LoadArray("res/TextureArrays/MonospaceFont"); //RLE would be nice
-        common.LoadArray("res/TextureArrays/Default");
+        monospaceFont.LoadArray("AssetsApp/TextureArrays/MonospaceFont"); //RLE would be nice
+        common.LoadArray("AssetsApp/TextureArrays/Default");
     }
 };
 
@@ -56,10 +56,10 @@ struct Models
             tmp.Clear();
         };
 
-        LoadModelFn("res/Models/sword.txt", res::MeshType::Sword);
-        LoadModelFn("res/Models/grass.txt", res::MeshType::Grass);
-        LoadModelFn("res/Models/stone.txt", res::MeshType::Stone);
-        LoadModelFn("res/Models/tree.txt",  res::MeshType::Tree);
+        LoadModelFn("AssetsApp/Models/sword.txt", res::MeshType::Sword);
+        LoadModelFn("AssetsApp/Models/grass.txt", res::MeshType::Grass);
+        LoadModelFn("AssetsApp/Models/stone.txt", res::MeshType::Stone);
+        LoadModelFn("AssetsApp/Models/tree.txt",  res::MeshType::Tree);
     }
 };
 

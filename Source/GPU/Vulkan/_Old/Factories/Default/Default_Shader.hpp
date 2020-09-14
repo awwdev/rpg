@@ -11,8 +11,8 @@ namespace rpg::gpu::vuk {
     
 inline void Default_CreateShaderVertexColor(Shader& shader, RenderPassDepth& rp)
 {  
-    shader.CreateShaderModule("res/Shaders/spv/defaultVertexColor.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-    shader.CreateShaderModule("res/Shaders/spv/defaultVertexColor.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/defaultVertexColor.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/defaultVertexColor.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 
     const VkSamplerCreateInfo samplerInfo {
         .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
@@ -60,8 +60,8 @@ inline void Default_CreateShaderVertexColor(Shader& shader, RenderPassDepth& rp)
 
 inline void Default_CreateShaderTexture(Shader& shader, RenderPassDepth& rp, ImageArray& imageArray)
 {  
-    shader.CreateShaderModule("res/Shaders/spv/defaultTexture.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-    shader.CreateShaderModule("res/Shaders/spv/defaultTexture.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/defaultTexture.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/defaultTexture.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 
     //SHADOW MAP
     {
@@ -154,8 +154,8 @@ inline void Default_CreateShaderTexture(Shader& shader, RenderPassDepth& rp, Ima
 
 inline void Default_CreateShaderShadow(Shader& shader)
 {  
-    shader.CreateShaderModule("res/Shaders/spv/defaultShadow.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-    shader.CreateShaderModule("res/Shaders/spv/defaultShadow.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/defaultShadow.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/defaultShadow.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 }
 
 }//ns

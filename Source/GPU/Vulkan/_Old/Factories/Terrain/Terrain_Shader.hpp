@@ -11,8 +11,8 @@ namespace rpg::gpu::vuk {
 
 inline void Terrain_CreateShader(Shader& shader, RenderPassDepth& rp)
 {  
-    shader.CreateShaderModule("res/Shaders/spv/terrain.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-    shader.CreateShaderModule("res/Shaders/spv/terrain.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/terrain.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/terrain.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 
     const VkSamplerCreateInfo samplerInfo {
         .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
@@ -61,14 +61,14 @@ inline void Terrain_CreateShader(Shader& shader, RenderPassDepth& rp)
 
 inline void Terrain_CreateShaderWire(Shader& shader)
 {  
-    shader.CreateShaderModule("res/Shaders/spv/terrainWire.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-    shader.CreateShaderModule("res/Shaders/spv/terrainWire.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/terrainWire.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/terrainWire.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 }
 
 inline void Terrain_CreateShaderShadow(Shader& shader)
 {  
-    shader.CreateShaderModule("res/Shaders/spv/terrainShadow.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-    shader.CreateShaderModule("res/Shaders/spv/terrainShadow.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/terrainShadow.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/terrainShadow.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 }
 
 }//ns

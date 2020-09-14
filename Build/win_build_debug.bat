@@ -1,13 +1,15 @@
 @echo off ^
- & mkdir build\\optimized ^
- & mkdir build\\optimized\\res ^
- & xcopy /s /y /d res\* build\\optimized\\res\* ^
+ & mkdir Build\\Debug ^
+ & xcopy /s /y /d AssetsApp\* Build\\Debug\\AssetsApp\* ^
  & Pushd G:\\DEV2020\\buildtools\\msys2\\mingw64\\bin ^
  & gcc ^
 -I %2 ^
 -L %5 ^
 -Wall -Wpedantic -Wextra ^
--Ofast ^
+-Wno-missing-field-initializers ^
+-Wno-unused-variable ^
+-Wno-unused-parameter ^
+-g ^
 -municode ^
 -std=c++2a ^
 -o %3 ^
@@ -15,5 +17,6 @@
 -static ^
 -lpthread ^
 -lstdc++ ^
+-lVkLayer_utils ^
 -lvulkan-1 ^
  & popd

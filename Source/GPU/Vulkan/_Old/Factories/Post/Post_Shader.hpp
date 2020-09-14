@@ -12,8 +12,8 @@ namespace rpg::gpu::vuk {
     
 inline void Post_CreateShader(Shader& shader, Image& renderImage)
 {  
-    shader.CreateShaderModule("res/Shaders/spv/post.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-    shader.CreateShaderModule("res/Shaders/spv/post.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/post.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/post.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 
     const VkSamplerCreateInfo samplerInfo {
         .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,

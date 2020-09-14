@@ -14,7 +14,7 @@ void WriteOrRead(QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
 {
     using namespace com;
 
-    char path[] { "res/Terrain/txx" };
+    char path[] { "AssetsApp/Terrain/txx" };
 
     for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
     for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {

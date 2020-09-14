@@ -12,8 +12,8 @@ namespace rpg::gpu::vuk {
 
 inline void Shadow_CreateShader(Shader& shader, RenderPassDepth&)
 {  
-    shader.CreateShaderModule("res/Shaders/spv/shadow.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-    shader.CreateShaderModule("res/Shaders/spv/shadow.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/shadow.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/shadow.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 }
 
 }//ns

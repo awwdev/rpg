@@ -11,8 +11,8 @@ namespace rpg::gpu::vuk {
 
 inline void Sky_CreateShader(Shader& shader)
 {  
-    shader.CreateShaderModule("res/Shaders/spv/sky.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-    shader.CreateShaderModule("res/Shaders/spv/sky.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/sky.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+    shader.CreateShaderModule("AssetsApp/Shaders/spv/sky.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 }
 
 }//ns
