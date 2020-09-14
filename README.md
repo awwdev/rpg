@@ -26,7 +26,7 @@ It might get the base for some stylized low poly game in the future?
 
 ## How to run?
 - I am using VS Code with some C++ extensions
-- Batch files are included to fire up the compiler MSVC
+- Batch files are included to fire up the compiler (mingw GCC)
 - Need of C++20 (heavy use of "designated initializers" for Vulkan)
 
 
