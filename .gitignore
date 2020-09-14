@@ -1,2 +1,2 @@
-build_debug
-build_optimized
+build/debug
+build/optimized

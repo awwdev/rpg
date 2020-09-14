@@ -13,7 +13,7 @@ struct Widget_InputField
     com::String<30> value;
     bool isActive = false;
 
-    auto Update(gpu::RenderData& renderData)
+    T Update(gpu::RenderData& renderData)
     {
         const com::Rect<f32> back { 
             rect.x + rect.w/2,
@@ -50,7 +50,7 @@ struct Widget_InputField
         return GetValue();
     }
 
-    auto Update(gpu::RenderData& renderData, Widget_Window& wnd)
+    T Update(gpu::RenderData& renderData, Widget_Window& wnd)
     {
         wnd.CalculateRow(rect, LINE_HEIGHT);
         return Update(renderData);

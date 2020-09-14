@@ -4,25 +4,25 @@
         {
             "type": "shell",
             "label": "build_debug",
-            "command": "${workspaceFolder}\\build_debug.bat",
+            "command": "${workspaceFolder}/build/build_debug.bat",
             "args": [
-                "${workspaceFolder}\\build_debug",                      //build dir
-                "${workspaceFolder}\\src",                              //include headers
-                "${workspaceFolder}\\build_debug\\mini_rpg_debug.exe",  //build name
-                "${workspaceFolder}\\src\\main.cpp",                    //cpp
-                "${workspaceFolder}\\third\\libs",                      //libs
+                "${workspaceFolder}/build/debug",                    //build dir
+                "${workspaceFolder}/src",                            //include headers
+                "${workspaceFolder}/build/debug/rpg_debug.exe",      //build name
+                "${workspaceFolder}/src/main.cpp",                   //cpp
+                "${workspaceFolder}/third/libs",                     //libs
             ]
         },
         {
             "type": "shell",
             "label": "build_optimized",
-            "command": "${workspaceFolder}\\build_optimized.bat",
+            "command": "${workspaceFolder}/build/build_optimized.bat",
             "args": [
-                "${workspaceFolder}\\build_optimized",                          //build dir
-                "${workspaceFolder}\\src",                                      //include headers
-                "${workspaceFolder}\\build_optimized\\mini_rpg_optimized.exe",  //build name
-                "${workspaceFolder}\\src\\main.cpp",                            //cpp
-                "${workspaceFolder}\\third\\libs",                              //libs
+                "${workspaceFolder}/build/optimized",                //build dir
+                "${workspaceFolder}/src",                            //include headers
+                "${workspaceFolder}/build/optimized/rpg_optimized.exe", //build name
+                "${workspaceFolder}/src/main.cpp",                   //cpp
+                "${workspaceFolder}/third/libs",                     //libs
             ]
         },
     ]

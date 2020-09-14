@@ -5,13 +5,13 @@
         "name": "g++.exe - Build and debug active file",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${workspaceFolder}\\build_debug\\mini_rpg_debug.exe",
+        "program": "${workspaceFolder}/build/debug/rpg_debug.exe",
         "stopAtEntry": true,
         "cwd": "${workspaceFolder}",
         "environment": [],
         "externalConsole": true,
         "MIMode": "gdb",
-        "miDebuggerPath": "G:\\DEV2020\\buildtools\\msys2\\mingw64\\bin\\gdb.exe",
+        "miDebuggerPath": "G:/DEV2020/buildtools/msys2/mingw64/bin/gdb.exe",
         "setupCommands": [
           {
             "description": "Enable pretty-printing for gdb",

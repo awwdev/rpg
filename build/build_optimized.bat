@@ -1,8 +1,7 @@
 @echo off ^
- & mkdir build_optimized ^
- & mkdir build_optimized\objs ^
- & mkdir build_optimized\res ^
- & xcopy /s /y /d res\* build_optimized\res\* ^
+ & mkdir build\\optimized ^
+ & mkdir build\\optimized\\res ^
+ & xcopy /s /y /d res\* build\\optimized\\res\* ^
  & Pushd G:\\DEV2020\\buildtools\\msys2\\mingw64\\bin ^
  & gcc ^
 -I %2 ^

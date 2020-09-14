@@ -16,7 +16,7 @@ struct Widget_Slider
     bool isDragging; //internal
     f32 dragInitX;   //internal
 
-    auto Update(gpu::RenderData& renderData)
+    T Update(gpu::RenderData& renderData)
     {
         const com::Rect<f32> back { 
             rect.x + rect.w/2,
@@ -61,7 +61,7 @@ struct Widget_Slider
         return value;
     }
 
-    auto Update(gpu::RenderData& renderData, Widget_Window& wnd)
+    T Update(gpu::RenderData& renderData, Widget_Window& wnd)
     {
         wnd.CalculateRow(rect, LINE_HEIGHT);
         return Update(renderData);
