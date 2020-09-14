@@ -6,11 +6,11 @@ Little use of third party tools (besides vulkan.h).
 It is not intended to be a "plug in and play" library nor is it an universal 3D engine.
 It might get the base for some stylized low poly game in the future?
 
-![](media/progress/2020_09_03_grassPerf.gif)
-![](media/progress/2020_08_25_grass.gif)
-![](media/progress/2020_08_14_terrainEdit.gif)
-![](media/progress/2020_08_04_terrainStichPlayerMove.gif)
-![](media/progress/2020_07_04_ui_wnd.gif)
+![](Media/Progress/2020_09_03_grassPerf.gif)
+![](Media/Progress/2020_08_25_grass.gif)
+![](Media/Progress/2020_08_14_terrainEdit.gif)
+![](Media/Progress/2020_08_04_terrainStichPlayerMove.gif)
+![](Media/Progress/2020_07_04_ui_wnd.gif)
 
 ### Contents
 - Custom "STL" (Array, String, Bitset, Maps)
