@@ -10,7 +10,7 @@
 #include "Common/Memory/Allocator.hpp"
 #include "Common/Memory/AllocatorPrint.hpp"
 
-#include "Vulkan/VukRenderer.hpp"
+#include "GPU/Vulkan/VukRenderer.hpp"
 
 #include "App/Scene.hpp"
 #include "Common/DeltaTime.hpp"
@@ -26,7 +26,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
     {
         wnd::win_Window  window { hInstance, 800, 600 };
         auto ptrHostResources = com::mem::ClaimBlock<res::HostResources>();
-        auto ptrRenderer      = com::mem::ClaimBlock<vuk::VukRenderer>(vuk::WindowHandle{window.hInstance, window.hWnd}, *ptrHostResources);
+        auto ptrRenderer      = com::mem::ClaimBlock<gpu::vuk::VukRenderer>(gpu::vuk::WindowHandle{window.hInstance, window.hWnd}, *ptrHostResources);
         auto ptrGameScenes    = com::mem::ClaimBlock<app::GameScene>();
         ptrGameScenes->Create(*ptrHostResources);
 
@@ -43,7 +43,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
             }
         }
 
-        vuk::VkCheck(vkDeviceWaitIdle(vuk::g_contextPtr->device));
+        gpu::vuk::VkCheck(vkDeviceWaitIdle(gpu::vuk::g_contextPtr->device));
         com::mem::PrintAllocationHTML();
     }
     
