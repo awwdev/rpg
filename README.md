@@ -1,4 +1,4 @@
-# mini
+# 3D FRAMEWORK
 C++ 3D framework / engine with custom "STL" (utilities).
 Little use of third party tools (besides vulkan.h).
 
