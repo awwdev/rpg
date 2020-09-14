@@ -6,7 +6,7 @@
 #include "Vulkan/Objects/Buffer.hpp"
 #include "Vulkan/Objects/Image.hpp"
 #include "Vulkan/Objects/ImageOld.hpp"
-#include "Resources/HostResources.hpp"
+#include "Resources/CpuResources.hpp"
 #include "Resources/TextureLoader.hpp"
 
 namespace rpg::vuk {

@@ -14,7 +14,7 @@
 
 #include "App/Scene.hpp"
 #include "Common/DeltaTime.hpp"
-#include "Resources/HostResources.hpp"
+#include "Resources/CpuResources.hpp"
 
 using namespace rpg;
 

@@ -4,7 +4,7 @@
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Commands.hpp"
 #include "Vulkan/Objects/Buffer.hpp"
-#include "Resources/HostResources.hpp"
+#include "Resources/CpuResources.hpp"
 #include "Resources/TextureLoader.hpp"
 
 namespace rpg::vuk {

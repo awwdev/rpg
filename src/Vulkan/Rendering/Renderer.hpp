@@ -2,8 +2,8 @@
 
 #pragma once
 #include "Vulkan/Context.hpp"
-#include "Vulkan/Resources/Resources.hpp"
-#include "Resources/HostResources.hpp"
+#include "Vulkan/_Old/Resources/Resources.hpp"
+#include "Resources/CpuResources.hpp"
 #include "App/Scene.hpp"
 #include "GPU/RenderData.hpp"
 #include "Common/Structs.hpp"

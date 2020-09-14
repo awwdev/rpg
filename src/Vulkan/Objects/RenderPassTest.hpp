@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Vulkan/Core.hpp"
+
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Objects/Image.hpp"
 

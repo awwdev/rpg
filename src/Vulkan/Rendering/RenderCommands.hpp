@@ -1,11 +1,11 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Vulkan/Core.hpp"
+
 #include "Vulkan/Context.hpp"
-#include "Vulkan/Resources/Resources.hpp"
+#include "Vulkan/_Old/Resources/Resources.hpp"
 #include "App/Scene.hpp"
-#include "Resources/HostResources.hpp"
+#include "Resources/CpuResources.hpp"
 
 //vkCmdSetDepthBias(
 //    cmdBuffer, 
