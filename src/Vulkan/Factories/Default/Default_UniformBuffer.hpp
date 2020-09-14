@@ -6,10 +6,10 @@
 #include "Common/Structs.hpp"
 #include "GPU/RenderData.hpp"
 
-namespace rpg::vk
+namespace rpg::vuk
 {
-    void Default_CreateUniformBuffer(
-        UniformBuffer_Groups<gpu::Default_UniformData, 
+    void Common_CreateUniformBuffer(
+        UniformBuffer_Groups<gpu::Common_UniformData, 
         gpu::DEFAULT_UBO_MAX_COUNT>& ubo)
     {  
         ubo.Create();

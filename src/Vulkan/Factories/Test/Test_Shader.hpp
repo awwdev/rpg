@@ -4,7 +4,7 @@
 #pragma once
 #include "Vulkan/Objects/Shader.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
     
 inline void Test_CreateShader(Shader& shader)
 {  

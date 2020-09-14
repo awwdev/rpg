@@ -8,7 +8,7 @@
 #include "Resources/HostResources.hpp"
 #include "Debug/Assert.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 using Post_VertexBuffer = VertexBuffer<com::Post_Vertex, gpu::UI_VBO_BLUR_COUNT>;
 

@@ -6,7 +6,7 @@
 #include "Common/Structs.hpp"
 #include "Debug/Assert.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 inline VkMemoryAllocateInfo CreateAllocInfo(const VkDeviceSize& size, const uint32_t memTypeIndex)
 {

@@ -20,7 +20,7 @@ struct UniformGroup
     u32 begin, count;
 };
 
-struct Default_UniformData
+struct Common_UniformData
 {
     alignas(64) com::Mat4f transform;
     //alignas(64) int textureIndex;

@@ -26,7 +26,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
     {
         wnd::Window  window { hInstance, 800, 600 };
         auto ptrHostResources = com::mem::ClaimBlock<res::HostResources>();
-        auto ptrRenderer      = com::mem::ClaimBlock<vk::VkRenderer>(vk::WindowHandle{window.hInstance, window.hWnd}, *ptrHostResources);
+        auto ptrRenderer      = com::mem::ClaimBlock<vuk::VkRenderer>(vuk::WindowHandle{window.hInstance, window.hWnd}, *ptrHostResources);
         auto ptrGameScenes    = com::mem::ClaimBlock<app::GameScene>();
         ptrGameScenes->Create(*ptrHostResources);
 
@@ -43,7 +43,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
             }
         }
 
-        vk::VkCheck(vkDeviceWaitIdle(vk::g_contextPtr->device));
+        vuk::VkCheck(vkDeviceWaitIdle(vuk::g_contextPtr->device));
         com::mem::PrintAllocationHTML();
     }
     

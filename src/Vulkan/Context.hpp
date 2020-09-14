@@ -4,7 +4,7 @@
 #include "Vulkan/Core.hpp"
 
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct WindowHandle
 {
@@ -57,8 +57,8 @@ struct Context
     //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
     
     VkSwapchainKHR swapchain;
-    vk::VkArray<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
-    vk::VkArray<VkImageView, 4> swapImageViews { 0 };
+    vuk::VkArray<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
+    vuk::VkArray<VkImageView, 4> swapImageViews { 0 };
 
 
     void Create(const WindowHandle& wndHandle)
@@ -137,11 +137,11 @@ struct Context
 
     void CreatePhysical()
     {
-        vk::VkArray<VkPhysicalDevice, 4> physicals { 4 };
+        vuk::VkArray<VkPhysicalDevice, 4> physicals { 4 };
         VkCheck(vkEnumeratePhysicalDevices(instance, &physicals.count, physicals.data));
         physical = physicals[0];
 
-        vk::VkArray<VkQueueFamilyProperties, 10> famProps { 10 };
+        vuk::VkArray<VkQueueFamilyProperties, 10> famProps { 10 };
         vkGetPhysicalDeviceQueueFamilyProperties(physical, &famProps.count, famProps.data);
 
         for (uint32_t i = 0; i < famProps.count; ++i) {

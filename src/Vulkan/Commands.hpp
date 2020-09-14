@@ -4,12 +4,12 @@
 #include "Vulkan/Core.hpp"
 #include "Vulkan/Context.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct Commands
 {
     VkCommandPool cmdPool;
-    vk::VkArray<VkCommandBuffer, 4> cmdBuffers { 0 };
+    vuk::VkArray<VkCommandBuffer, 4> cmdBuffers { 0 };
 
     inline void Create()
     {

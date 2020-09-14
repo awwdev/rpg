@@ -15,16 +15,16 @@
 #include "Vulkan/Resources/Resources_UI.hpp"
 #include "Vulkan/Resources/Resources_Test.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct VkResources
 {
-    Common_PushConstants  common_pushConsts;
-    Common_PushConstants2 common_pushConsts2;
-    Resources_Shadow  shadow;
-    Resources_Sky     sky;
-    Resources_Terrain terrain; 
-    Resources_Common  common;
+    //Common_PushConstants  common_pushConsts;
+    //Common_PushConstants2 common_pushConsts2;
+    //Resources_Shadow  shadow;
+    //Resources_Sky     sky;
+    //Resources_Terrain terrain; 
+    //Resources_Common  common;
 
     Resources_Test    test;
     Resources_Post    post;

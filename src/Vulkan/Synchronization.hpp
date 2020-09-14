@@ -4,15 +4,15 @@
 #include "Vulkan/Core.hpp"
 #include "Vulkan/Context.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct Synchronization
 {
     //triple buffering
-    vk::VkArray<VkSemaphore, 3> imageAcquired { 0 }; 
-    vk::VkArray<VkSemaphore, 3> imageFinished { 0 }; 
-    vk::VkArray<VkFence, 3>     inFlight      { 0 };
-    vk::VkArray<VkFence, 3>     fences        { 0 }; 
+    vuk::VkArray<VkSemaphore, 3> imageAcquired { 0 }; 
+    vuk::VkArray<VkSemaphore, 3> imageFinished { 0 }; 
+    vuk::VkArray<VkFence, 3>     inFlight      { 0 };
+    vuk::VkArray<VkFence, 3>     fences        { 0 }; 
 
     void Create()
     {

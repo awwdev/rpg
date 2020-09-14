@@ -7,7 +7,7 @@
 #include "Vulkan/Factories/Test/Test_Pipeline.hpp"
 #include "Vulkan/Factories/Test/Test_Shader.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct Resources_Test
 {

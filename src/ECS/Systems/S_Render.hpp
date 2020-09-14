@@ -28,7 +28,7 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
     }   
 
     auto loop = [&](bool useTexture, auto& arr) {
-        com::Array<gpu::Default_UniformData, gpu::DEFAULT_UBO_MAX_COUNT> group;
+        com::Array<gpu::Common_UniformData, gpu::DEFAULT_UBO_MAX_COUNT> group;
 
         FOR_CARRAY(arr, i){ // meshType == group
             group.Clear();

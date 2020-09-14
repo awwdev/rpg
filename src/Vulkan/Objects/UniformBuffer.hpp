@@ -5,7 +5,7 @@
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Objects/Buffer.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct UniformInfo
 {

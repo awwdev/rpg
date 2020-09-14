@@ -1,47 +1,51 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Vulkan/Core.hpp"
 #include "Vulkan/Context.hpp"
-#include "Vulkan/Objects/Shader.hpp"
 #include "Vulkan/Objects/VertexBuffer.hpp"
-#include "Vulkan/Objects/UniformBuffer.hpp"
-#include "Vulkan/Objects/PushConstants.hpp"
-#include "Vulkan/Objects/Pipeline.hpp"
-#include "Vulkan/Objects/RenderPass.hpp"
-#include "GPU/RenderData.hpp"
+#include "Common/Structs.hpp"
 
-namespace rpg::vuk
+namespace rpg::vuk {
+
+struct General_Pipeline
 {
-    void UI_CreatePipeline(
-        Pipeline& pipeline,
-        Shader& shader, 
-        RenderPass& renderPass,
-        UniformBuffer_Groups<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT>& uboText)
+    //? DATA
+    VkPipeline pipeline;
+    VkPipelineLayout layout;
+
+    VkDescriptorPool descPool  {};
+    com::Array<VkDescriptorSetLayout, 10> setLayouts {};
+    com::Array<VkDescriptorSet, 10> sets {};
+
+    //? RAII
+    ~General_Pipeline()
     {
-        const VkPipelineVertexInputStateCreateInfo vertexInput {
-            .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-            .pNext                           = nullptr,
-            .flags                           = 0,
-            .vertexBindingDescriptionCount   = 0,
-            .pVertexBindingDescriptions      = nullptr,
-            .vertexAttributeDescriptionCount = 0,
-            .pVertexAttributeDescriptions    = nullptr
-        };
+        Clear();
+    }
 
-        UniformInfo* uniformInfos [] = {
-            &shader.infos[0],
-            &uboText.info,
-        };
-        WriteDescriptors(pipeline, uniformInfos);
+    void Clear()
+    {   
+        vkDestroyPipelineLayout (g_contextPtr->device, layout, nullptr);
+        vkDestroyPipeline       (g_contextPtr->device, pipeline, nullptr);
+    }
 
+    //? CREATE
+    void Create(VertexBuffer<com::Common_Vertex, 100>& vbo)
+    {
+        const auto vertexInput   = CreatePipelineVertexInputInfo(vbo);
         const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+
+        //UniformInfo* uniformInfos [] = {
+        //    &shader.infos[0],
+        //    &ubo.info
+        //};
+        //WriteDescriptors(pipeline, uniformInfos);
 
         const VkViewport viewport {
             .x        = 0.f,
             .y        = 0.f,
-            .width    = (float)renderPass.width,
-            .height   = (float)renderPass.height,
+            .width    = g_contextPtr->surfaceCapabilities.currentExtent.width,
+            .height   = g_contextPtr->surfaceCapabilities.currentExtent.height,
             .minDepth = 0.f,
             .maxDepth = 1.f
         };
@@ -72,10 +76,10 @@ namespace rpg::vuk
             .depthClampEnable        = VK_FALSE,
             .rasterizerDiscardEnable = VK_FALSE,
             .polygonMode             = VK_POLYGON_MODE_FILL,
-            .cullMode                = VK_CULL_MODE_BACK_BIT,
+            .cullMode                = VK_CULL_MODE_BACK_BIT, //VK_CULL_MODE_BACK_BIT,
             .frontFace               = VK_FRONT_FACE_CLOCKWISE,
             .depthBiasEnable         = VK_FALSE,
-            .depthBiasConstantFactor = 0.f,
+            .depthBiasConstantFactor = 1.f,
             .depthBiasClamp          = 0.f,
             .depthBiasSlopeFactor    = 0.f,
             .lineWidth               = 1.f  
@@ -97,9 +101,9 @@ namespace rpg::vuk
             .sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
             .pNext                 = nullptr,
             .flags                 = 0,
-            .depthTestEnable       = VK_FALSE,
-            .depthWriteEnable      = VK_FALSE,
-            .depthCompareOp        = VK_COMPARE_OP_LESS,
+            .depthTestEnable       = VK_TRUE,
+            .depthWriteEnable      = VK_TRUE,
+            .depthCompareOp        = VK_COMPARE_OP_GREATER_OR_EQUAL,
             .depthBoundsTestEnable = VK_FALSE,
             .stencilTestEnable     = VK_FALSE,
             .front                 = {},
@@ -109,7 +113,7 @@ namespace rpg::vuk
         };
 
         const VkPipelineColorBlendAttachmentState colorBlend {
-            .blendEnable                = VK_TRUE,
+            .blendEnable                = VK_FALSE,
             .srcColorBlendFactor        = VK_BLEND_FACTOR_SRC_ALPHA,
             .dstColorBlendFactor        = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, 
             .colorBlendOp               = VK_BLEND_OP_ADD,
@@ -134,20 +138,20 @@ namespace rpg::vuk
             .blendConstants  = { 0.f, 0.f, 0.f, 0.f }
         };
 
-        const VkPushConstantRange constantRange {
-            .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-            .offset     = 0,
-            .size       = (uint32_t)sizeof(Common_PushConstants)
-        };
+        //const VkPushConstantRange constantRange {
+        //    .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+        //    .offset     = 0,
+        //    .size       = (uint32_t)sizeof(Common_PushConstants2)
+        //};
 
         const VkPipelineLayoutCreateInfo layoutInfo {
             .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
             .pNext                  = nullptr,
             .flags                  = 0,
-            .setLayoutCount         = pipeline.setLayouts.count,
-            .pSetLayouts            = pipeline.setLayouts.Data(),
-            .pushConstantRangeCount = 1,
-            .pPushConstantRanges    = &constantRange,
+            .setLayoutCount         = setLayouts.count,
+            .pSetLayouts            = setLayouts.Data(),
+            .pushConstantRangeCount = 0,//1,
+            .pPushConstantRanges    = nullptr//&constantRange,
         };
         VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &pipeline.layout));
 
@@ -172,8 +176,9 @@ namespace rpg::vuk
             .basePipelineHandle         = VK_NULL_HANDLE,
             .basePipelineIndex          = -1
         };
-        
+
         VkCheck(vkCreateGraphicsPipelines(g_contextPtr->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.pipeline));
     }
+};
 
-} //ns
+}//ns

@@ -14,10 +14,11 @@
 //    scene.renderGraph.depthBiasSlopeFactor
 //);
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t, VkResources& resources, const app::GameScene& scene)
 {
+    /*
     VkDeviceSize offsets {};
     const VkClearValue clears [] { 
         { .depthStencil = { 0, 0 } } //reversed z        
@@ -46,6 +47,7 @@ inline void ShadowMap(VkCommandBuffer cmdBuffer, const uint32_t, VkResources& re
         vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
         vkCmdEndRenderPass      (cmdBuffer);
     }
+    */
 
     //vkCmdSetDepthBias(
     //    cmdBuffer, 
@@ -78,10 +80,10 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
         { .color = { 1.0f, 1.0f, 1.0f, 1.0f } },//ignored
     };
 
-    const auto beginInfo_default = resources.common.renderPass.GetBeginInfo(cmdBufferIdx, clears);
-    VkDeviceSize offsets {};
+    //const auto beginInfo_default = resources.common.renderPass.GetBeginInfo(cmdBufferIdx, clears);
+    //VkDeviceSize offsets {};
 
-    vkCmdBeginRenderPass(cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
+    //vkCmdBeginRenderPass(cmdBuffer, &beginInfo_default, VK_SUBPASS_CONTENTS_INLINE);
 
     //?SKYDOME
     //vkCmdPushConstants      (cmdBuffer, resources.sky.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(resources.sky.pushConsts), &resources.sky.pushConsts);
@@ -90,11 +92,11 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
 
     //?TERRAIN
     //TODO: culling (loops)
-    vkCmdPushConstants      (cmdBuffer, resources.terrain.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(resources.common_pushConsts2), &resources.common_pushConsts2);
-    vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
-    vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.layout, 0, 1, &resources.terrain.pipeline.sets[cmdBufferIdx], 0, nullptr); 
-    vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.pipeline);
-    vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
+    //vkCmdPushConstants      (cmdBuffer, resources.terrain.pipeline.layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(resources.common_pushConsts2), &resources.common_pushConsts2);
+    //vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &resources.terrain.vbo.activeBuffer->buffer, &offsets);
+    //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.layout, 0, 1, &resources.terrain.pipeline.sets[cmdBufferIdx], 0, nullptr); 
+    //vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipeline.pipeline);
+    //vkCmdDraw               (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
     //if (scene.editorController.terrainWireMode) {
     //    vkCmdBindPipeline   (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, resources.terrain.pipelineWire.pipeline);
     //    vkCmdDraw           (cmdBuffer, resources.terrain.vbo.count, 1, 0, 0); 
@@ -133,7 +135,7 @@ inline void Geometry(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkR
     }
     */
 
-    vkCmdEndRenderPass(cmdBuffer);
+    //vkCmdEndRenderPass(cmdBuffer);
 }
 
 inline void Post(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResources& resources, const app::GameScene& scene)
@@ -176,8 +178,11 @@ inline void Test(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx, VkResou
 
     const auto beginInfo = rp.GetBeginInfo(clears);
     vkCmdBeginRenderPass(cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+    //? TEST TRIANGLE
     vkCmdBindPipeline   (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pi.pipeline);
     vkCmdDraw           (cmdBuffer, 3, 1, 0, 0);
+
     vkCmdEndRenderPass  (cmdBuffer);
 }
 
@@ -189,7 +194,7 @@ inline void RecordCommands(
     const app::GameScene& scene)
 {
     auto cmdBuffer = commands.cmdBuffers[cmdBufferIdx];
-    const auto beginInfo = vk::CreateCmdBeginInfo();
+    const auto beginInfo = vuk::CreateCmdBeginInfo();
     VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
 
     //ShadowMap   (cmdBuffer, cmdBufferIdx, resources, scene);

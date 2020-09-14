@@ -5,7 +5,7 @@
 #include "Vulkan/Objects/UniformBuffer.hpp"
 #include "GPU/RenderData.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 inline void Terrain_CreateUniformBuffer(UniformBuffer<gpu::Terrain_UniformData, 1>& ubo)
 {

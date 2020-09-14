@@ -6,7 +6,7 @@
 #include "Vulkan/Factories/Post/Post_VertexBuffer.hpp"
 
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 void Post_CreatePipeline(
     Pipeline& pipeline,

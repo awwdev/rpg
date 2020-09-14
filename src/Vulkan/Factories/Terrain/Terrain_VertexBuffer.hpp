@@ -8,7 +8,7 @@
 #include "Resources/HostResources.hpp"
 #include "Debug/Assert.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 inline void Terrain_CreateVertexBuffer(
     VertexBuffer<com::Common_Vertex, gpu::TERRAIN_VERTEX_MAX_COUNT>& vbo, 

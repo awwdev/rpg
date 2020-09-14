@@ -15,7 +15,7 @@
 #include "Vulkan/Factories/Terrain/Terrain_PipelineShadow.hpp"
 #include "Vulkan/Factories/Terrain/Terrain_Shader.hpp" //includes wire and shadow
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct Resources_Terrain
 {
@@ -37,8 +37,8 @@ struct Resources_Terrain
         Terrain_CreateShader        (shader, shadow.renderPass);
         Terrain_CreateShaderWire    (shaderWire);
         Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);
-        Terrain_CreatePipeline      (pipeline, shader, common.renderPass, vbo, uboMeta);
-        Terrain_CreatePipelineWire  (pipelineWire, shaderWire, common.renderPass, vbo);
+        //Terrain_CreatePipeline      (pipeline, shader, common.renderPass, vbo, uboMeta);
+        //Terrain_CreatePipelineWire  (pipelineWire, shaderWire, common.renderPass, vbo);
     }
 
     void Recreate(VkCommandPool&, Resources_Shadow& shadow, Resources_Common& common)
@@ -51,8 +51,8 @@ struct Resources_Terrain
         //TODO: recreate whole shader is wrong, only sampler needs recreation (due to img resize)
         Terrain_CreateShader        (shader, shadow.renderPass);
         Terrain_CreatePipelineShadow(pipelineShadow, shaderShadow, shadow.renderPass, vbo);
-        Terrain_CreatePipeline      (pipeline, shader, common.renderPass, vbo, uboMeta);
-        Terrain_CreatePipelineWire  (pipelineWire, shaderWire, common.renderPass, vbo);
+        //Terrain_CreatePipeline      (pipeline, shader, common.renderPass, vbo, uboMeta);
+        //Terrain_CreatePipelineWire  (pipelineWire, shaderWire, common.renderPass, vbo);
     }
 };
 

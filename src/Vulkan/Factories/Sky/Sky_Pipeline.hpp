@@ -11,7 +11,7 @@
 #include "Vulkan/Objects/RenderPass.hpp"
 #include "GPU/RenderData.hpp"
 
-namespace rpg::vk
+namespace rpg::vuk
 {
 void Sky_CreatePipeline(
     Pipeline& pipeline,

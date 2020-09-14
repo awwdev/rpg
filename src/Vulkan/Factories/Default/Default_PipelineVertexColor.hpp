@@ -11,14 +11,14 @@
 #include "Vulkan/Objects/RenderPass.hpp"
 #include "GPU/RenderData.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 void Default_CreatePipelineVertexColor(
     Pipeline& pipeline,
     Shader& shader, 
     RenderPass& renderPass,
     VertexBuffer<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT>& vbo,
-    UniformBuffer_Groups<gpu::Default_UniformData, gpu::DEFAULT_UBO_MAX_COUNT>& ubo)
+    UniformBuffer_Groups<gpu::Common_UniformData, gpu::DEFAULT_UBO_MAX_COUNT>& ubo)
 {
     const auto vertexInput   = CreatePipelineVertexInputInfo(vbo);
     const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);

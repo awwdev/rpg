@@ -8,9 +8,9 @@
 #include "Resources/HostResources.hpp"
 #include "Debug/Assert.hpp"
 
-namespace rpg::vk
+namespace rpg::vuk
 {
-    inline void Default_CreateVertexBuffer(
+    inline void Common_CreateVertexBuffer(
         VertexBuffer<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT>& vbo, 
         VkCommandPool cmdPool,
         res::HostResources& res)

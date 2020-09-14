@@ -8,7 +8,7 @@
 #include "App/Scene.hpp"
 #include "Resources/HostResources.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 const com::Mat4f BIAS { 
     0.5, 0.0, 0.0, 0.0,

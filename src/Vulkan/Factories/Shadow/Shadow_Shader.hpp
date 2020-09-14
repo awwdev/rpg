@@ -8,7 +8,7 @@
 #include "Common/Structs.hpp"
 #include "Vulkan/Factories/Shadow/Shadow_RenderPass.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 inline void Shadow_CreateShader(Shader& shader, RenderPassDepth&)
 {  

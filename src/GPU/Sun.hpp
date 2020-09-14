@@ -56,8 +56,8 @@ struct Sun
             case 1: S = 0.050f; break;
             case 2: S = 0.100f; break;
         }
-        //const float W = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.width;
-        //const float H = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vk::g_contextPtr->surfaceCapabilities.currentExtent.height;
+        //const float W = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vuk::g_contextPtr->surfaceCapabilities.currentExtent.width;
+        //const float H = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vuk::g_contextPtr->surfaceCapabilities.currentExtent.height;
         const float D = 0.00001f; 
         const float Z = 0.01f;
 

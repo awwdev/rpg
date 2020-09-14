@@ -10,7 +10,7 @@
 #include "Common/Memory/Allocator.hpp"
 #include "Common/Container/Array.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct Shader
 {

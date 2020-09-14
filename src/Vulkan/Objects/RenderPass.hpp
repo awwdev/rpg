@@ -7,7 +7,7 @@
 
 #include "Common/Container/Array.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 inline VkRenderPassBeginInfo CreateRenderPassBeginInfo(
     VkRenderPass  renderPass,

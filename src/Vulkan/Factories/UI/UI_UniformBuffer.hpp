@@ -5,7 +5,7 @@
 #include "Vulkan/Objects/UniformBuffer.hpp"
 #include "GPU/RenderData.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 inline void UI_CreateUniformBuffer(
     UniformBuffer_Groups<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT>& ub)

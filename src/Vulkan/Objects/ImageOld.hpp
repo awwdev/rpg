@@ -7,7 +7,7 @@
 #include "Resources/HostResources.hpp"
 #include "Resources/TextureLoader.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 //? HELPER
 inline void TransitionImageLayout(

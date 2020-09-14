@@ -5,7 +5,7 @@
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Objects/RenderPassTest.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 inline void Test_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
 {  

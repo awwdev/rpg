@@ -5,7 +5,7 @@
 #include "Vulkan/Context.hpp"
 #include "Vulkan/Objects/RenderPass.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 inline void UI_CreateRenderPass(RenderPass& rp)
 {  

@@ -14,7 +14,7 @@
 #include "Vulkan/Rendering/RenderCommands.hpp"
 #include "Vulkan/Rendering/UpdateResources.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct VkRenderer
 {
@@ -24,7 +24,7 @@ struct VkRenderer
     Synchronization sync;
     uint32_t        currentFrame = 0;
     
-    VkRenderer(const vk::WindowHandle& wndHandle, res::HostResources& hostResources)
+    VkRenderer(const vuk::WindowHandle& wndHandle, res::HostResources& hostResources)
     {
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();

@@ -9,7 +9,7 @@
 #include "Vulkan/Factories/Sky/Sky_Pipeline.hpp"
 #include "Vulkan/Factories/Sky/Sky_Shader.hpp" 
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct Resources_Sky
 {
@@ -21,7 +21,7 @@ struct Resources_Sky
     void Create(VkCommandPool&, Resources_Common& common)
     {
         Sky_CreateShader        (shader);
-        Sky_CreatePipeline      (pipeline, shader, common.renderPass);
+        //Sky_CreatePipeline      (pipeline, shader, common.renderPass);
     }
 
     void Recreate(VkCommandPool&, Resources_Common& common)
@@ -30,7 +30,7 @@ struct Resources_Sky
         pipeline.Clear();
 
         Sky_CreateShader        (shader);
-        Sky_CreatePipeline      (pipeline, shader, common.renderPass);
+        //Sky_CreatePipeline      (pipeline, shader, common.renderPass);
     }
 };
 

@@ -6,7 +6,7 @@
 #include "Common/Container/Array.hpp"
 #include "Common/Structs.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct VertexGroup
 {

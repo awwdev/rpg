@@ -17,7 +17,7 @@ constexpr u32 TERRAIN_VERTEX_MAX_COUNT = 1'000'000;
 struct RenderData
 {
     UniformDataGroups<UI_UniformData, UI_UBO_MAX_COUNT, 1>  gui_ubo; //1 group only
-    UniformDataGroupsMesh<Default_UniformData, DEFAULT_UBO_MAX_COUNT> common_ubo;
+    UniformDataGroupsMesh<Common_UniformData, DEFAULT_UBO_MAX_COUNT> common_ubo;
 
     com::Array<com::Post_Vertex, UI_VBO_BLUR_COUNT> gui_vbo_blur {
         //first 3 vertices used to draw stuff from previous offscreen (full screen tris)

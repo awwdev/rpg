@@ -6,7 +6,7 @@
 #include "Common/Matrix.hpp"
 #include "Vulkan/Context.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 struct Common_PushConstants
 {

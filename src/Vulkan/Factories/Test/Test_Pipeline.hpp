@@ -8,7 +8,7 @@
 #include "Vulkan/Objects/Pipeline.hpp"
 #include "Vulkan/Objects/RenderPassTest.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
 
 inline void Test_CreatePipeline(
     Pipeline& pipeline,

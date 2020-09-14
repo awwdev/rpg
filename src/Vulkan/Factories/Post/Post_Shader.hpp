@@ -8,7 +8,7 @@
 #include "Resources/HostResources.hpp"
 #include "Common/Structs.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
     
 inline void Post_CreateShader(Shader& shader, Image& renderImage)
 {  

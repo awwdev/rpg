@@ -7,7 +7,7 @@
 #include "Resources/HostResources.hpp"
 #include "Common/Structs.hpp"
 
-namespace rpg::vk {
+namespace rpg::vuk {
     
 inline void UI_CreateShader(Shader& shader, ImageArray& imageArray)
 {  

@@ -9,7 +9,7 @@
 #define VK_USE_PLATFORM_WIN32_KHR
 #include "../third/include/vulkan.h"
 		
-namespace rpg::vk {
+namespace rpg::vuk {
 
 enum class VkErrorHandling { None, Warn, Assert };
 constexpr auto VK_ERROR_HANDLING = VkErrorHandling::Warn;
