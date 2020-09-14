@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "Vulkan/Context.hpp"
-#include "Vulkan/Commands.hpp"
-#include "Vulkan/Synchronization.hpp"
+#include "Vulkan/Meta/Context.hpp"
+#include "Vulkan/Meta/Commands.hpp"
+#include "Vulkan/Meta/Synchronization.hpp"
 #include "Vulkan/Objects/PushConstants.hpp" //TODO: move out
 
 #include "Vulkan/_Old/Resources/Resources_Shadow.hpp"

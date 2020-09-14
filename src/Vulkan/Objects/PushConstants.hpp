@@ -4,7 +4,7 @@
 
 #include "Common/Types.hpp"
 #include "Common/Matrix.hpp"
-#include "Vulkan/Context.hpp"
+#include "Vulkan/Meta/Context.hpp"
 
 namespace rpg::vuk {
 

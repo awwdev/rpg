@@ -3,7 +3,7 @@
 #pragma once
 #include "Debug/Assert.hpp"
 
-#include "Vulkan/Context.hpp"
+#include "Vulkan/Meta/Context.hpp"
 #include "Vulkan/Objects/Image.hpp"
 #include "Vulkan/Objects/UniformBuffer.hpp"
 

@@ -154,7 +154,7 @@ inline void WmChar(WPARAM wParam, LPARAM)
     glo::chars.Append((char)wParam);        
 }
 
-inline LRESULT CALLBACK CustomWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+inline LRESULT CALLBACK win_CustomWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch(uMsg)
     {

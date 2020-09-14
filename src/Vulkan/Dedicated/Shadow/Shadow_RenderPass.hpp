@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Vulkan/Context.hpp"
+#include "Vulkan/Meta/Context.hpp"
 #include "Vulkan/Objects/Image.hpp"
 
 namespace rpg::vuk {

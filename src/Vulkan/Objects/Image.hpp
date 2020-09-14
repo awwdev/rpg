@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 #pragma once
 
-#include "Vulkan/Context.hpp"
-#include "Vulkan/Commands.hpp"
+#include "Vulkan/Meta/Context.hpp"
+#include "Vulkan/Meta/Commands.hpp"
 #include "Vulkan/Objects/Buffer.hpp"
 
 namespace rpg::vuk {

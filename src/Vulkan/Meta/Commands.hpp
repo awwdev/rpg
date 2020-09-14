@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Vulkan/Context.hpp"
+#include "Vulkan/Meta/Context.hpp"
 
 namespace rpg::vuk {
 
@@ -11,7 +11,7 @@ struct Commands
     VkCommandPool cmdPool;
     vuk::VkArray<VkCommandBuffer, 4> cmdBuffers { 0 };
 
-    inline void Create()
+    void Create()
     {
         //? CMD POOL
         const VkCommandPoolCreateInfo poolInfo

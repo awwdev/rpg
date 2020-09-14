@@ -6,20 +6,20 @@
 
 namespace rpg::wnd {
     
-struct Window
+struct win_Window
 {
     const wchar_t* className;
     HWND hWnd;
     HINSTANCE hInstance;
 
-    Window(HINSTANCE hInst, u16 width, u16 height, const wchar_t* pClassName = L"miniClass", const wchar_t* wndName = L"miniWnd")
+    win_Window(HINSTANCE hInst, u16 width, u16 height, const wchar_t* pClassName = L"miniClass", const wchar_t* wndName = L"miniWnd")
         : className { pClassName }
         , hInstance { hInst }
     {
         WNDCLASSEX wndClass {
             .cbSize         = sizeof(WNDCLASSEX),
             .style          = 0,
-            .lpfnWndProc    = wnd::CustomWindowProc,
+            .lpfnWndProc    = wnd::win_CustomWindowProc,
             .cbClsExtra     = 0,
             .cbWndExtra     = 0,
             .hInstance      = hInst,
@@ -70,7 +70,7 @@ struct Window
         //window size and window screen size are not same
     }
 
-    ~Window()
+    ~win_Window()
     {
         DestroyWindow(hWnd);
         UnregisterClass(className, hInstance);

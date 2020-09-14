@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Vulkan/Context.hpp"
+#include "Vulkan/Meta/Context.hpp"
 #include "Vulkan/_Old/Resources/Resources.hpp"
 #include "Resources/CpuResources.hpp"
 #include "App/Scene.hpp"
@@ -11,12 +11,12 @@
 #include "Window/WindowEvents.hpp"
 #include "Common/DeltaTime.hpp"
 
-#include "Vulkan/Rendering/RenderCommands.hpp"
-#include "Vulkan/Rendering/UpdateResources.hpp"
+#include "Vulkan/Transfer/RenderCommands.hpp"
+#include "Vulkan/Transfer/UpdateGpuResources.hpp"
 
 namespace rpg::vuk {
 
-struct VkRenderer
+struct VukRenderer
 {
     Context         context     {};
     VkResources     resources   {};
@@ -24,7 +24,7 @@ struct VkRenderer
     Synchronization sync;
     uint32_t        currentFrame = 0;
     
-    VkRenderer(const vuk::WindowHandle& wndHandle, res::HostResources& hostResources)
+    VukRenderer(const vuk::WindowHandle& wndHandle, res::HostResources& hostResources)
     {
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
