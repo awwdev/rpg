@@ -10,9 +10,9 @@ namespace rpg::gpu::vuk {
 struct General_RenderPass
 {
     //? DATA
-    constexpr auto DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
-    constexpr auto COLOR_FORMAT = VK_FORMAT_R8G8B8A8_UNORM;
-    constexpr auto MSAA_SAMPLE_COUNT = VK_SAMPLE_COUNT_4_BIT;
+    static constexpr auto DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
+    static constexpr auto COLOR_FORMAT = VK_FORMAT_R8G8B8A8_UNORM;
+    static constexpr auto MSAA_SAMPLE_COUNT = VK_SAMPLE_COUNT_4_BIT;
 
     VkRenderPass  renderPass;
     VkFramebuffer framebuffer; //offscreen
@@ -22,7 +22,7 @@ struct General_RenderPass
     Image finalImage;
 
     //? RAII
-    ~RenderPassTest() 
+    ~General_RenderPass() 
     { 
         Clear(); 
     }
@@ -64,7 +64,7 @@ struct General_RenderPass
         msaaImage.Create(
             COLOR_FORMAT,
             extent.width, extent.height,
-            sampleCount,
+            MSAA_SAMPLE_COUNT,
             VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
             VK_IMAGE_ASPECT_COLOR_BIT,
             VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
@@ -91,7 +91,7 @@ struct General_RenderPass
         depthImage.Create(
             DEPTH_FORMAT,
             extent.width, extent.height,
-            sampleCount,
+            MSAA_SAMPLE_COUNT,
             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
             VK_IMAGE_ASPECT_DEPTH_BIT,
             VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
@@ -161,8 +161,8 @@ struct General_RenderPass
             .inputAttachmentCount    = 0,
             .pInputAttachments       = nullptr,
             .colorAttachmentCount    = 1,
-            .pColorAttachments       = &colorRef,
-            .pResolveAttachments     = &resolveRef,
+            .pColorAttachments       = &msaaRef,
+            .pResolveAttachments     = &finalRef,
             .pDepthStencilAttachment = &depthRef,
             .preserveAttachmentCount = 0,
             .pPreserveAttachments    = nullptr

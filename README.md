@@ -36,7 +36,7 @@ It might get the base for some stylized low poly game in the future?
 The std is hard to read and hard to extend (e.g. using std::vector with a custom allocator).
 So I decided to roll my own containers and memory allocation.
 
-![](media/progress/2020_08_08_AllocationView.png)
+![](Media/Progress/2020_08_08_AllocationView.png)
 
 ## Entity-Component-System
 - DOD (SOA)

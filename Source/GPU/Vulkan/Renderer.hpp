@@ -11,20 +11,23 @@
 #include "Window/WindowEvents.hpp"
 #include "Common/DeltaTime.hpp"
 
-#include "GPU/Vulkan/Transfer/RenderCommands.hpp"
-#include "GPU/Vulkan/Transfer/UpdateGpuResources.hpp"
+#include "GPU/Vulkan/_Old/Transfer/RenderCommands.hpp"
+#include "GPU/Vulkan/_Old/Transfer/UpdateGpuResources.hpp"
+
+#include "GPU/Vulkan/States/States.hpp"
 
 namespace rpg::gpu::vuk {
 
-struct VukRenderer
+struct Renderer
 {
-    Context         context     {};
-    VkResources     resources   {};
-    Commands        commands    {};
+    Context         context;
+    VkResources     resources;
+    States          states;
+    Commands        commands;
     Synchronization sync;
     uint32_t        currentFrame = 0;
     
-    VukRenderer(const vuk::WindowHandle& wndHandle, res::HostResources& hostResources)
+    Renderer(const vuk::WindowHandle& wndHandle, res::HostResources& hostResources)
     {
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
@@ -79,8 +82,10 @@ struct VukRenderer
         VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
         //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-        UpdateVkResources_GameScene(resources, scene, hostRes, dt, commands); //TODO: depends on scene
-        RecordCommands(resources, commands, imageIndex, dt, scene);
+        states.Update();
+        states.Record();
+        //UpdateVkResources_GameScene(resources, scene, hostRes, dt, commands); //TODO: depends on scene
+        //RecordCommands(resources, commands, imageIndex, dt, scene);
         //!--------------------------------------------------
 
         const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
