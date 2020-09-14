@@ -8,9 +8,9 @@
 #include "GPU/RenderData.hpp"
 #include "GPU/Sun.hpp"
 
-#include "Debug/GUI/Composed/GUI_Stats.hpp"
-#include "Debug/GUI/Composed/GUI_Shadow.hpp"
-#include "Debug/GUI/Composed/GUI_Level.hpp"
+#include "GUI/Dedicated_Editor/GUI_Stats.hpp"
+#include "GUI/Dedicated_Editor/GUI_Shadow.hpp"
+#include "GUI/Dedicated_Editor/GUI_Level.hpp"
 
 #include "Resources/Terrain/Terrain.hpp"
 #include "ECS/Prefabs/PrefabLoader.hpp"
@@ -31,9 +31,9 @@ struct GameScene
     app::PlayerController playerController;
     app::EditorController editorController;
 
-    dbg::gui::GUI_Level  guiLevel;
-    dbg::gui::GUI_Shadow guiShadow;
-    dbg::gui::GUI_Stats  guiStats;
+    gui::GUI_Level  guiLevel;
+    gui::GUI_Shadow guiShadow;
+    gui::GUI_Stats  guiStats;
 
     void Create(res::HostResources& hostRes)
     {

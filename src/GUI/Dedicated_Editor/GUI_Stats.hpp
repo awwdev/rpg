@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
-#include "Debug/GUI/Widgets/Widget_Window.hpp"
+#include "GUI/Widgets/Widget_Window.hpp"
 
-namespace rpg::dbg::gui {
+namespace rpg::gui {
 
 struct GUI_Stats
 {

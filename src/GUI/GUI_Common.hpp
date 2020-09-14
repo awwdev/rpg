@@ -12,7 +12,7 @@
 #include "Common/Container/String.hpp"
 #include "App/InputMode.hpp"
 
-namespace rpg::dbg::gui {
+namespace rpg::gui {
 
 constexpr idx_t LETTER_SIZE  = 16; //monospace
 constexpr idx_t LETTER_SPACE = 8;

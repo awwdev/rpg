@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Debug/GUI/Widgets/Widget_Window.hpp"
+#include "GUI/Widgets/Widget_Window.hpp"
 
-namespace rpg::dbg::gui {
+namespace rpg::gui {
 
 template<class T>
 struct Widget_InputField

@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Debug/GUI/GUI_Common.hpp"
+#include "GUI/GUI_Common.hpp"
 
-namespace rpg::dbg::gui {
+namespace rpg::gui {
 
 struct Widget_Window
 {
