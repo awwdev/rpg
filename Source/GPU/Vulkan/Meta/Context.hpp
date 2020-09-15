@@ -9,6 +9,8 @@
 #define VK_USE_PLATFORM_WIN32_KHR
 #include "../third/include/vulkan.h"
 
+#include "GPU/Vulkan/Objects/Initializers.hpp"
+
 namespace rpg::gpu::vuk {
 
 enum class VkErrorHandling { None, Warn, Assert };

@@ -4,26 +4,26 @@
 #include "GPU/Vulkan/States/General/General_RenderPass.hpp"
 #include "GPU/Vulkan/States/General/General_Pipeline.hpp"
 #include "GPU/Vulkan/States/General/General_Shader.hpp"
-#include "GPU/Vulkan/States/General/General_VBO.hpp"
-#include "GPU/Vulkan/States/General/General_UBO.hpp"
+
+#include "GPU/Vulkan/Objects/VertexBuffer.hpp"
 
 namespace rpg::gpu::vuk {
+
+struct Vertex_General{};
 
 struct State_General
 {
     General_Pipeline    pipeline;
     General_RenderPass  renderPass;
     General_Shader      shader;
-    General_VBO         vbo;
-    General_UBO         ubo;
+    
+    VertexBuffer<Vertex_General, 10> vbo;
 
     void Create(VkCommandPool cmdPool)
     {
-        pipeline.Create();
+        pipeline.Create(renderPass, vbo);
         renderPass.Create(cmdPool);
         shader.Create();
-        vbo.Create();
-        ubo.Create();
     }
 
     void Clear()
@@ -31,8 +31,6 @@ struct State_General
         pipeline.Clear();
         renderPass.Clear();
         shader.Clear();
-        vbo.Clear();
-        ubo.Clear();
     }
 
     void Update()

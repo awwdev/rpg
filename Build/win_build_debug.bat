@@ -8,6 +8,7 @@
 -Wall -Wpedantic -Wextra ^
 -Wno-missing-field-initializers ^
 -Wno-unused-variable ^
+-Wunused-but-set-variable ^
 -Wno-unused-parameter ^
 -g ^
 -municode ^

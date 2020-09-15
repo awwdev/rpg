@@ -12,14 +12,16 @@ struct General_RenderPass
     //? DATA
     static constexpr auto DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
     static constexpr auto COLOR_FORMAT = VK_FORMAT_R8G8B8A8_UNORM;
-    static constexpr auto MSAA_SAMPLE_COUNT = VK_SAMPLE_COUNT_4_BIT;
 
     VkRenderPass  renderPass;
-    VkFramebuffer framebuffer; //offscreen
+    VkFramebuffer framebuffer; //offscreen (1x)
 
     Image depthImage;
     Image msaaImage;
     Image finalImage;
+
+    uint32_t width, height; //used by pipeline for view, scissor
+    VkSampleCountFlagBits msaaSampleCount = VK_SAMPLE_COUNT_4_BIT;
 
     //? RAII
     ~General_RenderPass() 
@@ -58,13 +60,14 @@ struct General_RenderPass
     //? CREATE
     void Create(VkCommandPool cmdPool)
     {
-        const auto& extent = g_contextPtr->surfaceCapabilities.currentExtent;
+        width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
+        height = g_contextPtr->surfaceCapabilities.currentExtent.height;
 
         //? MSAA
         msaaImage.Create(
             COLOR_FORMAT,
-            extent.width, extent.height,
-            MSAA_SAMPLE_COUNT,
+            width, height,
+            msaaSampleCount,
             VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
             VK_IMAGE_ASPECT_COLOR_BIT,
             VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
@@ -73,7 +76,7 @@ struct General_RenderPass
         const VkAttachmentDescription msaaDesc {
             .flags          = 0 ,
             .format         = COLOR_FORMAT, 
-            .samples        = MSAA_SAMPLE_COUNT,
+            .samples        = msaaSampleCount,
             .loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR,
             .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
             .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -90,8 +93,8 @@ struct General_RenderPass
          //? DEPTH
         depthImage.Create(
             DEPTH_FORMAT,
-            extent.width, extent.height,
-            MSAA_SAMPLE_COUNT,
+            width, height,
+            msaaSampleCount,
             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
             VK_IMAGE_ASPECT_DEPTH_BIT,
             VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
@@ -100,7 +103,7 @@ struct General_RenderPass
         const VkAttachmentDescription depthDesc {
             .flags          = 0 ,
             .format         = DEPTH_FORMAT, 
-            .samples        = MSAA_SAMPLE_COUNT,
+            .samples        = msaaSampleCount,
             .loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR,
             .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
             .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -117,7 +120,7 @@ struct General_RenderPass
         //? FINAL
         finalImage.Create(
             COLOR_FORMAT,
-            extent.width, extent.height,
+            width,height,
             VK_SAMPLE_COUNT_1_BIT,
             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             VK_IMAGE_ASPECT_COLOR_BIT,
@@ -212,8 +215,8 @@ struct General_RenderPass
             .renderPass      = renderPass,
             .attachmentCount = ArrayCount(views),
             .pAttachments    = views,
-            .width           = extent.width,
-            .height          = extent.height,
+            .width           = width,
+            .height          = height,
             .layers          = 1
         };
         VkCheck(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &framebuffer));

@@ -145,15 +145,4 @@ auto CreatePipelineVertexInputInfo(VertexBuffer<T, N>& vb) -> VkPipelineVertexIn
     };
 }
 
-auto CreatePipelineInputAssemblyInfo(const VkPrimitiveTopology topology)
-{
-    return VkPipelineInputAssemblyStateCreateInfo {
-        .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-        .pNext                  = nullptr,
-        .flags                  = 0,
-        .topology               = topology,
-        .primitiveRestartEnable = VK_FALSE 
-    };
-}
-
 }//ns
