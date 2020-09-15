@@ -20,7 +20,7 @@ namespace rpg::gpu::vuk
         VertexBuffer<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT>& vbo,
         UniformBuffer_Groups<gpu::Common_UniformData, gpu::DEFAULT_UBO_MAX_COUNT>& ubo)
     {
-        const auto vertexInput   = CreatePipelineVertexInputInfo(vbo);
+        const auto vertexInput   = VertexInputInfo();
         const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
         UniformInfo* uniformInfos [] = {

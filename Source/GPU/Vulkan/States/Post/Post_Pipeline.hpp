@@ -16,6 +16,11 @@ struct Post_Pipeline
     {
         
     }
+
+    Post_Pipeline()
+    {
+        Clear();
+    }
 };
 
 }//ns

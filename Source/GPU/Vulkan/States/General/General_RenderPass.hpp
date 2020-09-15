@@ -23,40 +23,6 @@ struct General_RenderPass
     uint32_t width, height; //used by pipeline for view, scissor
     VkSampleCountFlagBits msaaSampleCount = VK_SAMPLE_COUNT_4_BIT;
 
-    //? RAII
-    ~General_RenderPass() 
-    { 
-        Clear(); 
-    }
-
-    void Clear()
-    {
-        vkDestroyRenderPass (g_contextPtr->device, renderPass, nullptr);
-        vkDestroyFramebuffer(g_contextPtr->device, framebuffer, nullptr);
-        finalImage.Clear();    
-        depthImage.Clear();    
-        msaaImage.Clear();
-    }
-
-    //? HELPER
-    template<idx_t N>
-    VkRenderPassBeginInfo GetBeginInfo(const VkClearValue (&clears) [N])
-    {
-        return {
-            .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            .pNext          = nullptr, 
-            .renderPass     = renderPass,
-            .framebuffer    = framebuffer,
-            .renderArea     = 
-            {
-                .offset     = {},
-                .extent     = g_contextPtr->surfaceCapabilities.currentExtent,
-            },
-            .clearValueCount= N,
-            .pClearValues   = clears
-        };
-    }
-
     //? CREATE
     void Create(VkCommandPool cmdPool)
     {
@@ -220,6 +186,40 @@ struct General_RenderPass
             .layers          = 1
         };
         VkCheck(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &framebuffer));
+    }
+    
+    //? RAII
+    ~General_RenderPass() 
+    { 
+        Clear(); 
+    }
+
+    void Clear()
+    {
+        vkDestroyRenderPass (g_contextPtr->device, renderPass, nullptr);
+        vkDestroyFramebuffer(g_contextPtr->device, framebuffer, nullptr);
+        finalImage.Clear();    
+        depthImage.Clear();    
+        msaaImage.Clear();
+    }
+
+    //? HELPER
+    template<idx_t N>
+    VkRenderPassBeginInfo GetBeginInfo(const VkClearValue (&clears) [N])
+    {
+        return {
+            .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            .pNext          = nullptr, 
+            .renderPass     = renderPass,
+            .framebuffer    = framebuffer,
+            .renderArea     = 
+            {
+                .offset     = {},
+                .extent     = g_contextPtr->surfaceCapabilities.currentExtent,
+            },
+            .clearValueCount= N,
+            .pClearValues   = clears
+        };
     }
     
 };

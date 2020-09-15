@@ -16,6 +16,11 @@ struct GUI_Pipeline
     {
         
     }
+
+    GUI_Pipeline()
+    {
+        Clear();
+    }
 };
 
 }//ns

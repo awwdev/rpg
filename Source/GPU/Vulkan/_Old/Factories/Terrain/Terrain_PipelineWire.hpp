@@ -19,7 +19,7 @@ inline void Terrain_CreatePipelineWire(
     RenderPass& renderPass,
     VertexBuffer<com::Common_Vertex, gpu::TERRAIN_VERTEX_MAX_COUNT>& vbo)
 {
-    const auto vertexInput   = CreatePipelineVertexInputInfo(vbo);
+    const auto vertexInput   = VertexInputInfo();
     const auto inputAssembly = CreatePipelineInputAssemblyInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
     const VkViewport viewport {

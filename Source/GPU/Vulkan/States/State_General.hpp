@@ -38,9 +38,9 @@ struct State_General
 
     }
 
-    void Record()
+    void Record(VkCommandBuffer cmdBuffer)
     {
-
+        
     };
     
 };

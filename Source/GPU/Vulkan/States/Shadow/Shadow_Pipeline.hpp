@@ -16,6 +16,11 @@ struct Shadow_Pipeline
     {
         
     }
+
+    ~Shadow_Pipeline()
+    {
+        
+    }
 };
 
 }//ns

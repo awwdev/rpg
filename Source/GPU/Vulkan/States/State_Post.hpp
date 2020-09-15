@@ -32,7 +32,7 @@ struct State_Post
 
     }
 
-    void Record()
+    void Record(VkCommandBuffer cmdBuffer)
     {
 
     };

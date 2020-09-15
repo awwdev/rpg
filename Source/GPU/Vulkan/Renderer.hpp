@@ -77,7 +77,7 @@ struct Renderer
 
         //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
         states.Update();
-        states.Record();
+        states.Record(commands.cmdBuffers[imageIndex], imageIndex);
         //!--------------------------------------------------
 
         const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;

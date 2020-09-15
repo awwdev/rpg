@@ -32,7 +32,7 @@ struct State_Shadow
 
     }
 
-    void Record()
+    void Record(VkCommandBuffer cmdBuffer)
     {
 
     };

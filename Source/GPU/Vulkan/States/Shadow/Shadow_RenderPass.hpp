@@ -16,6 +16,11 @@ struct Shadow_RenderPass
     {
         
     }
+
+    ~Shadow_RenderPass()
+    {
+        Clear();
+    }
 };
 
 }//ns

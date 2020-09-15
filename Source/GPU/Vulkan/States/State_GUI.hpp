@@ -32,9 +32,12 @@ struct State_GUI
 
     }
 
-    void Record()
+    void Record(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx)
     {
-
+        const auto beginInfo = renderPass.GetBeginInfo(cmdBufferIdx);
+        
+        vkCmdBeginRenderPass    (cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdEndRenderPass      (cmdBuffer);
     };
 
 };

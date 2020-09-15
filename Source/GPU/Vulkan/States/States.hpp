@@ -33,12 +33,17 @@ struct States
         gui.Update();
     }
 
-    void Record()
+    void Record(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx)
     {
-        shadow.Record();
-        general.Record();
-        post.Record();
-        gui.Record();
+        const auto beginInfo = CommandBufferBeginInfo();
+        VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+
+        shadow.Record(cmdBuffer);
+        general.Record(cmdBuffer);
+        post.Record(cmdBuffer);
+        gui.Record(cmdBuffer, cmdBufferIdx);
+
+        VkCheck(vkEndCommandBuffer(cmdBuffer));
     }
 
     void Clear()

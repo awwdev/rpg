@@ -128,21 +128,20 @@ struct VertexBuffer
     {
         count = 0;
         vertexGroups.Clear();
-    }        
-};
+    }     
 
-template<class T, u32 N>
-auto CreatePipelineVertexInputInfo(VertexBuffer<T, N>& vb) -> VkPipelineVertexInputStateCreateInfo
-{
-    return {
-        .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        .pNext                           = nullptr,
-        .flags                           = 0,
-        .vertexBindingDescriptionCount   = vb.bindings.count,
-        .pVertexBindingDescriptions      = vb.bindings.Data(),
-        .vertexAttributeDescriptionCount = vb.attributes.count,
-        .pVertexAttributeDescriptions    = vb.attributes.Data()
-    };
-}
+    auto VertexInputInfo() 
+    {
+        return VkPipelineVertexInputStateCreateInfo {
+            .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+            .pNext                           = nullptr,
+            .flags                           = 0,
+            .vertexBindingDescriptionCount   = bindings.count,
+            .pVertexBindingDescriptions      = bindings.Data(),
+            .vertexAttributeDescriptionCount = attributes.count,
+            .pVertexAttributeDescriptions    = attributes.Data()
+        };
+    }
+};
 
 }//ns

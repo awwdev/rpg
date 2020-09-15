@@ -16,6 +16,11 @@ struct Post_RenderPass
     {
         
     }
+
+    ~Post_RenderPass()
+    {
+        Clear();
+    }
 };
 
 }//ns

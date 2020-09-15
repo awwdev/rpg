@@ -2,6 +2,8 @@
 
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
+#include "GPU/Vulkan/Objects/Initializers.hpp"
+#include "GPU/Vulkan/Objects/Utils.hpp"
 #include "GPU/Vulkan/States/General/General_RenderPass.hpp"
 #include "GPU/Vulkan/Objects/VertexBuffer.hpp"
 
@@ -17,11 +19,9 @@ struct General_Pipeline
     //Descriptor class
     
     template<class VERTEX_TYPE, auto VERTEX_COUNT>
-    void Create(
-    General_RenderPass& rp, 
-    VertexBuffer<VERTEX_TYPE, VERTEX_COUNT>& vbo)
+    void Create(General_RenderPass& rp, VertexBuffer<VERTEX_TYPE, VERTEX_COUNT>& vbo)
     {
-        const auto vertexInput   = CreatePipelineVertexInputInfo(vbo);   //make that to class member?
+        const auto vertexInput   = vbo.VertexInputInfo();
         const auto inputAssembly = InputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
         const auto viewport      = Viewport(rp.width, rp.height);
@@ -116,6 +116,11 @@ struct General_Pipeline
     {
         vkDestroyPipelineLayout (g_contextPtr->device, layout, nullptr);
         vkDestroyPipeline       (g_contextPtr->device, pipeline, nullptr);
+    }
+
+    ~General_Pipeline()
+    {
+        Clear();
     }
 
 };

@@ -7,6 +7,8 @@ namespace rpg::gpu::vuk {
 
 struct General_Shader
 {
+
+
     void Create()
     {
 
@@ -14,7 +16,10 @@ struct General_Shader
 
     void Clear()
     {
-        
+    }
+
+    ~General_Shader()
+    {
     }
 };
 

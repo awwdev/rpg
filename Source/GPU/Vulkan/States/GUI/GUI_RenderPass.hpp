@@ -7,14 +7,130 @@ namespace rpg::gpu::vuk {
 
 struct GUI_RenderPass
 {
+    //? DATA
+    VkRenderPass  renderPass;
+    VkFramebuffer framebuffers[4]; //moving to swapchain images //!need some max imgs count
+
+    uint32_t width, height;
+
+    //? HELPER
+    auto GetBeginInfo(const uint32_t frameBufferIdx)
+    {
+        return VkRenderPassBeginInfo 
+        {
+            .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            .pNext          = nullptr, 
+            .renderPass     = renderPass,
+            .framebuffer    = framebuffers[frameBufferIdx],
+            .renderArea     = {
+                .offset     = VkOffset2D {0, 0},
+                .extent     = { width, height }
+            },
+            .clearValueCount= 0,
+            .pClearValues   = nullptr
+        };
+    }
+
     void Create()
     {
+        const VkFormat COLOR_FORMAT = g_contextPtr->format;
+
+        //? ATTACHMENTS
+        const VkAttachmentDescription colorDesc {
+            .flags          = 0 ,
+            .format         = COLOR_FORMAT, 
+            .samples        = VK_SAMPLE_COUNT_1_BIT,
+            .loadOp         = VK_ATTACHMENT_LOAD_OP_DONT_CARE, //VK_ATTACHMENT_LOAD_OP_LOAD,
+            .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
+            .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+            .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+            .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED, //VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+            .finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+        };
+
+        const VkAttachmentDescription descs [] {
+            colorDesc,
+        };
+
+        const VkAttachmentReference colorRef {
+            .attachment = 0,
+            .layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+        };
+        
+        //? SUBPASS
+        const VkSubpassDescription subpassDesc {
+            .flags                   = 0,
+            .pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS,
+            .inputAttachmentCount    = 0,
+            .pInputAttachments       = nullptr,
+            .colorAttachmentCount    = 1,
+            .pColorAttachments       = &colorRef,
+            .pResolveAttachments     = nullptr,
+            .pDepthStencilAttachment = nullptr,
+            .preserveAttachmentCount = 0,
+            .pPreserveAttachments    = nullptr
+        };
+        
+        VkSubpassDependency dependencies []
+        {
+            {
+                .srcSubpass         = VK_SUBPASS_EXTERNAL,
+                .dstSubpass         = 0,
+                .srcStageMask       = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                .dstStageMask       = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                .srcAccessMask      = 0,
+                .dstAccessMask      = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                .dependencyFlags    = VK_DEPENDENCY_BY_REGION_BIT,
+            },
+        };
+
+        //? RENDERPASS
+        const VkRenderPassCreateInfo renderPassInfo {
+            .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+            .pNext           = nullptr,
+            .flags           = 0,
+            .attachmentCount = ArrayCount(descs),
+            .pAttachments    = descs,
+            .subpassCount    = 1,
+            .pSubpasses      = &subpassDesc,
+            .dependencyCount = ArrayCount(dependencies),
+            .pDependencies   = dependencies
+        };
+        VkCheck(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &renderPass));
+
+        //? FRAMEBUFFER
+        FOR_VK_ARRAY(g_contextPtr->swapImages, i)
+        {
+            const VkImageView views [] {
+                g_contextPtr->swapImageViews[i]
+            };
+
+            const VkFramebufferCreateInfo framebufferInfo {
+                .sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+                .pNext           = nullptr,
+                .flags           = 0,
+                .renderPass      = renderPass,
+                .attachmentCount = ArrayCount(views),
+                .pAttachments    = views,
+                .width           = width,
+                .height          = height,
+                .layers          = 1
+            };
+            VkCheck(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &framebuffers[i]));
+        }
 
     }
 
+    //? RAII
     void Clear()
     {
-        
+        vkDestroyRenderPass (g_contextPtr->device, renderPass, nullptr);
+        //vkDestroyFramebuffer(g_contextPtr->device, framebuffer, nullptr);
+    }
+
+    ~GUI_RenderPass()
+    {
+        Clear();
     }
 };
 

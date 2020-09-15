@@ -2,7 +2,7 @@
  & mkdir Build\\Optimized ^
  & xcopy /s /y /d AssetsApp\* Build\\Optimized\\AssetsApp\* ^
  & Pushd G:\\DEV2020\\buildtools\\msys2\\mingw64\\bin ^
- & gcc ^
+ & g++ ^
 -I %2 ^
 -L %5 ^
 -Wall -Wpedantic -Wextra ^

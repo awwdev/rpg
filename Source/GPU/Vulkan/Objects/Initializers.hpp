@@ -107,4 +107,14 @@ const VkPrimitiveTopology topology)
     };
 }
 
+inline auto CommandBufferBeginInfo(const VkCommandBufferUsageFlags flags = 0)
+{
+    return VkCommandBufferBeginInfo {
+        .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        .pNext            = nullptr,
+        .flags            = flags,
+        .pInheritanceInfo = nullptr
+    };
+}
+
 }//ns
