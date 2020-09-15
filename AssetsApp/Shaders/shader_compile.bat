@@ -1,5 +1,5 @@
-glslc ui.vert -o spv/ui.vert.spv
-glslc ui.frag -o spv/ui.frag.spv
+glslc gui.vert -o spv/gui.vert.spv
+glslc gui.frag -o spv/gui.frag.spv
 
 glslc post.vert -o spv/post.vert.spv
 glslc post.frag -o spv/post.frag.spv

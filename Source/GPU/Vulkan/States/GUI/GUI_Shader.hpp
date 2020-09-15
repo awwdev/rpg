@@ -15,12 +15,12 @@ struct GUI_Shader
     void Create()
     {
         CreateShaderModule(
-            "AssetsApp/Shaders/spv/ui.vert.spv", 
+            "AssetsApp/Shaders/spv/gui.vert.spv", 
             VK_SHADER_STAGE_VERTEX_BIT,
             modules[0], info[0]);
 
         CreateShaderModule(
-            "AssetsApp/Shaders/spv/ui.frag.spv", 
+            "AssetsApp/Shaders/spv/gui.frag.spv", 
             VK_SHADER_STAGE_FRAGMENT_BIT,
             modules[1], info[1]);
     }

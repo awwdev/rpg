@@ -15,16 +15,16 @@ struct State_GUI
 
     void Create(VkCommandPool cmdPool)
     {
-        //pipeline.Create();
         shader.Create();
         renderPass.Create();
+        pipeline.Create(renderPass, shader);
     }
 
     void Clear()
     {
-        //pipeline.Clear();
-        shader.Clear();
+        pipeline.Clear();
         renderPass.Clear();
+        shader.Clear();
     }
 
     void Update()

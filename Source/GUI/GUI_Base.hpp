@@ -36,14 +36,25 @@ enum class Colors : u32
 //? RECTANGLE
 
 inline void AddRect(gpu::RenderData& renderData, 
-const com::Rect<f32>& rect, const Colors col, const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, bool blur = false)
+const com::Rect<f32>& rect, const Colors col, 
+const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
 {
+    const com::Rect<f32> normRect = { 
+        //vulkan space
+        (rect.x / wnd::glo::window_w) * 2 - 1,  
+        (rect.y / wnd::glo::window_h) * 2 - 1,  
+        (rect.w / wnd::glo::window_w) * 2 - 1,  
+        (rect.h / wnd::glo::window_h) * 2 - 1,  
+    };
+
     renderData.gui_ubo.AppendData({ 
-        .rect         = rect,
+        .rect         = normRect,
         .colorIndex   = (u32)col,
         .textureIndex = texIdx,
     });
-    if (blur) {
+
+    if (blur) 
+    {
         using namespace com;
         com::Vec2f v1 = { rect.x, rect.y };
         com::Vec2f v2 = { rect.x + rect.w, rect.y };

@@ -20,10 +20,8 @@ VkShaderModule& mod, VkPipelineShaderStageCreateInfo& stageInfo)
 
     const uint32_t size = (uint32_t)file.tellg();
     auto ptrBuffer = com::mem::ClaimBlock<char[BUFFER_SIZE]>();
-    //char buffer [BUFFER_SIZE];
     file.seekg(std::ios::beg);
     file.read(*ptrBuffer, size);
-    //file.read(buffer, size);
 
     const VkShaderModuleCreateInfo moduleInfo {
         .sType      = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
@@ -31,7 +29,6 @@ VkShaderModule& mod, VkPipelineShaderStageCreateInfo& stageInfo)
         .flags      = 0,
         .codeSize   = size,
         .pCode      = reinterpret_cast<const uint32_t*>(*ptrBuffer)
-        //.pCode      = reinterpret_cast<const uint32_t*>(buffer)
     };
     VkCheck(vkCreateShaderModule(g_contextPtr->device, &moduleInfo, nullptr, &mod));
 

@@ -46,8 +46,59 @@ const VkViewport& viewport, const VkRect2D& scissor)
     };
 }
 
-inline auto BlendAttachent(
-const VkBool32 enable)
+inline auto RasterizationDefault()
+{
+    return VkPipelineRasterizationStateCreateInfo {
+        .sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+        .pNext                   = nullptr,
+        .flags                   = 0,
+        .depthClampEnable        = VK_FALSE,
+        .rasterizerDiscardEnable = VK_FALSE,
+        .polygonMode             = VK_POLYGON_MODE_FILL,
+        .cullMode                = VK_CULL_MODE_BACK_BIT,
+        .frontFace               = VK_FRONT_FACE_CLOCKWISE,
+        .depthBiasEnable         = VK_FALSE,
+        .depthBiasConstantFactor = 0.f,
+        .depthBiasClamp          = 0.f,
+        .depthBiasSlopeFactor    = 0.f,
+        .lineWidth               = 1.f  
+    };
+}
+
+inline auto MultisamplingEmpty()
+{
+    return VkPipelineMultisampleStateCreateInfo {
+        .sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+        .pNext                 = nullptr,
+        .flags                 = 0,
+        .rasterizationSamples  = VK_SAMPLE_COUNT_1_BIT,
+        .sampleShadingEnable   = VK_FALSE,
+        .minSampleShading      = 1.f,
+        .pSampleMask           = nullptr,
+        .alphaToCoverageEnable = VK_FALSE,
+        .alphaToOneEnable      = VK_FALSE
+    };
+}
+
+inline auto DepthStencilEmpty()
+{
+    return VkPipelineDepthStencilStateCreateInfo {
+        .sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+        .pNext                 = nullptr,
+        .flags                 = 0,
+        .depthTestEnable       = VK_FALSE,
+        .depthWriteEnable      = VK_FALSE,
+        .depthCompareOp        = VK_COMPARE_OP_LESS,
+        .depthBoundsTestEnable = VK_FALSE,
+        .stencilTestEnable     = VK_FALSE,
+        .front                 = {},
+        .back                  = {},
+        .minDepthBounds        = 0.f,
+        .maxDepthBounds        = 1.f
+    };
+}
+
+inline auto BlendAttachment(const VkBool32 enable)
 {
     return VkPipelineColorBlendAttachmentState {
         .blendEnable                = enable,
@@ -95,8 +146,7 @@ VkPushConstantRange* pushConsts = nullptr, const uint32_t pushConstCount = 0)
     };
 }
 
-inline auto InputAssembly(
-const VkPrimitiveTopology topology)
+inline auto InputAssemblyDefault(const VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)
 {
     return VkPipelineInputAssemblyStateCreateInfo {
         .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
@@ -104,6 +154,19 @@ const VkPrimitiveTopology topology)
         .flags                  = 0,
         .topology               = topology,
         .primitiveRestartEnable = VK_FALSE 
+    };
+}
+
+inline auto VertexInputInfoEmpty() 
+{
+    return VkPipelineVertexInputStateCreateInfo {
+        .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+        .pNext                           = nullptr,
+        .flags                           = 0,
+        .vertexBindingDescriptionCount   = 0,
+        .pVertexBindingDescriptions      = nullptr,
+        .vertexAttributeDescriptionCount = 0,
+        .pVertexAttributeDescriptions    = nullptr
     };
 }
 

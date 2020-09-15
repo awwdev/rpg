@@ -1,10 +1,4 @@
 #version 450
-//todo: shader extension to allow smaller types on INSTANCE_DATA
-
-layout(push_constant) uniform Push {
-    uint wnd_width;
-    uint wnd_height;
-} push;
 
 struct INSTANCE_DATA {
     vec4 rect;
@@ -39,7 +33,6 @@ const vec2 uv [6] = {
     vec2( 0,  1), //bot left
 };
 
-//alpha does not matter
 //could do an UBO
 const vec4 colors[] = {
     vec4(0.90, 0.90, 0.90, 1.0), //WHITE
@@ -63,12 +56,10 @@ void main()
     const float vertOffX = quad[vertID].x * instData.rect.z;
     const float vertOffY = quad[vertID].y * instData.rect.w;
 
-    const float xnorm1 = (instData.rect.x + vertOffX) / push.wnd_width;
-    const float ynorm1 = (instData.rect.y + vertOffY) / push.wnd_height;
-    const float xnorm2 = xnorm1 * 2 - 1;
-    const float ynorm2 = ynorm1 * 2 - 1;
+    const float x = instData.rect.x + vertOffX;
+    const float y = instData.rect.y + vertOffY;
+    gl_Position = vec4(x, y, 0, 1);
 
-    gl_Position = vec4(xnorm2, ynorm2, 0, 1);
     outColors   = colors[instanceData.arr[instID].colorIdx]; //color lookup
     outUV       = vec3(uv[vertID], instanceData.arr[instID].textureIdx); //texture index lookup
 }

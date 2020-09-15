@@ -22,7 +22,7 @@ struct General_Pipeline
     void Create(General_RenderPass& rp, VertexBuffer<VERTEX_TYPE, VERTEX_COUNT>& vbo)
     {
         const auto vertexInput   = vbo.VertexInputInfo();
-        const auto inputAssembly = InputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+        const auto inputAssembly = InputAssemblyDefault();
 
         const auto viewport      = Viewport(rp.width, rp.height);
         const auto scissor       = Scissor (rp.width, rp.height);
@@ -74,7 +74,7 @@ struct General_Pipeline
             .maxDepthBounds        = 1.f
         };
 
-        const auto blendAttachment = BlendAttachent(VK_FALSE);
+        const auto blendAttachment = BlendAttachment(VK_FALSE);
         const auto colorBlendState = BlendState(blendAttachment);
 
         const VkPushConstantRange constantRange {
