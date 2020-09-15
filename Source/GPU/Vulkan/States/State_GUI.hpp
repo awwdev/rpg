@@ -4,24 +4,28 @@
 #include "GPU/Vulkan/States/GUI/GUI_Pipeline.hpp"
 #include "GPU/Vulkan/States/GUI/GUI_Shader.hpp"
 #include "GPU/Vulkan/States/GUI/GUI_RenderPass.hpp"
+#include "GPU/Vulkan/States/GUI/GUI_Uniforms.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct State_GUI
 {
-    GUI_Pipeline    pipeline;
-    GUI_Shader      shader;
-    GUI_RenderPass  renderPass;
+    GUI_Pipeline       pipeline;
+    GUI_Shader         shader;
+    GUI_RenderPass     renderPass;
+    GUI_Uniforms       uniforms;
 
     void Create(VkCommandPool cmdPool)
     {
+        uniforms.Create();
         shader.Create();
         renderPass.Create();
-        pipeline.Create(renderPass, shader);
+        pipeline.Create(renderPass, shader, uniforms);
     }
 
     void Clear()
     {
+        uniforms.Clear();
         pipeline.Clear();
         renderPass.Clear();
         shader.Clear();
@@ -37,6 +41,8 @@ struct State_GUI
         const auto beginInfo = renderPass.GetBeginInfo(cmdBufferIdx);
         
         vkCmdBeginRenderPass    (cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
+        //vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, pipeline.descSets, pipeline.descSets, 0, nullptr);
         vkCmdEndRenderPass      (cmdBuffer);
     };
 

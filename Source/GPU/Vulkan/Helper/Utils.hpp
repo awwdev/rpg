@@ -4,6 +4,7 @@
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Helper/Initializers.hpp"
 #include "GPU/Vulkan/Helper/Utils.hpp"
+#include "GPU/Vulkan/Objects/UniformBuffer.hpp"
 
 #include "Common/Memory/Allocator.hpp"
 #include <fstream>
@@ -41,6 +42,58 @@ VkShaderModule& mod, VkPipelineShaderStageCreateInfo& stageInfo)
         .pName  = "main",
         .pSpecializationInfo = nullptr 
     };
+}
+
+template<uint32_t UNIFORM_COUNT>
+void CreateDescriptors(
+UniformInfo (&uniformInfos) [UNIFORM_COUNT],
+VkDescriptorSetLayout* descSetLayouts, const uint32_t descSetLayoutCount,
+VkDescriptorPool descPool,
+VkDescriptorSet* descSets)
+{
+    VkDescriptorSetLayoutBinding bindings [UNIFORM_COUNT];
+    VkDescriptorPoolSize poolSizes [UNIFORM_COUNT];
+
+    for(uint32_t i = 0; i < UNIFORM_COUNT; ++i) {
+        bindings[i]  = uniformInfos[i].layout;
+        poolSizes[i] = {
+            .type = bindings[i].descriptorType,
+            .descriptorCount = descSetLayoutCount
+        };
+    }
+
+    const auto descSetLayoutInfo = DescSetLayoutInfo(bindings, UNIFORM_COUNT);
+    for(uint32_t i = 0; i < descSetLayoutCount; ++i) 
+        VkCheck(vkCreateDescriptorSetLayout(g_contextPtr->device, &descSetLayoutInfo, nullptr, &descSetLayouts[i]));
+
+    const auto descPoolInfo = DescPoolInfo(descSetLayoutCount, UNIFORM_COUNT, poolSizes);
+    VkCheck(vkCreateDescriptorPool(g_contextPtr->device, &descPoolInfo, nullptr, &descPool));
+
+    const auto allocInfo = DescSetAllocInfo(descPool, descSetLayoutCount, descSetLayouts);
+    VkCheck(vkAllocateDescriptorSets(g_contextPtr->device, &allocInfo, descSets));
+
+    VkArray<VkWriteDescriptorSet, 10> writes;
+    writes.count = descSetLayoutCount * UNIFORM_COUNT;
+    for(u32 i = 0; i < descSetLayoutCount; ++i)
+    {
+        FOR_CARRAY(uniformInfos, j)
+        {
+            writes[i * UNIFORM_COUNT + j] = {
+                .sType              = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+                .pNext              = nullptr,
+                .dstSet             = descSets[i],
+                .dstBinding         = uniformInfos[j].layout.binding,
+                .dstArrayElement    = 0,
+                .descriptorCount    = 1,
+                .descriptorType     = uniformInfos[j].layout.descriptorType,
+                .pImageInfo         = uniformInfos[j].type == UniformInfo::Image  ? &uniformInfos[j].imageInfo  : nullptr,
+                .pBufferInfo        = uniformInfos[j].type == UniformInfo::Buffer ? &uniformInfos[j].bufferInfo : nullptr,
+                .pTexelBufferView   = nullptr
+            };
+        }
+    }
+    vkUpdateDescriptorSets(g_contextPtr->device, writes.count, writes.data, 0, nullptr);   
+
 }
 
 }//ns

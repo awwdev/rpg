@@ -6,6 +6,7 @@
 
 #include "GPU/Vulkan/States/GUI/GUI_RenderPass.hpp"
 #include "GPU/Vulkan/States/GUI/GUI_Shader.hpp"
+#include "GPU/Vulkan/States/GUI/GUI_Uniforms.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -14,7 +15,12 @@ struct GUI_Pipeline
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
-    void Create(GUI_RenderPass& renderPass, GUI_Shader& shader)
+    //make struct with method
+    VkArray<VkDescriptorSetLayout, 4> descSetLayouts;
+    VkArray<VkDescriptorSet, 4> descSets;
+    VkDescriptorPool descPool;
+
+    void Create(GUI_RenderPass& renderPass, GUI_Shader& shader, GUI_Uniforms& uniforms)
     {
         const auto vertexInput      = VertexInputInfoEmpty();
         const auto inputAssembly    = InputAssemblyDefault();
@@ -27,7 +33,9 @@ struct GUI_Pipeline
         const auto blendAttachment  = BlendAttachment(VK_TRUE);
         const auto blendState       = BlendState(blendAttachment);   
 
-        const auto layoutInfo = PipelineLayoutInfo(nullptr, 0);
+        descSetLayouts.count = descSets.count = g_contextPtr->swapImages.count;
+        CreateDescriptors(uniforms.infos, descSetLayouts.data, descSetLayouts.count, descPool, descSets.data);
+        const auto layoutInfo = PipelineLayoutInfo(descSetLayouts.data, descSetLayouts.count);
         VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &layout));
 
         const VkGraphicsPipelineCreateInfo pipelineInfo
@@ -60,6 +68,9 @@ struct GUI_Pipeline
     {
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
+
+        FOR_VK_ARRAY(descSetLayouts, i)
+            vkDestroyDescriptorSetLayout(g_contextPtr->device, descSetLayouts[i], nullptr);
     }
 
     ~GUI_Pipeline()

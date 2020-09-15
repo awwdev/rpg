@@ -2,7 +2,9 @@
 #pragma once
 #include "Common/Matrix.hpp"
 #include "Common/Container/Array.hpp"
+#include "Common/Container/EnumMap.hpp"
 #include "Common/Structs.hpp"
+#include "Resources/MeshTypes.hpp"
 
 namespace rpg::gpu {
 

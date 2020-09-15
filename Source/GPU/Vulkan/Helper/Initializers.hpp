@@ -180,4 +180,46 @@ inline auto CommandBufferBeginInfo(const VkCommandBufferUsageFlags flags = 0)
     };
 }
 
+inline auto DescSetLayoutInfo(
+VkDescriptorSetLayoutBinding* bindings,
+const uint32_t bindingCount)
+{
+     return VkDescriptorSetLayoutCreateInfo {
+        .sType          = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .pNext          = nullptr,
+        .flags          = 0,
+        .bindingCount   = bindingCount,
+        .pBindings      = bindings
+    };
+}
+
+
+inline auto DescPoolInfo(
+const uint32_t maxSets, 
+const uint32_t poolSizeCount, VkDescriptorPoolSize* poolSizes
+)
+{
+    return VkDescriptorPoolCreateInfo {
+        .sType          = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .pNext          = nullptr,
+        .flags          = 0,
+        .maxSets        = maxSets,
+        .poolSizeCount  = poolSizeCount,
+        .pPoolSizes     = poolSizes
+    };
+}
+
+inline auto DescSetAllocInfo(
+VkDescriptorPool descPool,
+const uint32_t descSetLayoutCount, VkDescriptorSetLayout* descSetLayouts)
+{
+    return VkDescriptorSetAllocateInfo {
+        .sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+        .pNext              = nullptr,
+        .descriptorPool     = descPool,
+        .descriptorSetCount = descSetLayoutCount,
+        .pSetLayouts        = descSetLayouts
+    };
+}
+
 }//ns
