@@ -9,7 +9,7 @@ struct GUI_RenderPass
 {
     //? DATA
     VkRenderPass  renderPass;
-    VkFramebuffer framebuffers[4]; //moving to swapchain images //!need some max imgs count
+    VkArray<VkFramebuffer, 4> framebuffers;
 
     uint32_t width, height;
 
@@ -34,6 +34,8 @@ struct GUI_RenderPass
     void Create()
     {
         const VkFormat COLOR_FORMAT = g_contextPtr->format;
+        width  = g_contextPtr->surfaceCapabilities.currentExtent.width;
+        height = g_contextPtr->surfaceCapabilities.currentExtent.height;
 
         //? ATTACHMENTS
         const VkAttachmentDescription colorDesc {
@@ -116,7 +118,9 @@ struct GUI_RenderPass
                 .height          = height,
                 .layers          = 1
             };
+            
             VkCheck(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &framebuffers[i]));
+            framebuffers.count++;
         }
 
     }
@@ -125,7 +129,8 @@ struct GUI_RenderPass
     void Clear()
     {
         vkDestroyRenderPass (g_contextPtr->device, renderPass, nullptr);
-        //vkDestroyFramebuffer(g_contextPtr->device, framebuffer, nullptr);
+        FOR_VK_ARRAY(framebuffers, i)
+            vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
     }
 
     ~GUI_RenderPass()

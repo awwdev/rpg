@@ -21,15 +21,15 @@ struct State_General
 
     void Create(VkCommandPool cmdPool)
     {
-        pipeline.Create(renderPass, vbo);
-        renderPass.Create(cmdPool);
+        //pipeline.Create(renderPass, vbo);
+        //renderPass.Create(cmdPool);
         shader.Create();
     }
 
     void Clear()
     {
-        pipeline.Clear();
-        renderPass.Clear();
+        //pipeline.Clear();
+        //renderPass.Clear();
         shader.Clear();
     }
 

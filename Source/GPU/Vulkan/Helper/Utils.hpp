@@ -2,8 +2,8 @@
 
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Objects/Initializers.hpp"
-#include "GPU/Vulkan/Objects/Utils.hpp"
+#include "GPU/Vulkan/Helper/Initializers.hpp"
+#include "GPU/Vulkan/Helper/Utils.hpp"
 
 #include "Common/Memory/Allocator.hpp"
 #include <fstream>
@@ -35,12 +35,12 @@ VkShaderModule& mod, VkPipelineShaderStageCreateInfo& stageInfo)
     };
     VkCheck(vkCreateShaderModule(g_contextPtr->device, &moduleInfo, nullptr, &mod));
 
-    stageInfo = {
+    stageInfo = VkPipelineShaderStageCreateInfo {
         .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
         .pNext  = nullptr,
         .flags  = 0,
         .stage  = stage,
-        .module = *mod,
+        .module = mod,
         .pName  = "main",
         .pSpecializationInfo = nullptr 
     };

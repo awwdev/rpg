@@ -2,8 +2,8 @@
 
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Objects/Initializers.hpp"
-#include "GPU/Vulkan/Objects/Utils.hpp"
+#include "GPU/Vulkan/Helper/Initializers.hpp"
+#include "GPU/Vulkan/Helper/Utils.hpp"
 #include "GPU/Vulkan/States/General/General_RenderPass.hpp"
 #include "GPU/Vulkan/Objects/VertexBuffer.hpp"
 
