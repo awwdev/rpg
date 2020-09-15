@@ -3,6 +3,7 @@
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Helper/Initializers.hpp"
+#include "GPU/Vulkan/Objects/Descriptors.hpp"
 
 #include "GPU/Vulkan/States/GUI/GUI_RenderPass.hpp"
 #include "GPU/Vulkan/States/GUI/GUI_Shader.hpp"
@@ -14,11 +15,7 @@ struct GUI_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
-
-    //make struct with method
-    VkArray<VkDescriptorSetLayout, 4> descSetLayouts;
-    VkArray<VkDescriptorSet, 4> descSets;
-    VkDescriptorPool descPool;
+    Descriptors descriptors;
 
     void Create(GUI_RenderPass& renderPass, GUI_Shader& shader, GUI_Uniforms& uniforms)
     {
@@ -33,9 +30,8 @@ struct GUI_Pipeline
         const auto blendAttachment  = BlendAttachment(VK_TRUE);
         const auto blendState       = BlendState(blendAttachment);   
 
-        descSetLayouts.count = descSets.count = g_contextPtr->swapImages.count;
-        CreateDescriptors(uniforms.infos, descSetLayouts.data, descSetLayouts.count, descPool, descSets.data);
-        const auto layoutInfo = PipelineLayoutInfo(descSetLayouts.data, descSetLayouts.count);
+        descriptors.Create(uniforms.infos);
+        const auto layoutInfo = PipelineLayoutInfo(descriptors.descSetLayouts.data, descriptors.descSetLayouts.count);
         VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &layout));
 
         const VkGraphicsPipelineCreateInfo pipelineInfo
@@ -60,6 +56,7 @@ struct GUI_Pipeline
             .basePipelineHandle         = VK_NULL_HANDLE,
             .basePipelineIndex          = -1
         };
+
         VkCheck(vkCreateGraphicsPipelines(g_contextPtr->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline));
 
     }
@@ -68,9 +65,7 @@ struct GUI_Pipeline
     {
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
-
-        FOR_VK_ARRAY(descSetLayouts, i)
-            vkDestroyDescriptorSetLayout(g_contextPtr->device, descSetLayouts[i], nullptr);
+        descriptors.Clear();
     }
 
     ~GUI_Pipeline()
