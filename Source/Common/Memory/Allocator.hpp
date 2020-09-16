@@ -14,7 +14,7 @@
 
 namespace rpg::com::mem {
 
-constexpr auto DO_LOG_BLOCKS = false;
+constexpr auto DO_LOG_BLOCKS = true;
 
 struct BlockArray
 {
@@ -25,12 +25,12 @@ struct BlockArray
 //?-------------------------------------
 //?DEFINE BLOCKS HERE (keep sorted for size!)
 constexpr BlockArray BLOCK_ARRAYS [] {
-    { .size =        1'000, .count = 5 },
-    { .size =       10'000, .count = 5 },
-    { .size =      100'000, .count = 5 },
-    { .size =    1'000'000, .count = 5 },
-    { .size =   10'000'000, .count = 5 },
-    { .size =  100'000'000, .count = 5 },
+    { .size =        1'000, .count = 5  },
+    { .size =       10'000, .count = 5  },
+    { .size =      100'000, .count = 5  },
+    { .size =    1'000'000, .count = 5  },
+    { .size =   10'000'000, .count = 5  },
+    { .size =  100'000'000, .count = 5  },
 };
 //?-------------------------------------
 
@@ -168,14 +168,23 @@ auto ClaimBlock(CtorArgs&&... args)
     }();
 
     const auto freeBlockId = priv::blocksUsed.FindFirstFreeBit(FITTING_BLOCK_ARRAY.blockId);
+    //dbg::Assert(freeBlockId < FITTING_BLOCK_ARRAY.blockId + BLOCK_ARRAYS[FITTING_BLOCK_ARRAY.arrayIdx].count, "not enough free blocks");
     priv::blocksUsed.Flip(freeBlockId);
 
     u8* blockAddress = priv::BlockAddress<FITTING_BLOCK_ARRAY.arrayIdx>(freeBlockId - FITTING_BLOCK_ARRAY.blockId);
     u8* aligned      = (u8*) (((std::uintptr_t)blockAddress + (alignof(T) - 1)) & ~(alignof(T) - 1));
     
-    T* obj;
-    if constexpr(std::is_array_v<T>) obj = new (aligned) T [ ArrayCount<T>() ]{};
-    else                             obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
+    T* const obj = [&]{
+        if constexpr (std::is_array_v<T>) {
+            struct Arr { T data; };
+            return &(new (aligned) Arr { std::forward<CtorArgs>(args) ... })->data;
+        }   
+        else return new (aligned) T  { std::forward<CtorArgs>(args) ... };
+    }();
+    
+
+    //T* const obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
+    //just don't allow arrays, you can wrap them into structs 
 
     //? debug info
     priv::blockInfos[freeBlockId] = __PRETTY_FUNCTION__;
@@ -184,7 +193,8 @@ auto ClaimBlock(CtorArgs&&... args)
         dbg::LogColor(dbg::ConsoleColors::Red, "ClaimBlock", 
             "arr idx ", FITTING_BLOCK_ARRAY.arrayIdx, 
             "block id ", freeBlockId - FITTING_BLOCK_ARRAY.blockId, 
-            "freeBlockId ", freeBlockId);
+            "freeBlockId ", freeBlockId,
+            __PRETTY_FUNCTION__);
             
     return BlockPtr<T> { obj, freeBlockId };
 }

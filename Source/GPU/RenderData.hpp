@@ -39,7 +39,7 @@ struct RenderData
     {
         gui_ubo.Clear();
         common_ubo.Clear();
-        gui_vbo_blur.Clear(3); //keep first 3, they are used to draw previous offscreen
+        //gui_vbo_blur.Clear(3); //keep first 3, they are used to draw previous offscreen
     }
 };
 

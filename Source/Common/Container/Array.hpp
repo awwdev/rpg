@@ -33,7 +33,7 @@ struct Array
 
     static constexpr idx_t CAPACITY  = (idx_t)N;
     static constexpr idx_t BYTE_SIZE = sizeof(T) * CAPACITY;
-    alignas(T) u8 bytes[BYTE_SIZE]; //don't init
+    alignas(alignof(T)) u8 bytes[BYTE_SIZE]; //don't init
 
     Array() = default;
     Array(std::initializer_list<T> list) {

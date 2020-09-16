@@ -90,6 +90,7 @@ struct Bitset
             const auto a = data[BYTE(i)] & (1 << BIT(i)); //Test() is due to Assert not constexpr
             if (a == 0) return i;
         }
+        dbg::LogWarning("cannot find free bit");
         return BITS;
     }
 
