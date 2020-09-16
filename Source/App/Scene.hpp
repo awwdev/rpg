@@ -24,7 +24,7 @@ namespace rpg::app {
 struct GameScene
 {
     //TODO: not every Scene will have those members
-    ecs::ECS          ecs {};
+    ecs::ECS          ecs;
     gpu::RenderData   renderData;
     gpu::Sun          sun;
 
@@ -53,8 +53,8 @@ struct GameScene
         app::ResetUpdateInputMode();
         if (app::glo::inputMode != app::glo::InputMode::PlayMode) {
             guiLevel.Update(renderData);
-            guiStats.Update(renderData);
-            guiShadow.Update(renderData);
+            //guiStats.Update(renderData);
+            //guiShadow.Update(renderData);
         }   
 
         //? META

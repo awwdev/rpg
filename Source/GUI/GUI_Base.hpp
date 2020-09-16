@@ -41,10 +41,10 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
 {
     const com::Rect<f32> normRect = { 
         //vulkan space
-        (rect.x / wnd::glo::window_w) * 2 - 1,  
-        (rect.y / wnd::glo::window_h) * 2 - 1,  
-        (rect.w / wnd::glo::window_w) * 2 - 1,  
-        (rect.h / wnd::glo::window_h) * 2 - 1,  
+        (rect.x / (f32)wnd::glo::window_w) * 2 - 1,  
+        (rect.y / (f32)wnd::glo::window_h) * 2 - 1,  
+        (rect.w / (f32)wnd::glo::window_w) * 2,  
+        (rect.h / (f32)wnd::glo::window_h) * 2,  
     };
 
     renderData.gui_ubo.AppendData({ 
@@ -53,7 +53,7 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
         .textureIndex = texIdx,
     });
 
-    if (blur) 
+    /*if (blur) 
     {
         using namespace com;
         com::Vec2f v1 = { rect.x, rect.y };
@@ -78,7 +78,7 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
             {v4, uv4, 1},
         };
         renderData.gui_vbo_blur.AppendArray(verts);
-    }
+    }*/
 }
 
 inline void AddRectOutline(gpu::RenderData& renderData, 

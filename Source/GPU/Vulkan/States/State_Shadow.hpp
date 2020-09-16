@@ -4,6 +4,7 @@
 #include "GPU/Vulkan/States/Shadow/Shadow_RenderPass.hpp"
 #include "GPU/Vulkan/States/Shadow/Shadow_Pipeline.hpp"
 #include "GPU/Vulkan/States/Shadow/Shadow_Shader.hpp"
+#include "GPU/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -27,7 +28,7 @@ struct State_Shadow
         shader.Clear();
     }
 
-    void Update()
+    void Update(gpu::RenderData&)
     {
 
     }

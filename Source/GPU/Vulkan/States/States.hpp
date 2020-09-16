@@ -25,12 +25,12 @@ struct States
         gui.Create(hostRes, cmdPool);
     }
 
-    void Update()
+    void Update(gpu::RenderData& renderData)
     {
-        shadow.Update();
-        general.Update();
-        post.Update();
-        gui.Update();
+        shadow.Update(renderData);
+        general.Update(renderData);
+        post.Update(renderData);
+        gui.Update(renderData);
     }
 
     void Record(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx)

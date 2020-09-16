@@ -4,6 +4,7 @@
 #include "GPU/Vulkan/States/Post/Post_Pipeline.hpp"
 #include "GPU/Vulkan/States/Post/Post_Shader.hpp"
 #include "GPU/Vulkan/States/Post/Post_RenderPass.hpp"
+#include "GPU/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -27,7 +28,7 @@ struct State_Post
         renderPass.Clear();
     }
 
-    void Update()
+    void Update(gpu::RenderData& )
     {
 
     }

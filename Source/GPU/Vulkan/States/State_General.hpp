@@ -4,8 +4,8 @@
 #include "GPU/Vulkan/States/General/General_RenderPass.hpp"
 #include "GPU/Vulkan/States/General/General_Pipeline.hpp"
 #include "GPU/Vulkan/States/General/General_Shader.hpp"
-
 #include "GPU/Vulkan/Objects/VertexBuffer.hpp"
+#include "GPU/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -33,7 +33,7 @@ struct State_General
         shader.Clear();
     }
 
-    void Update()
+    void Update(gpu::RenderData& )
     {
 
     }

@@ -76,7 +76,7 @@ struct Renderer
         VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
         //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-        states.Update();
+        states.Update(scene.renderData);
         states.Record(commands.cmdBuffers[imageIndex], imageIndex);
         //!--------------------------------------------------
 
