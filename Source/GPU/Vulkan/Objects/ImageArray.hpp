@@ -128,9 +128,12 @@ struct ImageArray
 
     void Clear()
     {
-        vkDestroyImage      (g_contextPtr->device, image, nullptr);
-        vkFreeMemory        (g_contextPtr->device, memory, nullptr);
-        vkDestroyImageView  (g_contextPtr->device, view, nullptr);
+        if (image != VK_NULL_HANDLE){
+            vkDestroyImage      (g_contextPtr->device, image, nullptr);
+            vkFreeMemory        (g_contextPtr->device, memory, nullptr);
+            vkDestroyImageView  (g_contextPtr->device, view, nullptr);
+        }
+        image = VK_NULL_HANDLE;
     }
 };
 

@@ -3,7 +3,10 @@
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Objects/UniformBuffer.hpp"
+#include "GPU/Vulkan/Objects/Descriptors.hpp"
+#include "GPU/Vulkan/Objects/ImageArray.hpp"
 #include "GPU/RenderData.hpp"
+#include "Resources/CpuResources.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -12,11 +15,17 @@ struct GUI_Uniforms
     UniformInfo infos [2];
     UniformBuffer_Groups<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT> ubo;
     VkSampler sampler;
+    Descriptors descriptors;
 
-    void Create()
+    ImageArray fontImages;
+
+    void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
     {
+        fontImages.Create(hostRes.textures.monospaceFont, cmdPool);
+
         //? SAMPLER
-        const VkSamplerCreateInfo samplerInfo {
+        const VkSamplerCreateInfo samplerInfo 
+        {
             .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .pNext                   = nullptr,
             .flags                   = 0,
@@ -39,7 +48,7 @@ struct GUI_Uniforms
         VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, &sampler));
 
         infos[0].type = UniformInfo::Type::Image;
-        infos[0].layout =
+        infos[0].binding =
         {
             .binding            = 0,
             .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -50,15 +59,15 @@ struct GUI_Uniforms
         infos[0].imageInfo = 
         {
             .sampler        = sampler,
-            .imageView      = {}, //!, 
-            .imageLayout    = {}, //!
+            .imageView      = fontImages.view,
+            .imageLayout    = fontImages.layout
         };
 
         //? UBO
         ubo.Create();
 
         infos[1].type = UniformInfo::Buffer;
-        infos[1].layout = {
+        infos[1].binding = {
             .binding            = 1,
             .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             .descriptorCount    = 1,
@@ -70,12 +79,17 @@ struct GUI_Uniforms
             .offset = 0,
             .range  = VK_WHOLE_SIZE
         };
+
+        //? DESCRIPTORS
+        descriptors.Create(infos);
     }
 
     void Clear()
     {
         ubo.Clear();
         vkDestroySampler(g_contextPtr->device, sampler, nullptr);
+        descriptors.Clear();
+        fontImages.Clear();
     }
 
     ~GUI_Uniforms()

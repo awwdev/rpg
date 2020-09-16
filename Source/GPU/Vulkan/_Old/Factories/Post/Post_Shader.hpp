@@ -42,7 +42,7 @@ inline void Post_CreateShader(Shader& shader, Image& renderImage)
         auto& info = shader.infos.Last();
 
         info.type = UniformInfo::Image;
-        info.layout =
+        info.binding =
         {
             .binding            = 0,
             .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,

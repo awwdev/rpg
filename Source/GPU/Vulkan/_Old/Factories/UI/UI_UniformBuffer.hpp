@@ -13,7 +13,7 @@ inline void UI_CreateUniformBuffer(
     ub.Create();
 
     ub.info.type = UniformInfo::Buffer;
-    ub.info.layout = {
+    ub.info.binding = {
         .binding            = 1,
         .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .descriptorCount    = 1,

@@ -3,7 +3,7 @@
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Helper/Initializers.hpp"
-#include "GPU/Vulkan/Objects/Descriptors.hpp"
+
 
 #include "GPU/Vulkan/States/GUI/GUI_RenderPass.hpp"
 #include "GPU/Vulkan/States/GUI/GUI_Shader.hpp"
@@ -15,7 +15,6 @@ struct GUI_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
-    Descriptors descriptors;
 
     void Create(GUI_RenderPass& renderPass, GUI_Shader& shader, GUI_Uniforms& uniforms)
     {
@@ -29,9 +28,8 @@ struct GUI_Pipeline
         const auto depthStencil     = DepthStencilEmpty();
         const auto blendAttachment  = BlendAttachment(VK_TRUE);
         const auto blendState       = BlendState(blendAttachment);   
-
-        descriptors.Create(uniforms.infos);
-        const auto layoutInfo = PipelineLayoutInfo(descriptors.descSetLayouts.data, descriptors.descSetLayouts.count);
+        
+        const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1);
         VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &layout));
 
         const VkGraphicsPipelineCreateInfo pipelineInfo
@@ -65,7 +63,6 @@ struct GUI_Pipeline
     {
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
-        descriptors.Clear();
     }
 
     ~GUI_Pipeline()

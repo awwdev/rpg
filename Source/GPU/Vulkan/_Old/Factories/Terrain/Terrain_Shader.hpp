@@ -42,7 +42,7 @@ inline void Terrain_CreateShader(Shader& shader, RenderPassDepth& rp)
         auto& info = shader.infos.Last();
 
         info.type = UniformInfo::Image;
-        info.layout =
+        info.binding =
         {
             .binding            = 0,
             .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,

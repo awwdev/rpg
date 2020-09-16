@@ -12,7 +12,7 @@ inline void Terrain_CreateUniformBuffer(UniformBuffer<gpu::Terrain_UniformData, 
     ubo.Create();
 
     ubo.info.type = UniformInfo::Buffer;
-    ubo.info.layout = {
+    ubo.info.binding = {
         .binding            = 1,
         .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .descriptorCount    = 1,

@@ -10,7 +10,7 @@ namespace rpg::gpu::vuk {
 struct UniformInfo
 {
     enum Type { Buffer, Image } type;
-    VkDescriptorSetLayoutBinding layout {}; //includes binding
+    VkDescriptorSetLayoutBinding binding {}; //includes binding
     //union {
         VkDescriptorBufferInfo bufferInfo {};
         VkDescriptorImageInfo  imageInfo  {};
@@ -55,9 +55,19 @@ struct UniformBuffer_Groups
         count = hostUBO.data.count;
     }
 
-    void Clear()
+    void Reset()
     {
         count = 0;
+    }
+
+    void Clear()
+    {
+        buffer.Clear();
+    }
+
+    ~UniformBuffer_Groups()
+    {
+        Clear();
     }
 
 };
@@ -91,9 +101,19 @@ struct UniformBuffer
         ++count;
     }
 
-    void Clear()
+    void Reset()
     {
         count = 0;
+    }
+
+    ~UniformBuffer()
+    {
+        Clear();
+    }
+
+    void Clear()
+    {
+        buffer.Clear();
     }
 
 };

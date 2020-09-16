@@ -8,69 +8,67 @@ namespace rpg::gpu::vuk {
 
 struct Descriptors
 {
-    VkArray<VkDescriptorSetLayout, 4>   descSetLayouts;
-    VkArray<VkDescriptorSet, 4>         descSets;
-    VkDescriptorPool                    descPool;
+    //capacity
+    VkDescriptorSetLayout        descSetLayout;
+    VkDescriptorPool             descPool;
+    VkArray<VkDescriptorSet, 10> descSets;
 
-    template<auto N>
-    void Create(UniformInfo (&uniformInfos) [N])
+    template<auto UNIFORM_COUNT>
+    void Create(UniformInfo (&uniformInfos) [UNIFORM_COUNT])
     {
-        descSetLayouts.count = descSets.count = g_contextPtr->swapImages.count;
-        constexpr auto UNIFORM_COUNT = 1;
-        const auto descSetLayoutCount = descSetLayouts.count;
-
+        //? LAYOUT
         VkDescriptorSetLayoutBinding bindings [UNIFORM_COUNT];
-        VkDescriptorPoolSize poolSizes [UNIFORM_COUNT];
-
         for(uint32_t i = 0; i < UNIFORM_COUNT; ++i) {
-            bindings[i]  = uniformInfos[i].layout;
+            bindings[i] = uniformInfos[i].binding;
+        }
+        const auto descSetLayoutInfo = DescSetLayoutInfo(ArrayCount(bindings), bindings);
+        VkCheck(vkCreateDescriptorSetLayout(g_contextPtr->device, &descSetLayoutInfo, nullptr, &descSetLayout));
+
+        //? POOL
+        VkDescriptorPoolSize poolSizes [UNIFORM_COUNT];
+        for(uint32_t i = 0; i < UNIFORM_COUNT; ++i) {
             poolSizes[i] = {
                 .type = bindings[i].descriptorType,
-                .descriptorCount = descSetLayoutCount
+                .descriptorCount = 1
             };
         }
-
-        const auto descSetLayoutInfo = DescSetLayoutInfo(bindings, UNIFORM_COUNT);
-        for(uint32_t i = 0; i < descSetLayoutCount; ++i) 
-            VkCheck(vkCreateDescriptorSetLayout(g_contextPtr->device, &descSetLayoutInfo, nullptr, &(descSetLayouts[i])));
-
-        const auto descPoolInfo = DescPoolInfo(descSetLayoutCount, UNIFORM_COUNT, poolSizes);
+        const uint32_t MAX_SETS = 1; //arbitrary, max swapchain images
+        const auto descPoolInfo = DescPoolInfo(MAX_SETS, ArrayCount(poolSizes), poolSizes); 
         VkCheck(vkCreateDescriptorPool(g_contextPtr->device, &descPoolInfo, nullptr, &descPool));
 
-        const auto allocInfo = DescSetAllocInfo(descPool, descSetLayoutCount, descSetLayouts.data);
+        //? ALLOCATION
+        descSets.count = 1;
+        const auto allocInfo = DescSetAllocInfo(descPool, 1, &descSetLayout);
         VkCheck(vkAllocateDescriptorSets(g_contextPtr->device, &allocInfo, descSets.data));
 
-        VkArray<VkWriteDescriptorSet, 10> writes;
-        writes.count = descSetLayoutCount * UNIFORM_COUNT;
-        for(u32 i = 0; i < descSetLayoutCount; ++i)
+        //? WRITE
+        VkWriteDescriptorSet writes [UNIFORM_COUNT];
+        FOR_CARRAY(writes, i)
         {
-            FOR_CARRAY(uniformInfos, j)
-            {
-                writes[i * UNIFORM_COUNT + j] = {
-                    .sType              = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-                    .pNext              = nullptr,
-                    .dstSet             = descSets[i],
-                    .dstBinding         = uniformInfos[j].layout.binding,
-                    .dstArrayElement    = 0,
-                    .descriptorCount    = 1,
-                    .descriptorType     = uniformInfos[j].layout.descriptorType,
-                    .pImageInfo         = uniformInfos[j].type == UniformInfo::Image  ? &uniformInfos[j].imageInfo  : nullptr,
-                    .pBufferInfo        = uniformInfos[j].type == UniformInfo::Buffer ? &uniformInfos[j].bufferInfo : nullptr,
-                    .pTexelBufferView   = nullptr
-                };
-            }
+            writes[i] = VkWriteDescriptorSet {
+                .sType              = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+                .pNext              = nullptr,
+                .dstSet             = descSets.data[0],
+                .dstBinding         = uniformInfos[i].binding.binding,
+                .dstArrayElement    = 0,
+                .descriptorCount    = 1,
+                .descriptorType     = uniformInfos[i].binding.descriptorType,
+                .pImageInfo         = uniformInfos[i].type == UniformInfo::Image  ? &uniformInfos[i].imageInfo  : nullptr,
+                .pBufferInfo        = uniformInfos[i].type == UniformInfo::Buffer ? &uniformInfos[i].bufferInfo : nullptr,
+                .pTexelBufferView   = nullptr
+            };
         }
-        vkUpdateDescriptorSets(g_contextPtr->device, writes.count, writes.data, 0, nullptr);   
-        
+        vkUpdateDescriptorSets(g_contextPtr->device, ArrayCount(writes), writes, 0, nullptr);   
     }
 
     void Clear()
     {
-        FOR_VK_ARRAY(descSetLayouts, i)
-            vkDestroyDescriptorSetLayout(g_contextPtr->device, descSetLayouts[i], nullptr);
-        descSetLayouts.count = 0;
-        descSets.count = 0;
-        vkDestroyDescriptorPool(g_contextPtr->device, descPool, nullptr);
+        if (descSetLayout != VK_NULL_HANDLE){
+            vkDestroyDescriptorSetLayout(g_contextPtr->device, descSetLayout, nullptr);
+            vkDestroyDescriptorPool(g_contextPtr->device, descPool, nullptr);
+            descSets.count = 0;
+        }
+        descSetLayout = VK_NULL_HANDLE;
     }
 
     ~Descriptors()

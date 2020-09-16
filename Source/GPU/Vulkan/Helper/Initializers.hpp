@@ -181,8 +181,7 @@ inline auto CommandBufferBeginInfo(const VkCommandBufferUsageFlags flags = 0)
 }
 
 inline auto DescSetLayoutInfo(
-VkDescriptorSetLayoutBinding* bindings,
-const uint32_t bindingCount)
+const uint32_t bindingCount, VkDescriptorSetLayoutBinding* bindings)
 {
      return VkDescriptorSetLayoutCreateInfo {
         .sType          = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,

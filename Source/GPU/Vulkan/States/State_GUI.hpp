@@ -5,6 +5,7 @@
 #include "GPU/Vulkan/States/GUI/GUI_Shader.hpp"
 #include "GPU/Vulkan/States/GUI/GUI_RenderPass.hpp"
 #include "GPU/Vulkan/States/GUI/GUI_Uniforms.hpp"
+#include "Resources/CpuResources.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -15,9 +16,9 @@ struct State_GUI
     GUI_RenderPass     renderPass;
     GUI_Uniforms       uniforms;
 
-    void Create(VkCommandPool cmdPool)
+    void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
     {
-        uniforms.Create();
+        uniforms.Create(hostRes, cmdPool);
         shader.Create();
         renderPass.Create();
         pipeline.Create(renderPass, shader, uniforms);

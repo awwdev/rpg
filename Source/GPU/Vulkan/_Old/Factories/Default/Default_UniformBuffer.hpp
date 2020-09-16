@@ -15,7 +15,7 @@ namespace rpg::gpu::vuk
         ubo.Create();
 
         ubo.info.type = UniformInfo::Buffer;
-        ubo.info.layout = {
+        ubo.info.binding = {
             .binding            = 0,
             .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             .descriptorCount    = 1,

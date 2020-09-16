@@ -41,7 +41,7 @@ inline void Default_CreateShaderVertexColor(Shader& shader, RenderPassDepth& rp)
         auto& info = shader.infos.Last();
 
         info.type = UniformInfo::Image;
-        info.layout =
+        info.binding =
         {
             .binding            = 1,
             .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -91,7 +91,7 @@ inline void Default_CreateShaderTexture(Shader& shader, RenderPassDepth& rp, Ima
         auto& info = shader.infos.Last();
 
         info.type = UniformInfo::Image;
-        info.layout =
+        info.binding =
         {
             .binding            = 1,
             .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -134,7 +134,7 @@ inline void Default_CreateShaderTexture(Shader& shader, RenderPassDepth& rp, Ima
         auto& info = shader.infos.Last();
 
         info.type = UniformInfo::Image;
-        info.layout =
+        info.binding =
         {
             .binding            = 2,
             .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,

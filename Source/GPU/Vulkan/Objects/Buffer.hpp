@@ -81,7 +81,11 @@ struct Buffer
 
     ~Buffer()
     {
-        //TODO: does not always work when Baking?
+        Clear();
+    }
+
+    void Clear()
+    {
         if (buffer != nullptr){
             vkDestroyBuffer (g_contextPtr->device, buffer, nullptr);
             vkFreeMemory    (g_contextPtr->device, memory, nullptr);

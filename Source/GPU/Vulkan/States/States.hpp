@@ -22,7 +22,7 @@ struct States
         shadow.Create(cmdPool);
         general.Create(cmdPool);
         post.Create(cmdPool);
-        gui.Create(cmdPool);
+        gui.Create(hostRes, cmdPool);
     }
 
     void Update()
