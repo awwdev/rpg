@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/Objects/VertexBuffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/VertexBuffer.hpp"
 #include "Common/Structs.hpp"
 #include "Common/PrimitiveMeshes.hpp"
 #include "Resources/MeshTypes.hpp"

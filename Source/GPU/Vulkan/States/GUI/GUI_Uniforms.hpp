@@ -2,9 +2,9 @@
 
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Objects/UniformBuffer.hpp"
-#include "GPU/Vulkan/Objects/Descriptors.hpp"
-#include "GPU/Vulkan/Objects/ImageArray.hpp"
+#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/Descriptors.hpp"
+#include "GPU/Vulkan/_Old/Objects/ImageArray.hpp"
 #include "GPU/RenderData.hpp"
 #include "Resources/CpuResources.hpp"
 #include "GUI/GUI_Base.hpp"
@@ -82,10 +82,12 @@ struct GUI_Uniforms
         };
 
         uboColors.Create();
-        //uboColors.Bake(cmdPool);
         GUI_UBO_Colors colors;
         std::memcpy(colors.colors, gui::ColorValues.data, gui::ColorValues.ENUM_END * sizeof(com::Vec4f));
         uboColors.Store(colors);
+
+        //uboColors.Bake(cmdPool);
+        
         infos[2] = {
             .type = UniformInfo::Buffer,
             .binding {
@@ -96,7 +98,7 @@ struct GUI_Uniforms
                 .pImmutableSamplers = nullptr,
             },
             .bufferInfo {
-                .buffer = uboColors.buffer.buffer,
+                .buffer = uboColors.cpuBuffer.buffer,
                 .offset = 0,
                 .range  = VK_WHOLE_SIZE
             }

@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/Objects/UniformBuffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
 #include "GPU/UboData.hpp"
 #include "Common/Structs.hpp"
 #include "GPU/RenderData.hpp"

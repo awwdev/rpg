@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/Objects/Shader.hpp"
-#include "GPU/Vulkan/Objects/UniformBuffer.hpp"
-#include "GPU/Vulkan/Objects/ImageArray.hpp"
+#include "GPU/Vulkan/_Old/Objects/Shader.hpp"
+#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/ImageArray.hpp"
 #include "Resources/CpuResources.hpp"
 #include "Common/Structs.hpp"
 #include "GPU/Vulkan/_Old/Factories/Shadow/Shadow_RenderPass.hpp"

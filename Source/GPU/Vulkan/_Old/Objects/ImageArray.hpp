@@ -3,9 +3,9 @@
 
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Meta/Commands.hpp"
-#include "GPU/Vulkan/Objects/Buffer.hpp"
-#include "GPU/Vulkan/Objects/Image.hpp"
-#include "GPU/Vulkan/Objects/ImageOld.hpp"
+#include "GPU/Vulkan/_Old/Objects/Buffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/Image.hpp"
+#include "GPU/Vulkan/_Old/Objects/ImageOld.hpp"
 #include "Resources/CpuResources.hpp"
 #include "Resources/TextureLoader.hpp"
 

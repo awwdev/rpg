@@ -102,7 +102,7 @@ inline void CreateCascades2(com::Mat4f (&cascades)[3], const app::GameScene& sce
 inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& scene, res::HostResources& hostRes, double dt, Commands& commands)
 {
     //? POST
-    resources.post.vbo.Clear();
+    resources.post.vbo.Reset();
     resources.post.vbo.StoreGroup(scene.renderData.gui_vbo_blur.Data(), scene.renderData.gui_vbo_blur.count);
 
     //? UI

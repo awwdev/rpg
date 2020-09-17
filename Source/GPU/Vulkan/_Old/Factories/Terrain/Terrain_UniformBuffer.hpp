@@ -2,7 +2,7 @@
 
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Objects/UniformBuffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
 #include "GPU/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
@@ -20,7 +20,7 @@ inline void Terrain_CreateUniformBuffer(UniformBuffer<gpu::Terrain_UniformData, 
         .pImmutableSamplers = nullptr,
     };
     ubo.info.bufferInfo = {
-        .buffer = ubo.buffer.buffer, //create buffer beforehand
+        .buffer = ubo.cpuBuffer.buffer, //create buffer beforehand
         .offset = 0,
         .range  = VK_WHOLE_SIZE
     };

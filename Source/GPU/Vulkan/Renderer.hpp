@@ -15,9 +15,9 @@ namespace rpg::gpu::vuk {
 struct Renderer
 {
     Context         context;
-    States          states;
     Commands        commands;
     Synchronization sync;
+    States          states;
     uint32_t        currentFrame = 0;
     
     Renderer(const vuk::WindowHandle& wndHandle, res::HostResources& hostResources)

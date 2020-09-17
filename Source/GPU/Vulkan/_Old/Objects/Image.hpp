@@ -3,7 +3,7 @@
 
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Meta/Commands.hpp"
-#include "GPU/Vulkan/Objects/Buffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/Buffer.hpp"
 
 namespace rpg::gpu::vuk {
 

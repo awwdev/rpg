@@ -5,7 +5,7 @@
 #include "GPU/Vulkan/Helper/Initializers.hpp"
 #include "GPU/Vulkan/Helper/Utils.hpp"
 #include "GPU/Vulkan/States/General/General_RenderPass.hpp"
-#include "GPU/Vulkan/Objects/VertexBuffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/VertexBuffer.hpp"
 
 #include "Common/Container/Array.hpp"
 

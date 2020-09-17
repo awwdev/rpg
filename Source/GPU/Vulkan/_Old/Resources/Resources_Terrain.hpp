@@ -6,7 +6,7 @@
 #include "Resources/CpuResources.hpp"
 #include "GPU/Vulkan/_Old/Resources/Resources_Default.hpp"
 #include "GPU/Vulkan/_Old/Resources/Resources_Shadow.hpp"
-#include "GPU/Vulkan/Objects/UniformBuffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
 
 #include "GPU/Vulkan/_Old/Factories/Terrain/Terrain_VertexBuffer.hpp"
 #include "GPU/Vulkan/_Old/Factories/Terrain/Terrain_UniformBuffer.hpp"

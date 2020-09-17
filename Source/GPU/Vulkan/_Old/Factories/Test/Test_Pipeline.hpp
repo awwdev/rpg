@@ -3,10 +3,10 @@
 #pragma once
 
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Objects/Shader.hpp"
-#include "GPU/Vulkan/Objects/PushConstants.hpp"
-#include "GPU/Vulkan/Objects/Pipeline.hpp"
-#include "GPU/Vulkan/Objects/RenderPassTest.hpp"
+#include "GPU/Vulkan/_Old/Objects/Shader.hpp"
+#include "GPU/Vulkan/_Old/Objects/PushConstants.hpp"
+#include "GPU/Vulkan/_Old/Objects/Pipeline.hpp"
+#include "GPU/Vulkan/_Old/Objects/RenderPassTest.hpp"
 
 namespace rpg::gpu::vuk {
 

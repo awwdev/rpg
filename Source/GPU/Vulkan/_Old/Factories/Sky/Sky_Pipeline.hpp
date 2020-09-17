@@ -3,12 +3,12 @@
 #pragma once
 
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Objects/Shader.hpp"
-#include "GPU/Vulkan/Objects/VertexBuffer.hpp"
-#include "GPU/Vulkan/Objects/UniformBuffer.hpp"
-#include "GPU/Vulkan/Objects/PushConstants.hpp"
-#include "GPU/Vulkan/Objects/Pipeline.hpp"
-#include "GPU/Vulkan/Objects/RenderPass.hpp"
+#include "GPU/Vulkan/_Old/Objects/Shader.hpp"
+#include "GPU/Vulkan/_Old/Objects/VertexBuffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
+#include "GPU/Vulkan/_Old/Objects/PushConstants.hpp"
+#include "GPU/Vulkan/_Old/Objects/Pipeline.hpp"
+#include "GPU/Vulkan/_Old/Objects/RenderPass.hpp"
 #include "GPU/RenderData.hpp"
 
 namespace rpg::gpu::vuk
