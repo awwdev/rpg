@@ -6,7 +6,7 @@
 
 namespace rpg::gpu::vuk {
 
-struct Buffer2
+struct Buffer
 {
     VkBuffer        buffer { VK_NULL_HANDLE };
     VkDeviceMemory  memory { VK_NULL_HANDLE };
@@ -47,7 +47,7 @@ struct Buffer2
         memPtr = nullptr;
         actualSize = 0;
     }
-    ~Buffer2() { Clear(); }
+    ~Buffer() { Clear(); }
 
     //? STORE
 

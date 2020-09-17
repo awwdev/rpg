@@ -15,8 +15,8 @@ namespace rpg::gpu::vuk {
 struct GUI_Uniforms
 {
     UniformInfo infos [3];
-    UniformBuffer2<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT> uboText;
-    UniformBuffer2<GUI_UBO_Colors, 1> uboColors;
+    UniformBuffer<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT> uboText;
+    UniformBuffer<GUI_UBO_Colors, 1> uboColors;
 
     VkSampler sampler;
     ImageArray fontImages;

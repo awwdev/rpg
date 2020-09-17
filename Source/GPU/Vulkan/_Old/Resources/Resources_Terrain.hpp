@@ -27,7 +27,7 @@ struct Resources_Terrain
     Pipeline    pipelineWire    {};
 
     VertexBuffer<com::Common_Vertex, gpu::TERRAIN_VERTEX_MAX_COUNT> vbo;
-    UniformBuffer<gpu::Terrain_UniformData, 1> uboMeta;
+    UniformBufferOld<gpu::Terrain_UniformData, 1> uboMeta;
 
     void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow& shadow, Resources_Common& common)
     {

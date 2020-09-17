@@ -33,7 +33,7 @@ inline uint32_t GetMemoryType(
 }
 
 
-struct Buffer
+struct BufferOld
 {
     VkBuffer        buffer = nullptr;
     VkDeviceMemory  memory = nullptr;
@@ -79,7 +79,7 @@ struct Buffer
         VkCheck(vkBindBufferMemory(g_contextPtr->device, buffer, memory, 0));
     }
 
-    ~Buffer()
+    ~BufferOld()
     {
         Clear();
     }

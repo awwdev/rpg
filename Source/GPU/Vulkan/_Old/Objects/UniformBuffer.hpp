@@ -25,7 +25,7 @@ struct UniformBuffer_Groups
     static constexpr u32 TOTAL_SIZE = sizeof(T) * MAX_COUNT_T;
     using  TYPE = T;
 
-    Buffer      buffer;
+    BufferOld      buffer;
     UniformInfo info { .type = UniformInfo::Buffer }; //!complete in factory
 
     u32 count = 0;
@@ -73,15 +73,15 @@ struct UniformBuffer_Groups
 };
 
 template<class T, u32 MAX_COUNT_T>
-struct UniformBuffer
+struct UniformBufferOld
 {
     static constexpr u32 MAX_COUNT  = MAX_COUNT_T;
     static constexpr u32 TOTAL_SIZE = sizeof(T) * MAX_COUNT_T;
     using  TYPE = T;
 
-    Buffer  cpuBuffer;
-    Buffer  gpuBuffer;
-    Buffer* activeBuffer = nullptr;
+    BufferOld  cpuBuffer;
+    BufferOld  gpuBuffer;
+    BufferOld* activeBuffer = nullptr;
     bool IsBaked() const { return activeBuffer == &gpuBuffer; }
 
     u32 count = 0;
@@ -108,7 +108,7 @@ struct UniformBuffer
         count = 0;
     }
 
-    ~UniformBuffer()
+    ~UniformBufferOld()
     {
         Clear();
     }

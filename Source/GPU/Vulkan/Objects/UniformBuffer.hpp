@@ -7,14 +7,14 @@
 namespace rpg::gpu::vuk {
 
 template<class T, idx_t MAX_COUNT_T>
-struct UniformBuffer2
+struct UniformBuffer
 {
     static constexpr idx_t MAX_COUNT = MAX_COUNT_T;
     static constexpr idx_t BYTE_SIZE = MAX_COUNT_T * sizeof(T);
 
-    Buffer2  cpuBuffer;
-    Buffer2  gpuBuffer; //possibility to (re)bake into device local memory
-    Buffer2* activeBuffer;
+    Buffer  cpuBuffer;
+    Buffer  gpuBuffer; //possibility to (re)bake into device local memory
+    Buffer* activeBuffer;
 
     idx_t count = 0;
     auto CurrentByteSize() const { return count * sizeof(T); }
@@ -44,7 +44,7 @@ struct UniformBuffer2
         activeBuffer = nullptr;
         Reset();
     }
-    ~UniformBuffer2() { Clear(); }
+    ~UniformBuffer() { Clear(); }
 
     //? STORE
 

@@ -86,7 +86,7 @@ struct ImageArray
         TransitionImageLayout(g_contextPtr->device, cmdPool, g_contextPtr->queue, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, image, textureArray.COUNT);
 
         //? TMP BUFFER
-        Buffer buffer;
+        BufferOld buffer;
         buffer.Create(
             VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
             textureArray.TOTAL_SIZE, //!

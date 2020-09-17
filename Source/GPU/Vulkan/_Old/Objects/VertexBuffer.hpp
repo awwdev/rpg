@@ -21,9 +21,9 @@ struct VertexBuffer
     static constexpr u32 MAX_VERTEX_COUNT = N;
     static constexpr u32 TOTAL_SIZE = N * sizeof(T);
 
-    Buffer  cpuBuffer; //host visible
-    Buffer  gpuBuffer; //device local
-    Buffer* activeBuffer = nullptr;
+    BufferOld  cpuBuffer; //host visible
+    BufferOld  gpuBuffer; //device local
+    BufferOld* activeBuffer = nullptr;
 
     bool IsBaked() const { return activeBuffer == &gpuBuffer; }
 
