@@ -14,7 +14,7 @@
 
 namespace rpg::com::mem {
 
-constexpr auto DO_LOG_BLOCKS = true;
+constexpr auto DO_LOG_BLOCKS = false;
 
 struct BlockArray
 {
@@ -54,19 +54,26 @@ namespace priv
     //all blocks are successive 
     inline com::Bitset<BLOCK_COUNT_TOTAL> blocksUsed;
     inline u8* blockArrayPtrs [BLOCK_ARRAY_COUNT]; //u8 for ptr arithmetics 
-    inline com::String<300> blockInfos [BLOCK_COUNT_TOTAL];
 
-    template<u32 ARRAY_INDEX>
-    u8* BlockAddress(const u32 blockIdx) 
+    struct BlockInfo 
+    {
+        com::String<300> fnName;
+        std::uintptr_t   address;
+    };
+    inline BlockInfo blockInfos [BLOCK_COUNT_TOTAL];
+
+    template<idx_t ARRAY_INDEX>
+    u8* BlockAddress(const idx_t arrBlockIdx) 
     {
         constexpr auto blockSize = BLOCK_ARRAYS[ARRAY_INDEX].size;
-        return priv::blockArrayPtrs[ARRAY_INDEX] + (blockIdx * blockSize);
+        return priv::blockArrayPtrs[ARRAY_INDEX] + (arrBlockIdx * blockSize);
     }
 
-    inline void FreeBlock(const u32 blockId)
+    inline void FreeBlock(const idx_t blockId)
     {
         priv::blocksUsed.Flip(blockId);
-        priv::blockInfos[blockId].Clear();
+        priv::blockInfos[blockId].fnName.Clear();
+        priv::blockInfos[blockId].address = 0;
         //dtor call of object is done in BlockPtr
 
         if constexpr(DO_LOG_BLOCKS)
@@ -168,7 +175,7 @@ auto ClaimBlock(CtorArgs&&... args)
     }();
 
     const auto freeBlockId = priv::blocksUsed.FindFirstFreeBit(FITTING_BLOCK_ARRAY.blockId);
-    //dbg::Assert(freeBlockId < FITTING_BLOCK_ARRAY.blockId + BLOCK_ARRAYS[FITTING_BLOCK_ARRAY.arrayIdx].count, "not enough free blocks");
+    dbg::Assert(freeBlockId < FITTING_BLOCK_ARRAY.blockId + BLOCK_ARRAYS[FITTING_BLOCK_ARRAY.arrayIdx].count, "not enough free blocks");
     priv::blocksUsed.Flip(freeBlockId);
 
     u8* blockAddress = priv::BlockAddress<FITTING_BLOCK_ARRAY.arrayIdx>(freeBlockId - FITTING_BLOCK_ARRAY.blockId);
@@ -181,13 +188,10 @@ auto ClaimBlock(CtorArgs&&... args)
         }   
         else return new (aligned) T  { std::forward<CtorArgs>(args) ... };
     }();
-    
-
-    //T* const obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
-    //just don't allow arrays, you can wrap them into structs 
 
     //? debug info
-    priv::blockInfos[freeBlockId] = __PRETTY_FUNCTION__;
+    priv::blockInfos[freeBlockId].fnName  = __PRETTY_FUNCTION__;
+    priv::blockInfos[freeBlockId].address = (std::uintptr_t) aligned;
 
     if constexpr(DO_LOG_BLOCKS)
         dbg::LogColor(dbg::ConsoleColors::Red, "ClaimBlock", 

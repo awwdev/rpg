@@ -116,6 +116,11 @@ struct UniformBuffer
         buffer.Clear();
     }
 
+    void Bake()
+    {
+        
+    }
+
 };
 
 }//ns

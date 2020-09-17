@@ -35,23 +35,22 @@ struct State_GUI
 
     void Update(gpu::RenderData& renderData)
     {
-        uniforms.ubo.Reset();
-        uniforms.ubo.Store(renderData.gui_ubo);
+        uniforms.Update(renderData);
     }
 
     void Record(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx)
     {
         const auto beginInfo = renderPass.GetBeginInfo(cmdBufferIdx);
         
-        vkCmdBeginRenderPass    (cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
-        if (uniforms.ubo.count > 0)
+        vkCmdBeginRenderPass(cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        if (uniforms.uboText.count > 0)
         {
-            vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
-            vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
+            vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
+            vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
             uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
-            vkCmdDraw(cmdBuffer, uniforms.ubo.count * 6, 1, 0, 0); 
+            vkCmdDraw(cmdBuffer, uniforms.uboText.count * 6, 1, 0, 0); //vertex offsets per quad are hardcoded inside the shader
         }
-        vkCmdEndRenderPass      (cmdBuffer);
+        vkCmdEndRenderPass(cmdBuffer);
     };
 
 };

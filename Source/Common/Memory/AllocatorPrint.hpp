@@ -8,7 +8,7 @@ namespace rpg::com::mem {
 
 inline void PrintAllocationHTML()
 {
-    std::ofstream out("log/AllocationView.html");
+    std::ofstream out("Log/AllocationView.html");
 
     out << R"(
 <!DOCTYPE html>
@@ -33,14 +33,19 @@ inline void PrintAllocationHTML()
     {
         const auto nextArrayIdx = GetBlockArrayIdxFromBlockId(i);
         if (currentArrayIdx != nextArrayIdx) {
-            currentArrayIdx = nextArrayIdx;
+            currentArrayIdx =  nextArrayIdx;
             out << "<br>";//new line for a new array
-            out << "<div width=100px>" << BLOCK_ARRAYS[currentArrayIdx].count << " | " << BLOCK_ARRAYS[currentArrayIdx].size << "</div>";
+            out << "<div width=100px>" << 
+                BLOCK_ARRAYS[currentArrayIdx].count << " | " << 
+                BLOCK_ARRAYS[currentArrayIdx].size << "|" <<
+                (std::uintptr_t) priv::blockArrayPtrs[currentArrayIdx] << 
+                "</div>";
         }
 
         if (priv::blocksUsed.Test(i))  {
             out << "<a title='";
-            out << priv::blockInfos[i].data;
+            out << priv::blockInfos[i].address;
+            out << priv::blockInfos[i].fnName.data;
             out << "'>&#9639;";
         } else {
             out << "<a>"; 
@@ -54,9 +59,3 @@ inline void PrintAllocationHTML()
 }
 
 }//ns
-
-/* auto* blockType = blockTypes.GetValueOptional(i);
-        
-        out << "<a title='";
-        out << (blockType == nullptr ? "unused" : *blockType);
-        out << (blocksUsed.Test(i) ? "'>&#9639;</a>" : "'>&#9634;</a>"); //filled and not filled rect*/

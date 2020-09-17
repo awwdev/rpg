@@ -25,8 +25,8 @@ struct EnumMap
     //? DATA
     static constexpr auto ENUM_END = (idx_t)ENUM_END_T;
 
-    using PAIR = EnumPair<decltype(ENUM_END_T), VAL>;
-    using KEY  = decltype(ENUM_END_T);
+    using KEY   = decltype(ENUM_END_T);
+    using PAIR  = EnumPair<decltype(ENUM_END_T), VAL>;
 
     VAL data [ENUM_END];
     com::Array<idx_t, ENUM_END> usedIndices; //for iteration

@@ -5,6 +5,7 @@
 #include "Common/Container/EnumMap.hpp"
 #include "Common/Structs.hpp"
 #include "Resources/MeshTypes.hpp"
+//#include "GUI/GUI_Base.hpp"
 
 namespace rpg::gpu {
 
@@ -26,6 +27,11 @@ struct Common_UniformData
 {
     alignas(64) com::Mat4f transform;
     //alignas(64) int textureIndex;
+};
+
+struct GUI_UBO_Colors
+{
+    com::Vec4f colors [9];
 };
 
 struct Terrain_UniformData

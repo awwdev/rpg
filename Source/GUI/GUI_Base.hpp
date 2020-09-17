@@ -6,6 +6,7 @@
 #include "Common/Structs.hpp"
 #include "Common/DeltaTime.hpp"
 #include "Common/Algorithms.hpp"
+#include "Common/Container/EnumMap.hpp"
 
 #include "Window/WindowEvents.hpp"
 #include "Debug/Logger.hpp"
@@ -31,6 +32,19 @@ enum class Colors : u32
     Black4,
     Black5,
     Orange,
+    ENUM_END
+};
+
+const com::EnumMap<Colors::ENUM_END, com::Vec4f> ColorValues = {
+    { Colors::White,        { 0.90, 0.90, 0.90, 1.0 } },
+    { Colors::Green,        { 0.01, 0.90, 0.01, 1.0 } },
+    { Colors::Red,          { 0.90, 0.01, 0.01, 1.0 } },
+    { Colors::Black1,       { 0.01, 0.01, 0.01, 1.0 } },
+    { Colors::Black2_Alpha, { 0.02, 0.02, 0.02, 0.5 } },
+    { Colors::Black3,       { 0.03, 0.03, 0.03, 1.0 } },
+    { Colors::Black4,       { 0.04, 0.04, 0.04, 1.0 } },
+    { Colors::Black5,       { 0.05, 0.05, 0.05, 1.0 } },
+    { Colors::Orange,       { 235/255.f, 140/255.f, 52/255.f, 1.0 } },
 };
 
 //? RECTANGLE

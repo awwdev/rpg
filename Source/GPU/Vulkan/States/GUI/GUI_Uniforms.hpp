@@ -7,23 +7,24 @@
 #include "GPU/Vulkan/Objects/ImageArray.hpp"
 #include "GPU/RenderData.hpp"
 #include "Resources/CpuResources.hpp"
+#include "GUI/GUI_Base.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct GUI_Uniforms
 {
-    UniformInfo infos [2];
-    UniformBuffer_Groups<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT> ubo;
+    UniformInfo infos [3];
+    UniformBuffer_Groups<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT> uboText;
+    UniformBuffer<GUI_UBO_Colors, 1> uboColors;
     VkSampler sampler;
-    Descriptors descriptors;
-
     ImageArray fontImages;
+
+    Descriptors descriptors;
 
     void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
     {
         fontImages.Create(hostRes.textures.monospaceFont, cmdPool);
 
-        //? SAMPLER
         const VkSamplerCreateInfo samplerInfo 
         {
             .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
@@ -47,37 +48,58 @@ struct GUI_Uniforms
         };
         VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, &sampler));
 
-        infos[0].type = UniformInfo::Type::Image;
-        infos[0].binding =
-        {
-            .binding            = 0,
-            .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount    = 1,
-            .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .pImmutableSamplers = nullptr,
-        };
-        infos[0].imageInfo = 
-        {
-            .sampler        = sampler,
-            .imageView      = fontImages.view,
-            .imageLayout    = fontImages.layout
+        infos[0] = {
+            .type = UniformInfo::Image,
+            .binding {
+                .binding            = 0,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+                .pImmutableSamplers = nullptr,
+            },
+            .imageInfo {
+                .sampler        = sampler,
+                .imageView      = fontImages.view,
+                .imageLayout    = fontImages.layout
+            }
         };
 
-        //? UBO
-        ubo.Create();
-
-        infos[1].type = UniformInfo::Buffer;
-        infos[1].binding = {
-            .binding            = 1,
-            .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            .descriptorCount    = 1,
-            .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
-            .pImmutableSamplers = nullptr,
+        uboText.Create();
+        infos[1] = {
+            .type = UniformInfo::Buffer,
+            .binding {
+                .binding            = 1,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
+                .pImmutableSamplers = nullptr,
+            },
+            .bufferInfo {
+                .buffer = uboText.buffer.buffer,
+                .offset = 0,
+                .range  = VK_WHOLE_SIZE
+            }
         };
-        infos[1].bufferInfo = {
-            .buffer = ubo.buffer.buffer,
-            .offset = 0,
-            .range  = VK_WHOLE_SIZE
+
+        uboColors.Create();
+        //uboColors.Bake(cmdPool);
+        GUI_UBO_Colors colors;
+        std::memcpy(colors.colors, gui::ColorValues.data, gui::ColorValues.ENUM_END * sizeof(com::Vec4f));
+        uboColors.Store(colors);
+        infos[2] = {
+            .type = UniformInfo::Buffer,
+            .binding {
+                .binding            = 2,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
+                .pImmutableSamplers = nullptr,
+            },
+            .bufferInfo {
+                .buffer = uboColors.buffer.buffer,
+                .offset = 0,
+                .range  = VK_WHOLE_SIZE
+            }
         };
 
         //? DESCRIPTORS
@@ -86,7 +108,8 @@ struct GUI_Uniforms
 
     void Clear()
     {
-        ubo.Clear();
+        uboText.Clear();
+        uboColors.Clear();
         vkDestroySampler(g_contextPtr->device, sampler, nullptr);
         descriptors.Clear();
         fontImages.Clear();
@@ -95,6 +118,12 @@ struct GUI_Uniforms
     ~GUI_Uniforms()
     {
         Clear();
+    }
+
+    void Update(gpu::RenderData& renderData)
+    {
+        uboText.Reset();
+        uboText.Store(renderData.gui_ubo);
     }
 
 };
