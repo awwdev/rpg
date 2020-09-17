@@ -4,7 +4,6 @@
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Helper/Initializers.hpp"
 #include "GPU/Vulkan/Helper/Utils.hpp"
-#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
 
 #include "Common/Memory/Allocator.hpp"
 #include <fstream>
@@ -54,6 +53,7 @@ VkShaderModule& mod, VkPipelineShaderStageCreateInfo& stageInfo)
     };
 }
 
+/*
 template<uint32_t UNIFORM_COUNT>
 void CreateDescriptors(
 UniformInfo (&uniformInfos) [UNIFORM_COUNT],
@@ -103,8 +103,8 @@ VkDescriptorSet* descSets)
         }
     }
     vkUpdateDescriptorSets(g_contextPtr->device, writes.count, writes.data, 0, nullptr);   
-
 }
+*/
 
 inline uint32_t MemoryType(
     const VkPhysicalDeviceMemoryProperties& physicalMemProps,
@@ -151,7 +151,7 @@ inline auto CmdBufferBeginInfo(const VkCommandBufferUsageFlags flags = 0)
     };
 }
 
-inline auto CopyBuffer(VkCommandPool cmdPool, const Buffer& src, Buffer& dst)
+inline auto CopyBuffer(VkCommandPool cmdPool, const VkBuffer src, VkBuffer dst, const std::size_t size)
 {
     //create temp command buffer
     const auto allocInfo = BufferAllocInfo(cmdPool);
@@ -164,9 +164,9 @@ inline auto CopyBuffer(VkCommandPool cmdPool, const Buffer& src, Buffer& dst)
     const VkBufferCopy copyRegion {
         .srcOffset = 0,
         .dstOffset = 0,
-        .size = dst.size
+        .size = size
     };
-    vkCmdCopyBuffer(commandBuffer, src.buffer, dst.buffer, 1, &copyRegion);
+    vkCmdCopyBuffer(commandBuffer, src, dst, 1, &copyRegion);
     VkCheck(vkEndCommandBuffer(commandBuffer));
 
     //submit

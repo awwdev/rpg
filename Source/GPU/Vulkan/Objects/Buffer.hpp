@@ -6,14 +6,14 @@
 
 namespace rpg::gpu::vuk {
 
-struct Buffer 
+struct Buffer2
 {
     VkBuffer        buffer { VK_NULL_HANDLE };
     VkDeviceMemory  memory { VK_NULL_HANDLE };
     void*           memPtr;
+    std::size_t     actualSize; //determined by GPU mem requirements
 
-    void Map()   { VkCheck(vkMapMemory(g_contextPtr->device, memory, 0, VK_WHOLE_SIZE, 0, &memPtr)); }
-    void Unmap() { vkUnmapMemory(g_contextPtr->device, memory); }
+    //? RAII
 
     void Create(const VkBufferUsageFlags usage, const std::size_t pSize, const VkMemoryPropertyFlags memProps)
     {
@@ -34,16 +34,28 @@ struct Buffer
         const auto allocInfo = MemoryAllocInfo(memReqs.size, MemoryType(g_contextPtr->physicalMemProps, memReqs, memProps));
         VkCheck(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory));
         VkCheck(vkBindBufferMemory(g_contextPtr->device, buffer, memory, 0));
+
+        actualSize = memReqs.size;
     }
 
     void Clear()
     {
         vkDestroyBuffer (g_contextPtr->device, buffer, nullptr);
         vkFreeMemory    (g_contextPtr->device, memory, nullptr);
-        
-        buffer = memory = VK_NULL_HANDLE;
+        buffer = VK_NULL_HANDLE;
+        memory = VK_NULL_HANDLE;
     }
-    ~Buffer() { Clear(); }
+    ~Buffer2() { Clear(); }
+
+    //? STORE
+
+    void Store(const void* data, const std::size_t size, const std::size_t offset = 0)
+    {
+        std::memcpy((char*)memPtr + offset, data, size);
+    }
+    
+    void Map()   { VkCheck(vkMapMemory(g_contextPtr->device, memory, 0, VK_WHOLE_SIZE, 0, &memPtr)); }
+    void Unmap() { vkUnmapMemory(g_contextPtr->device, memory); }
 
 };
 

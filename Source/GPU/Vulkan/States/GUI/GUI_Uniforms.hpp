@@ -3,6 +3,7 @@
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
+#include "GPU/Vulkan/Objects/UniformBuffer.hpp"
 #include "GPU/Vulkan/_Old/Objects/Descriptors.hpp"
 #include "GPU/Vulkan/_Old/Objects/ImageArray.hpp"
 #include "GPU/RenderData.hpp"
@@ -15,7 +16,9 @@ struct GUI_Uniforms
 {
     UniformInfo infos [3];
     UniformBuffer_Groups<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT> uboText;
-    UniformBuffer<GUI_UBO_Colors, 1> uboColors;
+
+    UniformBuffer2<GUI_UBO_Colors, 1> uboColors;
+
     VkSampler sampler;
     ImageArray fontImages;
 
@@ -84,9 +87,8 @@ struct GUI_Uniforms
         uboColors.Create();
         GUI_UBO_Colors colors;
         std::memcpy(colors.colors, gui::ColorValues.data, gui::ColorValues.ENUM_END * sizeof(com::Vec4f));
-        uboColors.Store(colors);
-
-        //uboColors.Bake(cmdPool);
+        uboColors.StoreElement(colors);
+        uboColors.Bake(cmdPool);
         
         infos[2] = {
             .type = UniformInfo::Buffer,
@@ -98,7 +100,7 @@ struct GUI_Uniforms
                 .pImmutableSamplers = nullptr,
             },
             .bufferInfo {
-                .buffer = uboColors.cpuBuffer.buffer,
+                .buffer = uboColors.activeBuffer->buffer,
                 .offset = 0,
                 .range  = VK_WHOLE_SIZE
             }
