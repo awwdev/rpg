@@ -15,8 +15,7 @@ namespace rpg::gpu::vuk {
 struct GUI_Uniforms
 {
     UniformInfo infos [3];
-    UniformBuffer_Groups<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT> uboText;
-
+    UniformBuffer2<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT> uboText;
     UniformBuffer2<GUI_UBO_Colors, 1> uboColors;
 
     VkSampler sampler;
@@ -78,7 +77,7 @@ struct GUI_Uniforms
                 .pImmutableSamplers = nullptr,
             },
             .bufferInfo {
-                .buffer = uboText.buffer.buffer,
+                .buffer = uboText.activeBuffer->buffer,
                 .offset = 0,
                 .range  = VK_WHOLE_SIZE
             }
@@ -87,7 +86,7 @@ struct GUI_Uniforms
         uboColors.Create();
         GUI_UBO_Colors colors;
         std::memcpy(colors.colors, gui::ColorValues.data, gui::ColorValues.ENUM_END * sizeof(com::Vec4f));
-        uboColors.StoreElement(colors);
+        uboColors.Append(colors);
         uboColors.Bake(cmdPool);
         
         infos[2] = {
@@ -122,12 +121,6 @@ struct GUI_Uniforms
     ~GUI_Uniforms()
     {
         Clear();
-    }
-
-    void Update(gpu::RenderData& renderData)
-    {
-        uboText.Reset();
-        uboText.Store(renderData.gui_ubo);
     }
 
 };

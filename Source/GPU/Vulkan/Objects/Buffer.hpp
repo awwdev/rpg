@@ -41,9 +41,11 @@ struct Buffer2
     void Clear()
     {
         vkDestroyBuffer (g_contextPtr->device, buffer, nullptr);
-        vkFreeMemory    (g_contextPtr->device, memory, nullptr);
+        vkFreeMemory    (g_contextPtr->device, memory, nullptr); //will unmap
         buffer = VK_NULL_HANDLE;
         memory = VK_NULL_HANDLE;
+        memPtr = nullptr;
+        actualSize = 0;
     }
     ~Buffer2() { Clear(); }
 

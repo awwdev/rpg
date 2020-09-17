@@ -16,7 +16,7 @@ struct UniformBuffer2
     Buffer2  gpuBuffer; //possibility to (re)bake into device local memory
     Buffer2* activeBuffer;
 
-    idx_t count;
+    idx_t count = 0;
     auto CurrentByteSize() const { return count * sizeof(T); }
     
     //? RAII
@@ -32,33 +32,38 @@ struct UniformBuffer2
         activeBuffer = &cpuBuffer;
     }
 
+    void Reset()
+    {
+        count = 0;
+    }
+
     void Clear()
     {
         if (cpuBuffer.buffer) cpuBuffer.Clear();
         if (gpuBuffer.buffer) gpuBuffer.Clear();
         activeBuffer = nullptr;
-        count = 0;
+        Reset();
     }
     ~UniformBuffer2() { Clear(); }
 
     //? STORE
 
-    void StoreElement(const T& element)
+    void Append(const T& element)
     {
         activeBuffer->Store(&element, sizeof(T), CurrentByteSize());
         ++count;
     }
 
-    void StoreArray(const T* arr, const std::size_t pCount)
+    void Append(const T* arr, const std::size_t pCount)
     {
-        activeBuffer->Store(&arr, sizeof(T) * pCount, CurrentByteSize());
+        activeBuffer->Store(arr, sizeof(T) * pCount, CurrentByteSize());
         count += pCount;
     }
 
     template<std::size_t ARR_COUNT>
-    void StoreArray(const T (&arr) [ARR_COUNT])
+    void Append(const T (&arr) [ARR_COUNT])
     {
-        activeBuffer->Store(&arr, sizeof(T) * ARR_COUNT, CurrentByteSize());
+        activeBuffer->Store(arr, sizeof(T) * ARR_COUNT, CurrentByteSize());
         count += ARR_COUNT;
     }
 
