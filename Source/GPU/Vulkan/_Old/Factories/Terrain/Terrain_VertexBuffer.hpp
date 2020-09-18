@@ -11,7 +11,7 @@
 namespace rpg::gpu::vuk {
 
 inline void Terrain_CreateVertexBuffer(
-    VertexBuffer<com::Common_Vertex, gpu::TERRAIN_VERTEX_MAX_COUNT>& vbo, 
+    VertexBufferOld<com::Common_Vertex, gpu::TERRAIN_VERTEX_MAX_COUNT>& vbo, 
     VkCommandPool,
     res::HostResources& res)
 {  

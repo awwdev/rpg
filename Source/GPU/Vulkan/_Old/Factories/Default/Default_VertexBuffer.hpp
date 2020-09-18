@@ -11,7 +11,7 @@
 namespace rpg::gpu::vuk
 {
     inline void Common_CreateVertexBuffer(
-        VertexBuffer<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT>& vbo, 
+        VertexBufferOld<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT>& vbo, 
         VkCommandPool cmdPool,
         res::HostResources& res)
     {  

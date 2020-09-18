@@ -15,7 +15,7 @@ struct VertexGroup
 
 //bakable
 template<class T, u32 N>
-struct VertexBuffer
+struct VertexBufferOld
 {
     using VERTEX_TYPE = T;
     static constexpr u32 MAX_VERTEX_COUNT = N;
@@ -137,7 +137,7 @@ struct VertexBuffer
         Reset();
     }
 
-    ~VertexBuffer()
+    ~VertexBufferOld()
     {
         Clear();
     }

@@ -2,7 +2,6 @@
 
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Objects/UniformBuffer.hpp"
 #include "GPU/Vulkan/Objects/Descriptors.hpp"
 #include "GPU/Vulkan/Objects/Image.hpp"
 #include "GPU/RenderData.hpp"

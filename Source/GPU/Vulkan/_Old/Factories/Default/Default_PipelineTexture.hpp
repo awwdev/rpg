@@ -17,7 +17,7 @@ void Default_CreatePipelineTexture(
     Pipeline& pipeline,
     Shader& shader, 
     RenderPass& renderPass,
-    VertexBuffer<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT>& vbo,
+    VertexBufferOld<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT>& vbo,
     UniformBuffer_Groups<gpu::Common_UniformData, gpu::DEFAULT_UBO_MAX_COUNT>& ubo)
 {
     const auto vertexInput   = VertexInputInfo();

@@ -17,7 +17,7 @@ inline void Terrain_CreatePipeline(
     Pipeline& pipeline,
     Shader& shader, 
     RenderPass& renderPass,
-    VertexBuffer<com::Common_Vertex, gpu::TERRAIN_VERTEX_MAX_COUNT>& vbo,
+    VertexBufferOld<com::Common_Vertex, gpu::TERRAIN_VERTEX_MAX_COUNT>& vbo,
     UniformBufferOld<gpu::Terrain_UniformData, 1>& ubo)
 {
     const auto vertexInput   = VertexInputInfo();

@@ -6,25 +6,39 @@
 
 namespace rpg::gpu::vuk {
 
-template<class T, idx_t MAX_COUNT_T>
-struct UniformBuffer
+enum class BufferExtType 
+{ 
+    UBO, 
+    VBO
+};
+
+template<BufferExtType BUFFER_EXT_TYPE, class ELEMENT_TYPE, idx_t MAX_COUNT_T>
+struct BufferExt
 {
     static constexpr idx_t MAX_COUNT = MAX_COUNT_T;
-    static constexpr idx_t BYTE_SIZE = MAX_COUNT_T * sizeof(T);
+    static constexpr idx_t BYTE_SIZE = MAX_COUNT_T * sizeof(ELEMENT_TYPE);
 
     Buffer  cpuBuffer;
     Buffer  gpuBuffer; //possibility to (re)bake into device local memory
     Buffer* activeBuffer;
 
     idx_t count = 0;
-    auto CurrentByteSize() const { return count * sizeof(T); }
+    auto CurrentByteSize() const { return count * sizeof(ELEMENT_TYPE); }
     
+    static constexpr auto BUFFER_USAGE = []() constexpr {
+        switch(BUFFER_EXT_TYPE) 
+        {
+            case BufferExtType::UBO: return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+            case BufferExtType::VBO: return VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+        }
+    }();
+
     //? RAII
 
     void Create()
     {
         cpuBuffer.Create(
-            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            BUFFER_USAGE | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
             BYTE_SIZE,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
         );
@@ -44,26 +58,26 @@ struct UniformBuffer
         activeBuffer = nullptr;
         Reset();
     }
-    ~UniformBuffer() { Clear(); }
+    ~BufferExt() { Clear(); }
 
     //? STORE
 
-    void Append(const T& element)
+    void Append(const ELEMENT_TYPE& element)
     {
-        activeBuffer->Store(&element, sizeof(T), CurrentByteSize());
+        activeBuffer->Store(&element, sizeof(ELEMENT_TYPE), CurrentByteSize());
         ++count;
     }
 
-    void Append(const T* arr, const std::size_t pCount)
+    void Append(const ELEMENT_TYPE* arr, const std::size_t pCount)
     {
-        activeBuffer->Store(arr, sizeof(T) * pCount, CurrentByteSize());
+        activeBuffer->Store(arr, sizeof(ELEMENT_TYPE) * pCount, CurrentByteSize());
         count += pCount;
     }
 
     template<std::size_t ARR_COUNT>
-    void Append(const T (&arr) [ARR_COUNT])
+    void Append(const ELEMENT_TYPE (&arr) [ARR_COUNT])
     {
-        activeBuffer->Store(arr, sizeof(T) * ARR_COUNT, CurrentByteSize());
+        activeBuffer->Store(arr, sizeof(ELEMENT_TYPE) * ARR_COUNT, CurrentByteSize());
         count += ARR_COUNT;
     }
 
@@ -77,7 +91,7 @@ struct UniformBuffer
         }
 
         gpuBuffer.Create(
-            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+            BUFFER_USAGE | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
             CurrentByteSize(),
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
         );
@@ -87,5 +101,11 @@ struct UniformBuffer
     }
 
 };
+
+template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
+using UniformBuffer = BufferExt<BufferExtType::UBO, ELEMENT_TYPE, MAX_COUNT_T>;
+
+template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
+using VertexBuffer  = BufferExt<BufferExtType::VBO, ELEMENT_TYPE, MAX_COUNT_T>;
 
 }//ns

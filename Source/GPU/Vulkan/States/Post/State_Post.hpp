@@ -5,6 +5,7 @@
 #include "GPU/Vulkan/States/Post/Post_Shader.hpp"
 #include "GPU/Vulkan/States/Post/Post_RenderPass.hpp"
 #include "GPU/Vulkan/States/Post/Post_Uniforms.hpp"
+#include "GPU/Vulkan/States/Post/Post_Vertices.hpp"
 #include "GPU/RenderData.hpp"
 
 #include "GPU/Vulkan/States/General/State_General.hpp"
@@ -17,10 +18,12 @@ struct State_Post
     Post_Shader     shader;
     Post_Pipeline   pipeline;
     Post_Uniforms   uniforms;
+    Post_Vertices   vertices;
 
     void Create(VkCommandPool cmdPool, State_General& general)
     {
         uniforms    .Create(general.renderPass.finalImage);
+        vertices    .Create();
         shader      .Create();
         renderPass  .Create();
         pipeline    .Create(renderPass, shader, uniforms);
@@ -32,6 +35,7 @@ struct State_Post
         renderPass  .Clear();
         shader      .Clear();
         uniforms    .Clear();
+        vertices    .Clear();
     }
 
     void Update(gpu::RenderData&)
