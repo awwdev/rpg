@@ -4,7 +4,7 @@
 #include "Debug/Assert.hpp"
 
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Objects/Image.hpp"
+#include "GPU/Vulkan/Objects/Image.hpp"
 #include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
 
 #include "Common/Memory/Allocator.hpp"

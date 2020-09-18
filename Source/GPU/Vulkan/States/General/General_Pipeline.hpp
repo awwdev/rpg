@@ -3,11 +3,9 @@
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Helper/Initializers.hpp"
-#include "GPU/Vulkan/Helper/Utils.hpp"
-#include "GPU/Vulkan/States/General/General_RenderPass.hpp"
-#include "GPU/Vulkan/_Old/Objects/VertexBuffer.hpp"
 
-#include "Common/Container/Array.hpp"
+#include "GPU/Vulkan/States/General/General_RenderPass.hpp"
+#include "GPU/Vulkan/States/General/General_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -16,83 +14,29 @@ struct General_Pipeline
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
-    //Descriptor class
-    
-    template<class VERTEX_TYPE, auto VERTEX_COUNT>
-    void Create(General_RenderPass& rp, VertexBuffer<VERTEX_TYPE, VERTEX_COUNT>& vbo)
+    void Create(General_RenderPass& renderPass, General_Shader& shader)
     {
-        const auto vertexInput   = vbo.VertexInputInfo();
-        const auto inputAssembly = InputAssemblyDefault();
+        const auto vertexInput      = VertexInputInfoEmpty();
+        const auto inputAssembly    = InputAssemblyDefault();
+        const auto viewport         = Viewport(renderPass.width, renderPass.height);
+        const auto scissor          = Scissor(renderPass.width, renderPass.height);
+        const auto viewportState    = ViewportState(viewport, scissor);
+        const auto rasterization    = RasterizationDefault();
+        const auto multisampling    = Multisampling(renderPass.msaaSampleCount);
+        const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
+        const auto blendAttachment  = BlendAttachment(VK_FALSE);
+        const auto blendState       = BlendState(blendAttachment);   
+        
+        const auto layoutInfo = PipelineLayoutInfo(nullptr, 0);
+        VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &layout));
 
-        const auto viewport      = Viewport(rp.width, rp.height);
-        const auto scissor       = Scissor (rp.width, rp.height);
-        const auto viewportState = ViewportState(viewport, scissor);
-
-        const VkPipelineRasterizationStateCreateInfo rasterization 
-        {
-            .sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-            .pNext                   = nullptr,
-            .flags                   = 0,
-            .depthClampEnable        = VK_FALSE,
-            .rasterizerDiscardEnable = VK_FALSE,
-            .polygonMode             = VK_POLYGON_MODE_FILL,
-            .cullMode                = VK_CULL_MODE_NONE,
-            .frontFace               = VK_FRONT_FACE_CLOCKWISE,
-            .depthBiasEnable         = VK_FALSE,
-            .depthBiasConstantFactor = 0.f,
-            .depthBiasClamp          = 0.f,
-            .depthBiasSlopeFactor    = 0.f,
-            .lineWidth               = 1.f  
-        };
-
-         const VkPipelineMultisampleStateCreateInfo multisampling 
-         {
-            .sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-            .pNext                 = nullptr,
-            .flags                 = 0,
-            .rasterizationSamples  = rp.msaaSampleCount,
-            .sampleShadingEnable   = VK_FALSE,
-            .minSampleShading      = 0.5f,
-            .pSampleMask           = nullptr,
-            .alphaToCoverageEnable = VK_FALSE,
-            .alphaToOneEnable      = VK_FALSE
-        };
-
-        const VkPipelineDepthStencilStateCreateInfo depthStencil 
-        {
-            .sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-            .pNext                 = nullptr,
-            .flags                 = 0,
-            .depthTestEnable       = VK_TRUE,
-            .depthWriteEnable      = VK_TRUE,
-            .depthCompareOp        = VK_COMPARE_OP_GREATER_OR_EQUAL,
-            .depthBoundsTestEnable = VK_FALSE,
-            .stencilTestEnable     = VK_FALSE,
-            .front                 = {},
-            .back                  = {},
-            .minDepthBounds        = 0.f,
-            .maxDepthBounds        = 1.f
-        };
-
-        const auto blendAttachment = BlendAttachment(VK_FALSE);
-        const auto colorBlendState = BlendState(blendAttachment);
-
-        const VkPushConstantRange constantRange {
-            .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-            .offset     = 0,
-            .size       = 0,
-        };
-
-        const auto pipelineLayoutInfo = PipelineLayoutInfo(nullptr, 0); //!
-        VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &pipelineLayoutInfo, nullptr, &layout));
-
-        const VkGraphicsPipelineCreateInfo pipelineInfo 
+        const VkGraphicsPipelineCreateInfo pipelineInfo
         {
             .sType                      = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
             .pNext                      = nullptr,
             .flags                      = 0,
-            .stageCount                 = 0, //shader.stageInfos.count, //!
-            .pStages                    = 0, //shader.stageInfos.Data(), //!
+            .stageCount                 = ArrayCount(shader.stageInfo),
+            .pStages                    = shader.stageInfo,
             .pVertexInputState          = &vertexInput,
             .pInputAssemblyState        = &inputAssembly,
             .pTessellationState         = nullptr,
@@ -100,29 +44,29 @@ struct General_Pipeline
             .pRasterizationState        = &rasterization,
             .pMultisampleState          = &multisampling,
             .pDepthStencilState         = &depthStencil,
-            .pColorBlendState           = &colorBlendState,
+            .pColorBlendState           = &blendState,
             .pDynamicState              = nullptr,
             .layout                     = layout,
-            .renderPass                 = rp.renderPass,
+            .renderPass                 = renderPass.renderPass,
             .subpass                    = 0,
             .basePipelineHandle         = VK_NULL_HANDLE,
             .basePipelineIndex          = -1
         };
+
         VkCheck(vkCreateGraphicsPipelines(g_contextPtr->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline));
 
     }
 
     void Clear()
     {
-        vkDestroyPipelineLayout (g_contextPtr->device, layout, nullptr);
-        vkDestroyPipeline       (g_contextPtr->device, pipeline, nullptr);
+        vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
+        vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
     }
 
     ~General_Pipeline()
     {
         Clear();
     }
-
 };
 
 }//ns

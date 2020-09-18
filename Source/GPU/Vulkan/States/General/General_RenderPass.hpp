@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Objects/Image.hpp"
+#include "GPU/Vulkan/Objects/Image.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -13,8 +13,9 @@ struct General_RenderPass
     static constexpr auto DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
     static constexpr auto COLOR_FORMAT = VK_FORMAT_R8G8B8A8_UNORM;
 
-    VkRenderPass  renderPass;
+    VkRenderPassBeginInfo beginInfo;
     VkFramebuffer framebuffer; //offscreen (1x)
+    VkRenderPass  renderPass;
 
     Image depthImage;
     Image msaaImage;
@@ -23,26 +24,11 @@ struct General_RenderPass
     uint32_t width, height; //used by pipeline for view, scissor
     VkSampleCountFlagBits msaaSampleCount = VK_SAMPLE_COUNT_4_BIT;
 
-    //? BEGIN INFO
     VkClearValue clears [2] { 
         { .color        = { 0, 0, 0, 1 } },
         { .depthStencil = { 0, 0 } } //reversed z        
     };
 
-    VkRenderPassBeginInfo beginInfo 
-    {
-        .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-        .pNext          = nullptr, 
-        .renderPass     = renderPass,
-        .framebuffer    = framebuffer,
-        .renderArea     = 
-        {
-            .offset     = {},
-            .extent     = { width, height }
-        },
-        .clearValueCount= ArrayCount(clears),
-        .pClearValues   = clears
-    };
 
     //? CREATE
     void Create(VkCommandPool cmdPool)
@@ -55,7 +41,7 @@ struct General_RenderPass
             COLOR_FORMAT,
             width, height,
             msaaSampleCount,
-            VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
+            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
             VK_IMAGE_ASPECT_COLOR_BIT,
             VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
         );
@@ -207,6 +193,21 @@ struct General_RenderPass
             .layers          = 1
         };
         VkCheck(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &framebuffer));
+
+        //? BEGIN INFO
+        beginInfo = {
+            .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            .pNext          = nullptr, 
+            .renderPass     = renderPass,
+            .framebuffer    = framebuffer,
+            .renderArea     = 
+            {
+                .offset     = {},
+                .extent     = { width, height }
+            },
+            .clearValueCount= ArrayCount(clears),
+            .pClearValues   = clears
+        };
     }
     
     //? RAII

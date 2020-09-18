@@ -10,9 +10,11 @@ constexpr u32 UBO_GUI_TEXT_MAX = 1'000;
 struct RenderData
 {
     com::Array<UboData_GUI_Text, UBO_GUI_TEXT_MAX> uboData_gui_text;
-
+    idx_t uboData_gui_text_previousVertCount = 0; //for debug 
+    
     void Clear()
     {
+        uboData_gui_text_previousVertCount = uboData_gui_text.count * 6;
         uboData_gui_text.Clear();
     }
 };

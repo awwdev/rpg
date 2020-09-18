@@ -11,16 +11,22 @@ namespace rpg::gpu::vuk {
 
 struct State_General
 {
-    General_RenderPass renderPass;
+    General_RenderPass  renderPass;
+    General_Shader      shader;
+    General_Pipeline    pipeline;
 
     void Create(VkCommandPool cmdPool)
     {
-        //renderPass.Create(cmdPool);
+        shader.Create();
+        renderPass.Create(cmdPool);
+        pipeline.Create(renderPass, shader);
     }
 
     void Clear()
     {
-        //renderPass.Clear();
+        pipeline.Clear();
+        renderPass.Clear();
+        shader.Clear();
     }
 
     void Update(gpu::RenderData& )
@@ -30,8 +36,10 @@ struct State_General
 
     void Record(VkCommandBuffer cmdBuffer)
     {
-        //vkCmdBeginRenderPass(cmdBuffer, &renderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
-        //vkCmdEndRenderPass(cmdBuffer);
+        vkCmdBeginRenderPass    (cmdBuffer, &renderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
+        vkCmdDraw               (cmdBuffer, 3, 1, 0, 0);
+        vkCmdEndRenderPass      (cmdBuffer);
     };
     
 };

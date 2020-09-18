@@ -65,13 +65,14 @@ inline auto RasterizationDefault()
     };
 }
 
-inline auto MultisamplingEmpty()
+inline auto Multisampling(
+const VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT)
 {
     return VkPipelineMultisampleStateCreateInfo {
         .sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
         .pNext                 = nullptr,
         .flags                 = 0,
-        .rasterizationSamples  = VK_SAMPLE_COUNT_1_BIT,
+        .rasterizationSamples  = sampleCount,
         .sampleShadingEnable   = VK_FALSE,
         .minSampleShading      = 1.f,
         .pSampleMask           = nullptr,
@@ -80,15 +81,16 @@ inline auto MultisamplingEmpty()
     };
 }
 
-inline auto DepthStencilEmpty()
+inline auto DepthStencil(
+const VkBool32 dephTestEnable = VK_FALSE, const VkBool32 depthWriteEnable = VK_FALSE)
 {
     return VkPipelineDepthStencilStateCreateInfo {
         .sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
         .pNext                 = nullptr,
         .flags                 = 0,
-        .depthTestEnable       = VK_FALSE,
-        .depthWriteEnable      = VK_FALSE,
-        .depthCompareOp        = VK_COMPARE_OP_LESS,
+        .depthTestEnable       = dephTestEnable,
+        .depthWriteEnable      = depthWriteEnable,
+        .depthCompareOp        = VK_COMPARE_OP_LESS,//reversed z
         .depthBoundsTestEnable = VK_FALSE,
         .stencilTestEnable     = VK_FALSE,
         .front                 = {},

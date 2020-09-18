@@ -4,7 +4,7 @@
 #pragma once
 #include "GPU/Vulkan/_Old/Objects/Shader.hpp"
 #include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
-#include "GPU/Vulkan/_Old/Objects/Image.hpp"
+#include "GPU/Vulkan/Objects/Image.hpp"
 #include "Resources/CpuResources.hpp"
 #include "Common/Structs.hpp"
 

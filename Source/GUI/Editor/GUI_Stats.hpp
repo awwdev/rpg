@@ -12,7 +12,7 @@ struct GUI_Stats
     {
         .title  = "Stats",
         .rect   = { (f32)wnd::glo::window_w - 300, 0, 300, 300 },
-        .limits = { 128, 64, f32max, f32max }
+        .limits = { 128, 128, f32max, f32max }
     };
 
     Widget_Table table;
@@ -45,7 +45,7 @@ struct GUI_Stats
         if (dt::secondHasPassed){
             table.table[0][1] = dt::fps;
             table.table[1][1] = dt::seconds;
-            table.table[2][1] = renderData.uboData_gui_text.count * 6;
+            table.table[2][1] = renderData.uboData_gui_text_previousVertCount;
             table.table[2][1].Append(" verts");
         }
         

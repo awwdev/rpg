@@ -24,8 +24,8 @@ struct GUI_Pipeline
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
         const auto rasterization    = RasterizationDefault();
-        const auto multisampling    = MultisamplingEmpty();
-        const auto depthStencil     = DepthStencilEmpty();
+        const auto multisampling    = Multisampling();
+        const auto depthStencil     = DepthStencil();
         const auto blendAttachment  = BlendAttachment(VK_TRUE);
         const auto blendState       = BlendState(blendAttachment);   
         
@@ -37,8 +37,8 @@ struct GUI_Pipeline
             .sType                      = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
             .pNext                      = nullptr,
             .flags                      = 0,
-            .stageCount                 = ArrayCount(shader.info),
-            .pStages                    = shader.info,
+            .stageCount                 = ArrayCount(shader.stageInfo),
+            .pStages                    = shader.stageInfo,
             .pVertexInputState          = &vertexInput,
             .pInputAssemblyState        = &inputAssembly,
             .pTessellationState         = nullptr,

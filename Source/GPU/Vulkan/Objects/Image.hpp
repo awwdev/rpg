@@ -3,7 +3,7 @@
 
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Meta/Commands.hpp"
-#include "GPU/Vulkan/_Old/Objects/Buffer.hpp"
+#include "GPU/Vulkan/Helper/Utils.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -48,7 +48,7 @@ struct Image
         VkMemoryRequirements memReqs;
         vkGetImageMemoryRequirements(g_contextPtr->device, image, &memReqs);
         const VkMemoryPropertyFlags memProps { VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT };
-        const auto allocInfo = CreateAllocInfo(memReqs.size, GetMemoryType(g_contextPtr->physicalMemProps, memReqs, memProps));
+        const auto allocInfo = MemoryAllocInfo(memReqs.size, MemoryType(g_contextPtr->physicalMemProps, memReqs, memProps));
         VkCheck(vkAllocateMemory(g_contextPtr->device, &allocInfo, nullptr, &memory));
         VkCheck(vkBindImageMemory(g_contextPtr->device, image, memory, 0));
 
