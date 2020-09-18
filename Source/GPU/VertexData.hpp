@@ -9,6 +9,7 @@ struct PostVertex
 {
     com::Vec2f pos;
     com::Vec2f tex;
+    alignas(2) f32 blur;
 };
 
 }//ns

@@ -49,8 +49,8 @@ struct State_Post
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
         vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
                                  uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
-        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.vbo.activeBuffer->buffer, vertices.offsets);
-        vkCmdDraw               (cmdBuffer, vertices.vbo.count, 1, 0, 0);
+        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.gpuVbo.activeBuffer->buffer, vertices.offsets);
+        vkCmdDraw               (cmdBuffer, vertices.gpuVbo.count, 1, 0, 0);
         vkCmdEndRenderPass      (cmdBuffer);
     };
     

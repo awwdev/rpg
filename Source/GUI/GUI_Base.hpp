@@ -3,14 +3,15 @@
 #pragma once
 #include "GPU/RenderData.hpp"
 
+#include "GPU/VertexData.hpp"
 #include "Common/Structs.hpp"
 #include "Common/DeltaTime.hpp"
 #include "Common/Algorithms.hpp"
 #include "Common/Container/EnumMap.hpp"
 
 #include "Window/WindowEvents.hpp"
-#include "Debug/Logger.hpp"
 #include "Common/Container/String.hpp"
+#include "Debug/Logger.hpp"
 #include "App/InputMode.hpp"
 
 namespace rpg::gui {
@@ -69,7 +70,7 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
         }
     });
 
-    /*if (blur) 
+    if (blur) 
     {
         using namespace com;
         com::Vec2f v1 = { rect.x, rect.y };
@@ -85,7 +86,7 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
         v3 = uv3 * 2 - 1;
         v4 = uv4 * 2 - 1;
 
-        com::Post_Vertex verts [] {
+        gpu::PostVertex verts [] {
             {v1, uv1, 1},
             {v2, uv2, 1},
             {v3, uv3, 1},
@@ -93,8 +94,8 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
             {v3, uv3, 1},
             {v4, uv4, 1},
         };
-        renderData.gui_vbo_blur.AppendArray(verts);
-    }*/
+        renderData.vboData_post.AppendArray(verts);
+    }
 }
 
 inline void AddRectOutline(gpu::RenderData& renderData, 

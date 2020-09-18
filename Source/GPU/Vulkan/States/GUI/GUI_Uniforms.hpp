@@ -108,6 +108,12 @@ struct GUI_Uniforms
         descriptors.Create(infos);
     }
 
+    void Update(const com::Array<UboData_GUI_Text, UBO_GUI_TEXT_MAX>& uboData_gui_text)
+    {
+        uboText.Reset();
+        uboText.Append(uboData_gui_text.Data(), uboData_gui_text.count);
+    }
+
     void Destroy()
     {
         uboText.Destroy();

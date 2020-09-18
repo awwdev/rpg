@@ -11,6 +11,7 @@ It might get the base for some stylized low poly game in the future?
 ![](Media/Progress/2020_08_14_terrainEdit.gif)
 ![](Media/Progress/2020_08_04_terrainStichPlayerMove.gif)
 ![](Media/Progress/2020_07_04_ui_wnd.gif)
+![](Media/Progress/2020_09_18_blur2.gif)
 
 ### Contents
 - Custom "STL" (Array, String, Bitset, Maps)

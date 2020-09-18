@@ -10,7 +10,7 @@ namespace rpg::gpu::vuk {
 struct Post_Vertices
 {
     using VERTEX_TYPE = PostVertex;
-    VertexBuffer<VERTEX_TYPE, VBO_POST_MAX> vbo;
+    VertexBuffer<VERTEX_TYPE, VBO_POST_MAX> gpuVbo;
 
     VkDeviceSize offsets [1] = {};
     const VkVertexInputBindingDescription bindings [1]
@@ -22,7 +22,7 @@ struct Post_Vertices
         }
     };
 
-    const VkVertexInputAttributeDescription attributes [2]
+    const VkVertexInputAttributeDescription attributes [3]
     {
         {
             .location   = 0,
@@ -35,29 +35,36 @@ struct Post_Vertices
             .binding    = 0, 
             .format     = VK_FORMAT_R32G32_SFLOAT,
             .offset     = offsetof(VERTEX_TYPE, tex),
+        },
+        {
+            .location   = 2,
+            .binding    = 0, 
+            .format     = VK_FORMAT_R32_SFLOAT,
+            .offset     = offsetof(VERTEX_TYPE, blur),
         }
     };
 
-    void Update(const com::Array<PostVertex, VBO_POST_MAX>& vboData)
+    void Update(const com::Array<PostVertex, VBO_POST_MAX>& cpuVbo)
     {
-        vbo.Reset(3); //keep the fullscreen triangle
+        gpuVbo.Reset(3); //keep the fullscreen triangle
+        gpuVbo.Append(cpuVbo.Data(), cpuVbo.count);
     }
 
     void Create()
     {
-        vbo.Create();
+        gpuVbo.Create();
 
         constexpr VERTEX_TYPE FULLSCREEN_TRIANGLE [3] {
-            { {-1,-1 }, {0, 0} },
-            { { 3,-1 }, {2, 0} },
-            { {-1, 3 }, {0, 2} },
+            { {-1,-1 }, {0, 0}, 0 },
+            { { 3,-1 }, {2, 0}, 0 },
+            { {-1, 3 }, {0, 2}, 0 },
         };
-        vbo.Append(FULLSCREEN_TRIANGLE);
+        gpuVbo.Append(FULLSCREEN_TRIANGLE);
     }
 
     void Destroy()
     {
-        vbo.Destroy();
+        gpuVbo.Destroy();
     }
 
     ~Post_Vertices()
