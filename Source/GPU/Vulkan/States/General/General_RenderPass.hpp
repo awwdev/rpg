@@ -23,6 +23,27 @@ struct General_RenderPass
     uint32_t width, height; //used by pipeline for view, scissor
     VkSampleCountFlagBits msaaSampleCount = VK_SAMPLE_COUNT_4_BIT;
 
+    //? BEGIN INFO
+    VkClearValue clears [2] { 
+        { .color        = { 0, 0, 0, 1 } },
+        { .depthStencil = { 0, 0 } } //reversed z        
+    };
+
+    VkRenderPassBeginInfo beginInfo 
+    {
+        .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        .pNext          = nullptr, 
+        .renderPass     = renderPass,
+        .framebuffer    = framebuffer,
+        .renderArea     = 
+        {
+            .offset     = {},
+            .extent     = { width, height }
+        },
+        .clearValueCount= ArrayCount(clears),
+        .pClearValues   = clears
+    };
+
     //? CREATE
     void Create(VkCommandPool cmdPool)
     {
@@ -202,25 +223,7 @@ struct General_RenderPass
         depthImage.Clear();    
         msaaImage.Clear();
     }
-
-    //? HELPER
-    template<idx_t N>
-    VkRenderPassBeginInfo GetBeginInfo(const VkClearValue (&clears) [N])
-    {
-        return {
-            .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            .pNext          = nullptr, 
-            .renderPass     = renderPass,
-            .framebuffer    = framebuffer,
-            .renderArea     = 
-            {
-                .offset     = {},
-                .extent     = g_contextPtr->surfaceCapabilities.currentExtent,
-            },
-            .clearValueCount= N,
-            .pClearValues   = clears
-        };
-    }
+   
     
 };
 

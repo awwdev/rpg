@@ -7,29 +7,10 @@ namespace rpg::gpu::vuk {
 
 struct GUI_RenderPass
 {
-    //? DATA
-    VkRenderPass  renderPass;
+    VkArray<VkRenderPassBeginInfo, 4> beginInfos;
     VkArray<VkFramebuffer, 4> framebuffers;
-
+    VkRenderPass renderPass;
     uint32_t width, height;
-
-    //? HELPER
-    auto GetBeginInfo(const uint32_t frameBufferIdx)
-    {
-        return VkRenderPassBeginInfo 
-        {
-            .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            .pNext          = nullptr, 
-            .renderPass     = renderPass,
-            .framebuffer    = framebuffers[frameBufferIdx],
-            .renderArea     = {
-                .offset     = VkOffset2D {0, 0},
-                .extent     = { width, height }
-            },
-            .clearValueCount= 0,
-            .pClearValues   = nullptr
-        };
-    }
 
     void Create()
     {
@@ -123,21 +104,38 @@ struct GUI_RenderPass
             framebuffers.count++;
         }
 
+        //? BEGIN INFO
+        FOR_VK_ARRAY(g_contextPtr->swapImages, i) {
+            beginInfos[i] = {
+                .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+                .pNext          = nullptr, 
+                .renderPass     = renderPass,
+                .framebuffer    = framebuffers[i],
+                .renderArea     = {
+                    .offset     = VkOffset2D {0, 0},
+                    .extent     = { width, height }
+                },
+                .clearValueCount= 0,
+                .pClearValues   = nullptr
+            };
+        }
     }
 
-    //? RAII
+
     void Clear()
     {
         vkDestroyRenderPass (g_contextPtr->device, renderPass, nullptr);
         FOR_VK_ARRAY(framebuffers, i)
             vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
         framebuffers.count = 0;
+        beginInfos.count = 0;
     }
 
     ~GUI_RenderPass()
     {
         Clear();
     }
+
 };
 
 }//ns

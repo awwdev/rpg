@@ -36,14 +36,12 @@ struct State_GUI
     void Update(gpu::RenderData& renderData)
     {
         uniforms.uboText.Reset();
-        uniforms.uboText.Append(renderData.uboData_gui_text.data.Data(), renderData.uboData_gui_text.data.count);
+        uniforms.uboText.Append(renderData.uboData_gui_text.Data(), renderData.uboData_gui_text.count);
     }
 
     void Record(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx)
     {
-        const auto beginInfo = renderPass.GetBeginInfo(cmdBufferIdx);
-        
-        vkCmdBeginRenderPass(cmdBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBeginRenderPass(cmdBuffer, &renderPass.beginInfos[cmdBufferIdx], VK_SUBPASS_CONTENTS_INLINE);
         if (uniforms.uboText.count > 0)
         {
             vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);

@@ -10,23 +10,32 @@ struct GUI_Stats
 {
     Widget_Window wnd 
     {
-        .title = "Stats",
-        .rect  = { (f32)wnd::glo::window_w - 300, 0, 300, 300 }
+        .title  = "Stats",
+        .rect   = { (f32)wnd::glo::window_w - 300, 0, 300, 300 },
+        .limits = { 128, 64, f32max, f32max }
     };
 
     Widget_Table table;
 
     GUI_Stats()
     {
-        auto row1 = table.table.Append();
-        row1->Append("fps");
-        row1->Append("0");
-        auto row2 = table.table.Append();
-        row2->Append("dt");
-        row2->Append("0");
-
-        row1->Append(""); //add some empty cells so stuff moves to the left side
-        row1->Append("");
+        {
+            auto row = table.table.Append();
+            row->Append("fps");
+            row->Append("0");
+            row->Append(""); //add some empty cells so stuff moves to the left side
+            row->Append("");
+        }
+        {
+            auto row = table.table.Append();
+            row->Append("dt");
+            row->Append("0");
+        }
+        {
+            auto row = table.table.Append();
+            row->Append("ui");
+            row->Append("0");
+        }
     }
 
     void Update(gpu::RenderData& renderData)
@@ -36,6 +45,8 @@ struct GUI_Stats
         if (dt::secondHasPassed){
             table.table[0][1] = dt::fps;
             table.table[1][1] = dt::seconds;
+            table.table[2][1] = renderData.uboData_gui_text.count * 6;
+            table.table[2][1].Append(" verts");
         }
         
         table.Update(renderData, wnd);

@@ -78,14 +78,6 @@ constexpr idx_t ArrayCount(const T (&arr)[N])
     return N;
 }
 
-template<class ARR>
-constexpr idx_t ArrayCount() 
-{ 
-    //return (idx_t) std::extent_v<ARR>;
-    using ELEMENT_T = std::remove_all_extents_t<ARR>;
-    return sizeof(ARR) / sizeof(ELEMENT_T); 
-}
-
 #define FOR_CARRAY(arr, i) for(idx_t i = 0; i < ArrayCount(arr); ++i)
 
 template<class T, class... PARAMS>

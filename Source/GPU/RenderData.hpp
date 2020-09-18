@@ -9,7 +9,7 @@ constexpr u32 UBO_GUI_TEXT_MAX = 1'000;
 
 struct RenderData
 {
-    UniformDataGroups<UboData_GUI_Text, UBO_GUI_TEXT_MAX, 1> uboData_gui_text;
+    com::Array<UboData_GUI_Text, UBO_GUI_TEXT_MAX> uboData_gui_text;
 
     void Clear()
     {

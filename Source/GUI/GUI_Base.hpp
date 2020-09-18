@@ -61,7 +61,7 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
         (rect.h / (f32)wnd::glo::window_h) * 2,  
     };
 
-    renderData.uboData_gui_text.AppendData({ 
+    renderData.uboData_gui_text.Append(gpu::UboData_GUI_Text{ 
         .rect    = normRect,
         .visuals = {
             .colIdx = (u32)col,

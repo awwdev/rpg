@@ -11,17 +11,16 @@ namespace rpg::gpu::vuk {
 
 struct State_General
 {
-    General_RenderPass  renderPass;
-
+    General_RenderPass renderPass;
 
     void Create(VkCommandPool cmdPool)
     {
-
+        //renderPass.Create(cmdPool);
     }
 
     void Clear()
     {
-
+        //renderPass.Clear();
     }
 
     void Update(gpu::RenderData& )
@@ -31,7 +30,8 @@ struct State_General
 
     void Record(VkCommandBuffer cmdBuffer)
     {
-        
+        //vkCmdBeginRenderPass(cmdBuffer, &renderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        //vkCmdEndRenderPass(cmdBuffer);
     };
     
 };

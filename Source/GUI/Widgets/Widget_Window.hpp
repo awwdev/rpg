@@ -13,7 +13,6 @@ struct Widget_Window
     com::String<30> title  { "Window" };
     com::Rect<f32>  rect   { 0, 0, 300, 300 };
     const com::Rect<f32>  limits { 32, 32, f32max, f32max };
-    //! BUG everything gets resetted to null ?! UB, even the const, so something copies into this
 
     enum class Mode { None, Resize, Move } mode = Widget_Window::Mode::None;
     s32 rowY = 0; //for element arrangement

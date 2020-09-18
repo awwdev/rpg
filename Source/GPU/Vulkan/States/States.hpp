@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/States/State_Shadow.hpp"
-#include "GPU/Vulkan/States/State_General.hpp"
-#include "GPU/Vulkan/States/State_Post.hpp"
-#include "GPU/Vulkan/States/State_GUI.hpp"
+#include "GPU/Vulkan/States/Shadow/State_Shadow.hpp"
+#include "GPU/Vulkan/States/General/State_General.hpp"
+#include "GPU/Vulkan/States/Post/State_Post.hpp"
+#include "GPU/Vulkan/States/GUI/State_GUI.hpp"
 
 #include "Resources/CpuResources.hpp"
 
