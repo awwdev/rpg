@@ -4,7 +4,7 @@
 #include "Common/Structs.hpp"
 #include "Common/Container/Array.hpp"
 #include "ECS/ECS.hpp"
-#include "GPU/Cameras.hpp"
+#include "GPU/Meta/Cameras.hpp"
 #include "Resources/Terrain/TerrainQuadrant.hpp"
 #include "Resources/Terrain/TerrainSerialization.hpp"
 #include "ECS/Prefabs/PrefabTypes.hpp"

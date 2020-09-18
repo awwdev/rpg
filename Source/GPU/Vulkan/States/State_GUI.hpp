@@ -36,7 +36,7 @@ struct State_GUI
     void Update(gpu::RenderData& renderData)
     {
         uniforms.uboText.Reset();
-        uniforms.uboText.Append(renderData.gui_ubo.data.Data(), renderData.gui_ubo.data.count);
+        uniforms.uboText.Append(renderData.uboData_gui_text.data.Data(), renderData.uboData_gui_text.data.count);
     }
 
     void Record(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx)

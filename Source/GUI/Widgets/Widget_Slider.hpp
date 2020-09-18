@@ -3,8 +3,6 @@
 #pragma once
 #include "GUI/Widgets/Widget_Window.hpp"
 
-//TODO: conflate slider and input field!
-
 namespace rpg::gui {
 
 template<class T>

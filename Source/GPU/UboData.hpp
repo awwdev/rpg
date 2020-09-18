@@ -5,18 +5,32 @@
 #include "Common/Container/EnumMap.hpp"
 #include "Common/Structs.hpp"
 #include "Resources/MeshTypes.hpp"
-//#include "GUI/GUI_Base.hpp"
 
 namespace rpg::gpu {
 
-struct UI_UniformData
+struct UboData_GUI_Text
 {
-    com::Rect<f32> rect;
-    u32 colorIndex;
-    u32 textureIndex;
-    u32 padding1;
-    u32 padding2;
+    alignas(16) com::Rect<f32> rect;
+    alignas(16) struct 
+    {
+        u32 colIdx;
+        u32 texIdx;
+    } 
+    visuals;
 };
+
+struct UboData_GUI_Cols
+{
+    alignas(256) com::Vec4f colors [9]; //how to get color table count
+};
+
+
+
+
+
+
+
+
 
 struct UniformGroup
 {
@@ -27,11 +41,6 @@ struct Common_UniformData
 {
     alignas(64) com::Mat4f transform;
     //alignas(64) int textureIndex;
-};
-
-struct GUI_UBO_Colors
-{
-    com::Vec4f colors [9];
 };
 
 struct Terrain_UniformData

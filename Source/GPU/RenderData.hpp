@@ -2,21 +2,43 @@
 
 #pragma once
 #include "GPU/UboData.hpp"
-#include "Common/Structs.hpp"
-#include "Resources/MeshTypes.hpp"
 
 namespace rpg::gpu {
 
-constexpr u32 UI_UBO_MAX_COUNT = 2'000; //8*4*2000 < 65.000
+constexpr u32 UBO_GUI_TEXT_MAX = 1'000;
+
+struct RenderData
+{
+    UniformDataGroups<UboData_GUI_Text, UBO_GUI_TEXT_MAX, 1> uboData_gui_text;
+
+    void Clear()
+    {
+        uboData_gui_text.Clear();
+    }
+};
+
+}//ns
+
+
+
+
+
+
+
+
+namespace rpg::gpu {
 constexpr u32 UI_VBO_BLUR_COUNT = 100; 
 constexpr u32 DEFAULT_UBO_MAX_COUNT = 1'000;
 constexpr u32 DEFAULT_VERTEX_MAX_COUNT = 5000;
 constexpr u32 TERRAIN_VERTEX_MAX_COUNT = 1'000'000;
+}//ns
 
 //keep rendergraph intact until all rendering (since it will be referenced on draw too)
+/*
 struct RenderData
 {
-    UniformDataGroups<UI_UniformData, UI_UBO_MAX_COUNT, 1>  gui_ubo; //1 group only
+    UniformDataGroups<UI_UniformData, UBO_GUI_TEXT_MAX, 1>  gui_ubo; //1 group only
+
     UniformDataGroupsMesh<Common_UniformData, DEFAULT_UBO_MAX_COUNT> common_ubo;
 
     com::Array<com::Post_Vertex, UI_VBO_BLUR_COUNT> gui_vbo_blur {
@@ -38,9 +60,10 @@ struct RenderData
     void Clear()
     {
         gui_ubo.Clear();
-        common_ubo.Clear();
+
+
+        //common_ubo.Clear();
         //gui_vbo_blur.Clear(3); //keep first 3, they are used to draw previous offscreen
     }
 };
-
-}//ns
+*/

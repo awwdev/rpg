@@ -2,26 +2,25 @@
 
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
 #include "GPU/Vulkan/Objects/UniformBuffer.hpp"
-#include "GPU/Vulkan/_Old/Objects/Descriptors.hpp"
-#include "GPU/Vulkan/_Old/Objects/ImageArray.hpp"
+#include "GPU/Vulkan/Objects/Descriptors.hpp"
 #include "GPU/RenderData.hpp"
-#include "Resources/CpuResources.hpp"
+
 #include "GUI/GUI_Base.hpp"
+#include "Resources/CpuResources.hpp"
+#include "GPU/Vulkan/_Old/Objects/ImageArray.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct GUI_Uniforms
 {
     UniformInfo infos [3];
-    UniformBuffer<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT> uboText;
-    UniformBuffer<GUI_UBO_Colors, 1> uboColors;
-
-    VkSampler sampler;
-    ImageArray fontImages;
-
     Descriptors descriptors;
+
+    UniformBuffer<UboData_GUI_Text, UBO_GUI_TEXT_MAX> uboText;
+    UniformBuffer<UboData_GUI_Cols, 1> uboColors;
+    VkSampler  sampler;
+    ImageArray fontImages;
 
     void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
     {
@@ -84,7 +83,7 @@ struct GUI_Uniforms
         };
 
         uboColors.Create();
-        GUI_UBO_Colors colors;
+        UboData_GUI_Cols colors;
         std::memcpy(colors.colors, gui::ColorValues.data, gui::ColorValues.ENUM_END * sizeof(com::Vec4f));
         uboColors.Append(colors);
         uboColors.Bake(cmdPool);

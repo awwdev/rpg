@@ -8,7 +8,7 @@
 namespace rpg::gpu::vuk {
 
 inline void UI_CreateUniformBuffer(
-    UniformBuffer_Groups<gpu::UI_UniformData, gpu::UI_UBO_MAX_COUNT>& ub)
+    UniformBuffer_Groups<gpu::UboData_GUI_Text, gpu::UBO_GUI_TEXT_MAX>& ub)
 {
     ub.Create();
 

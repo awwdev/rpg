@@ -4,7 +4,7 @@
 #include "ECS/ECS.hpp"
 #include "Common/Matrix.hpp"
 #include "window/WindowEvents.hpp"
-#include "GPU/Cameras.hpp"
+#include "GPU/Meta/Cameras.hpp"
 #include "App/InputMode.hpp"
 
 namespace rpg::app {

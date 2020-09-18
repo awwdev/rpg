@@ -14,7 +14,7 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
 
     auto& arr_render    = arrays.renderData;
     auto& arr_transform = arrays.transforms;
-
+    /*
     //? SORTING (for mesh type)(so instancing can be used)
     com::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypesVertexColor [(u32)res::MeshType::ENUM_END];
     com::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypesTextures    [(u32)res::MeshType::ENUM_END];
@@ -75,10 +75,12 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
                     renderGraph.common_ubo.AppendGroup_VertexColor(group, (res::MeshType)i);
             } 
         }
+
     };
     
     loop(false, meshTypesVertexColor);
     loop(true, meshTypesTextures);
+    */
 }
 
 }//ns

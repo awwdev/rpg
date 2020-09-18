@@ -9,28 +9,19 @@
 
 namespace rpg::gpu::vuk {
 
-struct Vertex_General{};
-
 struct State_General
 {
-    General_Pipeline    pipeline;
     General_RenderPass  renderPass;
-    General_Shader      shader;
-    
-    VertexBuffer<Vertex_General, 10> vbo;
+
 
     void Create(VkCommandPool cmdPool)
     {
-        //pipeline.Create(renderPass, vbo);
-        //renderPass.Create(cmdPool);
-        shader.Create();
+
     }
 
     void Clear()
     {
-        //pipeline.Clear();
-        //renderPass.Clear();
-        shader.Clear();
+
     }
 
     void Update(gpu::RenderData& )

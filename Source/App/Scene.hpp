@@ -6,11 +6,11 @@
 #include "ECS/Systems/S_Render.hpp"
 
 #include "GPU/RenderData.hpp"
-#include "GPU/Sun.hpp"
+#include "GPU/Meta/Sun.hpp"
 
-#include "GUI/Dedicated_Editor/GUI_Stats.hpp"
-#include "GUI/Dedicated_Editor/GUI_Shadow.hpp"
-#include "GUI/Dedicated_Editor/GUI_Level.hpp"
+#include "GUI/Editor/GUI_Stats.hpp"
+#include "GUI/Editor/GUI_Shadow.hpp"
+#include "GUI/Editor/GUI_Level.hpp"
 
 #include "Resources/Terrain/Terrain.hpp"
 #include "ECS/Prefabs/PrefabLoader.hpp"

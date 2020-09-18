@@ -61,10 +61,12 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
         (rect.h / (f32)wnd::glo::window_h) * 2,  
     };
 
-    renderData.gui_ubo.AppendData({ 
-        .rect         = normRect,
-        .colorIndex   = (u32)col,
-        .textureIndex = texIdx,
+    renderData.uboData_gui_text.AppendData({ 
+        .rect    = normRect,
+        .visuals = {
+            .colIdx = (u32)col,
+            .texIdx = (u32)texIdx,
+        }
     });
 
     /*if (blur) 
