@@ -3,12 +3,10 @@
 
 layout (binding = 0)  uniform sampler2D finalImage;
 
-layout (location = 0) in vec4 inColors;
-layout (location = 1) in vec2 inUV;
-
-layout (location = 0) out vec4 outColor;
+layout (location = 0) in  vec2 inTex;
+layout (location = 0) out vec4 outCol;
 
 void main() 
 {
-    outColor = texture(finalImage, inUV);
+    outCol = texture(finalImage, inTex);
 }

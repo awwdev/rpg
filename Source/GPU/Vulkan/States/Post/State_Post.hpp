@@ -26,21 +26,21 @@ struct State_Post
         vertices    .Create();
         shader      .Create();
         renderPass  .Create();
-        pipeline    .Create(renderPass, shader, uniforms);
+        pipeline    .Create(renderPass, shader, uniforms, vertices);
     }
 
-    void Clear()
+    void Destroy()
     {
-        pipeline    .Clear();
-        renderPass  .Clear();
-        shader      .Clear();
-        uniforms    .Clear();
-        vertices    .Clear();
+        pipeline    .Destroy();
+        renderPass  .Destroy();
+        shader      .Destroy();
+        uniforms    .Destroy();
+        vertices    .Destroy();
     }
 
-    void Update(gpu::RenderData&)
+    void Update(const gpu::RenderData& renderData)
     {
-
+        vertices.Update(renderData.vboData_post);
     }
 
     void Record(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx)
@@ -49,7 +49,8 @@ struct State_Post
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
         vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
                                  uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
-        vkCmdDraw               (cmdBuffer, 3, 1, 0, 0);
+        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.vbo.activeBuffer->buffer, vertices.offsets);
+        vkCmdDraw               (cmdBuffer, vertices.vbo.count, 1, 0, 0);
         vkCmdEndRenderPass      (cmdBuffer);
     };
     

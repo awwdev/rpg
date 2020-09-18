@@ -175,6 +175,22 @@ inline auto VertexInputInfoEmpty()
     };
 }
 
+template<auto BINDING_COUNT, auto ATTRIBUTE_COUNT>
+inline auto VertexInputInfo(
+const VkVertexInputBindingDescription   (&bindings)  [BINDING_COUNT],
+const VkVertexInputAttributeDescription (&attribues) [ATTRIBUTE_COUNT]) 
+{
+    return VkPipelineVertexInputStateCreateInfo {
+        .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+        .pNext                           = nullptr,
+        .flags                           = 0,
+        .vertexBindingDescriptionCount   = BINDING_COUNT,
+        .pVertexBindingDescriptions      = bindings,
+        .vertexAttributeDescriptionCount = ATTRIBUTE_COUNT,
+        .pVertexAttributeDescriptions    = attribues
+    };
+}
+
 inline auto CommandBufferBeginInfo(const VkCommandBufferUsageFlags flags = 0)
 {
     return VkCommandBufferBeginInfo {

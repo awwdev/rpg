@@ -61,7 +61,7 @@ struct Descriptors
         vkUpdateDescriptorSets(g_contextPtr->device, ArrayCount(writes), writes, 0, nullptr);   
     }
 
-    void Clear()
+    void Destroy()
     {
         if (descSetLayout != VK_NULL_HANDLE){
             vkDestroyDescriptorSetLayout(g_contextPtr->device, descSetLayout, nullptr);
@@ -73,7 +73,7 @@ struct Descriptors
 
     ~Descriptors()
     {
-        Clear();
+        Destroy();
     }
 
 };

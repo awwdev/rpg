@@ -2,20 +2,30 @@
 
 #pragma once
 #include "GPU/UboData.hpp"
+#include "GPU/VertexData.hpp"
 
 namespace rpg::gpu {
 
-constexpr u32 UBO_GUI_TEXT_MAX = 1'000;
+constexpr uint32_t UBO_GUI_TEXT_MAX = 1'000;
+constexpr uint32_t VBO_POST_MAX = 100;
 
 struct RenderData
 {
     com::Array<UboData_GUI_Text, UBO_GUI_TEXT_MAX> uboData_gui_text;
-    idx_t uboData_gui_text_previousVertCount = 0; //for debug 
+    com::Array<PostVertex, VBO_POST_MAX> vboData_post;
+
+    //vertex count for debug
+    idx_t uboData_gui_text_previousVertCount;
+    idx_t vboData_post_previousVertCount;
     
     void Clear()
     {
+        //vertex count for debug
         uboData_gui_text_previousVertCount = uboData_gui_text.count * 6;
+        vboData_post_previousVertCount     = vboData_post.count + 3; //+ fullscreen triangle
+
         uboData_gui_text.Clear();
+        vboData_post.Clear();
     }
 };
 

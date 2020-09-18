@@ -12,7 +12,7 @@ struct Shadow_Shader
 
     }
 
-    void Clear()
+    void Destroy()
     {
         
     }

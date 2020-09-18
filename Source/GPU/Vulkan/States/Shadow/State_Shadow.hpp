@@ -16,16 +16,16 @@ struct State_Shadow
 
     void Create(VkCommandPool cmdPool)
     {
-        pipeline.Create();
-        renderPass.Create();
-        shader.Create();
+        pipeline    .Create();
+        renderPass  .Create();
+        shader      .Create();
     }
 
-    void Clear()
+    void Destroy()
     {
-        pipeline.Clear();
-        renderPass.Clear();
-        shader.Clear();
+        pipeline    .Destroy();
+        renderPass  .Destroy();
+        shader      .Destroy();
     }
 
     void Update(gpu::RenderData&)

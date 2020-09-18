@@ -122,7 +122,7 @@ struct GUI_RenderPass
     }
 
 
-    void Clear()
+    void Destroy()
     {
         vkDestroyRenderPass (g_contextPtr->device, renderPass, nullptr);
         FOR_VK_ARRAY(framebuffers, i)
@@ -133,7 +133,7 @@ struct GUI_RenderPass
 
     ~GUI_RenderPass()
     {
-        Clear();
+        Destroy();
     }
 
 };

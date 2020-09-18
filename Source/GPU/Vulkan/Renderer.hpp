@@ -35,9 +35,9 @@ struct Renderer
         if (!context.RecreateSwapchain())
             return;
 
-        commands.Clear();
+        commands.Destroy();
         commands.Create();
-        states.Clear();
+        states.Destroy();
         states.Create(hostResources, commands.cmdPool);
     }
 

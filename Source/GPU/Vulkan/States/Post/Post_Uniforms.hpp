@@ -62,16 +62,16 @@ struct Post_Uniforms
         descriptors.Create(infos);
     }
 
-    void Clear()
+    void Destroy()
     {
         vkDestroySampler(g_contextPtr->device, sampler, nullptr);
-        descriptors.Clear();
+        descriptors.Destroy();
         infos[0] = {};
     }
 
     ~Post_Uniforms()
     {
-        Clear();
+        Destroy();
     }
 
 };

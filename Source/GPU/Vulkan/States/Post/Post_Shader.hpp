@@ -25,7 +25,7 @@ struct Post_Shader
             modules[1], stageInfo[1]);
     }
 
-    void Clear()
+    void Destroy()
     {
         FOR_CARRAY(modules, i)
             vkDestroyShaderModule(g_contextPtr->device, modules[i], nullptr);
@@ -34,7 +34,7 @@ struct Post_Shader
 
     ~Post_Shader()
     {
-        Clear();
+        Destroy();
     }
 };
 

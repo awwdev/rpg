@@ -213,16 +213,16 @@ struct General_RenderPass
     //? RAII
     ~General_RenderPass() 
     { 
-        Clear(); 
+        Destroy(); 
     }
 
-    void Clear()
+    void Destroy()
     {
         vkDestroyRenderPass (g_contextPtr->device, renderPass, nullptr);
         vkDestroyFramebuffer(g_contextPtr->device, framebuffer, nullptr);
-        finalImage.Clear();    
-        depthImage.Clear();    
-        msaaImage.Clear();
+        finalImage.Destroy();    
+        depthImage.Destroy();    
+        msaaImage.Destroy();
     }
    
     

@@ -38,7 +38,7 @@ struct Buffer
         actualSize = memReqs.size;
     }
 
-    void Clear()
+    void Destroy()
     {
         vkDestroyBuffer (g_contextPtr->device, buffer, nullptr);
         vkFreeMemory    (g_contextPtr->device, memory, nullptr); //will unmap
@@ -47,7 +47,7 @@ struct Buffer
         memPtr = nullptr;
         actualSize = 0;
     }
-    ~Buffer() { Clear(); }
+    ~Buffer() { Destroy(); }
 
     //? STORE
 

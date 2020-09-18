@@ -4,10 +4,10 @@
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Helper/Initializers.hpp"
 
-
 #include "GPU/Vulkan/States/Post/Post_RenderPass.hpp"
 #include "GPU/Vulkan/States/Post/Post_Shader.hpp"
 #include "GPU/Vulkan/States/Post/Post_Uniforms.hpp"
+#include "GPU/Vulkan/States/Post/Post_Vertices.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -16,9 +16,13 @@ struct Post_Pipeline
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
-    void Create(Post_RenderPass& renderPass, Post_Shader& shader, Post_Uniforms& uniforms)
+    void Create(
+    Post_RenderPass& renderPass, 
+    Post_Shader& shader, 
+    Post_Uniforms& uniforms,
+    Post_Vertices& vertices)
     {
-        const auto vertexInput      = VertexInputInfoEmpty();
+        const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
         const auto inputAssembly    = InputAssemblyDefault();
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
@@ -59,7 +63,7 @@ struct Post_Pipeline
 
     }
 
-    void Clear()
+    void Destroy()
     {
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
@@ -67,7 +71,7 @@ struct Post_Pipeline
 
     ~Post_Pipeline()
     {
-        Clear();
+        Destroy();
     }
 };
 

@@ -121,7 +121,7 @@ struct Image
         EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
     }
 
-    void Clear()
+    void Destroy()
     {
         if (image != VK_NULL_HANDLE) {
             vkDestroyImage      (g_contextPtr->device, image, nullptr);
@@ -133,7 +133,7 @@ struct Image
 
     ~Image()
     {
-        Clear();
+        Destroy();
     }
 };
 

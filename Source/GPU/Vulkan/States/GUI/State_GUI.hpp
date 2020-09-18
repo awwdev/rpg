@@ -25,15 +25,15 @@ struct State_GUI
         pipeline    .Create(renderPass, shader, uniforms);
     }
 
-    void Clear()
+    void Destroy()
     {
-        uniforms    .Clear();
-        pipeline    .Clear();
-        renderPass  .Clear();
-        shader      .Clear();
+        uniforms    .Destroy();
+        pipeline    .Destroy();
+        renderPass  .Destroy();
+        shader      .Destroy();
     }
 
-    void Update(gpu::RenderData& renderData)
+    void Update(const gpu::RenderData& renderData)
     {
         uniforms.uboText.Reset();
         uniforms.uboText.Append(renderData.uboData_gui_text.Data(), renderData.uboData_gui_text.count);

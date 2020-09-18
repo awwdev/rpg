@@ -46,19 +46,19 @@ struct BufferExt
         activeBuffer = &cpuBuffer;
     }
 
-    void Reset()
+    void Reset(const uint32_t idx = 0)
     {
-        count = 0;
+        count = idx;
     }
 
-    void Clear()
+    void Destroy()
     {
-        if (cpuBuffer.buffer) cpuBuffer.Clear();
-        if (gpuBuffer.buffer) gpuBuffer.Clear();
+        if (cpuBuffer.buffer) cpuBuffer.Destroy();
+        if (gpuBuffer.buffer) gpuBuffer.Destroy();
         activeBuffer = nullptr;
         Reset();
     }
-    ~BufferExt() { Clear(); }
+    ~BufferExt() { Destroy(); }
 
     //? STORE
 
@@ -87,7 +87,7 @@ struct BufferExt
     {
         if (gpuBuffer.buffer) {
             VkCheck(vkQueueWaitIdle(g_contextPtr->queue));
-            gpuBuffer.Clear();
+            gpuBuffer.Destroy();
         }
 
         gpuBuffer.Create(

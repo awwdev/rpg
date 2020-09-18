@@ -22,14 +22,14 @@ struct State_General
         pipeline    .Create(renderPass, shader);
     }
 
-    void Clear()
+    void Destroy()
     {
-        pipeline    .Clear();
-        renderPass  .Clear();
-        shader      .Clear();
+        pipeline    .Destroy();
+        renderPass  .Destroy();
+        shader      .Destroy();
     }
 
-    void Update(gpu::RenderData& )
+    void Update(const gpu::RenderData&)
     {
 
     }

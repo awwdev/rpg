@@ -46,12 +46,12 @@ struct States
         VkCheck(vkEndCommandBuffer(cmdBuffer));
     }
 
-    void Clear()
+    void Destroy()
     {
-        shadow  .Clear();
-        general .Clear();
-        post    .Clear();
-        gui     .Clear();
+        shadow  .Destroy();
+        general .Destroy();
+        post    .Destroy();
+        gui     .Destroy();
     }
 };
 

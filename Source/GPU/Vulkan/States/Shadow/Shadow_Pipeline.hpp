@@ -12,7 +12,7 @@ struct Shadow_Pipeline
 
     }
 
-    void Clear()
+    void Destroy()
     {
         
     }

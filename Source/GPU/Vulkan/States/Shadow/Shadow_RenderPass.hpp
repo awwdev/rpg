@@ -12,14 +12,14 @@ struct Shadow_RenderPass
 
     }
 
-    void Clear()
+    void Destroy()
     {
         
     }
 
     ~Shadow_RenderPass()
     {
-        Clear();
+        Destroy();
     }
 };
 

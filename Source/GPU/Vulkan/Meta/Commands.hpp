@@ -39,10 +39,10 @@ struct Commands
 
     ~Commands()
     {
-        Clear();
+        Destroy();
     }
 
-    void Clear()
+    void Destroy()
     {
         vkFreeCommandBuffers(g_contextPtr->device, cmdPool, cmdBuffers.count, cmdBuffers.data);
         vkDestroyCommandPool(g_contextPtr->device, cmdPool, nullptr);

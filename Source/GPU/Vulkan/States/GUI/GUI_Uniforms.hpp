@@ -108,19 +108,19 @@ struct GUI_Uniforms
         descriptors.Create(infos);
     }
 
-    void Clear()
+    void Destroy()
     {
-        uboText.Clear();
-        uboColors.Clear();
+        uboText.Destroy();
+        uboColors.Destroy();
         vkDestroySampler(g_contextPtr->device, sampler, nullptr);
-        descriptors.Clear();
-        fontImages.Clear();
+        descriptors.Destroy();
+        fontImages.Destroy();
         infos[0] = infos[1] = infos[2] = {};
     }
 
     ~GUI_Uniforms()
     {
-        Clear();
+        Destroy();
     }
 
 };

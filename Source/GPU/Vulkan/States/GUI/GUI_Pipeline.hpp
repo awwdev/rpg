@@ -59,7 +59,7 @@ struct GUI_Pipeline
 
     }
 
-    void Clear()
+    void Destroy()
     {
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
@@ -67,7 +67,7 @@ struct GUI_Pipeline
 
     ~GUI_Pipeline()
     {
-        Clear();
+        Destroy();
     }
 };
 
