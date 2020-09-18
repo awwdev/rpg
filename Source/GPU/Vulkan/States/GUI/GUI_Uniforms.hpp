@@ -22,7 +22,7 @@ struct GUI_Uniforms
     VkSampler  sampler;
     ImageArray fontImages;
 
-    void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
+    void Create(VkCommandPool cmdPool, res::HostResources& hostRes)
     {
         fontImages.Create(hostRes.textures.monospaceFont, cmdPool);
 
@@ -115,6 +115,7 @@ struct GUI_Uniforms
         vkDestroySampler(g_contextPtr->device, sampler, nullptr);
         descriptors.Clear();
         fontImages.Clear();
+        infos[0] = infos[1] = infos[2] = {};
     }
 
     ~GUI_Uniforms()

@@ -21,9 +21,9 @@ struct General_Pipeline
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
-        const auto rasterization    = RasterizationDefault();
+        const auto rasterization    = Rasterization();
         const auto multisampling    = Multisampling(renderPass.msaaSampleCount);
-        const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
+        const auto depthStencil     = DepthStencil(VK_FALSE, VK_FALSE);
         const auto blendAttachment  = BlendAttachment(VK_FALSE);
         const auto blendState       = BlendState(blendAttachment);   
         

@@ -23,7 +23,7 @@ struct GUI_Pipeline
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
-        const auto rasterization    = RasterizationDefault();
+        const auto rasterization    = Rasterization();
         const auto multisampling    = Multisampling();
         const auto depthStencil     = DepthStencil();
         const auto blendAttachment  = BlendAttachment(VK_TRUE);

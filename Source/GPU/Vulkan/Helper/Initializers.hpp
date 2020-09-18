@@ -46,7 +46,10 @@ const VkViewport& viewport, const VkRect2D& scissor)
     };
 }
 
-inline auto RasterizationDefault()
+inline auto Rasterization(
+const VkCullModeFlags cullmode    = VK_CULL_MODE_BACK_BIT,
+const VkPolygonMode   polygonMode = VK_POLYGON_MODE_FILL,
+const VkFrontFace     frontFace   = VK_FRONT_FACE_CLOCKWISE)
 {
     return VkPipelineRasterizationStateCreateInfo {
         .sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
@@ -54,9 +57,9 @@ inline auto RasterizationDefault()
         .flags                   = 0,
         .depthClampEnable        = VK_FALSE,
         .rasterizerDiscardEnable = VK_FALSE,
-        .polygonMode             = VK_POLYGON_MODE_FILL,
-        .cullMode                = VK_CULL_MODE_BACK_BIT,
-        .frontFace               = VK_FRONT_FACE_CLOCKWISE,
+        .polygonMode             = polygonMode,
+        .cullMode                = cullmode,
+        .frontFace               = frontFace,
         .depthBiasEnable         = VK_FALSE,
         .depthBiasConstantFactor = 0.f,
         .depthBiasClamp          = 0.f,

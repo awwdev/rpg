@@ -17,16 +17,16 @@ struct State_General
 
     void Create(VkCommandPool cmdPool)
     {
-        shader.Create();
-        renderPass.Create(cmdPool);
-        pipeline.Create(renderPass, shader);
+        shader      .Create();
+        renderPass  .Create(cmdPool);
+        pipeline    .Create(renderPass, shader);
     }
 
     void Clear()
     {
-        pipeline.Clear();
-        renderPass.Clear();
-        shader.Clear();
+        pipeline    .Clear();
+        renderPass  .Clear();
+        shader      .Clear();
     }
 
     void Update(gpu::RenderData& )
