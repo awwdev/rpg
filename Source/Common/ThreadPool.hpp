@@ -10,39 +10,36 @@
 
 namespace rpg::com {
     
-template<auto THREAD_COUNT_T, class TaskArgs>
+template<auto THREAD_COUNT_T>
 struct ThreadPool
 {
     static constexpr idx_t THREAD_COUNT = (idx_t) THREAD_COUNT_T;
 
-    using TaskFn = void(TaskArgs&&);
-
     struct Thread
     {
-        std::atomic<bool> taskFinished;
-        std::jthread thread;
+        std::thread thread;
         std::function<void()> task;
         std::mutex taskMutex;
     };
 
-    std::atomic<bool> isPoolRunning { true };
+    std::atomic<bool> isPoolRunning;
     Thread threads [THREAD_COUNT_T];
 
-    ThreadPool() 
+    void Init()
     {
+        isPoolRunning = true;
         FOR_CARRAY(threads, i) {
             auto& t = threads[i];
-            t.taskFinished = false;
-            t.task = nullptr;
-            t.thread = std::jthread { [this, &t] {
+            t.thread = std::thread { [this, &t] {
                 while (isPoolRunning)
                 {
                     t.taskMutex.lock();
-                    if (t.task != nullptr){
+                    if (t.task){
                         t.task();
                         t.task = nullptr;
                     }
                     t.taskMutex.unlock();
+                    //std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 }
             }};
         }  
@@ -51,27 +48,39 @@ struct ThreadPool
     ~ThreadPool()
     {
         isPoolRunning = false;
+        WaitForAllTasks();
+        FOR_CARRAY(threads, i){
+            if (threads[i].thread.joinable())
+                threads[i].thread.join();
+        } 
     }
 
     void AssignTask(const idx_t threadIdx, const std::function<void()>& task)
     {
+        dbg::Assert(isPoolRunning, "pool is not running");
         auto& thread = threads[threadIdx];
         thread.taskMutex.lock();
-        dbg::Assert(threads[threadIdx].task == nullptr, "cannot assign task, thread is already busy");
+        dbg::Assert(!thread.task, "cannot assign task, thread is already busy");
         thread.task = task;
         thread.taskMutex.unlock();
     }
 
-    void WaitForAllFinished()
+    void WaitForAllTasks()
     {
         idx_t threadIdx = 0;
         while(true)
         {
-            if (threads[threadIdx].task == nullptr){
+            const auto idx = threadIdx;
+            
+            threads[idx].taskMutex.lock();
+            if (!threads[idx].task){
                 ++threadIdx;
             }
+            threads[idx].taskMutex.unlock();
+
             if (threadIdx >= THREAD_COUNT)
                 break;
+            //std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
 

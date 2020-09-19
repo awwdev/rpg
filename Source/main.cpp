@@ -24,27 +24,6 @@ using namespace rpg;
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int)
 {
     dbg::Console console{};
-
-    {
-        struct TaskArgsTest { int num; };
-        com::ThreadPool<4, TaskArgsTest> threadPool;
-        for(int i = 0; i < 10; ++i){
-            const auto a = 1;
-            const auto b = 2;
-            const auto c = 3;
-            const auto d = 4;
-            threadPool.AssignTask(0, [=]() { std::cout << a; });
-            threadPool.AssignTask(1, [=]() { std::cout << b; });
-            threadPool.AssignTask(2, [=]() { std::cout << c; });
-            threadPool.AssignTask(3, [=]() { std::cout << d; });
-            threadPool.WaitForAllFinished();
-        }
-    }
-
-    system("pause");
-    std::exit(0);
-
-
     com::mem::GlobalAllocate();
 
     {

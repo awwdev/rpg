@@ -7,7 +7,7 @@
 #include "GPU/Vulkan/States/GUI/State_GUI.hpp"
 
 #include "Resources/CpuResources.hpp"
-#include <thread>
+#include "Common/ThreadPool.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -35,7 +35,7 @@ struct States
     }
 
     com::Array<VkCommandBuffer, Commands::STATE_COUNT_MAX> Record(
-    Commands& commands, const uint32_t cmdBufferIdx)
+    Commands& commands, const uint32_t cmdBufferIdx, com::ThreadPool<4>& threadPool)
     {
         constexpr auto SHADOW_STATE_IDX  = 0;
         constexpr auto GENERAL_STATE_IDX = 1;
@@ -48,37 +48,34 @@ struct States
         VkCommandBuffer cmdBuffer = nullptr;
 
         cmdBuffer = cmds.Append(commands.stateCommands[SHADOW_STATE_IDX].cmdBuffers[cmdBufferIdx]);
-        std::thread t0 { [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+        threadPool.AssignTask(0, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
             VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             shadow.Record(cmdBuffer);
             VkCheck(vkEndCommandBuffer(cmdBuffer));
-        }};
+        });
         
         cmdBuffer = cmds.Append(commands.stateCommands[GENERAL_STATE_IDX].cmdBuffers[cmdBufferIdx]);
-        std::thread t1 { [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+        threadPool.AssignTask(1, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
             VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             general.Record(cmdBuffer);
             VkCheck(vkEndCommandBuffer(cmdBuffer));
-        }};
+        });
             
         cmdBuffer = cmds.Append(commands.stateCommands[POST_STATE_IDX].cmdBuffers[cmdBufferIdx]);
-        std::thread t2 { [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+        threadPool.AssignTask(2, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
             VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             post.Record(cmdBuffer, cmdBufferIdx);
             VkCheck(vkEndCommandBuffer(cmdBuffer));
-        }};
+        });
 
         cmdBuffer = cmds.Append(commands.stateCommands[GUI_STATE_IDX].cmdBuffers[cmdBufferIdx]);
-        std::thread t3 { [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+        threadPool.AssignTask(3, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
             VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             gui.Record(cmdBuffer, cmdBufferIdx);
             VkCheck(vkEndCommandBuffer(cmdBuffer));
-        }};
+        });
 
-        t0.join();
-        t1.join();
-        t2.join();
-        t3.join();
+        threadPool.WaitForAllTasks();
 
         return cmds;
     }

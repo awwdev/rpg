@@ -171,7 +171,7 @@ auto ClaimBlock(CtorArgs&&... args)
     T* const obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
 
     //? debug info
-    priv::blockInfos[freeBlockId].fnName  = __PRETTY_FUNCTION__;
+    priv::blockInfos[freeBlockId].fnName  = __FUNCTION__ ;//__PRETTY_FUNCTION__;
     priv::blockInfos[freeBlockId].address = (std::uintptr_t) aligned;
 
     if constexpr(DO_LOG_BLOCKS)
@@ -179,7 +179,7 @@ auto ClaimBlock(CtorArgs&&... args)
             "arr idx ", FITTING_BLOCK_ARRAY.arrayIdx, 
             "block id ", freeBlockId - FITTING_BLOCK_ARRAY.blockId, 
             "freeBlockId ", freeBlockId,
-            __PRETTY_FUNCTION__);
+            __FUNCTION__ );//__PRETTY_FUNCTION__
             
     return BlockPtr<T> { obj, freeBlockId };
 }

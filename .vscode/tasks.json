@@ -4,7 +4,7 @@
         {
             "type": "shell",
             "label": "build_debug",
-            "command": "${workspaceFolder}/Build/win_build_debug.bat",
+            "command": "${workspaceFolder}/Build/win_build_debug_gcc.bat",
             "args": [
                 "${workspaceFolder}/Build/Debug",                    //build dir
                 "${workspaceFolder}/Source",                         //include headers
@@ -18,8 +18,23 @@
         },
         {
             "type": "shell",
-            "label": "build_optimized",
-            "command": "${workspaceFolder}/Build/win_build_optimized.bat",
+            "label": "build_debug_msvc",
+            "command": "${workspaceFolder}/Build/win_build_debug_msvc.bat",
+            "args": [
+                "${workspaceFolder}/Build/Debug",                    //build dir
+                "${workspaceFolder}/Source",                         //include headers
+                "${workspaceFolder}/Build/Debug/rpg_debug.exe",      //build name
+                "${workspaceFolder}/Source/main.cpp",                //cpp
+                "${workspaceFolder}/Third/Libs",                     //libs
+            ],
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "build_optimized_gcc",
+            "command": "${workspaceFolder}/Build/win_build_optimized_gcc.bat",
             "args": [
                 "${workspaceFolder}/Build/Optimized",                //build dir
                 "${workspaceFolder}/Source",                         //include headers

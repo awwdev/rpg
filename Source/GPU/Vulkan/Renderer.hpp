@@ -9,6 +9,7 @@
 #include "App/Scene.hpp"
 #include "GPU/RenderData.hpp"
 #include "Window/WindowEvents.hpp"
+#include "Common/ThreadPool.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -19,9 +20,17 @@ struct Renderer
     Synchronization sync;
     States          states;
     uint32_t        currentFrame = 0;
+
+    com::ThreadPool<4> threadPool;
     
     Renderer(const vuk::WindowHandle& wndHandle, res::HostResources& hostResources)
+        : context {}
+        , commands {}
+        , sync {}
+        , states {}
+        , threadPool {}
     {
+        threadPool.Init();
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
@@ -30,6 +39,7 @@ struct Renderer
 
     void RecreateScwapchain(res::HostResources& hostResources)
     {
+        threadPool.WaitForAllTasks();
         vkDeviceWaitIdle(context.device);
         if (!context.RecreateSwapchain())
             return;
@@ -76,7 +86,7 @@ struct Renderer
 
         //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
         states.Update(scene.renderData);
-        auto cmds = states.Record(commands, imageIndex);
+        auto cmds = states.Record(commands, imageIndex, threadPool);
         //!--------------------------------------------------
 
         const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;

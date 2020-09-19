@@ -12,6 +12,7 @@
 -o %3 ^
 %4 ^
 -static ^
+-lpthread ^
 -lstdc++ ^
 -lvulkan-1 ^
  & popd
