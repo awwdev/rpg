@@ -39,7 +39,6 @@ struct Renderer
 
     void RecreateScwapchain(res::HostResources& hostResources)
     {
-        threadPool.WaitForAllTasks();
         vkDeviceWaitIdle(context.device);
         if (!context.RecreateSwapchain())
             return;
