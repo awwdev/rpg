@@ -20,26 +20,26 @@ struct GUI_Stats
     GUI_Stats()
     {
         {
-            auto row = table.table.Append();
-            row->Append("fps");
-            row->Append("0");
-            row->Append(""); //add some empty cells so stuff moves to the left side
-            row->Append("");
+            auto& row = table.table.Append();
+            row.Append("fps");
+            row.Append("0");
+            row.Append(""); //add some empty cells so stuff moves to the left side
+            row.Append("");
         }
         {
-            auto row = table.table.Append();
-            row->Append("dt");
-            row->Append("0");
+            auto& row = table.table.Append();
+            row.Append("dt");
+            row.Append("0");
         }
         {
-            auto row = table.table.Append();
-            row->Append("ui");
-            row->Append("0");
+            auto& row = table.table.Append();
+            row.Append("ui");
+            row.Append("0");
         }
         {
-            auto row = table.table.Append();
-            row->Append("post");
-            row->Append("0");
+            auto& row = table.table.Append();
+            row.Append("post");
+            row.Append("0");
         }
     }
 

@@ -17,7 +17,6 @@
 -o %3 ^
 %4 ^
 -static ^
--lpthread ^
 -lstdc++ ^
 -lVkLayer_utils ^
 -lvulkan-1 ^

@@ -55,12 +55,12 @@ struct Array
     //? COUNT MODIFICATION
 
     template<class... ARGS>
-    T* Append(ARGS&&... args)
+    T& Append(ARGS&&... args)
     {
         ArrayAssert(count < CAPACITY, "array capacity exhausted");
         auto* ptr = PlacementNew(std::forward<ARGS>(args)...);
         ++count;
-        return ptr;
+        return *ptr;
     }
 
     template<auto OTHER_N>

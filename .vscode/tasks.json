@@ -11,7 +11,10 @@
                 "${workspaceFolder}/Build/Debug/rpg_debug.exe",      //build name
                 "${workspaceFolder}/Source/main.cpp",                //cpp
                 "${workspaceFolder}/Third/Libs",                     //libs
-            ]
+            ],
+            "presentation": {
+                "clear": true
+            }
         },
         {
             "type": "shell",
@@ -23,7 +26,10 @@
                 "${workspaceFolder}/Build/Optimized/rpg_optimized.exe",//build name
                 "${workspaceFolder}/Source/main.cpp",                //cpp
                 "${workspaceFolder}/Third/Libs",                     //libs
-            ]
+            ],
+            "presentation": {
+                "clear": true
+            }
         },
     ]
 }

@@ -1,3 +1,5 @@
+//https://github.com/awwdev
+
 #pragma once
 #include <numeric>
 #include <cstdint>

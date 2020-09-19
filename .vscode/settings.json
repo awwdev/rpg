@@ -511,7 +511,11 @@
 		"codecvt": "cpp",
 		"queue": "cpp",
 		"memory": "cpp",
-		"memory_resource": "cpp"
+		"memory_resource": "cpp",
+		"stop_token": "cpp",
+		"thread": "cpp",
+		"condition_variable": "cpp",
+		"mutex": "cpp"
 	},
 
 }

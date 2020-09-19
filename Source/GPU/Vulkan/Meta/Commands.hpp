@@ -3,50 +3,60 @@
 #pragma once
 
 #include "GPU/Vulkan/Meta/Context.hpp"
+#include "GPU/Vulkan/Helper/Initializers.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct Commands
 {
-    VkCommandPool cmdPool;
-    vuk::VkArray<VkCommandBuffer, 4> cmdBuffers { 0 };
+    VkCommandPool mainCmdPool; //for single time cmds on main thread
+
+    //? THREADING
+    static constexpr uint32_t SWAP_COUNT_MAX  = 4;
+    static constexpr uint32_t STATE_COUNT_MAX = 4;
+
+    //per thread
+    struct StateCommands
+    {
+        VkCommandPool cmdPool;
+        VkArray<VkCommandBuffer, SWAP_COUNT_MAX> cmdBuffers;
+    };
+    StateCommands stateCommands [STATE_COUNT_MAX] {};
 
     void Create()
     {
-        //? CMD POOL
-        const VkCommandPoolCreateInfo poolInfo
-        {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-            .queueFamilyIndex = g_contextPtr->queueIndex
-        };
-        VkCheck(vkCreateCommandPool(g_contextPtr->device, &poolInfo, nullptr, &cmdPool));
+        const auto poolInfo = CmdPoolInfo(g_contextPtr->queueIndex);
+        VkCheck(vkCreateCommandPool(g_contextPtr->device, &poolInfo, nullptr, &mainCmdPool));
 
-        //? CMD BUFFERS
+        FOR_CARRAY(stateCommands, i) {
+            auto& cmdPool    = stateCommands[i].cmdPool;
+            auto& cmdBuffers = stateCommands[i].cmdBuffers;
+            VkCheck(vkCreateCommandPool(g_contextPtr->device, &poolInfo, nullptr, &cmdPool));
 
-        cmdBuffers.count = g_contextPtr->swapImages.count;
-        const VkCommandBufferAllocateInfo allocInfo
-        {
-            .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .pNext              = nullptr,
-            .commandPool        = cmdPool,
-            .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            .commandBufferCount = cmdBuffers.count
-        };
-        VkCheck(vkAllocateCommandBuffers(g_contextPtr->device, &allocInfo, cmdBuffers.data));
+            cmdBuffers.count = g_contextPtr->swapImages.count;
+            const auto allocInfo = CmdBufferAllocInfo(cmdPool, cmdBuffers.count);
+            VkCheck(vkAllocateCommandBuffers(g_contextPtr->device, &allocInfo, cmdBuffers.data));
+        }
     }
 
+    void Destroy()
+    {
+        vkDestroyCommandPool(g_contextPtr->device, mainCmdPool, nullptr);
+
+        FOR_CARRAY(stateCommands, i) {
+            auto& cmdPool    = stateCommands[i].cmdPool;
+            auto& cmdBuffers = stateCommands[i].cmdBuffers;
+            FOR_VK_ARRAY(cmdBuffers, i)
+                vkFreeCommandBuffers(g_contextPtr->device, cmdPool, 1, &cmdBuffers[i]);
+            cmdBuffers.count = 0;
+            vkDestroyCommandPool(g_contextPtr->device, cmdPool, nullptr);
+        }
+    }
     ~Commands()
     {
         Destroy();
     }
 
-    void Destroy()
-    {
-        vkFreeCommandBuffers(g_contextPtr->device, cmdPool, cmdBuffers.count, cmdBuffers.data);
-        vkDestroyCommandPool(g_contextPtr->device, cmdPool, nullptr);
-    }
 };
 
 inline VkCommandBufferBeginInfo CreateCmdBeginInfo(const VkCommandBufferUsageFlags flags = 0)
@@ -77,7 +87,6 @@ inline VkCommandBuffer BeginCommands_OneTime(VkDevice device, VkCommandPool cmdP
     
     return commandBuffer;
 }
-
 
 inline void EndCommands_OneTime(
     VkDevice device, 

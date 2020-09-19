@@ -25,8 +25,7 @@ struct Renderer
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
-        //resources.Create(hostResources, commands.cmdPool);
-        states.Create(hostResources, commands.cmdPool);
+        states.Create(hostResources, commands.mainCmdPool);
     }
 
     void RecreateScwapchain(res::HostResources& hostResources)
@@ -38,7 +37,7 @@ struct Renderer
         commands.Destroy();
         commands.Create();
         states.Destroy();
-        states.Create(hostResources, commands.cmdPool);
+        states.Create(hostResources, commands.mainCmdPool);
     }
 
     void Render(const double dt, app::GameScene& scene, res::HostResources& hostRes)
@@ -77,7 +76,7 @@ struct Renderer
 
         //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
         states.Update(scene.renderData);
-        states.Record(commands.cmdBuffers[imageIndex], imageIndex);
+        auto cmds = states.Record(commands, imageIndex);
         //!--------------------------------------------------
 
         const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -87,8 +86,8 @@ struct Renderer
             .waitSemaphoreCount     = 1,
             .pWaitSemaphores        = &sync.imageAcquired[currentFrame],
             .pWaitDstStageMask      = &waitStages,
-            .commandBufferCount     = 1,
-            .pCommandBuffers        = &commands.cmdBuffers[imageIndex],
+            .commandBufferCount     = (uint32_t) cmds.count,
+            .pCommandBuffers        = cmds.Data(),
             .signalSemaphoreCount   = 1,
             .pSignalSemaphores      = &sync.imageFinished[currentFrame],
         };

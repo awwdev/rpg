@@ -7,6 +7,7 @@
 #include "GPU/Vulkan/States/GUI/State_GUI.hpp"
 
 #include "Resources/CpuResources.hpp"
+#include <thread>
 
 namespace rpg::gpu::vuk {
 
@@ -33,17 +34,53 @@ struct States
         gui     .Update(renderData);
     }
 
-    void Record(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx)
+    com::Array<VkCommandBuffer, Commands::STATE_COUNT_MAX> Record(
+    Commands& commands, const uint32_t cmdBufferIdx)
     {
+        constexpr auto SHADOW_STATE_IDX  = 0;
+        constexpr auto GENERAL_STATE_IDX = 1;
+        constexpr auto POST_STATE_IDX    = 2;
+        constexpr auto GUI_STATE_IDX     = 3;
+
         const auto beginInfo = CommandBufferBeginInfo();
-        VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
 
-        shadow  .Record(cmdBuffer);
-        general .Record(cmdBuffer);
-        post    .Record(cmdBuffer, cmdBufferIdx);
-        gui     .Record(cmdBuffer, cmdBufferIdx);
+        com::Array<VkCommandBuffer, Commands::STATE_COUNT_MAX> cmds;
+        VkCommandBuffer cmdBuffer = nullptr;
 
-        VkCheck(vkEndCommandBuffer(cmdBuffer));
+        cmdBuffer = cmds.Append(commands.stateCommands[SHADOW_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        std::thread t0 { [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+            VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+            shadow.Record(cmdBuffer);
+            VkCheck(vkEndCommandBuffer(cmdBuffer));
+        }};
+        
+        cmdBuffer = cmds.Append(commands.stateCommands[GENERAL_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        std::thread t1 { [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+            VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+            general.Record(cmdBuffer);
+            VkCheck(vkEndCommandBuffer(cmdBuffer));
+        }};
+            
+        cmdBuffer = cmds.Append(commands.stateCommands[POST_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        std::thread t2 { [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+            VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+            post.Record(cmdBuffer, cmdBufferIdx);
+            VkCheck(vkEndCommandBuffer(cmdBuffer));
+        }};
+
+        cmdBuffer = cmds.Append(commands.stateCommands[GUI_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        std::thread t3 { [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+            VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+            gui.Record(cmdBuffer, cmdBufferIdx);
+            VkCheck(vkEndCommandBuffer(cmdBuffer));
+        }};
+
+        t0.join();
+        t1.join();
+        t2.join();
+        t3.join();
+
+        return cmds;
     }
 
     void Destroy()

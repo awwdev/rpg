@@ -38,10 +38,10 @@ struct Synchronization
 
     ~Synchronization()
     {
-        Clear();
+        Destroy();
     }
 
-    void Clear()
+    void Destroy()
     {
         FOR_VK_ARRAY(imageAcquired, i) vkDestroySemaphore   (g_contextPtr->device, imageAcquired[i], nullptr);
         FOR_VK_ARRAY(imageFinished, i) vkDestroySemaphore   (g_contextPtr->device, imageFinished[i], nullptr);

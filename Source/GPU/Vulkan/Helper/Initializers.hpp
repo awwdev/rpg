@@ -242,4 +242,27 @@ const uint32_t descSetLayoutCount, VkDescriptorSetLayout* descSetLayouts)
     };
 }
 
+inline auto CmdBufferAllocInfo(
+VkCommandPool cmdPool, const uint32_t count, 
+const VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+{
+    return VkCommandBufferAllocateInfo {
+        .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .pNext              = nullptr,
+        .commandPool        = cmdPool,
+        .level              = level,
+        .commandBufferCount = count
+    };
+}
+
+inline auto CmdPoolInfo(const uint32_t queueIdx)
+{
+    return VkCommandPoolCreateInfo {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+        .queueFamilyIndex = queueIdx
+    };
+}
+
 }//ns
