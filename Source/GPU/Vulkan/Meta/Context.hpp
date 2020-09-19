@@ -28,18 +28,18 @@ inline void VkCheck(const VkResult result)
 
 #define FOR_VK_ARRAY(arr, i) for(u32 i = 0; i < arr.count; ++i)
 
-template<class T, auto N>
+template<class T, uint32_t N>
 struct VkArray
 {
-    VkArray(const idx_t pCount = 0) 
+    VkArray(const uint32_t pCount = 0) 
         : count { pCount } 
     { ; }
 
-    idx_t count;
-    T     data[N];
+    uint32_t count;
+    T        data[N];
 
-    T&       operator[](const idx_t i)       { return data[i]; }
-    const T& operator[](const idx_t i) const { return data[i]; }
+    T&       operator[](const uint32_t i)       { return data[i]; }
+    const T& operator[](const uint32_t i) const { return data[i]; }
 };
 
 /*

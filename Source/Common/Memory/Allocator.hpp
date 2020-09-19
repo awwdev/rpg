@@ -18,8 +18,8 @@ constexpr auto DO_LOG_BLOCKS = false;
 
 struct BlockArray
 {
-    u32 size;
-    u32 count;
+    idx_t size;
+    idx_t count;
 };
 
 //?-------------------------------------
@@ -53,7 +53,7 @@ namespace priv
 {
     //all blocks are successive 
     inline com::Bitset<BLOCK_COUNT_TOTAL> blocksUsed;
-    inline u8* blockArrayPtrs [BLOCK_ARRAY_COUNT]; //u8 for ptr arithmetics 
+    inline s8* blockArrayPtrs [BLOCK_ARRAY_COUNT]; //s8 for ptr arithmetics 
 
     struct BlockInfo 
     {
@@ -63,7 +63,7 @@ namespace priv
     inline BlockInfo blockInfos [BLOCK_COUNT_TOTAL];
 
     template<idx_t ARRAY_INDEX>
-    u8* BlockAddress(const idx_t arrBlockIdx) 
+    s8* BlockAddress(const idx_t arrBlockIdx) 
     {
         constexpr auto blockSize = BLOCK_ARRAYS[ARRAY_INDEX].size;
         return priv::blockArrayPtrs[ARRAY_INDEX] + (arrBlockIdx * blockSize);
@@ -83,7 +83,7 @@ namespace priv
 
 inline void GlobalAllocate()
 {
-    priv::blockArrayPtrs[0] = (u8*)VirtualAlloc(NULL, ALLOCATION_SIZE, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    priv::blockArrayPtrs[0] = (s8*)VirtualAlloc(NULL, ALLOCATION_SIZE, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     dbg::LogInfo("Block array:", 0, BLOCK_ARRAYS[0].size * BLOCK_ARRAYS[0].count, (void*)priv::blockArrayPtrs[0]);
 
     for(idx_t i = 1; i < BLOCK_ARRAY_COUNT; ++i) {
@@ -102,8 +102,8 @@ struct BlockPtr
 {
     using DATA_T = T;
 
-    T* ptr = nullptr;
-    u32 blockId = 0;
+    T*    ptr = nullptr;
+    idx_t blockId = 0;
 
     T* operator->() { return  ptr; }
     T& operator* () { return *ptr; }
@@ -112,10 +112,10 @@ struct BlockPtr
     const T& Get() const { return *ptr; }
 
     //array access
-    auto&       operator[](const std::size_t i)        { return (*ptr)[i]; };
-    const auto& operator[](const std::size_t i) const  { return (*ptr)[i]; };
+    auto&       operator[](const idx_t i)        { return (*ptr)[i]; };
+    const auto& operator[](const idx_t i) const  { return (*ptr)[i]; };
 
-    BlockPtr(T* const pPtr, const u32 pBlockId)
+    BlockPtr(T* const pPtr, const idx_t pBlockId)
         : ptr     { pPtr }
         , blockId { pBlockId } 
     {}
@@ -146,7 +146,7 @@ struct BlockPtr
             if constexpr(std::is_array_v<T>)
             {
                 using Element = std::remove_all_extents_t<T>;
-                constexpr auto COUNT = sizeof(T)/sizeof(Element);
+                constexpr idx_t COUNT = (idx_t) sizeof(T)/sizeof(Element);
                 for(idx_t i = 0; i < COUNT; ++i)
                     ((Element*)ptr + i)->~Element();
             }
@@ -162,12 +162,12 @@ struct BlockPtr
 template<class T, class... CtorArgs>
 auto ClaimBlock(CtorArgs&&... args)
 {
-    struct FittingBlockSize { u32 arrayIdx; u32 blockId; }; //blockId == bitIdx
+    struct FittingBlockSize { idx_t arrayIdx; idx_t blockId; }; //blockId == bitIdx
 
     constexpr auto FITTING_BLOCK_ARRAY = []() constexpr -> FittingBlockSize {
-        u32 blockId = 0;
-        for(u32 i = 0; i < BLOCK_ARRAY_COUNT; ++i) {
-            if (BLOCK_ARRAYS[i].size >= (sizeof(T) + alignof(T))) //max
+        idx_t blockId = 0;
+        for(idx_t i = 0; i < BLOCK_ARRAY_COUNT; ++i) {
+            if ((std::size_t) BLOCK_ARRAYS[i].size >= (sizeof(T) + alignof(T))) //max
                 return FittingBlockSize { i, blockId };
             blockId += BLOCK_ARRAYS[i].count;
         }
@@ -178,8 +178,8 @@ auto ClaimBlock(CtorArgs&&... args)
     dbg::Assert(freeBlockId < FITTING_BLOCK_ARRAY.blockId + BLOCK_ARRAYS[FITTING_BLOCK_ARRAY.arrayIdx].count, "not enough free blocks");
     priv::blocksUsed.Flip(freeBlockId);
 
-    u8* blockAddress = priv::BlockAddress<FITTING_BLOCK_ARRAY.arrayIdx>(freeBlockId - FITTING_BLOCK_ARRAY.blockId);
-    u8* aligned      = (u8*) (((std::uintptr_t)blockAddress + (alignof(T) - 1)) & ~(alignof(T) - 1));
+    s8* blockAddress = priv::BlockAddress<FITTING_BLOCK_ARRAY.arrayIdx>(freeBlockId - FITTING_BLOCK_ARRAY.blockId);
+    s8* aligned      = (s8*) (((std::uintptr_t)blockAddress + (alignof(T) - 1)) & ~(alignof(T) - 1));
     
     T* const obj = [&]{
         if constexpr (std::is_array_v<T>) {

@@ -205,7 +205,7 @@ struct General_RenderPass
                 .offset     = {},
                 .extent     = { width, height }
             },
-            .clearValueCount= ArrayCount(clears),
+            .clearValueCount= (uint32_t) ArrayCount(clears),
             .pClearValues   = clears
         };
     }

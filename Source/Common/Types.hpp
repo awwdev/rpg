@@ -22,7 +22,7 @@ constexpr auto u16max = std::numeric_limits<u16>::max();
 constexpr auto u32max = std::numeric_limits<u32>::max();
 constexpr auto f32max = std::numeric_limits<f32>::max();
 
-using idx_t   = u32; //default index type
+using idx_t   = s32; //default index type
 using chars_t = const char* const;
 
 //type traits

@@ -27,11 +27,11 @@ struct Settings
     com::Array<VertexBrushInfo, VERT_COUNT_TOTAL> editingVertIndices;
 
     com::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
-    bool isDragging  = false;
-    f32  yGrabRef    = 0;
-    f32  dragScale   = 0.3f;
-    u32  quadrantIdx = 0;
-    f32  brushSize   = 1;
+    bool  isDragging  = false;
+    f32   yGrabRef    = 0;
+    f32   dragScale   = 0.3f;
+    idx_t quadrantIdx = 0;
+    f32   brushSize   = 1;
 
     com::Vec4f vertexColor { 1, 1, 1, 1 };
 
@@ -385,8 +385,8 @@ struct Terrain
         auto stichFn = [&](
             QUADRANT_T& quadrant,
             QUADRANT_T& neighborQuadrant,
-            const com::Array<u32, 6>& edgeVerts, 
-            const com::Array<u32, 6>& edgeVertsNeighbor)
+            const com::Array<idx_t, 6>& edgeVerts, 
+            const com::Array<idx_t, 6>& edgeVertsNeighbor)
         {
             const auto averagePos = [&]
             { 

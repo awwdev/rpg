@@ -33,6 +33,7 @@ using Mat4f = Mat<float, 4, 4>;
 template<class T, auto X>
 using Vec   = Mat<T, 1, X>;
 using Vec2u = Vec<u32, 2>;
+using Vec2i = Vec<s32, 2>;
 using Vec4f = Vec<float, 4>;
 using Vec3f = Vec<float, 3>;
 using Vec2f = Vec<float, 2>;
