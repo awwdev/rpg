@@ -19,7 +19,7 @@ struct ThreadPool
     {
         std::thread thread;
         std::function<void()> task;
-        std::mutex taskMutex;
+        std::atomic<bool> active;
     };
 
     std::atomic<bool> isPoolRunning;
@@ -33,13 +33,10 @@ struct ThreadPool
             t.thread = std::thread { [this, &t] {
                 while (isPoolRunning)
                 {
-                    t.taskMutex.lock();
-                    if (t.task){
+                    if (t.active){
                         t.task();
-                        t.task = nullptr;
+                        t.active = false;
                     }
-                    t.taskMutex.unlock();
-                    //std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 }
             }};
         }  
@@ -59,10 +56,9 @@ struct ThreadPool
     {
         dbg::Assert(isPoolRunning, "pool is not running");
         auto& thread = threads[threadIdx];
-        thread.taskMutex.lock();
-        dbg::Assert(!thread.task, "cannot assign task, thread is already busy");
+        dbg::Assert(thread.active == false, "cannot assign task, thread is already busy");
         thread.task = task;
-        thread.taskMutex.unlock();
+        thread.active = true;
     }
 
     void WaitForAllTasks()
@@ -72,15 +68,12 @@ struct ThreadPool
         {
             const auto idx = threadIdx;
             
-            threads[idx].taskMutex.lock();
-            if (!threads[idx].task){
+            if (threads[idx].active == false){
                 ++threadIdx;
             }
-            threads[idx].taskMutex.unlock();
 
             if (threadIdx >= THREAD_COUNT)
                 break;
-            //std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
 
