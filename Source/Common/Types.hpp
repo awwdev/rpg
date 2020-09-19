@@ -2,6 +2,7 @@
 #include <numeric>
 #include <cstdint>
 #include <type_traits>
+#include <concepts>
 #undef max
 
 namespace rpg {

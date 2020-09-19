@@ -19,8 +19,9 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     std::ifstream file(path);//, std::ios::beg
     dbg::Assert(file.is_open(), "cannot open file");
 
-    auto blockPtr = rpg::com::mem::ClaimBlock<ComponentDataStringPairs [(idx_t)PrefabType::ENUM_END][(idx_t)ComponentType::ENUM_END]>();
-    auto& componentDataKeyValueArray = *blockPtr;
+    struct Arr { ComponentDataStringPairs data [(idx_t)PrefabType::ENUM_END][(idx_t)ComponentType::ENUM_END]; };
+    auto blockPtrArr = rpg::com::mem::ClaimBlock<Arr>();
+    auto& componentDataKeyValueArray = blockPtrArr->data;
 
     auto currentPrefab    = PrefabType::ENUM_END;
     auto currentComponent = ComponentType::ENUM_END;

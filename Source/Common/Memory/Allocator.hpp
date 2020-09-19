@@ -141,25 +141,12 @@ struct BlockPtr
     ~BlockPtr()
     { 
         if (ptr == nullptr) return;
-        if constexpr(!std::is_trivial_v<T>)
-        {
-            if constexpr(std::is_array_v<T>)
-            {
-                using Element = std::remove_all_extents_t<T>;
-                constexpr idx_t COUNT = (idx_t) sizeof(T)/sizeof(Element);
-                for(idx_t i = 0; i < COUNT; ++i)
-                    ((Element*)ptr + i)->~Element();
-            }
-            else 
-            {
-                ptr->~T(); 
-            }
-        }
+        ptr->~T(); 
         priv::FreeBlock(blockId);
     }
 };
 
-template<class T, class... CtorArgs>
+template<class T, class... CtorArgs, typename = std::enable_if_t<!std::is_array_v<T>>> //does not allow arrays, use a struct
 auto ClaimBlock(CtorArgs&&... args)
 {
     struct FittingBlockSize { idx_t arrayIdx; idx_t blockId; }; //blockId == bitIdx
@@ -181,13 +168,7 @@ auto ClaimBlock(CtorArgs&&... args)
     s8* blockAddress = priv::BlockAddress<FITTING_BLOCK_ARRAY.arrayIdx>(freeBlockId - FITTING_BLOCK_ARRAY.blockId);
     s8* aligned      = (s8*) (((std::uintptr_t)blockAddress + (alignof(T) - 1)) & ~(alignof(T) - 1));
     
-    T* const obj = [&]{
-        if constexpr (std::is_array_v<T>) {
-            struct Arr { T data; };
-            return &(new (aligned) Arr { std::forward<CtorArgs>(args) ... })->data;
-        }   
-        else return new (aligned) T  { std::forward<CtorArgs>(args) ... };
-    }();
+    T* const obj = new (aligned) T { std::forward<CtorArgs>(args) ... };
 
     //? debug info
     priv::blockInfos[freeBlockId].fnName  = __PRETTY_FUNCTION__;

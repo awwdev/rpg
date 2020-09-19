@@ -5,6 +5,7 @@
 #include "Debug/Logger.hpp"
 #include "Debug/Console.hpp"
 #include "Common/Container/Array.hpp"
+#include "Common/Container/EnumMap.hpp"
 #include "Common/Types.hpp"
 
 #include "Common/Memory/Allocator.hpp"
