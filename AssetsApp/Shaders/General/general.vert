@@ -8,9 +8,14 @@ layout (location = 3) in vec2 inTex;
 layout(location = 0) out vec4 outCol;
 layout(location = 1) out vec2 outTex;
 
+layout(binding = 0) uniform Meta { 
+    mat4 view;
+    mat4 proj;
+} meta;
+
 void main() 
 {
-    gl_Position = inPos;
+    gl_Position = meta.view * inPos;
     outCol = inCol;
     outTex = inTex;
 }

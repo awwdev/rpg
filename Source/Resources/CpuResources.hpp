@@ -69,7 +69,7 @@ struct HostResources
     Textures textures;
     Models   models;
 
-    res::Terrain<10, 10, 2> terrain;
+    res::Terrain<10, 10, 2> terrain; //!move it out
 
     //! should all load before any GPU resources are used
     HostResources() 

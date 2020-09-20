@@ -24,6 +24,15 @@ struct UboData_GUI_Cols
     alignas(256) com::Vec4f colors [9]; //how to get color table count
 };
 
+struct UboData_General_Meta
+{
+    com::Mat4f view;
+    com::Mat4f proj;
+};
+
+
+
+
 
 
 

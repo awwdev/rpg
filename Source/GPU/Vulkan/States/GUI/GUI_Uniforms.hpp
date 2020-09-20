@@ -5,6 +5,7 @@
 #include "GPU/Vulkan/Objects/BufferExt.hpp"
 #include "GPU/Vulkan/Objects/Descriptors.hpp"
 #include "GPU/RenderData.hpp"
+#include "GPU/UboData.hpp"
 
 #include "GUI/GUI_Base.hpp"
 #include "Resources/CpuResources.hpp"
@@ -18,7 +19,7 @@ struct GUI_Uniforms
     Descriptors descriptors;
 
     UniformBuffer<UboData_GUI_Text, UBO_GUI_TEXT_MAX> uboText;
-    UniformBuffer<UboData_GUI_Cols, 1> uboColors;
+    UniformBuffer<UboData_GUI_Cols, 1> uboColorTable;
     VkSampler  sampler;
     ImageArray fontImages;
 
@@ -82,11 +83,11 @@ struct GUI_Uniforms
             }
         };
 
-        uboColors.Create();
+        uboColorTable.Create();
         UboData_GUI_Cols colors;
         std::memcpy(colors.colors, gui::ColorValues.data, gui::ColorValues.ENUM_END * sizeof(com::Vec4f));
-        uboColors.Append(colors);
-        uboColors.Bake(cmdPool);
+        uboColorTable.Append(colors);
+        uboColorTable.Bake(cmdPool);
         
         infos[2] = {
             .type = UniformInfo::Buffer,
@@ -98,7 +99,7 @@ struct GUI_Uniforms
                 .pImmutableSamplers = nullptr,
             },
             .bufferInfo {
-                .buffer = uboColors.activeBuffer->buffer,
+                .buffer = uboColorTable.activeBuffer->buffer,
                 .offset = 0,
                 .range  = VK_WHOLE_SIZE
             }
@@ -117,13 +118,12 @@ struct GUI_Uniforms
     void Destroy()
     {
         uboText.Destroy();
-        uboColors.Destroy();
+        uboColorTable.Destroy();
         vkDestroySampler(g_contextPtr->device, sampler, nullptr);
         descriptors.Destroy();
         fontImages.Destroy();
         infos[0] = infos[1] = infos[2] = {};
     }
-
     ~GUI_Uniforms()
     {
         Destroy();

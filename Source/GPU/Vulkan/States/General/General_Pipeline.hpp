@@ -7,6 +7,7 @@
 #include "GPU/Vulkan/States/General/General_RenderPass.hpp"
 #include "GPU/Vulkan/States/General/General_Shader.hpp"
 #include "GPU/Vulkan/States/General/General_Vertices.hpp"
+#include "GPU/Vulkan/States/General/General_Uniforms.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -15,7 +16,11 @@ struct General_Pipeline
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
-    void Create(General_RenderPass& renderPass, General_Shader& shader, General_Vertices& vertices)
+    void Create(
+    General_RenderPass& renderPass, 
+    General_Shader& shader, 
+    General_Vertices& vertices,
+    General_Uniforms& uniforms)
     {
         const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
         const auto inputAssembly    = InputAssemblyDefault();
@@ -28,7 +33,7 @@ struct General_Pipeline
         const auto blendAttachment  = BlendAttachment(VK_FALSE);
         const auto blendState       = BlendState(blendAttachment);   
         
-        const auto layoutInfo = PipelineLayoutInfo(nullptr, 0);
+        const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1);
         VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &layout));
 
         const VkGraphicsPipelineCreateInfo pipelineInfo
