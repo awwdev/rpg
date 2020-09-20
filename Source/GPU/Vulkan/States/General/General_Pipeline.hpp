@@ -6,6 +6,7 @@
 
 #include "GPU/Vulkan/States/General/General_RenderPass.hpp"
 #include "GPU/Vulkan/States/General/General_Shader.hpp"
+#include "GPU/Vulkan/States/General/General_Vertices.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -14,9 +15,9 @@ struct General_Pipeline
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
-    void Create(General_RenderPass& renderPass, General_Shader& shader)
+    void Create(General_RenderPass& renderPass, General_Shader& shader, General_Vertices& vertices)
     {
-        const auto vertexInput      = VertexInputInfoEmpty();
+        const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
         const auto inputAssembly    = InputAssemblyDefault();
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);

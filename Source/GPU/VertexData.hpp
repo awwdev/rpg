@@ -12,4 +12,12 @@ struct PostVertex
     alignas(2) f32 blur;
 };
 
+struct GeneralVertex
+{
+    alignas(16) com::Vec3f pos;
+    alignas(16) com::Vec3f nor;
+    alignas(16) com::Vec4f col;
+    alignas(16) com::Vec2f tex;
+};
+
 }//ns

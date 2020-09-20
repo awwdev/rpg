@@ -4,6 +4,8 @@
 #include "Common/Structs.hpp"
 #include "Common/Container/Array.hpp"
 
+#include "GPU/VertexData.hpp"
+
 namespace rpg::res {
 
 template<auto QUAD_COUNT_T, auto QUADRANT_LEN_T>
@@ -20,7 +22,7 @@ struct Quadrant
     float quadrantX;
     float quadrantZ;
 
-    com::Common_Vertex verts     [VERT_COUNT_TOTAL];
+    gpu::GeneralVertex verts     [VERT_COUNT_TOTAL];
     com::Array<idx_t, 6> corners [CORNER_COUNT][CORNER_COUNT];
 
     void Create(const float pZ, const float pX)

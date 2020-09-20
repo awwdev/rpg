@@ -3,13 +3,14 @@
 
 #include "Common/Types.hpp"
 #include "Common/Structs.hpp"
+#include "GPU/VertexData.hpp"
 #include <fstream>
 #include <filesystem>
 
 namespace rpg::res {
 
 template<auto N>
-void LoadModel(com::Array<com::Common_Vertex, N>& vertices, chars_t path)
+void LoadModel(com::Array<gpu::GeneralVertex, N>& vertices, chars_t path)
 {
     using namespace com;
     
@@ -20,7 +21,7 @@ void LoadModel(com::Array<com::Common_Vertex, N>& vertices, chars_t path)
     constexpr auto COMMAS_MAX = 13;
 
     char line [BUFFER_MAX];
-    Common_Vertex vertex {};
+    gpu::GeneralVertex vertex {};
 
     while(file.getline(line, BUFFER_MAX))
     {

@@ -7,7 +7,8 @@
 namespace rpg::gpu {
 
 constexpr uint32_t UBO_GUI_TEXT_MAX = 1'000;
-constexpr uint32_t VBO_POST_MAX = 100;
+constexpr uint32_t VBO_POST_MAX = 100; //used for blurring
+constexpr uint32_t VBO_GENERAL_MAX = 10'000;
 
 struct RenderData
 {

@@ -301,12 +301,12 @@ struct Terrain
     void StichCorner(const idx_t qcz, const idx_t qcx, const idx_t cornerCount) 
     {
         com::Array<com::Vec3f, 4> positions;
-        com::Array<com::Common_Vertex*, 6> verts;
+        com::Array<gpu::GeneralVertex*, 6> verts;
 
         //TL
         if (qcx > 0 && qcz > 0){
             auto& quadrant = quadrants[qcz - 1][qcx - 1];
-            const auto  vertIndices = quadrant.GetVerticesByCorner({quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
+            const auto vertIndices = quadrant.GetVerticesByCorner({quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
             FOR_ARRAY(vertIndices, i){
                 verts.Append(&quadrant.verts[vertIndices[i]]);
             }

@@ -1,23 +1,16 @@
 #version 450
 
-const vec4 pos [] = 
-{
-    vec4( 0.0,-0.5, 0, 1),
-    vec4( 0.5, 0.5, 0, 1),
-    vec4(-0.5, 0.5, 0, 1),
-};
+layout (location = 0) in vec4 inPos;
+layout (location = 1) in vec3 inNor;
+layout (location = 2) in vec4 inCol;
+layout (location = 3) in vec2 inTex;
 
-const vec4 col [] = 
-{
-    vec4(1, 0, 0, 1),
-    vec4(0, 1, 0, 1),
-    vec4(0, 0, 1, 1),
-};
-
-layout(location = 0) out vec4 outColor;
+layout(location = 0) out vec4 outCol;
+layout(location = 1) out vec2 outTex;
 
 void main() 
 {
-    gl_Position = pos[gl_VertexIndex];
-    outColor    = col[gl_VertexIndex];
+    gl_Position = inPos;
+    outCol = inCol;
+    outTex = inTex;
 }
