@@ -41,6 +41,11 @@ struct GUI_Stats
             row.Append("post");
             row.Append("0");
         }
+        {
+            auto& row = table.table.Append();
+            row.Append("general");
+            row.Append("0");
+        }
     }
 
     void Update(gpu::RenderData& renderData)
@@ -49,11 +54,17 @@ struct GUI_Stats
 
         if (dt::secondHasPassed){
             table.table[0][1] = dt::fps;
+
             table.table[1][1] = dt::seconds;
-            table.table[2][1] = renderData.uboData_gui_text_previousVertCount;
+
+            table.table[2][1] = renderData.debugInfo.uboData_gui_text_previousVertCount;
             table.table[2][1].Append(" verts");
-            table.table[3][1] = renderData.vboData_post_previousVertCount;
+
+            table.table[3][1] = renderData.debugInfo.vboData_post_previousVertCount;
             table.table[3][1].Append(" verts");
+
+            table.table[4][1] = renderData.debugInfo.vboData_general_vertCount;
+            table.table[4][1].Append(" verts");
         }
         
         table.Update(renderData, wnd);

@@ -7,6 +7,9 @@
 #include "GPU/VertexData.hpp"
 #include "Common/Container/Array.hpp"
 
+#include "Resources/CpuResources.hpp"
+#include "GPU/RenderData.hpp"
+
 namespace rpg::gpu::vuk {
 
 struct General_Vertices
@@ -52,21 +55,19 @@ struct General_Vertices
         }
     };
 
-    void Update(const com::Array<PostVertex, VBO_POST_MAX>& cpuVbo)
+    void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
     {
-        //gpuVbo.Reset(3); //keep the fullscreen triangle
-        //gpuVbo.Append(cpuVbo.Data(), cpuVbo.count);
+        gpuVbo.Reset();
+        const auto& verts    = cpuRes.terrain.quadrants[0][0].verts;
+        const auto vertCount = cpuRes.terrain.quadrants[0][0].VERT_COUNT_TOTAL;
+        gpuVbo.Append(verts, vertCount);
+
+        renderData.debugInfo.vboData_general_vertCount = vertCount;
     }
 
     void Create()
     {
         gpuVbo.Create();
-        constexpr VERTEX_TYPE TRIANGLE [3] {
-            { .pos {  0.0,-0.5, 0 }, .nor {}, .col { 1, 1, 1, 1 }, .tex {} },
-            { .pos {  0.5, 0.5, 0 }, .nor {}, .col { 1, 1, 1, 1 }, .tex {} },
-            { .pos { -0.5, 0.5, 0 }, .nor {}, .col { 1, 1, 1, 1 }, .tex {} },
-        };
-        gpuVbo.Append(TRIANGLE);
     }
 
     void Destroy()

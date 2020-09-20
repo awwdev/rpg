@@ -6,6 +6,7 @@
 #include "GPU/Vulkan/States/General/General_Shader.hpp"
 #include "GPU/Vulkan/States/General/General_Vertices.hpp"
 #include "GPU/Vulkan/States/General/General_Uniforms.hpp"
+
 #include "GPU/RenderData.hpp"
 #include "Resources/CpuResources.hpp"
 
@@ -37,15 +38,10 @@ struct State_General
         uniforms    .Destroy();
     }
 
-    void Update(const gpu::RenderData& renderData, const res::CpuResources& cpuRes)
+    void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
     {
-        uniforms.uboMeta.Reset();
-        uniforms.uboMeta.Append(renderData.uboData_general_meta);
-
-        vertices.gpuVbo.Reset();
-        const auto& verts    = cpuRes.terrain.quadrants[0][0].verts;
-        const auto vertCount = cpuRes.terrain.quadrants[0][0].VERT_COUNT_TOTAL;
-        vertices.gpuVbo.Append(verts, vertCount);
+        uniforms.Update(renderData.uboData_general_meta);
+        vertices.Update(renderData, cpuRes);
     }
 
     void Record(VkCommandBuffer cmdBuffer)

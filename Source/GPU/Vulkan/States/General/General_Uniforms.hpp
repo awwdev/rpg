@@ -50,6 +50,12 @@ struct General_Uniforms
         descriptors.Create(infos);
     }
 
+    void Update(UboData_General_Meta& uboData_general_meta)
+    {
+        uboMeta.Reset();
+        uboMeta.Append(uboData_general_meta);
+    }
+
     void Destroy()
     {
         uboMeta.Destroy();
