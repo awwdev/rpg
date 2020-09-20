@@ -11,26 +11,24 @@ struct Commands
 {
     VkCommandPool mainCmdPool; //for single time cmds on main thread
 
-    //? THREADING
-    static constexpr uint32_t SWAP_COUNT_MAX  = 4;
-    static constexpr uint32_t STATE_COUNT_MAX = 4;
+    static constexpr uint32_t SWAP_COUNT_MAX   = 4;
+    static constexpr uint32_t THREAD_COUNT_MAX = 4;
 
-    //per thread
-    struct StateCommands
+    struct ThreadCommands
     {
         VkCommandPool cmdPool;
         VkArray<VkCommandBuffer, SWAP_COUNT_MAX> cmdBuffers;
     };
-    StateCommands stateCommands [STATE_COUNT_MAX] {};
+    ThreadCommands threadCommands [THREAD_COUNT_MAX] {};
 
     void Create()
     {
         const auto poolInfo = CmdPoolInfo(g_contextPtr->queueIndex);
         VkCheck(vkCreateCommandPool(g_contextPtr->device, &poolInfo, nullptr, &mainCmdPool));
 
-        FOR_CARRAY(stateCommands, i) {
-            auto& cmdPool    = stateCommands[i].cmdPool;
-            auto& cmdBuffers = stateCommands[i].cmdBuffers;
+        FOR_CARRAY(threadCommands, i) {
+            auto& cmdPool    = threadCommands[i].cmdPool;
+            auto& cmdBuffers = threadCommands[i].cmdBuffers;
             VkCheck(vkCreateCommandPool(g_contextPtr->device, &poolInfo, nullptr, &cmdPool));
 
             cmdBuffers.count = g_contextPtr->swapImages.count;
@@ -43,9 +41,9 @@ struct Commands
     {
         vkDestroyCommandPool(g_contextPtr->device, mainCmdPool, nullptr);
 
-        FOR_CARRAY(stateCommands, i) {
-            auto& cmdPool    = stateCommands[i].cmdPool;
-            auto& cmdBuffers = stateCommands[i].cmdBuffers;
+        FOR_CARRAY(threadCommands, i) {
+            auto& cmdPool    = threadCommands[i].cmdPool;
+            auto& cmdBuffers = threadCommands[i].cmdBuffers;
             FOR_VK_ARRAY(cmdBuffers, i)
                 vkFreeCommandBuffers(g_contextPtr->device, cmdPool, 1, &cmdBuffers[i]);
             cmdBuffers.count = 0;

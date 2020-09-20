@@ -25,8 +25,9 @@ struct ThreadPool
     std::atomic<bool> isPoolRunning;
     Thread threads [THREAD_COUNT_T];
 
-    void Init()
+    void Start()
     {
+        dbg::Assert(isPoolRunning == false, "started a non-stopped thread pool");
         isPoolRunning = true;
         FOR_CARRAY(threads, i) {
             auto& t = threads[i];
@@ -42,10 +43,15 @@ struct ThreadPool
         }  
     }
 
+    void Stop()
+    {
+        WaitForAllTasks();
+        isPoolRunning = false;
+    }
+
     ~ThreadPool()
     {
-        isPoolRunning = false;
-        WaitForAllTasks();
+        Stop();
         FOR_CARRAY(threads, i){
             if (threads[i].thread.joinable())
                 threads[i].thread.join();

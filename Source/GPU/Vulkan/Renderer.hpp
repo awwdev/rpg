@@ -21,16 +21,14 @@ struct Renderer
     States          states;
     uint32_t        currentFrame = 0;
 
-    com::ThreadPool<4> threadPool;
+    //com::ThreadPool<4> threadPool;
     
     Renderer(const vuk::WindowHandle& wndHandle, res::HostResources& hostResources)
         : context {}
         , commands {}
         , sync {}
         , states {}
-        , threadPool {}
     {
-        threadPool.Init();
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
@@ -83,10 +81,10 @@ struct Renderer
         sync.inFlight[imageIndex] = sync.fences[currentFrame];
         VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
-        //!UPDATE GPU RESOURCES AND RECORD COMMANDS----------
+        //UPDATE GPU RESOURCES AND RECORD COMMANDS----------
         states.Update(scene.renderData);
-        auto cmds = states.Record(commands, imageIndex, threadPool);
-        //!--------------------------------------------------
+        auto cmds = states.Record(commands, imageIndex);
+        //--------------------------------------------------
 
         const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         const VkSubmitInfo submitInfo {
