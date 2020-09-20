@@ -93,7 +93,7 @@ const VkBool32 dephTestEnable = VK_FALSE, const VkBool32 depthWriteEnable = VK_F
         .flags                 = 0,
         .depthTestEnable       = dephTestEnable,
         .depthWriteEnable      = depthWriteEnable,
-        .depthCompareOp        = VK_COMPARE_OP_LESS,//reversed z
+        .depthCompareOp        = VK_COMPARE_OP_GREATER_OR_EQUAL,//reversed z
         .depthBoundsTestEnable = VK_FALSE,
         .stencilTestEnable     = VK_FALSE,
         .front                 = {},
