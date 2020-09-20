@@ -41,7 +41,7 @@ const com::EnumMap<Colors::ENUM_END, com::Vec4f> ColorValues = {
     { Colors::Green,        { 0.01, 0.90, 0.01, 1.0 } },
     { Colors::Red,          { 0.90, 0.01, 0.01, 1.0 } },
     { Colors::Black1,       { 0.01, 0.01, 0.01, 1.0 } },
-    { Colors::Black2_Alpha, { 0.02, 0.02, 0.02, 0.5 } },
+    { Colors::Black2_Alpha, { 0.00, 0.00, 0.00, 0.7 } },
     { Colors::Black3,       { 0.03, 0.03, 0.03, 1.0 } },
     { Colors::Black4,       { 0.04, 0.04, 0.04, 1.0 } },
     { Colors::Black5,       { 0.05, 0.05, 0.05, 1.0 } },

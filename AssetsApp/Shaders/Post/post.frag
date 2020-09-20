@@ -12,19 +12,37 @@ void main()
 {
     if (inBlur == 1)
     {
+        //? XY BLUR
+        /*
         outCol = texture(finalImage, inTex);
         vec2 size = textureSize(finalImage, 0);
-        const float scale = 2;
+        const float scale = 1.5;
         for(int x = -2; x <= 2; ++x) {
         for(int y = -2; y <= 2; ++y) {
             vec2 off = vec2(x / size.x * scale, y / size.y * scale);
             outCol += texture(finalImage, inTex + off);
         }}
         outCol /= 25;
+        */
+
+        //? RADIAL BLUR
+        const float pi2 = 6.28318530718;
+        const float directions= 16;
+        const float scale     = 2;
+        const float steps     = 0.2f; 
+        vec2 size = textureSize(finalImage, 0);
+
+        outCol = texture(finalImage, inTex);
+        for(float i = 0; i < pi2; i += pi2 / directions) {
+        for(float j = 0.5; j < 1.5; j+=steps) {
+            vec2 off = (vec2(cos(i), sin(i)) / size) * (j * scale);
+            outCol  += texture(finalImage, inTex + off);		
+        }}
+        outCol /= directions * (1 / steps);
+
     }
     else 
     {
         outCol = texture(finalImage, inTex);
     }
-
 }
