@@ -7,6 +7,9 @@
 #include "GPU/Vulkan/States/General/General_Vertices.hpp"
 #include "GPU/Vulkan/States/General/General_Uniforms.hpp"
 
+#include "GPU/Vulkan/States/General/Wire/General_Wire_Shader.hpp"
+#include "GPU/Vulkan/States/General/Wire/General_Wire_Pipeline.hpp"
+
 #include "GPU/RenderData.hpp"
 #include "Resources/CpuResources.hpp"
 
@@ -20,6 +23,9 @@ struct State_General
     General_Vertices    vertices;
     General_Uniforms    uniforms;
 
+    General_Wire_Shader   wireShader;
+    General_Wire_Pipeline wirePipeline;
+
     void Create(VkCommandPool cmdPool)
     {
         vertices    .Create();
@@ -27,6 +33,9 @@ struct State_General
         shader      .Create();
         renderPass  .Create(cmdPool);
         pipeline    .Create(renderPass, shader, vertices, uniforms);
+
+        wireShader  .Create();
+        wirePipeline.Create(renderPass, wireShader, vertices, uniforms);
     }
 
     void Destroy()
@@ -36,6 +45,9 @@ struct State_General
         shader      .Destroy();
         vertices    .Destroy();
         uniforms    .Destroy();
+
+        wirePipeline.Destroy();
+        wireShader  .Destroy();
     }
 
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
@@ -47,11 +59,17 @@ struct State_General
     void Record(VkCommandBuffer cmdBuffer)
     {
         vkCmdBeginRenderPass    (cmdBuffer, &renderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
-        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
+
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.gpuVbo.activeBuffer->buffer, vertices.offsets);
         vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
                                  uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
+        //general
+        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
         vkCmdDraw               (cmdBuffer, vertices.gpuVbo.count, 1, 0, 0);
+        //wire
+        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, wirePipeline.pipeline);
+        vkCmdDraw               (cmdBuffer, vertices.gpuVbo.count, 1, 0, 0);
+
         vkCmdEndRenderPass      (cmdBuffer);
     };
     

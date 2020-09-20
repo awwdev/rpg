@@ -5,20 +5,21 @@
 #include "GPU/Vulkan/Helper/Initializers.hpp"
 
 #include "GPU/Vulkan/States/General/General_RenderPass.hpp"
-#include "GPU/Vulkan/States/General/General_Shader.hpp"
 #include "GPU/Vulkan/States/General/General_Vertices.hpp"
 #include "GPU/Vulkan/States/General/General_Uniforms.hpp"
 
+#include "GPU/Vulkan/States/General/Wire/General_Wire_Shader.hpp"
+
 namespace rpg::gpu::vuk {
 
-struct General_Pipeline
+struct General_Wire_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
     void Create(
     General_RenderPass& renderPass, 
-    General_Shader& shader, 
+    General_Wire_Shader& shader, 
     General_Vertices& vertices,
     General_Uniforms& uniforms)
     {
@@ -27,7 +28,7 @@ struct General_Pipeline
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
-        const auto rasterization    = Rasterization(VK_CULL_MODE_NONE, VK_POLYGON_MODE_FILL, VK_FRONT_FACE_COUNTER_CLOCKWISE);
+        const auto rasterization    = Rasterization(VK_CULL_MODE_BACK_BIT, VK_POLYGON_MODE_LINE); //!
         const auto multisampling    = Multisampling(renderPass.msaaSampleCount);
         const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
         const auto blendAttachment  = BlendAttachment(VK_FALSE);
@@ -68,11 +69,11 @@ struct General_Pipeline
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
     }
-
-    ~General_Pipeline()
+    ~General_Wire_Pipeline()
     {
         Destroy();
     }
+    
 };
 
 }//ns
