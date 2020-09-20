@@ -35,7 +35,7 @@ struct GameScene
     gui::GUI_Shadow guiShadow;
     gui::GUI_Stats  guiStats;
 
-    void Create(res::HostResources& hostRes)
+    void Create(res::CpuResources& hostRes)
     {
         //TODO: resource manager, init gizmos? find better place!
         res::LoadPrefabs("AssetsApp/prefabs.mini", ecs.prefabsArrays);
@@ -45,7 +45,7 @@ struct GameScene
     }
 
 
-    void Update(const double dt, res::HostResources& hostRes)
+    void Update(const double dt, res::CpuResources& hostRes)
     {
         renderData.Clear();
 
@@ -58,8 +58,8 @@ struct GameScene
         }   
 
         //? META
-        playerController.Update(dt, ecs);
-        editorController.Update(dt, ecs);
+        playerController.Update(dt, ecs, renderData);
+        editorController.Update(dt, ecs, renderData);
         hostRes.terrain.Update(dt, editorController.camera, ecs); //move into editor?
         sun.Update(ecs, dt);
 

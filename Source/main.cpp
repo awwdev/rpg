@@ -28,10 +28,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
 
     {
         wnd::win_Window  window { hInstance, 800, 600 };
-        auto ptrHostResources = com::mem::ClaimBlock<res::HostResources>();
-        auto ptrRenderer      = com::mem::ClaimBlock<gpu::vuk::Renderer>(gpu::vuk::WindowHandle{window.hInstance, window.hWnd}, *ptrHostResources);
+        auto ptrCpuResources = com::mem::ClaimBlock<res::CpuResources>();
+        auto ptrRenderer      = com::mem::ClaimBlock<gpu::vuk::Renderer>(gpu::vuk::WindowHandle{window.hInstance, window.hWnd}, *ptrCpuResources);
         auto ptrGameScenes    = com::mem::ClaimBlock<app::GameScene>();
-        ptrGameScenes->Create(*ptrHostResources);
+        ptrGameScenes->Create(*ptrCpuResources);
 
         while (!wnd::HasEvent<wnd::EventType::Window_Close>() && 
                !wnd::HasEvent<wnd::EventType::ESC, wnd::EventState::Pressed>())
@@ -41,8 +41,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
 
             if (wnd::glo::window_h != 0 && wnd::glo::window_w != 0)
             {
-                ptrGameScenes->Update(rpg::dt::seconds, *ptrHostResources);
-                ptrRenderer->Render(rpg::dt::seconds, *ptrGameScenes, *ptrHostResources);
+                ptrGameScenes->Update(rpg::dt::seconds, *ptrCpuResources);
+                ptrRenderer->Render(rpg::dt::seconds, *ptrGameScenes, *ptrCpuResources);
             }
         }
 

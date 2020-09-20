@@ -5,6 +5,7 @@
 #include "Common/Matrix.hpp"
 #include "window/WindowEvents.hpp"
 #include "GPU/Meta/Cameras.hpp"
+#include "GPU/RenderData.hpp"
 
 namespace rpg::app {
     
@@ -33,7 +34,7 @@ struct PlayerController
         ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::MeshType::PrimitiveCube);
     }
 
-    void Update(const double dt, ecs::ECS& ecs)
+    void Update(const double dt, ecs::ECS& ecs, gpu::RenderData& renderData)
     {
         if (wnd::glo::resizeState == wnd::glo::ResizeState::End)
             camera.UpdatePerspective();
@@ -59,6 +60,9 @@ struct PlayerController
         
         const com::Vec3f pos = { position[X], HEAD, position[Z] };
         camera.Update(orientation, pos, dt);
+
+        renderData.uboData_general_meta.view = camera.view;
+        renderData.uboData_general_meta.proj = camera.perspective;
     }
 };
     

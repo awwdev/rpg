@@ -29,7 +29,7 @@ struct Resources_Terrain
     VertexBufferOld<com::Common_Vertex, gpu::TERRAIN_VERTEX_MAX_COUNT> vbo;
     UniformBufferOld<gpu::Terrain_UniformData, 1> uboMeta;
 
-    void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow& shadow, Resources_Common& common)
+    void Create(res::CpuResources& hostRes, VkCommandPool cmdPool, Resources_Shadow& shadow, Resources_Common& common)
     {
         Terrain_CreateVertexBuffer  (vbo, cmdPool, hostRes);
         Terrain_CreateUniformBuffer (uboMeta);

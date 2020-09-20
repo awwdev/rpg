@@ -31,7 +31,7 @@ struct VkResources
     Resources_UI      ui;
 
 
-    void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
+    void Create(res::CpuResources& hostRes, VkCommandPool cmdPool)
     {
         //shadow.Create(hostRes, cmdPool);
         //common.Create(hostRes, cmdPool, shadow);

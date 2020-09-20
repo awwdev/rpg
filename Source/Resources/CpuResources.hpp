@@ -64,7 +64,7 @@ struct Models
     }
 };
 
-struct HostResources
+struct CpuResources
 {   
     Textures textures;
     Models   models;
@@ -72,7 +72,7 @@ struct HostResources
     res::Terrain<10, 10, 2> terrain; //!move it out
 
     //! should all load before any GPU resources are used
-    HostResources() 
+    CpuResources() 
     {
         textures.Load();
         models.Load();

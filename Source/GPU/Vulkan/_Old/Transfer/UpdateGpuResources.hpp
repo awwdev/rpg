@@ -99,7 +99,7 @@ inline void CreateCascades2(com::Mat4f (&cascades)[3], const app::GameScene& sce
     cascades[2] = ortho2 * view2;
 }
 
-inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& scene, res::HostResources& hostRes, double dt, Commands& commands)
+inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameScene& scene, res::CpuResources& hostRes, double dt, Commands& commands)
 {
     //? POST
     resources.post.vbo.Reset();

@@ -22,7 +22,7 @@ struct Resources_UI
     Pipeline         pipeline;
     UniformBuffer_Groups<gpu::UboData_GUI_Text, gpu::UBO_GUI_TEXT_MAX> ubo; //one group only
 
-    void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
+    void Create(res::CpuResources& hostRes, VkCommandPool cmdPool)
     {
         fontImages.Create(hostRes.textures.monospaceFont, cmdPool);
 

@@ -18,7 +18,7 @@ struct States
     State_Post    post;
     State_GUI     gui;
 
-    void Create(res::HostResources& hostRes, VkCommandPool cmdPool)
+    void Create(res::CpuResources& hostRes, VkCommandPool cmdPool)
     {
         shadow  .Create(cmdPool);
         general .Create(cmdPool);
@@ -26,10 +26,10 @@ struct States
         gui     .Create(cmdPool, hostRes);
     }
 
-    void Update(gpu::RenderData& renderData)
+    void Update(gpu::RenderData& renderData, res::CpuResources& hostRes)
     {
         shadow  .Update(renderData);
-        general .Update(renderData);
+        general .Update(renderData, hostRes);
         post    .Update(renderData);
         gui     .Update(renderData);
     }

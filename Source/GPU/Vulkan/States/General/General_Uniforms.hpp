@@ -30,7 +30,6 @@ struct General_Uniforms
         };
         uboMeta.Append(data);
 
-
         infos[0] = {
             .type = UniformInfo::Buffer,
             .binding {

@@ -23,7 +23,7 @@ struct Renderer
 
     //com::ThreadPool<4> threadPool;
     
-    Renderer(const vuk::WindowHandle& wndHandle, res::HostResources& hostResources)
+    Renderer(const vuk::WindowHandle& wndHandle, res::CpuResources& cpuRes)
         : context {}
         , commands {}
         , sync {}
@@ -32,10 +32,10 @@ struct Renderer
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
-        states.Create(hostResources, commands.mainCmdPool);
+        states.Create(cpuRes, commands.mainCmdPool);
     }
 
-    void RecreateScwapchain(res::HostResources& hostResources)
+    void RecreateScwapchain(res::CpuResources& cpuRes)
     {
         vkDeviceWaitIdle(context.device);
         if (!context.RecreateSwapchain())
@@ -44,14 +44,14 @@ struct Renderer
         commands.Destroy();
         commands.Create();
         states.Destroy();
-        states.Create(hostResources, commands.mainCmdPool);
+        states.Create(cpuRes, commands.mainCmdPool);
     }
 
-    void Render(const double dt, app::GameScene& scene, res::HostResources& hostRes)
+    void Render(const double dt, app::GameScene& scene, res::CpuResources& cpuRes)
     {
         if (wnd::glo::resizeState != wnd::glo::ResizeState::None){
             if (wnd::glo::resizeState == wnd::glo::ResizeState::End)
-                RecreateScwapchain(hostRes);
+                RecreateScwapchain(cpuRes);
             return;
         } //checking for size==0 is done previously (will also pause other logic)
 
@@ -71,7 +71,7 @@ struct Renderer
         switch(acquireRes)
         {
             case VK_SUCCESS: break;
-            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(hostRes); return; //when?!
+            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(cpuRes); return; //when?!
             default: return;
         }
 
@@ -82,7 +82,7 @@ struct Renderer
         VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
         //UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-        states.Update(scene.renderData);
+        states.Update(scene.renderData, cpuRes);
         auto cmds = states.Record(commands, imageIndex);
         //--------------------------------------------------
 

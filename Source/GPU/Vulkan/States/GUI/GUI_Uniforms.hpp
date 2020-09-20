@@ -23,7 +23,7 @@ struct GUI_Uniforms
     VkSampler  sampler;
     ImageArray fontImages;
 
-    void Create(VkCommandPool cmdPool, res::HostResources& hostRes)
+    void Create(VkCommandPool cmdPool, res::CpuResources& hostRes)
     {
         fontImages.Create(hostRes.textures.monospaceFont, cmdPool);
 

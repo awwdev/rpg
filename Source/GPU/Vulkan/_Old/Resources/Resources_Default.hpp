@@ -31,7 +31,7 @@ struct Resources_Common
     UniformBuffer_Groups<gpu::Common_UniformData, gpu::DEFAULT_UBO_MAX_COUNT> ubo;
     VertexBufferOld<com::Common_Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> vbo;
 
-    void Create(res::HostResources& hostRes, VkCommandPool cmdPool, Resources_Shadow&)
+    void Create(res::CpuResources& hostRes, VkCommandPool cmdPool, Resources_Shadow&)
     {
         textures.Create(hostRes.textures.common, cmdPool);
 

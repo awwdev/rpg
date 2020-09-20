@@ -17,7 +17,7 @@ struct State_GUI
     GUI_RenderPass  renderPass;
     GUI_Uniforms    uniforms;
 
-    void Create(VkCommandPool cmdPool, res::HostResources& hostRes)
+    void Create(VkCommandPool cmdPool, res::CpuResources& hostRes)
     {
         uniforms    .Create(cmdPool, hostRes);
         shader      .Create();

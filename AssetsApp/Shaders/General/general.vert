@@ -15,7 +15,7 @@ layout(binding = 0) uniform Meta {
 
 void main() 
 {
-    gl_Position = meta.view * inPos;
+    gl_Position = meta.proj * meta.view * inPos;
     outCol = inCol;
     outTex = inTex;
 }

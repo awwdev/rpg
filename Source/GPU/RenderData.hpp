@@ -15,6 +15,8 @@ struct RenderData
     com::Array<UboData_GUI_Text, UBO_GUI_TEXT_MAX> uboData_gui_text;
     com::Array<PostVertex, VBO_POST_MAX> vboData_post;
 
+    UboData_General_Meta uboData_general_meta; //camera data
+
     //vertex count for debug
     idx_t uboData_gui_text_previousVertCount;
     idx_t vboData_post_previousVertCount;

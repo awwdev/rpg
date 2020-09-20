@@ -6,6 +6,7 @@
 #include "window/WindowEvents.hpp"
 #include "GPU/Meta/Cameras.hpp"
 #include "App/InputMode.hpp"
+#include "GPU/RenderData.hpp"
 
 namespace rpg::app {
 
@@ -19,7 +20,7 @@ struct EditorController
         camera.Update(0);
     }
 
-    void Update(const double dt, ecs::ECS&)
+    void Update(const double dt, ecs::ECS&, gpu::RenderData& renderData)
     {
         if (app::glo::inputMode == app::glo::FlyMode)
             camera.Update(dt);
@@ -29,6 +30,8 @@ struct EditorController
         if (wnd::HasEvent<wnd::EventType::F9, wnd::EventState::Pressed>())
             terrainWireMode = !terrainWireMode;
 
+        renderData.uboData_general_meta.view = camera.view;
+        renderData.uboData_general_meta.proj = camera.perspective;
     }
 };
 

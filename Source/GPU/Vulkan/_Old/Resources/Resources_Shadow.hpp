@@ -15,7 +15,7 @@ struct Resources_Shadow
     RenderPassDepth renderPass;
     Shadow_PushConstants pushConsts;
 
-    void Create(res::HostResources&, VkCommandPool cmdPool)
+    void Create(res::CpuResources&, VkCommandPool cmdPool)
     {
         Shadow_CreateRenderPass(renderPass, cmdPool);
     }
