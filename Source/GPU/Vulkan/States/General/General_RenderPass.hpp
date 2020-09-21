@@ -42,8 +42,7 @@ struct General_RenderPass
             width, height,
             msaaSampleCount,
             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
-            VK_IMAGE_ASPECT_COLOR_BIT,
-            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+            VK_IMAGE_ASPECT_COLOR_BIT
         );
 
         const VkAttachmentDescription msaaDesc {
@@ -57,6 +56,7 @@ struct General_RenderPass
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
             .finalLayout    = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
         };
+        msaaImage.layout = msaaDesc.finalLayout; //VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 
         const VkAttachmentReference msaaRef {
             .attachment = 0,
@@ -69,8 +69,7 @@ struct General_RenderPass
             width, height,
             msaaSampleCount,
             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-            VK_IMAGE_ASPECT_DEPTH_BIT,
-            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+            VK_IMAGE_ASPECT_DEPTH_BIT
         );
 
         const VkAttachmentDescription depthDesc {
@@ -84,6 +83,7 @@ struct General_RenderPass
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
             .finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,        
         };
+        depthImage.layout = depthDesc.finalLayout; //VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 
         const VkAttachmentReference depthRef {
             .attachment = 1,
@@ -96,8 +96,7 @@ struct General_RenderPass
             width,height,
             VK_SAMPLE_COUNT_1_BIT,
             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-            VK_IMAGE_ASPECT_COLOR_BIT,
-            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+            VK_IMAGE_ASPECT_COLOR_BIT
         );
 
         const VkAttachmentDescription finalDesc {
@@ -111,6 +110,7 @@ struct General_RenderPass
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
             .finalLayout    = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,        
         };
+        finalImage.layout = finalDesc.finalLayout;
 
         const VkAttachmentReference finalRef {
             .attachment = 2,
@@ -224,8 +224,7 @@ struct General_RenderPass
         depthImage.Destroy();    
         msaaImage.Destroy();
     }
-   
-    
+
 };
 
 }//ns

@@ -152,7 +152,7 @@ struct RenderPassDepth
             vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
         framebuffers.Clear();
 
-        depthImageArray.Clear();
+        depthImageArray.Destroy();
     }
 };
 

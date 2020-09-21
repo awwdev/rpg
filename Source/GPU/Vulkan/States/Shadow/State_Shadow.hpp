@@ -16,9 +16,9 @@ struct State_Shadow
 
     void Create(VkCommandPool cmdPool)
     {
-        pipeline    .Create();
-        renderPass  .Create();
         shader      .Create();
+        renderPass  .Create(cmdPool);
+        pipeline    .Create();
     }
 
     void Destroy()
@@ -35,7 +35,11 @@ struct State_Shadow
 
     void Record(VkCommandBuffer cmdBuffer)
     {
-
+        for(uint32_t cascadeIdx = 0; cascadeIdx < renderPass.CASCADE_COUNT; ++cascadeIdx)
+        {
+            vkCmdBeginRenderPass    (cmdBuffer, &renderPass.beginInfos[cascadeIdx], VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdEndRenderPass      (cmdBuffer);
+        }
     };
     
 };

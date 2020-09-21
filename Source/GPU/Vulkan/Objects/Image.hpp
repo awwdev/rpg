@@ -20,10 +20,9 @@ struct Image
         const VkSampleCountFlagBits sampleCount,
         const VkImageUsageFlags usage,
         const VkImageAspectFlags aspect,
-        const VkImageLayout pLayout)
+        const uint32_t layerCount = 1,
+        const VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D)
     {
-        layout = pLayout; //used by e.g. samplers
-
         //? IMAGE
         const VkImageCreateInfo imageInfo {
             .sType                  = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -33,7 +32,7 @@ struct Image
             .format                 = format,
             .extent                 = VkExtent3D { width, height, 1 },
             .mipLevels              = 1,
-            .arrayLayers            = 1,
+            .arrayLayers            = layerCount,
             .samples                = sampleCount,
             .tiling                 = VK_IMAGE_TILING_OPTIMAL,
             .usage                  = usage,
@@ -58,7 +57,7 @@ struct Image
             .pNext              = nullptr,
             .flags              = 0, 
             .image              = image, 
-            .viewType           = VK_IMAGE_VIEW_TYPE_2D, 
+            .viewType           = viewType, 
             .format             = format,
             .components         = 
             {
@@ -73,7 +72,7 @@ struct Image
                 .baseMipLevel   = 0,
                 .levelCount     = 1,
                 .baseArrayLayer = 0,
-                .layerCount     = 1
+                .layerCount     = layerCount
             }
         };
         VkCheck(vkCreateImageView(g_contextPtr->device, &viewInfo, nullptr, &view));
@@ -82,7 +81,9 @@ struct Image
     void Transition(
         VkCommandPool cmdPool,
         VkImageLayout newLayout,
-        VkImageAspectFlags aspect)
+        VkImageAspectFlags aspect, 
+        VkAccessFlags dstAccessMask       = VK_ACCESS_TRANSFER_WRITE_BIT | VK_ACCESS_TRANSFER_READ_BIT, 
+        VkPipelineStageFlags dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT)
     {
         layout = newLayout; 
         auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
@@ -92,7 +93,7 @@ struct Image
             .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
             .pNext               = nullptr,
             .srcAccessMask       = 0,
-            .dstAccessMask       = VK_ACCESS_TRANSFER_WRITE_BIT | VK_ACCESS_TRANSFER_READ_BIT,
+            .dstAccessMask       = dstAccessMask,
             .oldLayout           = VK_IMAGE_LAYOUT_UNDEFINED,
             .newLayout           = newLayout,
             .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
@@ -110,7 +111,7 @@ struct Image
 
         vkCmdPipelineBarrier(
             cmdBuffer,
-            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
+            dstStageMask, 
             VK_PIPELINE_STAGE_TRANSFER_BIT,
             0,
             0, nullptr,

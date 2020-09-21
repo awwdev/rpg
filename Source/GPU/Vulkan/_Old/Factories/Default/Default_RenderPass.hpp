@@ -128,7 +128,7 @@ inline void Common_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         rp.sampleCount,
         VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
         VK_IMAGE_ASPECT_COLOR_BIT,
-        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+        //VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     );
     rp.msaaImage.Transition(cmdPool, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT);
 
@@ -138,7 +138,7 @@ inline void Common_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         VK_SAMPLE_COUNT_1_BIT,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
         VK_IMAGE_ASPECT_COLOR_BIT,
-        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+        //VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
     );
 
     rp.depthImage.Create(
@@ -147,7 +147,7 @@ inline void Common_CreateRenderPass(RenderPassTest& rp, VkCommandPool cmdPool)
         rp.sampleCount,
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
         VK_IMAGE_ASPECT_DEPTH_BIT,
-        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+        //VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
     );
     rp.depthImage.Transition(cmdPool, VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_DEPTH_BIT);
 
