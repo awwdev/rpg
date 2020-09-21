@@ -57,6 +57,7 @@ struct State_Shadow
             vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
                                      uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
+            vkCmdSetDepthBias       (cmdBuffer, -10, 0, -10);
             vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &general.vertices.gpuVbo.activeBuffer->buffer, general.vertices.offsets);
             vkCmdDraw               (cmdBuffer, general.vertices.gpuVbo.count, 1, 0, 0);
             vkCmdEndRenderPass      (cmdBuffer);

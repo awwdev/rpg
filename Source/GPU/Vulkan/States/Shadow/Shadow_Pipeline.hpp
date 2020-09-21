@@ -27,7 +27,7 @@ struct Shadow_Pipeline
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
-        const auto rasterization    = Rasterization(VK_CULL_MODE_BACK_BIT, VK_POLYGON_MODE_FILL);
+        const auto rasterization    = Rasterization(VK_CULL_MODE_BACK_BIT, VK_POLYGON_MODE_FILL, VK_FRONT_FACE_CLOCKWISE, VK_TRUE);
         const auto multisampling    = Multisampling();
         const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
         const auto blendAttachment  = BlendAttachment(VK_FALSE);

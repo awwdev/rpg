@@ -49,7 +49,8 @@ const VkViewport& viewport, const VkRect2D& scissor)
 inline auto Rasterization(
 const VkCullModeFlags cullmode    = VK_CULL_MODE_BACK_BIT,
 const VkPolygonMode   polygonMode = VK_POLYGON_MODE_FILL,
-const VkFrontFace     frontFace   = VK_FRONT_FACE_CLOCKWISE)
+const VkFrontFace     frontFace   = VK_FRONT_FACE_CLOCKWISE,
+const VkBool32        depthBiasEnable = VK_FALSE)
 {
     return VkPipelineRasterizationStateCreateInfo {
         .sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
@@ -60,8 +61,8 @@ const VkFrontFace     frontFace   = VK_FRONT_FACE_CLOCKWISE)
         .polygonMode             = polygonMode,
         .cullMode                = cullmode,
         .frontFace               = frontFace,
-        .depthBiasEnable         = VK_FALSE,
-        .depthBiasConstantFactor = 0.f,
+        .depthBiasEnable         = depthBiasEnable,
+        .depthBiasConstantFactor = 0.f, //setting this via vkCmd
         .depthBiasClamp          = 0.f,
         .depthBiasSlopeFactor    = 0.f,
         .lineWidth               = 1.f  

@@ -13,14 +13,31 @@ layout(binding  = 2) uniform sampler2DArrayShadow shadowMap;
 
 void main() 
 {
-    float shadowSum = 0;
-    for(int i = 0; i < CASCADE_COUNT; ++i){
-        vec4  coord = vec4(inShadowCoord[i].xy, i, inShadowCoord[i].z);
-        float shadow = texture(shadowMap, coord).r;
-        shadowSum += shadow;
-    }
-    shadowSum /= CASCADE_COUNT;
+    //float shadowSum = 0;
+    //for(int i = 0; i < CASCADE_COUNT; ++i){
+    //    vec4  coord = vec4(inShadowCoord[i].xy, i, inShadowCoord[i].z);
+    //    float shadow = texture(shadowMap, coord).r;
+    //    shadowSum += shadow;
+    //}
+    //shadowSum /= CASCADE_COUNT;
 
-    shadowSum = texture(shadowMap, vec4(inShadowCoord[0].xy, 0, inShadowCoord[0].z)).r;
-    outCol = vec4(inCol.rgb * shadowSum, 1);
+    int cascadeIdx = 0;
+    vec2 size = textureSize(shadowMap, 0).xy;
+
+    //radial
+    float directions = 8;
+    float PI2 = 6.28318530718;
+    float shadow = 0;
+    for(float p = 0; p < PI2; p += PI2 / directions)
+    {
+        vec2 off   = vec2(sin(p), cos(p)) / size;
+        vec4 coord = vec4(inShadowCoord[cascadeIdx].xy + off, 0, inShadowCoord[cascadeIdx].z);
+        shadow    += texture(shadowMap, coord).r;
+    }
+    shadow /= directions;
+    shadow = clamp(1 - shadow, 0, 1);
+
+    #define AMBIENT 0.1f
+    float shadowAmbient = clamp(AMBIENT + shadow, 0, 1);
+    outCol = vec4(inCol.rgb * shadowAmbient, 1);
 }
