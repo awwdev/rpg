@@ -18,10 +18,10 @@ struct Shadow_Pipeline
     VkPipelineLayout layout;
 
     void Create(
-    Shadow_RenderPass& renderPass, 
-    Shadow_Shader& shader, 
-    General_Vertices& vertices,
-    Shadow_Uniforms& uniforms)
+    const Shadow_RenderPass& renderPass, 
+    const Shadow_Shader& shader, 
+    const General_Vertices& vertices,
+    const Shadow_Uniforms& uniforms)
     {
         const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
         const auto inputAssembly    = InputAssemblyDefault();
@@ -33,8 +33,8 @@ struct Shadow_Pipeline
         const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
         const auto blendAttachment  = BlendAttachment(VK_FALSE);
         const auto blendState       = BlendState(blendAttachment);   
-        
-        const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1);
+
+        const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1, &uniforms.pushConst.rangeInfo, 1);
         VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &layout));
 
         const VkGraphicsPipelineCreateInfo pipelineInfo

@@ -1,8 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/UboData.hpp"
-#include "GPU/VertexData.hpp"
+#include "GPU/RenderStructs.hpp"
 
 namespace rpg::gpu {
 

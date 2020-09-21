@@ -4,7 +4,7 @@
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Objects/BufferExt.hpp"
 #include "GPU/RenderData.hpp"
-#include "GPU/VertexData.hpp"
+#include "GPU/RenderStructs.hpp"
 #include "Common/Container/Array.hpp"
 
 #include "Resources/CpuResources.hpp"

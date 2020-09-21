@@ -4,8 +4,9 @@
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Objects/BufferExt.hpp"
 #include "GPU/Vulkan/Objects/Descriptors.hpp"
+#include "GPU/Vulkan/Objects/PushConstant.hpp"
 #include "GPU/RenderData.hpp"
-#include "GPU/UboData.hpp"
+#include "GPU/RenderStructs.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -15,6 +16,7 @@ struct Shadow_Uniforms
     UniformInfo infos [1];
     UniformBuffer<UboData_Shadow_Sun, CASCADE_COUNT> uboSun;
     Descriptors descriptors;
+    PushConstant<PushData_Shadow> pushConst;
 
     void Create()
     {
@@ -38,6 +40,13 @@ struct Shadow_Uniforms
 
         //? DESCRIPTORS
         descriptors.Create(infos);
+
+        //? PUSH CONSTS
+        pushConst.rangeInfo = {
+            .stageFlags  = VK_SHADER_STAGE_VERTEX_BIT,
+            .offset      = 0,
+            .size        = sizeof(pushConst.data)
+        };
     }
 
     void Update(const UboData_Shadow_Sun (&uboData_shadow_sun) [CASCADE_COUNT])

@@ -3,7 +3,7 @@
 #pragma once
 #include "Common/Structs.hpp"
 #include "Common/Algorithms.hpp"
-#include "GPU/VertexData.hpp"
+#include "GPU/RenderStructs.hpp"
 
 namespace rpg::com {
     

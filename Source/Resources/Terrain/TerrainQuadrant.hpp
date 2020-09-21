@@ -4,7 +4,7 @@
 #include "Common/Structs.hpp"
 #include "Common/Container/Array.hpp"
 
-#include "GPU/VertexData.hpp"
+#include "GPU/RenderStructs.hpp"
 
 namespace rpg::res {
 

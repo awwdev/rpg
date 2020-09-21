@@ -5,7 +5,7 @@
 #include "GPU/Vulkan/Objects/BufferExt.hpp"
 #include "GPU/Vulkan/Objects/Descriptors.hpp"
 #include "GPU/RenderData.hpp"
-#include "GPU/UboData.hpp"
+#include "GPU/RenderStructs.hpp"
 
 #include "GUI/GUI_Base.hpp"
 #include "Resources/CpuResources.hpp"

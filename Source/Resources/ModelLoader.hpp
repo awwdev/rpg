@@ -3,7 +3,7 @@
 
 #include "Common/Types.hpp"
 #include "Common/Structs.hpp"
-#include "GPU/VertexData.hpp"
+#include "GPU/RenderStructs.hpp"
 #include <fstream>
 #include <filesystem>
 

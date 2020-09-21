@@ -3,7 +3,7 @@
 #pragma once
 #include "GPU/RenderData.hpp"
 
-#include "GPU/VertexData.hpp"
+#include "GPU/RenderStructs.hpp"
 #include "Common/Structs.hpp"
 #include "Common/DeltaTime.hpp"
 #include "Common/Algorithms.hpp"

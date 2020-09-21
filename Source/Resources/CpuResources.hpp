@@ -10,7 +10,7 @@
 #include "Resources/MeshTypes.hpp"
 #include "Resources/Terrain/Terrain.hpp"
 #include "GPU/RenderData.hpp"
-#include "GPU/VertexData.hpp"
+#include "GPU/RenderStructs.hpp"
 #include "Common/PrimitiveMeshes.hpp"
 
 namespace rpg::res {

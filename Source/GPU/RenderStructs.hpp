@@ -8,6 +8,15 @@
 
 namespace rpg::gpu {
 
+//? PUST CONSTANT DATA
+
+struct PushData_Shadow
+{
+    uint32_t cascadeIdx;
+};
+
+//? UBO DATA
+
 struct UboData_GUI_Text
 {
     alignas(16) com::Rect<f32> rect;
@@ -34,6 +43,38 @@ struct UboData_Shadow_Sun
 {
     alignas(64) com::Mat4f projView;
 };
+
+//? VERTEX DATA
+
+struct PostVertex
+{
+    com::Vec2f pos;
+    com::Vec2f tex;
+    alignas(2) f32 blur;
+};
+
+struct GeneralVertex
+{
+    alignas(16) com::Vec3f pos;
+    alignas(16) com::Vec3f nor;
+    alignas(16) com::Vec4f col;
+    alignas(16) com::Vec2f tex;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

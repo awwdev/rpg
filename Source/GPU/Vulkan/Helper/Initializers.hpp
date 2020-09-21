@@ -137,8 +137,8 @@ const VkPipelineColorBlendAttachmentState& blendAttachment)
 }
 
 inline auto PipelineLayoutInfo(
-VkDescriptorSetLayout* setLayouts, const uint32_t setLayoutsCount,
-VkPushConstantRange* pushConsts = nullptr, const uint32_t pushConstCount = 0)
+const VkDescriptorSetLayout* setLayouts, const uint32_t setLayoutsCount,
+const VkPushConstantRange* pushConsts = nullptr, const uint32_t pushConstCount = 0)
 {
     return VkPipelineLayoutCreateInfo {
         .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
