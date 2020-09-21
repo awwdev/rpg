@@ -9,10 +9,12 @@ namespace rpg::gpu {
 constexpr uint32_t UBO_GUI_TEXT_MAX = 1'000;
 constexpr uint32_t VBO_POST_MAX = 100; //used for blurring
 constexpr uint32_t VBO_GENERAL_MAX = 10'000;
+constexpr uint32_t CASCADE_COUNT = 4;
 
 struct RenderData
 {
     UboData_General_Meta uboData_general_meta; //camera data
+    UboData_Shadow_Sun   uboData_shadow_sun [CASCADE_COUNT];
 
     com::Array<UboData_GUI_Text, UBO_GUI_TEXT_MAX> uboData_gui_text;
     com::Array<PostVertex, VBO_POST_MAX> vboData_post;
@@ -20,7 +22,7 @@ struct RenderData
     struct {
         idx_t uboData_gui_text_previousVertCount;
         idx_t vboData_post_previousVertCount;
-        idx_t vboData_general_vertCount; //updated on state
+        idx_t vboData_general_vertCount; //updated on state because vert data comes from multiple places (and is not constructed here)
     } debugInfo;    
     
     void Clear()
@@ -28,6 +30,7 @@ struct RenderData
         debugInfo.uboData_gui_text_previousVertCount = uboData_gui_text.count * 6;
         debugInfo.vboData_post_previousVertCount     = vboData_post.count + 3; //+ fullscreen triangle
 
+        //clear stuff, that has multiple sources that are going to append
         uboData_gui_text.Clear();
         vboData_post.Clear();
     }

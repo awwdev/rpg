@@ -4,6 +4,7 @@
 #include "Common/Structs.hpp"
 #include "Common/Algorithms.hpp"
 #include "ECS/ECS.hpp"
+#include "GPU/RenderData.hpp"
 
 namespace rpg::gpu {
 
@@ -21,7 +22,7 @@ struct Sun
         //ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(gizmoID, res::MeshType::PrimitiveCube);
     }
 
-    void Update(ecs::ECS&, const double dt)
+    void Update(ecs::ECS&, const double dt, RenderData& renderData)
     {
         
         using namespace com;
@@ -37,6 +38,10 @@ struct Sun
         //    0, 0, 1, 0,
         //    pos[X], pos[Y], pos[Z], 1,
         //};
+
+        for(uint32_t i = 0; i < gpu::CASCADE_COUNT; ++i){
+            renderData.uboData_shadow_sun[i].projView = GetOrthographic(i) * GetView();
+        }
         
     }
 
@@ -55,6 +60,7 @@ struct Sun
             case 0: S = 0.005f; break;
             case 1: S = 0.050f; break;
             case 2: S = 0.100f; break;
+            case 3: S = 0.200f; break;
         }
         //const float W = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vuk::g_contextPtr->surfaceCapabilities.currentExtent.width;
         //const float H = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vuk::g_contextPtr->surfaceCapabilities.currentExtent.height;

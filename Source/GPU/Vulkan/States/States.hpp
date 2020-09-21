@@ -20,8 +20,8 @@ struct States
 
     void Create(res::CpuResources& hostRes, VkCommandPool cmdPool)
     {
-        shadow  .Create(cmdPool);
         general .Create(cmdPool);
+        shadow  .Create(cmdPool, general);
         post    .Create(cmdPool, general);
         gui     .Create(cmdPool, hostRes);
     }
@@ -42,7 +42,7 @@ struct States
 
         VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             
-        shadow  .Record(cmdBuffer);
+        shadow  .Record(cmdBuffer, general);
         general .Record(cmdBuffer);
         post    .Record(cmdBuffer, cmdBufferIdx);
         gui     .Record(cmdBuffer, cmdBufferIdx);
@@ -54,10 +54,10 @@ struct States
 
     void Destroy()
     {
+        gui     .Destroy();
+        post    .Destroy();
         shadow  .Destroy();
         general .Destroy();
-        post    .Destroy();
-        gui     .Destroy();
     }
 };
 

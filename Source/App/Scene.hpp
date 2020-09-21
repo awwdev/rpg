@@ -61,7 +61,7 @@ struct GameScene
         playerController.Update(dt, ecs, renderData);
         editorController.Update(dt, ecs, renderData);
         hostRes.terrain.Update(dt, editorController.camera, ecs); //move into editor?
-        sun.Update(ecs, dt);
+        sun.Update(ecs, dt, renderData);
 
         //? ECS
         ecs::S_Render(ecs.arrays, dt, renderData);

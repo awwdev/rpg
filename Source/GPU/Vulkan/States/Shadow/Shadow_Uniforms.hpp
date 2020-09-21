@@ -9,16 +9,17 @@
 
 namespace rpg::gpu::vuk {
 
-struct General_Uniforms
+struct Shadow_Uniforms
 {
+    // re-use ubos from general for model matrices??
     UniformInfo infos [1];
-    UniformBuffer<UboData_General_Meta, 1> uboMeta;
+    UniformBuffer<UboData_Shadow_Sun, CASCADE_COUNT> uboSun;
     Descriptors descriptors;
 
     void Create()
     {
-        uboMeta.Create();
-        
+        uboSun.Create();
+
         infos[0] = {
             .type = UniformInfo::Buffer,
             .binding {
@@ -29,7 +30,7 @@ struct General_Uniforms
                 .pImmutableSamplers = nullptr,
             },
             .bufferInfo = {
-                .buffer = uboMeta.activeBuffer->buffer,
+                .buffer = uboSun.activeBuffer->buffer,
                 .offset = 0,
                 .range  = VK_WHOLE_SIZE,
             }
@@ -39,19 +40,19 @@ struct General_Uniforms
         descriptors.Create(infos);
     }
 
-    void Update(UboData_General_Meta& uboData_general_meta)
+    void Update(const UboData_Shadow_Sun (&uboData_shadow_sun) [CASCADE_COUNT])
     {
-        uboMeta.Reset();
-        uboMeta.Append(uboData_general_meta);
+        uboSun.Reset();
+        uboSun.Append(uboData_shadow_sun);
     }
 
     void Destroy()
     {
-        uboMeta.Destroy();
+        uboSun.Destroy();
         descriptors.Destroy();
         infos[0] = {};
     }
-    ~General_Uniforms()
+    ~Shadow_Uniforms()
     {
         Destroy();
     }

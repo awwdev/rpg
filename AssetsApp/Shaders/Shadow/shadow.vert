@@ -5,7 +5,7 @@ layout (location = 1) in vec3 inNor;
 layout (location = 2) in vec4 inCol;
 layout (location = 3) in vec2 inTex;
 
-layout(binding = 0) uniform Sun { 
+layout(binding = 1) uniform Sun { 
     mat4 projView;
 } sun;
 

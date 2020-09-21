@@ -26,8 +26,13 @@ struct UboData_GUI_Cols
 
 struct UboData_General_Meta
 {
-    com::Mat4f view;
-    com::Mat4f proj;
+    alignas(64) com::Mat4f view;
+    alignas(64) com::Mat4f proj;
+};
+
+struct UboData_Shadow_Sun
+{
+    alignas(64) com::Mat4f projView;
 };
 
 

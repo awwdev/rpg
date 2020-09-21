@@ -3,17 +3,17 @@
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Objects/Image.hpp"
+#include "GPU/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct Shadow_RenderPass
 {
     VkRenderPass renderPass;
-    
-    static constexpr uint32_t CASCADE_COUNT = 4;
-    VkRenderPassBeginInfo   beginInfos   [CASCADE_COUNT];
-    VkFramebuffer           framebuffers [CASCADE_COUNT];
-    VkImageView             views        [CASCADE_COUNT];
+
+    VkRenderPassBeginInfo   beginInfos   [gpu::CASCADE_COUNT];
+    VkFramebuffer           framebuffers [gpu::CASCADE_COUNT];
+    VkImageView             views        [gpu::CASCADE_COUNT];
 
     static constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
     uint32_t width  = 1024 * 4; 
@@ -31,7 +31,7 @@ struct Shadow_RenderPass
             VK_SAMPLE_COUNT_1_BIT,
             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             VK_IMAGE_ASPECT_DEPTH_BIT,
-            CASCADE_COUNT,
+            gpu::CASCADE_COUNT,
             VK_IMAGE_VIEW_TYPE_2D_ARRAY
         );
 
@@ -108,7 +108,7 @@ struct Shadow_RenderPass
         VkCheck(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &renderPass));
 
         //? PER CASCADE
-        for(uint32_t cascadeIdx = 0; cascadeIdx < CASCADE_COUNT; ++cascadeIdx)
+        for(uint32_t cascadeIdx = 0; cascadeIdx < gpu::CASCADE_COUNT; ++cascadeIdx)
         {
             //? VIEW
             const VkImageViewCreateInfo viewInfo 
@@ -171,7 +171,7 @@ struct Shadow_RenderPass
     void Destroy()
     {
         vkDestroyRenderPass(g_contextPtr->device, renderPass, nullptr);
-        for(uint32_t cascadeIdx = 0; cascadeIdx < CASCADE_COUNT; ++cascadeIdx) {
+        for(uint32_t cascadeIdx = 0; cascadeIdx < gpu::CASCADE_COUNT; ++cascadeIdx) {
             vkDestroyImageView(g_contextPtr->device, views[cascadeIdx], nullptr);
             vkDestroyFramebuffer(g_contextPtr->device, framebuffers[cascadeIdx], nullptr);
         }
