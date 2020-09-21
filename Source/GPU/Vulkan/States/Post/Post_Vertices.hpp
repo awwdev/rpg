@@ -3,16 +3,16 @@
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Objects/BufferExt.hpp"
-#include "GPU/RenderData.hpp"
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/RenderData.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 #include "Common/Container/Array.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct Post_Vertices
 {
-    using VERTEX_TYPE = PostVertex;
-    VertexBuffer<VERTEX_TYPE, VBO_POST_MAX> gpuVbo;
+    using VERTEX_TYPE = RenderData_Post::Vertex;
+    VertexBuffer<VERTEX_TYPE, RenderData_Post::VBO_BLUR_MAX> gpuVbo;
 
     VkDeviceSize offsets [1] = {};
     static constexpr VkVertexInputBindingDescription bindings []
@@ -46,7 +46,7 @@ struct Post_Vertices
         }
     };
 
-    void Update(const com::Array<PostVertex, VBO_POST_MAX>& cpuVbo)
+    void Update(const com::Array<RenderData_Post::Vertex, RenderData_Post::VBO_BLUR_MAX>& cpuVbo)
     {
         gpuVbo.Reset(3); //keep the fullscreen triangle
         gpuVbo.Append(cpuVbo.Data(), cpuVbo.count);

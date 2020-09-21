@@ -9,8 +9,8 @@
 #include "Resources/ModelLoader.hpp"
 #include "Resources/MeshTypes.hpp"
 #include "Resources/Terrain/Terrain.hpp"
-#include "GPU/RenderData.hpp"
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/RenderData.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 #include "Common/PrimitiveMeshes.hpp"
 
 namespace rpg::res {
@@ -31,7 +31,7 @@ struct Models
 {
     struct MeshVertexView
     {
-        const gpu::GeneralVertex* begin;
+        const gpu::RenderData_General::Vertex* begin;
         idx_t count;
     };
 
@@ -44,11 +44,11 @@ struct Models
         { res::MeshType::PrimitiveRing16,    { com::MESH_RING_16,  ArrayCount(com::MESH_RING_16)     } },
     }; 
 
-    com::Array<gpu::GeneralVertex, gpu::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;
+    com::Array<gpu::RenderData_General::Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;
 
     void Load()
     {
-        com::Array<gpu::GeneralVertex, gpu::DEFAULT_VERTEX_MAX_COUNT> tmp;
+        com::Array<gpu::RenderData_General::Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> tmp;
 
         const auto LoadModelFn = [&](chars_t path, const res::MeshType type){
             LoadModel(tmp, path);

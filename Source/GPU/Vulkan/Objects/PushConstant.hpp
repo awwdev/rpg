@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 #include "GPU/Vulkan/Meta/Context.hpp"
 
 namespace rpg::gpu::vuk {

@@ -30,8 +30,8 @@ void WriteOrRead(QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
         
         if (!file) dbg::LogError("cannot open file");
 
-        if constexpr (DoSave)  file.write((const char*)quadrant.verts, sizeof(gpu::GeneralVertex) * quadrant.VERT_COUNT_TOTAL);
-        else                   file.read((char*)quadrant.verts, sizeof(gpu::GeneralVertex) * quadrant.VERT_COUNT_TOTAL);
+        if constexpr (DoSave)  file.write((const char*)quadrant.verts, sizeof(gpu::RenderData_General::Vertex) * quadrant.VERT_COUNT_TOTAL);
+        else                   file.read((char*)quadrant.verts, sizeof(gpu::RenderData_General::Vertex) * quadrant.VERT_COUNT_TOTAL);
     }}
 }
 

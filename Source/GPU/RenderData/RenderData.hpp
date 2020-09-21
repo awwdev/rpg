@@ -1,36 +1,49 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/RenderData_Shadow.hpp"
+#include "GPU/RenderData/RenderData_General.hpp"
+#include "GPU/RenderData/RenderData_Post.hpp"
+#include "GPU/RenderData/RenderData_GUI.hpp"
 
 namespace rpg::gpu {
 
 struct RenderData
 {
-    UboData_General_Meta uboData_general_meta; //camera data
-    UboData_Shadow_Sun   uboData_shadow_sun;
-
-    com::Array<UboData_GUI_Text, UBO_GUI_TEXT_MAX> uboData_gui_text;
-    com::Array<PostVertex, VBO_POST_MAX> vboData_post;
+    RenderData_Shadow   shadow;
+    RenderData_General  general;
+    RenderData_Post     post;
+    RenderData_GUI      gui;
 
     struct {
-        idx_t uboData_gui_text_previousVertCount;
+        idx_t uboData_GUI_Text_previousVertCount;
         idx_t vboData_post_previousVertCount;
         idx_t vboData_general_vertCount; //updated on state because vert data comes from multiple places (and is not constructed here)
     } debugInfo;    
-    
+
     void Clear()
     {
-        debugInfo.uboData_gui_text_previousVertCount = uboData_gui_text.count * 6;
-        debugInfo.vboData_post_previousVertCount     = vboData_post.count + 3; //+ fullscreen triangle
+        debugInfo.uboData_GUI_Text_previousVertCount = gui.uboText.count * 6;
+        debugInfo.vboData_post_previousVertCount     = post.vboBlur.count + 3; //+ fullscreen triangle
 
         //clear stuff, that has multiple sources that are going to append
-        uboData_gui_text.Clear();
-        vboData_post.Clear();
+        shadow  .Clear();
+        general .Clear();
+        post    .Clear();
+        gui     .Clear();
     }
 };
 
 }//ns
+
+
+
+
+
+
+
+
+
 
 
 
@@ -50,7 +63,7 @@ constexpr u32 TERRAIN_VERTEX_MAX_COUNT = 1'000'000;
 /*
 struct RenderData
 {
-    UniformDataGroups<UI_UniformData, UBO_GUI_TEXT_MAX, 1>  gui_ubo; //1 group only
+    UniformDataGroups<UI_UniformData, RenderData_GUI::UBO_GUI_TEXT_MAX, 1>  gui_ubo; //1 group only
 
     UniformDataGroupsMesh<Common_UniformData, DEFAULT_UBO_MAX_COUNT> common_ubo;
 

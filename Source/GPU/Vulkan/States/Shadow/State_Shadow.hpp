@@ -9,8 +9,8 @@
 
 #include "GPU/Vulkan/States/General/State_General.hpp"
 
-#include "GPU/RenderData.hpp"
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/RenderData.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -42,12 +42,12 @@ struct State_Shadow
 
     void Update(gpu::RenderData& renderData)
     {
-        uniforms.Update(renderData.uboData_shadow_sun);
+        uniforms.Update(renderData.shadow.uboShadowMap);
     }
 
     void Record(VkCommandBuffer cmdBuffer, State_General& general)
     {
-        for(uint32_t cascadeIdx = 0; cascadeIdx < gpu::CASCADE_COUNT; ++cascadeIdx)
+        for(uint32_t cascadeIdx = 0; cascadeIdx < RenderData_Shadow::CASCADE_COUNT; ++cascadeIdx)
         {
             uniforms.pushConst.data.cascadeIdx = cascadeIdx;
 

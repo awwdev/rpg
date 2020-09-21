@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 #include "Common/Structs.hpp"
 #include "Common/DeltaTime.hpp"
 #include "Common/Algorithms.hpp"
@@ -62,7 +62,7 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
         (rect.h / (f32)wnd::glo::window_h) * 2,  
     };
 
-    renderData.uboData_gui_text.Append(gpu::UboData_GUI_Text{ 
+    renderData.gui.uboText.Append(gpu::RenderData_GUI::UBO_Text{ 
         .rect    = normRect,
         .visuals = {
             .colIdx = (u32)col,
@@ -86,7 +86,7 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
         v3 = uv3 * 2 - 1;
         v4 = uv4 * 2 - 1;
 
-        gpu::PostVertex verts [] {
+        gpu::RenderData_Post::Vertex verts [] {
             {v1, uv1, 1},
             {v2, uv2, 1},
             {v3, uv3, 1},
@@ -94,7 +94,7 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
             {v3, uv3, 1},
             {v4, uv4, 1},
         };
-        renderData.vboData_post.AppendArray(verts);
+        renderData.post.vboBlur.AppendArray(verts);
     }
 }
 

@@ -6,7 +6,7 @@
 #include "GPU/Vulkan/States/GUI/GUI_RenderPass.hpp"
 #include "GPU/Vulkan/States/GUI/GUI_Uniforms.hpp"
 #include "Resources/CpuResources.hpp"
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -35,7 +35,7 @@ struct State_GUI
 
     void Update(const gpu::RenderData& renderData)
     {
-        uniforms.Update(renderData.uboData_gui_text);
+        uniforms.Update(renderData.gui.uboText);
     }
 
     void Record(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx)

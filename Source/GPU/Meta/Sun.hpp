@@ -4,7 +4,7 @@
 #include "Common/Structs.hpp"
 #include "Common/Algorithms.hpp"
 #include "ECS/ECS.hpp"
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 
 namespace rpg::gpu {
 
@@ -46,9 +46,9 @@ struct Sun
             0.5, 0.5, 0.0, 1.0 
         };
 
-        for(uint32_t i = 0; i < gpu::CASCADE_COUNT; ++i){
-            renderData.uboData_shadow_sun.projView[i]       = GetOrthographic(i) * GetView();
-            renderData.uboData_shadow_sun.projViewBiased[i] = biasMat * GetOrthographic(i) * GetView();
+        for(uint32_t i = 0; i < RenderData_Shadow::CASCADE_COUNT; ++i){
+            renderData.shadow.uboShadowMap.projView[i]       = GetOrthographic(i) * GetView();
+            renderData.shadow.uboShadowMap.projViewBiased[i] = biasMat * GetOrthographic(i) * GetView();
         }
         
     }

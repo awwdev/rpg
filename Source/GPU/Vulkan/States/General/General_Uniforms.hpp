@@ -4,8 +4,8 @@
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Objects/BufferExt.hpp"
 #include "GPU/Vulkan/Objects/Descriptors.hpp"
-#include "GPU/RenderData.hpp"
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/RenderData.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -14,7 +14,7 @@ struct General_Uniforms
     UniformInfo infos [3];
     Descriptors descriptors;
 
-    UniformBuffer<UboData_General_Meta, 1> uboMeta;
+    UniformBuffer<RenderData_General::UBO_Meta, 1> uboMeta;
     VkSampler shadowMapSampler;
 
     void Create(Buffer& uboSun, Image& shadowMaps)
@@ -97,7 +97,7 @@ struct General_Uniforms
         descriptors.Create(infos);
     }
 
-    void Update(UboData_General_Meta& uboData_general_meta)
+    void Update(RenderData_General::UBO_Meta& uboData_general_meta)
     {
         uboMeta.Reset();
         uboMeta.Append(uboData_general_meta);

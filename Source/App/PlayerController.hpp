@@ -5,7 +5,7 @@
 #include "Common/Matrix.hpp"
 #include "window/WindowEvents.hpp"
 #include "GPU/Meta/Cameras.hpp"
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 
 namespace rpg::app {
     
@@ -61,8 +61,8 @@ struct PlayerController
         const com::Vec3f pos = { position[X], HEAD, position[Z] };
         camera.Update(orientation, pos, dt);
 
-        renderData.uboData_general_meta.view = camera.view;
-        renderData.uboData_general_meta.proj = camera.perspective;
+        renderData.general.uboData_general_meta.view = camera.view;
+        renderData.general.uboData_general_meta.proj = camera.perspective;
     }
 };
     

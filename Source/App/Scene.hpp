@@ -5,7 +5,7 @@
 #include "ECS/ECS.hpp"
 #include "ECS/Systems/S_Render.hpp"
 
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 #include "GPU/Meta/Sun.hpp"
 
 #include "GUI/Editor/GUI_Stats.hpp"

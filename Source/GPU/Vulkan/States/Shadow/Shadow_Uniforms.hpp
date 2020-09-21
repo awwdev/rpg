@@ -5,8 +5,8 @@
 #include "GPU/Vulkan/Objects/BufferExt.hpp"
 #include "GPU/Vulkan/Objects/Descriptors.hpp"
 #include "GPU/Vulkan/Objects/PushConstant.hpp"
-#include "GPU/RenderData.hpp"
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/RenderData.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -14,9 +14,9 @@ struct Shadow_Uniforms
 {
     // re-use ubos from general for model matrices??
     UniformInfo infos [1];
-    UniformBuffer<UboData_Shadow_Sun, 1> uboSun;
+    UniformBuffer<RenderData_Shadow::UBO_ShadowMap, 1> uboSun;
     Descriptors descriptors;
-    PushConstant<PushData_Shadow> pushConst;
+    PushConstant<RenderData_Shadow::Push_Cascades> pushConst;
 
     void Create()
     {
@@ -49,10 +49,10 @@ struct Shadow_Uniforms
         };
     }
 
-    void Update(const UboData_Shadow_Sun& uboData_shadow_sun)
+    void Update(const RenderData_Shadow::UBO_ShadowMap& uboShadowMap)
     {
         uboSun.Reset();
-        uboSun.Append(uboData_shadow_sun);
+        uboSun.Append(uboShadowMap);
     }
 
     void Destroy()

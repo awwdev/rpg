@@ -109,7 +109,7 @@ inline void UpdateVkResources_GameScene(VkResources& resources, const app::GameS
     resources.ui.pushConsts.wnd_w = wnd::glo::window_w;
     resources.ui.pushConsts.wnd_h = wnd::glo::window_h;
     resources.ui.ubo.Reset();
-    resources.ui.ubo.Store(scene.renderData.uboData_gui_text);
+    resources.ui.ubo.Store(scene.renderData.uboText);
 
 
 

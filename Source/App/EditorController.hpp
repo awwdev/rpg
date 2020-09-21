@@ -6,7 +6,7 @@
 #include "window/WindowEvents.hpp"
 #include "GPU/Meta/Cameras.hpp"
 #include "App/InputMode.hpp"
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 
 namespace rpg::app {
 
@@ -30,8 +30,8 @@ struct EditorController
         if (wnd::HasEvent<wnd::EventType::F9, wnd::EventState::Pressed>())
             terrainWireMode = !terrainWireMode;
 
-        renderData.uboData_general_meta.view = camera.view;
-        renderData.uboData_general_meta.proj = camera.perspective;
+        renderData.general.uboData_general_meta.view = camera.view;
+        renderData.general.uboData_general_meta.proj = camera.perspective;
     }
 };
 

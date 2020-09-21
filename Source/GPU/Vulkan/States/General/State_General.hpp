@@ -10,7 +10,7 @@
 #include "GPU/Vulkan/States/General/Wire/General_Wire_Shader.hpp"
 #include "GPU/Vulkan/States/General/Wire/General_Wire_Pipeline.hpp"
 
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 #include "Resources/CpuResources.hpp"
 
 namespace rpg::gpu::vuk {
@@ -52,7 +52,7 @@ struct State_General
 
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
     {
-        uniforms.Update(renderData.uboData_general_meta);
+        uniforms.Update(renderData.general.uboData_general_meta);
         vertices.Update(renderData, cpuRes);
     }
 

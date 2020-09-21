@@ -20,7 +20,7 @@ struct Resources_UI
     RenderPass       renderPass;
     Shader           shader;
     Pipeline         pipeline;
-    UniformBuffer_Groups<gpu::UboData_GUI_Text, gpu::UBO_GUI_TEXT_MAX> ubo; //one group only
+    UniformBuffer_Groups<gpu::RenderData_GUI::UBO_Text, gpu::RenderData_GUI::UBO_GUI_TEXT_MAX> ubo; //one group only
 
     void Create(res::CpuResources& hostRes, VkCommandPool cmdPool)
     {

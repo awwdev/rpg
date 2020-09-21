@@ -3,19 +3,19 @@
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Objects/BufferExt.hpp"
-#include "GPU/RenderData.hpp"
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/RenderData.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 #include "Common/Container/Array.hpp"
 
 #include "Resources/CpuResources.hpp"
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct General_Vertices
 {
-    using VERTEX_TYPE = GeneralVertex;
-    VertexBuffer<VERTEX_TYPE, VBO_GENERAL_MAX> gpuVbo;
+    using VERTEX_TYPE = RenderData_General::Vertex;
+    VertexBuffer<VERTEX_TYPE, RenderData_General::VBO_MAX> gpuVbo;
 
     VkDeviceSize offsets [1] = {};
     static constexpr VkVertexInputBindingDescription bindings []

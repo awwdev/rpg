@@ -3,18 +3,18 @@
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Objects/BufferExt.hpp"
-#include "GPU/RenderData.hpp"
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/RenderData.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 #include "Common/Container/Array.hpp"
 
 #include "Resources/CpuResources.hpp"
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct Shadow_Vertices
 {
-    using VERTEX_TYPE = GeneralVertex;
+    using VERTEX_TYPE = RenderData_General::Vertex;
     //using form general vbo
 
     VkDeviceSize offsets [1] = {};

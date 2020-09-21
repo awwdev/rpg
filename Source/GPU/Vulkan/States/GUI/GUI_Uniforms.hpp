@@ -4,8 +4,8 @@
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Objects/BufferExt.hpp"
 #include "GPU/Vulkan/Objects/Descriptors.hpp"
-#include "GPU/RenderData.hpp"
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/RenderData.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 
 #include "GUI/GUI_Base.hpp"
 #include "Resources/CpuResources.hpp"
@@ -18,8 +18,8 @@ struct GUI_Uniforms
     UniformInfo infos [3];
     Descriptors descriptors;
 
-    UniformBuffer<UboData_GUI_Text, UBO_GUI_TEXT_MAX> uboText;
-    UniformBuffer<UboData_GUI_Cols, 1> uboColorTable;
+    UniformBuffer<RenderData_GUI::UBO_Text, RenderData_GUI::UBO_TEXT_MAX> uboText;
+    UniformBuffer<RenderData_GUI::UBO_ColorTable, 1> uboColorTable;
     VkSampler  sampler;
     ImageArray fontImages;
 
@@ -84,7 +84,7 @@ struct GUI_Uniforms
         };
 
         uboColorTable.Create();
-        UboData_GUI_Cols colors;
+        RenderData_GUI::UBO_ColorTable colors;
         std::memcpy(colors.colors, gui::ColorValues.data, gui::ColorValues.ENUM_END * sizeof(com::Vec4f));
         uboColorTable.Append(colors);
         uboColorTable.Bake(cmdPool);
@@ -109,10 +109,10 @@ struct GUI_Uniforms
         descriptors.Create(infos);
     }
 
-    void Update(const com::Array<UboData_GUI_Text, UBO_GUI_TEXT_MAX>& uboData_gui_text)
+    void Update(const com::Array<RenderData_GUI::UBO_Text, RenderData_GUI::UBO_TEXT_MAX>& pUboText)
     {
         uboText.Reset();
-        uboText.Append(uboData_gui_text.Data(), uboData_gui_text.count);
+        uboText.Append(pUboText.Data(), pUboText.count);
     }
 
     void Destroy()

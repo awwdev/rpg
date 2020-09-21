@@ -4,7 +4,7 @@
 #include "Common/Structs.hpp"
 #include "Common/Container/Array.hpp"
 
-#include "GPU/RenderStructs.hpp"
+#include "GPU/RenderData/_Old/RenderStructs.hpp"
 
 namespace rpg::res {
 
@@ -22,7 +22,7 @@ struct Quadrant
     float quadrantX;
     float quadrantZ;
 
-    gpu::GeneralVertex verts     [VERT_COUNT_TOTAL];
+    gpu::RenderData_General::Vertex verts     [VERT_COUNT_TOTAL];
     com::Array<idx_t, 6> corners [CORNER_COUNT][CORNER_COUNT];
 
     void Create(const float pZ, const float pX)

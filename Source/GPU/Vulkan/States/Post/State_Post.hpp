@@ -6,7 +6,7 @@
 #include "GPU/Vulkan/States/Post/Post_RenderPass.hpp"
 #include "GPU/Vulkan/States/Post/Post_Uniforms.hpp"
 #include "GPU/Vulkan/States/Post/Post_Vertices.hpp"
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -38,7 +38,7 @@ struct State_Post
 
     void Update(const gpu::RenderData& renderData)
     {
-        vertices.Update(renderData.vboData_post);
+        vertices.Update(renderData.post.vboBlur);
     }
 
     void Record(VkCommandBuffer cmdBuffer, const uint32_t cmdBufferIdx)

@@ -17,7 +17,7 @@ namespace rpg::gpu::vuk
         Pipeline& pipeline,
         Shader& shader, 
         RenderPass& renderPass,
-        UniformBuffer_Groups<gpu::UboData_GUI_Text, gpu::UBO_GUI_TEXT_MAX>& uboText)
+        UniformBuffer_Groups<gpu::RenderData_GUI::UBO_Text, gpu::RenderData_GUI::UBO_GUI_TEXT_MAX>& uboText)
     {
         const VkPipelineVertexInputStateCreateInfo vertexInput {
             .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

@@ -301,7 +301,7 @@ struct Terrain
     void StichCorner(const idx_t qcz, const idx_t qcx, const idx_t cornerCount) 
     {
         com::Array<com::Vec3f, 4> positions;
-        com::Array<gpu::GeneralVertex*, 6> verts;
+        com::Array<gpu::RenderData_General::Vertex*, 6> verts;
 
         //TL
         if (qcx > 0 && qcz > 0){

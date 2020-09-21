@@ -7,7 +7,7 @@
 
 #include "Resources/CpuResources.hpp"
 #include "App/Scene.hpp"
-#include "GPU/RenderData.hpp"
+#include "GPU/RenderData/RenderData.hpp"
 #include "Window/WindowEvents.hpp"
 #include "Common/ThreadPool.hpp"
 

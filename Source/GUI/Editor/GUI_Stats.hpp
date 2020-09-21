@@ -57,7 +57,7 @@ struct GUI_Stats
 
             table.table[1][1] = dt::seconds;
 
-            table.table[2][1] = renderData.debugInfo.uboData_gui_text_previousVertCount;
+            table.table[2][1] = renderData.debugInfo.uboData_GUI_Text_previousVertCount;
             table.table[2][1].Append(" verts");
 
             table.table[3][1] = renderData.debugInfo.vboData_post_previousVertCount;
