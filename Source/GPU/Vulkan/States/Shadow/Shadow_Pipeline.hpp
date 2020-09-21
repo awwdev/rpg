@@ -7,8 +7,7 @@
 #include "GPU/Vulkan/States/Shadow/Shadow_RenderPass.hpp"
 #include "GPU/Vulkan/States/Shadow/Shadow_Shader.hpp"
 #include "GPU/Vulkan/States/Shadow/Shadow_Uniforms.hpp"
-
-#include "GPU/Vulkan/States/General/General_Vertices.hpp"
+#include "GPU/Vulkan/States/Shadow/Shadow_Vertices.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -20,7 +19,7 @@ struct Shadow_Pipeline
     void Create(
     const Shadow_RenderPass& renderPass, 
     const Shadow_Shader& shader, 
-    const General_Vertices& vertices,
+    const Shadow_Vertices& vertices,
     const Shadow_Uniforms& uniforms)
     {
         const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);

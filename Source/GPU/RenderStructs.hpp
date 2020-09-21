@@ -8,12 +8,18 @@
 
 namespace rpg::gpu {
 
+constexpr uint32_t UBO_GUI_TEXT_MAX = 1'000;
+constexpr uint32_t VBO_POST_MAX = 100; //used for blurring
+constexpr uint32_t VBO_GENERAL_MAX = 10'000;
+constexpr uint32_t CASCADE_COUNT = 4; //! need to change array size in shader too (UBO)
+
 //? PUST CONSTANT DATA
 
 struct PushData_Shadow
 {
     uint32_t cascadeIdx;
 };
+
 
 //? UBO DATA
 
@@ -41,8 +47,10 @@ struct UboData_General_Meta
 
 struct UboData_Shadow_Sun
 {
-    alignas(64) com::Mat4f projView;
+    com::Mat4f projView         [CASCADE_COUNT];
+    com::Mat4f projViewBiased   [CASCADE_COUNT];
 };
+
 
 //? VERTEX DATA
 

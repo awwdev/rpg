@@ -14,7 +14,7 @@ struct Shadow_Uniforms
 {
     // re-use ubos from general for model matrices??
     UniformInfo infos [1];
-    UniformBuffer<UboData_Shadow_Sun, CASCADE_COUNT> uboSun;
+    UniformBuffer<UboData_Shadow_Sun, 1> uboSun;
     Descriptors descriptors;
     PushConstant<PushData_Shadow> pushConst;
 
@@ -49,7 +49,7 @@ struct Shadow_Uniforms
         };
     }
 
-    void Update(const UboData_Shadow_Sun (&uboData_shadow_sun) [CASCADE_COUNT])
+    void Update(const UboData_Shadow_Sun& uboData_shadow_sun)
     {
         uboSun.Reset();
         uboSun.Append(uboData_shadow_sun);
@@ -59,7 +59,8 @@ struct Shadow_Uniforms
     {
         uboSun.Destroy();
         descriptors.Destroy();
-        infos[0] = {};
+        FOR_CARRAY(infos, i)
+            infos[i] = {};
     }
     ~Shadow_Uniforms()
     {

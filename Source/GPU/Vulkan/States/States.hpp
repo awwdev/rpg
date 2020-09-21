@@ -20,9 +20,9 @@ struct States
 
     void Create(res::CpuResources& hostRes, VkCommandPool cmdPool)
     {
-        general .Create(cmdPool);
-        shadow  .Create(cmdPool, general);
-        post    .Create(cmdPool, general);
+        shadow  .Create(cmdPool);
+        general .Create(cmdPool, *shadow.uniforms.uboSun.activeBuffer, shadow.renderPass.shadowMaps);
+        post    .Create(cmdPool, general.renderPass.finalImage);
         gui     .Create(cmdPool, hostRes);
     }
 

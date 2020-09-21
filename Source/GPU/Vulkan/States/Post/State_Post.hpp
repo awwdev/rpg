@@ -8,8 +8,6 @@
 #include "GPU/Vulkan/States/Post/Post_Vertices.hpp"
 #include "GPU/RenderData.hpp"
 
-#include "GPU/Vulkan/States/General/State_General.hpp"
-
 namespace rpg::gpu::vuk {
 
 struct State_Post
@@ -20,9 +18,9 @@ struct State_Post
     Post_Uniforms   uniforms;
     Post_Vertices   vertices;
 
-    void Create(VkCommandPool cmdPool, State_General& general)
+    void Create(VkCommandPool cmdPool, Image& finalImage)
     {
-        uniforms    .Create(general.renderPass.finalImage);
+        uniforms    .Create(finalImage);
         vertices    .Create();
         shader      .Create();
         renderPass  .Create();

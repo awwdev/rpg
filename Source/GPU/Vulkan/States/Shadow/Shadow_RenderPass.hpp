@@ -20,12 +20,12 @@ struct Shadow_RenderPass
     uint32_t height = 1024 * 4; 
     VkClearValue clears [1] { { .depthStencil { 0, 0 } } };
 
-    Image depthImageArray;
+    Image shadowMaps;
 
     void Create(VkCommandPool cmdPool)
     {
         //? DEPTH IMAGE ARRAY
-        depthImageArray.Create(
+        shadowMaps.Create(
             DEPTH_FORMAT,
             width, height,
             VK_SAMPLE_COUNT_1_BIT,
@@ -47,7 +47,7 @@ struct Shadow_RenderPass
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
             .finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
         };
-        depthImageArray.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+        shadowMaps.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 
         const VkAttachmentDescription descs [] {
             depthDesc,
@@ -116,7 +116,7 @@ struct Shadow_RenderPass
                 .sType              = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
                 .pNext              = nullptr,
                 .flags              = 0, 
-                .image              = depthImageArray.image, 
+                .image              = shadowMaps.image, 
                 .viewType           = VK_IMAGE_VIEW_TYPE_2D_ARRAY, //!
                 .format             = DEPTH_FORMAT,
                 .components         = 
@@ -175,7 +175,7 @@ struct Shadow_RenderPass
             vkDestroyImageView(g_contextPtr->device, views[cascadeIdx], nullptr);
             vkDestroyFramebuffer(g_contextPtr->device, framebuffers[cascadeIdx], nullptr);
         }
-        depthImageArray.Destroy();
+        shadowMaps.Destroy();
     }
     ~Shadow_RenderPass()
     {

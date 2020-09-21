@@ -39,8 +39,16 @@ struct Sun
         //    pos[X], pos[Y], pos[Z], 1,
         //};
 
+        constexpr com::Mat4f biasMat {
+            0.5, 0.0, 0.0, 0.0,
+            0.0, 0.5, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.5, 0.5, 0.0, 1.0 
+        };
+
         for(uint32_t i = 0; i < gpu::CASCADE_COUNT; ++i){
-            renderData.uboData_shadow_sun[i].projView = GetOrthographic(i) * GetView();
+            renderData.uboData_shadow_sun.projView[i]       = GetOrthographic(i) * GetView();
+            renderData.uboData_shadow_sun.projViewBiased[i] = biasMat * GetOrthographic(i) * GetView();
         }
         
     }

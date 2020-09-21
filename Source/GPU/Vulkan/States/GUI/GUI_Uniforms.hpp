@@ -122,7 +122,8 @@ struct GUI_Uniforms
         vkDestroySampler(g_contextPtr->device, sampler, nullptr);
         descriptors.Destroy();
         fontImages.Destroy();
-        infos[0] = infos[1] = infos[2] = {};
+        FOR_CARRAY(infos, i)
+            infos[i] = {};
     }
     ~GUI_Uniforms()
     {

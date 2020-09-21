@@ -5,11 +5,12 @@
 #include "GPU/Vulkan/States/Shadow/Shadow_Pipeline.hpp"
 #include "GPU/Vulkan/States/Shadow/Shadow_Shader.hpp"
 #include "GPU/Vulkan/States/Shadow/Shadow_Uniforms.hpp"
-#include "GPU/Vulkan/Objects/PushConstant.hpp"
-#include "GPU/RenderData.hpp"
-#include "GPU/RenderStructs.hpp"
+#include "GPU/Vulkan/States/Shadow/Shadow_Vertices.hpp"
 
 #include "GPU/Vulkan/States/General/State_General.hpp"
+
+#include "GPU/RenderData.hpp"
+#include "GPU/RenderStructs.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -19,13 +20,15 @@ struct State_Shadow
     Shadow_RenderPass renderPass;
     Shadow_Shader     shader;
     Shadow_Uniforms   uniforms;
+    Shadow_Vertices   vertices;
 
-    void Create(VkCommandPool cmdPool, State_General& general)
+    void Create(VkCommandPool cmdPool)
     {
+        vertices    .Create();
         uniforms    .Create();
         shader      .Create();
         renderPass  .Create(cmdPool);
-        pipeline    .Create(renderPass, shader, general.vertices, uniforms);
+        pipeline    .Create(renderPass, shader, vertices, uniforms);
     }
 
     void Destroy()
@@ -34,6 +37,7 @@ struct State_Shadow
         renderPass  .Destroy();
         shader      .Destroy();
         uniforms    .Destroy();
+        vertices    .Destroy();
     }
 
     void Update(gpu::RenderData& renderData)

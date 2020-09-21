@@ -26,10 +26,10 @@ struct State_General
     General_Wire_Shader   wireShader;
     General_Wire_Pipeline wirePipeline;
 
-    void Create(VkCommandPool cmdPool)
+    void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps)
     {
         vertices    .Create();
-        uniforms    .Create();
+        uniforms    .Create(uboSun, shadowMaps);
         shader      .Create();
         renderPass  .Create(cmdPool);
         pipeline    .Create(renderPass, shader, vertices, uniforms);
