@@ -131,11 +131,11 @@ struct Image
         }
         image = VK_NULL_HANDLE;
     }
-
     ~Image()
     {
         Destroy();
     }
+    
 };
 
 }//ns

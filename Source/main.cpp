@@ -18,12 +18,23 @@
 #include "Resources/CpuResources.hpp"
 
 #include "Common/ThreadPool.hpp"
+#include "Common/Container/Array2.hpp"
 
 using namespace rpg;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int)
 {
     dbg::Console console{};
+
+    {
+        com2::Array<float, 10> arr1 { 1.23f, 2, 3 };
+        double arr2 [] { 3.3, 6.6 };
+        arr1.AppendArray(arr2);
+        com2::PrintArray(arr1);
+    }
+    system("pause");
+    std::exit(0);
+
     com::mem::GlobalAllocate();
 
     {

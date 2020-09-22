@@ -10,7 +10,7 @@ struct Widget_List
 {
     com::String<30> name;
     com::Rect<f32>  rect;
-    f32 maxHeight = rect.h;
+    f32 maxHeight = 100;
     f32 scroll = 0;
 
     static constexpr auto NO_ACTIVE_INDEX = ITEM_COUNT_MAX;
