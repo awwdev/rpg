@@ -61,6 +61,7 @@ struct Terrain
     using SETTINGS_T = Settings<QUADRANT_T::VERT_COUNT_TOTAL, QUADRANT_COUNT_TOTAL>;
 
     QUADRANT_T quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
+    //TODO make one vertex buffer and quadrants as views
     SETTINGS_T settings {};
 
     //? MAIN

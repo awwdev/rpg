@@ -9,7 +9,7 @@ layout(location = 2) in vec4 inShadowCoord [CASCADE_COUNT];
 
 layout(location = 0) out vec4 outCol;
 
-layout(binding  = 2) uniform sampler2DArrayShadow shadowMap;
+layout(binding  = 3) uniform sampler2DArrayShadow shadowMap;
 
 void main() 
 {

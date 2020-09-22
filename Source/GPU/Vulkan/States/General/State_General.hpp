@@ -52,7 +52,7 @@ struct State_General
 
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
     {
-        uniforms.Update(renderData.general.uboData_general_meta);
+        uniforms.Update(renderData.general.ubo_meta);
         vertices.Update(renderData, cpuRes);
     }
 

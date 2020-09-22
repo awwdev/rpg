@@ -59,6 +59,7 @@ struct General_Vertices
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
     {
         terrain.Reset();
+        
         const auto& verts    = cpuRes.terrain.quadrants[0][0].verts;
         const auto vertCount = cpuRes.terrain.quadrants[0][0].VERT_COUNT_TOTAL;
         terrain.Append(verts, vertCount);

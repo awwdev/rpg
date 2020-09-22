@@ -8,14 +8,22 @@
 
 namespace rpg::ecs {
     
-inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& renderGraph)
+inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
 {
-    using namespace com;
+    const auto& renderComponents    = arrays.renderComponents;
+    const auto& transformComponents = arrays.transforms;
 
-    auto& arr_render    = arrays.renderData;
-    auto& arr_transform = arrays.transforms;
+    
+
+    FOR_ARRAY(renderComponents.dense, i) 
+    {
+        const auto& renderComponent = renderComponents.dense[i];
+        const auto& meshType = renderComponent.meshType;
+
+    }
+
+
     /*
-    //? SORTING (for mesh type)(so instancing can be used)
     com::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypesVertexColor [(u32)res::MeshType::ENUM_END];
     com::Array<ecs::ID, ecs::MAX_ENTITY_COUNT> meshTypesTextures    [(u32)res::MeshType::ENUM_END];
 

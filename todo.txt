@@ -1,3 +1,4 @@
+- TERRAIN REFACTOR (one vbo for all quadrants)
 - use pointer in renderdata for e.g. terrain and model vbo?
 
 - shadow cascades fade 

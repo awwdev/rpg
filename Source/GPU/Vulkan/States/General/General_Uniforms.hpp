@@ -11,20 +11,31 @@ namespace rpg::gpu::vuk {
 
 struct General_Uniforms
 {
-    UniformInfo infos [3];
+    enum Bindings : uint32_t {
+        BindingMeta        = 0,
+        BindindModel       = 1,
+        BindingSun         = 2,
+        BindingShadowMap   = 3,
+        ENUM_END
+    };
+
+    UniformInfo infos [Bindings::ENUM_END];
     Descriptors descriptors;
 
-    UniformBuffer<RenderData_General::UBO_Meta, 1> uboMeta;
+    using RD = RenderData_General;
+
+    UniformBuffer<RD::UBO_Meta, 1> uboMeta;
+    UniformBuffer<RD::UBO_Model, RD::UBO_MODEL_MAX> uboModels;
     VkSampler shadowMapSampler;
 
     void Create(Buffer& uboSun, Image& shadowMaps)
     {
         //? UBO META
         uboMeta.Create();
-        infos[0] = {
+        infos[BindingMeta] = {
             .type = UniformInfo::Buffer,
             .binding {
-                .binding            = 0,
+                .binding            = BindingMeta,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
@@ -37,11 +48,29 @@ struct General_Uniforms
             }
         };
 
-        //? SHADOW MAP
-        infos[1] = {
+        //? UBO MODELS
+        uboModels.Create();
+        infos[BindindModel] = {
             .type = UniformInfo::Buffer,
             .binding {
-                .binding            = 1,
+                .binding            = BindindModel,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
+                .pImmutableSamplers = nullptr,
+            },
+            .bufferInfo = {
+                .buffer = uboModels.activeBuffer->buffer,
+                .offset = 0,
+                .range  = VK_WHOLE_SIZE,
+            }
+        };
+
+        //? SUN
+        infos[BindingSun] = {
+            .type = UniformInfo::Buffer,
+            .binding {
+                .binding            = BindingSun,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
@@ -54,6 +83,7 @@ struct General_Uniforms
             }
         };
 
+         //? SHADOW MAP
         const VkSamplerCreateInfo samplerInfo 
         {
             .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
@@ -77,10 +107,10 @@ struct General_Uniforms
         };
         VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, &shadowMapSampler));
 
-        infos[2] = {
+        infos[BindingShadowMap] = {
             .type = UniformInfo::Image,
             .binding {
-                .binding            = 2,
+                .binding            = BindingShadowMap,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
@@ -101,11 +131,20 @@ struct General_Uniforms
     {
         uboMeta.Reset();
         uboMeta.Append(uboData_general_meta);
+
+        uboModels.Reset();
+        uboModels.Append({
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1,
+        });
     }
 
     void Destroy()
     {
         uboMeta.Destroy();
+        uboModels.Destroy();
         descriptors.Destroy();
         vkDestroySampler(g_contextPtr->device, shadowMapSampler, nullptr);
         FOR_CARRAY(infos, i)

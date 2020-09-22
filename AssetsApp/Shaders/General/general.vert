@@ -16,14 +16,18 @@ layout(binding = 0) uniform Meta {
     mat4 proj;
 } meta;
 
-layout(binding = 1) uniform Sun { 
+layout(binding = 1) uniform Models { 
+    mat4 transform;
+} models;
+
+layout(binding = 2) uniform Sun { 
     mat4 projView       [CASCADE_COUNT];
     mat4 projViewBiased [CASCADE_COUNT];
 } sun;
 
 void main() 
 {
-    gl_Position = meta.proj * meta.view * inPos;
+    gl_Position = meta.proj * meta.view * models.transform * inPos;
     outCol = inCol;
     outTex = inTex;
 

@@ -14,13 +14,13 @@ struct ComponentArrays
 
     //? COMPONENT ARRAYS
     ComponentArray<C_Transform, MAX_COUNT>  transforms;
-    ComponentArray<C_RenderData, MAX_COUNT> renderData;
+    ComponentArray<C_RenderData, MAX_COUNT> renderComponents;
 
     ComponentArrays()
     {
         //? COMPONENT CLEARING
         transforms.SetAllToNone();
-        renderData.SetAllToNone();
+        renderComponents.SetAllToNone();
     }
 
     template<ComponentType TYPE, class... CtorArgs>
@@ -32,7 +32,7 @@ struct ComponentArrays
 
         //? COMPONENT ADDING
         if constexpr(TYPE == ComponentType::Transform)  return transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
-        if constexpr(TYPE == ComponentType::RenderData) return renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+        if constexpr(TYPE == ComponentType::RenderData) return renderComponents.AddComponent(entityID, std::forward<CtorArgs>(args)...);
     }
 
     template<class... CtorArgs>
@@ -43,7 +43,7 @@ struct ComponentArrays
         //? COMPONENT ADDING
         switch(componentType)
         {
-            case ComponentType::RenderData: renderData.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
+            case ComponentType::RenderData: renderComponents.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
             case ComponentType::Transform:  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
             default: break;
         }
@@ -62,7 +62,7 @@ struct ComponentArrays
 
         //? COMPONENT COPYING
         CopyOptional(transforms, other.transforms);
-        CopyOptional(renderData, other.renderData);
+        CopyOptional(renderComponents, other.renderComponents);
     }
 
 };

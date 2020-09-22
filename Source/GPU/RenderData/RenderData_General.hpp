@@ -10,6 +10,7 @@ struct RenderData_General
 {
     static constexpr uint32_t VBO_TERRAIN_MAX = 10'000;
     static constexpr uint32_t VBO_OBJECTS_MAX = 10'000;
+    static constexpr uint32_t UBO_MODEL_MAX   =  1'000;
 
     struct Vertex
     {
@@ -25,8 +26,13 @@ struct RenderData_General
         alignas(64) com::Mat4f proj;
     };
 
+    struct UBO_Model
+    {
+        com::Mat4f transform;
+    };
+
     //? DATA
-    UBO_Meta uboData_general_meta; //camera data
+    UBO_Meta ubo_meta; //camera data
 
     void Clear()
     {
