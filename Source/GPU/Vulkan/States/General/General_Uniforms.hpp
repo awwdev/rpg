@@ -25,7 +25,7 @@ struct General_Uniforms
     using RD = RenderData_General;
 
     UniformBuffer<RD::UBO_Meta, 1> uboMeta;
-    UniformBuffer<RD::UBO_Model, RD::UBO_MODEL_MAX> uboModels;
+    StorageBuffer<RD::SBO_Model, RD::UBO_MODEL_MAX> sboModel;
     VkSampler shadowMapSampler;
 
     void Create(Buffer& uboSun, Image& shadowMaps)
@@ -36,7 +36,7 @@ struct General_Uniforms
             .type = UniformInfo::Buffer,
             .binding {
                 .binding            = BindingMeta,
-                .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                .descriptorType     = uboMeta.DESCRIPTOR_TYPE,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
                 .pImmutableSamplers = nullptr,
@@ -49,18 +49,18 @@ struct General_Uniforms
         };
 
         //? UBO MODELS
-        uboModels.Create();
+        sboModel.Create();
         infos[BindindModel] = {
             .type = UniformInfo::Buffer,
             .binding {
                 .binding            = BindindModel,
-                .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                .descriptorType     = sboModel.DESCRIPTOR_TYPE,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
                 .pImmutableSamplers = nullptr,
             },
             .bufferInfo = {
-                .buffer = uboModels.activeBuffer->buffer,
+                .buffer = sboModel.activeBuffer->buffer,
                 .offset = 0,
                 .range  = VK_WHOLE_SIZE,
             }
@@ -127,24 +127,19 @@ struct General_Uniforms
         descriptors.Create(infos);
     }
 
-    void Update(RenderData_General::UBO_Meta& uboData_general_meta)
+    void Update(RenderData_General& rdGeneral)
     {
         uboMeta.Reset();
-        uboMeta.Append(uboData_general_meta);
+        uboMeta.Append(rdGeneral.uboMeta);
 
-        uboModels.Reset();
-        uboModels.Append({
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1,
-        });
+        sboModel.Reset();
+        sboModel.Append(rdGeneral.sboModels);
     }
 
     void Destroy()
     {
         uboMeta.Destroy();
-        uboModels.Destroy();
+        sboModel.Destroy();
         descriptors.Destroy();
         vkDestroySampler(g_contextPtr->device, shadowMapSampler, nullptr);
         FOR_CARRAY(infos, i)

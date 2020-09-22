@@ -61,8 +61,8 @@ struct PlayerController
         const com::Vec3f pos = { position[X], HEAD, position[Z] };
         camera.Update(orientation, pos, dt);
 
-        renderData.general.ubo_meta.view = camera.view;
-        renderData.general.ubo_meta.proj = camera.perspective;
+        renderData.general.uboMeta.view = camera.view;
+        renderData.general.uboMeta.proj = camera.perspective;
     }
 };
     

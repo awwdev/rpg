@@ -26,17 +26,20 @@ struct RenderData_General
         alignas(64) com::Mat4f proj;
     };
 
-    struct UBO_Model
+    struct SBO_Model
     {
         com::Mat4f transform;
+        //TODO: array, fill inside render system
     };
 
     //? DATA
-    UBO_Meta ubo_meta; //camera data
+    UBO_Meta uboMeta;
+    com::Array<SBO_Model, UBO_MODEL_MAX> sboModels;
 
     void Clear()
     {
-        
+        //uboMeta is overwritten
+        sboModels.Clear();
     }
 };
 

@@ -5,6 +5,7 @@
 #include "ECS/Components/Meta/ComponentTypes.hpp"
 #include "ECS/Components/Meta/ComponentArrays.hpp"
 #include "GPU/RenderData/RenderData.hpp"
+#include "GPU/RenderData/RenderData_General.hpp"
 
 namespace rpg::ecs {
     
@@ -13,7 +14,18 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
     const auto& renderComponents    = arrays.renderComponents;
     const auto& transformComponents = arrays.transforms;
 
-    
+    renderData.general.sboModels.Append(gpu::RenderData_General::SBO_Model{
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1,
+    });
+    renderData.general.sboModels.Append(gpu::RenderData_General::SBO_Model{
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        1, 0, 0, 1,
+    });
 
     FOR_ARRAY(renderComponents.dense, i) 
     {

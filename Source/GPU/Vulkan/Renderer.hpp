@@ -83,7 +83,7 @@ struct Renderer
 
         //UPDATE GPU RESOURCES AND RECORD COMMANDS----------
         states.Update(scene.renderData, cpuRes);
-        auto cmds = states.Record(commands, imageIndex);
+        auto cmds = states.Record(commands, imageIndex, scene.renderData);
         //--------------------------------------------------
 
         const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;

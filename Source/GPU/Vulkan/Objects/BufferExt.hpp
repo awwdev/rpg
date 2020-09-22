@@ -9,8 +9,9 @@ namespace rpg::gpu::vuk {
 
 enum class BufferExtType 
 { 
-    UBO, 
-    VBO
+    UniformBuffer, 
+    VertexBuffer,
+    StorageBuffer,
 };
 
 template<BufferExtType BUFFER_EXT_TYPE, class ELEMENT_TYPE, idx_t MAX_COUNT_T>
@@ -29,8 +30,17 @@ struct BufferExt
     static constexpr auto BUFFER_USAGE = []() constexpr {
         switch(BUFFER_EXT_TYPE) 
         {
-            case BufferExtType::UBO: return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-            case BufferExtType::VBO: return VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+            case BufferExtType::UniformBuffer: return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+            case BufferExtType::VertexBuffer:  return VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+            case BufferExtType::StorageBuffer: return VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+        }
+    }();
+
+    static constexpr auto DESCRIPTOR_TYPE = []() constexpr {
+        switch(BUFFER_EXT_TYPE) 
+        {
+            case BufferExtType::UniformBuffer: return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            case BufferExtType::StorageBuffer: return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         }
     }();
 
@@ -111,9 +121,12 @@ struct BufferExt
 };
 
 template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
-using UniformBuffer = BufferExt<BufferExtType::UBO, ELEMENT_TYPE, MAX_COUNT_T>;
+using UniformBuffer = BufferExt<BufferExtType::UniformBuffer, ELEMENT_TYPE, MAX_COUNT_T>;
 
 template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
-using VertexBuffer  = BufferExt<BufferExtType::VBO, ELEMENT_TYPE, MAX_COUNT_T>;
+using StorageBuffer = BufferExt<BufferExtType::StorageBuffer, ELEMENT_TYPE, MAX_COUNT_T>;
+
+template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
+using VertexBuffer  = BufferExt<BufferExtType::VertexBuffer, ELEMENT_TYPE, MAX_COUNT_T>;
 
 }//ns

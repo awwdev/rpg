@@ -16,8 +16,13 @@ layout(binding = 0) uniform Meta {
     mat4 proj;
 } meta;
 
-layout(binding = 1) uniform Models { 
+struct Model 
+{
     mat4 transform;
+};
+
+layout(binding = 1) readonly buffer Models { 
+    Model arr [];
 } models;
 
 layout(binding = 2) uniform Sun { 
@@ -27,7 +32,7 @@ layout(binding = 2) uniform Sun {
 
 void main() 
 {
-    gl_Position = meta.proj * meta.view * models.transform * inPos;
+    gl_Position = meta.proj * meta.view * models.arr[gl_InstanceIndex].transform * inPos;
     outCol = inCol;
     outTex = inTex;
 

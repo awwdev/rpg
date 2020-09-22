@@ -52,11 +52,11 @@ struct State_General
 
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
     {
-        uniforms.Update(renderData.general.ubo_meta);
+        uniforms.Update(renderData.general);
         vertices.Update(renderData, cpuRes);
     }
 
-    void Record(VkCommandBuffer cmdBuffer)
+    void Record(VkCommandBuffer cmdBuffer, RenderData_General& rdGeneral)
     {
         vkCmdBeginRenderPass    (cmdBuffer, &renderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -72,7 +72,13 @@ struct State_General
         //Objects
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.objects.activeBuffer->buffer, vertices.offsets);
-        vkCmdDraw               (cmdBuffer, vertices.objects.count, 1, 0, 0);
+
+        //FOR_ARRAY(rdGeneral.sboModels, i)
+        //{
+            //groups, instanced draw -> additional wrapper
+            //use dynamic ubo?
+            vkCmdDraw(cmdBuffer, vertices.objects.count, 2, 0, 0);
+        //}
 
         vkCmdEndRenderPass      (cmdBuffer);
     };
