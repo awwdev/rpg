@@ -15,7 +15,8 @@ namespace rpg::gpu::vuk {
 struct General_Vertices
 {
     using VERTEX_TYPE = RenderData_General::Vertex;
-    VertexBuffer<VERTEX_TYPE, RenderData_General::VBO_MAX> gpuVbo;
+    VertexBuffer<VERTEX_TYPE, RenderData_General::VBO_TERRAIN_MAX> terrain;
+    VertexBuffer<VERTEX_TYPE, RenderData_General::VBO_OBJECTS_MAX> objects;
 
     VkDeviceSize offsets [1] = {};
     static constexpr VkVertexInputBindingDescription bindings []
@@ -57,22 +58,27 @@ struct General_Vertices
 
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
     {
-        gpuVbo.Reset();
+        terrain.Reset();
         const auto& verts    = cpuRes.terrain.quadrants[0][0].verts;
         const auto vertCount = cpuRes.terrain.quadrants[0][0].VERT_COUNT_TOTAL;
-        gpuVbo.Append(verts, vertCount);
+        terrain.Append(verts, vertCount);
 
         renderData.debugInfo.vboData_general_vertCount = vertCount;
     }
 
-    void Create()
+    void Create(VkCommandPool cmdPool, const res::CpuResources& cpuRes)
     {
-        gpuVbo.Create();
+        terrain.Create();
+
+        objects.Create();
+        objects.Append(cpuRes.models.allModelVertices);
+        objects.Bake(cmdPool);
     }
 
     void Destroy()
     {
-        gpuVbo.Destroy();
+        terrain.Destroy();
+        objects.Destroy();
     }
     ~General_Vertices()
     {

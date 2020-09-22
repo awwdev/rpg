@@ -8,7 +8,8 @@ namespace rpg::gpu {
 
 struct RenderData_General
 {
-    static constexpr uint32_t VBO_MAX = 10'000;
+    static constexpr uint32_t VBO_TERRAIN_MAX = 10'000;
+    static constexpr uint32_t VBO_OBJECTS_MAX = 10'000;
 
     struct Vertex
     {

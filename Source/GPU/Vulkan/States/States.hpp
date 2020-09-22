@@ -18,18 +18,18 @@ struct States
     State_Post    post;
     State_GUI     gui;
 
-    void Create(res::CpuResources& hostRes, VkCommandPool cmdPool)
+    void Create(res::CpuResources& cpuRes, VkCommandPool cmdPool)
     {
         shadow  .Create(cmdPool);
-        general .Create(cmdPool, *shadow.uniforms.uboSun.activeBuffer, shadow.renderPass.shadowMaps);
+        general .Create(cmdPool, *shadow.uniforms.uboSun.activeBuffer, shadow.renderPass.shadowMaps, cpuRes);
         post    .Create(cmdPool, general.renderPass.finalImage);
-        gui     .Create(cmdPool, hostRes);
+        gui     .Create(cmdPool, cpuRes);
     }
 
-    void Update(gpu::RenderData& renderData, res::CpuResources& hostRes)
+    void Update(gpu::RenderData& renderData, res::CpuResources& cpuRes)
     {
         shadow  .Update(renderData);
-        general .Update(renderData, hostRes);
+        general .Update(renderData, cpuRes);
         post    .Update(renderData);
         gui     .Update(renderData);
     }

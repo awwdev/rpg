@@ -112,7 +112,7 @@ struct GUI_Uniforms
     void Update(const com::Array<RenderData_GUI::UBO_Text, RenderData_GUI::UBO_TEXT_MAX>& pUboText)
     {
         uboText.Reset();
-        uboText.Append(pUboText.Data(), pUboText.Count());
+        uboText.Append(pUboText);
     }
 
     void Destroy()

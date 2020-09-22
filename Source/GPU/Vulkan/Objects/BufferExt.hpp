@@ -3,6 +3,7 @@
 #pragma once
 #include "GPU/Vulkan/Meta/Context.hpp"
 #include "GPU/Vulkan/Objects/Buffer.hpp"
+#include "Common/Container/Array.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -74,11 +75,18 @@ struct BufferExt
         count += pCount;
     }
 
-    template<std::size_t ARR_COUNT>
+    template<auto ARR_COUNT>
     void Append(const ELEMENT_TYPE (&arr) [ARR_COUNT])
     {
         activeBuffer->Store(arr, sizeof(ELEMENT_TYPE) * ARR_COUNT, CurrentByteSize());
         count += ARR_COUNT;
+    }
+
+    template<auto N>
+    void Append(const com::Array<ELEMENT_TYPE, N>& arr)
+    {
+        activeBuffer->Store(arr.Data(), arr.CurrentSize(), CurrentByteSize());
+        count += arr.Count();
     }
 
     //? BAKE

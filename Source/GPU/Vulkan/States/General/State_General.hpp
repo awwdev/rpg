@@ -26,9 +26,9 @@ struct State_General
     General_Wire_Shader   wireShader;
     General_Wire_Pipeline wirePipeline;
 
-    void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps)
+    void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::CpuResources& cpuRes)
     {
-        vertices    .Create();
+        vertices    .Create(cmdPool, cpuRes);
         uniforms    .Create(uboSun, shadowMaps);
         shader      .Create();
         renderPass  .Create(cmdPool);
@@ -60,15 +60,19 @@ struct State_General
     {
         vkCmdBeginRenderPass    (cmdBuffer, &renderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.gpuVbo.activeBuffer->buffer, vertices.offsets);
+        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.terrain.activeBuffer->buffer, vertices.offsets);
         vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
                                  uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
         //general
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
-        vkCmdDraw               (cmdBuffer, vertices.gpuVbo.count, 1, 0, 0);
+        vkCmdDraw               (cmdBuffer, vertices.terrain.count, 1, 0, 0);
         //wire
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, wirePipeline.pipeline);
-        vkCmdDraw               (cmdBuffer, vertices.gpuVbo.count, 1, 0, 0);
+        vkCmdDraw               (cmdBuffer, vertices.terrain.count, 1, 0, 0);
+        //Objects
+        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
+        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.objects.activeBuffer->buffer, vertices.offsets);
+        vkCmdDraw               (cmdBuffer, vertices.objects.count, 1, 0, 0);
 
         vkCmdEndRenderPass      (cmdBuffer);
     };
