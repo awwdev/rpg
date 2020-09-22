@@ -35,24 +35,24 @@ struct GameScene
     gui::GUI_Shadow guiShadow;
     gui::GUI_Stats  guiStats;
 
-    void Create(res::CpuResources& hostRes)
+    void Create(res::CpuResources& cpuRes)
     {
         //TODO: resource manager, init gizmos? find better place!
         res::LoadPrefabs("AssetsApp/prefabs.mini", ecs.prefabsArrays);
         sun.Create(ecs);
         playerController.Create(ecs);
-        hostRes.terrain.InitGizmos(ecs);
+        cpuRes.terrain.InitGizmos(ecs);
     }
 
 
-    void Update(const double dt, res::CpuResources& hostRes)
+    void Update(const double dt, res::CpuResources& cpuRes)
     {
         renderData.Clear();
 
         //? UI
         app::ResetUpdateInputMode();
         if (app::glo::inputMode != app::glo::InputMode::PlayMode) {
-            guiLevel.Update(renderData);
+            guiLevel.Update(renderData, cpuRes);
             guiStats.Update(renderData);
             //guiShadow.Update(renderData);
         }   
@@ -60,7 +60,7 @@ struct GameScene
         //? META
         playerController.Update(dt, ecs, renderData);
         editorController.Update(dt, ecs, renderData);
-        hostRes.terrain.Update(dt, editorController.camera, ecs); //move into editor?
+        cpuRes.terrain.Update(dt, editorController.camera, ecs); //move into editor?
         sun.Update(ecs, dt, renderData);
 
         //? ECS

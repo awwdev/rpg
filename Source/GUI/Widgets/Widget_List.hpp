@@ -13,9 +13,8 @@ struct Widget_List
     f32 maxHeight = 100;
     f32 scroll = 0;
 
-    static constexpr auto NO_ACTIVE_INDEX = ITEM_COUNT_MAX;
     com::Array<com::String<30>, ITEM_COUNT_MAX> items;
-    idx_t activeIdx = NO_ACTIVE_INDEX;
+    idx_t activeIdx = 0;
 
     void Update(gpu::RenderData& renderData)
     {

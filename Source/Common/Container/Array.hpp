@@ -10,6 +10,9 @@ namespace rpg::com {
 
 #define FOR_ARRAY(arr, i) for(idx_t i = 0; i < arr.Count(); ++i)
 
+constexpr bool DO_ARRAY_ASSERTS = true;
+
+
 template<class T, auto N>
 struct Array
 {
@@ -21,8 +24,8 @@ struct Array
     Array() : count {0} {} //leave bytes array uninit
     explicit Array(std::common_with<T> auto&&... elements) : Array()
     {
-        const auto Emplace = [&](T&& element) {
-            dbg::Assert(count + 1 <= COUNT_MAX, "array exhausted");
+        const auto Emplace = [this](T&& element) {
+            ArrayAssert(count + 1 <= COUNT_MAX, "array exhausted");
             PlacementNew(std::forward<T>(element));
         };
         (Emplace(static_cast<T>(elements)), ...);
@@ -37,24 +40,24 @@ struct Array
     {
         if constexpr (!std::is_trivial_v<T>) {
             while(count > beginIdx) {
-                this->operator[](count - 1).~T(); // avoid trigger Assert
+                this->operator[](count - 1).~T(); // avoid trigger ArrayAssert
                 --count;
             }
         }
-        else count = 0;        
+        else count = beginIdx;        
     }
 
     //? APPEND
     auto Append(auto&&... args) -> T&
     {
-        dbg::Assert(count + 1 <= COUNT_MAX, "array exhausted");
+        ArrayAssert(count + 1 <= COUNT_MAX, "array exhausted");
         return *PlacementNew(std::forward<decltype(args)>(args)...);
     }
 
     template<class OTHER_T, auto OTHER_N>
     void AppendArray(const Array<OTHER_T, OTHER_N>& other)
     {
-        dbg::Assert(count + other.Count() <= COUNT_MAX, "array exhausted");
+        ArrayAssert(count + other.Count() <= COUNT_MAX, "array exhausted");
         FOR_ARRAY(other, i)
             PlacementNew(static_cast<T>(other[i]));
     }
@@ -62,22 +65,22 @@ struct Array
     template<class OTHER_T, auto OTHER_N>
     void AppendArray(const OTHER_T (&arr)[OTHER_N])
     {
-        dbg::Assert(count + OTHER_N <= COUNT_MAX, "array exhausted");
+        ArrayAssert(count + OTHER_N <= COUNT_MAX, "array exhausted");
         FOR_CARRAY(arr, i)
             PlacementNew(static_cast<T>(arr[i]));
     }
 
-    //implement ptr, count version when needed
+    //implement (ptr, count) version when needed
 
     //? ACCESS
     T& operator[](idx_t idx) 
     { 
-        dbg::Assert(idx >= 0 && idx < count, "array access out of bounds");
+        ArrayAssert(idx >= 0 && idx < count, "array access out of bounds");
         return reinterpret_cast<T*> (bytes)[idx]; 
     } 
     T const& operator[](idx_t idx) const 
     { 
-        dbg::Assert(idx >= 0 && idx < count, "array access out of bounds");
+        ArrayAssert(idx >= 0 && idx < count, "array access out of bounds");
         return reinterpret_cast<T const*>(bytes)[idx];
     }
 
@@ -102,17 +105,25 @@ struct Array
     }
 
 private:
-    T* PlacementNew(auto&&... args)
+    //? INTERNAL HELPER 
+    auto PlacementNew(auto&&... args) -> T*
     {
         auto address = &this->operator[](count++);
         return new(address) T { std::forward<decltype(args)>(args)... };
     }
 
+    void ArrayAssert(const bool expr, chars_t msg) const 
+    {
+        if constexpr (!DO_ARRAY_ASSERTS) return;
+        dbg::Assert(expr, msg);
+    }
+
+    //? DATA
     alignas(alignof(T)) std::byte bytes [BYTE_COUNT]; //uninit
     idx_t count;
 };
 
-//CTAD
+//? CTAD
 template<typename T, typename...Ts>
 Array(T, Ts...) -> Array<T, sizeof...(Ts) + 1>;
 
@@ -121,7 +132,7 @@ template<class T, auto N>
 void PrintArray(const Array<T, N>& arr)
 {
     FOR_ARRAY(arr, i)
-        std::cout << arr[i] << '\n';
+        dbg::LogInfo(arr[i]);
 }
 
 }//ns

@@ -55,15 +55,3 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
 
     return 0;
 }
-
-
-//TODO: rework vk image obj
-//TODO: profiler
-//TODO: normal per triangle on terrain instead of 
-//TODO: IBO
-//TODO: cast shadow or not (tree vs grass both texture)
-//TODO: ECS serialization
-//TODO: add static flag to render component, so ubo data is not updated
-//TODO: join transform and render component
-//TODO: draw stuff on render target for post fx
-//TODO: use block ptr for s render function 
