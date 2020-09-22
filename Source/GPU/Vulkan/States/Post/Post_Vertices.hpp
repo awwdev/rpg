@@ -49,7 +49,7 @@ struct Post_Vertices
     void Update(const com::Array<RenderData_Post::Vertex, RenderData_Post::VBO_BLUR_MAX>& cpuVbo)
     {
         gpuVbo.Reset(3); //keep the fullscreen triangle
-        gpuVbo.Append(cpuVbo.Data(), cpuVbo.count);
+        gpuVbo.Append(cpuVbo.Data(), cpuVbo.Count());
     }
 
     void Create()

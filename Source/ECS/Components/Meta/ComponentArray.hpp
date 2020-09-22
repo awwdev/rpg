@@ -37,8 +37,8 @@ struct ComponentArray
         }
         
         dense.Append(std::forward<CtorArgs>(args)...);
-        componentLookup[entityID] = dense.count - 1;
-        entityLookup[dense.count - 1] = entityID;
+        componentLookup[entityID] = dense.Count() - 1;
+        entityLookup[dense.Count() - 1] = entityID;
         return dense.Last();
     }
 
@@ -50,8 +50,8 @@ struct ComponentArray
         }
 
         dense.Append(other);
-        componentLookup[entityID] = dense.count - 1;
-        entityLookup[dense.count - 1] = entityID;
+        componentLookup[entityID] = dense.Count() - 1;
+        entityLookup[dense.Count() - 1] = entityID;
     }
 
 };

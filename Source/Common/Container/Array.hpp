@@ -3,103 +3,96 @@
 #include "Debug/Assert.hpp"
 #include "Debug/Logger.hpp"
 
-#include <cstring>
+#include <cstddef>
+#include <iostream>
 
 namespace rpg::com {
 
-constexpr bool USE_ARRAY_ASSERTS = true;
-
-constexpr void ArrayAssert(const bool condition, chars_t msg = "array assertion failed")
-{
-    if (std::is_constant_evaluated())
-        return;
-
-    if constexpr(USE_ARRAY_ASSERTS) {
-        if (condition == false){
-            dbg::LogError(msg);
-            dbg::DebugBreak();
-        }
-    }
-}
-
-#define FOR_ARRAY(arr, i) for(idx_t i = 0; i < arr.count; ++i)
+#define FOR_ARRAY(arr, i) for(idx_t i = 0; i < arr.Count(); ++i)
 
 template<class T, auto N>
 struct Array
 {
+    static constexpr auto COUNT_MAX  = (idx_t) N;
+    static constexpr auto BYTE_COUNT = (idx_t) N * sizeof(T);
     using TYPE = T;
 
-    idx_t count = 0;
-
-    static constexpr idx_t CAPACITY  = (idx_t)N;
-    static constexpr idx_t BYTE_SIZE = sizeof(T) * CAPACITY;
-    alignas(alignof(T)) u8 bytes[BYTE_SIZE]; //don't init
-
-    Array() = default;
-    Array(std::initializer_list<T> list) {
-        for(auto&& element : list){
-            Append(element);
-        }
+    //? RAII
+    Array() : count {0} {} //leave bytes array uninit
+    explicit Array(std::common_with<T> auto&&... elements) : Array()
+    {
+        const auto Emplace = [&](T&& element) {
+            dbg::Assert(count + 1 <= COUNT_MAX, "array exhausted");
+            PlacementNew(std::forward<T>(element));
+        };
+        (Emplace(static_cast<T>(elements)), ...);
     }
+
+    ~Array()
+    {
+        Clear();
+    }
+
+    void Clear(idx_t beginIdx = 0)
+    {
+        if constexpr (!std::is_trivial_v<T>) {
+            while(count > beginIdx) {
+                this->operator[](count - 1).~T(); // avoid trigger Assert
+                --count;
+            }
+        }
+        else count = 0;        
+    }
+
+    //? APPEND
+    auto Append(auto&&... args) -> T&
+    {
+        dbg::Assert(count + 1 <= COUNT_MAX, "array exhausted");
+        return *PlacementNew(std::forward<decltype(args)>(args)...);
+    }
+
+    template<class OTHER_T, auto OTHER_N>
+    void AppendArray(const Array<OTHER_T, OTHER_N>& other)
+    {
+        dbg::Assert(count + other.Count() <= COUNT_MAX, "array exhausted");
+        FOR_ARRAY(other, i)
+            PlacementNew(static_cast<T>(other[i]));
+    }
+
+    template<class OTHER_T, auto OTHER_N>
+    void AppendArray(const OTHER_T (&arr)[OTHER_N])
+    {
+        dbg::Assert(count + OTHER_N <= COUNT_MAX, "array exhausted");
+        FOR_CARRAY(arr, i)
+            PlacementNew(static_cast<T>(arr[i]));
+    }
+
+    //implement ptr, count version when needed
 
     //? ACCESS
-
-    template<class IDX> T&       operator[](const IDX idx)       { return reinterpret_cast<T&>      (bytes[sizeof(T) * (idx_t)idx]); }
-    template<class IDX> const T& operator[](const IDX idx) const { return reinterpret_cast<const T&>(bytes[sizeof(T) * (idx_t)idx]); }
-
-    T&       Last()       { ArrayAssert(count > 0); return this->operator[](count - 1); }
-    const T& Last() const { ArrayAssert(count > 0); return this->operator[](count - 1); }
-    T*       Data()       { return &(this->operator[](0)); }
-    const T* Data() const { return &(this->operator[](0)); }
-
-    //? COUNT MODIFICATION
-
-    template<class... ARGS>
-    T& Append(ARGS&&... args)
-    {
-        ArrayAssert(count < CAPACITY, "array capacity exhausted");
-        auto* ptr = PlacementNew(std::forward<ARGS>(args)...);
-        ++count;
-        return *ptr;
+    T& operator[](idx_t idx) 
+    { 
+        dbg::Assert(idx >= 0 && idx < count, "array access out of bounds");
+        return reinterpret_cast<T*> (bytes)[idx]; 
+    } 
+    T const& operator[](idx_t idx) const 
+    { 
+        dbg::Assert(idx >= 0 && idx < count, "array access out of bounds");
+        return reinterpret_cast<T const*>(bytes)[idx];
     }
 
-    template<auto OTHER_N>
-    void AppendArray(const Array<T, OTHER_N>& other)
-    {
-        ArrayAssert(count + other.count <= CAPACITY, "array capacity exhausted");
-        FOR_ARRAY(other, i) {
-            PlacementNew(other[i]);
-            ++count;
-        }
-    }
+    auto     Count() const { return count; }
+    bool     Empty() const { return count == 0; }
 
-    template<auto OTHER_N>
-    void AppendArray(const T (&arr)[OTHER_N])
-    {
-        ArrayAssert(count + OTHER_N <= CAPACITY, "array capacity exhausted");
-        FOR_CARRAY(arr, i) {
-            PlacementNew(arr[i]);
-            ++count;
-        }
-    }
+    T*       Data()        { return &this->operator[](0); }
+    T const* Data() const  { return &this->operator[](0); }
+    T&       Last()        { return this->operator[](count - 1); }
+    T const& Last() const {  return this->operator[](count - 1); }
 
-    void Clear(const idx_t begin = 0)
-    {
-        ArrayAssert(begin <= count, "clear begin idx is bigger than array count");
-        if constexpr (!std::is_trivial_v<T>) 
-        {
-            while(count > begin){
-                --count;
-                this->operator[](count).~T();
-            }   
-        }
-        else count = begin;
-    }
+    auto CurrentSize() const { return sizeof(T) * count; }
 
     //? HELPER
-
-    template<class E>
-    T* Contains(const E& element) //allows for custom operator==
+    T* Contains(auto&& element) //allows for custom operator==
     {
         FOR_ARRAY((*this), i) {
             if (this->operator[](i) == element)
@@ -108,23 +101,27 @@ struct Array
         return nullptr;
     }
 
-    template<class... ARGS>
-    T* PlacementNew(ARGS&&... args)
+private:
+    T* PlacementNew(auto&&... args)
     {
-        return new(&bytes[sizeof(T) * count]) T { std::forward<ARGS>(args)... };
+        auto address = &this->operator[](count++);
+        return new(address) T { std::forward<decltype(args)>(args)... };
     }
 
-    bool Empty()       const { return count == 0; }
-    auto CurrentSize() const { return sizeof(T) * count; }
+    alignas(alignof(T)) std::byte bytes [BYTE_COUNT]; //uninit
+    idx_t count;
 };
+
+//CTAD
+template<typename T, typename...Ts>
+Array(T, Ts...) -> Array<T, sizeof...(Ts) + 1>;
+
 
 template<class T, auto N>
 void PrintArray(const Array<T, N>& arr)
 {
-    FOR_ARRAY(arr, i){
-        std::cout << arr[i] << ',';
-    }
-    std::cout << '\n';
+    FOR_ARRAY(arr, i)
+        std::cout << arr[i] << '\n';
 }
 
 }//ns

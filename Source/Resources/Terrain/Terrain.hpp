@@ -346,7 +346,7 @@ struct Terrain
         const auto avgPos = [&]{
             com::Vec3f pos {};
             FOR_ARRAY(positions, i) pos = pos + positions[i];
-            pos = pos * (1/(float)positions.count);
+            pos = pos * (1/(float)positions.Count());
             return pos;
         }();
 

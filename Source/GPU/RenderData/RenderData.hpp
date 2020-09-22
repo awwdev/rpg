@@ -23,8 +23,8 @@ struct RenderData
 
     void Clear()
     {
-        debugInfo.uboData_GUI_Text_previousVertCount = gui.uboText.count * 6;
-        debugInfo.vboData_post_previousVertCount     = post.vboBlur.count + 3; //+ fullscreen triangle
+        debugInfo.uboData_GUI_Text_previousVertCount = gui.uboText.Count() * 6;
+        debugInfo.vboData_post_previousVertCount     = post.vboBlur.Count() + 3; //+ fullscreen triangle
 
         //clear stuff, that has multiple sources that are going to append
         shadow  .Clear();

@@ -27,10 +27,10 @@ struct Widget_List
 
         if (isMouseOnList && wnd::glo::mouse_scroll_delta != 0){
             scroll += wnd::glo::mouse_scroll_delta < 0 ? +1 : -1;
-            com::Clamp(scroll, 0, items.count - 1);
+            com::Clamp(scroll, 0, items.Count() - 1);
         }
 
-        for(idx_t idx = scroll; idx < items.count; ++idx)
+        for(idx_t idx = scroll; idx < items.Count(); ++idx)
         {
             const com::Rect<f32> itemRect {
                 back.x + PADDING,

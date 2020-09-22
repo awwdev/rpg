@@ -34,8 +34,7 @@ struct States
         gui     .Update(renderData);
     }
 
-    com::Array<VkCommandBuffer, Commands::THREAD_COUNT_MAX> 
-    Record(Commands& commands, const uint32_t cmdBufferIdx)
+    auto Record(Commands& commands, const uint32_t cmdBufferIdx)
     {
         const auto beginInfo = CommandBufferBeginInfo();
         VkCommandBuffer cmdBuffer = commands.threadCommands[0].cmdBuffers[cmdBufferIdx]; //single thread 
@@ -49,7 +48,7 @@ struct States
             
         VkCheck(vkEndCommandBuffer(cmdBuffer));
 
-        return { cmdBuffer };
+        return com::Array<VkCommandBuffer, Commands::THREAD_COUNT_MAX> { cmdBuffer };
     }
 
     void Destroy()

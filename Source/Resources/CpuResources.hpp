@@ -52,8 +52,9 @@ struct Models
 
         const auto LoadModelFn = [&](chars_t path, const res::MeshType type){
             LoadModel(tmp, path);
-            vertexLookup.Set(type, MeshVertexView{ &allModelVertices[allModelVertices.count], tmp.count });
+            const auto prevCount = allModelVertices.Count();
             allModelVertices.AppendArray(tmp);
+            vertexLookup.Set(type, MeshVertexView{ &allModelVertices[prevCount], tmp.Count() });
             tmp.Clear();
         };
 

@@ -19,8 +19,8 @@ struct Widget_Table
         const auto CELL_W = [&]{
             idx_t count = 1;
             FOR_ARRAY(table, y) {
-                if (table[y].count > count)
-                    count = table[y].count;
+                if (table[y].Count() > count)
+                    count = table[y].Count();
             };
             return rect.w / count;
         }();
@@ -36,7 +36,7 @@ struct Widget_Table
 
     void Update(gpu::RenderData& renderData, Widget_Window& wnd)
     {
-        const auto maxHeight = table.count * LINE_HEIGHT;
+        const auto maxHeight = table.Count() * LINE_HEIGHT;
         wnd.CalculateRow(rect, maxHeight);
         Update(renderData);
     }

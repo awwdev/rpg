@@ -93,7 +93,7 @@ struct Renderer
             .waitSemaphoreCount     = 1,
             .pWaitSemaphores        = &sync.imageAcquired[currentFrame],
             .pWaitDstStageMask      = &waitStages,
-            .commandBufferCount     = (uint32_t) cmds.count,
+            .commandBufferCount     = (uint32_t) cmds.Count(),
             .pCommandBuffers        = cmds.Data(),
             .signalSemaphoreCount   = 1,
             .pSignalSemaphores      = &sync.imageFinished[currentFrame],
