@@ -3,8 +3,8 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "build_debug",
-            "command": "${workspaceFolder}/Build/win_build_debug_gcc.bat",
+            "label": "win_build_dbg_gcc",
+            "command": "${workspaceFolder}/Build/win_build_dbg_gcc.bat",
             "args": [
                 "${workspaceFolder}/Build/Debug",                    //build dir
                 "${workspaceFolder}/src",                         //include headers
@@ -18,8 +18,8 @@
         },
         {
             "type": "shell",
-            "label": "build_debug_msvc",
-            "command": "${workspaceFolder}/Build/win_build_debug_msvc.bat",
+            "label": "win_build_dbg_msvc",
+            "command": "${workspaceFolder}/Build/win_build_dbg_msvc.bat",
             "args": [
                 "${workspaceFolder}/Build/Debug",                    //build dir
                 "${workspaceFolder}/src",                         //include headers
@@ -33,8 +33,8 @@
         },
         {
             "type": "shell",
-            "label": "build_optimized_gcc",
-            "command": "${workspaceFolder}/Build/win_build_optimized_gcc.bat",
+            "label": "win_build_opt_gcc",
+            "command": "${workspaceFolder}/Build/win_build_opt_gcc.bat",
             "args": [
                 "${workspaceFolder}/Build/Optimized",                //build dir
                 "${workspaceFolder}/src",                         //include headers
