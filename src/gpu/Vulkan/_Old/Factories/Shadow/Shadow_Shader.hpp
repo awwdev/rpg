@@ -5,7 +5,7 @@
 #include "gpu/Vulkan/_Old/Objects/UniformBuffer.hpp"
 #include "gpu/Vulkan/_Old/Objects/ImageArray.hpp"
 #include "res/_Old/CpuResources.hpp"
-#include "com/Structs.hpp"
+
 #include "gpu/Vulkan/_Old/Factories/Shadow/Shadow_RenderPass.hpp"
 
 namespace rpg::gpu::vuk {

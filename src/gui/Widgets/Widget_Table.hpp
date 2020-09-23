@@ -11,7 +11,7 @@ struct Widget_Table
 {
     using Row = com::Array<com::String<30>, 5>;
     com::Array<Row, 30> table;
-    com::Rect<f32> rect;
+    com::Rectf rect;
 
     void Update(gpu::RenderData& renderData)
     {
@@ -22,7 +22,7 @@ struct Widget_Table
                 if (table[y].Count() > count)
                     count = table[y].Count();
             };
-            return rect.w / count;
+            return rect.width / count;
         }();
 
         FOR_ARRAY(table, y) {

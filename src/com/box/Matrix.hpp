@@ -21,7 +21,15 @@ struct Mat
     union
     {
         T data [Y][X];
-        struct { T x, y, z, w; }; //using this while the array is active is technically UB
+        //using those while the array is active is technically UB
+        struct {
+             T x, y; 
+             union {
+                 struct { T z, w; };
+                 struct { T width, height; };
+             };
+        };
+        struct { T r, g, b, a; };
     };
 
     T*       operator[](const u8 y)       { return data[y]; } 
@@ -38,6 +46,7 @@ using Vec4f = Vec<float, 4>;
 using Vec3f = Vec<float, 3>;
 using Vec2f = Vec<float, 2>;
 using Quatf = Vec4f;
+using Rectf = Vec4f;
 
 Mat4f Identity4()
 {

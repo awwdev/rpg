@@ -2,7 +2,7 @@
 
 #pragma once
 #include "ecs/Components/Meta/ComponentTypes.hpp"
-#include "com/Matrix.hpp"
+#include "com/box/Matrix.hpp"
 #include "dbg/Logger.hpp"
 
 namespace rpg::ecs {

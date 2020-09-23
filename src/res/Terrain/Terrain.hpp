@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Structs.hpp"
+
 #include "com/box/Array.hpp"
 #include "ecs/ECS.hpp"
 #include "gpu/Meta/Cameras.hpp"

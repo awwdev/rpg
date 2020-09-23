@@ -2,7 +2,7 @@
 
 #pragma once
 #include "gpu/Vulkan/_Old/Objects/VertexBuffer.hpp"
-#include "com/Structs.hpp"
+
 #include "res/Models/Primitives.hpp"
 #include "res/_Old/CpuResources.hpp"
 #include "res/_Old/CpuResources.hpp"

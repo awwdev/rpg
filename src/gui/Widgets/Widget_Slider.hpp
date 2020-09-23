@@ -8,7 +8,7 @@ namespace rpg::gui {
 template<class T>
 struct Widget_Slider
 {
-    com::Rect<f32>  rect;
+    com::Rectf  rect;
     com::String<30> label;
     T value;
     T min, max;
@@ -18,18 +18,18 @@ struct Widget_Slider
 
     T Update(gpu::RenderData& renderData)
     {
-        const com::Rect<f32> back { 
-            rect.x + rect.w/2,
+        const com::Rectf back { 
+            rect.x + rect.width/2,
             rect.y,
-            rect.w/2,
-            rect.h
+            rect.width/2,
+            rect.height
         };
 
         constexpr f32 KNOB_SIZE = LINE_HEIGHT;
         const f32 knobXNorm = (value - min) / (max - min);
         const f32 knobX = knobXNorm * (back.w - KNOB_SIZE);
 
-        const com::Rect<f32> knob { 
+        const com::Rectf knob { 
             back.x + 1 + knobX,
             back.y + 1,
             KNOB_SIZE - 2,

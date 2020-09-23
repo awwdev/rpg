@@ -3,7 +3,7 @@
 
 #pragma once
 #include "com/box/Array.hpp"
-#include "com/Matrix.hpp"
+#include "com/box/Matrix.hpp"
 
 namespace rpg::gpu {
 

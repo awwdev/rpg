@@ -3,7 +3,7 @@
 #pragma once
 #include "gpu/Vulkan/_Old/Objects/UniformBuffer.hpp"
 #include "gpu/UboData.hpp"
-#include "com/Structs.hpp"
+
 #include "gpu/RenderData.hpp"
 
 namespace rpg::gpu::vuk

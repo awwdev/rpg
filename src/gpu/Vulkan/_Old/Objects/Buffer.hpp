@@ -3,7 +3,7 @@
 #pragma once
 
 #include "gpu/Vulkan/Meta/Context.hpp"
-#include "com/Structs.hpp"
+
 #include "dbg/Assert.hpp"
 
 namespace rpg::gpu::vuk {

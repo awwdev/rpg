@@ -2,7 +2,7 @@
 
 #pragma once
 #include "com/box/Array.hpp"
-#include "com/Matrix.hpp"
+#include "com/box/Matrix.hpp"
 
 namespace rpg::gpu {
 
@@ -17,7 +17,7 @@ struct RenderData_GUI
 
     struct UBO_Text
     {
-        alignas(16) com::Rect<f32> rect;
+        alignas(16) com::Rectf rect;
         alignas(16) struct 
         {
             u32 colIdx;

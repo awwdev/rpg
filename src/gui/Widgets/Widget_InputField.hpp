@@ -8,18 +8,18 @@ namespace rpg::gui {
 template<class T>
 struct Widget_InputField
 {
-    com::Rect<f32>  rect;
+    com::Rectf  rect;
     com::String<30> label;
     com::String<30> value;
     bool isActive = false;
 
     T Update(gpu::RenderData& renderData)
     {
-        const com::Rect<f32> back { 
-            rect.x + rect.w/2,
+        const com::Rectf back { 
+            rect.x + rect.width/2,
             rect.y,
-            rect.w/2,
-            rect.h
+            rect.width/2,
+            rect.height
         };
 
         const bool isMouseOnInput = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);

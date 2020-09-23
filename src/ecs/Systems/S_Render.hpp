@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Matrix.hpp"
+#include "com/box/Matrix.hpp"
 #include "ecs/Components/Meta/ComponentTypes.hpp"
 #include "ecs/Components/Meta/ComponentArrays.hpp"
 #include "gpu/RenderData/RenderData.hpp"

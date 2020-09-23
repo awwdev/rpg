@@ -9,7 +9,7 @@ template<idx_t ITEM_COUNT_MAX>
 struct Widget_List
 {
     com::String<30> name;
-    com::Rect<f32>  rect;
+    com::Rectf  rect;
     f32 maxHeight = 100;
     f32 scroll = 0;
 
@@ -18,7 +18,7 @@ struct Widget_List
 
     void Update(gpu::RenderData& renderData)
     {
-        const com::Rect<f32> back { rect.x, rect.y + LINE_HEIGHT, rect.w, rect.h - LINE_HEIGHT };
+        const com::Rectf back { rect.x, rect.y + LINE_HEIGHT, rect.width, rect.height - LINE_HEIGHT };
         const bool isMouseOnList = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);
 
         AddText(renderData, name, rect.x, rect.y); 
@@ -31,15 +31,15 @@ struct Widget_List
 
         for(idx_t idx = scroll; idx < items.Count(); ++idx)
         {
-            const com::Rect<f32> itemRect {
+            const com::Rectf itemRect {
                 back.x + PADDING,
                 back.y + PADDING + (idx - scroll) * LINE_HEIGHT,
-                back.w - PADDING * 2,
+                back.width - PADDING * 2,
                 LINE_HEIGHT
             };
 
             //max item display vertical
-            if (itemRect.y + itemRect.h > rect.y + rect.h)
+            if (itemRect.y + itemRect.height > rect.y + rect.height)
                 break;
 
             const bool isMouseOnItem = isMouseOnList && com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, itemRect);

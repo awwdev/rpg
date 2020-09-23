@@ -2,7 +2,7 @@
 #pragma once
 
 #include "com/Types.hpp"
-#include "com/Structs.hpp"
+
 #include "gpu/RenderData/_Old/RenderStructs.hpp"
 #include <fstream>
 #include <filesystem>

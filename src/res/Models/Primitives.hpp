@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Structs.hpp"
+
 #include "com/Algorithms.hpp"
 #include "gpu/RenderData/_Old/RenderStructs.hpp"
 

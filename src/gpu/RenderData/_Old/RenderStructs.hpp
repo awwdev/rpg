@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 #pragma once
-#include "com/Matrix.hpp"
+#include "com/box/Matrix.hpp"
 #include "com/box/Array.hpp"
 #include "com/box/EnumMap.hpp"
-#include "com/Structs.hpp"
+
 #include "res/_Old/CpuResources.hpp"
 
 namespace rpg::gpu {

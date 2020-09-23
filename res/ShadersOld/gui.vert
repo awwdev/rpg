@@ -47,7 +47,7 @@ void main()
     const float vertOffX = quad[vertID].x * instData.rect.z;
     const float vertOffY = quad[vertID].y * instData.rect.w;
 
-    const float x = instData.rect.x + vertOffX;
+    const float x = instData.rect.X + vertOffX;
     const float y = instData.rect.y + vertOffY;
     gl_Position = vec4(x, y, 0, 1);
 

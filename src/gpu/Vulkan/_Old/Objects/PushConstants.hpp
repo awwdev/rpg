@@ -3,7 +3,7 @@
 #pragma once
 
 #include "com/Types.hpp"
-#include "com/Matrix.hpp"
+#include "com/box/Matrix.hpp"
 #include "gpu/Vulkan/Meta/Context.hpp"
 
 namespace rpg::gpu::vuk {

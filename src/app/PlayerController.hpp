@@ -2,7 +2,7 @@
 
 #pragma once
 #include "ecs/ECS.hpp"
-#include "com/Matrix.hpp"
+#include "com/box/Matrix.hpp"
 #include "wnd/WindowEvents.hpp"
 #include "gpu/Meta/Cameras.hpp"
 #include "gpu/RenderData/RenderData.hpp"

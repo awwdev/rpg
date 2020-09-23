@@ -6,7 +6,7 @@
 #include "gpu/Vulkan/_Old/Objects/UniformBuffer.hpp"
 #include "gpu/Vulkan/Objects/Image.hpp"
 #include "res/_Old/CpuResources.hpp"
-#include "com/Structs.hpp"
+
 
 namespace rpg::gpu::vuk {
     

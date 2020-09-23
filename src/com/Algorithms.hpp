@@ -1,7 +1,7 @@
 #pragma once
 
-#include "com/Structs.hpp"
 #include "com/box/Optional.hpp"
+#include "com/box/Matrix.hpp"
 
 namespace rpg::com {
     
@@ -11,13 +11,11 @@ auto Max(const VAL1& val1, const VAL2& val2)
     return (val1 > val2) ? val1 : val2;
 }
 
-template<class POINT, class RECT, 
-    typename = IsArithmetic<POINT>, 
-    typename = IsArithmetic<RECT>>
-bool IsPointInsideRect(const POINT x, const POINT y, const com::Rect<RECT>& rect)
+template<class POINT>
+bool IsPointInsideRect(const POINT x, const POINT y, const com::Rectf& rect)
 {
-    return (x > rect.x && x < rect.x + rect.w &&
-            y > rect.y && y < rect.y + rect.h);
+    return (x > rect.x && x < rect.x + rect.width &&
+            y > rect.y && y < rect.y + rect.height);
 }
 
 template<auto MIN, auto MAX, typename T>

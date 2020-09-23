@@ -11,8 +11,8 @@ struct Widget_Window
     static constexpr f32 BAR_H = 20;
 
     com::String<30> title  { "Window" };
-    com::Rect<f32>  rect   { 0, 0, 300, 300 };
-    const com::Rect<f32>  limits { 32, 32, f32max, f32max };
+    com::Rectf  rect   { 0, 0, 300, 300 };
+    const com::Rectf  limits { 32, 32, f32max, f32max };
 
     enum class Mode { None, Resize, Move } mode = Widget_Window::Mode::None;
     s32 rowY = 0; //for element arrangement
@@ -21,8 +21,8 @@ struct Widget_Window
     {
         rowY = rect.y + BAR_H + PADDING; //reset (will be increased externally)
 
-        const com::Rect<f32> bar     { rect.x, rect.y, rect.w, BAR_H };
-        const com::Rect<f32> resizer { rect.x + rect.w - 8, rect.y + rect.h - 8, 8, 8 };
+        const com::Rectf bar     { rect.x, rect.y, rect.width, BAR_H };
+        const com::Rectf resizer { rect.x + rect.width - 8, rect.y + rect.height - 8, 8, 8 };
 
         const bool isMouseOnBar     = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, bar);
         const bool isMouseOnResizer = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, resizer);
@@ -41,10 +41,10 @@ struct Widget_Window
         }
 
         else if (mode == Widget_Window::Mode::Resize) {
-            rect.w += wnd::glo::mouse_dx;
-            rect.h += wnd::glo::mouse_dy;
-            com::Clamp(rect.w, limits.x, limits.w);
-            com::Clamp(rect.h, limits.y, limits.h);
+            rect.width += wnd::glo::mouse_dx;
+            rect.height += wnd::glo::mouse_dy;
+            com::Clamp(rect.width, limits.x, limits.width);
+            com::Clamp(rect.height, limits.y, limits.height);
         }
 
         AddRect(renderData, rect, Colors::Black2_Alpha, FULL_OPAQUE_NO_TEXTURE, true);
@@ -60,14 +60,14 @@ struct Widget_Window
         rowY += ROW_H;
     }
 
-    void CalculateRow(com::Rect<f32>& pRect, const f32 maxHeight)
+    void CalculateRow(com::Rectf& pRect, const f32 maxHeight)
     {
         pRect.x = rect.x + PADDING;
-        pRect.w = rect.w - PADDING * 2;
+        pRect.width = rect.width - PADDING * 2;
         pRect.y = rowY;
-        pRect.h = maxHeight;
-        com::Clamp(pRect.h, 0, (rect.y + rect.h - PADDING) - pRect.y);
-        rowY += pRect.h + PADDING;
+        pRect.height = maxHeight;
+        com::Clamp(pRect.height, 0, (rect.y + rect.height - PADDING) - pRect.y);
+        rowY += pRect.height + PADDING;
     }
 };
 

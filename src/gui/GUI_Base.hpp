@@ -4,7 +4,7 @@
 #include "gpu/RenderData/RenderData.hpp"
 
 #include "gpu/RenderData/_Old/RenderStructs.hpp"
-#include "com/Structs.hpp"
+
 #include "com/DeltaTime.hpp"
 #include "com/Algorithms.hpp"
 #include "com/box/EnumMap.hpp"
@@ -51,15 +51,15 @@ const com::EnumMap<Colors::ENUM_END, com::Vec4f> ColorValues = {
 //? RECTANGLE
 
 inline void AddRect(gpu::RenderData& renderData, 
-const com::Rect<f32>& rect, const Colors col, 
+const com::Rectf& rect, const Colors col, 
 const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
 {
-    const com::Rect<f32> normRect = { 
+    const com::Rectf normRect = { 
         //vulkan space
         (rect.x / (f32)wnd::glo::window_w) * 2 - 1,  
         (rect.y / (f32)wnd::glo::window_h) * 2 - 1,  
-        (rect.w / (f32)wnd::glo::window_w) * 2,  
-        (rect.h / (f32)wnd::glo::window_h) * 2,  
+        (rect.width / (f32)wnd::glo::window_w) * 2,  
+        (rect.height / (f32)wnd::glo::window_h) * 2,  
     };
 
     renderData.gui.uboText.Append(gpu::RenderData_GUI::UBO_Text{ 
@@ -74,9 +74,9 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
     {
         using namespace com;
         com::Vec2f v1 = { rect.x, rect.y };
-        com::Vec2f v2 = { rect.x + rect.w, rect.y };
-        com::Vec2f v3 = { rect.x + rect.w, rect.y + rect.h };
-        com::Vec2f v4 = { rect.x, rect.y + rect.h };
+        com::Vec2f v2 = { rect.x + rect.width, rect.y };
+        com::Vec2f v3 = { rect.x + rect.width, rect.y + rect.height };
+        com::Vec2f v4 = { rect.x, rect.y + rect.height };
         const auto uv1 = com::Vec2f{ v1.x / wnd::glo::window_w, v1.y / wnd::glo::window_h };
         const auto uv2 = com::Vec2f{ v2.x / wnd::glo::window_w, v2.y / wnd::glo::window_h };
         const auto uv3 = com::Vec2f{ v3.x / wnd::glo::window_w, v3.y / wnd::glo::window_h };
@@ -99,13 +99,13 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
 }
 
 inline void AddRectOutline(gpu::RenderData& renderData, 
-const com::Rect<f32>& rect, const Colors col, const f32 thickness = 1)
+const com::Rectf& rect, const Colors col, const f32 thickness = 1)
 {
     //lines
-    const com::Rect<f32> t { rect.x, rect.y, rect.w, thickness };
-    const com::Rect<f32> r { rect.x + rect.w, rect.y, thickness, rect.h };
-    const com::Rect<f32> b { rect.x, rect.y + rect.h, rect.w, thickness };
-    const com::Rect<f32> l { rect.x, rect.y, thickness, rect.h };
+    const com::Rectf t { rect.x, rect.y, rect.width, thickness };
+    const com::Rectf r { rect.x + rect.width, rect.y, thickness, rect.height };
+    const com::Rectf b { rect.x, rect.y + rect.height, rect.width, thickness };
+    const com::Rectf l { rect.x, rect.y, thickness, rect.height };
 
     AddRect(renderData, t, col);
     AddRect(renderData, r, col);
@@ -119,17 +119,17 @@ inline void AddText(gpu::RenderData& renderData,
 chars_t str, const idx_t len, const f32 x, const f32 y, const Colors col = Colors::White)
 {
     for(idx_t i = 0; i < len; ++i) {
-        const com::Rect<f32> rect = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE };
+        const com::Rectf rect = { x + LETTER_SPACE * i, y, LETTER_SIZE, LETTER_SIZE };
         AddRect(renderData, rect, col, (u32)str[i]);
     }
 }
 
 inline void AddTextCentered(gpu::RenderData& renderData, 
-chars_t str, const idx_t len, const com::Rect<f32>& center, const Colors col = Colors::White)
+chars_t str, const idx_t len, const com::Rectf& center, const Colors col = Colors::White)
 {
     const auto strWidth = len * LETTER_SPACE; //+1 ?
-    const auto x = center.x + center.w * 0.5f - strWidth    * 0.5f;
-    const auto y = center.y + center.h * 0.5f - LETTER_SIZE * 0.5f;
+    const auto x = center.x + center.width * 0.5f - strWidth    * 0.5f;
+    const auto y = center.y + center.height * 0.5f - LETTER_SIZE * 0.5f;
     AddText(renderData, str, len, x, y, col);
 }
 
@@ -142,7 +142,7 @@ const com::String<N>& str, const f32 x, const f32 y, const Colors col = Colors::
 
 template<idx_t N>
 inline void AddTextCentered(gpu::RenderData& renderData, 
-const com::String<N>& str, const com::Rect<f32>& center, const Colors col = Colors::White)
+const com::String<N>& str, const com::Rectf& center, const Colors col = Colors::White)
 {
     AddTextCentered(renderData, str.data, str.length, center, col);
 }
