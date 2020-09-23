@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "res/Loader/ModelLoader.hpp"
-#include "com/Containers/Array.hpp"
+#include "res/Models/ModelLoader.hpp"
+#include "com/box/Array.hpp"
 #include "gpu/RenderData/RenderData_General.hpp"
 
 namespace rpg::res {

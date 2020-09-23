@@ -5,7 +5,7 @@
 #include "gpu/Vulkan/Meta/Context.hpp"
 #include "gpu/Vulkan/_Old/Objects/ImageOld.hpp"
 
-#include "com/Containers/Array.hpp"
+#include "com/box/Array.hpp"
 
 namespace rpg::gpu::vuk {
 

@@ -2,7 +2,7 @@
 
 #pragma once
 #include "com/Structs.hpp"
-#include "com/Containers/Array.hpp"
+#include "com/box/Array.hpp"
 #include "ecs/ECS.hpp"
 #include "gpu/Meta/Cameras.hpp"
 #include "res/Terrain/TerrainQuadrant.hpp"

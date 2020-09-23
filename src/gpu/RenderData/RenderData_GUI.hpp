@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Containers/Array.hpp"
+#include "com/box/Array.hpp"
 #include "com/Matrix.hpp"
 
 namespace rpg::gpu {

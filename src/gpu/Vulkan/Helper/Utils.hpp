@@ -5,7 +5,7 @@
 #include "gpu/Vulkan/Helper/Initializers.hpp"
 #include "gpu/Vulkan/Helper/Utils.hpp"
 
-#include "com/Memory/Allocator.hpp"
+#include "com/mem/Allocator.hpp"
 #include <fstream>
 
 namespace rpg::gpu::vuk {
@@ -20,7 +20,7 @@ VkShaderModule& mod, VkPipelineShaderStageCreateInfo& stageInfo)
 
     const auto size = (uint32_t)file.tellg();
     struct Arr { char data [BUFFER_SIZE]; };
-    auto  ptrBufferArr = com::Memory::ClaimBlock<Arr>();
+    auto  ptrBufferArr = com::mem::ClaimBlock<Arr>();
     auto& buffer = ptrBufferArr->data;
     file.seekg(std::ios::beg);
     file.read(buffer, size);

@@ -7,8 +7,8 @@
 #include "gpu/Vulkan/Objects/Image.hpp"
 #include "gpu/Vulkan/_Old/Objects/UniformBuffer.hpp"
 
-#include "com/Memory/Allocator.hpp"
-#include "com/Containers/Array.hpp"
+#include "com/mem/Allocator.hpp"
+#include "com/box/Array.hpp"
 
 namespace rpg::gpu::vuk {
 

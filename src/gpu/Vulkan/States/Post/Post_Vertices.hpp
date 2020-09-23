@@ -5,7 +5,7 @@
 #include "gpu/Vulkan/Objects/BufferExt.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "gpu/RenderData/_Old/RenderStructs.hpp"
-#include "com/Containers/Array.hpp"
+#include "com/box/Array.hpp"
 
 namespace rpg::gpu::vuk {
 

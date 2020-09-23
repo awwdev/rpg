@@ -3,8 +3,8 @@
 #include "dbg/Console.hpp"
 #include "wnd/win_Window.hpp"
 
-#include "com/Memory/Allocator.hpp"
-#include "com/Memory/AllocatorPrint.hpp"
+#include "com/mem/Allocator.hpp"
+#include "com/mem/AllocatorPrint.hpp"
 
 #include "gpu/Vulkan/Renderer.hpp"
 #include "app/Scene.hpp"
@@ -19,13 +19,16 @@ using namespace rpg;
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int)
 {
     dbg::Console console{};
-    com::Memory::GlobalAllocate();
+    com::mem::GlobalAllocate();
 
     {
         wnd::win_Window  window { hInstance, 800, 600 };
-        auto ptrCpuResources = com::Memory::ClaimBlock<res::CpuResources>();
-        auto ptrRenderer      = com::Memory::ClaimBlock<gpu::vuk::Renderer>(gpu::vuk::WindowHandle{window.hInstance, window.hWnd}, *ptrCpuResources);
-        auto ptrGameScenes    = com::Memory::ClaimBlock<app::GameScene>();
+        auto ptrResources     = com::mem::ClaimBlock<res::Resources>();
+        ptrResources->Load();
+
+        auto ptrCpuResources  = com::mem::ClaimBlock<res::CpuResources>();
+        auto ptrRenderer      = com::mem::ClaimBlock<gpu::vuk::Renderer>(gpu::vuk::WindowHandle{window.hInstance, window.hWnd}, *ptrCpuResources);
+        auto ptrGameScenes    = com::mem::ClaimBlock<app::GameScene>();
         ptrGameScenes->Create(*ptrCpuResources);
 
         while (!wnd::HasEvent<wnd::EventType::Window_Close>() && 
@@ -42,10 +45,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
         }
 
         gpu::vuk::VkCheck(vkDeviceWaitIdle(gpu::vuk::g_contextPtr->device));
-        com::Memory::PrintAllocationHTML();
+        com::mem::PrintAllocationHTML();
     }
     
-    com::Memory::GlobalDeallocate();
+    com::mem::GlobalDeallocate();
     system("pause");
 
     return 0;

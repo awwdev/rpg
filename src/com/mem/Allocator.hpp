@@ -2,9 +2,9 @@
 
 #pragma once
 #include "com/Types.hpp"
-#include "com/Containers/Bitset.hpp"
+#include "com/box/Bitset.hpp"
 #include "dbg/Logger.hpp"
-#include "com/Containers/String.hpp"
+#include "com/box/String.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
@@ -12,7 +12,7 @@
 
 //? note: do not claim a block per array element, instead claim one block for the whole array
 
-namespace rpg::com::Memory {
+namespace rpg::com::mem {
 
 constexpr auto DO_LOG_BLOCKS = false;
 

@@ -4,8 +4,8 @@
 #include "com/Types.hpp"
 #include "com/Algorithms.hpp"
 #include "dbg/Logger.hpp"
-#include "com/Containers/String.hpp"
-#include "com/Containers/EnumMap.hpp"
+#include "com/box/String.hpp"
+#include "com/box/EnumMap.hpp"
 #include "com/CharsView.hpp"
 
 namespace rpg::com {

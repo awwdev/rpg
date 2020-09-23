@@ -2,8 +2,8 @@
 
 #pragma once
 #include "gui/Widgets/Widget_Window.hpp"
-#include "com/Containers/Array.hpp"
-#include "com/Containers/String.hpp"
+#include "com/box/Array.hpp"
+#include "com/box/String.hpp"
 
 namespace rpg::gui {
 

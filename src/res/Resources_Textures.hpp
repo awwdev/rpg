@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "res/Loader/TextureLoader.hpp"
+#include "res/Textures/TextureLoader.hpp"
 
 namespace rpg::res {
 

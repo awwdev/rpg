@@ -5,7 +5,7 @@
 #include "ecs/Prefabs/PrefabTypes.hpp"
 #include "ecs/Components/Meta/ComponentArray.hpp"
 #include "dbg/Assert.hpp"
-#include "com/Memory/Allocator.hpp"
+#include "com/mem/Allocator.hpp"
 
 #include <fstream>
 
@@ -20,7 +20,7 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     dbg::Assert(file.is_open(), "cannot open file");
 
     struct Arr { ComponentDataStringPairs data [(idx_t)PrefabType::ENUM_END][(idx_t)ComponentType::ENUM_END]; };
-    auto blockPtrArr = rpg::com::Memory::ClaimBlock<Arr>();
+    auto blockPtrArr = rpg::com::mem::ClaimBlock<Arr>();
     auto& componentDataKeyValueArray = blockPtrArr->data;
 
     auto currentPrefab    = PrefabType::ENUM_END;

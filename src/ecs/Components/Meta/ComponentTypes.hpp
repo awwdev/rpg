@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Containers/StringMap.hpp"
+#include "com/box/StringMap.hpp"
 #include "dbg/Assert.hpp"
 #include "ecs/Components/Meta/ComponentParsing.hpp"
 

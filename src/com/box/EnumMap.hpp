@@ -2,8 +2,8 @@
 
 #pragma once
 #include "com/Types.hpp"
-#include "com/Containers/Bitset.hpp"
-#include "com/Containers/Array.hpp"
+#include "com/box/Bitset.hpp"
+#include "com/box/Array.hpp"
 
 namespace rpg::com {
     

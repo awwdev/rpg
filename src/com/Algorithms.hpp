@@ -1,7 +1,7 @@
 #pragma once
 
 #include "com/Structs.hpp"
-#include "com/Containers/Optional.hpp"
+#include "com/box/Optional.hpp"
 
 namespace rpg::com {
     

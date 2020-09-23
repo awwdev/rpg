@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Containers/Array.hpp"
-#include "com/Containers/String.hpp"
+#include "com/box/Array.hpp"
+#include "com/box/String.hpp"
 
 namespace rpg::wnd {
 

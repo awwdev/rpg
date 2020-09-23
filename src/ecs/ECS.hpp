@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Containers/Bitset.hpp"
+#include "com/box/Bitset.hpp"
 #include "ecs/EntityID.hpp"
 #include "ecs/Components/Meta/ComponentArrays.hpp"
 #include "ecs/Prefabs/PrefabTypes.hpp"

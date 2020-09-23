@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Containers/StringMap.hpp"
+#include "com/box/StringMap.hpp"
 
 namespace rpg::ecs {
 

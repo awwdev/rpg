@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Memory/Allocator.hpp"
+#include "com/mem/Allocator.hpp"
 #include <fstream>
 
-namespace rpg::com::Memory {
+namespace rpg::com::mem {
 
 inline void PrintAllocationHTML()
 {

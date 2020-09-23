@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 #pragma once
 
-#include "com/Containers/Array.hpp"
-#include "com/Containers/EnumMap.hpp"
+#include "com/box/Array.hpp"
+#include "com/box/EnumMap.hpp"
 #include "dbg/Logger.hpp"
 #include "res/_Old/TextureLoader.hpp"
 #include "res/_Old/TextureArray.hpp"
@@ -11,7 +11,7 @@
 #include "res/Terrain/Terrain.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "gpu/RenderData/_Old/RenderStructs.hpp"
-#include "com/PrimitiveMeshes.hpp"
+#include "res/Models/Primitives.hpp"
 
 namespace rpg::res {
     

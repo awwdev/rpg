@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Containers/Array.hpp"
-#include "com/Containers/Bitset.hpp"
+#include "com/box/Array.hpp"
+#include "com/box/Bitset.hpp"
 
 #include "ecs/EntityID.hpp"
 #include "ecs/Components/Meta/ComponentTypes.hpp"

@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 #pragma once
 #include "com/Matrix.hpp"
-#include "com/Containers/Array.hpp"
-#include "com/Containers/EnumMap.hpp"
+#include "com/box/Array.hpp"
+#include "com/box/EnumMap.hpp"
 #include "com/Structs.hpp"
 #include "res/_Old/CpuResources.hpp"
 

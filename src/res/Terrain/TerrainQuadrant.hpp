@@ -2,7 +2,7 @@
 
 #pragma once
 #include "com/Structs.hpp"
-#include "com/Containers/Array.hpp"
+#include "com/box/Array.hpp"
 
 #include "gpu/RenderData/_Old/RenderStructs.hpp"
 
