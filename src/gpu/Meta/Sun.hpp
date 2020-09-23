@@ -28,15 +28,15 @@ struct Sun
         using namespace com;
         t += (float)dt * speed;
         constexpr auto A = 2;
-        pos[X] = sinf(t) * A;
-        pos[Z] = cosf(t) * A;
+        pos.x = sinf(t) * A;
+        pos.z = cosf(t) * A;
 
         //auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
         //cubeTrans.transform = {
         //    1, 0, 0, 0,
         //    0, 1, 0, 0,
         //    0, 0, 1, 0,
-        //    pos[X], pos[Y], pos[Z], 1,
+        //    pos.x, pos.y, pos.z, 1,
         //};
 
         constexpr com::Mat4f biasMat {

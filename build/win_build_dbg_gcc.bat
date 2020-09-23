@@ -5,7 +5,7 @@
  & g++ ^
 -I %2 ^
 -L %5 ^
--Wall -Wpedantic -Wextra ^
+-Wall -Wextra ^
 -Wno-missing-field-initializers ^
 -Wno-unused-variable ^
 -Wunused-but-set-variable ^

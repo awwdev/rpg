@@ -77,10 +77,10 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
         com::Vec2f v2 = { rect.x + rect.w, rect.y };
         com::Vec2f v3 = { rect.x + rect.w, rect.y + rect.h };
         com::Vec2f v4 = { rect.x, rect.y + rect.h };
-        const auto uv1 = com::Vec2f{ v1[X] / wnd::glo::window_w, v1[Y] / wnd::glo::window_h };
-        const auto uv2 = com::Vec2f{ v2[X] / wnd::glo::window_w, v2[Y] / wnd::glo::window_h };
-        const auto uv3 = com::Vec2f{ v3[X] / wnd::glo::window_w, v3[Y] / wnd::glo::window_h };
-        const auto uv4 = com::Vec2f{ v4[X] / wnd::glo::window_w, v4[Y] / wnd::glo::window_h };
+        const auto uv1 = com::Vec2f{ v1.x / wnd::glo::window_w, v1.y / wnd::glo::window_h };
+        const auto uv2 = com::Vec2f{ v2.x / wnd::glo::window_w, v2.y / wnd::glo::window_h };
+        const auto uv3 = com::Vec2f{ v3.x / wnd::glo::window_w, v3.y / wnd::glo::window_h };
+        const auto uv4 = com::Vec2f{ v4.x / wnd::glo::window_w, v4.y / wnd::glo::window_h };
         v1 = uv1 * 2 - 1;
         v2 = uv2 * 2 - 1;
         v3 = uv3 * 2 - 1;

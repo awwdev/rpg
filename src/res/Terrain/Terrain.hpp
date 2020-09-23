@@ -162,7 +162,7 @@ struct Terrain
         const auto S = settings.brushSize;
         transform.scale = { S, S, S };
         transform.translation = settings.intersectionPos;
-        transform.translation[Y] -= 0.1f; //z-fighting
+        transform.translation.y -= 0.1f; //z-fighting
     }
 
     //? INTERACTION
@@ -215,9 +215,9 @@ struct Terrain
                 FOR_ARRAY(settings.editingVertIndices, i){
                     const auto idx     = settings.editingVertIndices[i].idx;
                     //const auto falloff = settings.editingVertIndices[i].falloff;
-                    quadrant.verts[idx].col[X] = settings.vertexColor[X];
-                    quadrant.verts[idx].col[Y] = settings.vertexColor[Y];
-                    quadrant.verts[idx].col[Z] = settings.vertexColor[Z];
+                    quadrant.verts[idx].col.x = settings.vertexColor.x;
+                    quadrant.verts[idx].col.y = settings.vertexColor.y;
+                    quadrant.verts[idx].col.z = settings.vertexColor.z;
                 }
 
                 settings.dirtyQuadrants.Append(settings.quadrantIdx);
@@ -251,13 +251,13 @@ struct Terrain
             FOR_ARRAY(settings.editingVertIndices, i){
                 const auto idx     = settings.editingVertIndices[i].idx;
                 const auto falloff = settings.editingVertIndices[i].falloff;
-                quadrant.verts[idx].pos[Y] += yDelta * settings.dragScale * falloff;
+                quadrant.verts[idx].pos.y += yDelta * settings.dragScale * falloff;
 
                 const auto triangleIdx = (idx / 3) * 3;
                 quadrant.RecalculateNormalsOfTriangle(triangleIdx);
             }
 
-            settings.intersectionPos[Y] += yDelta * settings.dragScale; //TODO: would need falloff of closest intersection vertex
+            settings.intersectionPos.y += yDelta * settings.dragScale; //TODO: would need falloff of closest intersection vertex
             settings.dirtyQuadrants.Append(settings.quadrantIdx);
         }        
     }
@@ -279,8 +279,8 @@ struct Terrain
                     auto& t = ecs.arrays.transforms.Get(ID);
 
                     Vec3f pos = intersection->pos;
-                    pos[X] += ((std::rand() % 40) / 40.f) * 7;
-                    pos[Z] += ((std::rand() % 40) / 40.f) * 7;
+                    pos.x += ((std::rand() % 40) / 40.f) * 7;
+                    pos.z += ((std::rand() % 40) / 40.f) * 7;
 
                     //t.translation = intersection->pos;
                     t.translation = pos;

@@ -12,20 +12,20 @@
 
 namespace rpg::com {
 
-enum V { X, Y, Z, W }; //vector access of Mat, e.g. vec[X]
 constexpr float PI  = 3.14159265359f;
 constexpr float PIH = 1/180.f;
 
 template<class T, auto Y, auto X>
 struct Mat
 {
-    T data[Y][X];
-    //TODO making additional union (even if it would be UB)
+    union
+    {
+        T data [Y][X];
+        struct { T x, y, z, w; }; //using this while the array is active is technically UB
+    };
 
     T*       operator[](const u8 y)       { return data[y]; } 
     const T* operator[](const u8 y) const { return data[y]; } 
-    T&       operator[](const V  x)       { return data[0][x]; }
-    const T& operator[](const V  x) const { return data[0][x]; }
 };
 
 using Mat4f = Mat<float, 4, 4>;
@@ -53,12 +53,12 @@ Mat4f Identity4()
 
 inline Vec3f TruncateVec4(const Vec4f& vec)
 {
-    return { vec[X], vec[Y], vec[Z] };
+    return { vec.x, vec.y, vec.z };
 }
 
 inline Vec4f MakeHomoVec(const Vec3f& vec)
 {
-    return { vec[X], vec[Y], vec[Z], 1 };
+    return { vec.x, vec.y, vec.z, 1 };
 }
 
 inline float FastSqrt(float number)
@@ -119,9 +119,9 @@ template<class T>
 auto Cross(const Vec<T, 3>& v1, const Vec<T, 3>& v2)
 {
     return Vec<T, 3> {
-        v1[Y] * v2[Z] - v1[Z] * v2[Y],
-        v1[Z] * v2[X] - v1[X] * v2[Z],
-        v1[X] * v2[Y] - v1[Y] * v2[X],
+        v1.y * v2.z - v1.z * v2.y,
+        v1.z * v2.x - v1.x * v2.z,
+        v1.x * v2.y - v1.y * v2.x,
     };
 }
 
@@ -130,9 +130,9 @@ template<class T>
 auto Cross(const Vec<T, 4>& v1, const Vec<T, 4>& v2)
 {
     return Vec<T, 4> {
-        v1[Y] * v2[Z] - v1[Z] * v2[Y],
-        v1[Z] * v2[X] - v1[X] * v2[Z],
-        v1[X] * v2[Y] - v1[Y] * v2[X],
+        v1.y * v2.z - v1.z * v2.y,
+        v1.z * v2.x - v1.x * v2.z,
+        v1.x * v2.y - v1.y * v2.x,
         1
     };
 }
@@ -316,43 +316,43 @@ inline Quatf QuatAngleAxis(const float degree, const Vec3f& unitAxis)
     const float radh = degree * PI * PIH * 0.5f;
     const float s = (f32)sinf(radh);
     return {
-        unitAxis[X] * s,
-        unitAxis[Y] * s,
-        unitAxis[Z] * s,
+        unitAxis.x * s,
+        unitAxis.y * s,
+        unitAxis.z * s,
         (f32)cosf(radh),
     };
 }
 
 inline Vec3f QuatMultVec(const Quatf& q, const Vec3f& v)
 {
-    const Vec3f u { q[X], q[Y], q[Z] };
-    const float s { q[W] };
+    const Vec3f u { q.x, q.y, q.z };
+    const float s { q.w };
     return { u * Dot(u, v) * 2.0f + v * (s*s - Dot(u, u)) + Cross(u, v) * s * 2.0f };
 }
 
 inline Quatf QuatMultQuat(const Quatf& q1, const Quatf& q2)
 {
     return {
-         q1[X] * q2[W] + q1[Y] * q2[Z] - q1[Z] * q2[Y] + q1[W] * q2[X],
-        -q1[X] * q2[Z] + q1[Y] * q2[W] + q1[Z] * q2[X] + q1[W] * q2[Y],
-         q1[X] * q2[Y] - q1[Y] * q2[X] + q1[Z] * q2[W] + q1[W] * q2[Z],
-        -q1[X] * q2[X] - q1[Y] * q2[Y] - q1[Z] * q2[Z] + q1[W] * q2[W],
+         q1.x * q2.w + q1.y * q2.z - q1.z * q2.y + q1.w * q2.x,
+        -q1.x * q2.z + q1.y * q2.w + q1.z * q2.x + q1.w * q2.y,
+         q1.x * q2.y - q1.y * q2.x + q1.z * q2.w + q1.w * q2.z,
+        -q1.x * q2.x - q1.y * q2.y - q1.z * q2.z + q1.w * q2.w,
     };
 }
 
 inline Mat4f QuatToMat(const Quatf& q)
 {
     //from StackOverflow (forgot the link, sorry!)
-    const float y2 = 2*q[Y]*q[Y];
-    const float z2 = 2*q[Z]*q[Z];
-    const float x2 = 2*q[X]*q[X];
+    const float y2 = 2*q.y*q.y;
+    const float z2 = 2*q.z*q.z;
+    const float x2 = 2*q.x*q.x;
                     
-    const float xw = 2*q[X]*q[W];
-    const float xy = 2*q[X]*q[Y];
-    const float xz = 2*q[X]*q[Z];
-    const float yw = 2*q[Y]*q[W];
-    const float yz = 2*q[Y]*q[Z];
-    const float zw = 2*q[Z]*q[W];
+    const float xw = 2*q.x*q.w;
+    const float xy = 2*q.x*q.y;
+    const float xz = 2*q.x*q.z;
+    const float yw = 2*q.y*q.w;
+    const float yz = 2*q.y*q.z;
+    const float zw = 2*q.z*q.w;
 
     const float a =  1 - y2 - z2;
     const float b = xy - zw;
@@ -383,10 +383,10 @@ inline Mat4f LookAt(const Vec3f& eye, const Vec3f& at)
     const Vec3f e = { Dot(r, eye), Dot(u, eye), Dot(f, eye)};
 
     return { 
-        r[X], u[X],-f[X], 0,
-        r[Y], u[Y],-f[Y], 0,
-        r[Z], u[Z],-f[Z], 0,
-        -e[X],-e[Y], e[Z], 1
+        r.x, u.x,-f.x, 0,
+        r.y, u.y,-f.y, 0,
+        r.z, u.z,-f.z, 0,
+        -e.x,-e.y, e.z, 1
     };
 }
 

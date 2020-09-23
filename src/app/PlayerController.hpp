@@ -44,10 +44,10 @@ struct PlayerController
         using namespace com;
 
         Vec3f moveNorm {};
-        if (wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) moveNorm[Z] -= 1;
-        if (wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>()) moveNorm[X] -= 1;
-        if (wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>()) moveNorm[Z] += 1;
-        if (wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) moveNorm[X] += 1;
+        if (wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) moveNorm.z -= 1;
+        if (wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>()) moveNorm.x -= 1;
+        if (wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>()) moveNorm.z += 1;
+        if (wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) moveNorm.x += 1;
         NormalizeThis(moveNorm);
         const auto movDir = com::QuatMultVec(camera.qRot, moveNorm);
         auto move = movDir * speed * (float)dt;
@@ -55,10 +55,10 @@ struct PlayerController
         position = position + move;
 
         auto& playerTransform = ecs.arrays.transforms.Get(playerID);
-        playerTransform.translation = { position[X], Ypos, position[Z] };
-        playerTransform.rotation    = { 0, camera.rotation[Y], 0 };
+        playerTransform.translation = { position.x, Ypos, position.z };
+        playerTransform.rotation    = { 0, camera.rotation.y, 0 };
         
-        const com::Vec3f pos = { position[X], HEAD, position[Z] };
+        const com::Vec3f pos = { position.x, HEAD, position.z };
         camera.Update(orientation, pos, dt);
 
         renderData.general.uboMeta.view = camera.view;

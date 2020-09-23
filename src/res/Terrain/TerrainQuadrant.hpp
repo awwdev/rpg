@@ -52,7 +52,7 @@ struct Quadrant
         //? CREATE CORNER DATA (for settings)
         FOR_CARRAY(verts, i) {
             const auto corner = GetCornerByVertex(i);
-            corners[corner[X]][corner[Y]].Append(i); //zx
+            corners[corner.x][corner.y].Append(i); //zx
         }
 
     }
@@ -78,7 +78,7 @@ struct Quadrant
     com::Array<idx_t, 6> GetVerticesByCorner(const com::Vec2i& pair) const
     {
         using namespace com;
-        return corners[pair[X]][pair[Y]]; //zx
+        return corners[pair.x][pair.y]; //zx
     }
 
     void RecalculateNormalsOfTriangle(const idx_t triangleIdx)

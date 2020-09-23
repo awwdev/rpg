@@ -40,21 +40,21 @@ void LoadModel(com::Array<gpu::RenderData_General::Vertex, N>& vertices, chars_t
                 //vert idx
                 case  0: break;
                 //vert pos
-                case  1: vertex.pos[X] = value; break;
-                case  2: vertex.pos[Y] = value; break;
-                case  3: vertex.pos[Z] = value; break;
+                case  1: vertex.pos.x = value; break;
+                case  2: vertex.pos.y = value; break;
+                case  3: vertex.pos.z = value; break;
                 //vert col
-                case  4: vertex.col[X] = value; break;
-                case  5: vertex.col[Y] = value; break;
-                case  6: vertex.col[Z] = value; break;
-                case  7: vertex.col[W] = value; break;
+                case  4: vertex.col.x = value; break;
+                case  5: vertex.col.y = value; break;
+                case  6: vertex.col.z = value; break;
+                case  7: vertex.col.w = value; break;
                 //vert nor
-                case  8: vertex.nor[X] = value; break;
-                case  9: vertex.nor[Y] = value; break;
-                case 10: vertex.nor[Z] = value; break;
+                case  8: vertex.nor.x = value; break;
+                case  9: vertex.nor.y = value; break;
+                case 10: vertex.nor.z = value; break;
                 //vert tex
-                case 11: vertex.tex[X] = value; break;
-                case 12: vertex.tex[Y] = value; break;
+                case 11: vertex.tex.x = value; break;
+                case 12: vertex.tex.y = value; break;
             } 
 
             beg = i + 1;

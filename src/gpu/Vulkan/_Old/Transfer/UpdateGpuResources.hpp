@@ -43,11 +43,11 @@ inline void CreateCascades2(com::Mat4f (&cascades)[3], const app::GameScene& sce
     auto sunDist  = 10;
 
     Vec3f invCameraPos;
-    invCameraPos = { -scene.editorController.camera.position[X], scene.editorController.camera.position[Y], -scene.editorController.camera.position[Z] };
+    invCameraPos = { -scene.editorController.camera.position.x, scene.editorController.camera.position.y, -scene.editorController.camera.position.z };
     if (app::glo::inputMode == app::glo::PlayMode)
         invCameraPos = { -scene.playerController.camera.view[3][0], scene.playerController.camera.view[3][1], -scene.playerController.camera.view[3][2] };
 
-    //Vec3f cameraDir    { Sin(camera.rotation[Y] * 3.14f/180.f), 0, Cos(camera.rotation[Y] * 3.14f/180.f) };
+    //Vec3f cameraDir    { Sin(camera.rotation.y * 3.14f/180.f), 0, Cos(camera.rotation.y * 3.14f/180.f) };
 
     auto cascadePos0 = invCameraPos;
     auto cascadePos1 = invCameraPos;// + (Normalize(cameraDir) * -farPlane);

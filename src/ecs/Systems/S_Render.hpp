@@ -60,24 +60,24 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
 
                 //? compose matrix
                 const Mat4f sMat = {
-                    s[X], 0, 0, 0,
-                    0, s[Y], 0, 0,
-                    0, 0, s[Z], 0,
+                    s.x, 0, 0, 0,
+                    0, s.y, 0, 0,
+                    0, 0, s.z, 0,
                     0, 0, 0, 1,
                 };
 
-                const auto qX = QuatAngleAxis(r[X], { 1, 0, 0 });
-                const auto qY = QuatAngleAxis(r[Y], { 0, 1, 0 });
-                const auto qZ = QuatAngleAxis(r[Z], { 0, 0, 1 });
+                const auto qX = QuatAngleAxis(r.x, { 1, 0, 0 });
+                const auto qY = QuatAngleAxis(r.y, { 0, 1, 0 });
+                const auto qZ = QuatAngleAxis(r.z, { 0, 0, 1 });
                 auto q1 = QuatMultQuat(qX, qY);
                 auto q2 = QuatMultQuat(q1, qZ);
                 NormalizeThis(q2);
                 const auto qMat = QuatToMat(q2);
 
                 auto tMat = sMat * qMat;
-                tMat[3][X] = t[X];
-                tMat[3][Y] = t[Y];
-                tMat[3][Z] = t[Z];
+                tMat[3].x = t.x;
+                tMat[3].y = t.y;
+                tMat[3].z = t.z;
 
                 //TODO: REMOVE
                 if (arr_render.Get(eID).meshType == res::MeshType::Tree){

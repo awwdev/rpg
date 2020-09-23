@@ -31,22 +31,22 @@ struct EgoCamera
         using namespace com;
 
         com::Vec3f movNorm {};
-        if(wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) { movNorm[X] -= 1; }
-        if(wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>()) { movNorm[X] += 1; }
-        if(wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) { movNorm[Z] += 1; }
-        if(wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>()) { movNorm[Z] -= 1; }
+        if(wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) { movNorm.x -= 1; }
+        if(wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>()) { movNorm.x += 1; }
+        if(wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) { movNorm.z += 1; }
+        if(wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>()) { movNorm.z -= 1; }
         NormalizeThis(movNorm);
 
-        rotation[Y] += wnd::glo::mouse_dx * mouseSpeed; //!need of dt ?
-        rotation[X] += wnd::glo::mouse_dy * mouseSpeed;
+        rotation.y += wnd::glo::mouse_dx * mouseSpeed; //!need of dt ?
+        rotation.x += wnd::glo::mouse_dy * mouseSpeed;
 
-        if (rotation[X] >=  360) rotation[X] -= 360;
-        if (rotation[Y] >=  360) rotation[Y] -= 360;
-        if (rotation[X] <= -360) rotation[X] += 360;
-        if (rotation[Y] <= -360) rotation[Y] += 360;
+        if (rotation.x >=  360) rotation.x -= 360;
+        if (rotation.y >=  360) rotation.y -= 360;
+        if (rotation.x <= -360) rotation.x += 360;
+        if (rotation.y <= -360) rotation.y += 360;
 
-        const auto qX = QuatAngleAxis(+rotation[X], com::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation[Y], com::Vec3f{0, 1, 0});
+        const auto qX = QuatAngleAxis(+rotation.x, com::Vec3f{1, 0, 0});
+        const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f{0, 1, 0});
         const auto qRot = com::QuatMultQuat(qY, qX);
 
         const auto movDir  = com::QuatMultVec(qRot, movNorm);
@@ -63,7 +63,7 @@ struct EgoCamera
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
-            position[X], position[Y], position[Z], 1,
+            position.x, position.y, position.z, 1,
         };
 
         const auto mRot = QuatToMat(qRot);
@@ -111,16 +111,16 @@ struct ThirdCamera
     {
         using namespace com;
 
-        rotation[Y] += wnd::glo::mouse_dx * mouseSpeed; //!need of dt ?
-        rotation[X] += wnd::glo::mouse_dy * mouseSpeed;
+        rotation.y += wnd::glo::mouse_dx * mouseSpeed; //!need of dt ?
+        rotation.x += wnd::glo::mouse_dy * mouseSpeed;
 
-        if (rotation[X] >=  360) rotation[X] -= 360;
-        if (rotation[Y] >=  360) rotation[Y] -= 360;
-        if (rotation[X] <= -360) rotation[X] += 360;
-        if (rotation[Y] <= -360) rotation[Y] += 360;
+        if (rotation.x >=  360) rotation.x -= 360;
+        if (rotation.y >=  360) rotation.y -= 360;
+        if (rotation.x <= -360) rotation.x += 360;
+        if (rotation.y <= -360) rotation.y += 360;
 
-        const auto qX = QuatAngleAxis(+rotation[X], com::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation[Y], com::Vec3f{0, 1, 0});
+        const auto qX = QuatAngleAxis(+rotation.x, com::Vec3f{1, 0, 0});
+        const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f{0, 1, 0});
         qRot = com::QuatMultQuat(qY, qX);
         mRot = QuatToMat(qRot);
 
@@ -134,14 +134,14 @@ struct ThirdCamera
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
-            orientVec[X], orientVec[Y], orientVec[Z], 1,
+            orientVec.x, orientVec.y, orientVec.z, 1,
         };
 
         view = {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
-            -position[X], -position[Y], -position[Z], 1,
+            -position.x, -position.y, -position.z, 1,
         };
 
         view = (mOrientation * mRot) * view;
@@ -184,13 +184,13 @@ com::Vec3f ScreenRay(const CAMERA& camera)
 
     const auto projInv = Inverse(camera.perspective);
     auto eye = projInv * homo;
-    eye[Z] = -1;
-    eye[W] =  0;
+    eye.z = -1;
+    eye.w =  0;
     
     const auto viewInv = Inverse(camera.view);
     auto world = viewInv * eye;
 
-    return { world[X], world[Y], world[Z] };
+    return { world.x, world.y, world.z };
 }
 
 }//ns

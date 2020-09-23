@@ -46,10 +46,10 @@ std::ostream& operator<<(std::ostream& os, const Common_Vertex& vert)
 inline NormColor4f NormaliseColor(const RGBAColor4u& col) { 
     using namespace com;
     return { //normalise on gpu always instead??
-        col[X] / 255.f, 
-        col[Y] / 255.f, 
-        col[Z] / 255.f, 
-        col[W] / 255.f 
+        col.x / 255.f, 
+        col.y / 255.f, 
+        col.z / 255.f, 
+        col.w / 255.f 
     };
 }
 
@@ -57,9 +57,9 @@ inline RGBAColor4u HighlightColor(const RGBAColor4u& col, const u8 amount)
 {
     using namespace com;
     RGBAColor4u out { col };
-    out[X] += amount;
-    out[Y] += amount;
-    out[Z] += amount;
+    out.x += amount;
+    out.y += amount;
+    out.z += amount;
     return out;
 }
 
