@@ -1,6 +1,6 @@
 @echo off ^
  & mkdir Build\\Debug ^
- & xcopy /s /y /d AssetsApp\* Build\\Debug\\AssetsApp\* ^
+ & xcopy /s /y /d res\* Build\\Debug\\res\* ^
  & call G:\DEV2020\buildtools\msvc\VC\Auxiliary\Build\vcvars64.bat ^
  & cl ^
 /std:c++latest ^
@@ -18,4 +18,4 @@
 %4 ^
 user32.lib ^
 Shell32.lib ^
-third\libs\vulkan-1.lib ^
+ext\libs\vulkan-1.lib ^

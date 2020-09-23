@@ -5,7 +5,7 @@
 
 	//? FONT
 	//"editor.fontFamily": "Fira Code",
-	//"editor.fontFamily": "Source Code Variable",
+	//"editor.fontFamily": "src Code Variable",
 	//"editor.fontFamily": "Consolas",
 	"editor.fontFamily": "Cousine",
 	"editor.fontSize": 12,
@@ -461,7 +461,7 @@
 		"list": "cpp",
 		"locale": "cpp",
 		"map": "cpp",
-		"com/Memory": "cpp",
+		"memory": "cpp",
 		"new": "cpp",
 		"numeric": "cpp",
 		"ostream": "cpp",

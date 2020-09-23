@@ -1,6 +1,6 @@
 @echo off ^
  & mkdir Build\\Optimized ^
- & xcopy /s /y /d AssetsApp\* Build\\Optimized\\AssetsApp\* ^
+ & xcopy /s /y /d res\* Build\\Optimized\\res\* ^
  & Pushd G:\\DEV2020\\buildtools\\msys2\\mingw64\\bin ^
  & g++ ^
 -I %2 ^

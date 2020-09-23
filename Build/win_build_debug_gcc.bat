@@ -1,6 +1,6 @@
 @echo off ^
  & mkdir Build\\Debug ^
- & xcopy /s /y /d AssetsApp\* Build\\Debug\\AssetsApp\* ^
+ & xcopy /s /y /d res\* Build\\Debug\\res\* ^
  & Pushd G:\\DEV2020\\buildtools\\msys2\\mingw64\\bin ^
  & g++ ^
 -I %2 ^
