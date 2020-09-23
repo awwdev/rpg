@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Objects/RenderPass.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/_Old/Objects/RenderPass.hpp"
 
 namespace rpg::gpu::vuk {
 

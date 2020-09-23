@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "Common/Types.hpp"
-#include "Debug/Logger.hpp"
-#include "Debug/Assert.hpp"
+#include "com/Types.hpp"
+#include "dbg/Logger.hpp"
+#include "dbg/Assert.hpp"
 
 #define VK_USE_PLATFORM_WIN32_KHR
 #include "../third/include/vulkan.h"

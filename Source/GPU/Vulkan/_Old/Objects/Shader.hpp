@@ -1,14 +1,14 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Debug/Assert.hpp"
+#include "dbg/Assert.hpp"
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Objects/Image.hpp"
-#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/Objects/Image.hpp"
+#include "gpu/Vulkan/_Old/Objects/UniformBuffer.hpp"
 
-#include "Common/Memory/Allocator.hpp"
-#include "Common/Container/Array.hpp"
+#include "com/Memory/Allocator.hpp"
+#include "com/Container/Array.hpp"
 
 namespace rpg::gpu::vuk {
 

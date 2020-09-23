@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ECS/ECS.hpp"
-#include "Common/Matrix.hpp"
-#include "window/WindowEvents.hpp"
+#include "ecs/ECS.hpp"
+#include "com/Matrix.hpp"
+#include "wnd/WindowEvents.hpp"
 
 namespace rpg::gpu
 {

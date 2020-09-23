@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/RenderData/_Old/RenderStructs.hpp"
-#include "GPU/Vulkan/Meta/Context.hpp"
+#include "gpu/RenderData/_Old/RenderStructs.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
 
 namespace rpg::gpu::vuk {
 

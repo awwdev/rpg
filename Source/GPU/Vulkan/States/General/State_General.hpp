@@ -1,17 +1,17 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/States/General/General_RenderPass.hpp"
-#include "GPU/Vulkan/States/General/General_Pipeline.hpp"
-#include "GPU/Vulkan/States/General/General_Shader.hpp"
-#include "GPU/Vulkan/States/General/General_Vertices.hpp"
-#include "GPU/Vulkan/States/General/General_Uniforms.hpp"
+#include "gpu/Vulkan/States/General/General_RenderPass.hpp"
+#include "gpu/Vulkan/States/General/General_Pipeline.hpp"
+#include "gpu/Vulkan/States/General/General_Shader.hpp"
+#include "gpu/Vulkan/States/General/General_Vertices.hpp"
+#include "gpu/Vulkan/States/General/General_Uniforms.hpp"
 
-#include "GPU/Vulkan/States/General/Wire/General_Wire_Shader.hpp"
-#include "GPU/Vulkan/States/General/Wire/General_Wire_Pipeline.hpp"
+#include "gpu/Vulkan/States/General/Wire/General_Wire_Shader.hpp"
+#include "gpu/Vulkan/States/General/Wire/General_Wire_Pipeline.hpp"
 
-#include "GPU/RenderData/RenderData.hpp"
-#include "Resources/CpuResources.hpp"
+#include "gpu/RenderData/RenderData.hpp"
+#include "res/_Old/CpuResources.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -77,6 +77,7 @@ struct State_General
         //{
             //groups, instanced draw -> additional wrapper
             //use dynamic ubo?
+            //call draw per instance, but buffer we need buffer offset -> push const
             vkCmdDraw(cmdBuffer, vertices.objects.count, 2, 0, 0);
         //}
 

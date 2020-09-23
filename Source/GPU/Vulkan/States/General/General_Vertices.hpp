@@ -1,14 +1,14 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Objects/BufferExt.hpp"
-#include "GPU/RenderData/RenderData.hpp"
-#include "GPU/RenderData/_Old/RenderStructs.hpp"
-#include "Common/Container/Array.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/Objects/BufferExt.hpp"
+#include "gpu/RenderData/RenderData.hpp"
+#include "gpu/RenderData/_Old/RenderStructs.hpp"
+#include "com/Container/Array.hpp"
 
-#include "Resources/CpuResources.hpp"
-#include "GPU/RenderData/RenderData.hpp"
+#include "res/_Old/CpuResources.hpp"
+#include "gpu/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
 

@@ -1,12 +1,12 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ECS/ECS.hpp"
-#include "Common/Matrix.hpp"
-#include "window/WindowEvents.hpp"
-#include "GPU/Meta/Cameras.hpp"
-#include "App/InputMode.hpp"
-#include "GPU/RenderData/RenderData.hpp"
+#include "ecs/ECS.hpp"
+#include "com/Matrix.hpp"
+#include "wnd/WindowEvents.hpp"
+#include "gpu/Meta/Cameras.hpp"
+#include "app/InputMode.hpp"
+#include "gpu/RenderData/RenderData.hpp"
 
 namespace rpg::app {
 

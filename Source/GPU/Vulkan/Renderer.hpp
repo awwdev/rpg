@@ -1,15 +1,15 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/States/States.hpp"
-#include "GPU/Vulkan/Meta/Synchronization.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/States/States.hpp"
+#include "gpu/Vulkan/Meta/Synchronization.hpp"
 
-#include "Resources/CpuResources.hpp"
-#include "App/Scene.hpp"
-#include "GPU/RenderData/RenderData.hpp"
-#include "Window/WindowEvents.hpp"
-#include "Common/ThreadPool.hpp"
+#include "res/_Old/CpuResources.hpp"
+#include "app/Scene.hpp"
+#include "gpu/RenderData/RenderData.hpp"
+#include "wnd/WindowEvents.hpp"
+#include "com/ThreadPool.hpp"
 
 namespace rpg::gpu::vuk {
 

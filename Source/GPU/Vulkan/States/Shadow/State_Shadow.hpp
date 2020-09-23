@@ -1,16 +1,16 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/States/Shadow/Shadow_RenderPass.hpp"
-#include "GPU/Vulkan/States/Shadow/Shadow_Pipeline.hpp"
-#include "GPU/Vulkan/States/Shadow/Shadow_Shader.hpp"
-#include "GPU/Vulkan/States/Shadow/Shadow_Uniforms.hpp"
-#include "GPU/Vulkan/States/Shadow/Shadow_Vertices.hpp"
+#include "gpu/Vulkan/States/Shadow/Shadow_RenderPass.hpp"
+#include "gpu/Vulkan/States/Shadow/Shadow_Pipeline.hpp"
+#include "gpu/Vulkan/States/Shadow/Shadow_Shader.hpp"
+#include "gpu/Vulkan/States/Shadow/Shadow_Uniforms.hpp"
+#include "gpu/Vulkan/States/Shadow/Shadow_Vertices.hpp"
 
-#include "GPU/Vulkan/States/General/State_General.hpp"
+#include "gpu/Vulkan/States/General/State_General.hpp"
 
-#include "GPU/RenderData/RenderData.hpp"
-#include "GPU/RenderData/_Old/RenderStructs.hpp"
+#include "gpu/RenderData/RenderData.hpp"
+#include "gpu/RenderData/_Old/RenderStructs.hpp"
 
 namespace rpg::gpu::vuk {
 

@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Common/Container/Bitset.hpp"
-#include "ECS/EntityID.hpp"
-#include "ECS/Components/Meta/ComponentArrays.hpp"
-#include "ECS/Prefabs/PrefabTypes.hpp"
+#include "com/Container/Bitset.hpp"
+#include "ecs/EntityID.hpp"
+#include "ecs/Components/Meta/ComponentArrays.hpp"
+#include "ecs/Prefabs/PrefabTypes.hpp"
 
 namespace rpg::ecs {
 

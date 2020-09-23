@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/RenderData/RenderData_Shadow.hpp"
-#include "GPU/RenderData/RenderData_General.hpp"
-#include "GPU/RenderData/RenderData_Post.hpp"
-#include "GPU/RenderData/RenderData_GUI.hpp"
+#include "gpu/RenderData/RenderData_Shadow.hpp"
+#include "gpu/RenderData/RenderData_General.hpp"
+#include "gpu/RenderData/RenderData_Post.hpp"
+#include "gpu/RenderData/RenderData_GUI.hpp"
 
 namespace rpg::gpu {
 

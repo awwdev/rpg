@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ECS/Components/Meta/ComponentTypes.hpp"
-#include "Common/Matrix.hpp"
-#include "Debug/Logger.hpp"
+#include "ecs/Components/Meta/ComponentTypes.hpp"
+#include "com/Matrix.hpp"
+#include "dbg/Logger.hpp"
 
 namespace rpg::ecs {
 

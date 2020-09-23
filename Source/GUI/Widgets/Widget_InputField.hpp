@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GUI/Widgets/Widget_Window.hpp"
+#include "gui/Widgets/Widget_Window.hpp"
 
 namespace rpg::gui {
 

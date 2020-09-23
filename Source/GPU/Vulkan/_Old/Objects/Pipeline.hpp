@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "Common/Structs.hpp"
-#include "Common/Container/Array.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "com/Structs.hpp"
+#include "com/Container/Array.hpp"
 
 namespace rpg::gpu::vuk {
 

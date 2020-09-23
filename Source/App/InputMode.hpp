@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Window/WindowEvents.hpp"
+#include "wnd/WindowEvents.hpp"
 
 namespace rpg::app {
     

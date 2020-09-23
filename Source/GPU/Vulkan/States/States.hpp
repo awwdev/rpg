@@ -1,13 +1,13 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/States/Shadow/State_Shadow.hpp"
-#include "GPU/Vulkan/States/General/State_General.hpp"
-#include "GPU/Vulkan/States/Post/State_Post.hpp"
-#include "GPU/Vulkan/States/GUI/State_GUI.hpp"
+#include "gpu/Vulkan/States/Shadow/State_Shadow.hpp"
+#include "gpu/Vulkan/States/General/State_General.hpp"
+#include "gpu/Vulkan/States/Post/State_Post.hpp"
+#include "gpu/Vulkan/States/gui/State_GUI.hpp"
 
-#include "Resources/CpuResources.hpp"
-#include "Common/ThreadPool.hpp"
+#include "res/_Old/CpuResources.hpp"
+#include "com/ThreadPool.hpp"
 
 namespace rpg::gpu::vuk {
 

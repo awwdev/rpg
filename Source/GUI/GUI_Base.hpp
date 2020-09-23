@@ -1,18 +1,18 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/RenderData/RenderData.hpp"
+#include "gpu/RenderData/RenderData.hpp"
 
-#include "GPU/RenderData/_Old/RenderStructs.hpp"
-#include "Common/Structs.hpp"
-#include "Common/DeltaTime.hpp"
-#include "Common/Algorithms.hpp"
-#include "Common/Container/EnumMap.hpp"
+#include "gpu/RenderData/_Old/RenderStructs.hpp"
+#include "com/Structs.hpp"
+#include "com/DeltaTime.hpp"
+#include "com/Algorithms.hpp"
+#include "com/Container/EnumMap.hpp"
 
-#include "Window/WindowEvents.hpp"
-#include "Common/Container/String.hpp"
-#include "Debug/Logger.hpp"
-#include "App/InputMode.hpp"
+#include "wnd/WindowEvents.hpp"
+#include "com/Container/String.hpp"
+#include "dbg/Logger.hpp"
+#include "app/InputMode.hpp"
 
 namespace rpg::gui {
 

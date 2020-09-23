@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
 
 namespace rpg::gpu::vuk {
 

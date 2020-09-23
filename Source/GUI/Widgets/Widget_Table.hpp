@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GUI/Widgets/Widget_Window.hpp"
-#include "Common/Container/Array.hpp"
-#include "Common/Container/String.hpp"
+#include "gui/Widgets/Widget_Window.hpp"
+#include "com/Container/Array.hpp"
+#include "com/Container/String.hpp"
 
 namespace rpg::gui {
 

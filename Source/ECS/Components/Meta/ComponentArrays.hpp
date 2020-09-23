@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ECS/Components/Meta/ComponentArray.hpp"
-#include "ECS/Components/C_RenderData.hpp"
-#include "ECS/Components/C_Transform.hpp"
+#include "ecs/Components/Meta/ComponentArray.hpp"
+#include "ecs/Components/C_RenderData.hpp"
+#include "ecs/Components/C_Transform.hpp"
 
 namespace rpg::ecs {
 

@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
-#include "GPU/UboData.hpp"
-#include "Common/Structs.hpp"
-#include "GPU/RenderData.hpp"
+#include "gpu/Vulkan/_Old/Objects/UniformBuffer.hpp"
+#include "gpu/UboData.hpp"
+#include "com/Structs.hpp"
+#include "gpu/RenderData.hpp"
 
 namespace rpg::gpu::vuk
 {

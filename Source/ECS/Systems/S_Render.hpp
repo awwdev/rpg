@@ -1,11 +1,11 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Common/Matrix.hpp"
-#include "ECS/Components/Meta/ComponentTypes.hpp"
-#include "ECS/Components/Meta/ComponentArrays.hpp"
-#include "GPU/RenderData/RenderData.hpp"
-#include "GPU/RenderData/RenderData_General.hpp"
+#include "com/Matrix.hpp"
+#include "ecs/Components/Meta/ComponentTypes.hpp"
+#include "ecs/Components/Meta/ComponentArrays.hpp"
+#include "gpu/RenderData/RenderData.hpp"
+#include "gpu/RenderData/RenderData_General.hpp"
 
 namespace rpg::ecs {
     

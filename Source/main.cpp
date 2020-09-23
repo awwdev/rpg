@@ -1,23 +1,23 @@
 //https://github.com/awwdev
 
-#include "Window/win_Window.hpp"
-#include "Window/win_WindowProcedure.hpp"
-#include "Debug/Logger.hpp"
-#include "Debug/Console.hpp"
-#include "Common/Container/Array.hpp"
-#include "Common/Container/EnumMap.hpp"
-#include "Common/Types.hpp"
+#include "wnd/win_Window.hpp"
+#include "wnd/win_WindowProcedure.hpp"
+#include "dbg/Logger.hpp"
+#include "dbg/Console.hpp"
+#include "com/Container/Array.hpp"
+#include "com/Container/EnumMap.hpp"
+#include "com/Types.hpp"
 
-#include "Common/Memory/Allocator.hpp"
-#include "Common/Memory/AllocatorPrint.hpp"
+#include "com/Memory/Allocator.hpp"
+#include "com/Memory/AllocatorPrint.hpp"
 
-#include "GPU/Vulkan/Renderer.hpp"
+#include "gpu/Vulkan/Renderer.hpp"
 
-#include "App/Scene.hpp"
-#include "Common/DeltaTime.hpp"
-#include "Resources/CpuResources.hpp"
+#include "app/Scene.hpp"
+#include "com/DeltaTime.hpp"
+#include "res/_Old/CpuResources.hpp"
 
-#include "Common/ThreadPool.hpp"
+#include "com/ThreadPool.hpp"
 
 using namespace rpg;
 

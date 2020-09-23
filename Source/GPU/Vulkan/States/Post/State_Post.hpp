@@ -1,12 +1,12 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/States/Post/Post_Pipeline.hpp"
-#include "GPU/Vulkan/States/Post/Post_Shader.hpp"
-#include "GPU/Vulkan/States/Post/Post_RenderPass.hpp"
-#include "GPU/Vulkan/States/Post/Post_Uniforms.hpp"
-#include "GPU/Vulkan/States/Post/Post_Vertices.hpp"
-#include "GPU/RenderData/RenderData.hpp"
+#include "gpu/Vulkan/States/Post/Post_Pipeline.hpp"
+#include "gpu/Vulkan/States/Post/Post_Shader.hpp"
+#include "gpu/Vulkan/States/Post/Post_RenderPass.hpp"
+#include "gpu/Vulkan/States/Post/Post_Uniforms.hpp"
+#include "gpu/Vulkan/States/Post/Post_Vertices.hpp"
+#include "gpu/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
 

@@ -2,7 +2,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/_Old/Objects/Shader.hpp"
+#include "gpu/Vulkan/_Old/Objects/Shader.hpp"
 
 namespace rpg::gpu::vuk {
     

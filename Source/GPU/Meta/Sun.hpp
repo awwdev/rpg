@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Common/Structs.hpp"
-#include "Common/Algorithms.hpp"
-#include "ECS/ECS.hpp"
-#include "GPU/RenderData/RenderData.hpp"
+#include "com/Structs.hpp"
+#include "com/Algorithms.hpp"
+#include "ecs/ECS.hpp"
+#include "gpu/RenderData/RenderData.hpp"
 
 namespace rpg::gpu {
 

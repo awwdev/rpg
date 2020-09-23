@@ -2,11 +2,11 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/_Old/Objects/Shader.hpp"
-#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
-#include "GPU/Vulkan/Objects/Image.hpp"
-#include "Resources/CpuResources.hpp"
-#include "Common/Structs.hpp"
+#include "gpu/Vulkan/_Old/Objects/Shader.hpp"
+#include "gpu/Vulkan/_Old/Objects/UniformBuffer.hpp"
+#include "gpu/Vulkan/Objects/Image.hpp"
+#include "res/_Old/CpuResources.hpp"
+#include "com/Structs.hpp"
 
 namespace rpg::gpu::vuk {
     

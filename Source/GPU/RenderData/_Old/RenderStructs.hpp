@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 #pragma once
-#include "Common/Matrix.hpp"
-#include "Common/Container/Array.hpp"
-#include "Common/Container/EnumMap.hpp"
-#include "Common/Structs.hpp"
-#include "Resources/MeshTypes.hpp"
+#include "com/Matrix.hpp"
+#include "com/Container/Array.hpp"
+#include "com/Container/EnumMap.hpp"
+#include "com/Structs.hpp"
+#include "res/_Old/CpuResources.hpp"
 
 namespace rpg::gpu {
 

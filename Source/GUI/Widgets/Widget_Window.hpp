@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GUI/GUI_Base.hpp"
+#include "gui/GUI_Base.hpp"
 
 namespace rpg::gui {
 

@@ -1,11 +1,11 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ECS/EntityID.hpp"
-#include "ECS/Prefabs/PrefabTypes.hpp"
-#include "ECS/Components/Meta/ComponentArray.hpp"
-#include "Debug/Assert.hpp"
-#include "Common/Memory/Allocator.hpp"
+#include "ecs/EntityID.hpp"
+#include "ecs/Prefabs/PrefabTypes.hpp"
+#include "ecs/Components/Meta/ComponentArray.hpp"
+#include "dbg/Assert.hpp"
+#include "com/Memory/Allocator.hpp"
 
 #include <fstream>
 

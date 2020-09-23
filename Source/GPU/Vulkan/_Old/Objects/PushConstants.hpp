@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "Common/Types.hpp"
-#include "Common/Matrix.hpp"
-#include "GPU/Vulkan/Meta/Context.hpp"
+#include "com/Types.hpp"
+#include "com/Matrix.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
 
 namespace rpg::gpu::vuk {
 

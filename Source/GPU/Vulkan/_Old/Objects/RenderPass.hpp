@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Objects/ImageOld.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/_Old/Objects/ImageOld.hpp"
 
-#include "Common/Container/Array.hpp"
+#include "com/Container/Array.hpp"
 
 namespace rpg::gpu::vuk {
 

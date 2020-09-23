@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
-#include "GUI/Widgets/Widget_Window.hpp"
-#include "GUI/Widgets/Widget_List.hpp"
-#include "GUI/Widgets/Widget_Table.hpp"
+#include "gui/Widgets/Widget_Window.hpp"
+#include "gui/Widgets/Widget_List.hpp"
+#include "gui/Widgets/Widget_Table.hpp"
 
-#include "Resources/CpuResources.hpp"
+#include "res/_Old/CpuResources.hpp"
 
 namespace rpg::gui {
 

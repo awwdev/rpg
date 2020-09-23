@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources.hpp"
-#include "GPU/Vulkan/Meta/Commands.hpp"
-#include "App/Scene.hpp"
-#include "Resources/CpuResources.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/_Old/res/Resources.hpp"
+#include "gpu/Vulkan/Meta/Commands.hpp"
+#include "app/Scene.hpp"
+#include "res/_Old/CpuResources.hpp"
 
 namespace rpg::gpu::vuk {
 

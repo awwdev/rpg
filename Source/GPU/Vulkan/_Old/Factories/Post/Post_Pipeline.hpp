@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/_Old/Objects/Pipeline.hpp"
-#include "GPU/Vulkan/_Old/Objects/RenderPass.hpp"
-#include "GPU/Vulkan/_Old/Factories/Post/Post_VertexBuffer.hpp"
+#include "gpu/Vulkan/_Old/Objects/Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Objects/RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Factories/Post/Post_VertexBuffer.hpp"
 
 
 namespace rpg::gpu::vuk {

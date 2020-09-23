@@ -2,8 +2,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Common/Container/Array.hpp"
-#include "Common/Matrix.hpp"
+#include "com/Container/Array.hpp"
+#include "com/Matrix.hpp"
 
 namespace rpg::gpu {
 

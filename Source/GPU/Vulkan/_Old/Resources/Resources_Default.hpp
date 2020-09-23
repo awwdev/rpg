@@ -1,17 +1,17 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Resources/CpuResources.hpp"
+#include "res/_Old/CpuResources.hpp"
 
-#include "GPU/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
 
-#include "GPU/Vulkan/_Old/Factories/Default/Default_RenderPass.hpp"
-#include "GPU/Vulkan/_Old/Factories/Default/Default_PipelineVertexColor.hpp"
-#include "GPU/Vulkan/_Old/Factories/Default/Default_PipelineTexture.hpp"
-#include "GPU/Vulkan/_Old/Factories/Default/Default_PipelineShadow.hpp"
-#include "GPU/Vulkan/_Old/Factories/Default/Default_Shader.hpp" //includes shadow
-#include "GPU/Vulkan/_Old/Factories/Default/Default_VertexBuffer.hpp"
-#include "GPU/Vulkan/_Old/Factories/Default/Default_UniformBuffer.hpp"
+#include "gpu/Vulkan/_Old/Factories/Default/Default_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Factories/Default/Default_PipelineVertexColor.hpp"
+#include "gpu/Vulkan/_Old/Factories/Default/Default_PipelineTexture.hpp"
+#include "gpu/Vulkan/_Old/Factories/Default/Default_PipelineShadow.hpp"
+#include "gpu/Vulkan/_Old/Factories/Default/Default_Shader.hpp" //includes shadow
+#include "gpu/Vulkan/_Old/Factories/Default/Default_VertexBuffer.hpp"
+#include "gpu/Vulkan/_Old/Factories/Default/Default_UniformBuffer.hpp"
 
 namespace rpg::gpu::vuk {
 

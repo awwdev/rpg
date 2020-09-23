@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
-#include "GUI/Widgets/Widget_Window.hpp"
-#include "GUI/Widgets/Widget_Table.hpp"
-#include "Common/DeltaTime.hpp"
+#include "gui/Widgets/Widget_Window.hpp"
+#include "gui/Widgets/Widget_Table.hpp"
+#include "com/DeltaTime.hpp"
 
 namespace rpg::gui {
 

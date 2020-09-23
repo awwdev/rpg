@@ -1,13 +1,13 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Helper/Initializers.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/Helper/Initializers.hpp"
 
-#include "GPU/Vulkan/States/General/General_RenderPass.hpp"
-#include "GPU/Vulkan/States/General/General_Shader.hpp"
-#include "GPU/Vulkan/States/General/General_Vertices.hpp"
-#include "GPU/Vulkan/States/General/General_Uniforms.hpp"
+#include "gpu/Vulkan/States/General/General_RenderPass.hpp"
+#include "gpu/Vulkan/States/General/General_Shader.hpp"
+#include "gpu/Vulkan/States/General/General_Vertices.hpp"
+#include "gpu/Vulkan/States/General/General_Uniforms.hpp"
 
 namespace rpg::gpu::vuk {
 

@@ -2,18 +2,18 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "Resources/CpuResources.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources_Default.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources_Shadow.hpp"
-#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "res/_Old/CpuResources.hpp"
+#include "gpu/Vulkan/_Old/res/Resources_Default.hpp"
+#include "gpu/Vulkan/_Old/res/Resources_Shadow.hpp"
+#include "gpu/Vulkan/_Old/Objects/UniformBuffer.hpp"
 
-#include "GPU/Vulkan/_Old/Factories/Terrain/Terrain_VertexBuffer.hpp"
-#include "GPU/Vulkan/_Old/Factories/Terrain/Terrain_UniformBuffer.hpp"
-#include "GPU/Vulkan/_Old/Factories/Terrain/Terrain_Pipeline.hpp"
-#include "GPU/Vulkan/_Old/Factories/Terrain/Terrain_PipelineWire.hpp"
-#include "GPU/Vulkan/_Old/Factories/Terrain/Terrain_PipelineShadow.hpp"
-#include "GPU/Vulkan/_Old/Factories/Terrain/Terrain_Shader.hpp" //includes wire and shadow
+#include "gpu/Vulkan/_Old/Factories/Terrain/Terrain_VertexBuffer.hpp"
+#include "gpu/Vulkan/_Old/Factories/Terrain/Terrain_UniformBuffer.hpp"
+#include "gpu/Vulkan/_Old/Factories/Terrain/Terrain_Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Factories/Terrain/Terrain_PipelineWire.hpp"
+#include "gpu/Vulkan/_Old/Factories/Terrain/Terrain_PipelineShadow.hpp"
+#include "gpu/Vulkan/_Old/Factories/Terrain/Terrain_Shader.hpp" //includes wire and shadow
 
 namespace rpg::gpu::vuk {
 

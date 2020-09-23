@@ -1,6 +1,6 @@
 //https://github.com/awwdev
 
-#include "GUI/Widgets/Widget_Window.hpp"
+#include "gui/Widgets/Widget_Window.hpp"
 
 namespace rpg::gui {
 

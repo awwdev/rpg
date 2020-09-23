@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Objects/Buffer.hpp"
-#include "Common/Container/Array.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/Objects/Buffer.hpp"
+#include "com/Container/Array.hpp"
 
 namespace rpg::gpu::vuk {
 

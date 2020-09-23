@@ -1,9 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ECS/Components/Meta/ComponentTypes.hpp"
-#include "Resources/MeshTypes.hpp"
-#include "Debug/Logger.hpp"
+#include "ecs/Components/Meta/ComponentTypes.hpp"
+#include "res/_Old/CpuResources.hpp"
+#include "dbg/Logger.hpp"
+#include "res/_Old/MeshTypes.hpp"
 
 namespace rpg::ecs {
 

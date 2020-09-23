@@ -1,12 +1,12 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "GPU/Vulkan/_Old/Objects/VertexBuffer.hpp"
-#include "Common/Structs.hpp"
-#include "Common/PrimitiveMeshes.hpp"
-#include "Resources/MeshTypes.hpp"
-#include "Resources/CpuResources.hpp"
-#include "Debug/Assert.hpp"
+#include "gpu/Vulkan/_Old/Objects/VertexBuffer.hpp"
+#include "com/Structs.hpp"
+#include "com/PrimitiveMeshes.hpp"
+#include "res/_Old/CpuResources.hpp"
+#include "res/_Old/CpuResources.hpp"
+#include "dbg/Assert.hpp"
 
 namespace rpg::gpu::vuk {
 

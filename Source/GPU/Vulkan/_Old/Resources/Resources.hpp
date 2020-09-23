@@ -2,18 +2,18 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/Meta/Commands.hpp"
-#include "GPU/Vulkan/Meta/Synchronization.hpp"
-#include "GPU/Vulkan/_Old/Objects/PushConstants.hpp" //TODO: move out
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/Meta/Commands.hpp"
+#include "gpu/Vulkan/Meta/Synchronization.hpp"
+#include "gpu/Vulkan/_Old/Objects/PushConstants.hpp" //TODO: move out
 
-#include "GPU/Vulkan/_Old/Resources/Resources_Shadow.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources_Default.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources_Terrain.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources_Sky.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources_Post.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources_UI.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources_Test.hpp"
+#include "gpu/Vulkan/_Old/res/Resources_Shadow.hpp"
+#include "gpu/Vulkan/_Old/res/Resources_Default.hpp"
+#include "gpu/Vulkan/_Old/res/Resources_Terrain.hpp"
+#include "gpu/Vulkan/_Old/res/Resources_Sky.hpp"
+#include "gpu/Vulkan/_Old/res/Resources_Post.hpp"
+#include "gpu/Vulkan/_Old/res/Resources_UI.hpp"
+#include "gpu/Vulkan/_Old/res/Resources_Test.hpp"
 
 namespace rpg::gpu::vuk {
 

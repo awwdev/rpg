@@ -2,22 +2,22 @@
 
 #pragma once
 
-#include "ECS/ECS.hpp"
-#include "ECS/Systems/S_Render.hpp"
+#include "ecs/ECS.hpp"
+#include "ecs/Systems/S_Render.hpp"
 
-#include "GPU/RenderData/RenderData.hpp"
-#include "GPU/Meta/Sun.hpp"
+#include "gpu/RenderData/RenderData.hpp"
+#include "gpu/Meta/Sun.hpp"
 
-#include "GUI/Editor/GUI_Stats.hpp"
-#include "GUI/Editor/GUI_Shadow.hpp"
-#include "GUI/Editor/GUI_Level.hpp"
+#include "gui/Editor/GUI_Stats.hpp"
+#include "gui/Editor/GUI_Shadow.hpp"
+#include "gui/Editor/GUI_Level.hpp"
 
-#include "Resources/Terrain/Terrain.hpp"
-#include "ECS/Prefabs/PrefabLoader.hpp"
+#include "res/Terrain/Terrain.hpp"
+#include "ecs/Prefabs/PrefabLoader.hpp"
 
-#include "App/PlayerController.hpp"
-#include "App/EditorController.hpp"
-#include "App/InputMode.hpp"
+#include "app/PlayerController.hpp"
+#include "app/EditorController.hpp"
+#include "app/InputMode.hpp"
 
 namespace rpg::app {
     

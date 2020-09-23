@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Objects/Shader.hpp"
-#include "GPU/Vulkan/_Old/Objects/VertexBuffer.hpp"
-#include "GPU/Vulkan/_Old/Objects/UniformBuffer.hpp"
-#include "GPU/Vulkan/_Old/Objects/PushConstants.hpp"
-#include "GPU/Vulkan/_Old/Objects/Pipeline.hpp"
-#include "GPU/Vulkan/_Old/Objects/RenderPass.hpp"
-#include "GPU/RenderData.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/_Old/Objects/Shader.hpp"
+#include "gpu/Vulkan/_Old/Objects/VertexBuffer.hpp"
+#include "gpu/Vulkan/_Old/Objects/UniformBuffer.hpp"
+#include "gpu/Vulkan/_Old/Objects/PushConstants.hpp"
+#include "gpu/Vulkan/_Old/Objects/Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Objects/RenderPass.hpp"
+#include "gpu/RenderData.hpp"
 
 namespace rpg::gpu::vuk
 {

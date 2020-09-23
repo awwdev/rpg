@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Objects/Shader.hpp"
-#include "GPU/Vulkan/_Old/Objects/PushConstants.hpp"
-#include "GPU/Vulkan/_Old/Objects/Pipeline.hpp"
-#include "GPU/Vulkan/_Old/Objects/RenderPassTest.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/_Old/Objects/Shader.hpp"
+#include "gpu/Vulkan/_Old/Objects/PushConstants.hpp"
+#include "gpu/Vulkan/_Old/Objects/Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Objects/RenderPassTest.hpp"
 
 namespace rpg::gpu::vuk {
 

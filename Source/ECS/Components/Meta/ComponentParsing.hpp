@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "Common/Container/StringMap.hpp"
-#include "Debug/Assert.hpp"
-#include "Common/Algorithms.hpp"
+#include "com/Container/StringMap.hpp"
+#include "dbg/Assert.hpp"
+#include "com/Algorithms.hpp"
 
 namespace rpg::ecs {
 

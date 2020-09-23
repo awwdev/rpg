@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Factories/Test/Test_RenderPass.hpp"
-#include "GPU/Vulkan/_Old/Factories/Test/Test_Pipeline.hpp"
-#include "GPU/Vulkan/_Old/Factories/Test/Test_Shader.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/_Old/Factories/Test/Test_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Factories/Test/Test_Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Factories/Test/Test_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 

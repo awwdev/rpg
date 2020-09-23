@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "GPU/Vulkan/Meta/Context.hpp"
-#include "GPU/Vulkan/_Old/Resources/Resources_Test.hpp"
+#include "gpu/Vulkan/Meta/Context.hpp"
+#include "gpu/Vulkan/_Old/res/Resources_Test.hpp"
 
-#include "GPU/Vulkan/_Old/Factories/Post/Post_RenderPass.hpp"
-#include "GPU/Vulkan/_Old/Factories/Post/Post_Pipeline.hpp"
-#include "GPU/Vulkan/_Old/Factories/Post/Post_Shader.hpp"
-#include "GPU/Vulkan/_Old/Factories/Post/Post_VertexBuffer.hpp"
+#include "gpu/Vulkan/_Old/Factories/Post/Post_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Factories/Post/Post_Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Factories/Post/Post_Shader.hpp"
+#include "gpu/Vulkan/_Old/Factories/Post/Post_VertexBuffer.hpp"
 
 namespace rpg::gpu::vuk {
 
