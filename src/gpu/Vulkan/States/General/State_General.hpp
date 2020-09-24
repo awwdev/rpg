@@ -7,8 +7,10 @@
 #include "gpu/Vulkan/States/General/General_Vertices.hpp"
 #include "gpu/Vulkan/States/General/General_Uniforms.hpp"
 
-#include "gpu/Vulkan/States/General/Wire/General_Wire_Shader.hpp"
-#include "gpu/Vulkan/States/General/Wire/General_Wire_Pipeline.hpp"
+#include "gpu/Vulkan/States/General/Terrain/Terrain_Shader.hpp"
+#include "gpu/Vulkan/States/General/Terrain/Terrain_Pipeline.hpp"
+#include "gpu/Vulkan/States/General/Terrain/Terrain_Wire_Shader.hpp"
+#include "gpu/Vulkan/States/General/Terrain/Terrain_Wire_Pipeline.hpp"
 
 #include "gpu/RenderData/RenderData.hpp"
 #include "res/_Old/CpuResources.hpp"
@@ -24,8 +26,10 @@ struct State_General
     General_Vertices    vertices;
     General_Uniforms    uniforms;
 
-    General_Wire_Shader   wireShader;
-    General_Wire_Pipeline wirePipeline;
+    Terrain_Shader        terrainShader;
+    Terrain_Pipeline      terrainPipeline;
+    Terrain_Wire_Shader   terrainWireShader;
+    Terrain_Wire_Pipeline terrainWirePipeline;
 
     void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::CpuResources& cpuRes, res::Resources& res)
     {
@@ -35,8 +39,10 @@ struct State_General
         renderPass  .Create(cmdPool);
         pipeline    .Create(renderPass, shader, vertices, uniforms);
 
-        wireShader  .Create();
-        wirePipeline.Create(renderPass, wireShader, vertices, uniforms);
+        terrainShader       .Create();
+        terrainPipeline     .Create(renderPass, terrainShader, vertices, uniforms);
+        terrainWireShader   .Create();
+        terrainWirePipeline .Create(renderPass, terrainWireShader, vertices, uniforms);
     }
 
     void Destroy()
@@ -47,8 +53,10 @@ struct State_General
         vertices    .Destroy();
         uniforms    .Destroy();
 
-        wirePipeline.Destroy();
-        wireShader  .Destroy();
+        terrainPipeline     .Destroy();
+        terrainShader       .Destroy();
+        terrainWirePipeline .Destroy();
+        terrainWireShader   .Destroy();
     }
 
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
@@ -65,10 +73,10 @@ struct State_General
         vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
                                  uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
         //general
-        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
+        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipeline.pipeline);
         vkCmdDraw               (cmdBuffer, vertices.terrain.count, 1, 0, 0);
         //wire
-        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, wirePipeline.pipeline);
+        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainWirePipeline.pipeline);
         vkCmdDraw               (cmdBuffer, vertices.terrain.count, 1, 0, 0);
         //Objects
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
