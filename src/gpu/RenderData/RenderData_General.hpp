@@ -36,11 +36,7 @@ struct RenderData_General
     UBO_Meta uboMeta;
 
     struct VertexRange { idx_t beginIdx, count; };
-    VertexRange vertexRanges [(idx_t) res::ModelType::ENUM_END];
     com::Array<SBO_Model, UBO_MODEL_MAX> sboModels [(idx_t) res::ModelType::ENUM_END];
-
-    //TODO: where to set the vertexRanges (on resource load?)
-    //TODO: enum is cluttered due to how loading is done
 
     void Clear()
     {

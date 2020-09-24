@@ -35,7 +35,7 @@ struct States
         gui     .Update(renderData);
     }
 
-    auto Record(Commands& commands, const uint32_t cmdBufferIdx, gpu::RenderData& renderData)
+    auto Record(Commands& commands, const uint32_t cmdBufferIdx, gpu::RenderData& renderData, const res::Resources& resources)
     {
         const auto beginInfo = CommandBufferBeginInfo();
         VkCommandBuffer cmdBuffer = commands.threadCommands[0].cmdBuffers[cmdBufferIdx]; //single thread 
@@ -43,7 +43,7 @@ struct States
         VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             
         shadow  .Record(cmdBuffer, general);
-        general .Record(cmdBuffer, renderData.general);
+        general .Record(cmdBuffer, renderData.general, resources.models);
         post    .Record(cmdBuffer, cmdBufferIdx);
         gui     .Record(cmdBuffer, cmdBufferIdx);
             

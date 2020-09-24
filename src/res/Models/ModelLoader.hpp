@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/box/Array.hpp"
+#include "res/Models/ModelView.hpp"
 #include "gpu/RenderData/RenderData_General.hpp"
-#include "res/Models/Model.hpp"
+#include "com/box/Array.hpp"
 
 #include <fstream>
 #include <filesystem>
@@ -11,14 +11,15 @@
 namespace rpg::res {
     
 template<auto N>
-Model LoadModel(com::Array<ModelVertex, N>& vertices, chars_t path)
+auto LoadModel(com::Array<ModelVertex, N>& vertices, chars_t path) -> ModelView
 {
     std::ifstream file(path, std::ios::binary);
     if (!file) dbg::LogError("cannot open file");
 
     //? MODEL META
-    Model model {};
-    Mesh& mesh = model.meshes.Append(Mesh { .vertPtr = &vertices.Last(), .vertCount = 0 }); //TODO: foreach mesh ...
+    ModelView modelView {};
+    MeshView& meshView = modelView.meshViews.Append(MeshView { .vertPtr = &vertices.Last() + 1, .vertCount = 0 });
+    //TODO: foreach mesh ...
 
     //? MODEL VERTICES
     constexpr auto BUFFER_MAX = 150;
@@ -67,11 +68,11 @@ Model LoadModel(com::Array<ModelVertex, N>& vertices, chars_t path)
 
         //dbg::LogInfo(vertex);
         vertices.Append(vertex);
-        mesh.vertCount += 1;
+        meshView.vertCount += 1;
         
     }
 
-    return model;
+    return modelView;
 }
 
 }//ns

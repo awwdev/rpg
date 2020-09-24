@@ -1,19 +1,20 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "res/Models/Model.hpp"
-#include "res/Models/ModelPrimitives.hpp"
 #include "res/Models/ModelType.hpp"
+#include "res/Models/ModelView.hpp"
+#include "res/Models/ModelPrimitives.hpp"
+
 #include "com/box/EnumMap.hpp"
 #include "com/box/StringMap.hpp"
 #include "com/box/String.hpp"
+
 #include "ecs/Components/Meta/ComponentParsing.hpp"
+
 
 namespace rpg::res {
 
-//? HARDCODED MODEL DATA
-
-const com::EnumMap<ModelType::HARDCODED_ENUM_END, Model> 
+const com::EnumMap<ModelType::HARDCODED_ENUM_END, ModelView> 
 MAP_MODELS_HARDCODED
 {
     { ModelType::PrimitiveCube,     MODEL_CUBE     },
@@ -22,10 +23,9 @@ MAP_MODELS_HARDCODED
     { ModelType::PrimitiveRing16,   MODEL_RING_16 },
 };
 
-//? PATHS TO LOAD MODELS
 
 constexpr auto MODEL_PATH_STR_MAX = 30;
-const com::EnumMap<ModelType::LOADED_ENUM_END, com::String<MODEL_PATH_STR_MAX>, ModelType::LOADED_ENUM_BEGIN> 
+const com::EnumMap<ModelType::ENUM_END, com::String<MODEL_PATH_STR_MAX>, ModelType::HARDCODED_ENUM_END> 
 MAP_MODELS_LOADED
 {
     { ModelType::Sword, "res/Models/sword.txt" },
@@ -34,7 +34,6 @@ MAP_MODELS_LOADED
     { ModelType::Grass, "res/Models/grass.txt" },
 };
 
-//? MODEL NAMES FOR PARSING
 
 constexpr auto MODEL_NAME_STR_MAX = 100;
 const com::EnumMap<ModelType::ENUM_END, com::String<MODEL_NAME_STR_MAX>> 

@@ -6,7 +6,8 @@
 #include "res/Models/ModelLoader.hpp"
 #include "res/Models/ModelPrimitives.hpp"
 #include "res/Models/ModelType.hpp"
-#include "res/Models/Model.hpp"
+#include "res/Models/ModelView.hpp"
+#include "res/Models/ModelMaps.hpp"
 
 #include "com/box/Array.hpp"
 #include "com/box/EnumMap.hpp"
@@ -16,18 +17,20 @@
 namespace rpg::res {
 
 constexpr idx_t ALL_MODEL_VERTICES_MAX = 1'000'000;
-constexpr idx_t MODEL_COUNT_MAX = 1'000;
 
 struct Resources_Models
 {
     com::Array<ModelVertex, ALL_MODEL_VERTICES_MAX> allVertices;
-    com::Array<Model, MODEL_COUNT_MAX> models; //"views" into allVertices + meta data
+    ModelView modelViews [(idx_t) ModelType::ENUM_END];
 
     void Load()
     {
         allVertices.Clear();
-        models.Clear();
+        FOR_CARRAY(modelViews, i)
+            modelViews[i] = {};
 
+        idx_t modelViewIndex = 0;
+        
         //? MODELS HARDCODED
         {
             constexpr idx_t ENUM_END = (idx_t) ModelType::HARDCODED_ENUM_END;
@@ -35,10 +38,11 @@ struct Resources_Models
 
             dbg::Assert(map.usedIndices.Count() == ENUM_END, "mapping missing");
             for(idx_t i = 0; i < ENUM_END; ++i) {
-                const auto& model = map.Get(i);
-                const auto& mesh  = model.meshes[0]; //assumes one mesh
-                allVertices.AppendArray(mesh.vertPtr, mesh.vertCount);   
-                models.Append(model);
+                const auto& modelView = map.Get(i);
+                const auto& meshView  = modelView.meshViews[0]; //assumes one mesh
+                allVertices.AppendArray(meshView.vertPtr, meshView.vertCount);   
+                modelViews[modelViewIndex] = modelView;
+                ++modelViewIndex;
             }
         }
 
@@ -48,10 +52,11 @@ struct Resources_Models
             const auto& map = MAP_MODELS_LOADED;
 
             dbg::Assert(map.usedIndices.Count() == ENUM_END, "mapping missing");
-            for(idx_t i = 0; i < ENUM_END; ++i) {
+            for(idx_t i = 0; i < ENUM_END; ++i) { //offset on map!
                 chars_t path = map.Get(i).data;
-                const auto model = LoadModel(allVertices, path); //appends
-                models.Append(model);
+                const auto modelView = LoadModel(allVertices, path); //appends
+                modelViews[modelViewIndex] = modelView;
+                ++modelViewIndex;
             }
         }
 

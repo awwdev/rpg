@@ -15,6 +15,7 @@
 #include "gpu/RenderData/RenderData.hpp"
 #include "res/_Old/CpuResources.hpp"
 #include "res/Resources.hpp"
+#include "res/Resources_Models.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -65,7 +66,7 @@ struct State_General
         vertices.Update(renderData, cpuRes);
     }
 
-    void Record(VkCommandBuffer cmdBuffer, RenderData_General& rdGeneral)
+    void Record(VkCommandBuffer cmdBuffer, RenderData_General& rdGeneral, const res::Resources_Models& resModels)
     {
         vkCmdBeginRenderPass    (cmdBuffer, &renderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
@@ -79,17 +80,18 @@ struct State_General
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainWirePipeline.pipeline);
         vkCmdDraw               (cmdBuffer, vertices.terrain.count, 1, 0, 0);
 
-        //objects 
+        //models 
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.objects.activeBuffer->buffer, vertices.offsets);
 
         for(uint32_t modelType = 0; modelType < (uint32_t) res::ModelType::ENUM_END; ++modelType)
         {
-            const auto& vertexRange = rdGeneral.vertexRanges[modelType];
-            const auto& sboModels   = rdGeneral.sboModels[modelType];
+            const auto& modelView = resModels.modelViews[modelType];
+            const auto& sboModels = rdGeneral.sboModels[modelType];
+            
             if (!sboModels.Empty()) {
                 //vkCmdPushConstant //for indexing into sbo
-                vkCmdDraw(cmdBuffer, vertexRange.count, sboModels.Count(), vertexRange.beginIdx, 0);
+                //vkCmdDraw(cmdBuffer, vertexRange.count, sboModels.Count(), vertexRange.beginIdx, 0);
             }
         }
 

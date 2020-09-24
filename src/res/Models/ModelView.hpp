@@ -7,7 +7,7 @@
 
 namespace rpg::res {
 
-constexpr idx_t MESHES_MAX = 10;
+constexpr idx_t MESH_VIEWS_MAX = 10;
 constexpr idx_t BONES_MAX  = 10;
 
 using ModelVertex = gpu::RenderData_General::Vertex;
@@ -18,23 +18,23 @@ enum class Blending
     Alpha,
 };
 
-struct Mesh
+struct MeshView
 {
-    Blending            blending;
-    ModelVertex const*  vertPtr;
-    idx_t               vertCount;
-    //additional material ubo data
+    Blending           blending;
+    ModelVertex const* vertPtr;
+    idx_t              vertCount;
 };
 
 struct Bone
 {
     com::Mat4f transform;
+    //vertices will have data on weights
 };
 
-struct Model 
+struct ModelView
 {
-    com::Array<Mesh, MESHES_MAX> meshes;
-    com::Array<Bone, BONES_MAX>  bones;
+    com::Array<MeshView, MESH_VIEWS_MAX> meshViews;
+    com::Array<Bone, BONES_MAX> bones;
 };
 
 }//ns

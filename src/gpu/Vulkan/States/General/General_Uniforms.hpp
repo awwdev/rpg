@@ -132,11 +132,9 @@ struct General_Uniforms
         uboMeta.Reset();
         uboMeta.Append(rdGeneral.uboMeta);
 
-        //TODO: also add a new entry for push consts
-        //sbomodels array index == vertex range offset 
         sboModel.Reset();
-        FOR_CARRAY(rdGeneral.sboModels, i)
-            sboModel.Append(rdGeneral.sboModels[i]);
+        //FOR_CARRAY(rdGeneral.sboModels, i)
+        //    sboModel.Append(rdGeneral.sboModels[i]);
     }
 
     void Destroy()

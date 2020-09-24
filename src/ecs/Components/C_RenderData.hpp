@@ -2,9 +2,8 @@
 
 #pragma once
 #include "ecs/Components/Meta/ComponentTypes.hpp"
-#include "res/_Old/CpuResources.hpp"
+#include "res/Models/ModelMaps.hpp"
 #include "dbg/Logger.hpp"
-#include "res/Models/ModelMapping.hpp"
 
 namespace rpg::ecs {
 
