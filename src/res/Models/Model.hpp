@@ -10,7 +10,7 @@ namespace rpg::res {
 constexpr idx_t MESHES_MAX = 10;
 constexpr idx_t BONES_MAX  = 10;
 
-using Vertex = gpu::RenderData_General::Vertex;
+using ModelVertex = gpu::RenderData_General::Vertex;
 
 enum class Blending 
 {
@@ -20,9 +20,9 @@ enum class Blending
 
 struct Mesh
 {
-    Blending       blending;
-    Vertex const*  vertBegin;
-    idx_t          vertCount;
+    Blending            blending;
+    ModelVertex const*  vertPtr;
+    idx_t               vertCount;
     //additional material ubo data
 };
 

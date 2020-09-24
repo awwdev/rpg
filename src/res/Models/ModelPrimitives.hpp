@@ -59,7 +59,7 @@ const Model MODEL_CUBE {
     .meshes = com::Array<Mesh, MESHES_MAX> {
         Mesh { 
             .blending  = Blending::Opaque, 
-            .vertBegin = MESH_CUBE, 
+            .vertPtr = MESH_CUBE, 
             .vertCount = ArrayCount(MESH_CUBE) 
         }
     },
@@ -78,7 +78,7 @@ const Model MODEL_QUAD {
     .meshes = com::Array<Mesh, MESHES_MAX> {
         Mesh { 
             .blending  = Blending::Opaque, 
-            .vertBegin = MESH_QUAD, 
+            .vertPtr = MESH_QUAD, 
             .vertCount = ArrayCount(MESH_QUAD) 
         }
     },
@@ -94,7 +94,7 @@ const Model MODEL_TRIANGLE {
     .meshes = com::Array<Mesh, MESHES_MAX> {
         Mesh { 
             .blending  = Blending::Opaque, 
-            .vertBegin = MESH_TRIANGLE, 
+            .vertPtr = MESH_TRIANGLE, 
             .vertCount = ArrayCount(MESH_TRIANGLE) 
         }
     },
@@ -146,7 +146,7 @@ const Model MODEL_RING_16 {
     .meshes = com::Array<Mesh, MESHES_MAX> {
         Mesh { 
             .blending  = Blending::Opaque, 
-            .vertBegin = MESH_RING_16, 
+            .vertPtr = MESH_RING_16, 
             .vertCount = ArrayCount(MESH_RING_16) 
         }
     },

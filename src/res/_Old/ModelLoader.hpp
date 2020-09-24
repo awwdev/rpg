@@ -10,7 +10,7 @@
 namespace rpg::res {
 
 template<auto N>
-void LoadModel(com::Array<gpu::RenderData_General::Vertex, N>& vertices, chars_t path)
+void LoadModelOld(com::Array<gpu::RenderData_General::Vertex, N>& vertices, chars_t path)
 {
     using namespace com;
     

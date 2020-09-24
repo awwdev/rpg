@@ -51,7 +51,7 @@ struct Models
         com::Array<gpu::RenderData_General::Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> tmp;
 
         const auto LoadModelFn = [&](chars_t path, const res::MeshType type){
-            LoadModel(tmp, path);
+            LoadModelOld(tmp, path);
             const auto prevCount = allModelVertices.Count();
             allModelVertices.AppendArray(tmp);
             vertexLookup.Set(type, MeshVertexView{ &allModelVertices[prevCount], tmp.Count() });

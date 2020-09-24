@@ -20,20 +20,33 @@ constexpr idx_t MODEL_COUNT_MAX = 1'000;
 
 struct Resources_Models
 {
-    com::Array<Vertex, ALL_MODEL_VERTICES_MAX> allVertices;
+    com::Array<ModelVertex, ALL_MODEL_VERTICES_MAX> allVertices;
     com::Array<Model, MODEL_COUNT_MAX> models; //"views" into allVertices + meta data
 
     void Load()
     {
-        //? EMPLACE HARDCODED PRIMITIVES (order is guaranteed)
-        dbg::Assert((idx_t) ModelType_Hardcoded::ENUM_END == MODELS_HARDCODED.usedIndices.Count(), "mapping missing");
+        allVertices.Clear();
+        models.Clear();
+
+        //? MODELS HARDCODED
+        dbg::Assert((idx_t) ModelType_Hardcoded::ENUM_END == MAP_MODELS_HARDCODED.usedIndices.Count(), "mapping missing");
         for(idx_t i = 0; i < (idx_t) ModelType_Hardcoded::ENUM_END; ++i)
         {
-            const auto& model = MODELS_HARDCODED.Get(i);
+            const auto& model = MAP_MODELS_HARDCODED.Get(i);
             const auto& mesh  = model.meshes[0]; //assumes one mesh
-            allVertices.AppendArray(mesh.vertBegin, mesh.vertCount);   
+            allVertices.AppendArray(mesh.vertPtr, mesh.vertCount);   
+            models.Append(model);
         }
-        //? LOAD EXTERNAL MODELS
+
+        //? MODELS TO LOAD
+        dbg::Assert((idx_t) ModelType_Loaded::ENUM_END == MAP_MODELS_LOADED.usedIndices.Count(), "mapping missing");
+        for(idx_t i = 0; i < (idx_t) ModelType_Loaded::ENUM_END; ++i)
+        {
+            chars_t path = MAP_MODELS_LOADED.Get(i).data;
+            const auto model = LoadModel(allVertices, path);
+            models.Append(model);
+        }
+
     }
 
 };
