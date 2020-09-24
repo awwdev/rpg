@@ -35,13 +35,13 @@ struct Models
         idx_t count;
     };
 
-    com::EnumMap<res::MeshType::ENUM_END, MeshVertexView> vertexLookup
+    com::EnumMap<res::ModelType::ENUM_END, MeshVertexView> vertexLookup
     {
         //hardcoded primitives
-        { res::MeshType::PrimitiveCube,      { res::MESH_CUBE,     ArrayCount(res::MESH_CUBE)       } },
-        { res::MeshType::PrimitiveQuad,      { res::MESH_QUAD,     ArrayCount(res::MESH_QUAD)       } },
-        { res::MeshType::PrimitiveTriangle,  { res::MESH_TRIANGLE, ArrayCount(res::MESH_TRIANGLE)   } },
-        { res::MeshType::PrimitiveRing16,    { res::MESH_RING_16,  ArrayCount(res::MESH_RING_16)     } },
+        { res::ModelType::PrimitiveCube,      { res::MESH_CUBE,     ArrayCount(res::MESH_CUBE)       } },
+        { res::ModelType::PrimitiveQuad,      { res::MESH_QUAD,     ArrayCount(res::MESH_QUAD)       } },
+        { res::ModelType::PrimitiveTriangle,  { res::MESH_TRIANGLE, ArrayCount(res::MESH_TRIANGLE)   } },
+        { res::ModelType::PrimitiveRing16,    { res::MESH_RING_16,  ArrayCount(res::MESH_RING_16)     } },
     }; 
 
     com::Array<gpu::RenderData_General::Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;
@@ -50,7 +50,7 @@ struct Models
     {
         com::Array<gpu::RenderData_General::Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> tmp;
 
-        const auto LoadModelFn = [&](chars_t path, const res::MeshType type){
+        const auto LoadModelFn = [&](chars_t path, const res::ModelType type){
             LoadModelOld(tmp, path);
             const auto prevCount = allModelVertices.Count();
             allModelVertices.AppendArray(tmp);
@@ -58,10 +58,10 @@ struct Models
             tmp.Clear();
         };
 
-        LoadModelFn("res/Models/sword.txt", res::MeshType::Sword);
-        LoadModelFn("res/Models/grass.txt", res::MeshType::Grass);
-        LoadModelFn("res/Models/stone.txt", res::MeshType::Stone);
-        LoadModelFn("res/Models/tree.txt",  res::MeshType::Tree);
+        LoadModelFn("res/Models/sword.txt", res::ModelType::Sword);
+        LoadModelFn("res/Models/grass.txt", res::ModelType::Grass);
+        LoadModelFn("res/Models/stone.txt", res::ModelType::Stone);
+        LoadModelFn("res/Models/tree.txt",  res::ModelType::Tree);
     }
 };
 

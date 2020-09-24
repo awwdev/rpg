@@ -29,8 +29,8 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
 
     FOR_ARRAY(renderComponents.dense, i) 
     {
-        const auto& renderComponent = renderComponents.dense[i];
-        const auto& meshType = renderComponent.meshType;
+        //const auto& renderComponent = renderComponents.dense[i];
+        //const auto& meshType = renderComponent.meshType;
 
     }
 

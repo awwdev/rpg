@@ -39,10 +39,10 @@ struct UniformDataGroups
     //1 group == 1 inst type (1 draw call)
     //1 group -> N instances
     com::Array<DATA_T, DATA_COUNT> data;  
-    com::EnumMap<res::MeshType::ENUM_END, UniformGroup> groups; 
+    com::EnumMap<res::ModelType::ENUM_END, UniformGroup> groups; 
 
     template<auto N>
-    void AppendGroup(const com::Array<DATA_T, N>& arr, const res::MeshType meshType)
+    void AppendGroup(const com::Array<DATA_T, N>& arr, const res::ModelType meshType)
     {
         groups.Set(meshType, gpu::UniformGroup{
             .begin = data.count, 
@@ -68,11 +68,11 @@ template<class DATA_T, u32 DATA_COUNT, u32 GROUP_COUNT = DATA_COUNT>
 struct UniformDataGroupsMesh
 {
     com::Array<DATA_T, DATA_COUNT> data;  
-    com::EnumMap<res::MeshType::ENUM_END, UniformGroup> groupsVertexColor; 
-    com::EnumMap<res::MeshType::ENUM_END, UniformGroup> groupsTexture; 
+    com::EnumMap<res::ModelType::ENUM_END, UniformGroup> groupsVertexColor; 
+    com::EnumMap<res::ModelType::ENUM_END, UniformGroup> groupsTexture; 
 
     template<auto N>
-    void AppendGroup_VertexColor(const com::Array<DATA_T, N>& arr, const res::MeshType meshType)
+    void AppendGroup_VertexColor(const com::Array<DATA_T, N>& arr, const res::ModelType meshType)
     {
         groupsVertexColor.Set(meshType, gpu::UniformGroup{
             .begin = data.count, 
@@ -82,7 +82,7 @@ struct UniformDataGroupsMesh
     }
 
     template<auto N>
-    void AppendGroup_Texture(const com::Array<DATA_T, N>& arr, const res::MeshType meshType)
+    void AppendGroup_Texture(const com::Array<DATA_T, N>& arr, const res::ModelType meshType)
     {
         groupsTexture.Set(meshType, gpu::UniformGroup{
             .begin = data.count, 

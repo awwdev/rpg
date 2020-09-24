@@ -25,18 +25,14 @@ const auto COMPONENT_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentType, COMP
 enum class ComponentDataType
 {
     scale,
-    meshType,
-    useTexture,
-    castShadow,
+    modelType,
     ENUM_END
 };
 
 const com::EnumMap<ComponentDataType::ENUM_END, com::String<COMPONENT_MAX_STR_LEN>> COMPONENTDATA_ENUM_TO_STR
 {
     { ComponentDataType::scale,         "scale" },
-    { ComponentDataType::meshType,      "meshType" },
-    { ComponentDataType::useTexture,    "useTexture" },
-    { ComponentDataType::castShadow,    "castShadow" },
+    { ComponentDataType::modelType,     "modelType" },
 };
 const auto COMPONENTDATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentDataType, COMPONENT_MAX_STR_LEN>(COMPONENTDATA_ENUM_TO_STR);
 

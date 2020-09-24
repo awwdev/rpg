@@ -32,8 +32,8 @@ struct Resources_Models
         {
             constexpr idx_t ENUM_END = (idx_t) ModelType::HARDCODED_ENUM_END;
             const auto& map = MAP_MODELS_HARDCODED;
-            dbg::Assert(map.usedIndices.Count() == ENUM_END, "mapping missing");
 
+            dbg::Assert(map.usedIndices.Count() == ENUM_END, "mapping missing");
             for(idx_t i = 0; i < ENUM_END; ++i) {
                 const auto& model = map.Get(i);
                 const auto& mesh  = model.meshes[0]; //assumes one mesh
@@ -46,8 +46,8 @@ struct Resources_Models
         {
             constexpr idx_t ENUM_END = (idx_t) ModelType::LOADED_ENUM_END;
             const auto& map = MAP_MODELS_LOADED;
-            dbg::Assert(map.usedIndices.Count() == ENUM_END, "mapping missing");
 
+            dbg::Assert(map.usedIndices.Count() == ENUM_END, "mapping missing");
             for(idx_t i = 0; i < ENUM_END; ++i) {
                 chars_t path = map.Get(i).data;
                 const auto model = LoadModel(allVertices, path); //appends

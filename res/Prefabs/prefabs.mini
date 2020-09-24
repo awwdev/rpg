@@ -7,29 +7,24 @@
 
 @ Sword
 ? RenderData
-+ meshType = Sword
-+ useTexture = 0
++ modelType = Sword
 ? Transform
 + scale = 1,1,1
 
 @ Grass
 ? RenderData
-+ meshType = Grass
-+ useTexture = 1
++ modelType = Grass
 ? Transform
 + scale = 0.7,0.7,0.7
 
 @ Stone
 ? RenderData
-+ meshType = Stone
-+ useTexture = 0
++ modelType = Stone
 ? Transform
 + scale = 1,1,1
 
 @ Tree
 ? RenderData
-+ meshType = Tree
-+ useTexture = 1
-+ castShadow = 1
++ modelType = Tree
 ? Transform
 + scale = 0.3,0.3,0.3

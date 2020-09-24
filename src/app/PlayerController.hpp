@@ -31,7 +31,7 @@ struct PlayerController
         auto& transform = ecs.arrays.AddComponent<ecs::ComponentType::Transform>(playerID);
         transform.scale = { S, H, S };
         transform.translation = { 0, Ypos, 0 };
-        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::MeshType::PrimitiveCube);
+        ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(playerID, res::ModelType::PrimitiveCube);
     }
 
     void Update(const double dt, ecs::ECS& ecs, gpu::RenderData& renderData)

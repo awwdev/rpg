@@ -22,12 +22,15 @@ enum class ModelType : idx_t
     Tree,
     Grass,
 
-    ENUM_LAST,
-    LOADED_ENUM_END = ENUM_LAST - 1 - HARDCODED_ENUM_END,
+    ENUM_END,
+    LOADED_ENUM_END   = ENUM_END - 1 - HARDCODED_ENUM_END,
     LOADED_ENUM_BEGIN = HARDCODED_ENUM_END + 1,
 };
 
-const com::EnumMap<ModelType::HARDCODED_ENUM_END, Model> MAP_MODELS_HARDCODED
+//? HARDCODED MODEL DATA
+
+const com::EnumMap<ModelType::HARDCODED_ENUM_END, Model> 
+MAP_MODELS_HARDCODED
 {
     { ModelType::PrimitiveCube,     MODEL_CUBE     },
     { ModelType::PrimitiveQuad,     MODEL_QUAD     },
@@ -35,12 +38,40 @@ const com::EnumMap<ModelType::HARDCODED_ENUM_END, Model> MAP_MODELS_HARDCODED
     { ModelType::PrimitiveRing16,   MODEL_RING_16 },
 };
 
-const com::EnumMap<ModelType::LOADED_ENUM_END, com::String<30>, ModelType::LOADED_ENUM_BEGIN> MAP_MODELS_LOADED
+//? PATHS TO LOAD MODELS
+
+constexpr auto MODEL_PATH_STR_MAX = 30;
+const com::EnumMap<ModelType::LOADED_ENUM_END, com::String<MODEL_PATH_STR_MAX>, ModelType::LOADED_ENUM_BEGIN> 
+MAP_MODELS_LOADED
 {
     { ModelType::Sword, "res/Models/sword.txt" },
     { ModelType::Stone, "res/Models/stone.txt" },
     { ModelType::Tree,  "res/Models/tree.txt"  },
     { ModelType::Grass, "res/Models/grass.txt" },
 };
+
+//? MODEL NAMES FOR PARSING
+
+constexpr auto MODEL_NAME_STR_MAX = 100;
+const com::EnumMap<ModelType::ENUM_END, com::String<MODEL_NAME_STR_MAX>> 
+MAP_MODEL_ENUM_TO_STR
+{
+    { ModelType::PrimitiveCube,      "PrimitiveCube" },
+    { ModelType::PrimitiveQuad,      "PrimitiveQuad" },
+    { ModelType::PrimitiveTriangle,  "PrimitiveTriangle" },
+    { ModelType::PrimitiveRing16,    "PrimitiveRing16" },
+    { ModelType::Sword,              "Sword" },
+    { ModelType::Grass,              "Grass" },
+    { ModelType::Stone,              "Stone" },
+    { ModelType::Tree,               "Tree" },
+};
+const auto MAP_MODEL_STR_TO_ENUM = com::StringMapFromEnumMap<ModelType, MODEL_NAME_STR_MAX>(MAP_MODEL_ENUM_TO_STR);
+
+inline ModelType GetModelType(const ecs::ComponentDataString& str)
+{
+    const ModelType* modelType = MAP_MODEL_STR_TO_ENUM.GetOptional(str.data);
+    dbg::Assert(modelType, "no model type found");
+    return *modelType;
+}
 
 }//ns

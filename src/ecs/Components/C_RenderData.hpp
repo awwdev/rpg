@@ -4,25 +4,17 @@
 #include "ecs/Components/Meta/ComponentTypes.hpp"
 #include "res/_Old/CpuResources.hpp"
 #include "dbg/Logger.hpp"
-#include "res/_Old/MeshTypes.hpp"
 #include "res/Models/ModelType.hpp"
 
 namespace rpg::ecs {
 
 struct C_RenderData
 {
-    res::MeshType meshType;
-    bool useTexture;
-    bool castShadow;
+    res::ModelType modelType;
 
     //defaults
-    C_RenderData(
-        const res::MeshType& pMeshType  = {},
-        const bool pUseTexture          = false,
-        const bool pCastShadow          = true)
-        : meshType      { pMeshType   }
-        , useTexture    { pUseTexture }
-        , castShadow    { pCastShadow }
+    C_RenderData(const res::ModelType& pModelType = {})
+        : modelType { pModelType }
     {}
 
     //parsing
@@ -33,17 +25,9 @@ struct C_RenderData
             const auto dataType = GetComponentDataType(pair.key);           
             switch(dataType)
             {
-                case ComponentDataType::meshType:  
-                meshType = res::GetMeshType(pair.val);  
-                break;
-
-                case ComponentDataType::useTexture:  
-                useTexture = (bool)std::atoi(pair.val.data);  
-                break;
-
-                case ComponentDataType::castShadow:  
-                castShadow = (bool)std::atoi(pair.val.data);  
-                break;
+                case ComponentDataType::modelType:  
+                modelType = res::GetModelType(pair.val);  
+                break;             
 
                 default: dbg::LogWarning("component data type not defined for this component");
             }
@@ -52,3 +36,9 @@ struct C_RenderData
 };
 
 }//NS
+
+/*
+case ComponentDataType::castShadow:  
+castShadow = (bool)std::atoi(pair.val.data);  
+break;
+*/
