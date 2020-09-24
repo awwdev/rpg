@@ -8,6 +8,7 @@
 #include "com/box/Array.hpp"
 
 #include "res/_Old/CpuResources.hpp"
+#include "res/Resources_Models.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
@@ -67,12 +68,12 @@ struct General_Vertices
         renderData.debugInfo.vboData_general_vertCount = vertCount;
     }
 
-    void Create(VkCommandPool cmdPool, const res::CpuResources& cpuRes)
+    void Create(VkCommandPool cmdPool, const res::Resources_Models& models)
     {
         terrain.Create();
 
         objects.Create();
-        objects.Append(cpuRes.models.allModelVertices);
+        objects.Append(models.allVertices);
         objects.Bake(cmdPool);
     }
 

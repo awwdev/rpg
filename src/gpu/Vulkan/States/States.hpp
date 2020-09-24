@@ -7,6 +7,7 @@
 #include "gpu/Vulkan/States/gui/State_GUI.hpp"
 
 #include "res/_Old/CpuResources.hpp"
+#include "res/Resources.hpp"
 #include "com/ThreadPool.hpp"
 
 namespace rpg::gpu::vuk {
@@ -18,10 +19,10 @@ struct States
     State_Post    post;
     State_GUI     gui;
 
-    void Create(res::CpuResources& cpuRes, VkCommandPool cmdPool)
+    void Create(res::CpuResources& cpuRes, res::Resources& res, VkCommandPool cmdPool)
     {
         shadow  .Create(cmdPool);
-        general .Create(cmdPool, *shadow.uniforms.uboSun.activeBuffer, shadow.renderPass.shadowMaps, cpuRes);
+        general .Create(cmdPool, *shadow.uniforms.uboSun.activeBuffer, shadow.renderPass.shadowMaps, cpuRes, res);
         post    .Create(cmdPool, general.renderPass.finalImage);
         gui     .Create(cmdPool, cpuRes);
     }

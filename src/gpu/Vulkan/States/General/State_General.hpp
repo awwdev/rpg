@@ -12,6 +12,7 @@
 
 #include "gpu/RenderData/RenderData.hpp"
 #include "res/_Old/CpuResources.hpp"
+#include "res/Resources.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -26,9 +27,9 @@ struct State_General
     General_Wire_Shader   wireShader;
     General_Wire_Pipeline wirePipeline;
 
-    void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::CpuResources& cpuRes)
+    void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::CpuResources& cpuRes, res::Resources& res)
     {
-        vertices    .Create(cmdPool, cpuRes);
+        vertices    .Create(cmdPool, res.models);
         uniforms    .Create(uboSun, shadowMaps);
         shader      .Create();
         renderPass  .Create(cmdPool);
@@ -78,7 +79,7 @@ struct State_General
             //groups, instanced draw -> additional wrapper
             //use dynamic ubo?
             //call draw per instance, but buffer we need buffer offset -> push const
-            vkCmdDraw(cmdBuffer, vertices.objects.count, 2, 0, 0);
+            vkCmdDraw(cmdBuffer, vertices.objects.count, 1, 0, 0);
         //}
 
         vkCmdEndRenderPass      (cmdBuffer);
