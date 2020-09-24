@@ -18,7 +18,7 @@ struct General_Vertices
     using VERTEX_TYPE = RenderData_General::Vertex;
     VertexBuffer<VERTEX_TYPE, RenderData_General::VBO_TERRAIN_MAX> terrain;
     VertexBuffer<VERTEX_TYPE, RenderData_General::VBO_OBJECTS_MAX> objects;
-
+    
     VkDeviceSize offsets [1] = {};
     static constexpr VkVertexInputBindingDescription bindings []
     {

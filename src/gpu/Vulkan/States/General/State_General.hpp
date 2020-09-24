@@ -68,29 +68,32 @@ struct State_General
     void Record(VkCommandBuffer cmdBuffer, RenderData_General& rdGeneral)
     {
         vkCmdBeginRenderPass    (cmdBuffer, &renderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.terrain.activeBuffer->buffer, vertices.offsets);
         vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
                                  uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
-        //general
+
+        //terrain
+        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.terrain.activeBuffer->buffer, vertices.offsets);
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipeline.pipeline);
         vkCmdDraw               (cmdBuffer, vertices.terrain.count, 1, 0, 0);
-        //wire
+        //terrain wire
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainWirePipeline.pipeline);
         vkCmdDraw               (cmdBuffer, vertices.terrain.count, 1, 0, 0);
-        //Objects
+
+        //objects 
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.objects.activeBuffer->buffer, vertices.offsets);
 
-        //FOR_ARRAY(rdGeneral.sboModels, i)
-        //{
-            //groups, instanced draw -> additional wrapper
-            //use dynamic ubo?
-            //call draw per instance, but buffer we need buffer offset -> push const
-            vkCmdDraw(cmdBuffer, vertices.objects.count, 1, 0, 0);
-        //}
+        for(uint32_t modelType = 0; modelType < (uint32_t) res::ModelType::ENUM_END; ++modelType)
+        {
+            const auto& vertexRange = rdGeneral.vertexRanges[modelType];
+            const auto& sboModels   = rdGeneral.sboModels[modelType];
+            if (!sboModels.Empty()) {
+                //vkCmdPushConstant //for indexing into sbo
+                vkCmdDraw(cmdBuffer, vertexRange.count, sboModels.Count(), vertexRange.beginIdx, 0);
+            }
+        }
 
-        vkCmdEndRenderPass      (cmdBuffer);
+        vkCmdEndRenderPass (cmdBuffer);
     };
     
 };

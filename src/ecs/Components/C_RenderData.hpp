@@ -4,7 +4,7 @@
 #include "ecs/Components/Meta/ComponentTypes.hpp"
 #include "res/_Old/CpuResources.hpp"
 #include "dbg/Logger.hpp"
-#include "res/Models/ModelType.hpp"
+#include "res/Models/ModelMapping.hpp"
 
 namespace rpg::ecs {
 
