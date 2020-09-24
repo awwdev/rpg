@@ -129,7 +129,7 @@ template<class VAL, auto STRING_CAPACITY, auto ENUM_END_T>
 auto StringMapFromEnumMap(const com::EnumMap<ENUM_END_T, com::String<STRING_CAPACITY>>& enumMap)
 {
     StringMap<VAL, STRING_CAPACITY> strMap;
-    FOR_ENUM_MAP(enumMap, i){
+    for(idx_t i = 0; i < enumMap.ENUM_END; ++i) {
         strMap.Insert({enumMap.Get(i), (VAL)i});
     }
     return strMap;

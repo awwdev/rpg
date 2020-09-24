@@ -70,7 +70,13 @@ struct Array
             PlacementNew(static_cast<T>(arr[i]));
     }
 
-    //implement (ptr, count) version when needed
+    template<class OTHER_T>
+    void AppendArray(OTHER_T const* ptr, idx_t const pCount)
+    {
+        ArrayAssert(count + pCount <= COUNT_MAX, "array exhausted");
+        for(idx_t i = 0; i < pCount; ++i)
+            PlacementNew(static_cast<T>(ptr[i]));
+    }
 
     //? ACCESS
     T& operator[](idx_t idx) 
@@ -124,9 +130,8 @@ private:
 };
 
 //? CTAD
-template<typename T, typename...Ts>
+template<class T, class... Ts>
 Array(T, Ts...) -> Array<T, sizeof...(Ts) + 1>;
-
 
 template<class T, auto N>
 void PrintArray(const Array<T, N>& arr)

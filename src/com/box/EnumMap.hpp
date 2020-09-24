@@ -17,8 +17,6 @@ struct EnumPair
 //wrapper over array that uses enum for max count and index
 //the wrapper allows for order independent init, removal, add, and is capacity based (last enum item)
 
-#define FOR_ENUM_MAP(map, i) for(idx_t i = 0; i < map.ENUM_END; ++i)
-
 template<auto ENUM_END_T, class VAL>
 struct EnumMap
 {

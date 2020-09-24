@@ -12,29 +12,29 @@ constexpr idx_t BONES_MAX  = 10;
 
 using Vertex = gpu::RenderData_General::Vertex;
 
-enum class SurfaceType 
+enum class Blending 
 {
-    VertexColor,
-    AlphaCutout,
-    Reflection,
+    Opaque,
+    Alpha,
 };
 
-struct MeshView
+struct Mesh
 {
-    SurfaceType surface;
-    Vertex*     vertBegin;
-    idx_t       vertCount;
+    Blending       blending;
+    Vertex const*  vertBegin;
+    idx_t          vertCount;
+    //additional material ubo data
 };
 
 struct Bone
 {
-
+    com::Mat4f transform;
 };
 
-struct ModelView 
+struct Model 
 {
-    com::Array<MeshView, MESHES_MAX> meshViews;
-    com::Array<Bone, BONES_MAX> bones;
+    com::Array<Mesh, MESHES_MAX> meshes;
+    com::Array<Bone, BONES_MAX>  bones;
 };
 
 }//ns
