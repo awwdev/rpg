@@ -8,38 +8,39 @@
 
 namespace rpg::res {
 
-enum class ModelType_Hardcoded : idx_t
+enum class ModelType : idx_t
 {
     PrimitiveCube, 
     PrimitiveQuad,  
     PrimitiveTriangle, 
     PrimitiveRing16,
-    ENUM_END
-};
 
-const com::EnumMap<ModelType_Hardcoded::ENUM_END, Model> MAP_MODELS_HARDCODED
-{
-    { ModelType_Hardcoded::PrimitiveCube,     MODEL_CUBE     },
-    { ModelType_Hardcoded::PrimitiveQuad,     MODEL_QUAD     },
-    { ModelType_Hardcoded::PrimitiveTriangle, MODEL_TRIANGLE },
-    { ModelType_Hardcoded::PrimitiveRing16,   MODEL_RING_16 },
-};
+    HARDCODED_ENUM_END,
 
-enum class ModelType_Loaded : idx_t
-{
     Sword,
     Stone, 
     Tree,
     Grass,
-    ENUM_END
+
+    ENUM_LAST,
+    LOADED_ENUM_END = ENUM_LAST - 1 - HARDCODED_ENUM_END,
+    LOADED_ENUM_BEGIN = HARDCODED_ENUM_END + 1,
 };
 
-const com::EnumMap<ModelType_Loaded::ENUM_END, com::String<30>> MAP_MODELS_LOADED
+const com::EnumMap<ModelType::HARDCODED_ENUM_END, Model> MAP_MODELS_HARDCODED
 {
-    { ModelType_Loaded::Sword, "res/Models/sword.txt" },
-    { ModelType_Loaded::Stone, "res/Models/stone.txt" },
-    { ModelType_Loaded::Tree,  "res/Models/tree.txt"  },
-    { ModelType_Loaded::Grass, "res/Models/grass.txt" },
+    { ModelType::PrimitiveCube,     MODEL_CUBE     },
+    { ModelType::PrimitiveQuad,     MODEL_QUAD     },
+    { ModelType::PrimitiveTriangle, MODEL_TRIANGLE },
+    { ModelType::PrimitiveRing16,   MODEL_RING_16 },
+};
+
+const com::EnumMap<ModelType::LOADED_ENUM_END, com::String<30>, ModelType::LOADED_ENUM_BEGIN> MAP_MODELS_LOADED
+{
+    { ModelType::Sword, "res/Models/sword.txt" },
+    { ModelType::Stone, "res/Models/stone.txt" },
+    { ModelType::Tree,  "res/Models/tree.txt"  },
+    { ModelType::Grass, "res/Models/grass.txt" },
 };
 
 }//ns

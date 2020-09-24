@@ -29,22 +29,30 @@ struct Resources_Models
         models.Clear();
 
         //? MODELS HARDCODED
-        dbg::Assert((idx_t) ModelType_Hardcoded::ENUM_END == MAP_MODELS_HARDCODED.usedIndices.Count(), "mapping missing");
-        for(idx_t i = 0; i < (idx_t) ModelType_Hardcoded::ENUM_END; ++i)
         {
-            const auto& model = MAP_MODELS_HARDCODED.Get(i);
-            const auto& mesh  = model.meshes[0]; //assumes one mesh
-            allVertices.AppendArray(mesh.vertPtr, mesh.vertCount);   
-            models.Append(model);
+            constexpr idx_t ENUM_END = (idx_t) ModelType::HARDCODED_ENUM_END;
+            const auto& map = MAP_MODELS_HARDCODED;
+            dbg::Assert(map.usedIndices.Count() == ENUM_END, "mapping missing");
+
+            for(idx_t i = 0; i < ENUM_END; ++i) {
+                const auto& model = map.Get(i);
+                const auto& mesh  = model.meshes[0]; //assumes one mesh
+                allVertices.AppendArray(mesh.vertPtr, mesh.vertCount);   
+                models.Append(model);
+            }
         }
 
-        //? MODELS TO LOAD
-        dbg::Assert((idx_t) ModelType_Loaded::ENUM_END == MAP_MODELS_LOADED.usedIndices.Count(), "mapping missing");
-        for(idx_t i = 0; i < (idx_t) ModelType_Loaded::ENUM_END; ++i)
+        //? MODELS LOADED externally
         {
-            chars_t path = MAP_MODELS_LOADED.Get(i).data;
-            const auto model = LoadModel(allVertices, path);
-            models.Append(model);
+            constexpr idx_t ENUM_END = (idx_t) ModelType::LOADED_ENUM_END;
+            const auto& map = MAP_MODELS_LOADED;
+            dbg::Assert(map.usedIndices.Count() == ENUM_END, "mapping missing");
+
+            for(idx_t i = 0; i < ENUM_END; ++i) {
+                chars_t path = map.Get(i).data;
+                const auto model = LoadModel(allVertices, path); //appends
+                models.Append(model);
+            }
         }
 
     }

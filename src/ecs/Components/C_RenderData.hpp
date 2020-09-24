@@ -5,6 +5,7 @@
 #include "res/_Old/CpuResources.hpp"
 #include "dbg/Logger.hpp"
 #include "res/_Old/MeshTypes.hpp"
+#include "res/Models/ModelType.hpp"
 
 namespace rpg::ecs {
 

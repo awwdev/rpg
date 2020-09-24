@@ -17,7 +17,7 @@ struct EnumPair
 //wrapper over array that uses enum for max count and index
 //the wrapper allows for order independent init, removal, add, and is capacity based (last enum item)
 
-template<auto ENUM_END_T, class VAL>
+template<auto ENUM_END_T, class VAL, auto OFFSET = 0>
 struct EnumMap
 {
     //? DATA
@@ -48,7 +48,8 @@ struct EnumMap
 
     KEY_T bool Contains(const KEY key) const
     {
-        return bitset.Test((idx_t)key);
+        const idx_t keyOffsetted = (idx_t) key - (idx_t) OFFSET;
+        return bitset.Test(keyOffsetted);
     }
 
     #undef KEY_T
@@ -58,16 +59,20 @@ struct EnumMap
     template<class... ARGS>
     void Set(const KEY key, ARGS&&... args)
     {
-        data[(idx_t)key] = VAL { std::forward<ARGS>(args)... };
+        const idx_t keyOffsetted = (idx_t) key - (idx_t) OFFSET;
+
+        data[keyOffsetted] = VAL { std::forward<ARGS>(args)... };
         
-        if (!bitset.Test(key)) {
-            bitset.Set(key, true);
-            usedIndices.Append((idx_t)key);
+        if (!bitset.Test(keyOffsetted)) {
+            bitset.Set(keyOffsetted, true);
+            usedIndices.Append(keyOffsetted);
         }
     }
 
     void Remove(const KEY key)
     {
+        const idx_t keyOffsetted = (idx_t) key - (idx_t) OFFSET;
+
         //bitset.Set(key, false);
         //FOR_ARRAY(usedIndices, i){
         //    if(usedIndices[i] == (idx_t)key)
