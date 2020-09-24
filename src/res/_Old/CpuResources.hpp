@@ -11,7 +11,7 @@
 #include "res/Terrain/Terrain.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "gpu/RenderData/_Old/RenderStructs.hpp"
-#include "res/Models/Primitives.hpp"
+#include "res/Models/ModelPrimitives.hpp"
 
 namespace rpg::res {
     
@@ -38,10 +38,10 @@ struct Models
     com::EnumMap<res::MeshType::ENUM_END, MeshVertexView> vertexLookup
     {
         //hardcoded primitives
-        { res::MeshType::PrimitiveCube,      { com::MESH_CUBE,     ArrayCount(com::MESH_CUBE)       } },
-        { res::MeshType::PrimitiveQuad,      { com::MESH_QUAD,     ArrayCount(com::MESH_QUAD)       } },
-        { res::MeshType::PrimitiveTriangle,  { com::MESH_TRIANGLE, ArrayCount(com::MESH_TRIANGLE)   } },
-        { res::MeshType::PrimitiveRing16,    { com::MESH_RING_16,  ArrayCount(com::MESH_RING_16)     } },
+        { res::MeshType::PrimitiveCube,      { res::MESH_CUBE,     ArrayCount(res::MESH_CUBE)       } },
+        { res::MeshType::PrimitiveQuad,      { res::MESH_QUAD,     ArrayCount(res::MESH_QUAD)       } },
+        { res::MeshType::PrimitiveTriangle,  { res::MESH_TRIANGLE, ArrayCount(res::MESH_TRIANGLE)   } },
+        { res::MeshType::PrimitiveRing16,    { res::MESH_RING_16,  ArrayCount(res::MESH_RING_16)     } },
     }; 
 
     com::Array<gpu::RenderData_General::Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;

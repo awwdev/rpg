@@ -1,20 +1,20 @@
 //https://github.com/awwdev
 
 #pragma once
-
+#include "com/Matrix.hpp"
 #include "com/Algorithms.hpp"
-#include "gpu/RenderData/_Old/RenderStructs.hpp"
 
-namespace rpg::com {
-    
-constexpr com::Vec4f GREEN = { 0, 1, 0, 1 };
-constexpr com::Vec4f BLUE  = { 0, 0, 1, 1 };
-constexpr com::Vec4f RED   = { 1, 0, 0, 1 };
-constexpr com::Vec4f RED2  = { 1, .3f, .3f, 1 };
-constexpr com::Vec4f WHITE = { 1, 1, 1, 1 };
+namespace rpg::res {
 
+using Vertex = gpu::RenderData_General::Vertex;
 
-const gpu::RenderData_General::Vertex MESH_CUBE [] {
+#define GREEN com::Vec4f { 0, 1, 0, 1 }
+#define BLUE  com::Vec4f { 0, 0, 1, 1 }
+#define RED   com::Vec4f { 1, 0, 0, 1 }
+#define RED2  com::Vec4f { 1, .3f, .3f, 1 }
+#define WHITE com::Vec4f { 1, 1, 1, 1 }
+
+constexpr Vertex MESH_CUBE [] {
     { { -1, 1, 1 }, {}, RED, {} },
     { {  1, 1, 1 }, {}, RED, {} },
     { {  1, 1,-1 }, {}, RED, {} },
@@ -53,7 +53,7 @@ const gpu::RenderData_General::Vertex MESH_CUBE [] {
     { { -1, 1,-1 }, {}, RED, {} },
 };
 
-const gpu::RenderData_General::Vertex MESH_QUAD [] {
+constexpr Vertex MESH_QUAD [] {
     { { -1.0f, -1.0f, 0 }, {}, { GREEN }, {} },
     { {  1.0f, -1.0f, 0 }, {}, { GREEN }, {} },
     { {  1.0f,  1.0f, 0 }, {}, { GREEN }, {} },
@@ -62,20 +62,18 @@ const gpu::RenderData_General::Vertex MESH_QUAD [] {
     { { -1.0f,  1.0f, 0 }, {}, { RED }, {} },
 };
 
-const gpu::RenderData_General::Vertex MESH_TRIANGLE [] {
+constexpr Vertex MESH_TRIANGLE [] {
     { {  0.0f, -1.0f, 0 }, {}, { .8f, .2f, .2f, 1 }, {} },
     { {  1.0f,  1.0f, 0 }, {}, { .8f, .2f, .2f, 1 }, {} },
     { { -1.0f,  1.0f, 0 }, {}, { .8f, .2f, .2f, 1 }, {} },
 };
 
-//TODO constexpr but we need sin/cos constexpr to
-//TODO unlit flag via UBO
-auto GetRingVertex(const u32 current, const u32 max, const f32 radius)
+constexpr auto GetRingVertex(const u32 current, const u32 max, const f32 radius)
 {
     const f32 norm = current / (f32)max;
-    const f32 x = sinf(norm * 6.283f) * radius;
-    const f32 z = cosf(norm * 6.283f) * radius;
-    return gpu::RenderData_General::Vertex {
+    const f32 x = com::Sin(norm * 6.283f) * radius;
+    const f32 z = com::Cos(norm * 6.283f) * radius;
+    return Vertex {
         { x, 0, z }, { 0, 1, 0 }, { 1, 1, 1, 1 }, {}
     };
 }
@@ -93,7 +91,7 @@ GetRingVertex(n, C, R1),        \
     GetRingVertex(n+1, C, R2)
      
 
-const gpu::RenderData_General::Vertex MESH_RING_16 [] {
+constexpr Vertex MESH_RING_16 [] {
     RING_SEGMENT( 0, 16),
     RING_SEGMENT( 1, 16),
     RING_SEGMENT( 2, 16),
@@ -111,5 +109,12 @@ const gpu::RenderData_General::Vertex MESH_RING_16 [] {
     RING_SEGMENT(14, 16),
     RING_SEGMENT(15, 16),
 };
+
+#undef RING_SEGMENT
+#undef GREEN 
+#undef BLUE  
+#undef RED   
+#undef RED2 
+#undef WHITE 
 
 }//ns

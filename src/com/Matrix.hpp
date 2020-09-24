@@ -32,6 +32,7 @@ struct Mat
         struct { T r, g, b, a; };
     };
 
+    //allow mat[][] access
     T*       operator[](const u8 y)       { return data[y]; } 
     const T* operator[](const u8 y) const { return data[y]; } 
 };
@@ -48,7 +49,7 @@ using Vec2f = Vec<float, 2>;
 using Quatf = Vec4f;
 using Rectf = Vec4f;
 
-Mat4f Identity4()
+inline Mat4f Identity4()
 {
     return {
         1, 0, 0, 0,
@@ -134,7 +135,7 @@ auto Cross(const Vec<T, 3>& v1, const Vec<T, 3>& v2)
     };
 }
 
-//! this is not a true cross product, it resets w to 1
+//will reset w to 1 !!!
 template<class T>
 auto Cross(const Vec<T, 4>& v1, const Vec<T, 4>& v2)
 {

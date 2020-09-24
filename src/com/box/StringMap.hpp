@@ -6,7 +6,7 @@
 #include "dbg/Logger.hpp"
 #include "com/box/String.hpp"
 #include "com/box/EnumMap.hpp"
-#include "com/CharsView.hpp"
+#include "com/Range.hpp"
 
 namespace rpg::com {
 

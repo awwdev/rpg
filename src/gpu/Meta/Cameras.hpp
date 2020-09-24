@@ -2,7 +2,7 @@
 
 #pragma once
 #include "ecs/ECS.hpp"
-#include "com/box/Matrix.hpp"
+#include "com/Matrix.hpp"
 #include "wnd/WindowEvents.hpp"
 
 namespace rpg::gpu

@@ -5,6 +5,24 @@
 
 namespace rpg::com {
 
+template<class T1, class T2 = T1>
+struct Pair
+{
+    union 
+    {
+        struct 
+        { 
+            T1 first; 
+            T2 second; 
+        };
+        struct 
+        { 
+            T1 begin; 
+            T2 end;
+        };
+    };
+};
+
 struct CharsView
 {
     const char* beginPtr;

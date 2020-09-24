@@ -1,7 +1,7 @@
 #pragma once
 
 #include "com/box/Optional.hpp"
-#include "com/box/Matrix.hpp"
+#include "com/Matrix.hpp"
 
 namespace rpg::com {
     
