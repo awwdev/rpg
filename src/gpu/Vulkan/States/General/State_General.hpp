@@ -82,16 +82,18 @@ struct State_General
 
         //models 
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
-        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.objects.activeBuffer->buffer, vertices.offsets);
+        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.models.activeBuffer->buffer, vertices.offsets);
 
-        for(uint32_t modelType = 0; modelType < (uint32_t) res::ModelType::ENUM_END; ++modelType)
-        {
-            const auto& modelView = resModels.modelViews[modelType];
-            const auto& sboModels = rdGeneral.sboModels[modelType];
-            
-            if (!sboModels.Empty()) {
-                //vkCmdPushConstant //for indexing into sbo
-                //vkCmdDraw(cmdBuffer, vertexRange.count, sboModels.Count(), vertexRange.beginIdx, 0);
+        uint32_t instanceCount = 0;
+        FOR_CARRAY(rdGeneral.modelTypeData, i){
+            const auto  subMesh       = 0;
+            const auto& modelView     = resModels.modelViews[i]; //vertex data
+            const auto& modelTypeData = rdGeneral.modelTypeData[i];
+            const auto& vertexBegin   = modelView.meshViews[subMesh].vertBegin;
+            const auto& vertexCount   = modelView.meshViews[subMesh].vertCount;
+            if (modelTypeData.instanceCount > 0){
+                vkCmdDraw(cmdBuffer, vertexCount, modelTypeData.instanceCount, vertexBegin, instanceCount);
+                instanceCount += modelTypeData.instanceCount;
             }
         }
 

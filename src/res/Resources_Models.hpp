@@ -16,11 +16,10 @@
 
 namespace rpg::res {
 
-constexpr idx_t ALL_MODEL_VERTICES_MAX = 1'000'000;
 
 struct Resources_Models
 {
-    com::Array<ModelVertex, ALL_MODEL_VERTICES_MAX> allVertices;
+    com::Array<ModelVertex, gpu::RenderData_General::MODEL_VERT_COUNT_MAX> allVertices;
     ModelView modelViews [(idx_t) ModelType::ENUM_END];
 
     void Load()
@@ -30,6 +29,7 @@ struct Resources_Models
             modelViews[i] = {};
 
         idx_t modelViewIndex = 0;
+        idx_t vertCount = 0;
         
         //? MODELS HARDCODED
         {
@@ -42,11 +42,13 @@ struct Resources_Models
                 const auto& meshView  = modelView.meshViews[0]; //assumes one mesh
                 allVertices.AppendArray(meshView.vertPtr, meshView.vertCount);   
                 modelViews[modelViewIndex] = modelView;
+                modelViews[modelViewIndex].meshViews[0].vertBegin = vertCount; //TODO: submehes
                 ++modelViewIndex;
+                vertCount += meshView.vertCount;
             }
         }
 
-        //? MODELS LOADED externally
+        //? MODELS LOADED
         {
             constexpr idx_t ENUM_END = (idx_t) ModelType::LOADED_ENUM_END;
             const auto& map = MAP_MODELS_LOADED;
@@ -56,7 +58,9 @@ struct Resources_Models
                 chars_t path = map.Get(i).data;
                 const auto modelView = LoadModel(allVertices, path); //appends
                 modelViews[modelViewIndex] = modelView;
+                modelViews[modelViewIndex].meshViews[0].vertBegin = vertCount; //TODO: submehes
                 ++modelViewIndex;
+                vertCount += modelView.meshViews[0].vertCount;
             }
         }
 

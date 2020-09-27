@@ -22,6 +22,7 @@ struct MeshView
 {
     Blending           blending;
     ModelVertex const* vertPtr;
+    idx_t              vertBegin;
     idx_t              vertCount;
 };
 

@@ -30,8 +30,8 @@ struct EditorController
         if (wnd::HasEvent<wnd::EventType::F9, wnd::EventState::Pressed>())
             terrainWireMode = !terrainWireMode;
 
-        renderData.general.uboMeta.view = camera.view;
-        renderData.general.uboMeta.proj = camera.perspective;
+        renderData.general.meta.view = camera.view;
+        renderData.general.meta.proj = camera.perspective;
     }
 };
 
