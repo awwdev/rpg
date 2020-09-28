@@ -9,10 +9,9 @@ namespace rpg::gpu {
 
 struct RenderData_General
 {
-    static constexpr uint32_t VBO_TERRAIN_MAX = 10'000;
-    static constexpr uint32_t MODEL_VERT_COUNT_MAX = 10'000;
-    static constexpr uint32_t MODEL_DATA_COUNT_MAX =  1'000;
-    //static constexpr uint32_t MODEL_VERT_RANGES_MAX = 
+    static constexpr uint32_t TERRA_VERT_MAX_ALL = 1'000'000;
+    static constexpr uint32_t MODEL_VERT_MAX_ALL = 1'000'000;
+    static constexpr uint32_t MODEL_INST_MAX     =     1'000;
 
     struct Vertex
     {
@@ -28,9 +27,10 @@ struct RenderData_General
         alignas(64) com::Mat4f proj;
     };
 
-    struct ModelData
+    struct ModelInstance
     {
         com::Mat4f transform;
+        //material settings
     };
 
     struct ModelTypeData 
@@ -40,16 +40,12 @@ struct RenderData_General
 
     //? DATA
     Meta meta;
-
-    com::Array<ModelData, MODEL_DATA_COUNT_MAX> modelData;
-    ModelTypeData modelTypeData [(idx_t) res::ModelType::ENUM_END];
+    com::Array<ModelInstance, MODEL_INST_MAX> modelInstances;
 
     void Clear()
     {
-        //uboMeta is overwritten
-        modelData.Clear();
-        FOR_CARRAY(modelTypeData, i)
-            modelTypeData[i] = {};
+        meta = {};
+        modelInstances.Clear();
     }
 };
 

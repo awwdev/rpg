@@ -49,12 +49,12 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
         transMat[3][2] = t.z;
 
         //render data
-        gpu::RenderData_General::ModelData sboModel {};
-        sboModel.transform = transMat;
-        const auto modelType = (idx_t) renderComponent.modelType;
-
-        renderData.general.modelData.Append(sboModel);
-        renderData.general.modelTypeData[modelType].instanceCount += 1;
+        
+        //gpu::RenderData_General::ModelData sboModel {};
+        //sboModel.transform = transMat;
+        //const auto modelType = (idx_t) renderComponent.modelType;
+        //renderData.general.modelData.Append(sboModel);
+        //renderData.general.modelTypeData[modelType].instanceCount += 1;
     }
 }
 

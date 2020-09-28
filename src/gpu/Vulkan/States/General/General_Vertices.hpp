@@ -15,17 +15,18 @@ namespace rpg::gpu::vuk {
 
 struct General_Vertices
 {
-    using VERTEX_TYPE = RenderData_General::Vertex;
+    using RD = RenderData_General;
+    using GeneralVertex = RD::Vertex;
 
-    VertexBuffer<VERTEX_TYPE, RenderData_General::VBO_TERRAIN_MAX> terrain;
-    VertexBuffer<VERTEX_TYPE, RenderData_General::MODEL_VERT_COUNT_MAX> models;
+    VertexBuffer<GeneralVertex, RD::TERRA_VERT_MAX_ALL> terrain;
+    VertexBuffer<GeneralVertex, RD::MODEL_VERT_MAX_ALL> models;
     
     VkDeviceSize offsets [1] = {};
     static constexpr VkVertexInputBindingDescription bindings []
     {
         {
             .binding    = 0,
-            .stride     = sizeof(VERTEX_TYPE),
+            .stride     = sizeof(GeneralVertex),
             .inputRate  = VK_VERTEX_INPUT_RATE_VERTEX
         }
     };
@@ -36,32 +37,32 @@ struct General_Vertices
             .location   = 0,
             .binding    = 0, 
             .format     = VK_FORMAT_R32G32B32_SFLOAT,
-            .offset     = offsetof(VERTEX_TYPE, pos),
+            .offset     = offsetof(GeneralVertex, pos),
         },
         {
             .location   = 1,
             .binding    = 0, 
             .format     = VK_FORMAT_R32G32B32_SFLOAT,
-            .offset     = offsetof(VERTEX_TYPE, nor),
+            .offset     = offsetof(GeneralVertex, nor),
         },
         {
             .location   = 2,
             .binding    = 0, 
             .format     = VK_FORMAT_R32G32B32A32_SFLOAT,
-            .offset     = offsetof(VERTEX_TYPE, col),
+            .offset     = offsetof(GeneralVertex, col),
         },
         {
             .location   = 3,
             .binding    = 0, 
             .format     = VK_FORMAT_R32G32_SFLOAT,
-            .offset     = offsetof(VERTEX_TYPE, tex),
+            .offset     = offsetof(GeneralVertex, tex),
         }
     };
 
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
     {
         terrain.Reset();
-        
+        //TODO: all quadrants
         const auto& verts    = cpuRes.terrain.quadrants[0][0].verts;
         const auto vertCount = cpuRes.terrain.quadrants[0][0].VERT_COUNT_TOTAL;
         terrain.Append(verts, vertCount);

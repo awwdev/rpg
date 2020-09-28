@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "res/Models/ModelView.hpp"
+#include "res/Models/Model.hpp"
 #include "com/Matrix.hpp"
 #include "com/Algorithms.hpp"
 
@@ -52,11 +52,11 @@ const ModelVertex MESH_CUBE [] {
     { { -1, 1,-1 }, {}, RED, {} },
 };
 
-const ModelView MODEL_CUBE {
-    .meshViews = com::Array<MeshView, MESH_VIEWS_MAX> {
-        MeshView { 
-            .blending  = Blending::Opaque, 
-            .vertPtr   = MESH_CUBE, 
+const Model MODEL_CUBE {
+    .meshes = com::Array<Mesh, MESH_COUNT_PER_MODEL> {
+        Mesh { 
+            .material  = { .type = Material::Type::Opaque },
+            .vertPtr   = MESH_CUBE,
             .vertCount = ArrayCount(MESH_CUBE) 
         }
     },
@@ -71,11 +71,11 @@ const ModelVertex MESH_QUAD [] {
     { { -1.0f,  1.0f, 0 }, {}, { RED }, {} },
 };
 
-const ModelView MODEL_QUAD {
-    .meshViews = com::Array<MeshView, MESH_VIEWS_MAX> {
-        MeshView { 
-            .blending  = Blending::Opaque, 
-            .vertPtr   = MESH_QUAD, 
+const Model MODEL_QUAD {
+    .meshes = com::Array<Mesh, MESH_COUNT_PER_MODEL> {
+        Mesh { 
+            .material  = { .type = Material::Type::Opaque },
+            .vertPtr   = MESH_QUAD,
             .vertCount = ArrayCount(MESH_QUAD) 
         }
     },
@@ -87,11 +87,11 @@ const ModelVertex MESH_TRIANGLE [] {
     { { -1.0f,  1.0f, 0 }, {}, { .8f, .2f, .2f, 1 }, {} },
 };
 
-const ModelView MODEL_TRIANGLE {
-    .meshViews = com::Array<MeshView, MESH_VIEWS_MAX> {
-        MeshView { 
-            .blending  = Blending::Opaque, 
-            .vertPtr   = MESH_TRIANGLE, 
+const Model MODEL_TRIANGLE {
+    .meshes = com::Array<Mesh, MESH_COUNT_PER_MODEL> {
+        Mesh { 
+            .material  = { .type = Material::Type::Opaque },
+            .vertPtr   = MESH_TRIANGLE,
             .vertCount = ArrayCount(MESH_TRIANGLE) 
         }
     },
@@ -138,11 +138,11 @@ const ModelVertex MESH_RING_16 [] {
     RING_SEGMENT(15, 16),
 };
 
-const ModelView MODEL_RING_16 {
-    .meshViews = com::Array<MeshView, MESH_VIEWS_MAX> {
-        MeshView { 
-            .blending  = Blending::Opaque, 
-            .vertPtr   = MESH_RING_16, 
+const Model MODEL_RING_16 {
+    .meshes = com::Array<Mesh, MESH_COUNT_PER_MODEL> {
+        Mesh { 
+            .material  = { .type = Material::Type::Opaque },
+            .vertPtr   = MESH_RING_16,
             .vertCount = ArrayCount(MESH_RING_16) 
         }
     },

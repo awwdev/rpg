@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
+#include "res/Models/Model.hpp"
 #include "res/Models/ModelType.hpp"
-#include "res/Models/ModelView.hpp"
 #include "res/Models/ModelPrimitives.hpp"
 
 #include "com/box/EnumMap.hpp"
@@ -14,7 +14,7 @@
 
 namespace rpg::res {
 
-const com::EnumMap<ModelType::HARDCODED_ENUM_END, ModelView> 
+const com::EnumMap<ModelType::HARDCODED_ENUM_END, Model> 
 MAP_MODELS_HARDCODED
 {
     { ModelType::PrimitiveCube,     MODEL_CUBE     },

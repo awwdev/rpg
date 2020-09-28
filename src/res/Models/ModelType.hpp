@@ -13,7 +13,7 @@ enum class ModelType : idx_t
     PrimitiveRing16,
 
     HARDCODED_ENUM_END,
-    KEEP_ENUMERATION = HARDCODED_ENUM_END - 1,
+    KEEP_ENUMERATION = HARDCODED_ENUM_END - 1, //DONT USE THIS
 
     Sword,
     Stone, 
@@ -21,7 +21,8 @@ enum class ModelType : idx_t
     Grass,
 
     ENUM_END,
-    LOADED_ENUM_END = ENUM_END - HARDCODED_ENUM_END
+    LOADED_ENUM_END = ENUM_END - HARDCODED_ENUM_END,
+    LOADED_ENUM_BEGIN = HARDCODED_ENUM_END,
 };
 
 }//ns

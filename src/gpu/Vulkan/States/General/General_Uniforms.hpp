@@ -13,7 +13,7 @@ struct General_Uniforms
 {
     enum Bindings : uint32_t {
         BindingMeta        = 0,
-        BindindModel       = 1,
+        BindingModelInstances       = 1,
         BindingSun         = 2,
         BindingShadowMap   = 3,
         ENUM_END
@@ -25,7 +25,7 @@ struct General_Uniforms
     using RD = RenderData_General;
 
     UniformBuffer<RD::Meta, 1> uboMeta;
-    StorageBuffer<RD::ModelData, RD::MODEL_DATA_COUNT_MAX> sboModels;
+    StorageBuffer<RD::ModelInstance, RD::MODEL_INST_MAX> sboModelInstances;
     VkSampler shadowMapSampler;
 
     void Create(Buffer& uboSun, Image& shadowMaps)
@@ -49,18 +49,18 @@ struct General_Uniforms
         };
 
         //? UBO MODELS
-        sboModels.Create();
-        infos[BindindModel] = {
+        sboModelInstances.Create();
+        infos[BindingModelInstances] = {
             .type = UniformInfo::Buffer,
             .binding {
-                .binding            = BindindModel,
-                .descriptorType     = sboModels.DESCRIPTOR_TYPE,
+                .binding            = BindingModelInstances,
+                .descriptorType     = sboModelInstances.DESCRIPTOR_TYPE,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
                 .pImmutableSamplers = nullptr,
             },
             .bufferInfo = {
-                .buffer = sboModels.activeBuffer->buffer,
+                .buffer = sboModelInstances.activeBuffer->buffer,
                 .offset = 0,
                 .range  = VK_WHOLE_SIZE,
             }
@@ -132,14 +132,15 @@ struct General_Uniforms
         uboMeta.Reset();
         uboMeta.Append(rdGeneral.meta);
 
-        sboModels.Reset();
-        sboModels.Append(rdGeneral.modelData);
+        sboModelInstances.Reset();
+        if (!rdGeneral.modelInstances.Empty())
+            sboModelInstances.Append(rdGeneral.modelInstances);
     }
 
     void Destroy()
     {
         uboMeta.Destroy();
-        sboModels.Destroy();
+        sboModelInstances.Destroy();
         descriptors.Destroy();
         vkDestroySampler(g_contextPtr->device, shadowMapSampler, nullptr);
         FOR_CARRAY(infos, i)

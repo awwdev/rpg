@@ -84,18 +84,18 @@ struct State_General
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.models.activeBuffer->buffer, vertices.offsets);
 
-        uint32_t instanceCount = 0;
-        FOR_CARRAY(rdGeneral.modelTypeData, i){
-            const auto  subMesh       = 0;
-            const auto& modelView     = resModels.modelViews[i]; //vertex data
-            const auto& modelTypeData = rdGeneral.modelTypeData[i];
-            const auto& vertexBegin   = modelView.meshViews[subMesh].vertBegin;
-            const auto& vertexCount   = modelView.meshViews[subMesh].vertCount;
-            if (modelTypeData.instanceCount > 0){
-                vkCmdDraw(cmdBuffer, vertexCount, modelTypeData.instanceCount, vertexBegin, instanceCount);
-                instanceCount += modelTypeData.instanceCount;
-            }
-        }
+        //uint32_t instanceCount = 0;
+        //FOR_CARRAY(rdGeneral.modelTypeData, i){
+        //    const auto  subMesh       = 0;
+        //    const auto& modelView     = resModels.modelViews[i]; //vertex data
+        //    const auto& modelTypeData = rdGeneral.modelTypeData[i];
+        //    const auto& vertexBegin   = modelView.meshViews[subMesh].vertBegin;
+        //    const auto& vertexCount   = modelView.meshViews[subMesh].vertCount;
+        //    if (modelTypeData.instanceCount > 0){
+        //        vkCmdDraw(cmdBuffer, vertexCount, modelTypeData.instanceCount, vertexBegin, instanceCount);
+        //        instanceCount += modelTypeData.instanceCount;
+        //    }
+        //}
 
         vkCmdEndRenderPass (cmdBuffer);
     };

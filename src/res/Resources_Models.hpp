@@ -3,10 +3,10 @@
 #pragma once
 #include "gpu/RenderData/RenderData_General.hpp"
 
+#include "res/Models/Model.hpp"
 #include "res/Models/ModelLoader.hpp"
 #include "res/Models/ModelPrimitives.hpp"
 #include "res/Models/ModelType.hpp"
-#include "res/Models/ModelView.hpp"
 #include "res/Models/ModelMaps.hpp"
 
 #include "com/box/Array.hpp"
@@ -16,54 +16,53 @@
 
 namespace rpg::res {
 
-
 struct Resources_Models
 {
-    com::Array<ModelVertex, gpu::RenderData_General::MODEL_VERT_COUNT_MAX> allVertices;
-    ModelView modelViews [(idx_t) ModelType::ENUM_END];
+    using RD = gpu::RenderData_General;
+
+    Model models [(idx_t) ModelType::ENUM_END];
+    com::Array<ModelVertex, RD::MODEL_VERT_MAX_ALL> allVertices;
 
     void Load()
     {
         allVertices.Clear();
-        FOR_CARRAY(modelViews, i)
-            modelViews[i] = {};
+        FOR_CARRAY(models, i)
+            models[i] = {};
 
-        idx_t modelViewIndex = 0;
-        idx_t vertCount = 0;
-        
         //? MODELS HARDCODED
         {
-            constexpr idx_t ENUM_END = (idx_t) ModelType::HARDCODED_ENUM_END;
-            const auto& map = MAP_MODELS_HARDCODED;
+            idx_t constexpr enumEnd = (idx_t) ModelType::HARDCODED_ENUM_END;
+            auto const& map = MAP_MODELS_HARDCODED;
+            dbg::Assert(map.usedIndices.Count() == enumEnd, "mapping missing");
 
-            dbg::Assert(map.usedIndices.Count() == ENUM_END, "mapping missing");
-            for(idx_t i = 0; i < ENUM_END; ++i) {
-                const auto& modelView = map.Get(i);
-                const auto& meshView  = modelView.meshViews[0]; //assumes one mesh
-                allVertices.AppendArray(meshView.vertPtr, meshView.vertCount);   
-                modelViews[modelViewIndex] = modelView;
-                modelViews[modelViewIndex].meshViews[0].vertBegin = vertCount; //TODO: submehes
-                ++modelViewIndex;
-                vertCount += meshView.vertCount;
+            for(idx_t modelType = 0; modelType < enumEnd; ++modelType) {
+                auto const& model = map.Get(modelType);
+                models[modelType] = model;
+
+                FOR_ARRAY(model.meshes, meshIdx){
+                    const auto vertCountPrev = allVertices.Count();
+                    const auto& mesh = model.meshes[meshIdx];
+                    allVertices.AppendArray(mesh.vertPtr, mesh.vertCount);   
+                    //point to the big vertex array instead of const storage
+                    models[modelType].meshes[meshIdx].vertPtr = &allVertices[vertCountPrev];
+                }
             }
         }
 
         //? MODELS LOADED
         {
-            constexpr idx_t ENUM_END = (idx_t) ModelType::LOADED_ENUM_END;
-            const auto& map = MAP_MODELS_LOADED;
+            idx_t constexpr enumEnd = (idx_t) ModelType::LOADED_ENUM_END;
+            auto const& map = MAP_MODELS_LOADED;
+            dbg::Assert(map.usedIndices.Count() == enumEnd, "mapping missing");
 
-            dbg::Assert(map.usedIndices.Count() == ENUM_END, "mapping missing");
-            for(idx_t i = 0; i < ENUM_END; ++i) { //offset on map!
-                chars_t path = map.Get(i).data;
-                const auto modelView = LoadModel(allVertices, path); //appends
-                modelViews[modelViewIndex] = modelView;
-                modelViews[modelViewIndex].meshViews[0].vertBegin = vertCount; //TODO: submehes
-                ++modelViewIndex;
-                vertCount += modelView.meshViews[0].vertCount;
+            for(idx_t modelType = 0; modelType < enumEnd; ++modelType) { //OFFSET!
+                auto const& path = map.Get(modelType);
+                const auto model = LoadModel(allVertices, path.data);
+                idx_t const modelTypeOffset = modelType + (idx_t) ModelType::LOADED_ENUM_BEGIN;
+                models[modelTypeOffset] = model;
             }
         }
-
+        
     }
 
 };
