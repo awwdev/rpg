@@ -33,7 +33,7 @@ struct RenderData_General
         //material settings
     };
 
-    struct ModelTypeData 
+    struct MeshStats
     {
         idx_t instanceCount;
     };
@@ -41,11 +41,15 @@ struct RenderData_General
     //? DATA
     Meta meta;
     com::Array<ModelInstance, MODEL_INST_MAX> modelInstances;
+    MeshStats meshStats [(idx_t) res::ModelType::ENUM_END];
 
     void Clear()
     {
         meta = {};
         modelInstances.Clear();
+        FOR_CARRAY(meshStats, modelTypeIdx)
+            meshStats[modelTypeIdx] = {};
+
     }
 };
 

@@ -43,18 +43,19 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
         const auto rotMat = QuatToMat(q2);
 
         //translation
-        auto transMat = scaleMat * rotMat;
-        transMat[3][0] = t.x;
-        transMat[3][1] = t.y;
-        transMat[3][2] = t.z;
+        auto combinedMat = scaleMat * rotMat;
+        combinedMat[3][0] = t.x;
+        combinedMat[3][1] = t.y;
+        combinedMat[3][2] = t.z;
 
         //render data
-        
-        //gpu::RenderData_General::ModelData sboModel {};
-        //sboModel.transform = transMat;
-        //const auto modelType = (idx_t) renderComponent.modelType;
-        //renderData.general.modelData.Append(sboModel);
-        //renderData.general.modelTypeData[modelType].instanceCount += 1;
+        const auto modelType = (idx_t) renderComponent.modelType;
+
+        gpu::RenderData_General::ModelInstance modelInstance{};
+        modelInstance.transform = combinedMat;
+
+        //renderData.general.meshStats[modelType].instanceCount += 1;
+        //renderData.general.modelInstances.Append(modelInstance);
     }
 }
 

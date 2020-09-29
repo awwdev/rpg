@@ -21,6 +21,7 @@ struct Resources_Models
     using RD = gpu::RenderData_General;
 
     Model models [(idx_t) ModelType::ENUM_END];
+
     com::Array<ModelVertex, RD::MODEL_VERT_MAX_ALL> allVertices;
 
     void Load()
@@ -42,9 +43,7 @@ struct Resources_Models
                 FOR_ARRAY(model.meshes, meshIdx){
                     const auto vertCountPrev = allVertices.Count();
                     const auto& mesh = model.meshes[meshIdx];
-                    allVertices.AppendArray(mesh.vertPtr, mesh.vertCount);   
-                    //point to the big vertex array instead of const storage
-                    models[modelType].meshes[meshIdx].vertPtr = &allVertices[vertCountPrev];
+                  
                 }
             }
         }
@@ -57,9 +56,9 @@ struct Resources_Models
 
             for(idx_t modelType = 0; modelType < enumEnd; ++modelType) { //OFFSET!
                 auto const& path = map.Get(modelType);
-                const auto model = LoadModel(allVertices, path.data);
-                idx_t const modelTypeOffset = modelType + (idx_t) ModelType::LOADED_ENUM_BEGIN;
-                models[modelTypeOffset] = model;
+                //const auto model = LoadModel(allVerts, path.data);
+
+
             }
         }
         

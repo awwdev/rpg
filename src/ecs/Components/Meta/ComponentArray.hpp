@@ -7,8 +7,8 @@
 #include "ecs/EntityID.hpp"
 #include "ecs/Components/Meta/ComponentTypes.hpp"
 
-namespace rpg::ecs
-{
+namespace rpg::ecs {
+    
 template<class COMPONENT, auto MAX_COUNT = MAX_ENTITY_COUNT>
 struct ComponentArray
 {

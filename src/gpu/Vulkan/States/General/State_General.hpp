@@ -84,6 +84,16 @@ struct State_General
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.models.activeBuffer->buffer, vertices.offsets);
 
+        uint32_t meshTypeIdx = 0;
+        //const auto& vertSegment = resModels.allVerts.segments[meshTypeIdx];
+
+
+        //const auto& rdGeneral = renderData.general;
+        //FOR_CARRAY(rdGeneral.modelTypeStats, modelTypeIdx)
+        //{
+        //    
+        //}
+
         //uint32_t instanceCount = 0;
         //FOR_CARRAY(rdGeneral.modelTypeData, i){
         //    const auto  subMesh       = 0;
