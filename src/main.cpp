@@ -14,11 +14,24 @@
 #include "res/_Old/CpuResources.hpp"
 
 
+#include "res/Prefabs/PrefabLoader2.hpp"
+
 using namespace rpg;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int)
 {
     dbg::Console console{};
+    {
+        
+    }
+    system("pause");
+    std::exit(0);
+
+
+
+
+
+
     com::mem::GlobalAllocate();
 
     {

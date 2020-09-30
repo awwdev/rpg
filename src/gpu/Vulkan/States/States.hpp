@@ -43,7 +43,7 @@ struct States
         VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             
         shadow  .Record(cmdBuffer, general);
-        general .Record(cmdBuffer, renderData.general, resources.models);
+        general .Record(cmdBuffer, renderData.general);
         post    .Record(cmdBuffer, cmdBufferIdx);
         gui     .Record(cmdBuffer, cmdBufferIdx);
             

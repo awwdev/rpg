@@ -23,6 +23,7 @@ auto LoadModel(com::Array<ModelVertex, N>& vertices, chars_t path) -> Model
     //? MESHES
     for(auto meshIdx = 0; meshIdx < meshCount; ++meshIdx)
     {
+        //assumes vertices are filled with primitives beforehand so there is no array assert on calling Last()
         Mesh& mesh = model.meshes.Append(Mesh{ .vertPtr = &vertices.Last() + 1, .vertCount = 0 });
 
         constexpr auto BUFFER_MAX = 150;

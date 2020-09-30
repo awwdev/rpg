@@ -20,8 +20,7 @@ struct Resources_Models
 {
     using RD = gpu::RenderData_General;
 
-    Model models [(idx_t) ModelType::ENUM_END];
-
+    Model models [(idx_t) ModelType::ENUM_END]; //allVertices layout info
     com::Array<ModelVertex, RD::MODEL_VERT_MAX_ALL> allVertices;
 
     void Load()
@@ -36,14 +35,16 @@ struct Resources_Models
             auto const& map = MAP_MODELS_HARDCODED;
             dbg::Assert(map.usedIndices.Count() == enumEnd, "mapping missing");
 
-            for(idx_t modelType = 0; modelType < enumEnd; ++modelType) {
-                auto const& model = map.Get(modelType);
-                models[modelType] = model;
+            for(idx_t modelTypeIdx = 0; modelTypeIdx < enumEnd; ++modelTypeIdx) {
+                auto const& model = map.Get(modelTypeIdx);
+                models[modelTypeIdx] = model;
 
                 FOR_ARRAY(model.meshes, meshIdx){
                     const auto vertCountPrev = allVertices.Count();
                     const auto& mesh = model.meshes[meshIdx];
-                  
+                    allVertices.AppendArray(mesh.vertPtr, mesh.vertCount);
+                    //point to the vertex array and not the const storage
+                    models[modelTypeIdx].meshes[meshIdx].vertPtr = &allVertices[vertCountPrev];
                 }
             }
         }
@@ -54,11 +55,11 @@ struct Resources_Models
             auto const& map = MAP_MODELS_LOADED;
             dbg::Assert(map.usedIndices.Count() == enumEnd, "mapping missing");
 
-            for(idx_t modelType = 0; modelType < enumEnd; ++modelType) { //OFFSET!
-                auto const& path = map.Get(modelType);
-                //const auto model = LoadModel(allVerts, path.data);
-
-
+            for(idx_t modelTypeIdx = 0; modelTypeIdx < enumEnd; ++modelTypeIdx) { //OFFSET!
+                auto const& path = map.Get(modelTypeIdx);
+                const auto model = LoadModel(allVertices, path.data); //loads all meshes
+                const auto modelTypeIdxOffsetted = modelTypeIdx + (idx_t) ModelType::LOADED_ENUM_BEGIN;
+                models[modelTypeIdxOffsetted] = model;
             }
         }
         

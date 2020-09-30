@@ -7,11 +7,10 @@
 
 namespace rpg::res {
 
-constexpr idx_t MESH_COUNT_PER_MODEL = 4;
+constexpr idx_t MESH_COUNT_PER_MODEL = 10;
 constexpr idx_t BONE_COUNT_PER_MODEL = 10;
 
 using ModelVertex = gpu::RenderData_General::Vertex;
-
 
 struct Material
 {
@@ -26,7 +25,7 @@ struct Bone
 struct Mesh
 {
     Material material;
-    ModelVertex const* vertPtr;
+    ModelVertex const* vertPtr; //points into vertex array of model resources struct
     idx_t vertCount;
 };
 

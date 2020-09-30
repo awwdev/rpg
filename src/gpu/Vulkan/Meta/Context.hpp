@@ -42,6 +42,8 @@ struct VkArray
     const T& operator[](const uint32_t i) const { return data[i]; }
 };
 
+
+
 /*
 //use this to give a resource a name to view in renderdoc
 const VkDebugUtilsObjectNameInfoEXT nameInfo

@@ -3,8 +3,8 @@
 #pragma once
 #include "gpu/Vulkan/Meta/Context.hpp"
 #include "gpu/Vulkan/Objects/BufferExt.hpp"
+#include "gpu/Vulkan/Helper/Utils.hpp"
 #include "gpu/RenderData/RenderData.hpp"
-#include "gpu/RenderData/_Old/RenderStructs.hpp"
 #include "com/box/Array.hpp"
 
 #include "res/_Old/CpuResources.hpp"
@@ -18,8 +18,9 @@ struct General_Vertices
     using RD = RenderData_General;
     using GeneralVertex = RD::Vertex;
 
-    VertexBuffer<GeneralVertex, RD::TERRA_VERT_MAX_ALL> terrain;
-    VertexBuffer<GeneralVertex, RD::MODEL_VERT_MAX_ALL> models;
+    VertexBuffer<GeneralVertex, RD::TERRA_VERT_MAX_ALL> vboTerrain;
+    VertexBuffer<GeneralVertex, RD::MODEL_VERT_MAX_ALL> vboMeshes;
+    com::Array<VertexRange, RD::MESH_MAX_ALL> vboMeshesLayout; 
     
     VkDeviceSize offsets [1] = {};
     static constexpr VkVertexInputBindingDescription bindings []
@@ -61,28 +62,40 @@ struct General_Vertices
 
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
     {
-        terrain.Reset();
+        vboTerrain.Reset();
         //TODO: all quadrants
         const auto& verts    = cpuRes.terrain.quadrants[0][0].verts;
         const auto vertCount = cpuRes.terrain.quadrants[0][0].VERT_COUNT_TOTAL;
-        terrain.Append(verts, vertCount);
+        vboTerrain.Append(verts, vertCount);
 
         renderData.debugInfo.vboData_general_vertCount = vertCount;
     }
 
     void Create(VkCommandPool cmdPool, const res::Resources_Models& resModels)
     {
-        terrain.Create();
+        vboTerrain.Create();
 
-        models.Create();
-        models.Append(resModels.allVertices);
-        models.Bake(cmdPool);
+        vboMeshes.Create();
+        vboMeshes.Append(resModels.allVertices);
+        vboMeshes.Bake(cmdPool);
+
+        //model vbo layout
+        uint32_t vertIndex = 0;
+        FOR_CARRAY(resModels.models, i){
+            const auto& model = resModels.models[i];
+            FOR_ARRAY(model.meshes, m) {
+                const auto& mesh = model.meshes[m];
+                vboMeshesLayout.Append(vertIndex, (uint32_t) mesh.vertCount);
+                vertIndex += mesh.vertCount;
+            }
+        }
     }
 
     void Destroy()
     {
-        terrain.Destroy();
-        models.Destroy();
+        vboTerrain.Destroy();
+        vboMeshes.Destroy();
+        vboMeshesLayout.Clear();
     }
     ~General_Vertices()
     {

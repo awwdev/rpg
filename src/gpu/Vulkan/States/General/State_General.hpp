@@ -66,23 +66,23 @@ struct State_General
         vertices.Update(renderData, cpuRes);
     }
 
-    void Record(VkCommandBuffer cmdBuffer, RenderData_General& rdGeneral, const res::Resources_Models& resModels)
+    void Record(VkCommandBuffer cmdBuffer, RenderData_General& rdGeneral)
     {
         vkCmdBeginRenderPass    (cmdBuffer, &renderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 
                                  uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
 
         //terrain
-        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.terrain.activeBuffer->buffer, vertices.offsets);
+        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.vboTerrain.activeBuffer->buffer, vertices.offsets);
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipeline.pipeline);
-        vkCmdDraw               (cmdBuffer, vertices.terrain.count, 1, 0, 0);
+        vkCmdDraw               (cmdBuffer, vertices.vboTerrain.count, 1, 0, 0);
         //terrain wire
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainWirePipeline.pipeline);
-        vkCmdDraw               (cmdBuffer, vertices.terrain.count, 1, 0, 0);
+        vkCmdDraw               (cmdBuffer, vertices.vboTerrain.count, 1, 0, 0);
 
         //models 
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
-        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.models.activeBuffer->buffer, vertices.offsets);
+        vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.vboMeshes.activeBuffer->buffer, vertices.offsets);
 
         uint32_t meshTypeIdx = 0;
         //const auto& vertSegment = resModels.allVerts.segments[meshTypeIdx];

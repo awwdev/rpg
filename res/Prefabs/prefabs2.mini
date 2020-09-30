@@ -1,0 +1,18 @@
+# PREFAB LANGUAGE
+# THE PARSER IS VERY ERROR-PRONE, SO WATCH WHITESPACE
+#   # comment
+#   @ prefab 
+#   § child
+#   = key value pair
+#   , multiple values
+
+@ Sword
+? Transform
++ scale = 1,1,1
+§ Grib
+    ? RenderData
+    + material = wood
+§ Blade
+    ? RenderData
+    + material = metallic
+    + reflect = 1

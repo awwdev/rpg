@@ -10,10 +10,12 @@ namespace rpg::ecs {
 struct C_RenderData
 {
     res::ModelType modelType;
+    idx_t meshIdx;
 
     //defaults
-    C_RenderData(const res::ModelType& pModelType = {})
+    C_RenderData(const res::ModelType& pModelType = {}, const idx_t pMeshIdx = {})
         : modelType { pModelType }
+        , meshIdx   { pMeshIdx   }
     {}
 
     //parsing

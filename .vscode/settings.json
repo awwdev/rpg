@@ -409,16 +409,20 @@
 			"regexFlags": "g", 
 			"filterFileRegex": ".*\\.mini", 
 			"decorations": [
-				{ "color": "#CC5555" },
+				{ 
+					"color": "#CC5555",
+					"fontWeight": "bold"
+				},
 			]
 		},
-		"(\\+.*=)": {
+		"(§.*)": {
 			"regexFlags": "g", 
 			"filterFileRegex": ".*\\.mini", 
 			"decorations": [
-				{ "color": "#6f96df" },
-				{ "color": "#6f96df" },
-				{ "color": "#6f96df" },
+				{ 
+					"color": "#cc8010",
+					"fontWeight": "bold"
+				},
 			]
 		},
 		"(\\?.*)": {

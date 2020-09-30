@@ -11,7 +11,8 @@ struct RenderData_General
 {
     static constexpr uint32_t TERRA_VERT_MAX_ALL = 1'000'000;
     static constexpr uint32_t MODEL_VERT_MAX_ALL = 1'000'000;
-    static constexpr uint32_t MODEL_INST_MAX     =     1'000;
+    static constexpr uint32_t MESH_INSTANCES_MAX =     1'000;
+    static constexpr uint32_t MESH_MAX_ALL       =       100;
 
     struct Vertex
     {
@@ -27,28 +28,28 @@ struct RenderData_General
         alignas(64) com::Mat4f proj;
     };
 
-    struct ModelInstance
+    struct MeshInstance
     {
         com::Mat4f transform;
         //material settings
     };
 
-    struct MeshStats
+    struct MeshInstancesStats
     {
         idx_t instanceCount;
     };
 
     //? DATA
     Meta meta;
-    com::Array<ModelInstance, MODEL_INST_MAX> modelInstances;
-    MeshStats meshStats [(idx_t) res::ModelType::ENUM_END];
+
+    com::Array<MeshInstance, MESH_INSTANCES_MAX> meshInstances;
+    com::Array<MeshInstancesStats, MESH_MAX_ALL> meshInstancesStats;
 
     void Clear()
     {
         meta = {};
-        modelInstances.Clear();
-        FOR_CARRAY(meshStats, modelTypeIdx)
-            meshStats[modelTypeIdx] = {};
+        meshInstances.Clear();
+        meshInstancesStats.Clear();
 
     }
 };

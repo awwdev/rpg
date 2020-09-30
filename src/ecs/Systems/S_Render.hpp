@@ -18,7 +18,7 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
     {
         const auto entityID = renderComponents.entityLookup[i];
 
-        const auto& renderComponent = renderComponents.dense[i];
+        const auto& renderComponent    = renderComponents.dense[i];
         const auto& transformComponent = transformComponents.Get(entityID);
 
         const auto& s = transformComponent.scale;
@@ -51,11 +51,16 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
         //render data
         const auto modelType = (idx_t) renderComponent.modelType;
 
-        gpu::RenderData_General::ModelInstance modelInstance{};
+        gpu::RenderData_General::MeshInstance modelInstance{};
         modelInstance.transform = combinedMat;
 
+        //! render needs to sort based on meshes
+        //! prefabs are based on modeltype but would need to create entities per submesh
+        //! meshIdx would be a combination of model type + submesh idx
+        //! need of parenting
+
         //renderData.general.meshStats[modelType].instanceCount += 1;
-        //renderData.general.modelInstances.Append(modelInstance);
+        //renderData.general.meshInstances.Append(modelInstance);
     }
 }
 

@@ -25,7 +25,7 @@ struct General_Uniforms
     using RD = RenderData_General;
 
     UniformBuffer<RD::Meta, 1> uboMeta;
-    StorageBuffer<RD::ModelInstance, RD::MODEL_INST_MAX> sboModelInstances;
+    StorageBuffer<RD::MeshInstance, RD::MESH_INSTANCES_MAX> sboModelInstances;
     VkSampler shadowMapSampler;
 
     void Create(Buffer& uboSun, Image& shadowMaps)
@@ -133,8 +133,8 @@ struct General_Uniforms
         uboMeta.Append(rdGeneral.meta);
 
         sboModelInstances.Reset();
-        if (!rdGeneral.modelInstances.Empty())
-            sboModelInstances.Append(rdGeneral.modelInstances);
+        if (!rdGeneral.meshInstances.Empty())
+            sboModelInstances.Append(rdGeneral.meshInstances);
     }
 
     void Destroy()

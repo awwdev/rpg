@@ -1,6 +1,6 @@
 @echo off ^
- & mkdir Build\\Debug ^
- & xcopy /s /y /d res\* Build\\Debug\\res\* ^
+ & mkdir out\\Debug ^
+ & xcopy /s /y /d res\* out\\Debug\\res\* ^
  & call G:\DEV2020\buildtools\msvc\VC\Auxiliary\Build\vcvars64.bat ^
  & cl ^
 /std:c++latest ^
@@ -11,9 +11,9 @@
 /GR ^
 /W1 ^
 /D _UNICODE /D UNICODE /D _STATIC_CPPLIB /D _HAS_EXCEPTIONS=0 ^
-/Fo: Build\\Debug\\Obj\\ ^
-/Fe: Build\\Debug\\main_debug.exe ^
-/Fd: Build\\Debug\\ ^
+/Fo: out\\Debug\\Obj\\ ^
+/Fe: out\\Debug\\main_debug.exe ^
+/Fd: out\\Debug\\ ^
 /I %2 ^
 %4 ^
 user32.lib ^
