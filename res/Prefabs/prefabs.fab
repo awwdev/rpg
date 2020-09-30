@@ -9,10 +9,10 @@
 @ Sword
 ? Transform
 + scale = 1,1,1
-§ Grib
+& Grib
     ? RenderData
     + material = wood
-§ Blade
+& Blade
     ? RenderData
     + material = metallic
     + reflect = 1

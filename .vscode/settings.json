@@ -400,14 +400,14 @@
 		//? MINI LANGUAGE
 		"(#.*)": {
 			"regexFlags": "g", 
-			"filterFileRegex": ".*\\.mini", 
+			"filterFileRegex": ".*\\.fab", 
 			"decorations": [
 				{ "color": "#555561" },
 			]
 		},
 		"(@.*)": {
 			"regexFlags": "g", 
-			"filterFileRegex": ".*\\.mini", 
+			"filterFileRegex": ".*\\.fab", 
 			"decorations": [
 				{ 
 					"color": "#CC5555",
@@ -415,9 +415,9 @@
 				},
 			]
 		},
-		"(§.*)": {
+		"(&.*)": {
 			"regexFlags": "g", 
-			"filterFileRegex": ".*\\.mini", 
+			"filterFileRegex": ".*\\.fab", 
 			"decorations": [
 				{ 
 					"color": "#cc8010",
@@ -427,7 +427,7 @@
 		},
 		"(\\?.*)": {
 			"regexFlags": "g", 
-			"filterFileRegex": ".*\\.mini", 
+			"filterFileRegex": ".*\\.fab", 
 			"decorations": [
 				{ "color": "#e7ce8a" },
 			]

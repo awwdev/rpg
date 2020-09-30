@@ -5,7 +5,7 @@
         "name": "g++.exe - Build and debug active file",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${workspaceFolder}/Build/Debug/rpg_debug.exe",
+        "program": "${workspaceFolder}/out/Debug/rpg_debug.exe",
         "stopAtEntry": true,
         "cwd": "${workspaceFolder}",
         "environment": [],
