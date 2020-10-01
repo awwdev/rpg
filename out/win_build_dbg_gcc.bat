@@ -8,9 +8,8 @@
 -Wall -Wextra ^
 -Wno-missing-field-initializers ^
 -Wno-unused-variable ^
--Wunused-but-set-variable ^
 -Wno-unused-parameter ^
--Wunused-but-set-variable ^
+-Wno-unused-but-set-variable ^
 -g ^
 -municode ^
 -std=c++2a ^

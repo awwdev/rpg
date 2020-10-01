@@ -2,8 +2,8 @@
 
 #pragma once
 #include "ecs/EntityID.hpp"
-#include "ecs/Prefabs/PrefabTypes.hpp"
-#include "ecs/Components/Meta/ComponentArray.hpp"
+#include "ecs/Prefabs/_Old/PrefabTypes.hpp"
+#include "ecs/ComponentsMeta/ComponentArray.hpp"
 #include "dbg/Assert.hpp"
 #include "com/mem/Allocator.hpp"
 

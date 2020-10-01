@@ -7,7 +7,7 @@
 #include "gpu/Meta/Cameras.hpp"
 #include "res/Terrain/TerrainQuadrant.hpp"
 #include "res/Terrain/TerrainSerialization.hpp"
-#include "ecs/Prefabs/PrefabTypes.hpp"
+#include "ecs/Prefabs/_Old/PrefabTypes.hpp"
 #include "com/Algorithms.hpp"
 
 #include <cstdlib> //rand
@@ -151,8 +151,8 @@ struct Terrain
     void InitGizmos(ecs::ECS& ecs)
     {
         settings.gizmoID = ecs.AddEntity();
-        ecs.arrays.AddComponent<ecs::ComponentEnum::RenderComponent>(settings.gizmoID, res::ModelType::PrimitiveRing16);
-        ecs.arrays.AddComponent<ecs::ComponentEnum::TransformComponent> (settings.gizmoID);
+        //ecs.arrays.AddComponent<ecs::ComponentEnum::RenderComponent>(settings.gizmoID, res::ModelType::PrimitiveRing16);
+        //ecs.arrays.AddComponent<ecs::ComponentEnum::TransformComponent> (settings.gizmoID);
     }
 
     void UpdateGizmos(ecs::ECS& ecs)

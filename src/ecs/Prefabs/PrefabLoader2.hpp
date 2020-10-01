@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ecs/EntityID.hpp"
-#include "ecs/Components/Meta/ComponentEnum.hpp"
+#include "ecs/ComponentsMeta/ComponentEnum.hpp"
+#include "ecs/ComponentsMeta/ComponentData.hpp"
 #include "ecs/Prefabs/PrefabEnum.hpp"
 #include "res/Models/MeshEnum.hpp"
 #include "dbg/Assert.hpp"
@@ -97,6 +97,8 @@ inline void LoadPrefabs(chars_t path)
 
         if (lineEnum == LineEnum::ComponentData)   
         {
+            auto pair = ConvertToComponentDataPair(line);
+            //const auto pair = ecs::ConvertToComponentDataStringPair(line);
             //TODO: split component key value
             //if (auto const componentDataEnum = ecs::COMPONENTDATA_STR_TO_ENUM.GetOptional(line)){
             //    dbg::LogInfo("ComponentData", (int)*componentDataEnum);

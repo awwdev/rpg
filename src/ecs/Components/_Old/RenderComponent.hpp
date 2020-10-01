@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ecs/Components/Meta/ComponentEnum.hpp"
+#include "ecs/ComponentsMeta/ComponentEnum.hpp"
 #include "res/Models/ModelMaps.hpp"
 #include "dbg/Logger.hpp"
 

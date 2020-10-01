@@ -8,17 +8,15 @@
 # whitespace is fine
 
 @ Sword
-    ? TransformComponent
+    ? MainComponent
         + Children = Sword_Grib, Sword_Blade
 
 @ Sword_Grib
-    ? TransformComponent
-    ? RenderComponent
+    ? MainComponent
         + Mesh = sword_grib
         + Material = wood
     
 @ Sword_Blade
-    ? TransformComponent
-    ? RenderComponent
+    ? MainComponent
         + Mesh = sword_blade
         + Material = metallic

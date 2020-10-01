@@ -2,7 +2,7 @@
 
 #pragma once
 #include "com/box/StringMap.hpp"
-#include "ecs/Components/Meta/ComponentParsing.hpp"
+#include "ecs/ComponentsMeta/_Old/ComponentParsing.hpp"
 
 namespace rpg::res {
 

@@ -3,8 +3,8 @@
 #pragma once
 #include "com/box/Bitset.hpp"
 #include "ecs/EntityID.hpp"
-#include "ecs/Components/Meta/ComponentArrays.hpp"
-#include "ecs/Prefabs/PrefabTypes.hpp"
+#include "ecs/ComponentsMeta/ComponentArrays.hpp"
+#include "ecs/Prefabs/_Old/PrefabTypes.hpp"
 
 namespace rpg::ecs {
 

@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ecs/Components/Meta/ComponentArray.hpp"
-#include "ecs/Components/RenderComponent.hpp"
-#include "ecs/Components/TransformComponent.hpp"
+#include "ecs/ComponentsMeta/ComponentArray.hpp"
+#include "ecs/Components/_Old/RenderComponent.hpp"
+#include "ecs/Components/_Old/TransformComponent.hpp"
 
 namespace rpg::ecs {
 
@@ -31,8 +31,8 @@ struct ComponentArrays
         signatures[entityID].Set(TYPE, true);
 
         //? COMPONENT ADDING
-        if constexpr(TYPE == ComponentEnum::TransformComponent)  return transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
-        if constexpr(TYPE == ComponentEnum::RenderComponent) return renderComponents.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+        //if constexpr(TYPE == ComponentEnum::TransformComponent)  return transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+        //if constexpr(TYPE == ComponentEnum::RenderComponent) return renderComponents.AddComponent(entityID, std::forward<CtorArgs>(args)...);
     }
 
     template<class... CtorArgs>
@@ -43,8 +43,8 @@ struct ComponentArrays
         //? COMPONENT ADDING
         switch(componentType)
         {
-            case ComponentEnum::RenderComponent: renderComponents.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
-            case ComponentEnum::TransformComponent:  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
+            //case ComponentEnum::RenderComponent: renderComponents.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
+            //case ComponentEnum::TransformComponent:  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
             default: break;
         }
     }
