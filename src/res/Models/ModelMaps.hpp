@@ -9,9 +9,6 @@
 #include "com/box/StringMap.hpp"
 #include "com/box/String.hpp"
 
-#include "ecs/ComponentsMeta/_Old/ComponentParsing.hpp"
-
-
 namespace rpg::res {
 
 const com::EnumMap<ModelType::HARDCODED_ENUM_END, Model> 

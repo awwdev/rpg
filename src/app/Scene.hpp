@@ -3,7 +3,7 @@
 #pragma once
 
 #include "ecs/ECS.hpp"
-#include "ecs/Systems/S_Render.hpp"
+#include "ecs/Systems/RenderSystem.hpp"
 
 #include "gpu/RenderData/RenderData.hpp"
 #include "gpu/Meta/Sun.hpp"
@@ -67,7 +67,7 @@ struct GameScene
         sun.Update(ecs, dt, renderData);
 
         //? ECS
-        ecs::S_Render(ecs.arrays, dt, renderData);
+        ecs::RenderSystem(ecs.arrays, dt, renderData);
     }
 
 };

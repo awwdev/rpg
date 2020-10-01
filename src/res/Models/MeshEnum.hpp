@@ -1,11 +1,12 @@
 //https://github.com/awwdev
 
 #pragma once
+#include "com/Types.hpp"
 #include "com/box/StringMap.hpp"
 
 namespace rpg::res {
 
-enum class MeshEnum
+enum class MeshEnum : u8
 {
     Sword_Grib,
     Sword_Blade,

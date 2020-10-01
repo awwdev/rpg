@@ -9,7 +9,7 @@
 
 namespace rpg::ecs {
     
-inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
+inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
 {
     //const auto& renderComponents    = arrays.renderComponents;
     //const auto& transformComponents = arrays.transforms;
