@@ -147,7 +147,8 @@ struct BlockPtr
     }
 };
 
-template<class T, class... CtorArgs, typename = std::enable_if_t<!std::is_array_v<T>>> //does not allow arrays, use a struct
+//does not allow arrays, use a struct (convention: struct Arr)
+template<class T, class... CtorArgs, typename = std::enable_if_t<!std::is_array_v<T>>> 
 auto ClaimBlock(CtorArgs&&... args)
 {
     struct FittingBlockSize { idx_t arrayIdx; idx_t blockId; }; //blockId == bitIdx

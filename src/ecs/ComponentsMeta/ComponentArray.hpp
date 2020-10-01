@@ -13,8 +13,8 @@ template<class COMPONENT, auto MAX_COUNT = MAX_ENTITY_COUNT>
 struct ComponentArray
 {
     com::Array<COMPONENT, MAX_COUNT> dense;
-    ID componentLookup [MAX_COUNT];
-    ID entityLookup    [MAX_COUNT];
+    ID componentLookup [(idx_t) MAX_COUNT];
+    ID entityLookup    [(idx_t) MAX_COUNT];
 
     auto*       GetOptional(const ID entityID)       { return componentLookup[entityID] == NONE ? nullptr : &dense[componentLookup[entityID]]; }
     const auto* GetOptional(const ID entityID) const { return componentLookup[entityID] == NONE ? nullptr : &dense[componentLookup[entityID]]; }

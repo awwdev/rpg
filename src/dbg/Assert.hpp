@@ -16,8 +16,9 @@ inline void DebugBreak()
     BringWindowToTop(GetConsoleWindow()); 
 }
 
+//DO NOT EXCLUDE THIS ASSERT VIA CONSTEXPR FLAG (OR MACRO) BUT DEFINE WRAPPER
 template<class T>
-inline void Assert(const bool expression, const T& msg) 
+void Assert(const bool expression, const T& msg) 
 { 
     if (!expression)  {
         dbg::LogError(msg);

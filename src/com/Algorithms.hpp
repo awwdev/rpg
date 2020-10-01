@@ -131,11 +131,11 @@ constexpr T Ease(const T val, const T p = 2)
 
 //? STRLEN
 
-idx_t StrLen(chars_t str)
+inline auto StrLen(chars_t str)
 {
-    idx_t i = 0;
-    while(str[i] != '\0') ++i;
-    return i;
+    idx_t len = 0;
+    while(str[len] != '\0') ++len;
+    return len;
 }
 
 }//ns

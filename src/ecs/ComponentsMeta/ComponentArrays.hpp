@@ -10,7 +10,7 @@ namespace rpg::ecs {
 template<auto MAX_COUNT = MAX_ENTITY_COUNT> //! could be more on a 1->n relationship
 struct ComponentArrays
 {
-    com::Bitset<ComponentEnum::ENUM_END> signatures[MAX_COUNT];
+    com::Bitset<ComponentEnum::ENUM_END> signatures[(idx_t) MAX_COUNT];
 
     //? COMPONENT ARRAYS
     ComponentArray<TransformComponent, MAX_COUNT>  transforms;
