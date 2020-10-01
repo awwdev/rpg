@@ -27,9 +27,9 @@ struct GUI_Level
 
     GUI_Level()
     {
-        FOR_STRING_MAP_BEGIN_CONST(ecs::PREFAB_STR_TO_ENUM, item)
-            prefabList.items.Append(item.key);
-        FOR_STRING_MAP_END
+        //FOR_STRING_MAP_BEGIN_CONST(ecs::PREFAB_STR_TO_ENUM, item)
+        //    prefabList.items.Append(item.key);
+        //FOR_STRING_MAP_END
 
         {
             auto& row = table.table.Append();
@@ -53,7 +53,7 @@ struct GUI_Level
         table       .Update(renderData, wnd);
         prefabList  .Update(renderData, wnd);
 
-        cpuRes.terrain.settings.prefabType = (ecs::PrefabType) prefabList.activeIdx;
+        //cpuRes.terrain.settings.prefabType = (ecs::PrefabType) prefabList.activeIdx;
         
     }
 };

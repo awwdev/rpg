@@ -4,7 +4,7 @@
 #include "com/box/Bitset.hpp"
 #include "ecs/EntityID.hpp"
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
-#include "ecs/Prefabs/_Old/PrefabTypes.hpp"
+#include "ecs/Prefabs/PrefabEnum.hpp"
 
 namespace rpg::ecs {
 
@@ -12,7 +12,7 @@ struct ECS
 {
     com::Bitset<MAX_ENTITY_COUNT>     entities;
     ComponentArrays<MAX_ENTITY_COUNT> arrays;
-    ComponentArrays<PREFAB_COUNT_MAX> prefabsArrays;
+    ComponentArrays<ecs2::PrefabEnum::ENUM_END> prefabsArrays;
     
     ID AddEntity()
     {
@@ -21,12 +21,12 @@ struct ECS
         return freeId;
     }
 
-    ID AddEntity(const PrefabType& prefabType)
-    {
-        const ID freeId = AddEntity();
-        arrays.CopyComponents(freeId, (ID)prefabType, prefabsArrays);
-        return freeId;
-    }
+    //ID AddEntity(const PrefabType& prefabType)
+    //{
+    //    const ID freeId = AddEntity();
+    //    arrays.CopyComponents(freeId, (ID)prefabType, prefabsArrays);
+    //    return freeId;
+    //}
 
 };    
 

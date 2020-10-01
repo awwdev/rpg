@@ -7,7 +7,7 @@
 #include "gpu/Meta/Cameras.hpp"
 #include "res/Terrain/TerrainQuadrant.hpp"
 #include "res/Terrain/TerrainSerialization.hpp"
-#include "ecs/Prefabs/_Old/PrefabTypes.hpp"
+#include "ecs/Prefabs/PrefabEnum.hpp"
 #include "com/Algorithms.hpp"
 
 #include <cstdlib> //rand
@@ -38,7 +38,7 @@ struct Settings
     ecs::ID gizmoID;
     com::Vec3f intersectionPos;
 
-    ecs::PrefabType prefabType; 
+    //ecs::PrefabType prefabType; 
     bool baked = false;
 };
 
@@ -275,7 +275,7 @@ struct Terrain
 
                 for(auto i = 0; i < 10; ++i) //for grass test 
                 {
-                    const auto ID = ecs.AddEntity(settings.prefabType);
+                    //const auto ID = ecs.AddEntity(settings.prefabType);
                     //auto& t = ecs.arrays.transforms.Get(ID);
                     //TODO
                     /*

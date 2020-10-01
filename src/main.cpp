@@ -13,7 +13,7 @@
 
 #include "res/_Old/CpuResources.hpp"
 
-#include "ecs/Prefabs/PrefabLoader2.hpp"
+#include "ecs/Prefabs/PrefabLoader.hpp"
 
 using namespace rpg;
 

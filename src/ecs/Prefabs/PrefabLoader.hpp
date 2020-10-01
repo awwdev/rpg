@@ -26,6 +26,20 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
     auto currentPrefab    = NO_CURRENT_PREFAB;
     auto currentComponent = NO_CURRENT_COMPONENT;
 
+
+    auto const NewPrefabFn = [&](){
+        if (currentPrefab == NO_CURRENT_PREFAB) 
+            return;
+
+        FOR_CARRAY(componentData, componentEnumIdx) {
+            const auto& pairs = componentData[componentEnumIdx];
+            prefabComponentArrays.AddComponent((ecs::ID) currentPrefab, (ecs::ComponentEnum) componentEnumIdx, pairs);
+        }
+
+        FOR_CARRAY(componentData, i)
+            componentData[i].Clear();
+    };
+
     //line parsing
     char line [PREFAB_FILE_LINE_LEN_MAX + 1] {}; //last will always be '\0'
     while(file.getline(line, PREFAB_FILE_LINE_LEN_MAX))  
@@ -76,21 +90,7 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
         {
             auto prefabEnum = PREFAB_STR_TO_ENUM.GetOptional(line);
             dbg::Assert(prefabEnum, "no prefab enum");
-
-            //new prefab 
-            if (currentPrefab != NO_CURRENT_PREFAB) 
-            { 
-                //add components ("to prefab")
-                FOR_CARRAY(componentData, componentEnumIdx) //per component
-                {
-                    const auto& pairs = componentData[componentEnumIdx];
-                    prefabComponentArrays.AddComponent((ecs::ID) currentPrefab, (ecs::ComponentEnum) componentEnumIdx, pairs);
-                }
-                //clear collected data
-                FOR_CARRAY(componentData, i)
-                    componentData[i].Clear();
-            }
-
+            NewPrefabFn();          
             currentPrefab = *prefabEnum;
             continue;
         } 
@@ -113,6 +113,7 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
         
     }
 
+    NewPrefabFn(); //to get the last prefab in the file 
 }
 
 }//ns

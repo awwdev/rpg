@@ -15,9 +15,12 @@ struct MainComponent
     res::MeshEnum meshEnum;
     res::MaterialEnum materialEnum;
 
-    MainComponent(const ecs2::ComponentDataPairs& pairs)
+    MainComponent(ecs2::ComponentDataPairs const& pairs)
     {
-
+        FOR_ARRAY(pairs, i) {
+            auto const& pair = pairs[i];
+            dbg::LogInfo(pair.key.data, pair.val.data);
+        }
     }
 };
 
