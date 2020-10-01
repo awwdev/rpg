@@ -158,11 +158,11 @@ struct Terrain
     void UpdateGizmos(ecs::ECS& ecs)
     {
         using namespace com;
-        auto& transform = ecs.arrays.transforms.Get(settings.gizmoID);
-        const auto S = settings.brushSize;
-        transform.scale = { S, S, S };
-        transform.translation = settings.intersectionPos;
-        transform.translation.y -= 0.1f; //z-fighting
+        //auto& transform = ecs.arrays.transforms.Get(settings.gizmoID);
+        //const auto S = settings.brushSize;
+        //transform.scale = { S, S, S };
+        //transform.translation = settings.intersectionPos;
+        //transform.translation.y -= 0.1f; //z-fighting
     }
 
     //? INTERACTION
@@ -276,8 +276,9 @@ struct Terrain
                 for(auto i = 0; i < 10; ++i) //for grass test 
                 {
                     const auto ID = ecs.AddEntity(settings.prefabType);
-                    auto& t = ecs.arrays.transforms.Get(ID);
-
+                    //auto& t = ecs.arrays.transforms.Get(ID);
+                    //TODO
+                    /*
                     Vec3f pos = intersection->pos;
                     pos.x += ((std::rand() % 40) / 40.f) * 7;
                     pos.z += ((std::rand() % 40) / 40.f) * 7;
@@ -290,6 +291,7 @@ struct Terrain
                     const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
                     const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
                     t.scale = { SX, SY, SZ };
+                    */
                 }
 
                 

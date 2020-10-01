@@ -11,11 +11,12 @@ namespace rpg::ecs {
     
 inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
 {
-    const auto& renderComponents    = arrays.renderComponents;
-    const auto& transformComponents = arrays.transforms;
+    //const auto& renderComponents    = arrays.renderComponents;
+    //const auto& transformComponents = arrays.transforms;
 
-    FOR_ARRAY(renderComponents.dense, i) 
+    //FOR_ARRAY(renderComponents.dense, i) 
     {
+        /*
         const auto entityID = renderComponents.entityLookup[i];
 
         const auto& renderComponent    = renderComponents.dense[i];
@@ -61,6 +62,8 @@ inline void S_Render(ComponentArrays<>& arrays, const double, gpu::RenderData& r
 
         //renderData.general.meshStats[modelType].instanceCount += 1;
         //renderData.general.meshInstances.Append(modelInstance);
+
+        */
     }
 }
 

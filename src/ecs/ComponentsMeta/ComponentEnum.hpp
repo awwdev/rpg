@@ -1,12 +1,13 @@
 //https://github.com/awwdev
 
 #pragma once
+#include "ecs/EntityID.hpp"
 #include "com/box/StringMap.hpp"
 #include "ecs/Prefabs/PrefabEnum.hpp"
 
 namespace rpg::ecs {
 
-enum class ComponentEnum
+enum class ComponentEnum : ecs::ID
 {
     MainComponent, 
     ENUM_END

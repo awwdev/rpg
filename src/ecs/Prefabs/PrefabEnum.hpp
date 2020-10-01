@@ -2,11 +2,12 @@
 
 #pragma once
 #include "ecs/EntityID.hpp"
+#include "ecs/EntityID.hpp"
 #include "com/box/StringMap.hpp"
 
 namespace rpg::ecs2 {
 
-enum class PrefabEnum
+enum class PrefabEnum : ecs::ID
 {
     Sword,
     Sword_Grib,

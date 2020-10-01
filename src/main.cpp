@@ -23,7 +23,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
     {
         com::mem::GlobalAllocate();
         ecs::ComponentArrays<ecs2::PrefabEnum::ENUM_END> prefabs {};
-        rpg::ecs2::LoadPrefabs("res\\Prefabs\\prefabs.fab");     
+        rpg::ecs2::LoadPrefabs("res\\Prefabs\\prefabs.fab", prefabs);     
         com::mem::GlobalDeallocate();
     }
     system("pause");

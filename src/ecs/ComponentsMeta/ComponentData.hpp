@@ -3,23 +3,24 @@
 #include "ecs/Prefabs/PrefabEnum.hpp"
 #include "dbg/Assert.hpp"
 #include "com/box/String.hpp"
+#include "com/box/Array.hpp"
 #include "com/Algorithms.hpp"
 
 namespace rpg::ecs2 {
 
 enum class ComponentDataEnum
 {
-    Children,
-    Mesh,
-    Material,
+    MainComponent_Children,
+    MainComponent_Mesh,
+    MainComponent_Material,
     ENUM_END
 };
 
 const com::EnumMap<ComponentDataEnum::ENUM_END, com::String<ecs2::PREFAB_FILE_LINE_LEN_MAX>> COMPONENTDATA_ENUM_TO_STR
 {
-    { ComponentDataEnum::Children,      "Children" },
-    { ComponentDataEnum::Mesh,          "Mesh" },
-    { ComponentDataEnum::Material,      "Material" },
+    { ComponentDataEnum::MainComponent_Children, "Children" },
+    { ComponentDataEnum::MainComponent_Mesh,     "Mesh" },
+    { ComponentDataEnum::MainComponent_Material, "Material" },
 };
 const auto COMPONENTDATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentDataEnum, ecs2::PREFAB_FILE_LINE_LEN_MAX>(COMPONENTDATA_ENUM_TO_STR);
 
@@ -31,6 +32,9 @@ struct ComponentDataPair
     com::String<PREFAB_FILE_LINE_LEN_MAX> key;
     com::String<PREFAB_FILE_LINE_LEN_MAX> val;
 };
+
+constexpr auto COMPONENT_DATA_PAIR_MAX = 10;
+using ComponentDataPairs =  com::Array<ComponentDataPair, COMPONENT_DATA_PAIR_MAX>;
 
 inline auto ConvertToComponentDataPair(chars_t line) -> const ComponentDataPair
 {

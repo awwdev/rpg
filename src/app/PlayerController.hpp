@@ -54,6 +54,7 @@ struct PlayerController
 
         position = position + move;
 
+        /*
         auto& playerTransform = ecs.arrays.transforms.Get(playerID);
         playerTransform.translation = { position.x, Ypos, position.z };
         playerTransform.rotation    = { 0, camera.rotation.y, 0 };
@@ -63,6 +64,7 @@ struct PlayerController
 
         renderData.general.meta.view = camera.view;
         renderData.general.meta.proj = camera.perspective;
+        */
     }
 };
     

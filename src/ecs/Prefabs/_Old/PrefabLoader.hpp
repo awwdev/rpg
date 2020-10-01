@@ -10,9 +10,9 @@
 #include <fstream>
 
 namespace rpg::res {
-
-template<auto MAX_COUNT>
-void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
+/*
+template<auto MAX_COMPONENT_COUNT>
+void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COMPONENT_COUNT>& componentArrays)
 {
     using namespace ecs;
 
@@ -112,5 +112,5 @@ inline void PrintParsedData(
         }
     }
 }
-
+*/
 }//NS

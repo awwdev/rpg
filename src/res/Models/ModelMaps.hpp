@@ -50,11 +50,11 @@ MAP_MODEL_ENUM_TO_STR
 };
 const auto MAP_MODEL_STR_TO_ENUM = com::StringMapFromEnumMap<ModelType, MODEL_NAME_STR_MAX>(MAP_MODEL_ENUM_TO_STR);
 
-inline ModelType GetModelType(const ecs::ComponentDataString& str)
-{
-    const ModelType* modelType = MAP_MODEL_STR_TO_ENUM.GetOptional(str.data);
-    dbg::Assert(modelType, "no model type found");
-    return *modelType;
-}
+//inline ModelType GetModelType(const ecs::ComponentDataString& str)
+//{
+//    const ModelType* modelType = MAP_MODEL_STR_TO_ENUM.GetOptional(str.data);
+//    dbg::Assert(modelType, "no model type found");
+//    return *modelType;
+//}
 
 }//ns

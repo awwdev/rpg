@@ -3,7 +3,7 @@
 #pragma once
 #include "com/box/StringMap.hpp"
 
-namespace rpg::ecs {
+namespace rpg::res {
 
 enum class MeshEnum
 {

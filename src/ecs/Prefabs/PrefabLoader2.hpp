@@ -1,6 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
+#include "ecs/ComponentsMeta/ComponentArrays.hpp"
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"
 #include "ecs/ComponentsMeta/ComponentData.hpp"
 #include "ecs/Prefabs/PrefabEnum.hpp"
@@ -9,16 +10,16 @@
 
 namespace rpg::ecs2 {
 
-inline void LoadPrefabs(chars_t path)
+template<auto N>
+inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentArrays)
 {
     std::ifstream file(path);
     dbg::Assert(file.is_open(), "cannot open file");
 
     //store all component data values per prefab
-    constexpr auto COMPONENT_DATA_PAIR_MAX = 10;
-    struct Arr { com::Array<ComponentDataPair, COMPONENT_DATA_PAIR_MAX> data [(idx_t) ecs::ComponentEnum::ENUM_END]; };
-    auto  ptrComponentDataPairs = com::mem::ClaimBlock<Arr>();
-    auto& componentDataPairs = ptrComponentDataPairs->data;
+    struct Arr { ComponentDataPairs data [(idx_t) ecs::ComponentEnum::ENUM_END]; };
+    auto  ptrComponentData = com::mem::ClaimBlock<Arr>();
+    auto& componentData = ptrComponentData->data;
 
     constexpr auto NO_CURRENT_PREFAB    = PrefabEnum::ENUM_END;
     constexpr auto NO_CURRENT_COMPONENT = ecs::ComponentEnum::ENUM_END;
@@ -76,16 +77,21 @@ inline void LoadPrefabs(chars_t path)
             auto prefabEnum = PREFAB_STR_TO_ENUM.GetOptional(line);
             dbg::Assert(prefabEnum, "no prefab enum");
 
+            //new prefab 
             if (currentPrefab != NO_CURRENT_PREFAB) 
             { 
-                //instantate previous prefab (data collection is done)
-
-                //clear collected data of previous prefab
-                FOR_CARRAY(componentDataPairs, i)
-                    componentDataPairs[i].Clear();
+                //add components ("to prefab")
+                FOR_CARRAY(componentData, componentEnumIdx) //per component
+                {
+                    const auto& pairs = componentData[componentEnumIdx];
+                    prefabComponentArrays.AddComponent((ecs::ID) currentPrefab, (ecs::ComponentEnum) componentEnumIdx, pairs);
+                }
+                //clear collected data
+                FOR_CARRAY(componentData, i)
+                    componentData[i].Clear();
             }
-            currentPrefab = *prefabEnum;
 
+            currentPrefab = *prefabEnum;
             continue;
         } 
 
@@ -101,7 +107,7 @@ inline void LoadPrefabs(chars_t path)
         {
             dbg::Assert(currentComponent != NO_CURRENT_COMPONENT, "no current component");
             auto const pair = ConvertToComponentDataPair(line);
-            componentDataPairs[(idx_t) currentComponent].Append(pair);
+            componentData[(idx_t) currentComponent].Append(pair);
             continue;
         } 
         

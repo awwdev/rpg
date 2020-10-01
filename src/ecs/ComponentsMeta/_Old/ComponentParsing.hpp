@@ -7,6 +7,7 @@
 
 namespace rpg::ecs {
 
+/*
 constexpr auto COMPONENT_DATA_COUNT_MAX = 20; 
 constexpr auto COMPONENT_MAX_STR_LEN = 100;
 constexpr auto IDENTIFIER_START = 2;
@@ -62,5 +63,6 @@ T ParseComponentData(const com::String<COMPONENT_MAX_STR_LEN>& str)
 
     return data;
 }
+*/
 
 }//NS

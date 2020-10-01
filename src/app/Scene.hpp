@@ -38,7 +38,7 @@ struct GameScene
     void Create(res::CpuResources& cpuRes)
     {
         //TODO: resource manager, init gizmos? find better place!
-        res::LoadPrefabs("res/Prefabs/prefabs.mini", ecs.prefabsArrays);
+        //res::LoadPrefabs("res/Prefabs/prefabs.mini", ecs.prefabsArrays);
         sun.Create(ecs);
         playerController.Create(ecs);
         cpuRes.terrain.InitGizmos(ecs);
