@@ -2,19 +2,19 @@
 
 #pragma once
 #include "ecs/Components/Meta/ComponentArray.hpp"
-#include "ecs/Components/C_RenderData.hpp"
-#include "ecs/Components/C_Transform.hpp"
+#include "ecs/Components/RenderComponent.hpp"
+#include "ecs/Components/TransformComponent.hpp"
 
 namespace rpg::ecs {
 
 template<auto MAX_COUNT = MAX_ENTITY_COUNT> //! could be more on a 1->n relationship
 struct ComponentArrays
 {
-    com::Bitset<ComponentType::ENUM_END> signatures[MAX_COUNT];
+    com::Bitset<ComponentEnum::ENUM_END> signatures[MAX_COUNT];
 
     //? COMPONENT ARRAYS
-    ComponentArray<C_Transform, MAX_COUNT>  transforms;
-    ComponentArray<C_RenderData, MAX_COUNT> renderComponents;
+    ComponentArray<TransformComponent, MAX_COUNT>  transforms;
+    ComponentArray<RenderComponent, MAX_COUNT> renderComponents;
 
     ComponentArrays()
     {
@@ -23,7 +23,7 @@ struct ComponentArrays
         renderComponents.SetAllToNone();
     }
 
-    template<ComponentType TYPE, class... CtorArgs>
+    template<ComponentEnum TYPE, class... CtorArgs>
     auto& AddComponent(const ID entityID, CtorArgs&&... args)
     {
         //this method is somewhat needed, I get compiler error if I use the runtime version of this method
@@ -31,20 +31,20 @@ struct ComponentArrays
         signatures[entityID].Set(TYPE, true);
 
         //? COMPONENT ADDING
-        if constexpr(TYPE == ComponentType::Transform)  return transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
-        if constexpr(TYPE == ComponentType::RenderData) return renderComponents.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+        if constexpr(TYPE == ComponentEnum::TransformComponent)  return transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...);
+        if constexpr(TYPE == ComponentEnum::RenderComponent) return renderComponents.AddComponent(entityID, std::forward<CtorArgs>(args)...);
     }
 
     template<class... CtorArgs>
-    void AddComponent(const ID entityID, const ComponentType componentType, CtorArgs&&... args)
+    void AddComponent(const ID entityID, const ComponentEnum componentType, CtorArgs&&... args)
     {
         signatures[entityID].Set(componentType, true);
 
         //? COMPONENT ADDING
         switch(componentType)
         {
-            case ComponentType::RenderData: renderComponents.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
-            case ComponentType::Transform:  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
+            case ComponentEnum::RenderComponent: renderComponents.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
+            case ComponentEnum::TransformComponent:  transforms.AddComponent(entityID, std::forward<CtorArgs>(args)...); break;
             default: break;
         }
     }

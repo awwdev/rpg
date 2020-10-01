@@ -5,13 +5,12 @@
 
 	//? FONT
 	//"editor.fontFamily": "Fira Code",
-	//"editor.fontFamily": "src Code Variable",
 	//"editor.fontFamily": "Consolas",
 	"editor.fontFamily": "Cousine",
-	"editor.fontSize": 12,
+	"editor.fontSize": 11.49,
 	"editor.fontWeight": "100",
 	"editor.fontLigatures": true,
-	"editor.lineHeight": 22,
+	"editor.lineHeight": 24,
 	"editor.tabSize": 4,
 	"editor.letterSpacing": -0.15,
 
@@ -59,7 +58,7 @@
 	// VS Colors
 	"workbench.colorCustomizations": {
 		"scrollbar.shadow": "#00000000",
-		"editor.background": "#36393f",
+		"editor.background": "#2c3236",
 		"panel.border": "#222",
 		"tab.border": "#222",
 		"contrastBorder": "#222",
@@ -212,7 +211,8 @@
 					"entity.name.type.class.value",
 				],
 				"settings": {
-					"foreground": "#8493a5",
+					"foreground": "#d8d8d8",
+					"fontStyle": "bold"
 				}
 			},
 
@@ -245,23 +245,25 @@
 					"punctuation.separator.continuation",
 				],
 				"settings": {
-					"foreground": "#f5f5f5",
-					"fontStyle": ""
-				}
-			},		
-			//? MODIFIERS
-			{
-				"scope": [
-					"punctuation",
-					"punctuation.terminator",
-					"punctuation.separator",
-					"entity.name.namespace",
-				],
-				"settings": {
-					"foreground": "#8a93a0",
-					"fontStyle": ""
+					"foreground": "#d8d8d8",
+					"fontStyle": "bold"
 				}
 			},
+			
+			//? KEYWORD
+			{
+				"scope": [
+					"keyword",
+					"keyword.operator.assignment",
+					"keyword.operator.logical",
+				],
+				"settings": {
+					"foreground": "#d8d8d8",
+					"fontStyle": "bold"
+				}
+			},
+				
+			//? STORAGE
 			{
 				"scope": [
 					"storage",
@@ -269,20 +271,22 @@
 					"storage.type",	
 				],
 				"settings": {
-					"foreground": "#8a93a0",
+					"foreground": "#9496aa",
 					"fontStyle": "bold"
 				}
 			},
+
 			//? CONTROL
 			{
 				"scope": [
 					"keyword.control",
 				],
 				"settings": {
-					"foreground": "#ff4f4f",
+					"foreground": "#e46262",
 					"fontStyle": ""
 				}
 			},
+
 			//? TYPE
 			{
 				"scope": [
@@ -290,10 +294,11 @@
 					"entity.name.type.class.templated",
 				],
 				"settings": {
-					"foreground": "#ffbc58",
+					"foreground": "#ecb06c",
 					"fontStyle": "bold"
 				}
 			},
+
 			//?FUNCTION
 			{
 				"scope": [
@@ -310,10 +315,24 @@
 					
 				],
 				"settings": {
-					"foreground": "#ffbc58",
+					"foreground": "#ecb06c",
 					"fontStyle": "bold"
 				}
 			},
+
+			//? NAMESPACE
+			{
+				"scope": [
+					"entity.name.namespace",
+					"punctuation.separator",	
+				],
+				"settings": {
+					"foreground": "#ecb06c",
+					"fontStyle": "bold"
+				}
+			},
+
+			//? CONSTANT
 			{
 				"scope": [
 					"constant",
@@ -325,36 +344,49 @@
 					"punctuation.definition.string.end",
 				],
 				"settings": {
-					"foreground": "#95bcf0",
-					"fontStyle": ""
+					"foreground": "#93acda",
+					"fontStyle": "bold"
 				}
 			},
-			//? KEYWORD
+
+			//? KEYWORD OPERATOR
 			{
 				"scope": [
-					"keyword",
 					"keyword.operator",
-					"keyword.operator.assignment",
-					"keyword.operator.logical",
 				],
 				"settings": {
-					"foreground": "#ffbc58",
-					"fontStyle": ""
+					"foreground": "#75b3e6",
+					"fontStyle": "bold"
 				}
 			},
-			//?COMMENT
+
+			//? COMMENT
 			{
 				"scope": [
 					"comment",
 					"comment.line",	
 					"comment.block",
-					"comment.block.documentation",		
+					"comment.block.documentation",	
 				],
 				"settings": {
-					"foreground": "#5a6068",
+					"foreground": "#777",
 					"fontStyle": ""
 				}
 			},
+			
+			//? PUNCTUATION
+			{
+				"scope": [
+					"punctuation",
+					"punctuation.terminator",
+				],
+				"settings": {
+					"foreground": "#d8d8d8",
+					"fontStyle": ""
+				}
+			},
+			
+
 		]
 	},
 
@@ -363,7 +395,7 @@
 	//?HIGHLIGHT
 	"highlight.regexes":
 	 {
-		"(.*//\\?.*)": {
+		"(//\\?.*)": {
 			"regexFlags": "g", 
 			"decorations": [
 				{ 
@@ -377,14 +409,6 @@
 			"decorations": [
 				{ 
 					"color": "#00aa00",
-				},
-			]
-		},
-		"(.*//!)": {
-			"regexFlags": "g", 
-			"decorations": [
-				{ 
-					"backgroundColor": "#ff000020", 
 				},
 			]
 		},
@@ -415,7 +439,7 @@
 				},
 			]
 		},
-		"(&.*)": {
+		"(.*children.*)": {
 			"regexFlags": "g", 
 			"filterFileRegex": ".*\\.fab", 
 			"decorations": [

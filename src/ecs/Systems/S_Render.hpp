@@ -2,7 +2,7 @@
 
 #pragma once
 #include "com/Matrix.hpp"
-#include "ecs/Components/Meta/ComponentTypes.hpp"
+#include "ecs/Components/Meta/ComponentEnum.hpp"
 #include "ecs/Components/Meta/ComponentArrays.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "gpu/RenderData/RenderData_General.hpp"

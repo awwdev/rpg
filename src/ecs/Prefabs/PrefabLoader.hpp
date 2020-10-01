@@ -19,12 +19,12 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     std::ifstream file(path);//, std::ios::beg
     dbg::Assert(file.is_open(), "cannot open file");
 
-    struct Arr { ComponentDataStringPairs data [(idx_t)PrefabType::ENUM_END][(idx_t)ComponentType::ENUM_END]; };
+    struct Arr { ComponentDataStringPairs data [(idx_t)PrefabType::ENUM_END][(idx_t)ComponentEnum::ENUM_END]; };
     auto blockPtrArr = rpg::com::mem::ClaimBlock<Arr>();
     auto& componentDataKeyValueArray = blockPtrArr->data;
 
     auto currentPrefab    = PrefabType::ENUM_END;
-    auto currentComponent = ComponentType::ENUM_END;
+    auto currentComponent = ComponentEnum::ENUM_END;
 
     //? META PARSE
     char line [COMPONENT_MAX_STR_LEN];
@@ -56,7 +56,7 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
         if (lineType == PrefabName){
             if (auto prefabType = PREFAB_STR_TO_ENUM.GetOptional(&line[IDENTIFIER_START])){
                 currentPrefab = *prefabType;
-                currentComponent = ComponentType::ENUM_END; //reset
+                currentComponent = ComponentEnum::ENUM_END; //reset
                 continue;
             }
         }
@@ -72,7 +72,7 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
                 continue;
             }
         }   
-        if (currentComponent == ComponentType::ENUM_END){
+        if (currentComponent == ComponentEnum::ENUM_END){
             dbg::LogWarning("no component type for parsing");
             continue;
         }
@@ -88,22 +88,22 @@ void LoadPrefabs(chars_t path, ecs::ComponentArrays<MAX_COUNT>& componentArrays)
     //? INSTANTIATION AND COMPONENT DATA PARSING
     //PrintParsedData(componentDataKeyValueArray);
     for(idx_t p = 0; p < (idx_t)PrefabType::ENUM_END; ++p) {
-    for(idx_t c = 0; c < (idx_t)ComponentType::ENUM_END; ++c) {
+    for(idx_t c = 0; c < (idx_t)ComponentEnum::ENUM_END; ++c) {
         const auto& pairs = componentDataKeyValueArray[p][c];
         if (pairs.Empty() == false)
-            componentArrays.AddComponent((ID)p, (ComponentType)c, pairs);
+            componentArrays.AddComponent((ID)p, (ComponentEnum)c, pairs);
     }}
 
 }
 
 inline void PrintParsedData(
-    const ecs::ComponentDataStringPairs (&componentDataKeyValueArray) [(idx_t)ecs::PrefabType::ENUM_END][(idx_t)ecs::ComponentType::ENUM_END])
+    const ecs::ComponentDataStringPairs (&componentDataKeyValueArray) [(idx_t)ecs::PrefabType::ENUM_END][(idx_t)ecs::ComponentEnum::ENUM_END])
 {
     using namespace ecs;
 
     for(idx_t p = 0; p < (idx_t)PrefabType::ENUM_END; ++p) {
         dbg::LogInfo("PrefabType", PREFAB_ENUM_TO_STR.Get(p));
-        for(idx_t c = 0; c < (idx_t)ComponentType::ENUM_END; ++c) {
+        for(idx_t c = 0; c < (idx_t)ComponentEnum::ENUM_END; ++c) {
             dbg::LogInfo("ComponentType", COMPONENT_ENUM_TO_STR.Get(c));
             const auto& arr = componentDataKeyValueArray[p][c];
             FOR_ARRAY(arr, i){

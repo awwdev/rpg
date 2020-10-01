@@ -5,7 +5,7 @@
 #include "com/box/Bitset.hpp"
 
 #include "ecs/EntityID.hpp"
-#include "ecs/Components/Meta/ComponentTypes.hpp"
+#include "ecs/Components/Meta/ComponentEnum.hpp"
 
 namespace rpg::ecs {
     

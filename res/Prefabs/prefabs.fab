@@ -1,18 +1,24 @@
 # PREFAB LANGUAGE
-# THE PARSER IS VERY ERROR-PRONE, SO WATCH WHITESPACE
 #   # comment
 #   @ prefab 
-#   § child
-#   = key value pair
-#   , multiple values
+#   ? component
+#   = component data 
+#   , component data multiple values
+# ONE-LINERS are permitted only
+# whitespace is fine
 
 @ Sword
-? Transform
-+ scale = 1,1,1
-& Grib
-    ? RenderData
-    + material = wood
-& Blade
-    ? RenderData
-    + material = metallic
-    + reflect = 1
+    ? TransformComponent
+        + Children = Sword_Grib, Sword_Blade
+
+@ Sword_Grib
+    ? TransformComponent
+    ? RenderComponent
+        + Mesh = sword_grib
+        + Material = wood
+    
+@ Sword_Blade
+    ? TransformComponent
+    ? RenderComponent
+        + Mesh = sword_blade
+        + Material = metallic
