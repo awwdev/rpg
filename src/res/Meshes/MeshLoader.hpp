@@ -1,31 +1,29 @@
 //https://github.com/awwdev
+
 #pragma once
+#include "gpu/RenderData/RenderData_General.hpp"
+#include "res/Meshes/MeshMeta.hpp"
+#include "com/box/Array.hpp"
 
-#include "com/Types.hpp"
-
-#include "gpu/RenderData/_Old/RenderStructs.hpp"
 #include <fstream>
-#include <filesystem>
 
 namespace rpg::res {
 
-template<auto N>
-void LoadModelOld(com::Array<gpu::RenderData_General::Vertex, N>& vertices, chars_t path)
+inline auto LoadMesh(chars_t path, 
+com::Array<MeshVertex, MESHES_VERTS_ALL> & allVertices,
+com::Array<MeshView,   MESHES_TOTAL>& meshViews)
 {
-    using namespace com;
-    
     std::ifstream file(path, std::ios::binary);
-    if (!file) dbg::LogError("cannot open file");
+    dbg::Assert(file.is_open(), "cannot open file");
 
-    constexpr auto BUFFER_MAX = 150;
-    constexpr auto COMMAS_MAX = 13;
+    constexpr auto LINE_LEN_MAX = 150;
+    char line [LINE_LEN_MAX];
 
-    char line [BUFFER_MAX];
-    gpu::RenderData_General::Vertex vertex {};
-
-    while(file.getline(line, BUFFER_MAX))
+    while(file.getline(line, LINE_LEN_MAX))
     {
-        idx_t beg = 0;
+        MeshVertex vertex {};
+
+        idx_t begin = 0;
         idx_t commaCount = 0;
 
         for(idx_t i = 0; line[i] != '\n' && line[i] != '\0'; ++i)
@@ -33,8 +31,9 @@ void LoadModelOld(com::Array<gpu::RenderData_General::Vertex, N>& vertices, char
             if (line[i] != ',')
                 continue;
 
-            const f32 value = (f32)std::atof(&line[beg]);
-            
+            const f32 value = (f32)std::atof(&line[begin]);
+
+            constexpr auto COMMAS_MAX = 13;
             switch(commaCount % COMMAS_MAX)
             {
                 //vert idx
@@ -57,15 +56,13 @@ void LoadModelOld(com::Array<gpu::RenderData_General::Vertex, N>& vertices, char
                 case 12: vertex.tex.y = value; break;
             } 
 
-            beg = i + 1;
+            begin = i + 1;
             commaCount++;    
         }
 
-        //dbg::LogInfo(vertex);
-        vertices.Append(vertex);
-        
+        allVertices.Append(vertex);
     }
 
 }
 
-}//NS
+}//ns

@@ -4,7 +4,6 @@
 #include "gpu/RenderData/RenderData_General.hpp"
 
 #include "res/Models/Model.hpp"
-#include "res/Models/ModelLoader.hpp"
 #include "res/Models/ModelPrimitives.hpp"
 #include "res/Models/ModelType.hpp"
 #include "res/Models/ModelMaps.hpp"
@@ -14,6 +13,7 @@
 #include "com/Range.hpp"
 #include "dbg/Assert.hpp"
 
+/*
 namespace rpg::res {
 
 struct Resources_Models
@@ -68,3 +68,5 @@ struct Resources_Models
 };
 
 } //ns
+
+*/

@@ -8,7 +8,7 @@
 #include "com/box/Array.hpp"
 
 #include "res/_Old/CpuResources.hpp"
-#include "res/Resources_Models.hpp"
+#include "res/Resources_Meshes.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
@@ -71,24 +71,26 @@ struct General_Vertices
         renderData.debugInfo.vboData_general_vertCount = vertCount;
     }
 
-    void Create(VkCommandPool cmdPool, const res::Resources_Models& resModels)
+    void Create(VkCommandPool cmdPool, const res::Resources_Meshes& meshes)
     {
         vboTerrain.Create();
 
         vboMeshes.Create();
-        vboMeshes.Append(resModels.allVertices);
-        vboMeshes.Bake(cmdPool);
-
-        //model vbo layout
-        uint32_t vertIndex = 0;
-        FOR_CARRAY(resModels.models, i){
-            const auto& model = resModels.models[i];
-            FOR_ARRAY(model.meshes, m) {
-                const auto& mesh = model.meshes[m];
-                vboMeshesLayout.Append(vertIndex, (uint32_t) mesh.vertCount);
-                vertIndex += mesh.vertCount;
-            }
+        if (meshes.allVertices.Empty() == false) {
+            vboMeshes.Append(meshes.allVertices);
+            vboMeshes.Bake(cmdPool);
         }
+            
+        //model vbo layout
+        //uint32_t vertIndex = 0;
+        //FOR_CARRAY(resModels.models, i){
+        //    const auto& model = resModels.models[i];
+        //    FOR_ARRAY(model.meshes, m) {
+        //        const auto& mesh = model.meshes[m];
+        //        vboMeshesLayout.Append(vertIndex, (uint32_t) mesh.vertCount);
+        //        vertIndex += mesh.vertCount;
+        //    }
+        //}
     }
 
     void Destroy()

@@ -6,7 +6,7 @@
 #include "dbg/Logger.hpp"
 #include "res/_Old/TextureLoader.hpp"
 #include "res/_Old/TextureArray.hpp"
-#include "res/_Old/ModelLoader.hpp"
+//#include "res/_Old/ModelLoader.hpp"
 #include "res/_Old/CpuResources.hpp"
 #include "res/Terrain/Terrain.hpp"
 #include "gpu/RenderData/RenderData.hpp"
@@ -29,22 +29,22 @@ struct Textures
 
 struct Models
 {
-    struct MeshVertexView
-    {
-        const gpu::RenderData_General::Vertex* begin;
-        idx_t count;
-    };
+    //struct MeshVertexView
+    //{
+    //    const gpu::RenderData_General::Vertex* begin;
+    //    idx_t count;
+    //};
 
-    com::EnumMap<res::ModelType::ENUM_END, MeshVertexView> vertexLookup
-    {
-        //hardcoded primitives
-        { res::ModelType::PrimitiveCube,      { res::MESH_CUBE,     ArrayCount(res::MESH_CUBE)       } },
-        { res::ModelType::PrimitiveQuad,      { res::MESH_QUAD,     ArrayCount(res::MESH_QUAD)       } },
-        { res::ModelType::PrimitiveTriangle,  { res::MESH_TRIANGLE, ArrayCount(res::MESH_TRIANGLE)   } },
-        { res::ModelType::PrimitiveRing16,    { res::MESH_RING_16,  ArrayCount(res::MESH_RING_16)     } },
-    }; 
+    //com::EnumMap<res::ModelType::ENUM_END, MeshVertexView> vertexLookup
+    //{
+    //    //hardcoded primitives
+    //    { res::ModelType::PrimitiveCube,      { res::MESH_CUBE,     ArrayCount(res::MESH_CUBE)       } },
+    //    { res::ModelType::PrimitiveQuad,      { res::MESH_QUAD,     ArrayCount(res::MESH_QUAD)       } },
+    //    { res::ModelType::PrimitiveTriangle,  { res::MESH_TRIANGLE, ArrayCount(res::MESH_TRIANGLE)   } },
+    //    { res::ModelType::PrimitiveRing16,    { res::MESH_RING_16,  ArrayCount(res::MESH_RING_16)     } },
+    //}; 
 
-    com::Array<gpu::RenderData_General::Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;
+    //com::Array<gpu::RenderData_General::Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> allModelVertices;
 
     void Load()
     {
@@ -68,7 +68,7 @@ struct Models
 struct CpuResources
 {   
     Textures textures;
-    Models   models;
+    //Models   models;
 
     res::Terrain<10, 10, 2> terrain; //!move it out
 
@@ -76,7 +76,7 @@ struct CpuResources
     CpuResources() 
     {
         textures.Load();
-        models.Load();
+        //models.Load();
         terrain.Create();
     }
 }; 

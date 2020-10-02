@@ -21,15 +21,18 @@ struct Mat
     union
     {
         T data [Y][X];
-        //using those while the array is active is technically UB
+
+        //vector access (out of bounds is UB)
+        //using those while the array is active (is always teh case) is technically UB
         struct {
-             T x, y; 
-             union {
-                 struct { T z, w; };
-                 struct { T width, height; };
-             };
+            T x, y; 
+            union {
+                struct { T z, w; };
+                struct { T width, height; };
+            };
         };
         struct { T r, g, b, a; };
+        
     };
 
     //allow mat[][] access

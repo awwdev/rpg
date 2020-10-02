@@ -34,7 +34,7 @@ struct State_General
 
     void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::CpuResources& cpuRes, res::Resources& res)
     {
-        vertices    .Create(cmdPool, res.models);
+        vertices    .Create(cmdPool, res.meshes);
         uniforms    .Create(uboSun, shadowMaps);
         shader      .Create();
         renderPass  .Create(cmdPool);
