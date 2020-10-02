@@ -2,7 +2,7 @@
 
 #pragma once
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
-#include "res/Prefabs/PrefabLoader.hpp"
+#include "res/Prefab/PrefabLoader.hpp"
 
 namespace rpg::res {
 

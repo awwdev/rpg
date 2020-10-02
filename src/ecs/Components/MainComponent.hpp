@@ -2,8 +2,8 @@
 
 #pragma once
 #include "ecs/ComponentsMeta/ComponentData.hpp"
-#include "res/Models/MeshEnum.hpp"
-#include "res/Models/MaterialEnum.hpp"
+#include "res/Mesh/MeshEnum.hpp"
+#include "res/Mesh/MeshMaterialEnum.hpp"
 #include "com/box/Array.hpp"
 #include "com/Matrix.hpp"
 

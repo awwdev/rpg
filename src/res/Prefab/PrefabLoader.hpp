@@ -4,7 +4,7 @@
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"
 #include "ecs/ComponentsMeta/ComponentData.hpp"
-#include "res/Prefabs/PrefabEnum.hpp"
+#include "res/Prefab/PrefabEnum.hpp"
 #include "com/mem/Allocator.hpp"
 #include "dbg/Assert.hpp"
 

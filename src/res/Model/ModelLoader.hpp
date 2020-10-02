@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "res/Models/Model.hpp"
+#include "res/Model/Model.hpp"
 #include "gpu/RenderData/RenderData_General.hpp"
 #include "com/box/Array.hpp"
 

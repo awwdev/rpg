@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "res/Models/Model.hpp"
-#include "res/Models/ModelType.hpp"
-#include "res/Models/ModelPrimitives.hpp"
+#include "res/Model/Model.hpp"
+#include "res/Model/ModelType.hpp"
+#include "res/Model/ModelPrimitives.hpp"
 
 #include "com/box/EnumMap.hpp"
 #include "com/box/StringMap.hpp"

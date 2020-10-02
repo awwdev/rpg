@@ -13,7 +13,7 @@
 #include "gui/Editor/GUI_Level.hpp"
 
 #include "res/Terrain/Terrain.hpp"
-#include "res/Prefabs/PrefabLoader.hpp"
+#include "res/Prefab/PrefabLoader.hpp"
 
 #include "app/PlayerController.hpp"
 #include "app/EditorController.hpp"

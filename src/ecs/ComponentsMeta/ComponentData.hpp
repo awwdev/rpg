@@ -1,6 +1,6 @@
 #pragma once
 #include "com/box/StringMap.hpp"
-#include "res/Prefabs/PrefabEnum.hpp"
+#include "res/Prefab/PrefabEnum.hpp"
 #include "dbg/Assert.hpp"
 #include "com/box/String.hpp"
 #include "com/box/Array.hpp"

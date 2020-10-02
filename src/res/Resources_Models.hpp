@@ -3,10 +3,10 @@
 #pragma once
 #include "gpu/RenderData/RenderData_General.hpp"
 
-#include "res/Models/Model.hpp"
-#include "res/Models/ModelPrimitives.hpp"
-#include "res/Models/ModelType.hpp"
-#include "res/Models/ModelMaps.hpp"
+#include "res/Model/Model.hpp"
+#include "res/Model/ModelPrimitives.hpp"
+#include "res/Model/ModelType.hpp"
+#include "res/Model/ModelMaps.hpp"
 
 #include "com/box/Array.hpp"
 #include "com/box/EnumMap.hpp"

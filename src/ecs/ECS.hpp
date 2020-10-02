@@ -4,7 +4,7 @@
 #include "com/box/Bitset.hpp"
 #include "ecs/EntityID.hpp"
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
-#include "res/Prefabs/PrefabEnum.hpp"
+#include "res/Prefab/PrefabEnum.hpp"
 
 namespace rpg::ecs {
 

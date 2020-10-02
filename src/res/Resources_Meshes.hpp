@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "res/Meshes/MeshMeta.hpp"
-#include "res/Meshes/MeshLoader.hpp"
+#include "res/Mesh/MeshMeta.hpp"
+#include "res/Mesh/MeshLoader.hpp"
 
 namespace rpg::res {
 

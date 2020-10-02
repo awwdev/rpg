@@ -2,7 +2,7 @@
 
 #pragma once
 #include "gpu/RenderData/RenderData_General.hpp"
-#include "res/Meshes/MeshMeta.hpp"
+#include "res/Mesh/MeshMeta.hpp"
 #include "com/box/Array.hpp"
 
 #include <fstream>

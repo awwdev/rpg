@@ -11,7 +11,7 @@
 #include "res/Terrain/Terrain.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "gpu/RenderData/_Old/RenderStructs.hpp"
-#include "res/Models/ModelPrimitives.hpp"
+#include "res/Model/ModelPrimitives.hpp"
 
 namespace rpg::res {
     
