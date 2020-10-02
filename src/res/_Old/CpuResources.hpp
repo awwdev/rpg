@@ -48,20 +48,20 @@ struct Models
 
     void Load()
     {
-        com::Array<gpu::RenderData_General::Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> tmp;
+        //com::Array<gpu::RenderData_General::Vertex, gpu::DEFAULT_VERTEX_MAX_COUNT> tmp;
 
-        const auto LoadModelFn = [&](chars_t path, const res::ModelType type){
-            LoadModelOld(tmp, path);
-            const auto prevCount = allModelVertices.Count();
-            allModelVertices.AppendArray(tmp);
-            vertexLookup.Set(type, MeshVertexView{ &allModelVertices[prevCount], tmp.Count() });
-            tmp.Clear();
-        };
+        //const auto LoadModelFn = [&](chars_t path, const res::ModelType type){
+        //    LoadModelOld(tmp, path);
+        //    const auto prevCount = allModelVertices.Count();
+        //    allModelVertices.AppendArray(tmp);
+        //    vertexLookup.Set(type, MeshVertexView{ &allModelVertices[prevCount], tmp.Count() });
+        //    tmp.Clear();
+        //};
 
-        LoadModelFn("res/Models/sword.txt", res::ModelType::Sword);
-        LoadModelFn("res/Models/grass.txt", res::ModelType::Grass);
-        LoadModelFn("res/Models/stone.txt", res::ModelType::Stone);
-        LoadModelFn("res/Models/tree.txt",  res::ModelType::Tree);
+        //LoadModelFn("res/Models/sword.txt", res::ModelType::Sword);
+        //LoadModelFn("res/Models/grass.txt", res::ModelType::Grass);
+        //LoadModelFn("res/Models/stone.txt", res::ModelType::Stone);
+        //LoadModelFn("res/Models/tree.txt",  res::ModelType::Tree);
     }
 };
 

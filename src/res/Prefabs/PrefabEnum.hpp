@@ -5,7 +5,7 @@
 #include "ecs/EntityID.hpp"
 #include "com/box/StringMap.hpp"
 
-namespace rpg::ecs2 {
+namespace rpg::res {
 
 enum class PrefabEnum : ecs::ID
 {

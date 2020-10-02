@@ -4,11 +4,11 @@
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"
 #include "ecs/ComponentsMeta/ComponentData.hpp"
-#include "ecs/Prefabs/PrefabEnum.hpp"
+#include "res/Prefabs/PrefabEnum.hpp"
 #include "com/mem/Allocator.hpp"
 #include "dbg/Assert.hpp"
 
-namespace rpg::ecs2 {
+namespace rpg::res {
 
 template<auto N>
 inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentArrays)
@@ -17,7 +17,7 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
     dbg::Assert(file.is_open(), "cannot open file");
 
     //store all component data values per prefab
-    struct Arr { ComponentDataPairs data [(idx_t) ecs::ComponentEnum::ENUM_END]; };
+    struct Arr { ecs::ComponentDataPairs data [(idx_t) ecs::ComponentEnum::ENUM_END]; };
     auto  ptrComponentData = com::mem::ClaimBlock<Arr>();
     auto& componentData = ptrComponentData->data;
 
@@ -106,7 +106,7 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
         if (lineEnum == LineEnum::ComponentData)   
         {
             dbg::Assert(currentComponent != NO_CURRENT_COMPONENT, "no current component");
-            auto const pair = ConvertToComponentDataPair(line);
+            auto const pair = ecs::ConvertToComponentDataPair(line);
             componentData[(idx_t) currentComponent].Append(pair);
             continue;
         } 

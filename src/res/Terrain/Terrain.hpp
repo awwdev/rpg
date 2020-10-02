@@ -7,7 +7,7 @@
 #include "gpu/Meta/Cameras.hpp"
 #include "res/Terrain/TerrainQuadrant.hpp"
 #include "res/Terrain/TerrainSerialization.hpp"
-#include "ecs/Prefabs/PrefabEnum.hpp"
+#include "res/Prefabs/PrefabEnum.hpp"
 #include "com/Algorithms.hpp"
 
 #include <cstdlib> //rand

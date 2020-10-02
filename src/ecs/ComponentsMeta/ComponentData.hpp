@@ -1,12 +1,12 @@
 #pragma once
 #include "com/box/StringMap.hpp"
-#include "ecs/Prefabs/PrefabEnum.hpp"
+#include "res/Prefabs/PrefabEnum.hpp"
 #include "dbg/Assert.hpp"
 #include "com/box/String.hpp"
 #include "com/box/Array.hpp"
 #include "com/Algorithms.hpp"
 
-namespace rpg::ecs2 {
+namespace rpg::ecs {
 
 enum class ComponentDataEnum
 {
@@ -16,21 +16,21 @@ enum class ComponentDataEnum
     ENUM_END
 };
 
-const com::EnumMap<ComponentDataEnum::ENUM_END, com::String<ecs2::PREFAB_FILE_LINE_LEN_MAX>> COMPONENTDATA_ENUM_TO_STR
+const com::EnumMap<ComponentDataEnum::ENUM_END, com::String<res::PREFAB_FILE_LINE_LEN_MAX>> COMPONENTDATA_ENUM_TO_STR
 {
     { ComponentDataEnum::MainComponent_Children, "Children" },
     { ComponentDataEnum::MainComponent_Mesh,     "Mesh" },
     { ComponentDataEnum::MainComponent_Material, "Material" },
 };
-const auto COMPONENTDATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentDataEnum, ecs2::PREFAB_FILE_LINE_LEN_MAX>(COMPONENTDATA_ENUM_TO_STR);
+const auto COMPONENTDATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentDataEnum, res::PREFAB_FILE_LINE_LEN_MAX>(COMPONENTDATA_ENUM_TO_STR);
 
 
 
 
 struct ComponentDataPair
 {
-    com::String<PREFAB_FILE_LINE_LEN_MAX> key;
-    com::String<PREFAB_FILE_LINE_LEN_MAX> val;
+    com::String<res::PREFAB_FILE_LINE_LEN_MAX> key;
+    com::String<res::PREFAB_FILE_LINE_LEN_MAX> val;
 };
 
 constexpr auto COMPONENT_DATA_PAIR_MAX = 10;

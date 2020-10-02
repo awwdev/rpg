@@ -13,27 +13,11 @@
 
 #include "res/_Old/CpuResources.hpp"
 
-#include "ecs/Prefabs/PrefabLoader.hpp"
-
 using namespace rpg;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int)
 {
     dbg::Console console{};
-    {
-        com::mem::GlobalAllocate();
-        ecs::ComponentArrays<ecs2::PrefabEnum::ENUM_END> prefabs {};
-        rpg::ecs2::LoadPrefabs("res\\Prefabs\\prefabs.fab", prefabs);     
-        com::mem::GlobalDeallocate();
-    }
-    system("pause");
-    std::exit(0);
-
-
-
-
-
-
     com::mem::GlobalAllocate();
 
     {

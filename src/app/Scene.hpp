@@ -13,7 +13,7 @@
 #include "gui/Editor/GUI_Level.hpp"
 
 #include "res/Terrain/Terrain.hpp"
-#include "ecs/Prefabs/PrefabLoader.hpp"
+#include "res/Prefabs/PrefabLoader.hpp"
 
 #include "app/PlayerController.hpp"
 #include "app/EditorController.hpp"
@@ -37,8 +37,6 @@ struct GameScene
 
     void Create(res::CpuResources& cpuRes)
     {
-        //TODO: resource manager, init gizmos? find better place!
-        //res::LoadPrefabs("res/Prefabs/prefabs.mini", ecs.prefabsArrays);
         sun.Create(ecs);
         playerController.Create(ecs);
         cpuRes.terrain.InitGizmos(ecs);
