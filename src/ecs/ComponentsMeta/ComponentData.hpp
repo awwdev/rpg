@@ -10,19 +10,19 @@ namespace rpg::ecs {
 
 enum class ComponentDataEnum
 {
-    MainComponent_Children,
-    MainComponent_Mesh,
-    MainComponent_Material,
+    Children,
+    Mesh,
+    Material,
     ENUM_END
 };
 
-const com::EnumMap<ComponentDataEnum::ENUM_END, com::String<res::PREFAB_FILE_LINE_LEN_MAX>> COMPONENTDATA_ENUM_TO_STR
+const com::EnumMap<ComponentDataEnum::ENUM_END, com::String<res::PREFAB_FILE_LINE_LEN_MAX>> COMPONENT_DATA_ENUM_TO_STR
 {
-    { ComponentDataEnum::MainComponent_Children, "Children" },
-    { ComponentDataEnum::MainComponent_Mesh,     "Mesh" },
-    { ComponentDataEnum::MainComponent_Material, "Material" },
+    { ComponentDataEnum::Children, "Children" },
+    { ComponentDataEnum::Mesh,     "Mesh" },
+    { ComponentDataEnum::Material, "Material" },
 };
-const auto COMPONENTDATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentDataEnum, res::PREFAB_FILE_LINE_LEN_MAX>(COMPONENTDATA_ENUM_TO_STR);
+const auto COMPONENT_DATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentDataEnum, res::PREFAB_FILE_LINE_LEN_MAX>(COMPONENT_DATA_ENUM_TO_STR);
 
 
 
@@ -36,7 +36,7 @@ struct ComponentDataPair
 constexpr auto COMPONENT_DATA_PAIR_MAX = 10;
 using ComponentDataPairs =  com::Array<ComponentDataPair, COMPONENT_DATA_PAIR_MAX>;
 
-inline auto ConvertToComponentDataPair(chars_t line) -> const ComponentDataPair
+inline auto LineStrToComponentDataPair(chars_t line) -> ComponentDataPair const 
 {
     ComponentDataPair pair {};
 

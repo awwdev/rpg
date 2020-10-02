@@ -62,7 +62,7 @@ struct StringMap
 
     void Insert(const Pair& pair)
     {
-        const auto hash = SimpleHash(pair.key.data);
+        const auto hash = SimpleHash(pair.key.cstr);
         buckets[hash].Add(pair);
     }
 

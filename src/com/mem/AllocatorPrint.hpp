@@ -45,7 +45,7 @@ inline void PrintAllocationHTML()
         if (priv::blocksUsed.Test(i))  {
             out << "<a title='";
             out << priv::blockInfos[i].address;
-            out << priv::blockInfos[i].fnName.data;
+            out << priv::blockInfos[i].fnName.cstr;
             out << "'>&#9639;";
         } else {
             out << "<a>"; 

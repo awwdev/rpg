@@ -5,6 +5,7 @@
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"
 #include "ecs/ComponentsMeta/ComponentData.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
+#include "res/Prefab/PrefabMeta.hpp"
 #include "com/mem/Allocator.hpp"
 #include "dbg/Assert.hpp"
 
@@ -106,7 +107,7 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
         if (lineEnum == LineEnum::ComponentData)   
         {
             dbg::Assert(currentComponent != NO_CURRENT_COMPONENT, "no current component");
-            auto const pair = ecs::ConvertToComponentDataPair(line);
+            auto const pair = ecs::LineStrToComponentDataPair(line);
             componentData[(idx_t) currentComponent].Append(pair);
             continue;
         } 

@@ -13,10 +13,10 @@
 
 @ Sword_Grib
     ? MainComponent
-        + Mesh = sword_grib
-        + Material = wood
+        + Mesh = Mesh_Sword_Grib
+        + Material = Wooden
     
 @ Sword_Blade
     ? MainComponent
-        + Mesh = sword_blade
-        + Material = metallic
+        + Mesh = Mesh_Sword_Blade
+        + Material = Metallic

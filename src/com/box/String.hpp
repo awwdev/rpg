@@ -36,11 +36,11 @@ struct String
     using DATA_T = char;
     static constexpr idx_t CAPACITY = (idx_t)CAPACITY_T;
 
-    DATA_T data [CAPACITY] { '\0' };
+    DATA_T cstr [CAPACITY] { '\0' };
     idx_t  length = 0;
 
-          DATA_T& operator[] (const idx_t i)       { return data[i]; }
-    const DATA_T& operator[] (const idx_t i) const { return data[i]; }
+          DATA_T& operator[] (const idx_t i)       { return cstr[i]; }
+    const DATA_T& operator[] (const idx_t i) const { return cstr[i]; }
 
     bool Empty()  const { return length == 0; }
     bool Full()   const { return length >= (CAPACITY-1); } 
@@ -49,7 +49,7 @@ struct String
 
     String() = default;
     template<idx_t N> String(const DATA_T (&arr)[N])  { Append(arr, N); }
-    template<idx_t N> String(const String<N>& str)    { Append(str.data, str.length); }
+    template<idx_t N> String(const String<N>& str)    { Append(str.cstr, str.length); }
     String(chars_t ptr)                               { Append(ptr, com::StrLen(ptr)); }
     String(chars_t ptr, const idx_t range)            { Append(ptr, range); }
 
@@ -61,19 +61,19 @@ struct String
     void Clear()
     {
         length  = 0;
-        data[0] = '\0';
+        cstr[0] = '\0';
     }
 
-    template<idx_t N> void Append(const String<N>& str)   { Append(str.data, str.length); }
+    template<idx_t N> void Append(const String<N>& str)   { Append(str.cstr, str.length); }
     template<idx_t N> void Append(const DATA_T (&arr)[N]) { Append(arr, N); }
     void Append(const DATA_T ch)                          { Append(&ch, 1); }
         
     void Append(const DATA_T* const ptr, const idx_t pLength)
     {
         StringAssert(length + pLength < CAPACITY, "str capacity exhausted");
-        std::memcpy(&data[length], ptr, pLength * sizeof(DATA_T));
+        std::memcpy(&cstr[length], ptr, pLength * sizeof(DATA_T));
         length += pLength;
-        data[length + 1] = '\0';       
+        cstr[length + 1] = '\0';       
     }
 
     template<class T, typename = std::enable_if_t<!std::is_same_v<std::decay_t<T>, DATA_T>>>
@@ -88,19 +88,19 @@ struct String
     {
         if (Empty()) return;
         --length;
-        data[length] = '\0';
+        cstr[length] = '\0';
     }
 
     //? COMPARSION
 
     constexpr bool operator==(const String& other) const
     {
-        return std::strcmp(this->data, other.data) == 0;
+        return std::strcmp(this->cstr, other.cstr) == 0;
     }
 
     constexpr bool operator==(chars_t other) const
     {
-        return std::strcmp(this->data, other) == 0;
+        return std::strcmp(this->cstr, other) == 0;
     }
 
 };
@@ -125,7 +125,7 @@ auto ConcatStrings(const STRINGS&... strs)
 template<auto N>
 std::ostream& operator<<(std::ostream& os, const String<N>& str)
 {
-    return (os << str.data);
+    return (os << str.cstr);
 }
 
 }//ns

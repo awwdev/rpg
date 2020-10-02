@@ -2,7 +2,7 @@
 
 #pragma once
 #include "ecs/EntityID.hpp"
-#include "ecs/EntityID.hpp"
+#include "res/Prefab/PrefabMeta.hpp"
 #include "com/box/StringMap.hpp"
 
 namespace rpg::res {
@@ -17,7 +17,6 @@ enum class PrefabEnum : ecs::ID
 };
 
 constexpr auto  PREFAB_COUNT_MAX = (ecs::ID) PrefabEnum::ENUM_END;
-constexpr idx_t PREFAB_FILE_LINE_LEN_MAX = 100;
 
 const com::EnumMap<PrefabEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> PREFAB_ENUM_TO_STR
 {
