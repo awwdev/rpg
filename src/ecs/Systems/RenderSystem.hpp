@@ -11,20 +11,13 @@ namespace rpg::ecs {
     
 inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
 {
-    //const auto& renderComponents    = arrays.renderComponents;
-    //const auto& transformComponents = arrays.transforms;
-
-    //FOR_ARRAY(renderComponents.dense, i) 
+    FOR_ARRAY(arrays.mainComponents.dense, i) 
     {
-        /*
-        const auto entityID = renderComponents.entityLookup[i];
+        auto const& mainComponent = arrays.mainComponents.dense[i];
 
-        const auto& renderComponent    = renderComponents.dense[i];
-        const auto& transformComponent = transformComponents.Get(entityID);
-
-        const auto& s = transformComponent.scale;
-        const auto& r = transformComponent.rotation;
-        const auto& t = transformComponent.translation;
+        const auto& s = mainComponent.scale;
+        const auto& r = mainComponent.rotation;
+        const auto& t = mainComponent.translation;
 
         //scale
         const com::Mat4f scaleMat = {
@@ -50,21 +43,14 @@ inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderDat
         combinedMat[3][2] = t.z;
 
         //render data
-        const auto modelType = (idx_t) renderComponent.modelType;
+        gpu::RenderData_General::MeshInstance meshInstance {};
+        meshInstance.transform = combinedMat;
 
-        gpu::RenderData_General::MeshInstance modelInstance{};
-        modelInstance.transform = combinedMat;
-
-        //! render needs to sort based on meshes
-        //! prefabs are based on modeltype but would need to create entities per submesh
-        //! meshIdx would be a combination of model type + submesh idx
-        //! need of parenting
-
-        //renderData.general.meshStats[modelType].instanceCount += 1;
-        //renderData.general.meshInstances.Append(modelInstance);
-
-        */
+        renderData.general.meshInstances.Append(meshInstance);
+        //TODO: need to add per mesh enum 
+        
     }
+
 }
 
 }//ns

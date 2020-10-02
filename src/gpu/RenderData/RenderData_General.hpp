@@ -31,7 +31,6 @@ struct RenderData_General
     struct MeshInstance
     {
         com::Mat4f transform;
-        //material settings
     };
 
     struct MeshInstancesStats
@@ -50,7 +49,6 @@ struct RenderData_General
         meta = {};
         meshInstances.Clear();
         meshInstancesStats.Clear();
-
     }
 };
 
