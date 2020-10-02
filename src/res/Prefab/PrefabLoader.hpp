@@ -34,7 +34,7 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
 
         FOR_CARRAY(componentData, componentEnumIdx) {
             const auto& pairs = componentData[componentEnumIdx];
-            prefabComponentArrays.AddComponent((ecs::ID) currentPrefab, (ecs::ComponentEnum) componentEnumIdx, pairs);
+            prefabComponentArrays.SetComponent((ecs::ID) currentPrefab, (ecs::ComponentEnum) componentEnumIdx, pairs);
         }
 
         FOR_CARRAY(componentData, i)

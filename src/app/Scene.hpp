@@ -35,13 +35,17 @@ struct GameScene
     gui::GUI_Shadow guiShadow;
     gui::GUI_Stats  guiStats;
 
-    void Create(res::CpuResources& cpuRes)
+    void Create(res::CpuResources& cpuRes, res::Resources const& resources)
     {
         sun.Create(ecs);
         playerController.Create(ecs);
         cpuRes.terrain.InitGizmos(ecs);
-    }
+        ecs.prefabsArrays = resources.prefabs.prefabsArrays;
 
+        //test
+        auto swordID = ecs.AddEntity(res::PrefabEnum::Sword);
+        auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
+    }
 
     void Update(const double dt, res::CpuResources& cpuRes)
     {

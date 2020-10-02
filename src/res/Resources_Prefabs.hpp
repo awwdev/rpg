@@ -12,6 +12,7 @@ struct Resources_Prefabs
 
     void Load()
     {
+        prefabsArrays.Clear();
         LoadPrefabs("res/Prefabs/Prefabs.fab", prefabsArrays);
     }
 };

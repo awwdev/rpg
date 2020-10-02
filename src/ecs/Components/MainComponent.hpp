@@ -22,7 +22,7 @@ struct MainComponent
     com::Vec3f translation  {};
 
     //render data
-    res::MeshEnum         meshEnum          { res::MeshEnum::Placeholder };
+    res::MeshEnum         meshEnum          { res::MeshEnum::None };
     res::MeshMaterialEnum meshMaterialEnum  { res::MeshMaterialEnum::Default };
 
     //parsing

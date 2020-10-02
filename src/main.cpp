@@ -28,7 +28,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
 
         auto ptrRenderer      = com::mem::ClaimBlock<gpu::vuk::Renderer>(gpu::vuk::WindowHandle{window.hInstance, window.hWnd}, *ptrCpuResources, *ptrResources);
         auto ptrGameScenes    = com::mem::ClaimBlock<app::GameScene>();
-        ptrGameScenes->Create(*ptrCpuResources);
+        ptrGameScenes->Create(*ptrCpuResources, *ptrResources);
 
         while (!wnd::HasEvent<wnd::EventType::Window_Close>() && 
                !wnd::HasEvent<wnd::EventType::ESC, wnd::EventState::Pressed>())

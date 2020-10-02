@@ -9,10 +9,12 @@
 
 namespace rpg::ecs {
     
-template<class COMPONENT, auto MAX_COMPONENT_COUNT = MAX_ENTITY_COUNT>
+template<class COMPONENT_T, auto MAX_COMPONENT_COUNT = MAX_ENTITY_COUNT>
 struct ComponentArray
 {
-    com::Array<COMPONENT, MAX_COMPONENT_COUNT> dense;
+    using COMPONENT = COMPONENT_T;
+
+    com::Array<COMPONENT_T, MAX_COMPONENT_COUNT> dense;
     ID componentLookup [(idx_t) MAX_COMPONENT_COUNT];
     ID entityLookup    [(idx_t) MAX_COMPONENT_COUNT];
 
@@ -23,38 +25,33 @@ struct ComponentArray
 
     ComponentArray() 
     {
-        for(idx_t i = 0; i < (idx_t) MAX_COMPONENT_COUNT; ++i) {
-            componentLookup[i] = ECS_NULL;
-            entityLookup[i]    = ECS_NULL;
-        }            
+        //initialization
+        Clear();         
     }
 
     template<class... CtorArgs>
-    COMPONENT& AddComponent(const ID entityID, CtorArgs&&... args)
+    COMPONENT_T& SetComponent(const ID entityID, CtorArgs&&... args)
     {
         //overwrite
         if (componentLookup[entityID] != ECS_NULL) {
             dbg::LogWarning("add component that alread exists");
-            dense[componentLookup[entityID]] = { std::forward<CtorArgs>(args)... }; //!
+            dense[componentLookup[entityID]] = { std::forward<CtorArgs>(args)... };
             return dense[componentLookup[entityID]];
         }
         //new
-        dense.Append(std::forward<CtorArgs>(args)...); //!
+        dense.Append(std::forward<CtorArgs>(args)...);
         componentLookup[entityID] = dense.Count() - 1;
         entityLookup[dense.Count() - 1] = entityID;
         return dense.Last();
     }
 
-    void CopyComponent(const ID entityID, const COMPONENT& other)
+    void Clear()
     {
-        if (componentLookup[entityID] != ECS_NULL) {
-            dense[componentLookup[entityID]] = other; 
-            return;
-        }
-
-        dense.Append(other);
-        componentLookup[entityID] = dense.Count() - 1;
-        entityLookup[dense.Count() - 1] = entityID;
+        dense.Clear();
+        for(idx_t i = 0; i < (idx_t) MAX_COMPONENT_COUNT; ++i) {
+            componentLookup[i] = ECS_NULL;
+            entityLookup[i]    = ECS_NULL;
+        }  
     }
 
 };

@@ -10,22 +10,23 @@ namespace rpg::ecs {
 
 struct ECS
 {
-    com::Bitset<MAX_ENTITY_COUNT>     entities;
-    ComponentArrays<MAX_ENTITY_COUNT> arrays;
+    com::Bitset<MAX_ENTITY_COUNT>              entities;
+    ComponentArrays<MAX_ENTITY_COUNT>          arrays;
+    ComponentArrays<res::PrefabEnum::ENUM_END> prefabsArrays;
     
-    ID AddEntity()
+    auto AddEntity() -> ID
     {
         const ID freeId = entities.FindFirstFreeBit();
         entities.Set(freeId, true);
         return freeId;
     }
 
-    //ID AddEntity(const PrefabType& prefabType)
-    //{
-    //    const ID freeId = AddEntity();
-    //    arrays.CopyComponents(freeId, (ID)prefabType, prefabsArrays);
-    //    return freeId;
-    //}
+    auto AddEntity(res::PrefabEnum const& prefabEnum) -> ID
+    {
+        const ID freeId = AddEntity();
+        arrays.SetComponentFrom(freeId, (ID) prefabEnum, prefabsArrays);
+        return freeId;
+    }
 
 };    
 
