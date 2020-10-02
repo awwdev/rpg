@@ -52,4 +52,26 @@ inline auto LineStrToComponentDataPair(chars_t line) -> ComponentDataPair const
     return pair;
 }
 
+//multiple values in one line to array (end of line must be null terminated)
+template<auto VAL_COUNT, auto VAL_LEN>
+auto ValStrToValArray(chars_t valStr)
+{
+    com::Array<com::String<VAL_LEN>, VAL_COUNT> arr;
+    
+    idx_t beginIdx = 0;
+    idx_t endIdx   = 0;
+
+    while(valStr[endIdx] != '\0') 
+    {
+        if (valStr[endIdx] == ',') {
+            arr.Append(&valStr[beginIdx], endIdx - beginIdx);
+            beginIdx = endIdx + 1;
+        }
+        ++endIdx;
+    }
+    arr.Append(&valStr[beginIdx], endIdx - beginIdx); //last one
+
+    return arr;
+}
+
 } //ns

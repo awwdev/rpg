@@ -21,7 +21,7 @@ template<class T>
 void Assert(const bool expression, const T& msg) 
 { 
     if (!expression)  {
-        dbg::LogError(msg);
+        dbg::LogError("[ASSERTION FAILED]", msg);
         dbg::DebugBreak();
     }
 } 

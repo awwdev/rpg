@@ -13,7 +13,6 @@ struct Resources_Prefabs
     void Load()
     {
         LoadPrefabs("res/Prefabs/Prefabs.fab", prefabsArrays);
-        dbg::LogInfo("prefabs loaded");
     }
 };
 

@@ -17,17 +17,17 @@ struct MainComponent
     com::Array<ID, CHILDREN_MAX> children;
 
     //transform data
-    com::Vec3f scale; 
-    com::Vec3f rotation; 
-    com::Vec3f translation; 
+    com::Vec3f scale        { 1, 1, 1 }; 
+    com::Vec3f rotation     {};
+    com::Vec3f translation  {};
 
     //render data
-    res::MeshEnum         meshEnum;
-    res::MeshMaterialEnum meshMaterialEnum;
+    res::MeshEnum         meshEnum          { res::MeshEnum::Placeholder };
+    res::MeshMaterialEnum meshMaterialEnum  { res::MeshMaterialEnum::Default };
 
+    //parsing
     MainComponent(ecs::ComponentDataPairs const& pairs)
     {
-
         FOR_ARRAY(pairs, i) {
             auto const& key_cstr = pairs[i].key.cstr;
             auto const& val_cstr = pairs[i].val.cstr;
@@ -39,7 +39,13 @@ struct MainComponent
             {
                 case ComponentDataEnum::Children:  
                 {
-
+                    const auto values = ValStrToValArray<3, 100>(val_cstr);     
+                    dbg::Assert(!values.Empty(), "values are empty");
+                    FOR_ARRAY(values, i){
+                        auto prefabEnum = res::PREFAB_STR_TO_ENUM.GetOptional(values[i].cstr);
+                        dbg::Assert(prefabEnum, "child prefab enum wrong");
+                        children.Append((ID) *prefabEnum);
+                    }
                 }
                 break;
 

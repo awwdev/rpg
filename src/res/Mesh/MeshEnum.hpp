@@ -9,6 +9,7 @@ namespace rpg::res {
 
 enum class MeshEnum : u8
 {
+    Placeholder, 
     Sword_Grib,
     Sword_Blade,
     ENUM_END
@@ -16,6 +17,7 @@ enum class MeshEnum : u8
 
 const com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> MESH_ENUM_TO_STR
 {
+    { MeshEnum::Placeholder,  "Mesh_Placeholder" },
     { MeshEnum::Sword_Grib,   "Mesh_Sword_Grib" },
     { MeshEnum::Sword_Blade,  "Mesh_Sword_Blade" },
 };
