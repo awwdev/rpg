@@ -134,7 +134,8 @@ struct General_Uniforms
 
         sboInstances.Reset();
         FOR_C_ARRAY(rdGeneral.meshInstances, i){
-            if (auto const& instanceData = rdGeneral.meshInstances[i]; instanceData.Empty() == false)
+            if (auto const& instanceData = rdGeneral.meshInstances[i]; 
+                instanceData.Empty() == false && i != (idx_t) res::MeshEnum::None)
                 sboInstances.Append(instanceData);
         }
     }

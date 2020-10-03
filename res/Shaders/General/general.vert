@@ -16,14 +16,14 @@ layout(binding = 0) uniform Meta {
     mat4 proj;
 } meta;
 
-struct Model 
+struct MeshInstance 
 {
     mat4 transform;
 };
 
-layout(binding = 1) readonly buffer Models { 
-    Model arr [];
-} models;
+layout(binding = 1) readonly buffer MeshInstances { 
+    MeshInstance arr [];
+} meshInstances;
 
 layout(binding = 2) uniform Sun { 
     mat4 projView       [CASCADE_COUNT];
@@ -32,7 +32,7 @@ layout(binding = 2) uniform Sun {
 
 void main() 
 {
-    gl_Position = meta.proj * meta.view * models.arr[gl_InstanceIndex].transform * inPos;
+    gl_Position = meta.proj * meta.view * meshInstances.arr[gl_InstanceIndex].transform * inPos;
     outCol = inCol;
     outTex = inTex;
 

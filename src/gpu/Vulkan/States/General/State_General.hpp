@@ -87,7 +87,7 @@ struct State_General
         uint32_t instanceIdx = 0;
         FOR_C_ARRAY(rdGeneral.meshInstances, meshIdx)
         {
-            if (rdGeneral.meshInstances[meshIdx].Empty() || meshIdx == (idx_t) res::MeshEnum::None)
+            if (rdGeneral.meshInstances[meshIdx].Empty() || meshIdx == (idx_t) res::MeshEnum::None) //start for loop at 1 is better
                 continue;
 
             auto const& meshInstances = rdGeneral.meshInstances[meshIdx];
@@ -97,7 +97,7 @@ struct State_General
             instanceIdx += meshInstances.Count();
         }
 
-        vkCmdEndRenderPass (cmdBuffer);
+        vkCmdEndRenderPass(cmdBuffer);
     };
     
 };

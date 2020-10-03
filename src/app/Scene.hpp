@@ -43,8 +43,18 @@ struct GameScene
         ecs.prefabsArrays = resources.prefabs.prefabsArrays;
 
         //test
-        auto  swordID = ecs.AddEntity(res::PrefabEnum::Sword);
-        auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
+        {
+            auto  swordID = ecs.AddEntity(res::PrefabEnum::Sword);
+            auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
+            swordMainComponent.translation = { 0, 1, 0 };
+        }
+
+        {
+            auto  swordID = ecs.AddEntity(res::PrefabEnum::Sword);
+            auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
+            swordMainComponent.translation = { 1, 0, 0 };
+        }
+        
     }
 
     void Update(const double dt, res::CpuResources& cpuRes)

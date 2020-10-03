@@ -13,14 +13,6 @@ layout(binding  = 3) uniform sampler2DArrayShadow shadowMap;
 
 void main() 
 {
-    //float shadowSum = 0;
-    //for(int i = 0; i < CASCADE_COUNT; ++i){
-    //    vec4  coord = vec4(inShadowCoord[i].xy, i, inShadowCoord[i].z);
-    //    float shadow = texture(shadowMap, coord).r;
-    //    shadowSum += shadow;
-    //}
-    //shadowSum /= CASCADE_COUNT;
-
     int cascadeIdx = 0;
     vec2 size = textureSize(shadowMap, 0).xy;
 
@@ -41,3 +33,14 @@ void main()
     float shadowAmbient = clamp(AMBIENT + shadow, 0, 1);
     outCol = vec4(inCol.rgb * shadowAmbient, 1);
 }
+
+
+
+
+//float shadowSum = 0;
+//for(int i = 0; i < CASCADE_COUNT; ++i){
+//    vec4  coord = vec4(inShadowCoord[i].xy, i, inShadowCoord[i].z);
+//    float shadow = texture(shadowMap, coord).r;
+//    shadowSum += shadow;
+//}
+//shadowSum /= CASCADE_COUNT;
