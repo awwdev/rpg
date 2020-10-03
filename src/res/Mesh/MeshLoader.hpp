@@ -10,7 +10,7 @@
 namespace rpg::res {
 
 inline auto LoadMesh(chars_t path, MeshEnum const& meshEnum,
-com::Array<MeshVertex, MESHES_VERTS_ALL>& allVertices,
+com::Array<MeshVertex, MESHES_VERTS_TOTAL>& allVertices,
 MeshVertexRange (&meshVertexRanges) [MESHES_TOTAL])
 {
     std::ifstream file(path, std::ios::binary);

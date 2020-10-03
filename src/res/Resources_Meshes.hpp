@@ -8,7 +8,7 @@ namespace rpg::res {
 
 struct Resources_Meshes
 {
-    com::Array<MeshVertex, MESHES_VERTS_ALL> allVertices;
+    com::Array<MeshVertex, MESHES_VERTS_TOTAL> allVertices;
     MeshVertexRange meshVertexRanges [MESHES_TOTAL];
 
     void Load()

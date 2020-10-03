@@ -20,7 +20,7 @@ struct General_Vertices
 
     VertexBuffer<GeneralVertex, RD::TERRA_VERT_MAX_ALL> vboTerrain;
 
-    VertexBuffer<GeneralVertex, RD::MODEL_VERT_MAX_ALL> vboMeshes;
+    VertexBuffer<GeneralVertex, res::MESHES_VERTS_TOTAL> vboMeshes;
     res::MeshVertexRange vboMeshesVertexRanges [(idx_t) res::MESHES_TOTAL];
 
     VkDeviceSize offsets [1] = {};

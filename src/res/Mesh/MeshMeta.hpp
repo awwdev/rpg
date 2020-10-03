@@ -10,11 +10,11 @@ namespace rpg::res {
 using MeshVertex = gpu::RenderData_General::Vertex;
 
 static constexpr uint32_t MESHES_TOTAL = 100;
-static constexpr uint32_t MESHES_VERTS_ALL = 1'000'000;
+static constexpr uint32_t MESHES_VERTS_TOTAL = 1'000'000;
 
 struct MeshVertexRange 
 { 
-    uint32_t beginIndx;
+    uint32_t index;
     uint32_t count; 
 };
 

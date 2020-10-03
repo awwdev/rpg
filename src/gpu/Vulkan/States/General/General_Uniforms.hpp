@@ -12,10 +12,10 @@ namespace rpg::gpu::vuk {
 struct General_Uniforms
 {
     enum Bindings : uint32_t {
-        BindingMeta        = 0,
-        BindingModelInstances       = 1,
-        BindingSun         = 2,
-        BindingShadowMap   = 3,
+        BindingMeta            = 0,
+        BindingModelInstances  = 1,
+        BindingSun             = 2,
+        BindingShadowMap       = 3,
         ENUM_END
     };
 
