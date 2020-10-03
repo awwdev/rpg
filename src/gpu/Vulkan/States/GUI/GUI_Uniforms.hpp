@@ -34,14 +34,20 @@ struct GUI_Uniforms
     {
         fontImages.Create(
             VK_FORMAT_R8_SRGB,
-            16, 16,
+            hostRes.textures.monospaceFont.WIDTH,
+            hostRes.textures.monospaceFont.HEIGHT,
             VK_SAMPLE_COUNT_1_BIT, 
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             VK_IMAGE_ASPECT_COLOR_BIT,
             hostRes.textures.monospaceFont.count,
             VK_IMAGE_VIEW_TYPE_2D_ARRAY
         );     
-        fontImages.Store(cmdPool);
+        fontImages.Store(
+            cmdPool, 
+            hostRes.textures.monospaceFont.data, 
+            hostRes.textures.monospaceFont.TOTAL_SIZE,
+            hostRes.textures.monospaceFont.TEX_SIZE
+        );
         fontImages.Bake(cmdPool);
 
         const VkSamplerCreateInfo samplerInfo 

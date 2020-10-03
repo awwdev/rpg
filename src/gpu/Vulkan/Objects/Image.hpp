@@ -3,7 +3,10 @@
 
 #include "gpu/Vulkan/Meta/Context.hpp"
 #include "gpu/Vulkan/Meta/Commands.hpp"
+#include "gpu/Vulkan/Objects/Buffer.hpp"
 #include "gpu/Vulkan/Helper/Utils.hpp"
+
+#include "com/box/Array.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -14,15 +17,26 @@ struct Image
     VkImageView     view;
     VkImageLayout   currentLayout { VK_IMAGE_LAYOUT_UNDEFINED }; //don't change from outside
 
+    static constexpr auto LAYER_COUNT_MAX = 300;
+    uint32_t layerCount;
+    uint32_t width, height;
+    VkImageAspectFlags aspect;
+
     void Create(
         const VkFormat format,
-        const uint32_t width, const uint32_t height,
+        const uint32_t pWidth, const uint32_t pHeight,
         const VkSampleCountFlagBits sampleCount,
         const VkImageUsageFlags usage,
-        const VkImageAspectFlags aspect,
-        const uint32_t layerCount = 1,
+        const VkImageAspectFlags pAspect,
+        const uint32_t pLayerCount = 1,
         const VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D)
     {
+        layerCount = pLayerCount;
+        dbg::Assert(layerCount < LAYER_COUNT_MAX, "layer count too high");
+        width  = pWidth;
+        height = pHeight;
+        aspect = pAspect;
+
         //? IMAGE
         const VkImageCreateInfo imageInfo {
             .sType                  = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -81,7 +95,6 @@ struct Image
     void Transition(
         VkCommandPool cmdPool,
         VkImageLayout newLayout,
-        VkImageAspectFlags aspect, 
         VkAccessFlags srcAccessMask,
         VkAccessFlags dstAccessMask, 
         VkPipelineStageFlags srcStageMask,
@@ -125,19 +138,49 @@ struct Image
         EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
     }
 
-    void Store(VkCommandPool cmdPool)
+    void Store(VkCommandPool cmdPool, void const* data, const uint32_t size, const uint32_t singleTextureSize)
     {
+        //prepare for storing 
         Transition(
             cmdPool, 
             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
-            VK_IMAGE_ASPECT_COLOR_BIT,
-            0, VK_ACCESS_TRANSFER_WRITE_BIT,
-            VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT
+            VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT,
+            VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT
         );
 
-        //auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
-        //vkCmdCopyBufferToImage(cmdBuffer, buffer.buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, textureArray.COUNT, regions);
-        //EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
+        //copy data into buffer
+        Buffer tmpBuffer;
+        tmpBuffer.Create(
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
+            size, 
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+        );
+        tmpBuffer.Map();
+        tmpBuffer.Store(data, size);
+
+        com::Array<VkBufferImageCopy, LAYER_COUNT_MAX> imageCopyInfos;
+        for(uint32_t layerIdx = 0; layerIdx < layerCount; ++layerIdx)
+        {
+            imageCopyInfos.Append(VkBufferImageCopy {
+                .bufferOffset       = layerIdx * singleTextureSize,
+                .bufferRowLength    = 0,
+                .bufferImageHeight  = 0,
+                .imageSubresource   = 
+                {
+                    .aspectMask     = aspect,
+                    .mipLevel       = 0,
+                    .baseArrayLayer = layerIdx,
+                    .layerCount     = 1
+                },
+                .imageOffset        = { 0, 0, 0 },
+                .imageExtent        = { width, height, 1 }
+            });
+        }
+
+        //send to queue
+        auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
+        vkCmdCopyBufferToImage(cmdBuffer, tmpBuffer.buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, imageCopyInfos.Count(), imageCopyInfos.Data());
+        EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
     }
 
     void Bake(VkCommandPool cmdPool)
@@ -145,7 +188,6 @@ struct Image
         Transition(
             cmdPool, 
             VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 
-            VK_IMAGE_ASPECT_COLOR_BIT,
             VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT,
             VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT
         );
@@ -153,11 +195,14 @@ struct Image
 
     void Destroy()
     {
-        if (image != VK_NULL_HANDLE) {
+        if (image != VK_NULL_HANDLE) { //! this should not be necessary
             vkDestroyImage      (g_contextPtr->device, image, nullptr);
             vkFreeMemory        (g_contextPtr->device, memory, nullptr);
             vkDestroyImageView  (g_contextPtr->device, view, nullptr);
-            currentLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+            currentLayout = VK_IMAGE_LAYOUT_UNDEFINED; //! should not be necessary
+            layerCount = 0;
+            width  = 0;
+            height = 0;
         }
         image = VK_NULL_HANDLE;
     }
