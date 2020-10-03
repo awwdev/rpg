@@ -70,6 +70,7 @@ struct MainComponent
 
         }
     }
+
 };
 
-}//NS
+}//ns

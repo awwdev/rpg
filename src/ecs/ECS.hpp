@@ -25,6 +25,15 @@ struct ECS
     {
         const ID freeId = AddEntity();
         arrays.SetComponentFrom(freeId, (ID) prefabEnum, prefabsArrays);
+
+        //instantiate children (prefabs)
+        if (auto const* mainComponent = arrays.mainComponents.GetOptional(freeId)) {
+            FOR_ARRAY(mainComponent->children, i){
+                auto const prefabID = mainComponent->children[i];
+                AddEntity((res::PrefabEnum) prefabID);
+            }
+        }
+
         return freeId;
     }
 

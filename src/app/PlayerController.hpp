@@ -27,7 +27,7 @@ struct PlayerController
     void Create(ecs::ECS& ecs)
     {
         using namespace com;
-        playerID = ecs.AddEntity();
+        //playerID = ecs.AddEntity();
         //auto& transform = ecs.arrays.AddComponent<ecs::ComponentEnum::TransformComponent>(playerID);
         //transform.scale = { S, H, S };
         //transform.translation = { 0, Ypos, 0 };

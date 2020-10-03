@@ -150,7 +150,7 @@ struct Terrain
 
     void InitGizmos(ecs::ECS& ecs)
     {
-        settings.gizmoID = ecs.AddEntity();
+        //settings.gizmoID = ecs.AddEntity();
         //ecs.arrays.AddComponent<ecs::ComponentEnum::RenderComponent>(settings.gizmoID, res::ModelType::PrimitiveRing16);
         //ecs.arrays.AddComponent<ecs::ComponentEnum::TransformComponent> (settings.gizmoID);
     }

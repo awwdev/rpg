@@ -43,7 +43,7 @@ struct GameScene
         ecs.prefabsArrays = resources.prefabs.prefabsArrays;
 
         //test
-        auto swordID = ecs.AddEntity(res::PrefabEnum::Sword);
+        auto  swordID = ecs.AddEntity(res::PrefabEnum::Sword);
         auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
     }
 

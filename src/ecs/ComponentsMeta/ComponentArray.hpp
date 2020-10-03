@@ -25,8 +25,7 @@ struct ComponentArray
 
     ComponentArray() 
     {
-        //initialization
-        Clear();         
+        Clear(); //used for initialization          
     }
 
     template<class... CtorArgs>
