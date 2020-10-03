@@ -20,6 +20,7 @@ struct MainComponent
     com::Vec3f scale        { 1, 1, 1 }; 
     com::Vec3f rotation     {};
     com::Vec3f translation  {};
+    com::Mat4f transform    {};
 
     //render data
     res::MeshEnum         meshEnum          { res::MeshEnum::None };

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "ecs/ECS.hpp"
-#include "ecs/Systems/RenderSystem.hpp"
 
 #include "gpu/RenderData/RenderData.hpp"
 #include "gpu/Meta/Sun.hpp"
@@ -47,12 +46,20 @@ struct GameScene
             auto  swordID = ecs.AddEntity(res::PrefabEnum::Sword);
             auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
             swordMainComponent.translation = { 0, 1, 0 };
+            
+            auto const gribID = swordMainComponent.children[0];
+            auto& gribMainComponent = ecs.arrays.mainComponents.Get(gribID);
+            gribMainComponent.translation = { 0, 1, 0 };
         }
 
         {
             auto  swordID = ecs.AddEntity(res::PrefabEnum::Sword);
             auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
             swordMainComponent.translation = { 1, 0, 0 };
+
+            auto const bladeID = swordMainComponent.children[1];
+            auto& bladeMainComponent = ecs.arrays.mainComponents.Get(bladeID);
+            bladeMainComponent.translation = { 0, 0, 1 };
         }
         
     }
@@ -79,7 +86,7 @@ struct GameScene
         sun.Update(ecs, dt, renderData);
 
         //? ECS
-        ecs::RenderSystem(ecs.arrays, dt, renderData);
+        ecs.Update(dt, renderData);
     }
 
 };
