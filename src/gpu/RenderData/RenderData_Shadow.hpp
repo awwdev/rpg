@@ -9,6 +9,7 @@ namespace rpg::gpu {
 struct RenderData_Shadow
 {
     static constexpr uint32_t CASCADE_COUNT = 4; // need to change array size in shader too (UBO)
+    static constexpr uint32_t SHADOW_MAP_SIZE = 4 * 1024;
 
     struct Push_Cascades
     {

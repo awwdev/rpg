@@ -54,7 +54,7 @@ struct Post_Uniforms
             .imageInfo {
                 .sampler        = sampler,
                 .imageView      = finalImage.view,
-                .imageLayout    = finalImage.layout
+                .imageLayout    = finalImage.currentLayout
             }
         };
 

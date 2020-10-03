@@ -119,7 +119,7 @@ struct General_Uniforms
             .imageInfo {
                 .sampler        = shadowMapSampler,
                 .imageView      = shadowMaps.view,
-                .imageLayout    = shadowMaps.layout
+                .imageLayout    = shadowMaps.currentLayout
             }
         };
 

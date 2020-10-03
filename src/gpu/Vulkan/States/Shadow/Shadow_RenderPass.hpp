@@ -16,8 +16,8 @@ struct Shadow_RenderPass
     VkImageView             views        [RenderData_Shadow::CASCADE_COUNT];
 
     static constexpr VkFormat DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
-    uint32_t width  = 1024 * 4; 
-    uint32_t height = 1024 * 4; 
+    uint32_t width  = RenderData_Shadow::SHADOW_MAP_SIZE;
+    uint32_t height = RenderData_Shadow::SHADOW_MAP_SIZE; 
     VkClearValue clears [1] { { .depthStencil { 0, 0 } } };
 
     Image shadowMaps;
@@ -47,7 +47,7 @@ struct Shadow_RenderPass
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
             .finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
         };
-        shadowMaps.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+        shadowMaps.currentLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 
         const VkAttachmentDescription descs [] {
             depthDesc,

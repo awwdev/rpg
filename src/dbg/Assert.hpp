@@ -22,7 +22,7 @@ void Assert(const bool expression, const T& msg)
 { 
     if (!expression)  {
         dbg::LogError("[ASSERTION FAILED]", msg);
-        dbg::DebugBreak();
+        //dbg::DebugBreak();
     }
 } 
 

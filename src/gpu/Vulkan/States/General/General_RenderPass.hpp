@@ -56,7 +56,7 @@ struct General_RenderPass
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
             .finalLayout    = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
         };
-        msaaImage.layout = msaaDesc.finalLayout; //VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+        msaaImage.currentLayout = msaaDesc.finalLayout; //VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 
         const VkAttachmentReference msaaRef {
             .attachment = 0,
@@ -83,7 +83,7 @@ struct General_RenderPass
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
             .finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,        
         };
-        depthImage.layout = depthDesc.finalLayout; //VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+        depthImage.currentLayout = depthDesc.finalLayout; //VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 
         const VkAttachmentReference depthRef {
             .attachment = 1,
@@ -110,7 +110,7 @@ struct General_RenderPass
             .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
             .finalLayout    = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,        
         };
-        finalImage.layout = finalDesc.finalLayout;
+        finalImage.currentLayout = finalDesc.finalLayout;
 
         const VkAttachmentReference finalRef {
             .attachment = 2,

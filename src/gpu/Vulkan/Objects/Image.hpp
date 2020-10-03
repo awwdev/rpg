@@ -12,7 +12,7 @@ struct Image
     VkImage         image { VK_NULL_HANDLE };
     VkDeviceMemory  memory;
     VkImageView     view;
-    VkImageLayout   layout;
+    VkImageLayout   currentLayout { VK_IMAGE_LAYOUT_UNDEFINED }; //don't change from outside
 
     void Create(
         const VkFormat format,
@@ -39,7 +39,7 @@ struct Image
             .sharingMode            = VK_SHARING_MODE_EXCLUSIVE,
             .queueFamilyIndexCount  = 0,
             .pQueueFamilyIndices    = 0,
-            .initialLayout          = VK_IMAGE_LAYOUT_UNDEFINED
+            .initialLayout          = currentLayout
         };
         VkCheck(vkCreateImage(g_contextPtr->device, &imageInfo, nullptr, &image));
 
@@ -82,19 +82,20 @@ struct Image
         VkCommandPool cmdPool,
         VkImageLayout newLayout,
         VkImageAspectFlags aspect, 
-        VkAccessFlags dstAccessMask       = VK_ACCESS_TRANSFER_WRITE_BIT | VK_ACCESS_TRANSFER_READ_BIT, 
-        VkPipelineStageFlags dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT)
+        VkAccessFlags srcAccessMask,
+        VkAccessFlags dstAccessMask, 
+        VkPipelineStageFlags srcStageMask,
+        VkPipelineStageFlags dstStageMask)
     {
-        layout = newLayout; 
         auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
 
         const VkImageMemoryBarrier barrier
         {
             .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
             .pNext               = nullptr,
-            .srcAccessMask       = 0,
+            .srcAccessMask       = srcAccessMask,
             .dstAccessMask       = dstAccessMask,
-            .oldLayout           = VK_IMAGE_LAYOUT_UNDEFINED,
+            .oldLayout           = currentLayout,
             .newLayout           = newLayout,
             .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
@@ -109,10 +110,12 @@ struct Image
             }
         };
 
+        currentLayout = newLayout;
+
         vkCmdPipelineBarrier(
             cmdBuffer,
-            dstStageMask, 
-            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            srcStageMask, 
+            dstStageMask,
             0,
             0, nullptr,
             0, nullptr,
@@ -122,12 +125,39 @@ struct Image
         EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
     }
 
+    void Store(VkCommandPool cmdPool)
+    {
+        Transition(
+            cmdPool, 
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
+            VK_IMAGE_ASPECT_COLOR_BIT,
+            0, VK_ACCESS_TRANSFER_WRITE_BIT,
+            VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT
+        );
+
+        //auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
+        //vkCmdCopyBufferToImage(cmdBuffer, buffer.buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, textureArray.COUNT, regions);
+        //EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
+    }
+
+    void Bake(VkCommandPool cmdPool)
+    {
+        Transition(
+            cmdPool, 
+            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 
+            VK_IMAGE_ASPECT_COLOR_BIT,
+            VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT,
+            VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT
+        );
+    }
+
     void Destroy()
     {
         if (image != VK_NULL_HANDLE) {
             vkDestroyImage      (g_contextPtr->device, image, nullptr);
             vkFreeMemory        (g_contextPtr->device, memory, nullptr);
             vkDestroyImageView  (g_contextPtr->device, view, nullptr);
+            currentLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         }
         image = VK_NULL_HANDLE;
     }

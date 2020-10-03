@@ -4,28 +4,45 @@
 #include "gpu/Vulkan/Meta/Context.hpp"
 #include "gpu/Vulkan/Objects/BufferExt.hpp"
 #include "gpu/Vulkan/Objects/Descriptors.hpp"
+#include "gpu/Vulkan/Objects/Image.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "gpu/RenderData/_Old/RenderStructs.hpp"
 
 #include "gui/GUI_Base.hpp"
 #include "res/_Old/CpuResources.hpp"
-#include "gpu/Vulkan/_Old/Objects/ImageArray.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct GUI_Uniforms
 {
-    UniformInfo infos [3];
+    enum Bindings : uint32_t {
+        BindingFontImages       = 0,
+        BindingUboText          = 1,
+        BindingColorTable       = 2,
+        ENUM_END
+    };
+
+    UniformInfo infos [Bindings::ENUM_END];
     Descriptors descriptors;
 
     UniformBuffer<RenderData_GUI::UBO_Text, RenderData_GUI::UBO_TEXT_MAX> uboText;
     UniformBuffer<RenderData_GUI::UBO_ColorTable, 1> uboColorTable;
     VkSampler  sampler;
-    ImageArray fontImages;
+    Image      fontImages;
 
     void Create(VkCommandPool cmdPool, res::CpuResources& hostRes)
     {
-        fontImages.Create(hostRes.textures.monospaceFont, cmdPool);
+        fontImages.Create(
+            VK_FORMAT_R8_SRGB,
+            16, 16,
+            VK_SAMPLE_COUNT_1_BIT, 
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+            VK_IMAGE_ASPECT_COLOR_BIT,
+            hostRes.textures.monospaceFont.count,
+            VK_IMAGE_VIEW_TYPE_2D_ARRAY
+        );     
+        fontImages.Store(cmdPool);
+        fontImages.Bake(cmdPool);
 
         const VkSamplerCreateInfo samplerInfo 
         {
@@ -50,10 +67,10 @@ struct GUI_Uniforms
         };
         VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, &sampler));
 
-        infos[0] = {
+        infos[BindingFontImages] = {
             .type = UniformInfo::Image,
             .binding {
-                .binding            = 0,
+                .binding            = BindingFontImages,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
@@ -62,15 +79,15 @@ struct GUI_Uniforms
             .imageInfo {
                 .sampler        = sampler,
                 .imageView      = fontImages.view,
-                .imageLayout    = fontImages.layout
+                .imageLayout    = fontImages.currentLayout
             }
         };
 
         uboText.Create();
-        infos[1] = {
+        infos[BindingUboText] = {
             .type = UniformInfo::Buffer,
             .binding {
-                .binding            = 1,
+                .binding            = BindingUboText,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
@@ -89,10 +106,10 @@ struct GUI_Uniforms
         uboColorTable.Append(colors);
         uboColorTable.Bake(cmdPool);
         
-        infos[2] = {
+        infos[BindingColorTable] = {
             .type = UniformInfo::Buffer,
             .binding {
-                .binding            = 2,
+                .binding            = BindingColorTable,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
