@@ -26,7 +26,7 @@ struct Commands
         const auto poolInfo = CmdPoolInfo(g_contextPtr->queueIndex);
         VkCheck(vkCreateCommandPool(g_contextPtr->device, &poolInfo, nullptr, &mainCmdPool));
 
-        FOR_CARRAY(threadCommands, i) {
+        FOR_C_ARRAY(threadCommands, i) {
             auto& cmdPool    = threadCommands[i].cmdPool;
             auto& cmdBuffers = threadCommands[i].cmdBuffers;
             VkCheck(vkCreateCommandPool(g_contextPtr->device, &poolInfo, nullptr, &cmdPool));
@@ -41,7 +41,7 @@ struct Commands
     {
         vkDestroyCommandPool(g_contextPtr->device, mainCmdPool, nullptr);
 
-        FOR_CARRAY(threadCommands, i) {
+        FOR_C_ARRAY(threadCommands, i) {
             auto& cmdPool    = threadCommands[i].cmdPool;
             auto& cmdBuffers = threadCommands[i].cmdBuffers;
             FOR_VK_ARRAY(cmdBuffers, i)

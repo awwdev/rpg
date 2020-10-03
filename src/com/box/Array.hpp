@@ -66,7 +66,7 @@ struct Array
     void AppendArray(const OTHER_T (&arr)[OTHER_N])
     {
         ArrayAssert(count + OTHER_N <= COUNT_MAX, "array exhausted");
-        FOR_CARRAY(arr, i)
+        FOR_C_ARRAY(arr, i)
             PlacementNew(static_cast<T>(arr[i]));
     }
 

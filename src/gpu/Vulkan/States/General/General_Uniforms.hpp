@@ -25,7 +25,7 @@ struct General_Uniforms
     using RD = RenderData_General;
 
     UniformBuffer<RD::Meta, 1> uboMeta;
-    StorageBuffer<RD::MeshInstance, RD::MESH_INSTANCES_MAX> sboModelInstances;
+    StorageBuffer<RD::MeshInstance, RD::MESH_INSTANCES_MAX> sboInstances;
     VkSampler shadowMapSampler;
 
     void Create(Buffer& uboSun, Image& shadowMaps)
@@ -49,18 +49,18 @@ struct General_Uniforms
         };
 
         //? UBO MODELS
-        sboModelInstances.Create();
+        sboInstances.Create();
         infos[BindingModelInstances] = {
             .type = UniformInfo::Buffer,
             .binding {
                 .binding            = BindingModelInstances,
-                .descriptorType     = sboModelInstances.DESCRIPTOR_TYPE,
+                .descriptorType     = sboInstances.DESCRIPTOR_TYPE,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
                 .pImmutableSamplers = nullptr,
             },
             .bufferInfo = {
-                .buffer = sboModelInstances.activeBuffer->buffer,
+                .buffer = sboInstances.activeBuffer->buffer,
                 .offset = 0,
                 .range  = VK_WHOLE_SIZE,
             }
@@ -132,18 +132,20 @@ struct General_Uniforms
         uboMeta.Reset();
         uboMeta.Append(rdGeneral.meta);
 
-        sboModelInstances.Reset();
-        if (!rdGeneral.meshInstances.Empty())
-            sboModelInstances.Append(rdGeneral.meshInstances);
+        sboInstances.Reset();
+        FOR_C_ARRAY(rdGeneral.meshInstances, i){
+            if (auto const& instanceData = rdGeneral.meshInstances[i]; instanceData.Empty() == false)
+                sboInstances.Append(instanceData);
+        }
     }
 
     void Destroy()
     {
         uboMeta.Destroy();
-        sboModelInstances.Destroy();
+        sboInstances.Destroy();
         descriptors.Destroy();
         vkDestroySampler(g_contextPtr->device, shadowMapSampler, nullptr);
-        FOR_CARRAY(infos, i)
+        FOR_C_ARRAY(infos, i)
             infos[i] = {};
     }
     ~General_Uniforms()

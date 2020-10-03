@@ -99,7 +99,7 @@ struct ImageArray
         auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
 
         VkBufferImageCopy regions [N];
-        FOR_CARRAY(regions, i) {
+        FOR_C_ARRAY(regions, i) {
             regions[i] = {
                 .bufferOffset       = i * textureArray.TEX_SIZE,
                 .bufferRowLength    = 0,

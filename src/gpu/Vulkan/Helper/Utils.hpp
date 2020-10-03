@@ -10,8 +10,6 @@
 
 namespace rpg::gpu::vuk {
 
-struct VertexRange { uint32_t index, count; };
-
 template<auto BUFFER_SIZE = 8000u>
 void CreateShaderModule(
 chars_t path, const VkShaderStageFlagBits stage,

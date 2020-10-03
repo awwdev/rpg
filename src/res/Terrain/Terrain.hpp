@@ -190,7 +190,7 @@ struct Terrain
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
         settings.editingVertIndices.Clear();
 
-        FOR_CARRAY(quadrant.verts, i){
+        FOR_C_ARRAY(quadrant.verts, i){
             const auto& vec1 = settings.intersectionPos;
             const auto& vec2 = quadrant.verts[i].pos;
             const auto  dist = com::Distance(vec2, vec1);

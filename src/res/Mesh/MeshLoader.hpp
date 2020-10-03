@@ -9,15 +9,17 @@
 
 namespace rpg::res {
 
-inline auto LoadMesh(chars_t path, 
-com::Array<MeshVertex, MESHES_VERTS_ALL> & allVertices,
-com::Array<MeshView,   MESHES_TOTAL>& meshViews)
+inline auto LoadMesh(chars_t path, MeshEnum const& meshEnum,
+com::Array<MeshVertex, MESHES_VERTS_ALL>& allVertices,
+MeshVertexRange (&meshVertexRanges) [MESHES_TOTAL])
 {
     std::ifstream file(path, std::ios::binary);
     dbg::Assert(file.is_open(), "cannot open file");
 
     constexpr auto LINE_LEN_MAX = 150;
     char line [LINE_LEN_MAX];
+
+    const auto vertexRangeIndex = allVertices.Count(); //begin
 
     while(file.getline(line, LINE_LEN_MAX))
     {
@@ -63,6 +65,8 @@ com::Array<MeshView,   MESHES_TOTAL>& meshViews)
         allVertices.Append(vertex);
     }
 
+    const auto vertexRangeCount = allVertices.Count() - vertexRangeIndex;
+    meshVertexRanges[(idx_t) meshEnum] = { (uint32_t) vertexRangeIndex, (uint32_t) vertexRangeCount };
 }
 
 }//ns

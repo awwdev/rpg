@@ -26,7 +26,7 @@ struct Resources_Models
     void Load()
     {
         allVertices.Clear();
-        FOR_CARRAY(models, i)
+        FOR_C_ARRAY(models, i)
             models[i] = {};
 
         //? MODELS HARDCODED

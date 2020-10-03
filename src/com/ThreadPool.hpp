@@ -29,7 +29,7 @@ struct ThreadPool
     {
         dbg::Assert(isPoolRunning == false, "started a non-stopped thread pool");
         isPoolRunning = true;
-        FOR_CARRAY(threads, i) {
+        FOR_C_ARRAY(threads, i) {
             auto& t = threads[i];
             t.thread = std::thread { [this, &t] {
                 while (isPoolRunning)
@@ -52,7 +52,7 @@ struct ThreadPool
     ~ThreadPool()
     {
         Stop();
-        FOR_CARRAY(threads, i){
+        FOR_C_ARRAY(threads, i){
             if (threads[i].thread.joinable())
                 threads[i].thread.join();
         } 

@@ -5,6 +5,7 @@
 #include "com/box/EnumMap.hpp"
 
 #include "res/_Old/CpuResources.hpp"
+#include "res/Model/ModelType.hpp"
 
 namespace rpg::gpu {
 

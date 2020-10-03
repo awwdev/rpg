@@ -94,7 +94,7 @@ void WriteDescriptors(
     com::Array<VkWriteDescriptorSet, 10> writes;
     for(u32 i = 0; i < g_contextPtr->swapImages.count; ++i)
     {
-        FOR_CARRAY(uniformInfos, j)
+        FOR_C_ARRAY(uniformInfos, j)
         {
             writes.Append(VkWriteDescriptorSet{
                 .sType              = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,

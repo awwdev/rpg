@@ -43,7 +43,7 @@ struct Descriptors
 
         //? WRITE
         VkWriteDescriptorSet writes [UNIFORM_COUNT];
-        FOR_CARRAY(writes, i)
+        FOR_C_ARRAY(writes, i)
         {
             writes[i] = VkWriteDescriptorSet {
                 .sType              = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,

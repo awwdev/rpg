@@ -38,14 +38,14 @@ constexpr BlockArray BLOCK_ARRAYS [] {
 constexpr auto BLOCK_ARRAY_COUNT = ArrayCount(BLOCK_ARRAYS);
 constexpr auto BLOCK_COUNT_TOTAL = []() constexpr {
     std::size_t count = 0;
-    FOR_CARRAY(BLOCK_ARRAYS, i)
+    FOR_C_ARRAY(BLOCK_ARRAYS, i)
         count += BLOCK_ARRAYS[i].count;
     return count;
 }();
 
 constexpr auto ALLOCATION_SIZE = []() constexpr {
     std::size_t size = 0;
-    FOR_CARRAY(BLOCK_ARRAYS, i)
+    FOR_C_ARRAY(BLOCK_ARRAYS, i)
         size += BLOCK_ARRAYS[i].size * BLOCK_ARRAYS[i].count;
     return size;
 }();
@@ -189,7 +189,7 @@ auto ClaimBlock(CtorArgs&&... args)
 inline idx_t GetBlockArrayIdxFromBlockId(const idx_t blockId)
 {
     idx_t blockCount = 0;
-    FOR_CARRAY(BLOCK_ARRAYS, i){
+    FOR_C_ARRAY(BLOCK_ARRAYS, i){
         blockCount += BLOCK_ARRAYS[i].count;
         if (blockId < blockCount)
             return i;

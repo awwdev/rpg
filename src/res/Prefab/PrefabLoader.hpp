@@ -32,12 +32,12 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
         if (currentPrefab == NO_CURRENT_PREFAB) 
             return;
 
-        FOR_CARRAY(componentData, componentEnumIdx) {
+        FOR_C_ARRAY(componentData, componentEnumIdx) {
             const auto& pairs = componentData[componentEnumIdx];
             prefabComponentArrays.SetComponent((ecs::ID) currentPrefab, (ecs::ComponentEnum) componentEnumIdx, pairs);
         }
 
-        FOR_CARRAY(componentData, i)
+        FOR_C_ARRAY(componentData, i)
             componentData[i].Clear();
     };
 

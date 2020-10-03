@@ -76,7 +76,7 @@ struct StringMap
         if (bucket.count == 0)
             return nullptr;
 
-        FOR_CARRAY(bucket.content, i){
+        FOR_C_ARRAY(bucket.content, i){
             auto& pair = bucket.content[i];
             if (pair.key == key) //str operator==
                 return &pair.val;

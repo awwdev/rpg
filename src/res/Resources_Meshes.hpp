@@ -9,12 +9,12 @@ namespace rpg::res {
 struct Resources_Meshes
 {
     com::Array<MeshVertex, MESHES_VERTS_ALL> allVertices;
-    com::Array<MeshView,   MESHES_TOTAL>     meshViews;
+    MeshVertexRange meshVertexRanges [MESHES_TOTAL];
 
     void Load()
     {
-        LoadMesh("res/Meshes/Sword_Blade.mesh", allVertices, meshViews);
-        LoadMesh("res/Meshes/Sword_Grib.mesh",  allVertices, meshViews);
+        LoadMesh("res/Meshes/Sword_Grib.mesh",  MeshEnum::Sword_Grib,  allVertices, meshVertexRanges);
+        LoadMesh("res/Meshes/Sword_Blade.mesh", MeshEnum::Sword_Blade, allVertices, meshVertexRanges);
     }
 };
 

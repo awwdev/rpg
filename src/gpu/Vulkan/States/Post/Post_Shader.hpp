@@ -27,7 +27,7 @@ struct Post_Shader
 
     void Destroy()
     {
-        FOR_CARRAY(modules, i)
+        FOR_C_ARRAY(modules, i)
             vkDestroyShaderModule(g_contextPtr->device, modules[i], nullptr);
         stageInfo[0] = stageInfo[1] = {};
     }

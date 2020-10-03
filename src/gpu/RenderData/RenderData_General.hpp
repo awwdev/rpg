@@ -3,7 +3,7 @@
 #pragma once
 #include "com/box/Array.hpp"
 #include "com/Matrix.hpp"
-#include "res/Model/ModelType.hpp"
+#include "res/Mesh/MeshEnum.hpp"
 
 namespace rpg::gpu {
 
@@ -40,15 +40,13 @@ struct RenderData_General
 
     //? DATA
     Meta meta;
-
-    com::Array<MeshInstance, MESH_INSTANCES_MAX> meshInstances;
-    com::Array<MeshInstancesStats, MESH_MAX_ALL> meshInstancesStats;
+    com::Array<MeshInstance, MESH_INSTANCES_MAX> meshInstances [(idx_t) res::MeshEnum::ENUM_END];
 
     void Clear()
     {
         meta = {};
-        meshInstances.Clear();
-        meshInstancesStats.Clear();
+        FOR_C_ARRAY(meshInstances, i)
+            meshInstances[i].Clear();  
     }
 };
 

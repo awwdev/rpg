@@ -43,12 +43,10 @@ inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderDat
         combinedMat[3][2] = t.z;
 
         //render data
+        auto const meshEnumIdx = (idx_t) mainComponent.meshEnum;
         gpu::RenderData_General::MeshInstance meshInstance {};
         meshInstance.transform = combinedMat;
-
-        renderData.general.meshInstances.Append(meshInstance);
-        //TODO: need to add per mesh enum 
-        
+        renderData.general.meshInstances[meshEnumIdx].Append(meshInstance);        
     }
 
 }

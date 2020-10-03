@@ -66,7 +66,7 @@ struct Post_Uniforms
     {
         vkDestroySampler(g_contextPtr->device, sampler, nullptr);
         descriptors.Destroy();
-        FOR_CARRAY(infos, i)
+        FOR_C_ARRAY(infos, i)
             infos[i] = {};
     }
 

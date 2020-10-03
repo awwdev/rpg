@@ -43,7 +43,7 @@ struct ComponentArrays
 
     void Clear()
     {
-        FOR_CARRAY(signatures, i)
+        FOR_C_ARRAY(signatures, i)
             signatures[i].Clear();
 
         //? COMPONENT CLEAR

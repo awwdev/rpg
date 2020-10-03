@@ -59,7 +59,7 @@ struct Shadow_Uniforms
     {
         uboSun.Destroy();
         descriptors.Destroy();
-        FOR_CARRAY(infos, i)
+        FOR_C_ARRAY(infos, i)
             infos[i] = {};
     }
     ~Shadow_Uniforms()

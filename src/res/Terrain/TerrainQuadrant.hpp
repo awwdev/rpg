@@ -50,7 +50,7 @@ struct Quadrant
         }}
 
         //? CREATE CORNER DATA (for settings)
-        FOR_CARRAY(verts, i) {
+        FOR_C_ARRAY(verts, i) {
             const auto corner = GetCornerByVertex(i);
             corners[corner.x][corner.y].Append(i); //zx
         }

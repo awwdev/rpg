@@ -81,7 +81,7 @@ constexpr idx_t ArrayCount(const T (&arr)[N])
     return N;
 }
 
-#define FOR_CARRAY(arr, i) for(idx_t i = 0; i < ArrayCount(arr); ++i)
+#define FOR_C_ARRAY(arr, i) for(idx_t i = 0; i < ArrayCount(arr); ++i)
 
 template<class T, class... PARAMS>
 using DoesTypeMatchParams = std::enable_if_t<std::is_same_v<T, std::common_type_t<PARAMS...>>>;

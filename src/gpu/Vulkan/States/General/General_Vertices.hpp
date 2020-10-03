@@ -19,9 +19,10 @@ struct General_Vertices
     using GeneralVertex = RD::Vertex;
 
     VertexBuffer<GeneralVertex, RD::TERRA_VERT_MAX_ALL> vboTerrain;
+
     VertexBuffer<GeneralVertex, RD::MODEL_VERT_MAX_ALL> vboMeshes;
-    com::Array<VertexRange, RD::MESH_MAX_ALL> vboMeshesLayout; 
-    
+    res::MeshVertexRange vboMeshesVertexRanges [(idx_t) res::MESHES_TOTAL];
+
     VkDeviceSize offsets [1] = {};
     static constexpr VkVertexInputBindingDescription bindings []
     {
@@ -71,33 +72,25 @@ struct General_Vertices
         renderData.debugInfo.vboData_general_vertCount = vertCount;
     }
 
-    void Create(VkCommandPool cmdPool, const res::Resources_Meshes& meshes)
+    void Create(VkCommandPool cmdPool, const res::Resources_Meshes& resMeshes)
     {
         vboTerrain.Create();
 
         vboMeshes.Create();
-        if (meshes.allVertices.Empty() == false) {
-            vboMeshes.Append(meshes.allVertices);
+        if (resMeshes.allVertices.Empty() == false) {
+            vboMeshes.Append(resMeshes.allVertices);
             vboMeshes.Bake(cmdPool);
+            FOR_C_ARRAY(resMeshes.meshVertexRanges, i)
+                vboMeshesVertexRanges[i] = resMeshes.meshVertexRanges[i];
         }
-            
-        //model vbo layout
-        //uint32_t vertIndex = 0;
-        //FOR_CARRAY(resModels.models, i){
-        //    const auto& model = resModels.models[i];
-        //    FOR_ARRAY(model.meshes, m) {
-        //        const auto& mesh = model.meshes[m];
-        //        vboMeshesLayout.Append(vertIndex, (uint32_t) mesh.vertCount);
-        //        vertIndex += mesh.vertCount;
-        //    }
-        //}
     }
 
     void Destroy()
     {
         vboTerrain.Destroy();
         vboMeshes.Destroy();
-        vboMeshesLayout.Clear();
+        FOR_C_ARRAY(vboMeshesVertexRanges, i)
+            vboMeshesVertexRanges[i] = {};
     }
     ~General_Vertices()
     {
