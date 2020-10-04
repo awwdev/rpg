@@ -12,6 +12,9 @@
 #include "gpu/Vulkan/States/General/Terrain/Terrain_Wire_Shader.hpp"
 #include "gpu/Vulkan/States/General/Terrain/Terrain_Wire_Pipeline.hpp"
 
+#include "gpu/Vulkan/States/General/Foliage/Foliage_Shader.hpp"
+#include "gpu/Vulkan/States/General/Foliage/Foliage_Pipeline.hpp"
+
 #include "gpu/RenderData/RenderData.hpp"
 #include "res/_Old/CpuResources.hpp"
 #include "res/Resources.hpp"
@@ -31,32 +34,41 @@ struct State_General
     Terrain_Wire_Shader   terrainWireShader;
     Terrain_Wire_Pipeline terrainWirePipeline;
 
+    Foliage_Shader        foliageShader;
+    Foliage_Pipeline      foliagePipeline;
+
     void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::CpuResources& cpuRes, res::Resources& res)
     {
-        vertices    .Create(cmdPool, res.meshes);
-        uniforms    .Create(uboSun, shadowMaps);
-        shader      .Create();
-        renderPass  .Create(cmdPool);
-        pipeline    .Create(renderPass, shader, vertices, uniforms);
+        vertices            .Create(cmdPool, res.meshes);
+        uniforms            .Create(uboSun, shadowMaps);
+        shader              .Create();
+        renderPass          .Create(cmdPool);
+        pipeline            .Create(renderPass, shader, vertices, uniforms);
 
         terrainShader       .Create();
         terrainPipeline     .Create(renderPass, terrainShader, vertices, uniforms);
         terrainWireShader   .Create();
         terrainWirePipeline .Create(renderPass, terrainWireShader, vertices, uniforms);
+
+        foliageShader       .Create();
+        foliagePipeline     .Create(renderPass, foliageShader, vertices, uniforms);
     }
 
     void Destroy()
     {
-        pipeline    .Destroy();
-        renderPass  .Destroy();
-        shader      .Destroy();
-        vertices    .Destroy();
-        uniforms    .Destroy();
+        pipeline            .Destroy();
+        renderPass          .Destroy();
+        shader              .Destroy();
+        vertices            .Destroy();
+        uniforms            .Destroy();
 
         terrainPipeline     .Destroy();
         terrainShader       .Destroy();
         terrainWirePipeline .Destroy();
         terrainWireShader   .Destroy();
+
+        foliagePipeline     .Destroy();
+        foliageShader       .Destroy();
     }
 
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
@@ -84,14 +96,13 @@ struct State_General
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.vboMeshes.activeBuffer->buffer, vertices.offsets);
 
         uint32_t instanceIdx = 0;
-        FOR_C_ARRAY(rdGeneral.meshInstances, meshIdx)
+        for(idx_t meshIdx = (idx_t) res::MeshEnum::None + 1; meshIdx < (idx_t) res::MeshEnum::ENUM_END; ++meshIdx)
         {
-            if (rdGeneral.meshInstances[meshIdx].Empty() || meshIdx == (idx_t) res::MeshEnum::None) //start for loop at 1 is better
+            auto const& meshInstances = rdGeneral.meshInstances[meshIdx];
+            if (meshInstances.Empty()) 
                 continue;
 
-            auto const& meshInstances = rdGeneral.meshInstances[meshIdx];
             auto const& vertexRange   = vertices.vboMeshesVertexRanges[meshIdx];
-
             vkCmdDraw(cmdBuffer, vertexRange.count, meshInstances.Count(), vertexRange.index, instanceIdx);
             instanceIdx += meshInstances.Count();
         }

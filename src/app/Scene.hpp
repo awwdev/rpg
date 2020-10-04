@@ -53,13 +53,9 @@ struct GameScene
         }
 
         {
-            auto  swordID = ecs.AddEntity(res::PrefabEnum::Sword);
-            auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
-            swordMainComponent.translation = { 1, 0, 0 };
-
-            auto const bladeID = swordMainComponent.children[1];
-            auto& bladeMainComponent = ecs.arrays.mainComponents.Get(bladeID);
-            bladeMainComponent.translation = { 0, 0, 1 };
+            auto  grassID = ecs.AddEntity(res::PrefabEnum::Grass);
+            auto& grassMainComponent = ecs.arrays.mainComponents.Get(grassID);
+            grassMainComponent.translation = { 1, 0, 0 };
         }
         
     }
