@@ -1,18 +1,6 @@
-- TERRAIN REFACTOR (one vbo for all quadrants)
-- use pointer in renderdata for e.g. terrain and model vbo?
-
-- shadow cascades fade 
-- prefab select for terrain placing
-- grass
-
-
-//TODO: rework vk image obj
-//TODO: profiler
-//TODO: normal per triangle on terrain instead of 
-//TODO: IBO
-//TODO: cast shadow or not (tree vs grass both texture)
-//TODO: ECS serialization
-//TODO: add static flag to render component, so ubo data is not updated
-//TODO: join transform and render component
-//TODO: draw stuff on render target for post fx
-//TODO: use block ptr for s render function 
+- terrain refactor
+- prefab list
+- grass 
+- shadow cascade fade
+- ecs serialization
+- cast shadow flag 

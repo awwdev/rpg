@@ -3,8 +3,7 @@
 #include "gui/Widgets/Widget_Window.hpp"
 #include "gui/Widgets/Widget_List.hpp"
 #include "gui/Widgets/Widget_Table.hpp"
-
-#include "res/_Old/CpuResources.hpp"
+#include "res/Prefab/PrefabEnum.hpp"
 
 namespace rpg::gui {
 
@@ -27,9 +26,9 @@ struct GUI_Level
 
     GUI_Level()
     {
-        //FOR_STRING_MAP_BEGIN_CONST(ecs::PREFAB_STR_TO_ENUM, item)
-        //    prefabList.items.Append(item.key);
-        //FOR_STRING_MAP_END
+        FOR_STRING_MAP_BEGIN_CONST(res::PREFAB_STR_TO_ENUM, prefabStr)
+            prefabList.items.Append(prefabStr.key);
+        FOR_STRING_MAP_END
 
         {
             auto& row = table.table.Append();
