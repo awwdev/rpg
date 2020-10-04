@@ -15,18 +15,8 @@ struct RenderData
     RenderData_Post     post;
     RenderData_GUI      gui;
 
-    struct {
-        idx_t uboData_GUI_Text_previousVertCount;
-        idx_t vboData_post_previousVertCount;
-        idx_t vboData_general_vertCount; //updated on state because vert data comes from multiple places (and is not constructed here)
-    } debugInfo;    
-
     void Clear()
     {
-        debugInfo.uboData_GUI_Text_previousVertCount = gui.uboText.Count() * 6;
-        debugInfo.vboData_post_previousVertCount     = post.vboBlur.Count() + 3; //+ fullscreen triangle
-
-        //clear stuff, that has multiple sources that are going to append
         shadow  .Clear();
         general .Clear();
         post    .Clear();

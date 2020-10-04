@@ -3,47 +3,53 @@
 #include "gui/Widgets/Widget_Window.hpp"
 #include "gui/Widgets/Widget_Table.hpp"
 #include "com/DeltaTime.hpp"
+#include "com/box/EnumMap.hpp"
+#include "com/box/String.hpp"
+#include "dbg/Assert.hpp"
 
 namespace rpg::gui {
 
 struct GUI_Stats
 {
+    //table rows
+    enum class RowEnum 
+    {
+        fps,
+        dt,
+        shadowMapSize,
+        shadowCascades,
+        instancedVerts,
+        terrainVerts,
+        ENUM_END
+    };
+    const com::EnumMap<RowEnum::ENUM_END, com::String<100>> RowStrings
+    {
+        { RowEnum::fps,                 "fps" },
+        { RowEnum::dt,                  "dt"  },
+        { RowEnum::shadowMapSize,       "shadowMapSize"  },
+        { RowEnum::shadowCascades,      "shadowCascades"  },
+        { RowEnum::instancedVerts,      "instancedVerts"  },
+        { RowEnum::terrainVerts,        "terrainVerts"  },
+    };    
+
+    //widgets
     Widget_Window wnd 
     {
         .title  = "Stats",
         .rect   = { (f32)wnd::glo::window_w - 300, 0, 300, 300 },
         .limits = { 128, 128, f32max, f32max }
     };
-
     Widget_Table table;
+
 
     GUI_Stats()
     {
+        for(idx_t i = 0; i < (idx_t) RowEnum::ENUM_END; ++i)
         {
+            dbg::Assert(RowStrings.Contains(i), "enum map entry missing");
+            const auto str = RowStrings.Get(i);
             auto& row = table.table.Append();
-            row.Append("fps");
-            row.Append("0");
-            row.Append(""); //add some empty cells so stuff moves to the left side
-            row.Append("");
-        }
-        {
-            auto& row = table.table.Append();
-            row.Append("dt");
-            row.Append("0");
-        }
-        {
-            auto& row = table.table.Append();
-            row.Append("ui");
-            row.Append("0");
-        }
-        {
-            auto& row = table.table.Append();
-            row.Append("post");
-            row.Append("0");
-        }
-        {
-            auto& row = table.table.Append();
-            row.Append("general");
+            row.Append(str);
             row.Append("0");
         }
     }
@@ -52,19 +58,17 @@ struct GUI_Stats
     {
         wnd.Update(renderData);
 
-        if (dt::secondHasPassed){
-            table.table[0][1] = dt::fps;
+        if (dt::secondHasPassed)
+        {
+            table.table[(idx_t) RowEnum::fps][1] = dt::fps;
+            table.table[(idx_t) RowEnum::dt ][1] = dt::seconds;
 
-            table.table[1][1] = dt::seconds;
+            table.table[(idx_t) RowEnum::shadowCascades][1] = renderData.shadow.CASCADE_COUNT;
+            table.table[(idx_t) RowEnum::shadowMapSize][1]  = renderData.shadow.SHADOW_MAP_SIZE;
 
-            table.table[2][1] = renderData.debugInfo.uboData_GUI_Text_previousVertCount;
-            table.table[2][1].Append(" verts");
+            table.table[(idx_t) RowEnum::instancedVerts][1] = renderData.general.dbgVertCountInstancedPrev;
+            table.table[(idx_t) RowEnum::terrainVerts][1] = renderData.general.dbgVertCountTerrainPrev;
 
-            table.table[3][1] = renderData.debugInfo.vboData_post_previousVertCount;
-            table.table[3][1].Append(" verts");
-
-            table.table[4][1] = renderData.debugInfo.vboData_general_vertCount;
-            table.table[4][1].Append(" verts");
         }
         
         table.Update(renderData, wnd);

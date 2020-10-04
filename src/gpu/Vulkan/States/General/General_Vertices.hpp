@@ -69,7 +69,7 @@ struct General_Vertices
         const auto vertCount = cpuRes.terrain.quadrants[0][0].VERT_COUNT_TOTAL;
         vboTerrain.Append(verts, vertCount);
 
-        renderData.debugInfo.vboData_general_vertCount = vertCount;
+        //renderData.debugInfo.vboData_general_vertCount = vertCount;
     }
 
     void Create(VkCommandPool cmdPool, const res::Resources_Meshes& resMeshes)

@@ -87,9 +87,16 @@ struct State_General
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &vertices.vboTerrain.activeBuffer->buffer, vertices.offsets);
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipeline.pipeline);
         vkCmdDraw               (cmdBuffer, vertices.vboTerrain.count, 1, 0, 0);
+        rdGeneral.dbgVertCountTerrain += vertices.vboTerrain.count;
+
         //terrain wire
-        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainWirePipeline.pipeline);
-        vkCmdDraw               (cmdBuffer, vertices.vboTerrain.count, 1, 0, 0);
+        bool drawTerrainWire = true; //TODO: move somewhere
+        if (drawTerrainWire)
+        {
+            vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainWirePipeline.pipeline);
+            vkCmdDraw(cmdBuffer, vertices.vboTerrain.count, 1, 0, 0);
+            rdGeneral.dbgVertCountTerrain += vertices.vboTerrain.count;
+        }
 
         //meshes 
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
@@ -107,6 +114,7 @@ struct State_General
 
             //TODO: additionally sorting by material 
             //TODO: also use one big array and not 2d array
+            //rendersystem, renderdata_general, state_general
 
             switch(meshMaterial)
             {
@@ -122,9 +130,11 @@ struct State_General
                 default: dbg::Assert(false, "mesh material pipeline missing");
             }
 
-            auto const& vertexRange   = vertices.vboMeshesVertexRanges[meshIdx];
+            auto const& vertexRange = vertices.vboMeshesVertexRanges[meshIdx];
             vkCmdDraw(cmdBuffer, vertexRange.count, meshInstances.Count(), vertexRange.index, instanceIdx);
             instanceIdx += meshInstances.Count();
+
+            rdGeneral.dbgVertCountInstanced += vertexRange.count * meshInstances.Count();
         }
 
         vkCmdEndRenderPass(cmdBuffer);

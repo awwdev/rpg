@@ -9,7 +9,8 @@
 
 namespace rpg::ecs {
     
-inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
+inline void RenderSystem(
+ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
 {
     FOR_ARRAY(arrays.mainComponents.dense, i) 
     {
@@ -24,6 +25,7 @@ inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderDat
 
         //TODO: additionally sorting by material 
         //TODO: also use one big array and not 2d array
+        //rendersystem, renderdata_general, state_general
     }
 
 }

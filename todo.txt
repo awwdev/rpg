@@ -1,7 +1,9 @@
 - todo: instance data: one array and also sorted by mesh material
+- load both material and mesh paths externally
+- FOR_ENUM_MAP macro for loop
+- draw terrain wire flag
 
 - add primitives to meshes
-- mesh property: indexed or not indexed
 - terrain refactor
 - grass 
 - shadow cascade fade

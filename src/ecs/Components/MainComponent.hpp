@@ -57,6 +57,16 @@ struct MainComponent
                 }
                 break;
 
+                case ComponentDataEnum::Scale:      
+                {
+                    const auto values = ValStrToValArray<3, 10>(val_cstr);   
+                    dbg::Assert(!values.Empty(), "values are empty");
+                    FOR_ARRAY(values, i){
+                        scale[0][i] = std::atof(values[i].cstr);
+                    }
+                }
+                break;
+
                 default: dbg::Assert(false, "wrong component data enum");
             };
 

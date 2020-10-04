@@ -52,7 +52,7 @@ struct GUI_Level
         table       .Update(renderData, wnd);
         prefabList  .Update(renderData, wnd);
 
-        //cpuRes.terrain.settings.prefabType = (ecs::PrefabType) prefabList.activeIdx;
+        cpuRes.terrain.settings.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
         
     }
 };

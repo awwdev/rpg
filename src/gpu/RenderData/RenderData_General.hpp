@@ -40,14 +40,26 @@ struct RenderData_General
     Meta meta;
     com::Array<MeshInstance, MESH_INSTANCES_MAX> meshInstances [(idx_t) res::MeshEnum::ENUM_END]; //big
 
+    //set on gpu draw
+    idx_t dbgVertCountInstanced = 0, dbgVertCountInstancedPrev = 0; 
+    idx_t dbgVertCountTerrain = 0, dbgVertCountTerrainPrev = 0;
+
+
     //TODO: additionally sorting by material 
     //TODO: also use one big array and not 2d array
+    //rendersystem, renderdata_general, state_general
 
     void Clear()
     {
         meta = {};
         FOR_C_ARRAY(meshInstances, i)
             meshInstances[i].Clear();  
+
+        dbgVertCountInstancedPrev = dbgVertCountInstanced;
+        dbgVertCountInstanced = 0;
+
+        dbgVertCountTerrainPrev = dbgVertCountTerrain;
+        dbgVertCountTerrain = 0;
     }
 };
 

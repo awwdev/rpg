@@ -38,7 +38,7 @@ struct Settings
     ecs::ID gizmoID;
     com::Vec3f intersectionPos;
 
-    //ecs::PrefabType prefabType; 
+    res::PrefabEnum prefabEnum; 
     bool baked = false;
 };
 
@@ -273,25 +273,28 @@ struct Terrain
             settings.intersectionPos = intersection->pos;
             if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) {
 
-                for(auto i = 0; i < 10; ++i) //for grass test 
-                {
-                    //const auto ID = ecs.AddEntity(settings.prefabType);
-                    //auto& t = ecs.arrays.transforms.Get(ID);
-                    //TODO
-                    /*
-                    Vec3f pos = intersection->pos;
-                    pos.x += ((std::rand() % 40) / 40.f) * 7;
-                    pos.z += ((std::rand() % 40) / 40.f) * 7;
+                auto const entityID = ecs.AddEntity(settings.prefabEnum);
+                auto& mainComponent = ecs.arrays.mainComponents.Get(entityID);
+                mainComponent.translation = intersection->pos;
 
-                    //t.translation = intersection->pos;
-                    t.translation = pos;
+                //!for grass test
+                for(auto i = 0; i < 10; ++i)  
+                {
+                    auto const entityID = ecs.AddEntity(settings.prefabEnum);
+                    auto& mainComponent = ecs.arrays.mainComponents.Get(entityID);
+
+                    Vec3f pos = intersection->pos;
+                    pos.x += ((std::rand() % 100) / 100.f) * 2 - 1;
+                    pos.z += ((std::rand() % 100) / 100.f) * 2 - 1;
+                    mainComponent.translation = pos;
+
                     const f32 randY = (f32) (std::rand() % 360);
-                    t.rotation = { 0, randY, 0 };
-                    const f32 SX = 0.8f + (std::rand() % 40) / 40.f;
-                    const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
-                    const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
-                    t.scale = { SX, SY, SZ };
-                    */
+                    mainComponent.rotation = { 0, randY, 0 };
+
+                    //const f32 SX = 0.8f + (std::rand() % 40) / 40.f;
+                    //const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
+                    //const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
+                    //mainComponent.scale = { SX, SY, SZ };
                 }
 
                 
