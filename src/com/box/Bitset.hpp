@@ -16,13 +16,11 @@ constexpr bool USE_BITSET_ASSERTS = true;
 inline void BitsetAssert(const bool condition, chars_t msg = "bitset assertion failed")
 {
     if constexpr(USE_BITSET_ASSERTS) {
-        if (condition == false){
-            dbg::LogError(msg);
-            dbg::DebugBreak();
-        }
+        dbg::Assert(condition, msg);
     }
 }
 
+//TODO: as function instead of macro:
 #define BIT(i)  (idx_t)i % (idx_t)8
 #define BYTE(i) (idx_t)i / (idx_t)8
 

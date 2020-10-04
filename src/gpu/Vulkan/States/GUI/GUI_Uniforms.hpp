@@ -32,6 +32,14 @@ struct GUI_Uniforms
 
     void Create(VkCommandPool cmdPool, res::CpuResources& hostRes)
     {
+        constexpr VkComponentMapping fontImagesComponentMapping = 
+        { 
+            .r = VK_COMPONENT_SWIZZLE_B,
+            .g = VK_COMPONENT_SWIZZLE_G,
+            .b = VK_COMPONENT_SWIZZLE_R,
+            .a = VK_COMPONENT_SWIZZLE_A
+        };
+
         fontImages.Create(
             VK_FORMAT_R8_SRGB,
             hostRes.textures.monospaceFont.WIDTH,
@@ -40,7 +48,8 @@ struct GUI_Uniforms
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             VK_IMAGE_ASPECT_COLOR_BIT,
             hostRes.textures.monospaceFont.count,
-            VK_IMAGE_VIEW_TYPE_2D_ARRAY
+            VK_IMAGE_VIEW_TYPE_2D_ARRAY,
+            fontImagesComponentMapping
         );     
         fontImages.Store(
             cmdPool, 

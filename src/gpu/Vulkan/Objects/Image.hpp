@@ -10,6 +10,14 @@
 
 namespace rpg::gpu::vuk {
 
+constexpr VkComponentMapping IMAGE_COMPONENT_MAPPING_DEFAULT = 
+{ 
+    .r = VK_COMPONENT_SWIZZLE_R,
+    .g = VK_COMPONENT_SWIZZLE_G,
+    .b = VK_COMPONENT_SWIZZLE_B,
+    .a = VK_COMPONENT_SWIZZLE_A
+};
+
 struct Image
 {
     VkImage         image { VK_NULL_HANDLE };
@@ -29,7 +37,8 @@ struct Image
         const VkImageUsageFlags usage,
         const VkImageAspectFlags pAspect,
         const uint32_t pLayerCount = 1,
-        const VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D)
+        const VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
+        const VkComponentMapping& componentMapping = IMAGE_COMPONENT_MAPPING_DEFAULT)
     {
         layerCount = pLayerCount;
         dbg::Assert(layerCount < LAYER_COUNT_MAX, "layer count too high");
@@ -66,20 +75,15 @@ struct Image
         VkCheck(vkBindImageMemory(g_contextPtr->device, image, memory, 0));
 
         //? VIEW
-        const VkImageViewCreateInfo viewInfo {
+        const VkImageViewCreateInfo viewInfo 
+        {
             .sType              = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             .pNext              = nullptr,
             .flags              = 0, 
             .image              = image, 
             .viewType           = viewType, 
             .format             = format,
-            .components         = 
-            {
-                .r = VK_COMPONENT_SWIZZLE_R,
-                .g = VK_COMPONENT_SWIZZLE_G,
-                .b = VK_COMPONENT_SWIZZLE_B,
-                .a = VK_COMPONENT_SWIZZLE_A
-            },
+            .components         = componentMapping,
             .subresourceRange   = 
             {
                 .aspectMask     = aspect,
@@ -119,7 +123,7 @@ struct Image
                 .baseMipLevel    = 0,
                 .levelCount      = 1,
                 .baseArrayLayer  = 0,
-                .layerCount      = 1
+                .layerCount      = layerCount
             }
         };
 
@@ -144,8 +148,8 @@ struct Image
         Transition(
             cmdPool, 
             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
-            VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT,
-            VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT
+            0, VK_ACCESS_TRANSFER_WRITE_BIT,
+            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT
         );
 
         //copy data into buffer
@@ -179,7 +183,12 @@ struct Image
 
         //send to queue
         auto cmdBuffer = BeginCommands_OneTime(g_contextPtr->device, cmdPool);
-        vkCmdCopyBufferToImage(cmdBuffer, tmpBuffer.buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, imageCopyInfos.Count(), imageCopyInfos.Data());
+        vkCmdCopyBufferToImage(
+            cmdBuffer, 
+            tmpBuffer.buffer, image, 
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
+            imageCopyInfos.Count(), imageCopyInfos.Data()
+        );
         EndCommands_OneTime(g_contextPtr->device, cmdBuffer, cmdPool, g_contextPtr->queue);
     }
 

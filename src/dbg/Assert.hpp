@@ -9,20 +9,14 @@
 
 namespace rpg::dbg {
 
-inline void DebugBreak()
-{
-    //win only
-    __debugbreak();
-    BringWindowToTop(GetConsoleWindow()); 
-}
-
 //DO NOT EXCLUDE THIS ASSERT VIA CONSTEXPR FLAG (OR MACRO) BUT DEFINE WRAPPER
 template<class T>
 void Assert(const bool expression, const T& msg) 
 { 
     if (!expression)  {
         dbg::LogError("[ASSERTION FAILED]", msg);
-        dbg::DebugBreak();
+        BringWindowToTop(GetConsoleWindow()); 
+        __debugbreak();
     }
 } 
 
