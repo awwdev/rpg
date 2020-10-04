@@ -12,10 +12,11 @@ namespace rpg::gpu::vuk {
 struct General_Uniforms
 {
     enum Bindings : uint32_t {
-        BindingMeta            = 0,
-        BindingModelInstances  = 1,
-        BindingSun             = 2,
-        BindingShadowMap       = 3,
+        BindingMeta,
+        BindingModelInstances,
+        BindingSun,
+        BindingShadowMap,
+        BindingFoliage,
         ENUM_END
     };
 
@@ -28,7 +29,10 @@ struct General_Uniforms
     StorageBuffer<RD::MeshInstance, RD::MESH_INSTANCES_MAX> sboInstances;
     VkSampler shadowMapSampler;
 
-    void Create(Buffer& uboSun, Image& shadowMaps)
+    Image     foliageImages;
+    VkSampler foliageSampler;
+
+    void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::Resources_Textures& resTextures)
     {
         //? UBO META
         uboMeta.Create();
@@ -83,8 +87,8 @@ struct General_Uniforms
             }
         };
 
-         //? SHADOW MAP
-        const VkSamplerCreateInfo samplerInfo 
+        //? SHADOW MAP
+        const VkSamplerCreateInfo shadowSamplerInfo 
         {
             .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .pNext                   = nullptr,
@@ -105,7 +109,7 @@ struct General_Uniforms
             .borderColor             = VK_BORDER_COLOR_INT_OPAQUE_BLACK, 
             .unnormalizedCoordinates = VK_FALSE
         };
-        VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, &shadowMapSampler));
+        VkCheck(vkCreateSampler(g_contextPtr->device, &shadowSamplerInfo, nullptr, &shadowMapSampler));
 
         infos[BindingShadowMap] = {
             .type = UniformInfo::Image,
@@ -120,6 +124,57 @@ struct General_Uniforms
                 .sampler        = shadowMapSampler,
                 .imageView      = shadowMaps.view,
                 .imageLayout    = shadowMaps.currentLayout
+            }
+        };
+
+        //? FOLIAGE IMAGES
+        constexpr VkComponentMapping foliageComponentMapping = 
+        { 
+            .r = VK_COMPONENT_SWIZZLE_B,
+            .g = VK_COMPONENT_SWIZZLE_G,
+            .b = VK_COMPONENT_SWIZZLE_R,
+            .a = VK_COMPONENT_SWIZZLE_A
+        };
+
+        foliageImages.Create(
+            VK_FORMAT_R8_SRGB,
+            resTextures.foliage.WIDTH,
+            resTextures.foliage.HEIGHT,
+            VK_SAMPLE_COUNT_1_BIT, 
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+            VK_IMAGE_ASPECT_COLOR_BIT,
+            resTextures.foliage.count,
+            VK_IMAGE_VIEW_TYPE_2D_ARRAY,
+            foliageComponentMapping
+        );     
+        foliageImages.Store(
+            cmdPool, 
+            resTextures.foliage.data, 
+            resTextures.foliage.ALL_TEXTURES_BYTES,
+            resTextures.foliage.SINGLE_TEXTURE_BYTES
+        );
+        foliageImages.Bake(cmdPool);
+
+        const auto foliageSamplerInfo = SamplerCreateInfo(
+            VK_FILTER_LINEAR, 
+            VK_SAMPLER_MIPMAP_MODE_LINEAR, 
+            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER
+        );
+        VkCheck(vkCreateSampler(g_contextPtr->device, &foliageSamplerInfo, nullptr, &foliageSampler));
+
+        infos[BindingFoliage] = {
+            .type = UniformInfo::Image,
+            .binding {
+                .binding            = BindingFoliage,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+                .pImmutableSamplers = nullptr,
+            },
+            .imageInfo {
+                .sampler        = foliageSampler,
+                .imageView      = foliageImages.view,
+                .imageLayout    = foliageImages.currentLayout
             }
         };
 
@@ -146,6 +201,8 @@ struct General_Uniforms
         sboInstances.Destroy();
         descriptors.Destroy();
         vkDestroySampler(g_contextPtr->device, shadowMapSampler, nullptr);
+        vkDestroySampler(g_contextPtr->device, foliageSampler, nullptr);
+        foliageImages.Destroy();
         FOR_C_ARRAY(infos, i)
             infos[i] = {};
     }

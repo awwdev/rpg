@@ -266,4 +266,31 @@ inline auto CmdPoolInfo(const uint32_t queueIdx)
     };
 }
 
+inline auto SamplerCreateInfo(
+const VkFilter filter, 
+const VkSamplerMipmapMode mipmapMode, 
+const VkSamplerAddressMode addressMode)
+{
+    return VkSamplerCreateInfo {
+        .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+        .pNext                   = nullptr,
+        .flags                   = 0,
+        .magFilter               = filter,
+        .minFilter               = filter, 
+        .mipmapMode              = mipmapMode,
+        .addressModeU            = addressMode, 
+        .addressModeV            = addressMode, 
+        .addressModeW            = addressMode,
+        .mipLodBias              = 0, 
+        .anisotropyEnable        = VK_FALSE, 
+        .maxAnisotropy           = 0, 
+        .compareEnable           = VK_FALSE,
+        .compareOp               = VK_COMPARE_OP_LESS, 
+        .minLod                  = 0,
+        .maxLod                  = 0, 
+        .borderColor             = VK_BORDER_COLOR_INT_OPAQUE_BLACK, 
+        .unnormalizedCoordinates = VK_FALSE
+    };
+}
+
 }//ns

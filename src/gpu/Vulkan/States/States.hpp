@@ -23,7 +23,7 @@ struct States
     {
         shadow  .Create(cmdPool);
         general .Create(cmdPool, *shadow.uniforms.uboSun.activeBuffer, shadow.renderPass.shadowMaps, cpuRes, res);
-        post    .Create(cmdPool, general.renderPass.finalImage);
+        post    .Create(cmdPool, general.generalRenderPass.finalImage);
         gui     .Create(cmdPool, res);
     }
 

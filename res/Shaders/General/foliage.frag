@@ -10,9 +10,16 @@ layout(location = 2) in vec4 inShadowCoord [CASCADE_COUNT];
 layout(location = 0) out vec4 outCol;
 
 layout(binding  = 3) uniform sampler2DArrayShadow shadowMap;
+layout(binding  = 4) uniform sampler2DArray foliageTextures;
 
 void main() 
 {
+    //todo: need to get right texture array index
+    int texArrIdx = 0;
+    float alpha = texture(foliageTextures, vec3(inTex, texArrIdx)).b;
+    if (alpha < 0.5) 
+        discard;
+
     int cascadeIdx = 0;
     vec2 size = textureSize(shadowMap, 0).xy;
 

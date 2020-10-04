@@ -5,7 +5,7 @@
 #include <fstream>
 #include <filesystem>
 
-namespace rpg::res2 {
+namespace rpg::res {
     
 template
 <
@@ -29,17 +29,31 @@ struct TextureArray
     char  data [COUNT][SINGLE_TEXTURE_BYTES];
     idx_t count = 0;
 
-    void LoadFile(const std::filesystem::path& path)
+    void LoadFile_GreyFormat(const std::filesystem::path& path)
     {
+        //THIS DOES NOT LOAD BMP BUT A CUSTOM FORMAT THAT IS JUST BYTES (GRAY SCALE)
         std::ifstream file (path, std::ios::binary);
         file.read(&(data[count][0]), SINGLE_TEXTURE_BYTES);
         ++count;
     }
 
-    void LoadDirectory(chars_t path)
+    void LoadDirectory_GreyFormat(chars_t path)
     {
         for(auto const& it : std::filesystem::directory_iterator(path)) { 
-            LoadFile(it.path()); //wchar
+            LoadFile_GreyFormat(it.path()); //wchar
+        }
+    }
+
+    void LoadFile_BMP(const std::filesystem::path& path)
+    {
+        //TODO:
+        dbg::Assert(false, "no impl yet");
+    }
+
+    void LoadDirectory_BMP(chars_t path)
+    {
+        for(auto const& it : std::filesystem::directory_iterator(path)) { 
+            LoadFile_BMP(it.path()); //wchar
         }
     }
 

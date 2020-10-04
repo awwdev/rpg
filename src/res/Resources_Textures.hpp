@@ -8,11 +8,13 @@ namespace rpg::res {
 
 struct Resources_Textures
 {
-    res2::TextureArray<16, 16, 128, 1> monospaceFont;
+    res::TextureArray<16, 16, 128, 1> monospaceFont;
+    res::TextureArray<512, 512, 1, 1> foliage;
 
     void Load()
     {
-        monospaceFont.LoadDirectory("res/TextureArrays/MonospaceFont");
+        monospaceFont   .LoadDirectory_GreyFormat("res/TextureArrays/MonospaceFont");
+        foliage         .LoadDirectory_GreyFormat("res/TextureArrays/Foliage");
     }
     
 };

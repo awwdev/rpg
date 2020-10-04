@@ -57,8 +57,8 @@ struct State_Shadow
                                      uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
             vkCmdSetDepthBias       (cmdBuffer, -10, 0, -10);
-            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &general.vertices.vboTerrain.activeBuffer->buffer, general.vertices.offsets);
-            vkCmdDraw               (cmdBuffer, general.vertices.vboTerrain.count, 1, 0, 0);
+            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &general.generalVertices.vboTerrain.activeBuffer->buffer, general.generalVertices.offsets);
+            vkCmdDraw               (cmdBuffer, general.generalVertices.vboTerrain.count, 1, 0, 0);
             vkCmdEndRenderPass      (cmdBuffer);
         }
     };

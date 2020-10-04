@@ -9,7 +9,7 @@ layout (location = 3) in vec2 inTex;
 
 layout(location = 0) out vec4 outCol;
 layout(location = 1) out vec2 outTex;
-layout(location = 2) out vec4 outShadowPos [CASCADE_COUNT];
+layout(location = 2) out vec4 outShadowCoord [CASCADE_COUNT];
 
 layout(binding = 0) uniform Meta { 
     mat4 view;
@@ -37,7 +37,7 @@ void main()
     outTex = inTex;
 
     for(int i = 0; i < CASCADE_COUNT; ++i){
-        outShadowPos[i] = sun.projViewBiased[i] * inPos;
+        outShadowCoord[i] = sun.projViewBiased[i] * inPos;
         //also change array size of output and input in frag
     }
 }
