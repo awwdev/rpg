@@ -12,7 +12,7 @@ namespace rpg::gpu::vuk {
 struct Shadow_Uniforms
 {
     // re-use ubos from general for model matrices??
-    UniformInfo2 infos [1];
+    UniformInfo infos [1];
     UniformBuffer<RenderData_Shadow::UBO_ShadowMap, 1> uboSun;
     Descriptors descriptors;
     PushConstant<RenderData_Shadow::Push_Cascades> pushConst;
@@ -22,7 +22,7 @@ struct Shadow_Uniforms
         uboSun.Create();
 
         infos[0] = {
-            .type = UniformInfo2::Buffer,
+            .type = UniformInfo::Buffer,
             .binding {
                 .binding            = 0,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,

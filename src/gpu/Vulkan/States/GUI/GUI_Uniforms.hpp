@@ -6,9 +6,7 @@
 #include "gpu/Vulkan/Objects/Descriptors.hpp"
 #include "gpu/Vulkan/Objects/Image.hpp"
 #include "gpu/RenderData/RenderData.hpp"
-
 #include "gui/GUI_Base.hpp"
-#include "res/_Old/CpuResources.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -21,7 +19,7 @@ struct GUI_Uniforms
         ENUM_END
     };
 
-    UniformInfo2 infos [Bindings::ENUM_END];
+    UniformInfo infos [Bindings::ENUM_END];
     Descriptors descriptors;
 
     UniformBuffer<RenderData_GUI::UBO_Text, RenderData_GUI::UBO_TEXT_MAX> uboText;
@@ -29,7 +27,7 @@ struct GUI_Uniforms
     VkSampler  sampler;
     Image      fontImages;
 
-    void Create(VkCommandPool cmdPool, res::CpuResources& hostRes)
+    void Create(VkCommandPool cmdPool, res::Resources& resources)
     {
         constexpr VkComponentMapping fontImagesComponentMapping = 
         { 
@@ -41,20 +39,20 @@ struct GUI_Uniforms
 
         fontImages.Create(
             VK_FORMAT_R8_SRGB,
-            hostRes.textures.monospaceFont.WIDTH,
-            hostRes.textures.monospaceFont.HEIGHT,
+            resources.textures.monospaceFont.WIDTH,
+            resources.textures.monospaceFont.HEIGHT,
             VK_SAMPLE_COUNT_1_BIT, 
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             VK_IMAGE_ASPECT_COLOR_BIT,
-            hostRes.textures.monospaceFont.count,
+            resources.textures.monospaceFont.count,
             VK_IMAGE_VIEW_TYPE_2D_ARRAY,
             fontImagesComponentMapping
         );     
         fontImages.Store(
             cmdPool, 
-            hostRes.textures.monospaceFont.data, 
-            hostRes.textures.monospaceFont.TOTAL_SIZE,
-            hostRes.textures.monospaceFont.TEX_SIZE
+            resources.textures.monospaceFont.data, 
+            resources.textures.monospaceFont.TOTAL_SIZE,
+            resources.textures.monospaceFont.TEX_SIZE
         );
         fontImages.Bake(cmdPool);
 
@@ -82,7 +80,7 @@ struct GUI_Uniforms
         VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, &sampler));
 
         infos[BindingFontImages] = {
-            .type = UniformInfo2::Image,
+            .type = UniformInfo::Image,
             .binding {
                 .binding            = BindingFontImages,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -99,7 +97,7 @@ struct GUI_Uniforms
 
         uboText.Create();
         infos[BindingUboText] = {
-            .type = UniformInfo2::Buffer,
+            .type = UniformInfo::Buffer,
             .binding {
                 .binding            = BindingUboText,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -121,7 +119,7 @@ struct GUI_Uniforms
         uboColorTable.Bake(cmdPool);
         
         infos[BindingColorTable] = {
-            .type = UniformInfo2::Buffer,
+            .type = UniformInfo::Buffer,
             .binding {
                 .binding            = BindingColorTable,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,

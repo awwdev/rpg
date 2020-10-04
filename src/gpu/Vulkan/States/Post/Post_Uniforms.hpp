@@ -13,7 +13,7 @@ namespace rpg::gpu::vuk {
 
 struct Post_Uniforms
 {
-    UniformInfo2 infos [1];
+    UniformInfo infos [1];
     Descriptors descriptors;
     VkSampler   sampler;
 
@@ -43,7 +43,7 @@ struct Post_Uniforms
         VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, &sampler));
 
         infos[0] = {
-            .type = UniformInfo2::Image,
+            .type = UniformInfo::Image,
             .binding {
                 .binding            = 0,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,

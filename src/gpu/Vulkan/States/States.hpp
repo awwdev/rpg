@@ -24,7 +24,7 @@ struct States
         shadow  .Create(cmdPool);
         general .Create(cmdPool, *shadow.uniforms.uboSun.activeBuffer, shadow.renderPass.shadowMaps, cpuRes, res);
         post    .Create(cmdPool, general.renderPass.finalImage);
-        gui     .Create(cmdPool, cpuRes);
+        gui     .Create(cmdPool, res);
     }
 
     void Update(gpu::RenderData& renderData, res::CpuResources& cpuRes)

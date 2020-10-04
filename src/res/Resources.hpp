@@ -1,7 +1,6 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "res/Resources_Models.hpp"
 #include "res/Resources_Textures.hpp"
 #include "res/Resources_Terrain.hpp"
 #include "res/Resources_Prefabs.hpp"

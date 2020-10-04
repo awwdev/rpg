@@ -15,7 +15,6 @@
 #include "gpu/RenderData/RenderData.hpp"
 #include "res/_Old/CpuResources.hpp"
 #include "res/Resources.hpp"
-#include "res/Resources_Models.hpp"
 
 namespace rpg::gpu::vuk {
 
