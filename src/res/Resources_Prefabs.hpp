@@ -4,6 +4,10 @@
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
 #include "res/Prefab/PrefabLoader.hpp"
 
+#include "res/Mesh/MeshEnum.hpp"
+#include "res/Mesh/MeshMaterialEnum.hpp"
+#include "com/box/EnumMap.hpp"
+
 namespace rpg::res {
 
 struct Resources_Prefabs

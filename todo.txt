@@ -1,3 +1,6 @@
+- todo: instance data: one array and also sorted by mesh material
+
+- add primitives to meshes
 - mesh property: indexed or not indexed
 - terrain refactor
 - grass 

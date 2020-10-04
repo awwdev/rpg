@@ -4,6 +4,8 @@
 #include "res/Mesh/MeshMeta.hpp"
 #include "res/Mesh/MeshLoader.hpp"
 
+#include "com/box/EnumMap.hpp"
+
 namespace rpg::res {
 
 struct Resources_Meshes

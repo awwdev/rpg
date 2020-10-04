@@ -62,11 +62,10 @@ struct EnumMap
         const idx_t keyOffsetted = (idx_t) key - (idx_t) OFFSET;
 
         data[keyOffsetted] = VAL { std::forward<ARGS>(args)... };
-        
-        if (!bitset.Test(keyOffsetted)) {
-            bitset.Set(keyOffsetted, true);
-            usedIndices.Append(keyOffsetted);
-        }
+        dbg::Assert(bitset.Test(keyOffsetted) == false, "enum entry already exists");
+
+        bitset.Set(keyOffsetted, true);
+        usedIndices.Append(keyOffsetted);
     }
 
     void Remove(const KEY key)

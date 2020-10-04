@@ -23,11 +23,11 @@ namespace rpg::gpu::vuk {
 
 struct State_General
 {
-    General_RenderPass  renderPass;
-    General_Shader      shader;
-    General_Pipeline    pipeline;
-    General_Vertices    vertices;
-    General_Uniforms    uniforms;
+    General_RenderPass    renderPass;
+    General_Shader        shader;
+    General_Pipeline      pipeline;
+    General_Vertices      vertices;
+    General_Uniforms      uniforms;
 
     Terrain_Shader        terrainShader;
     Terrain_Pipeline      terrainPipeline;
@@ -101,6 +101,26 @@ struct State_General
             auto const& meshInstances = rdGeneral.meshInstances[meshIdx];
             if (meshInstances.Empty()) 
                 continue;
+
+            dbg::Assert(res::MESH_MATERIALS.Contains(meshIdx), "mesh material mapping missing");
+            auto const meshMaterial = res::MESH_MATERIALS.Get(meshIdx);
+
+            //TODO: additionally sorting by material 
+            //TODO: also use one big array and not 2d array
+
+            switch(meshMaterial)
+            {
+                case res::MeshMaterialEnum::Foliage: 
+                    vkCmdBindPipeline (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, foliagePipeline.pipeline);
+                break;
+
+                case res::MeshMaterialEnum::Metal: 
+                case res::MeshMaterialEnum::Default: 
+                    vkCmdBindPipeline (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
+                break;
+
+                default: dbg::Assert(false, "mesh material pipeline missing");
+            }
 
             auto const& vertexRange   = vertices.vboMeshesVertexRanges[meshIdx];
             vkCmdDraw(cmdBuffer, vertexRange.count, meshInstances.Count(), vertexRange.index, instanceIdx);

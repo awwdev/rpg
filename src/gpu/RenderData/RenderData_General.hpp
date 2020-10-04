@@ -38,7 +38,10 @@ struct RenderData_General
 
     //? DATA
     Meta meta;
-    com::Array<MeshInstance, MESH_INSTANCES_MAX> meshInstances [(idx_t) res::MeshEnum::ENUM_END];
+    com::Array<MeshInstance, MESH_INSTANCES_MAX> meshInstances [(idx_t) res::MeshEnum::ENUM_END]; //big
+
+    //TODO: additionally sorting by material 
+    //TODO: also use one big array and not 2d array
 
     void Clear()
     {

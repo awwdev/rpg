@@ -20,7 +20,10 @@ inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderDat
         gpu::RenderData_General::MeshInstance const meshInstance {
             .transform = mainComponent.transform
         };
-        renderData.general.meshInstances[meshEnumIdx].Append(meshInstance);        
+        renderData.general.meshInstances[meshEnumIdx].Append(meshInstance);   
+
+        //TODO: additionally sorting by material 
+        //TODO: also use one big array and not 2d array
     }
 
 }
