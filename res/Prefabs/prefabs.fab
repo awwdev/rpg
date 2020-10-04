@@ -8,15 +8,20 @@
 # whitespace is fine
 
 @ Sword
-    ? MainComponent
-        + Children = Sword_Grib, Sword_Blade
+? MainComponent
+    + Children = Sword_Grib, Sword_Blade
 
 @ Sword_Grib
-    ? MainComponent
-        + Mesh = Mesh_Sword_Grib
-        + Material = Wooden
-    
+? MainComponent
+    + Mesh = Mesh_Sword_Grib
+    + Material = Wooden
+
 @ Sword_Blade
-    ? MainComponent
-        + Mesh = Mesh_Sword_Blade
-        + Material = Metallic
+? MainComponent
+    + Mesh = Mesh_Sword_Blade
+    + Material = Metallic
+
+@ Grass
+? MainComponent
+    + Mesh = Mesh_Grass
+    + Indexed = 1

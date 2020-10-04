@@ -12,15 +12,24 @@ enum class MeshEnum : u8
     None, 
     Sword_Grib,
     Sword_Blade,
+    Grass, 
     ENUM_END
 };
 
 const com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> MESH_ENUM_TO_STR
 {
-    { MeshEnum::Sword_Grib,   "Mesh_Sword_Grib" },
-    { MeshEnum::Sword_Blade,  "Mesh_Sword_Blade" },
+    { MeshEnum::Sword_Grib,     "Mesh_Sword_Grib" },
+    { MeshEnum::Sword_Blade,    "Mesh_Sword_Blade" },
+    { MeshEnum::Grass,          "Mesh_Grass" },
 };
 const auto MESH_STR_TO_ENUM = com::StringMapFromEnumMap<MeshEnum, PREFAB_FILE_LINE_LEN_MAX>(MESH_ENUM_TO_STR);
 
+
+const com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> MESH_PATHS
+{
+    { MeshEnum::Sword_Grib,     "res/Meshes/Sword_Grib.mesh" },
+    { MeshEnum::Sword_Blade,    "res/Meshes/Sword_Blade.mesh" },
+    { MeshEnum::Grass,          "res/Meshes/Grass.mesh" },
+};
 
 }//NS

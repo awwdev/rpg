@@ -25,6 +25,7 @@ struct MainComponent
     //render data
     res::MeshEnum         meshEnum          { res::MeshEnum::None };
     res::MeshMaterialEnum meshMaterialEnum  { res::MeshMaterialEnum::Default };
+    bool indexed { false };
 
     //parsing
     MainComponent(ecs::ComponentDataPairs const& pairs)
@@ -63,6 +64,13 @@ struct MainComponent
                     auto meshMaterialEnum = res::MESH_MATERIAL_STR_TO_ENUM.GetOptional(val_cstr);
                     dbg::Assert(meshMaterialEnum, "no meshEnum");
                     this->meshMaterialEnum = *meshMaterialEnum;
+                } 
+                break;
+
+                case ComponentDataEnum::Indexed: 
+                {
+                    auto const val = std::atoi(val_cstr);
+                    indexed = static_cast<bool>(val);
                 } 
                 break;
 

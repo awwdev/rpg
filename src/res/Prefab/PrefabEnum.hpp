@@ -12,6 +12,7 @@ enum class PrefabEnum : ecs::ID
     Sword,
     Sword_Grib,
     Sword_Blade,
+    Grass,
 
     ENUM_END
 };
@@ -23,6 +24,7 @@ const com::EnumMap<PrefabEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> 
     { PrefabEnum::Sword,        "Sword" },
     { PrefabEnum::Sword_Grib,   "Sword_Grib" },
     { PrefabEnum::Sword_Blade,  "Sword_Blade" },
+    { PrefabEnum::Grass,        "Grass" },
 
 };
 const auto PREFAB_STR_TO_ENUM = com::StringMapFromEnumMap<PrefabEnum, PREFAB_FILE_LINE_LEN_MAX>(PREFAB_ENUM_TO_STR);

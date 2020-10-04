@@ -13,8 +13,12 @@ struct Resources_Meshes
 
     void Load()
     {
-        LoadMesh("res/Meshes/Sword_Grib.mesh",  MeshEnum::Sword_Grib,  allVertices, meshVertexRanges);
-        LoadMesh("res/Meshes/Sword_Blade.mesh", MeshEnum::Sword_Blade, allVertices, meshVertexRanges);
+        FOR_ARRAY(MESH_PATHS.usedIndices, i) {
+            auto const idx  = MESH_PATHS.usedIndices[i];
+            auto const eIdx = (MeshEnum) idx;
+            auto const path = MESH_PATHS.Get(idx).cstr;
+            LoadMesh(path,  eIdx,  allVertices, meshVertexRanges);
+        }
     }
 };
 

@@ -1,5 +1,5 @@
+- mesh property: indexed or not indexed
 - terrain refactor
-- prefab list
 - grass 
 - shadow cascade fade
 - ecs serialization

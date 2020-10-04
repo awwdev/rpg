@@ -13,6 +13,7 @@ enum class ComponentDataEnum
     Children,
     Mesh,
     Material,
+    Indexed, 
     ENUM_END
 };
 
@@ -21,6 +22,7 @@ const com::EnumMap<ComponentDataEnum::ENUM_END, com::String<res::PREFAB_FILE_LIN
     { ComponentDataEnum::Children, "Children" },
     { ComponentDataEnum::Mesh,     "Mesh" },
     { ComponentDataEnum::Material, "Material" },
+    { ComponentDataEnum::Indexed,  "Indexed" },
 };
 const auto COMPONENT_DATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentDataEnum, res::PREFAB_FILE_LINE_LEN_MAX>(COMPONENT_DATA_ENUM_TO_STR);
 
