@@ -4,8 +4,6 @@
 
 #include "com/box/Array.hpp"
 
-#include "gpu/RenderData/_Old/RenderStructs.hpp"
-
 namespace rpg::res {
 
 template<auto QUAD_COUNT_T, auto QUADRANT_LEN_T>

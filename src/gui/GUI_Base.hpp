@@ -3,8 +3,6 @@
 #pragma once
 #include "gpu/RenderData/RenderData.hpp"
 
-#include "gpu/RenderData/_Old/RenderStructs.hpp"
-
 #include "com/DeltaTime.hpp"
 #include "com/Algorithms.hpp"
 #include "com/box/EnumMap.hpp"

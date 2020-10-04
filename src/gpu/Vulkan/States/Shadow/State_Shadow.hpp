@@ -10,7 +10,6 @@
 #include "gpu/Vulkan/States/General/State_General.hpp"
 
 #include "gpu/RenderData/RenderData.hpp"
-#include "gpu/RenderData/_Old/RenderStructs.hpp"
 
 namespace rpg::gpu::vuk {
 

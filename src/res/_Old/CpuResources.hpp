@@ -10,7 +10,6 @@
 #include "res/_Old/CpuResources.hpp"
 #include "res/Terrain/Terrain.hpp"
 #include "gpu/RenderData/RenderData.hpp"
-#include "gpu/RenderData/_Old/RenderStructs.hpp"
 #include "res/Model/ModelPrimitives.hpp"
 
 namespace rpg::res {
