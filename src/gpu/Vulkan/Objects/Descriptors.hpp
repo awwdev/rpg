@@ -2,9 +2,18 @@
 
 #pragma once
 #include "gpu/Vulkan/Meta/Context.hpp"
-#include "gpu/Vulkan/_Old/Objects/UniformBuffer.hpp"
 
 namespace rpg::gpu::vuk {
+
+struct UniformInfo2
+{
+    enum Type { Buffer, Image } type;
+    VkDescriptorSetLayoutBinding binding {}; //includes binding
+    //union {
+        VkDescriptorBufferInfo bufferInfo {};
+        VkDescriptorImageInfo  imageInfo  {};
+    //};
+};
 
 struct Descriptors
 {
@@ -14,7 +23,7 @@ struct Descriptors
     VkArray<VkDescriptorSet, 10> descSets;
 
     template<auto UNIFORM_COUNT>
-    void Create(UniformInfo (&uniformInfos) [UNIFORM_COUNT])
+    void Create(UniformInfo2 (&uniformInfos) [UNIFORM_COUNT])
     {
         //? LAYOUT
         VkDescriptorSetLayoutBinding bindings [UNIFORM_COUNT];
@@ -53,8 +62,8 @@ struct Descriptors
                 .dstArrayElement    = 0,
                 .descriptorCount    = 1,
                 .descriptorType     = uniformInfos[i].binding.descriptorType,
-                .pImageInfo         = uniformInfos[i].type == UniformInfo::Image  ? &uniformInfos[i].imageInfo  : nullptr,
-                .pBufferInfo        = uniformInfos[i].type == UniformInfo::Buffer ? &uniformInfos[i].bufferInfo : nullptr,
+                .pImageInfo         = uniformInfos[i].type == UniformInfo2::Image  ? &uniformInfos[i].imageInfo  : nullptr,
+                .pBufferInfo        = uniformInfos[i].type == UniformInfo2::Buffer ? &uniformInfos[i].bufferInfo : nullptr,
                 .pTexelBufferView   = nullptr
             };
         }

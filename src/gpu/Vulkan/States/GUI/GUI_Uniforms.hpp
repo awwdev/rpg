@@ -6,7 +6,6 @@
 #include "gpu/Vulkan/Objects/Descriptors.hpp"
 #include "gpu/Vulkan/Objects/Image.hpp"
 #include "gpu/RenderData/RenderData.hpp"
-#include "gpu/RenderData/_Old/RenderStructs.hpp"
 
 #include "gui/GUI_Base.hpp"
 #include "res/_Old/CpuResources.hpp"
@@ -22,7 +21,7 @@ struct GUI_Uniforms
         ENUM_END
     };
 
-    UniformInfo infos [Bindings::ENUM_END];
+    UniformInfo2 infos [Bindings::ENUM_END];
     Descriptors descriptors;
 
     UniformBuffer<RenderData_GUI::UBO_Text, RenderData_GUI::UBO_TEXT_MAX> uboText;
@@ -83,7 +82,7 @@ struct GUI_Uniforms
         VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, &sampler));
 
         infos[BindingFontImages] = {
-            .type = UniformInfo::Image,
+            .type = UniformInfo2::Image,
             .binding {
                 .binding            = BindingFontImages,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -100,7 +99,7 @@ struct GUI_Uniforms
 
         uboText.Create();
         infos[BindingUboText] = {
-            .type = UniformInfo::Buffer,
+            .type = UniformInfo2::Buffer,
             .binding {
                 .binding            = BindingUboText,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -122,7 +121,7 @@ struct GUI_Uniforms
         uboColorTable.Bake(cmdPool);
         
         infos[BindingColorTable] = {
-            .type = UniformInfo::Buffer,
+            .type = UniformInfo2::Buffer,
             .binding {
                 .binding            = BindingColorTable,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,

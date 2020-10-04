@@ -5,7 +5,6 @@
 #include "gpu/Vulkan/Objects/BufferExt.hpp"
 #include "gpu/Vulkan/Objects/Descriptors.hpp"
 #include "gpu/RenderData/RenderData.hpp"
-#include "gpu/RenderData/_Old/RenderStructs.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -19,7 +18,7 @@ struct General_Uniforms
         ENUM_END
     };
 
-    UniformInfo infos [Bindings::ENUM_END];
+    UniformInfo2 infos [Bindings::ENUM_END];
     Descriptors descriptors;
 
     using RD = RenderData_General;
@@ -33,7 +32,7 @@ struct General_Uniforms
         //? UBO META
         uboMeta.Create();
         infos[BindingMeta] = {
-            .type = UniformInfo::Buffer,
+            .type = UniformInfo2::Buffer,
             .binding {
                 .binding            = BindingMeta,
                 .descriptorType     = uboMeta.DESCRIPTOR_TYPE,
@@ -51,7 +50,7 @@ struct General_Uniforms
         //? UBO MODELS
         sboInstances.Create();
         infos[BindingModelInstances] = {
-            .type = UniformInfo::Buffer,
+            .type = UniformInfo2::Buffer,
             .binding {
                 .binding            = BindingModelInstances,
                 .descriptorType     = sboInstances.DESCRIPTOR_TYPE,
@@ -68,7 +67,7 @@ struct General_Uniforms
 
         //? SUN
         infos[BindingSun] = {
-            .type = UniformInfo::Buffer,
+            .type = UniformInfo2::Buffer,
             .binding {
                 .binding            = BindingSun,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -108,7 +107,7 @@ struct General_Uniforms
         VkCheck(vkCreateSampler(g_contextPtr->device, &samplerInfo, nullptr, &shadowMapSampler));
 
         infos[BindingShadowMap] = {
-            .type = UniformInfo::Image,
+            .type = UniformInfo2::Image,
             .binding {
                 .binding            = BindingShadowMap,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
