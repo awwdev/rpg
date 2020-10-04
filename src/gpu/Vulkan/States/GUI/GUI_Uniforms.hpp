@@ -7,6 +7,7 @@
 #include "gpu/Vulkan/Objects/Image.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "gui/GUI_Base.hpp"
+#include "res/Texture/TextureLoader.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -51,8 +52,8 @@ struct GUI_Uniforms
         fontImages.Store(
             cmdPool, 
             resources.textures.monospaceFont.data, 
-            resources.textures.monospaceFont.TOTAL_SIZE,
-            resources.textures.monospaceFont.TEX_SIZE
+            resources.textures.monospaceFont.ALL_TEXTURES_BYTES,
+            resources.textures.monospaceFont.SINGLE_TEXTURE_BYTES
         );
         fontImages.Bake(cmdPool);
 

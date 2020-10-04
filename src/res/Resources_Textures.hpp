@@ -2,17 +2,17 @@
 
 #pragma once
 #include "res/Texture/TextureLoader.hpp"
-#include "res/_Old/TextureArray.hpp"
+#include "res/Texture/TextureArray.hpp"
 
 namespace rpg::res {
 
 struct Resources_Textures
 {
-    TextureArray<128, 16, 16, 1> monospaceFont;
+    res2::TextureArray<16, 16, 128, 1> monospaceFont;
 
     void Load()
     {
-        monospaceFont.LoadArray("res/TextureArrays/MonospaceFont"); //RLE would be nice
+        monospaceFont.LoadDirectory("res/TextureArrays/MonospaceFont");
     }
     
 };
