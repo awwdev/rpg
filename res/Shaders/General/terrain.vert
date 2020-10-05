@@ -12,8 +12,9 @@ layout(location = 1) out vec2 outTex;
 layout(location = 2) out vec4 outShadowPos [CASCADE_COUNT];
 
 layout(binding = 0) uniform Meta { 
-    mat4 view;
-    mat4 proj;
+    mat4  view;
+    mat4  proj;
+    float time;
 } meta;
 
 layout(binding = 2) uniform Sun { 

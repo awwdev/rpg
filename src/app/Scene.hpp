@@ -63,6 +63,7 @@ struct GameScene
     void Update(const double dt, res::CpuResources& cpuRes)
     {
         renderData.Clear();
+        renderData.general.meta.time += dt;
 
         //? UI
         app::ResetUpdateInputMode();

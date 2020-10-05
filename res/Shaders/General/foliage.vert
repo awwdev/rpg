@@ -12,8 +12,9 @@ layout(location = 1) out vec2 outTex;
 layout(location = 2) out vec4 outShadowCoord [CASCADE_COUNT];
 
 layout(binding = 0) uniform Meta { 
-    mat4 view;
-    mat4 proj;
+    mat4  view;
+    mat4  proj;
+    float time;
 } meta;
 
 struct MeshInstance 
@@ -32,12 +33,21 @@ layout(binding = 2) uniform Sun {
 
 void main() 
 {
-    gl_Position = meta.proj * meta.view * meshInstances.arr[gl_InstanceIndex].transform * inPos;
+    //using flow map
+    float y = max(0, -inPos.y);
+    vec4 vertPosMoved = vec4(
+        inPos.x * (1 + sin(inPos.z + meta.time * 2.0) * 0.12 * y), 
+        inPos.y * (1 + sin(          meta.time * 0.1) * 0.01 * y), 
+        inPos.z * (1 + cos(inPos.x + meta.time * 1.5) * 0.15 * y), 
+        1
+    );
+
+    gl_Position = meta.proj * meta.view * meshInstances.arr[gl_InstanceIndex].transform * vertPosMoved;
     outCol = inCol;
     outTex = inTex;
 
     for(int i = 0; i < CASCADE_COUNT; ++i){
-        outShadowCoord[i] = sun.projViewBiased[i] * inPos;
+        outShadowCoord[i] = sun.projViewBiased[i] * meshInstances.arr[gl_InstanceIndex].transform * vertPosMoved;
         //also change array size of output and input in frag
     }
 }

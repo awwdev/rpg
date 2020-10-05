@@ -29,7 +29,20 @@ struct Foliage_Pipeline
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
         const auto rasterization    = Rasterization(VK_CULL_MODE_NONE); //!
-        const auto multisampling    = Multisampling(renderPass.msaaSampleCount);
+
+        const VkPipelineMultisampleStateCreateInfo multisampling 
+        {
+            .sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+            .pNext                 = nullptr,
+            .flags                 = 0,
+            .rasterizationSamples  = renderPass.msaaSampleCount,
+            .sampleShadingEnable   = VK_FALSE,
+            .minSampleShading      = 0.5f,
+            .pSampleMask           = nullptr,
+            .alphaToCoverageEnable = VK_TRUE, //! I think I would need real alpha channel?
+            .alphaToOneEnable      = VK_FALSE
+        };
+
         const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
         const auto blendAttachment  = BlendAttachment(VK_FALSE);
         const auto blendState       = BlendState(blendAttachment);   

@@ -16,8 +16,8 @@ void main()
 {
     //todo: need to get right texture array index
     int texArrIdx = 0;
-    float alpha = texture(foliageTextures, vec3(inTex, texArrIdx)).b;
-    if (alpha < 0.5) 
+    float alpha = clamp(texture(foliageTextures, vec3(inTex, texArrIdx)).b, 0, 1);
+    if (alpha < 0.1) 
         discard;
 
     int cascadeIdx = 0;
@@ -38,16 +38,5 @@ void main()
 
     #define AMBIENT 0.1f
     float shadowAmbient = clamp(AMBIENT + shadow, 0, 1);
-    outCol = vec4(inCol.rgb * shadowAmbient, 1);
+    outCol = vec4(inCol.rgb * shadowAmbient, alpha);
 }
-
-
-
-
-//float shadowSum = 0;
-//for(int i = 0; i < CASCADE_COUNT; ++i){
-//    vec4  coord = vec4(inShadowCoord[i].xy, i, inShadowCoord[i].z);
-//    float shadow = texture(shadowMap, coord).r;
-//    shadowSum += shadow;
-//}
-//shadowSum /= CASCADE_COUNT;

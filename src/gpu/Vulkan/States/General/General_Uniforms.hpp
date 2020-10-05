@@ -155,11 +155,27 @@ struct General_Uniforms
         );
         foliageImages.Bake(cmdPool);
 
-        const auto foliageSamplerInfo = SamplerCreateInfo(
-            VK_FILTER_LINEAR, 
-            VK_SAMPLER_MIPMAP_MODE_LINEAR, 
-            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER
-        );
+        const VkSamplerCreateInfo foliageSamplerInfo 
+        {
+            .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+            .pNext                   = nullptr,
+            .flags                   = 0,
+            .magFilter               = VK_FILTER_LINEAR,
+            .minFilter               = VK_FILTER_LINEAR, 
+            .mipmapMode              = VK_SAMPLER_MIPMAP_MODE_NEAREST,
+            .addressModeU            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, 
+            .addressModeV            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, 
+            .addressModeW            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+            .mipLodBias              = 0, 
+            .anisotropyEnable        = VK_FALSE, 
+            .maxAnisotropy           = 0, 
+            .compareEnable           = VK_FALSE,
+            .compareOp               = VK_COMPARE_OP_LESS, 
+            .minLod                  = 0,
+            .maxLod                  = 0, 
+            .borderColor             = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK, 
+            .unnormalizedCoordinates = VK_FALSE
+        };
         VkCheck(vkCreateSampler(g_contextPtr->device, &foliageSamplerInfo, nullptr, &foliageSampler));
 
         infos[BindingFoliage] = {

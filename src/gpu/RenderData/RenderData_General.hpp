@@ -24,6 +24,8 @@ struct RenderData_General
     {
         alignas(64) com::Mat4f view;
         alignas(64) com::Mat4f proj;
+
+        float time;
     };
 
     struct MeshInstance
@@ -51,7 +53,8 @@ struct RenderData_General
 
     void Clear()
     {
-        meta = {};
+        //do not clear meta (and time)
+
         FOR_C_ARRAY(meshInstances, i)
             meshInstances[i].Clear();  
 

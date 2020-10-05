@@ -32,17 +32,17 @@ void main()
         const float steps     = 0.2f; 
         vec2 size = textureSize(finalImage, 0);
 
-        outCol = texture(finalImage, inTex);
+        vec3 col = texture(finalImage, inTex).rgb;
         for(float i = 0; i < pi2; i += pi2 / directions) {
         for(float j = 0.5; j < 1.5; j+=steps) {
             vec2 off = (vec2(cos(i), sin(i)) / size) * (j * scale);
-            outCol  += texture(finalImage, inTex + off);		
+            col += texture(finalImage, inTex + off).rgb;		
         }}
-        outCol /= directions * (1 / steps);
-
+        col /= directions * (1 / steps);
+        outCol = vec4(col.rgb, 1);
     }
     else 
     {
-        outCol = texture(finalImage, inTex);
+        outCol = vec4(texture(finalImage, inTex).rgb, 1);
     }
 }
