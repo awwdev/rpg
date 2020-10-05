@@ -13,6 +13,7 @@ layout(location = 5) in vec4  inShadowCoord [CASCADE_COUNT];
 layout(location = 0) out vec4 outCol;
 
 layout(binding  = 3) uniform sampler2DArrayShadow shadowMap;
+layout(binding  = 5) uniform sampler2DArray fxTextures;
 
 void main() 
 {
@@ -45,5 +46,8 @@ void main()
        specular = pow(specAngle, 4.0);
     }
 
-    outCol = vec4(inCol.rgb * 0.5 * shadowAmbient * (1 + inMetallic * lambertian * specular), 1);
+    vec3  voronoi1 = texture(fxTextures, vec3(inTex, 0)).rgb;
+    float voronoi2 = dot(voronoi1, inViewDir);
+
+    outCol = vec4(inCol.rgb * 0.5 * shadowAmbient * (1 + inMetallic * lambertian * specular * voronoi2), 1);
 }

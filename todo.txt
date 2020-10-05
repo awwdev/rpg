@@ -1,11 +1,9 @@
-- todo: instance data: one array and also sorted by mesh material
+- add primitives to meshes
+- shadow cascade fade
+- cast shadow flag 
+
 - load both material and mesh paths externally
 - FOR_ENUM_MAP macro for loop
 - draw terrain wire flag
-
-- add primitives to meshes
 - terrain refactor
-- grass 
-- shadow cascade fade
 - ecs serialization
-- cast shadow flag 

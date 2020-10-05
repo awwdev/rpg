@@ -29,7 +29,7 @@ struct TextureArray
     char  data [COUNT][SINGLE_TEXTURE_BYTES];
     idx_t count = 0;
 
-    void LoadFile_GreyFormat(const std::filesystem::path& path)
+    void LoadFile_RawFormat(const std::filesystem::path& path)
     {
         //THIS DOES NOT LOAD BMP BUT A CUSTOM FORMAT THAT IS JUST BYTES (GRAY SCALE)
         std::ifstream file (path, std::ios::binary);
@@ -37,23 +37,10 @@ struct TextureArray
         ++count;
     }
 
-    void LoadDirectory_GreyFormat(chars_t path)
+    void LoadDirectory_RawFormat(chars_t path)
     {
         for(auto const& it : std::filesystem::directory_iterator(path)) { 
-            LoadFile_GreyFormat(it.path()); //wchar
-        }
-    }
-
-    void LoadFile_BMP(const std::filesystem::path& path)
-    {
-        //TODO:
-        dbg::Assert(false, "no impl yet");
-    }
-
-    void LoadDirectory_BMP(chars_t path)
-    {
-        for(auto const& it : std::filesystem::directory_iterator(path)) { 
-            LoadFile_BMP(it.path()); //wchar
+            LoadFile_RawFormat(it.path()); //wchar
         }
     }
 

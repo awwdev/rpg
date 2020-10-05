@@ -17,6 +17,7 @@ struct General_Uniforms
         BindingSun,
         BindingShadowMap,
         BindingFoliage,
+        BindingFX, 
         ENUM_END
     };
 
@@ -31,6 +32,9 @@ struct General_Uniforms
 
     Image     foliageImages;
     VkSampler foliageSampler;
+
+    Image     fxImages;;
+    VkSampler fxSampler;
 
     void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::Resources_Textures& resTextures)
     {
@@ -155,27 +159,11 @@ struct General_Uniforms
         );
         foliageImages.Bake(cmdPool);
 
-        const VkSamplerCreateInfo foliageSamplerInfo 
-        {
-            .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-            .pNext                   = nullptr,
-            .flags                   = 0,
-            .magFilter               = VK_FILTER_LINEAR,
-            .minFilter               = VK_FILTER_LINEAR, 
-            .mipmapMode              = VK_SAMPLER_MIPMAP_MODE_NEAREST,
-            .addressModeU            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, 
-            .addressModeV            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, 
-            .addressModeW            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
-            .mipLodBias              = 0, 
-            .anisotropyEnable        = VK_FALSE, 
-            .maxAnisotropy           = 0, 
-            .compareEnable           = VK_FALSE,
-            .compareOp               = VK_COMPARE_OP_LESS, 
-            .minLod                  = 0,
-            .maxLod                  = 0, 
-            .borderColor             = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK, 
-            .unnormalizedCoordinates = VK_FALSE
-        };
+        const auto foliageSamplerInfo = SamplerCreateInfo(
+            VK_FILTER_LINEAR,
+            VK_SAMPLER_MIPMAP_MODE_NEAREST,
+            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
+        );
         VkCheck(vkCreateSampler(g_contextPtr->device, &foliageSamplerInfo, nullptr, &foliageSampler));
 
         infos[BindingFoliage] = {
@@ -191,6 +179,48 @@ struct General_Uniforms
                 .sampler        = foliageSampler,
                 .imageView      = foliageImages.view,
                 .imageLayout    = foliageImages.currentLayout
+            }
+        };
+
+        //? FX TEXTURES
+        fxImages.Create(
+            VK_FORMAT_R8G8B8A8_SRGB,
+            resTextures.fx.WIDTH,
+            resTextures.fx.HEIGHT,
+            VK_SAMPLE_COUNT_1_BIT, 
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+            VK_IMAGE_ASPECT_COLOR_BIT,
+            resTextures.fx.count,
+            VK_IMAGE_VIEW_TYPE_2D_ARRAY
+        );     
+        fxImages.Store(
+            cmdPool, 
+            resTextures.fx.data, 
+            resTextures.fx.ALL_TEXTURES_BYTES,
+            resTextures.fx.SINGLE_TEXTURE_BYTES
+        );
+        fxImages.Bake(cmdPool);
+
+        const auto fxSamplerInfo = SamplerCreateInfo(
+            VK_FILTER_LINEAR,
+            VK_SAMPLER_MIPMAP_MODE_NEAREST,
+            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
+        );
+        VkCheck(vkCreateSampler(g_contextPtr->device, &fxSamplerInfo, nullptr, &fxSampler));
+
+        infos[BindingFX] = {
+            .type = UniformInfo::Image,
+            .binding {
+                .binding            = BindingFX,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+                .pImmutableSamplers = nullptr,
+            },
+            .imageInfo {
+                .sampler        = fxSampler,
+                .imageView      = fxImages.view,
+                .imageLayout    = fxImages.currentLayout
             }
         };
 
@@ -218,7 +248,9 @@ struct General_Uniforms
         descriptors.Destroy();
         vkDestroySampler(g_contextPtr->device, shadowMapSampler, nullptr);
         vkDestroySampler(g_contextPtr->device, foliageSampler, nullptr);
+        vkDestroySampler(g_contextPtr->device, fxSampler, nullptr);
         foliageImages.Destroy();
+        fxImages.Destroy();
         FOR_C_ARRAY(infos, i)
             infos[i] = {};
     }
