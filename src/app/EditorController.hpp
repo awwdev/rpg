@@ -32,6 +32,7 @@ struct EditorController
 
         renderData.general.meta.view = camera.view;
         renderData.general.meta.proj = camera.perspective;
+        renderData.general.meta.viewDir = com::Normalize(camera.rotation);
     }
 };
 

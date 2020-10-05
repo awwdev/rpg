@@ -34,6 +34,8 @@ struct GameScene
     gui::GUI_Shadow guiShadow;
     gui::GUI_Stats  guiStats;
 
+    ecs::ID swordID = 0; //TEST
+
     void Create(res::CpuResources& cpuRes, res::Resources const& resources)
     {
         sun.Create(ecs);
@@ -41,29 +43,22 @@ struct GameScene
         cpuRes.terrain.InitGizmos(ecs);
         ecs.prefabsArrays = resources.prefabs.prefabsArrays;
 
-        //test
+        //TEST
         {
-            auto  swordID = ecs.AddEntity(res::PrefabEnum::Sword);
+            swordID = ecs.AddEntity(res::PrefabEnum::Sword);
             auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
-            swordMainComponent.translation = { 0, 1, 0 };
-            
-            auto const gribID = swordMainComponent.children[0];
-            auto& gribMainComponent = ecs.arrays.mainComponents.Get(gribID);
-            gribMainComponent.translation = { 0, 1, 0 };
-        }
-
-        {
-            auto  grassID = ecs.AddEntity(res::PrefabEnum::Grass);
-            auto& grassMainComponent = ecs.arrays.mainComponents.Get(grassID);
-            grassMainComponent.translation = { 1, 0, 0 };
-        }
-        
+            swordMainComponent.translation = { 2, 0, 2 };
+        }       
     }
 
     void Update(const double dt, res::CpuResources& cpuRes)
     {
+        //TEST
+        auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
+        swordMainComponent.rotation.y += dt * 100;
+
         renderData.Clear();
-        renderData.general.meta.time += dt;
+        renderData.general.meta.time += dt;     
 
         //? UI
         app::ResetUpdateInputMode();

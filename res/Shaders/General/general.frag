@@ -3,9 +3,12 @@
 
 #define CASCADE_COUNT 4
 
-layout(location = 0) in vec4 inCol;
-layout(location = 1) in vec2 inTex;
-layout(location = 2) in vec4 inShadowCoord [CASCADE_COUNT];
+layout(location = 0) in vec4  inCol;
+layout(location = 1) in vec2  inTex;
+layout(location = 2) in vec3  inNormal;
+layout(location = 3) in vec3  inViewDir;
+layout(location = 4) in flat int inMetallic;
+layout(location = 5) in vec4  inShadowCoord [CASCADE_COUNT];
 
 layout(location = 0) out vec4 outCol;
 
@@ -31,16 +34,16 @@ void main()
 
     #define AMBIENT 0.1f
     float shadowAmbient = clamp(AMBIENT + shadow, 0, 1);
-    outCol = vec4(inCol.rgb * shadowAmbient, 1);
+
+    const vec3 lightDir = vec3(1, 1, 1);
+    float lambertian = max(dot(lightDir, inNormal), 0.0);
+    float specular = 1;
+
+    if(lambertian > 0.0) {
+       vec3 reflectDir = reflect(-lightDir, inNormal);
+       float specAngle = max(dot(reflectDir, -inViewDir), 0.0);
+       specular = pow(specAngle, 4.0);
+    }
+
+    outCol = vec4(inCol.rgb * 0.5 * shadowAmbient * (1 + inMetallic * lambertian * specular), 1);
 }
-
-
-
-
-//float shadowSum = 0;
-//for(int i = 0; i < CASCADE_COUNT; ++i){
-//    vec4  coord = vec4(inShadowCoord[i].xy, i, inShadowCoord[i].z);
-//    float shadow = texture(shadowMap, coord).r;
-//    shadowSum += shadow;
-//}
-//shadowSum /= CASCADE_COUNT;

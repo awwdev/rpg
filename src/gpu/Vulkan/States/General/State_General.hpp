@@ -111,14 +111,10 @@ struct State_General
             if (meshInstances.Empty()) 
                 continue;
 
-            dbg::Assert(res::MESH_MATERIALS.Contains(meshIdx), "mesh material mapping missing");
-            auto const meshMaterial = res::MESH_MATERIALS.Get(meshIdx);
+            dbg::Assert(res::MESH_MATERIAL_GROUPS.Contains(meshIdx), "mesh material mapping missing");
+            auto const meshMaterial = res::MESH_MATERIAL_GROUPS.Get(meshIdx);
 
-            //TODO: additionally sorting by material 
-            //TODO: also use one big array and not 2d array
-            //rendersystem, renderdata_general, state_general
-
-            switch(meshMaterial)
+            switch(meshMaterial) //prev material compare, to avoid bind same pipeline?
             {
                 case res::MeshMaterialEnum::Foliage: 
                     vkCmdBindPipeline (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, foliagePipeline.pipeline);

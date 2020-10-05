@@ -12,6 +12,7 @@ It might become the base for a stylized low poly game in the future ...
 ![](ads/progress/2020_08_04_terrainStichPlayerMove.gif)
 ![](ads/progress/2020_07_04_ui_wnd.gif)
 ![](ads/progress/2020_09_18_blur2.gif)
+![](ads/progress/2020_10_05_metallic.gif)
 ![](ads/progress/2020_08_08_AllocationView.png)
 
 ### Contents

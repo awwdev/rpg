@@ -24,6 +24,7 @@ struct MainComponent
 
     //render data
     res::MeshEnum  meshEnum { res::MeshEnum::None };
+    float metallic { 0.f };
 
     //parsing
     MainComponent(ecs::ComponentDataPairs const& pairs)
@@ -64,6 +65,12 @@ struct MainComponent
                     FOR_ARRAY(values, i){
                         scale[0][i] = std::atof(values[i].cstr);
                     }
+                }
+                break;
+
+                case ComponentDataEnum::Metallic:      
+                {
+                    metallic = std::atof(val_cstr);
                 }
                 break;
 

@@ -19,13 +19,10 @@ ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
         //render data
         auto const meshEnumIdx = (idx_t) mainComponent.meshEnum;
         gpu::RenderData_General::MeshInstance const meshInstance {
-            .transform = mainComponent.transform
+            .transform = mainComponent.transform,
+            .metallic  = mainComponent.metallic,
         };
         renderData.general.meshInstances[meshEnumIdx].Append(meshInstance);   
-
-        //TODO: additionally sorting by material 
-        //TODO: also use one big array and not 2d array
-        //rendersystem, renderdata_general, state_general
     }
 
 }

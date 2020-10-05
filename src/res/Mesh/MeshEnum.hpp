@@ -35,7 +35,7 @@ inline com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> M
     { MeshEnum::Grass,          "res/Meshes/Grass.mesh" },
 };
 
-inline com::EnumMap<MeshEnum::ENUM_END, MeshMaterialEnum> MESH_MATERIALS
+inline com::EnumMap<MeshEnum::ENUM_END, MeshMaterialEnum> MESH_MATERIAL_GROUPS
 {
     { MeshEnum::Sword_Grib,     MeshMaterialEnum::Default },
     { MeshEnum::Sword_Blade,    MeshMaterialEnum::Metal   },

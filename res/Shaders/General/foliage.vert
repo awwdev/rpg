@@ -2,7 +2,7 @@
 
 #define CASCADE_COUNT 4
 
-layout (location = 0) in vec4 inPos;
+layout (location = 0) in vec3 inPos;
 layout (location = 1) in vec3 inNor;
 layout (location = 2) in vec4 inCol;
 layout (location = 3) in vec2 inTex;
@@ -14,12 +14,14 @@ layout(location = 2) out vec4 outShadowCoord [CASCADE_COUNT];
 layout(binding = 0) uniform Meta { 
     mat4  view;
     mat4  proj;
+    vec3  viewDir;
     float time;
 } meta;
 
 struct MeshInstance 
 {
     mat4 transform;
+    mat4 metallic; //some settings
 };
 
 layout(binding = 1) readonly buffer MeshInstances { 

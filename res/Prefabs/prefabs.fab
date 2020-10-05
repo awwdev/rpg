@@ -14,10 +14,12 @@
 @ Sword_Grib
 ? MainComponent
     + Mesh = Mesh_Sword_Grib
+    + Metallic = 0
 
 @ Sword_Blade
 ? MainComponent
     + Mesh = Mesh_Sword_Blade
+    + Metallic = 1
 
 @ Grass
 ? MainComponent
