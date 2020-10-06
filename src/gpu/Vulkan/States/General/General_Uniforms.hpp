@@ -202,9 +202,9 @@ struct General_Uniforms
         fxImages.Bake(cmdPool);
 
         const auto fxSamplerInfo = SamplerCreateInfo(
-            VK_FILTER_LINEAR,
+            VK_FILTER_NEAREST,
             VK_SAMPLER_MIPMAP_MODE_NEAREST,
-            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
+            VK_SAMPLER_ADDRESS_MODE_REPEAT
         );
         VkCheck(vkCreateSampler(g_contextPtr->device, &fxSamplerInfo, nullptr, &fxSampler));
 

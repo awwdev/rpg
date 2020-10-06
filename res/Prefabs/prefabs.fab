@@ -13,12 +13,12 @@
 
 @ Sword_Grib
 ? MainComponent
-    + Mesh = Mesh_Sword_Grib
+    + Mesh = Mesh_Sword2_Grib
     + Metallic = 0
 
 @ Sword_Blade
 ? MainComponent
-    + Mesh = Mesh_Sword_Blade
+    + Mesh = Mesh_Sword2_Blade
     + Metallic = 1
 
 @ Grass
