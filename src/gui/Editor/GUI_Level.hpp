@@ -3,6 +3,7 @@
 #include "gui/Widgets/Widget_Window.hpp"
 #include "gui/Widgets/Widget_List.hpp"
 #include "gui/Widgets/Widget_Table.hpp"
+#include "gui/Widgets/Widget_Checkbox.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
 
 namespace rpg::gui {
@@ -23,6 +24,12 @@ struct GUI_Level
     };
 
     Widget_Table table;
+
+    Widget_Checkbox checkbox 
+    {
+        .label = "Terrain Wire"  
+    };
+
 
     GUI_Level()
     {
@@ -51,9 +58,10 @@ struct GUI_Level
         wnd         .Update(renderData);
         table       .Update(renderData, wnd);
         prefabList  .Update(renderData, wnd);
+        checkbox    .Update(renderData, wnd);
 
         cpuRes.terrain.settings.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
-        
+        renderData.general.enableTerrainWire = checkbox.isChecked;
     }
 };
 

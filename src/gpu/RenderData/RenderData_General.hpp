@@ -38,6 +38,7 @@ struct RenderData_General
     //? DATA
     Meta meta;
     com::Array<MeshInstance, MESH_INSTANCES_MAX> meshInstances [(idx_t) res::MeshEnum::ENUM_END]; //big
+    bool enableTerrainWire = true;
 
     //set on gpu draw
     idx_t dbgVertCountInstanced = 0, dbgVertCountInstancedPrev = 0; 

@@ -1,9 +1,9 @@
 - add primitives to meshes
 - shadow cascade fade
 - cast shadow flag 
+- better grass
 
 - load both material and mesh paths externally
 - FOR_ENUM_MAP macro for loop
-- draw terrain wire flag
 - terrain refactor
 - ecs serialization

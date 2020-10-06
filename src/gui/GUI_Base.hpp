@@ -101,8 +101,8 @@ const com::Rectf& rect, const Colors col, const f32 thickness = 1)
 {
     //lines
     const com::Rectf t { rect.x, rect.y, rect.width, thickness };
-    const com::Rectf r { rect.x + rect.width, rect.y, thickness, rect.height };
-    const com::Rectf b { rect.x, rect.y + rect.height, rect.width, thickness };
+    const com::Rectf r { rect.x + rect.width - thickness, rect.y, thickness, rect.height };
+    const com::Rectf b { rect.x, rect.y + rect.height - thickness, rect.width, thickness };
     const com::Rectf l { rect.x, rect.y, thickness, rect.height };
 
     AddRect(renderData, t, col);

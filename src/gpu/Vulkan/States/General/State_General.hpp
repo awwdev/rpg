@@ -21,24 +21,22 @@ struct State_General
     General_RenderPass    generalRenderPass;
     General_Vertices      generalVertices;
     General_Uniforms      generalUniforms;
-
     General_Shader        generalShader;
     General_Pipeline      generalPipeline;
 
-    State_Terrain terrain;
-    State_Foliage foliage;
+    State_Terrain         terrain;
+    State_Foliage         foliage;
 
     void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::CpuResources& cpuRes, res::Resources& res)
     {
         generalVertices     .Create(cmdPool, res.meshes);
         generalUniforms     .Create(cmdPool, uboSun, shadowMaps, res.textures);
         generalRenderPass   .Create(cmdPool);
-
         generalShader       .Create();
         generalPipeline     .Create(generalRenderPass, generalShader, generalVertices, generalUniforms);
 
-        terrain.Create(generalRenderPass, generalVertices, generalUniforms);
-        foliage.Create(generalRenderPass, generalVertices, generalUniforms);
+        terrain             .Create(generalRenderPass, generalVertices, generalUniforms);
+        foliage             .Create(generalRenderPass, generalVertices, generalUniforms);
     }
 
     void Destroy()
@@ -65,22 +63,21 @@ struct State_General
         vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.layout, 0, 
                                  generalUniforms.descriptors.descSets.count, generalUniforms.descriptors.descSets.data, 0, nullptr);
 
-        //terrain
+        //?terrain
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &generalVertices.vboTerrain.activeBuffer->buffer, generalVertices.offsets);
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrain.pipeline.pipeline);
         vkCmdDraw               (cmdBuffer, generalVertices.vboTerrain.count, 1, 0, 0);
         rdGeneral.dbgVertCountTerrain += generalVertices.vboTerrain.count;
 
-        //terrain wire
-        bool drawTerrainWire = true; //TODO: move somewhere
-        if (drawTerrainWire)
+        //?terrain wire
+        if (rdGeneral.enableTerrainWire)
         {
             vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrain.wirePipeline.pipeline);
             vkCmdDraw(cmdBuffer, generalVertices.vboTerrain.count, 1, 0, 0);
             rdGeneral.dbgVertCountTerrain += generalVertices.vboTerrain.count;
         }
 
-        //meshes 
+        //?meshes 
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.pipeline);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &generalVertices.vboMeshes.activeBuffer->buffer, generalVertices.offsets);
 
