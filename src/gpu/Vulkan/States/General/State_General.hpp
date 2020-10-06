@@ -7,13 +7,8 @@
 #include "gpu/Vulkan/States/General/General_Vertices.hpp"
 #include "gpu/Vulkan/States/General/General_Uniforms.hpp"
 
-#include "gpu/Vulkan/States/General/Terrain/Terrain_Shader.hpp"
-#include "gpu/Vulkan/States/General/Terrain/Terrain_Pipeline.hpp"
-#include "gpu/Vulkan/States/General/Terrain/Terrain_Wire_Shader.hpp"
-#include "gpu/Vulkan/States/General/Terrain/Terrain_Wire_Pipeline.hpp"
-
-#include "gpu/Vulkan/States/General/Foliage/Foliage_Shader.hpp"
-#include "gpu/Vulkan/States/General/Foliage/Foliage_Pipeline.hpp"
+#include "gpu/Vulkan/States/General/Terrain/State_Terrain.hpp"
+#include "gpu/Vulkan/States/General/Foliage/State_Foliage.hpp"
 
 #include "gpu/RenderData/RenderData.hpp"
 #include "res/_Old/CpuResources.hpp"
@@ -30,13 +25,8 @@ struct State_General
     General_Shader        generalShader;
     General_Pipeline      generalPipeline;
 
-    Terrain_Shader        terrainShader;
-    Terrain_Pipeline      terrainPipeline;
-    Terrain_Wire_Shader   terrainWireShader;
-    Terrain_Wire_Pipeline terrainWirePipeline;
-
-    Foliage_Shader        foliageShader;
-    Foliage_Pipeline      foliagePipeline;
+    State_Terrain terrain;
+    State_Foliage foliage;
 
     void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::CpuResources& cpuRes, res::Resources& res)
     {
@@ -47,13 +37,8 @@ struct State_General
         generalShader       .Create();
         generalPipeline     .Create(generalRenderPass, generalShader, generalVertices, generalUniforms);
 
-        terrainShader       .Create();
-        terrainPipeline     .Create(generalRenderPass, terrainShader, generalVertices, generalUniforms);
-        terrainWireShader   .Create();
-        terrainWirePipeline .Create(generalRenderPass, terrainWireShader, generalVertices, generalUniforms);
-
-        foliageShader       .Create();
-        foliagePipeline     .Create(generalRenderPass, foliageShader, generalVertices, generalUniforms);
+        terrain.Create(generalRenderPass, generalVertices, generalUniforms);
+        foliage.Create(generalRenderPass, generalVertices, generalUniforms);
     }
 
     void Destroy()
@@ -64,13 +49,8 @@ struct State_General
         generalVertices     .Destroy();
         generalUniforms     .Destroy();
 
-        terrainPipeline     .Destroy();
-        terrainShader       .Destroy();
-        terrainWirePipeline .Destroy();
-        terrainWireShader   .Destroy();
-
-        foliagePipeline     .Destroy();
-        foliageShader       .Destroy();
+        terrain             .Destroy();
+        foliage             .Destroy();
     }
 
     void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
@@ -87,7 +67,7 @@ struct State_General
 
         //terrain
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &generalVertices.vboTerrain.activeBuffer->buffer, generalVertices.offsets);
-        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipeline.pipeline);
+        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrain.pipeline.pipeline);
         vkCmdDraw               (cmdBuffer, generalVertices.vboTerrain.count, 1, 0, 0);
         rdGeneral.dbgVertCountTerrain += generalVertices.vboTerrain.count;
 
@@ -95,7 +75,7 @@ struct State_General
         bool drawTerrainWire = true; //TODO: move somewhere
         if (drawTerrainWire)
         {
-            vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainWirePipeline.pipeline);
+            vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrain.wirePipeline.pipeline);
             vkCmdDraw(cmdBuffer, generalVertices.vboTerrain.count, 1, 0, 0);
             rdGeneral.dbgVertCountTerrain += generalVertices.vboTerrain.count;
         }
@@ -117,7 +97,7 @@ struct State_General
             switch(meshMaterial) //prev material compare, to avoid bind same pipeline?
             {
                 case res::MeshMaterialEnum::Foliage: 
-                    vkCmdBindPipeline (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, foliagePipeline.pipeline);
+                    vkCmdBindPipeline (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, foliage.pipeline.pipeline);
                 break;
 
                 case res::MeshMaterialEnum::Metal: 
