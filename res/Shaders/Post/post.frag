@@ -10,28 +10,15 @@ layout (location = 0) out vec4 outCol;
 
 void main() 
 {
+    float pi2 = 6.28318530718;
+    float directions= 16;
+    float scale     = 2;
+    float steps     = 0.2f; 
+    vec2 size = textureSize(finalImage, 0);
+
     if (inBlur == 1)
     {
-        //? XY BLUR
-        /*
-        outCol = texture(finalImage, inTex);
-        vec2 size = textureSize(finalImage, 0);
-        const float scale = 1.5;
-        for(int x = -2; x <= 2; ++x) {
-        for(int y = -2; y <= 2; ++y) {
-            vec2 off = vec2(x / size.x * scale, y / size.y * scale);
-            outCol += texture(finalImage, inTex + off);
-        }}
-        outCol /= 25;
-        */
-
         //? RADIAL BLUR
-        const float pi2 = 6.28318530718;
-        const float directions= 16;
-        const float scale     = 2;
-        const float steps     = 0.2f; 
-        vec2 size = textureSize(finalImage, 0);
-
         vec3 col = texture(finalImage, inTex).rgb;
         for(float i = 0; i < pi2; i += pi2 / directions) {
         for(float j = 0.5; j < 1.5; j+=steps) {
@@ -45,4 +32,20 @@ void main()
     {
         outCol = vec4(texture(finalImage, inTex).rgb, 1);
     }
+
+
+
+
+    //? SIMPLE BLOOM TEST
+    float intensity = 0;
+    scale = 2;
+    for(float i = 0; i < pi2; i += pi2 / directions) {
+    for(float j = 0.5; j < 1.5; j+=steps) {
+        vec2 off = (vec2(cos(i), sin(i)) / size) * (j * scale);
+        vec3 img = texture(finalImage, inTex + off).rgb;		
+        intensity += img.r + img.g + img.b;
+    }}
+    intensity /= directions * (1 / steps);
+    outCol.rgb += intensity / 10;
+
 }

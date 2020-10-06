@@ -46,8 +46,13 @@ void main()
        specular = pow(specAngle, 4.0);
     }
 
-    vec3  voronoi1 = texture(fxTextures, vec3(inTex * 4, 0)).rgb;
-    float voronoi2 = dot(voronoi1, inViewDir);
+    vec3  voronoi1 = texture(fxTextures, vec3(inTex * 3.5, 0)).rgb;
+    float voronoi2 = abs(sin(dot(voronoi1, inNormal)));
 
-    outCol = vec4(inCol.rgb * 0.5 * shadowAmbient * (1 + inMetallic * lambertian * specular * voronoi2), 1);
+    outCol = vec4( 
+        inCol.rgb * max(0.5, 1 - inMetallic) 
+        * shadowAmbient 
+        * (1 + inMetallic * voronoi2)
+    , 1);
+
 }

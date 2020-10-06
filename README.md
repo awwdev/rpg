@@ -6,13 +6,14 @@ Little use of ext party tools (besides vulkan.h).
 It is not intended to be a "plug in and play" library nor is it an universal 3D engine.
 It might become the base for a stylized low poly game in the future ...
 
+
+![](ads/progress/2020_10_06_bloomVoronoi.gif)
 ![](ads/progress/2020_09_03_grassPerf.gif)
 ![](ads/progress/2020_08_25_grass.gif)
 ![](ads/progress/2020_08_14_terrainEdit.gif)
 ![](ads/progress/2020_08_04_terrainStichPlayerMove.gif)
 ![](ads/progress/2020_07_04_ui_wnd.gif)
 ![](ads/progress/2020_09_18_blur2.gif)
-![](ads/progress/2020_10_05_metallic.gif)
 ![](ads/progress/2020_08_08_AllocationView.png)
 
 ### Contents
