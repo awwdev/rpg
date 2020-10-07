@@ -17,7 +17,7 @@ struct GUI_Level
         .limits = { 128, 128, f32max, f32max }
     };
 
-    Widget_List<10> prefabList
+    Widget_List<res::PrefabEnum> prefabList
     {
         .listName = "prefab list",
         .maxHeight = 100
@@ -33,9 +33,12 @@ struct GUI_Level
 
     void Init(res::Resources_Prefabs const& resPrefabs)
     {
-        //FOR_STRING_MAP_BEGIN_CONST(res::PREFAB_STR_TO_ENUM, prefabStr)
-        //    prefabList.AddItem(prefabStr.key.Data(), prefabStr.key.Length());
-        //FOR_STRING_MAP_END
+        for(idx_t prefabIdx = 0; prefabIdx < (idx_t)res::PrefabEnum::ENUM_END; ++prefabIdx)
+        {
+            dbg::Assert(res::PREFAB_ENUM_TO_STR.Contains(prefabIdx), "prefab missing");
+            auto const prefabStr = res::PREFAB_ENUM_TO_STR.Get(prefabIdx);
+            prefabList.AddItem(prefabStr.Data(), prefabStr.Length());
+        }
 
         {
             auto& row = table.table.Append();

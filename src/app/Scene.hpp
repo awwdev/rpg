@@ -50,17 +50,17 @@ struct GameScene
 
         //TEST
         {
-            //swordID = ecs.AddEntity(res::PrefabEnum::Sword);
-            //ecs::MainComponent& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
-            //swordMainComponent.translation = { 2, 0, 2 };
+            swordID = ecs.AddEntity(res::PrefabEnum::Sword);
+            ecs::MainComponent& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
+            swordMainComponent.translation = { 2, 0, 2 };
         }       
     }
 
     void Update(const double dt, res::Resources& resources)
     {
         //TEST
-        //auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
-        //swordMainComponent.rotation.y += dt * 100;
+        auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
+        swordMainComponent.rotation.y += dt * 100;
 
         renderData.Clear();
         renderData.general.meta.time += dt;     

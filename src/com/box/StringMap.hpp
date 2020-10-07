@@ -12,7 +12,7 @@
 namespace rpg::com {
 
 //TODO: same keys are not considered yet
-
+//this is not ordered! but bucket order based
 #define FOR_STRING_MAP_BEGIN_CONST(map, item) \
 for(idx_t bucketIdx = 0; bucketIdx < map.BUCKET_COUNT; ++bucketIdx){ \
     const auto& bucket = map.buckets[bucketIdx]; \
