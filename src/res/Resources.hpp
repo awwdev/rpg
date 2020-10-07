@@ -17,7 +17,7 @@ struct Resources
     Resources_Prefabs   prefabs;
     Resources_Animation animation;
 
-    void Load()
+    Resources() //immediate load when ctor
     {
         prefabs.Load();
         textures.Load();

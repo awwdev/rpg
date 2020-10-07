@@ -13,7 +13,6 @@
 #include "gpu/Vulkan/States/General/Terrain/Terrain_Wire_Pipeline.hpp"
 
 #include "gpu/RenderData/RenderData.hpp"
-#include "res/_Old/CpuResources.hpp"
 #include "res/Resources.hpp"
 
 namespace rpg::gpu::vuk {

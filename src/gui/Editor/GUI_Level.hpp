@@ -5,6 +5,7 @@
 #include "gui/Widgets/Widget_Table.hpp"
 #include "gui/Widgets/Widget_Checkbox.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
+#include "res/Resources.hpp"
 
 namespace rpg::gui {
 
@@ -13,7 +14,7 @@ struct GUI_Level
     Widget_Window wnd 
     {
         .title  = "Level",
-        .rect   = { 0, 0, 300, 300 },
+        .rect   = { 0, 0, 300, 200 },
         .limits = { 128, 128, f32max, f32max }
     };
 
@@ -27,7 +28,8 @@ struct GUI_Level
 
     Widget_Checkbox checkbox 
     {
-        .label = "Terrain Wire"  
+        .label = "Terrain Wire" ,
+        .isChecked = true,
     };
 
 
@@ -44,10 +46,10 @@ struct GUI_Level
         }
     }
 
-    void Update(gpu::RenderData& renderData, res::CpuResources& cpuRes)
+    void Update(gpu::RenderData& renderData, res::Resources& res)
     {
         table.table[0][1] = [&] {
-            switch(cpuRes.terrain.settings.mode) {
+            switch(res.terrain.terrain.settings.mode) {
                 case res::EditMode::VertexGrab:     return "VertexGrab";
                 case res::EditMode::VertexPaint:    return "VertexPaint";
                 case res::EditMode::PropPlacement:  return "PrefabPlacement";
@@ -60,7 +62,7 @@ struct GUI_Level
         prefabList  .Update(renderData, wnd);
         checkbox    .Update(renderData, wnd);
 
-        cpuRes.terrain.settings.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
+        res.terrain.terrain.settings.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
         renderData.general.enableTerrainWire = checkbox.isChecked;
     }
 };

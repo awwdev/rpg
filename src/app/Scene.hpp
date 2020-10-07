@@ -13,6 +13,7 @@
 
 #include "res/Terrain/Terrain.hpp"
 #include "res/Prefab/PrefabLoader.hpp"
+#include "res/Resources.hpp"
 
 #include "app/PlayerController.hpp"
 #include "app/EditorController.hpp"
@@ -36,11 +37,11 @@ struct GameScene
 
     ecs::ID swordID = 0; //TEST
 
-    void Create(res::CpuResources& cpuRes, res::Resources const& resources)
+    GameScene(res::Resources& resources)
     {
         sun.Create(ecs);
         playerController.Create(ecs);
-        cpuRes.terrain.InitGizmos(ecs);
+        resources.terrain.terrain.InitGizmos(ecs);
         ecs.prefabsArrays = resources.prefabs.prefabsArrays;
 
         //TEST
@@ -51,7 +52,7 @@ struct GameScene
         }       
     }
 
-    void Update(const double dt, res::CpuResources& cpuRes)
+    void Update(const double dt, res::Resources& resources)
     {
         //TEST
         auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
@@ -63,7 +64,7 @@ struct GameScene
         //? UI
         app::ResetUpdateInputMode();
         if (app::glo::inputMode != app::glo::InputMode::PlayMode) {
-            guiLevel.Update(renderData, cpuRes);
+            guiLevel.Update(renderData, resources);
             guiStats.Update(renderData);
             //guiShadow.Update(renderData);
         }   
@@ -74,7 +75,7 @@ struct GameScene
         else 
             editorController.Update(dt, ecs, renderData);
 
-        cpuRes.terrain.Update(dt, editorController.camera, ecs); //move into editor?
+        resources.terrain.terrain.Update(dt, editorController.camera, ecs); //move into editor?
         sun.Update(ecs, dt, renderData);
 
         //? ECS

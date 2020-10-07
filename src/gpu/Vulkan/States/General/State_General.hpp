@@ -11,7 +11,6 @@
 #include "gpu/Vulkan/States/General/Foliage/State_Foliage.hpp"
 
 #include "gpu/RenderData/RenderData.hpp"
-#include "res/_Old/CpuResources.hpp"
 #include "res/Resources.hpp"
 
 namespace rpg::gpu::vuk {
@@ -27,7 +26,7 @@ struct State_General
     State_Terrain         terrain;
     State_Foliage         foliage;
 
-    void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::CpuResources& cpuRes, res::Resources& res)
+    void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::Resources& res)
     {
         generalVertices     .Create(cmdPool, res.meshes);
         generalUniforms     .Create(cmdPool, uboSun, shadowMaps, res.textures);
@@ -51,10 +50,10 @@ struct State_General
         foliage             .Destroy();
     }
 
-    void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
+    void Update(gpu::RenderData& renderData, const res::Resources& resources)
     {
         generalUniforms.Update(renderData.general);
-        generalVertices.Update(renderData, cpuRes);
+        generalVertices.Update(renderData.general, resources.terrain);
     }
 
     void Record(VkCommandBuffer cmdBuffer, RenderData_General& rdGeneral)

@@ -5,7 +5,6 @@
 #include "gpu/Vulkan/States/States.hpp"
 #include "gpu/Vulkan/Meta/Synchronization.hpp"
 
-#include "res/_Old/CpuResources.hpp"
 #include "res/Resources.hpp"
 #include "app/Scene.hpp"
 #include "gpu/RenderData/RenderData.hpp"
@@ -24,7 +23,7 @@ struct Renderer
 
     //com::ThreadPool<4> threadPool;
     
-    Renderer(const vuk::WindowHandle& wndHandle, res::CpuResources& cpuRes, res::Resources& res)
+    Renderer(const vuk::WindowHandle& wndHandle, res::Resources& res)
         : context {}
         , commands {}
         , sync {}
@@ -33,10 +32,10 @@ struct Renderer
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
-        states.Create(cpuRes, res, commands.mainCmdPool);
+        states.Create(res, commands.mainCmdPool);
     }
 
-    void RecreateScwapchain(res::CpuResources& cpuRes, res::Resources& res)
+    void RecreateScwapchain(res::Resources& res)
     {
         vkDeviceWaitIdle(context.device);
         if (!context.RecreateSwapchain())
@@ -45,14 +44,14 @@ struct Renderer
         commands.Destroy();
         commands.Create();
         states.Destroy();
-        states.Create(cpuRes, res, commands.mainCmdPool);
+        states.Create(res, commands.mainCmdPool);
     }
 
-    void Render(const double dt, app::GameScene& scene, res::CpuResources& cpuRes, res::Resources& res)
+    void Render(const double dt, app::GameScene& scene, res::Resources& res)
     {
         if (wnd::glo::resizeState != wnd::glo::ResizeState::None){
             if (wnd::glo::resizeState == wnd::glo::ResizeState::End)
-                RecreateScwapchain(cpuRes, res);
+                RecreateScwapchain(res);
             return;
         } //checking for size==0 is done previously (will also pause other logic)
 
@@ -72,7 +71,7 @@ struct Renderer
         switch(acquireRes)
         {
             case VK_SUCCESS: break;
-            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(cpuRes, res); return; //when?!
+            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(res); return; //when?!
             default: return;
         }
 
@@ -83,7 +82,7 @@ struct Renderer
         VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
         //UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-        states.Update(scene.renderData, cpuRes);
+        states.Update(scene.renderData, res);
         auto cmds = states.Record(commands, imageIndex, scene.renderData, res);
         //--------------------------------------------------
 

@@ -6,7 +6,7 @@
 #include "gpu/RenderData/RenderData.hpp"
 #include "com/box/Array.hpp"
 
-#include "res/_Old/CpuResources.hpp"
+#include "res/Resources_Terrain.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {
@@ -54,7 +54,7 @@ struct Shadow_Vertices
         }
     };
 
-    void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
+    void Update()
     {
     }
 
@@ -65,6 +65,7 @@ struct Shadow_Vertices
     void Destroy()
     {
     }
+    
     ~Shadow_Vertices()
     {
         Destroy();

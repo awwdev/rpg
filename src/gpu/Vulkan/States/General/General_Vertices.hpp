@@ -7,7 +7,6 @@
 #include "gpu/RenderData/RenderData.hpp"
 #include "com/box/Array.hpp"
 
-#include "res/_Old/CpuResources.hpp"
 #include "res/Resources_Meshes.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 
@@ -61,12 +60,12 @@ struct General_Vertices
         }
     };
 
-    void Update(gpu::RenderData& renderData, const res::CpuResources& cpuRes)
+    void Update(gpu::RenderData_General& renderData, const res::Resources_Terrain& resTerrain)
     {
         vboTerrain.Reset();
         //TODO: all quadrants
-        const auto& verts    = cpuRes.terrain.quadrants[0][0].verts;
-        const auto vertCount = cpuRes.terrain.quadrants[0][0].VERT_COUNT_TOTAL;
+        const auto& verts    = resTerrain.terrain.quadrants[0][0].verts;
+        const auto vertCount = resTerrain.terrain.quadrants[0][0].VERT_COUNT_TOTAL;
         vboTerrain.Append(verts, vertCount);
 
         //renderData.debugInfo.vboData_general_vertCount = vertCount;

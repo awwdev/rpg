@@ -1,8 +1,14 @@
+
+
+
+
 - add primitives to meshes
 - shadow cascade fade
 - cast shadow flag 
 - better grass
 
+
+- simple function ptr based system for gui callback
 - load both material and mesh paths externally
 - FOR_ENUM_MAP macro for loop
 - terrain refactor

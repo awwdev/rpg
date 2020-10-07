@@ -36,7 +36,7 @@ struct GUI_Stats
     Widget_Window wnd 
     {
         .title  = "Stats",
-        .rect   = { (f32)wnd::glo::window_w - 300, 0, 300, 300 },
+        .rect   = { (f32)wnd::glo::window_w - 300, 0, 300, 200 },
         .limits = { 128, 128, f32max, f32max }
     };
     Widget_Table table;

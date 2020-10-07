@@ -5,9 +5,7 @@
 #include "gpu/Vulkan/Objects/Descriptors.hpp"
 #include "gpu/Vulkan/Objects/Image.hpp"
 #include "gpu/RenderData/RenderData.hpp"
-
 #include "gui/GUI_Base.hpp"
-#include "res/_Old/CpuResources.hpp"
 
 namespace rpg::gpu::vuk {
 
