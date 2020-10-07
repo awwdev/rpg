@@ -3,9 +3,11 @@
 #pragma once
 #include "gui/Widgets/Widget_Window.hpp"
 #include "com/mem/Allocator.hpp"
+#include <functional>
 
 namespace rpg::gui {
 
+//allows nesting
 template<class IDX_T = idx_t>
 struct Widget_List
 {
@@ -37,6 +39,7 @@ struct Widget_List
         return blockPtr.ptr;
     }
 
+
     void Update(gpu::RenderData& renderData)
     {
         const com::Rectf back { rect.x, rect.y + LINE_HEIGHT, rect.width, rect.height - LINE_HEIGHT };
@@ -50,8 +53,12 @@ struct Widget_List
             com::Clamp(scroll, 0, topLevelItems.Count() - 1);
         }
 
-        auto drawItemFn = [&](idx_t& idx, Item const& item)
+        //? DRAW (SUB) ITEM FN
+        float intend = -1;
+        std::function<void(idx_t&, Item const&)> drawItemFn = [&](idx_t& idx, Item const& item)
         {
+            intend++;
+
             const com::Rectf itemRect {
                 back.x + PADDING,
                 back.y + PADDING + (idx - scroll) * LINE_HEIGHT,
@@ -63,11 +70,6 @@ struct Widget_List
             if (itemRect.y + itemRect.height > rect.y + rect.height)
                 return;
 
-            FOR_ARRAY(item.subItems, i)
-            {
-                ++idx;
-            }
-
             const bool isMouseOnItem = isMouseOnList && com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, itemRect);
             if (isMouseOnItem && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>())
                 activeIdx = (IDX_T) idx;
@@ -75,11 +77,20 @@ struct Widget_List
             if (activeIdx == (IDX_T) idx)
                 AddRect(renderData, itemRect, Colors::Black2_Alpha);
             
-            AddText(renderData, topLevelItems[idx]->itemName, itemRect.x, itemRect.y, isMouseOnItem ? Colors::Green : Colors::White);
+            AddText(renderData, item.itemName, itemRect.x + intend*4, itemRect.y, isMouseOnItem ? Colors::Green : Colors::White);
+
+            FOR_ARRAY(item.subItems, subIdx)
+            {
+                ++idx;
+                auto& ptrItem = item.subItems[subIdx];
+                drawItemFn(idx, *ptrItem);
+            }
+
+            intend--;
         };
 
-        for(idx_t idx = scroll; idx < topLevelItems.Count(); ++idx)
-        {
+        //? iterate top level
+        for(idx_t idx = scroll; idx < topLevelItems.Count(); ++idx) {
             auto& ptrItem = topLevelItems[idx];
             drawItemFn(idx, *ptrItem);
         }

@@ -108,6 +108,7 @@ struct BlockPtr
 
     T* operator->() { return  ptr; }
     T& operator* () { return *ptr; }
+    T const& operator* () const { return *ptr; }
 
     T&       Get()       { return *ptr; }
     T const& Get() const { return *ptr; }

@@ -12,7 +12,7 @@ struct GUI_Scene
         .rect  = { 0, 300, 300, 200 }
     };
 
-    
+    //TODO: scene hierarchy
 
     void Update(gpu::RenderData& renderData)
     {
