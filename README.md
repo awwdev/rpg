@@ -35,7 +35,7 @@ It might become the base for a stylized low poly game in the future ...
 # Rationale
 
 ## Code Style
-This codebase does not follow the common OOP paradigm.
+This codebase does not follow the classy OOP paradigm (inheritance, encapsulation).
 Personally, I found a straightforward and procedural approach more satisfying.
 
 ## Custom STL

@@ -15,12 +15,13 @@ struct Resources_Meshes
 
     void Load()
     {
-        FOR_ARRAY(MESH_PATHS.usedIndices, i) {
-            auto const idx  = MESH_PATHS.usedIndices[i];
-            auto const eIdx = (MeshEnum) idx;
-            auto const path = MESH_PATHS.Get(idx).cstr;
-            LoadMesh(path,  eIdx,  allVertices, meshVertexRanges);
+        for(idx_t meshIdx = (idx_t) MeshEnum::None + 1; meshIdx < (idx_t) MeshEnum::ENUM_END; ++meshIdx)
+        {
+            dbg::Assert(MESH_PATHS.Contains(meshIdx), "mesh missing");
+            auto const path = MESH_PATHS.Get(meshIdx).cstr;
+            LoadMesh(path,  meshIdx,  allVertices, meshVertexRanges);
         }
+        //TODO: meshenum::none should be a placeholder mesh
     }
 };
 

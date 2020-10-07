@@ -11,21 +11,23 @@ namespace rpg::res {
 enum class MeshEnum : u8
 {
     None, 
-    Sword_Grib,
-    Sword_Blade,
-    Grass, 
+    Cube,
+    Sword1_Grib,
+    Sword1_Blade,
     Sword2_Grib,
     Sword2_Blade,
+    Grass, 
     ENUM_END
 };
 
 const com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> MESH_ENUM_TO_STR
 {
-    { MeshEnum::Sword_Grib,     "Mesh_Sword_Grib" },
-    { MeshEnum::Sword_Blade,    "Mesh_Sword_Blade" },
-    { MeshEnum::Grass,          "Mesh_Grass" },
+    { MeshEnum::Cube,           "Mesh_Cube" },
+    { MeshEnum::Sword1_Grib,    "Mesh_Sword1_Grib" },
+    { MeshEnum::Sword1_Blade,   "Mesh_Sword1_Blade" },
     { MeshEnum::Sword2_Grib,    "Mesh_Sword2_Grib" },
     { MeshEnum::Sword2_Blade,   "Mesh_Sword2_Blade" },
+    { MeshEnum::Grass,          "Mesh_Grass" },
 };
 const auto MESH_STR_TO_ENUM = com::StringMapFromEnumMap<MeshEnum, PREFAB_FILE_LINE_LEN_MAX>(MESH_ENUM_TO_STR);
 
@@ -34,17 +36,19 @@ const auto MESH_STR_TO_ENUM = com::StringMapFromEnumMap<MeshEnum, PREFAB_FILE_LI
 
 inline com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> MESH_PATHS
 {
-    { MeshEnum::Sword_Grib,     "res/Meshes/Sword_Grib.mesh" },
-    { MeshEnum::Sword_Blade,    "res/Meshes/Sword_Blade.mesh" },
-    { MeshEnum::Grass,          "res/Meshes/Grass.mesh" },
-    { MeshEnum::Sword2_Grib,    "res/Meshes/Sword2_Grib.mesh" },
+    { MeshEnum::Cube,           "res/Meshes/Cube.mesh"         },
+    { MeshEnum::Sword1_Grib,    "res/Meshes/Sword1_Grib.mesh"  },
+    { MeshEnum::Sword1_Blade,   "res/Meshes/Sword1_Blade.mesh" },
+    { MeshEnum::Sword2_Grib,    "res/Meshes/Sword2_Grib.mesh"  },
     { MeshEnum::Sword2_Blade,   "res/Meshes/Sword2_Blade.mesh" },
+    { MeshEnum::Grass,          "res/Meshes/Grass.mesh"        },
 };
 
 inline com::EnumMap<MeshEnum::ENUM_END, MeshMaterialEnum> MESH_MATERIAL_GROUPS
 {
-    { MeshEnum::Sword_Grib,     MeshMaterialEnum::Default },
-    { MeshEnum::Sword_Blade,    MeshMaterialEnum::Metal   },
+    { MeshEnum::Cube,           MeshMaterialEnum::Default },
+    { MeshEnum::Sword1_Grib,    MeshMaterialEnum::Default },
+    { MeshEnum::Sword1_Blade,   MeshMaterialEnum::Metal   },
     { MeshEnum::Sword2_Grib,    MeshMaterialEnum::Default },
     { MeshEnum::Sword2_Blade,   MeshMaterialEnum::Metal   },
     { MeshEnum::Grass,          MeshMaterialEnum::Foliage },

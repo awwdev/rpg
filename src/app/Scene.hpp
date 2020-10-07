@@ -47,7 +47,7 @@ struct GameScene
         //TEST
         {
             swordID = ecs.AddEntity(res::PrefabEnum::Sword);
-            auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
+            ecs::MainComponent& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
             swordMainComponent.translation = { 2, 0, 2 };
         }       
     }

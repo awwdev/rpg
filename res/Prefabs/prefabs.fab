@@ -7,6 +7,10 @@
 # ONE-LINERS are permitted only
 # whitespace is fine
 
+@ Cube
+? MainComponent
+    + Mesh = Mesh_Cube
+
 @ Sword
 ? MainComponent
     + Children = Sword_Grib, Sword_Blade

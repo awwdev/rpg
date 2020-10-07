@@ -9,7 +9,7 @@
 
 namespace rpg::res {
 
-inline auto LoadMesh(chars_t path, MeshEnum const& meshEnum,
+inline auto LoadMesh(chars_t path, idx_t const meshIdx,
 com::Array<MeshVertex, MESHES_VERTS_TOTAL>& allVertices,
 MeshVertexRange (&meshVertexRanges) [MESHES_TOTAL])
 {
@@ -45,10 +45,10 @@ MeshVertexRange (&meshVertexRanges) [MESHES_TOTAL])
                 case  2: vertex.pos.y = value; break;
                 case  3: vertex.pos.z = value; break;
                 //vert col
-                case  4: vertex.col.x = value; break;
-                case  5: vertex.col.y = value; break;
-                case  6: vertex.col.z = value; break;
-                case  7: vertex.col.w = value; break;
+                case  4: vertex.col.r = value; break;
+                case  5: vertex.col.g = value; break;
+                case  6: vertex.col.b = value; break;
+                case  7: vertex.col.a = value; break;
                 //vert nor
                 case  8: vertex.nor.x = value; break;
                 case  9: vertex.nor.y = value; break;
@@ -66,7 +66,7 @@ MeshVertexRange (&meshVertexRanges) [MESHES_TOTAL])
     }
 
     const auto vertexRangeCount = allVertices.Count() - vertexRangeIndex;
-    meshVertexRanges[(idx_t) meshEnum] = { (uint32_t) vertexRangeIndex, (uint32_t) vertexRangeCount };
+    meshVertexRanges[meshIdx] = { (uint32_t) vertexRangeIndex, (uint32_t) vertexRangeCount };
 }
 
 }//ns

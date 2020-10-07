@@ -9,6 +9,7 @@ namespace rpg::res {
 
 enum class PrefabEnum : ecs::ID
 {
+    Cube,
     Sword,
     Sword_Grib,
     Sword_Blade,
@@ -21,6 +22,7 @@ constexpr auto  PREFAB_COUNT_MAX = (ecs::ID) PrefabEnum::ENUM_END;
 
 const com::EnumMap<PrefabEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> PREFAB_ENUM_TO_STR
 {
+    { PrefabEnum::Cube,         "Cube" },
     { PrefabEnum::Sword,        "Sword" },
     { PrefabEnum::Sword_Grib,   "Sword_Grib" },
     { PrefabEnum::Sword_Blade,  "Sword_Blade" },
