@@ -4,15 +4,21 @@
 #include "com/Types.hpp"
 #include "com/box/Bitset.hpp"
 #include "com/box/Array.hpp"
+#include <concepts>
 
 namespace rpg::com {
     
 template<class KEY, class VAL, typename = IsIntegralOrEnum<KEY>>
 struct EnumPair
 {
+    using KEY_T = KEY;
+    using VAL_T = VAL;
     KEY key;
     VAL val;
 };
+
+template<class T>
+concept PairConcept = requires (T) { T::KEY_T; T::VAL_T; };
 
 //wrapper over array that uses enum for max count and index
 //the wrapper allows for order independent init, removal, add, and is capacity based (last enum item)

@@ -4,6 +4,7 @@
 #include "com/Types.hpp"
 #include "com/Algorithms.hpp"
 #include "dbg/Logger.hpp"
+#include "dbg/Assert.hpp"
 #include "com/box/String.hpp"
 #include "com/box/EnumMap.hpp"
 #include "com/Range.hpp"
@@ -62,7 +63,7 @@ struct StringMap
 
     void Insert(const Pair& pair)
     {
-        const auto hash = SimpleHash(pair.key.cstr);
+        const auto hash = SimpleHash(pair.key.Data());
         buckets[hash].Add(pair);
     }
 
@@ -130,6 +131,7 @@ auto StringMapFromEnumMap(const com::EnumMap<ENUM_END_T, com::String<STRING_CAPA
 {
     StringMap<VAL, STRING_CAPACITY> strMap;
     for(idx_t i = 0; i < enumMap.ENUM_END; ++i) {
+        dbg::Assert(enumMap.Contains(i), "enum missing");
         strMap.Insert({enumMap.Get(i), (VAL)i});
     }
     return strMap;

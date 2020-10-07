@@ -22,6 +22,7 @@ enum class MeshEnum : u8
 
 const com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> MESH_ENUM_TO_STR
 {
+    { MeshEnum::None,           "Mesh_None" },
     { MeshEnum::Cube,           "Mesh_Cube" },
     { MeshEnum::Sword1_Grib,    "Mesh_Sword1_Grib" },
     { MeshEnum::Sword1_Blade,   "Mesh_Sword1_Blade" },

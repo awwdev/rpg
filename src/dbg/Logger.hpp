@@ -21,8 +21,7 @@ enum ConsoleColors
     BrightCyan,
 };
 
-template<class... T>
-void LogColor(const ConsoleColors color, T&&... args)
+void LogColor(const ConsoleColors color, auto&&... args)
 {
     switch(color)
     {

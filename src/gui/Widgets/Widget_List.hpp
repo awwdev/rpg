@@ -2,26 +2,48 @@
 
 #pragma once
 #include "gui/Widgets/Widget_Window.hpp"
+#include "com/mem/Allocator.hpp"
 
 namespace rpg::gui {
 
-template<idx_t ITEM_COUNT_MAX>
+template<idx_t ITEM_COUNT_MAX, idx_t NODE_COUNT_MAX = 100>
 struct Widget_List
 {
-    com::String<30> name;
-    com::Rectf  rect;
-    f32 maxHeight = 100;
-    f32 scroll = 0;
+    using ListString = com::String<50>;
 
-    com::Array<com::String<30>, ITEM_COUNT_MAX> items;
+    ListString      listName;
+    com::Rectf      rect;
+    f32 maxHeight   = 100;
+    f32 scroll      = 0;
     idx_t activeIdx = 0;
+    
+    struct Item
+    {
+        Item() = default;
+        Item(chars_t itemStr, idx_t const itemStrLen)
+            : itemName { itemStr, itemStrLen } //so forwarding will work
+        { }
+
+        ListString itemName;
+        com::Array<com::mem::BlockPtr<Item>, 20> subItems;
+        bool isToggled = false; 
+    };
+    com::Array<com::mem::BlockPtr<Item>, 100> items;
+
+    auto AddItem(chars_t str, idx_t const strLen, idx_t const idx = 0) -> idx_t
+    {   
+        auto& ptr = items.Append();
+        com::mem::ClaimBlock(ptr, str, strLen);
+        return items.Count() - 1;
+    }
 
     void Update(gpu::RenderData& renderData)
     {
+        /*
         const com::Rectf back { rect.x, rect.y + LINE_HEIGHT, rect.width, rect.height - LINE_HEIGHT };
         const bool isMouseOnList = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);
 
-        AddText(renderData, name, rect.x, rect.y); 
+        AddText(renderData, listName, rect.x, rect.y); 
         AddRect(renderData, back, Colors::Black2_Alpha);
 
         if (isMouseOnList && wnd::glo::mouse_scroll_delta != 0){
@@ -51,6 +73,7 @@ struct Widget_List
             
             AddText(renderData, items[idx], itemRect.x, itemRect.y, isMouseOnItem ? Colors::Green : Colors::White);
         }
+        */
     }
 
     void Update(gpu::RenderData& renderData, Widget_Window& wnd)

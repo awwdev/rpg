@@ -110,12 +110,13 @@ struct BlockPtr
     T& operator* () { return *ptr; }
 
     T&       Get()       { return *ptr; }
-    const T& Get() const { return *ptr; }
+    T const& Get() const { return *ptr; }
 
     //array access
     auto&       operator[](const idx_t i)        { return (*ptr)[i]; };
     const auto& operator[](const idx_t i) const  { return (*ptr)[i]; };
 
+    BlockPtr() = default;
     BlockPtr(T* const pPtr, const idx_t pBlockId)
         : ptr     { pPtr }
         , blockId { pBlockId } 
@@ -184,6 +185,13 @@ auto ClaimBlock(CtorArgs&&... args)
             __FUNCTION__ );//__PRETTY_FUNCTION__
             
     return BlockPtr<T> { obj, freeBlockId };
+}
+
+template<class T, class... CtorArgs, typename = std::enable_if_t<!std::is_array_v<T>>> 
+void ClaimBlock(BlockPtr<T>& refPtr, CtorArgs&&... args)
+{
+    auto ptr = ClaimBlock<T>(std::forward<CtorArgs>(args)...);
+    refPtr   = std::move(ptr);
 }
 
 inline idx_t GetBlockArrayIdxFromBlockId(const idx_t blockId)

@@ -30,8 +30,8 @@ struct MainComponent
     MainComponent(ecs::ComponentDataPairs const& pairs)
     {
         FOR_ARRAY(pairs, i) {
-            auto const& key_cstr = pairs[i].key.cstr;
-            auto const& val_cstr = pairs[i].val.cstr;
+            auto const& key_cstr = pairs[i].key.Data();
+            auto const& val_cstr = pairs[i].val.Data();
 
             auto componentDataEnum = ecs::COMPONENT_DATA_STR_TO_ENUM.GetOptional(key_cstr);
             dbg::Assert(componentDataEnum, "no componentDataEnum");
@@ -43,7 +43,7 @@ struct MainComponent
                     const auto values = ValStrToValArray<3, 100>(val_cstr);     
                     dbg::Assert(!values.Empty(), "values are empty");
                     FOR_ARRAY(values, i){
-                        auto prefabEnum = res::PREFAB_STR_TO_ENUM.GetOptional(values[i].cstr);
+                        auto prefabEnum = res::PREFAB_STR_TO_ENUM.GetOptional(values[i].Data());
                         dbg::Assert(prefabEnum, "child prefab enum wrong");
                         children.Append((ID) *prefabEnum);
                     }
@@ -63,7 +63,7 @@ struct MainComponent
                     const auto values = ValStrToValArray<3, 10>(val_cstr);   
                     dbg::Assert(!values.Empty(), "values are empty");
                     FOR_ARRAY(values, i){
-                        scale[0][i] = std::atof(values[i].cstr);
+                        scale[0][i] = std::atof(values[i].Data());
                     }
                 }
                 break;

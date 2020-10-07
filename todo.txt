@@ -1,8 +1,8 @@
 
 
+- scene hierarchy
 
 
-- add primitives to meshes
 - shadow cascade fade
 - cast shadow flag 
 - better grass

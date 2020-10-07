@@ -18,10 +18,9 @@ struct Resources_Meshes
         for(idx_t meshIdx = (idx_t) MeshEnum::None + 1; meshIdx < (idx_t) MeshEnum::ENUM_END; ++meshIdx)
         {
             dbg::Assert(MESH_PATHS.Contains(meshIdx), "mesh missing");
-            auto const path = MESH_PATHS.Get(meshIdx).cstr;
+            auto const path = MESH_PATHS.Get(meshIdx).Data();
             LoadMesh(path,  meshIdx,  allVertices, meshVertexRanges);
         }
-        //TODO: meshenum::none should be a placeholder mesh
     }
 };
 

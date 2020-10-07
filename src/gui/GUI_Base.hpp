@@ -135,14 +135,14 @@ template<idx_t N>
 inline void AddText(gpu::RenderData& renderData, 
 const com::String<N>& str, const f32 x, const f32 y, const Colors col = Colors::White)
 {
-    AddText(renderData, str.cstr, str.length, x, y, col);
+    AddText(renderData, str.Data(), str.Length(), x, y, col);
 }
 
 template<idx_t N>
 inline void AddTextCentered(gpu::RenderData& renderData, 
 const com::String<N>& str, const com::Rectf& center, const Colors col = Colors::White)
 {
-    AddTextCentered(renderData, str.cstr, str.length, center, col);
+    AddTextCentered(renderData, str.Data(), str.Length(), center, col);
 }
 
 }//ns

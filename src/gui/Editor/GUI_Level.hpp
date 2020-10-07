@@ -4,7 +4,6 @@
 #include "gui/Widgets/Widget_List.hpp"
 #include "gui/Widgets/Widget_Table.hpp"
 #include "gui/Widgets/Widget_Checkbox.hpp"
-#include "res/Prefab/PrefabEnum.hpp"
 #include "res/Resources.hpp"
 
 namespace rpg::gui {
@@ -20,7 +19,7 @@ struct GUI_Level
 
     Widget_List<10> prefabList
     {
-        .name = "prefab list",
+        .listName = "prefab list",
         .maxHeight = 100
     };
 
@@ -32,12 +31,11 @@ struct GUI_Level
         .isChecked = true,
     };
 
-
-    GUI_Level()
+    void Init(res::Resources_Prefabs const& resPrefabs)
     {
-        FOR_STRING_MAP_BEGIN_CONST(res::PREFAB_STR_TO_ENUM, prefabStr)
-            prefabList.items.Append(prefabStr.key);
-        FOR_STRING_MAP_END
+        //FOR_STRING_MAP_BEGIN_CONST(res::PREFAB_STR_TO_ENUM, prefabStr)
+        //    prefabList.AddItem(prefabStr.key.Data(), prefabStr.key.Length());
+        //FOR_STRING_MAP_END
 
         {
             auto& row = table.table.Append();
