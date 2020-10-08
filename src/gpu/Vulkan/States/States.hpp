@@ -51,6 +51,53 @@ struct States
         return com::Array<VkCommandBuffer, Commands::THREAD_COUNT_MAX> { cmdBuffer };
     }
 
+    com::Array<VkCommandBuffer, 4> RecordMT(
+    Commands& commands, const uint32_t cmdBufferIdx, 
+    RenderData& renderData, com::ThreadPool<4>& threadPool)
+    {
+        constexpr auto SHADOW_STATE_IDX  = 0;
+        constexpr auto GENERAL_STATE_IDX = 1;
+        constexpr auto POST_STATE_IDX    = 2;
+        constexpr auto GUI_STATE_IDX     = 3;
+
+        const auto beginInfo = CommandBufferBeginInfo();
+
+        com::Array<VkCommandBuffer, 4> cmds;
+        VkCommandBuffer cmdBuffer = nullptr;
+
+        cmdBuffer = cmds.Append(commands.threadCommands[SHADOW_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        threadPool.AssignTask(0, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+            VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+            shadow.Record(cmdBuffer, general);
+            VkCheck(vkEndCommandBuffer(cmdBuffer));
+        });
+        
+        cmdBuffer = cmds.Append(commands.threadCommands[GENERAL_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        threadPool.AssignTask(1, [this, cmdBuffer, beginInfo, cmdBufferIdx, &renderData]{
+            VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+            general.Record(cmdBuffer, renderData.general);
+            VkCheck(vkEndCommandBuffer(cmdBuffer));
+        });
+            
+        cmdBuffer = cmds.Append(commands.threadCommands[POST_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        threadPool.AssignTask(2, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+            VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+            post.Record(cmdBuffer, cmdBufferIdx);
+            VkCheck(vkEndCommandBuffer(cmdBuffer));
+        });
+
+        cmdBuffer = cmds.Append(commands.threadCommands[GUI_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        threadPool.AssignTask(3, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
+            VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+            gui.Record(cmdBuffer, cmdBufferIdx);
+            VkCheck(vkEndCommandBuffer(cmdBuffer));
+        });
+
+        threadPool.WaitForAllTasks();
+
+        return cmds;
+    }
+
     void Destroy()
     {
         gui     .Destroy();
@@ -61,59 +108,3 @@ struct States
 };
 
 } //ns
-
-
-
-
-
-
-
-
-//! MT VERSION
-/*
-com::Array<VkCommandBuffer, Commands::STATE_COUNT_MAX> RecordMT(
-Commands& commands, const uint32_t cmdBufferIdx, com::ThreadPool<4>& threadPool)
-{
-    constexpr auto SHADOW_STATE_IDX  = 0;
-    constexpr auto GENERAL_STATE_IDX = 1;
-    constexpr auto POST_STATE_IDX    = 2;
-    constexpr auto GUI_STATE_IDX     = 3;
-
-    const auto beginInfo = CommandBufferBeginInfo();
-
-    com::Array<VkCommandBuffer, Commands::STATE_COUNT_MAX> cmds;
-    VkCommandBuffer cmdBuffer = nullptr;
-
-    cmdBuffer = cmds.Append(commands.threadCommands[SHADOW_STATE_IDX].cmdBuffers[cmdBufferIdx]);
-    threadPool.AssignTask(0, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
-        VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
-        shadow.Record(cmdBuffer);
-        VkCheck(vkEndCommandBuffer(cmdBuffer));
-    });
-    
-    cmdBuffer = cmds.Append(commands.threadCommands[GENERAL_STATE_IDX].cmdBuffers[cmdBufferIdx]);
-    threadPool.AssignTask(1, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
-        VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
-        general.Record(cmdBuffer);
-        VkCheck(vkEndCommandBuffer(cmdBuffer));
-    });
-        
-    cmdBuffer = cmds.Append(commands.threadCommands[POST_STATE_IDX].cmdBuffers[cmdBufferIdx]);
-    threadPool.AssignTask(2, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
-        VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
-        post.Record(cmdBuffer, cmdBufferIdx);
-        VkCheck(vkEndCommandBuffer(cmdBuffer));
-    });
-
-    cmdBuffer = cmds.Append(commands.threadCommands[GUI_STATE_IDX].cmdBuffers[cmdBufferIdx]);
-    threadPool.AssignTask(3, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
-        VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
-        gui.Record(cmdBuffer, cmdBufferIdx);
-        VkCheck(vkEndCommandBuffer(cmdBuffer));
-    });
-
-    threadPool.WaitForAllTasks();
-
-    return cmds;
-}
-*/

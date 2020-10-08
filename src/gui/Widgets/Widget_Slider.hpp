@@ -63,6 +63,9 @@ struct Widget_Slider
 
     T Update(gpu::RenderData& renderData, Widget_Window& wnd)
     {
+        if (wnd.isClosed)
+            return;
+
         wnd.CalculateRow(rect, LINE_HEIGHT);
         return Update(renderData);
     }

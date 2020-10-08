@@ -11,6 +11,16 @@ namespace rpg::gui {
 
 struct GUI_Stats
 {
+    //widgets
+    Widget_Window wnd 
+    {
+        .title  = "Stats",
+        .rect   = { (f32)wnd::glo::window_w - 300, 0, 300, 200 },
+        .limits = { 128, 128, f32max, f32max }
+    };
+    Widget_Table table;
+
+
     //table rows
     enum class RowEnum 
     {
@@ -31,16 +41,6 @@ struct GUI_Stats
         { RowEnum::instancedVerts,      "instancedVerts"  },
         { RowEnum::terrainVerts,        "terrainVerts"  },
     };    
-
-    //widgets
-    Widget_Window wnd 
-    {
-        .title  = "Stats",
-        .rect   = { (f32)wnd::glo::window_w - 300, 0, 300, 200 },
-        .limits = { 128, 128, f32max, f32max }
-    };
-    Widget_Table table;
-
 
     GUI_Stats()
     {

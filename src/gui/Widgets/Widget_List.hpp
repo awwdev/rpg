@@ -46,11 +46,13 @@ struct Widget_List
         const bool isMouseOnList = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);
 
         AddText(renderData, listName, rect.x, rect.y); 
-        AddRect(renderData, back, Colors::Black2_Alpha);
+        AddRectOutline(renderData, back, Colors::Black2_Alpha);
 
         if (isMouseOnList && wnd::glo::mouse_scroll_delta != 0){
             scroll += wnd::glo::mouse_scroll_delta < 0 ? +1 : -1;
             com::Clamp(scroll, 0, topLevelItems.Count() - 1);
+            if (topLevelItems.Empty())
+                scroll = 0;
         }
 
         //? DRAW (SUB) ITEM FN
@@ -98,6 +100,9 @@ struct Widget_List
 
     void Update(gpu::RenderData& renderData, Widget_Window& wnd)
     {
+        if (wnd.isClosed)
+            return;
+
         wnd.CalculateRow(rect, maxHeight);
         Update(renderData);
     }

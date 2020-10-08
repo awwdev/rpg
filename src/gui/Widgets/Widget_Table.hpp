@@ -36,6 +36,9 @@ struct Widget_Table
 
     void Update(gpu::RenderData& renderData, Widget_Window& wnd)
     {
+        if (wnd.isClosed)
+            return;
+
         const auto maxHeight = table.Count() * LINE_HEIGHT;
         wnd.CalculateRow(rect, maxHeight);
         Update(renderData);

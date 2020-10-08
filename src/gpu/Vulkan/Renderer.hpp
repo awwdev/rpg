@@ -29,6 +29,8 @@ struct Renderer
         , sync {}
         , states {}
     {
+        //threadPool.Start();
+
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
@@ -84,6 +86,7 @@ struct Renderer
         //UPDATE GPU RESOURCES AND RECORD COMMANDS----------
         states.Update(scene.renderData, res);
         auto cmds = states.Record(commands, imageIndex, scene.renderData, res);
+        //auto cmds = states.RecordMT(commands, imageIndex, scene.renderData, threadPool);
         //--------------------------------------------------
 
         const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
