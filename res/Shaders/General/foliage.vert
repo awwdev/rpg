@@ -14,7 +14,7 @@ layout(location = 2) out vec4 outShadowCoord [CASCADE_COUNT];
 layout(binding = 0) uniform Meta { 
     mat4  view;
     mat4  proj;
-    vec3  viewDir;
+    vec4  viewDir; //set w to 1 
     float time;
 } meta;
 
@@ -35,6 +35,8 @@ layout(binding = 2) uniform Sun {
 
 void main() 
 {
+    MeshInstance instance = meshInstances.arr[gl_InstanceIndex];
+
     //using flow map
     float y = max(0, -inPos.y);
     vec4 vertPosMoved = vec4(
@@ -44,12 +46,12 @@ void main()
         1
     );
 
-    gl_Position = meta.proj * meta.view * meshInstances.arr[gl_InstanceIndex].transform * vertPosMoved;
+    gl_Position = meta.proj * meta.view * instance.transform * vertPosMoved;
     outCol = inCol;
     outTex = inTex;
 
     for(int i = 0; i < CASCADE_COUNT; ++i){
-        outShadowCoord[i] = sun.projViewBiased[i] * meshInstances.arr[gl_InstanceIndex].transform * vertPosMoved;
+        outShadowCoord[i] = sun.projViewBiased[i] * instance.transform * vertPosMoved;
         //also change array size of output and input in frag
     }
 }

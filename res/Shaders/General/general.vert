@@ -17,7 +17,7 @@ layout(location = 5) out vec4  outShadowPos [CASCADE_COUNT];
 layout(binding = 0) uniform Meta { 
     mat4  view;
     mat4  proj;
-    vec3  viewDir;
+    vec4  viewDir; //set w to 1
     float time;
 } meta;
 
@@ -45,7 +45,7 @@ void main()
     outTex = inTex;
 
     for(int i = 0; i < CASCADE_COUNT; ++i){
-        outShadowPos[i] = sun.projViewBiased[i] * vec4(inPos, 1);
+        outShadowPos[i] = sun.projViewBiased[i] * instance.transform * vec4(inPos, 1);
         //also change array size of output and input in frag
     }
 
@@ -58,5 +58,5 @@ void main()
 
     outNormal = normal;
     outMetallic = int(instance.metallic[0][0]);
-    outViewDir = normalize(meta.viewDir);
+    outViewDir = normalize(meta.viewDir.xyz);
 }

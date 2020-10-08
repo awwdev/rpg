@@ -20,6 +20,7 @@ struct RenderData_Shadow
     {
         com::Mat4f projView       [CASCADE_COUNT];
         com::Mat4f projViewBiased [CASCADE_COUNT];
+        alignas(16) com::Vec3f sunDir;
     };
 
     //? DATA

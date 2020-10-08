@@ -46,6 +46,7 @@ struct Sun
             0.5, 0.5, 0.0, 1.0 
         };
 
+        renderData.shadow.uboShadowMap.sunDir = Normalize(pos);
         for(uint32_t i = 0; i < RenderData_Shadow::CASCADE_COUNT; ++i){
             renderData.shadow.uboShadowMap.projView[i]       = GetOrthographic(i) * GetView();
             renderData.shadow.uboShadowMap.projViewBiased[i] = biasMat * GetOrthographic(i) * GetView();

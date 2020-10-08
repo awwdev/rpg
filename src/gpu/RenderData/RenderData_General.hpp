@@ -24,8 +24,8 @@ struct RenderData_General
     {
         alignas(64) com::Mat4f view;
         alignas(64) com::Mat4f proj;
-        com::Vec3f viewDir;
-        float time;
+        alignas(16) com::Vec3f viewDir;
+        alignas(16) float time;
     };
 
     struct MeshInstance

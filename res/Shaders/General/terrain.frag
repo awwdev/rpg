@@ -3,13 +3,14 @@
 
 #define CASCADE_COUNT 4
 
-layout(location = 0) in vec4 inCol;
-layout(location = 1) in vec2 inTex;
-layout(location = 2) in vec4 inShadowCoord [CASCADE_COUNT];
+layout (location = 0) in vec4  inCol;
+layout (location = 1) in vec2  inTex;
+layout (location = 2) in float inShadowDot;
+layout (location = 3) in vec4  inShadowCoord [CASCADE_COUNT];
 
-layout(location = 0) out vec4 outCol;
+layout (location = 0) out vec4 outCol;
 
-layout(binding  = 3) uniform sampler2DArrayShadow shadowMap;
+layout (binding  = 3) uniform sampler2DArrayShadow shadowMap;
 
 void main() 
 {
@@ -30,6 +31,8 @@ void main()
     shadow = clamp(1 - shadow, 0, 1);
 
     #define AMBIENT 0.1f
-    float shadowAmbient = clamp(AMBIENT + shadow, 0, 1);
+    float shadowAmbient = clamp(AMBIENT + shadow * inShadowDot, 0, 1);
     outCol = vec4(inCol.rgb * shadowAmbient, 1);
+
+
 }

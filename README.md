@@ -9,7 +9,7 @@ It might become the base for a stylized low poly game in the future ...
 
 ![](ads/progress/2020_10_06_bloomVoronoi.gif)
 ![](ads/progress/2020_09_03_grassPerf.gif)
-![](ads/progress/2020_08_25_grass.gif)
+![](ads/progress/2020_10_08_sceneTree.gif)
 ![](ads/progress/2020_08_14_terrainEdit.gif)
 ![](ads/progress/2020_08_04_terrainStichPlayerMove.gif)
 ![](ads/progress/2020_07_04_ui_wnd.gif)

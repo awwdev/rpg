@@ -7,19 +7,22 @@ layout (location = 1) in vec3 inNor;
 layout (location = 2) in vec4 inCol;
 layout (location = 3) in vec2 inTex;
 
-layout(location = 0) out vec4 outCol;
-layout(location = 1) out vec2 outTex;
-layout(location = 2) out vec4 outShadowPos [CASCADE_COUNT];
+layout (location = 0) out vec4  outCol;
+layout (location = 1) out vec2  outTex;
+layout (location = 2) out float outShadowDot;
+layout (location = 3) out vec4  outShadowPos [CASCADE_COUNT];
 
-layout(binding = 0) uniform Meta { 
+layout (binding = 0) uniform Meta { 
     mat4  view;
     mat4  proj;
+    vec4  viewDir; // set w to 1
     float time;
 } meta;
 
 layout(binding = 2) uniform Sun { 
     mat4 projView       [CASCADE_COUNT];
     mat4 projViewBiased [CASCADE_COUNT];
+    vec3 sunDir;
 } sun;
 
 void main() 
@@ -32,4 +35,8 @@ void main()
         outShadowPos[i] = sun.projViewBiased[i] * inPos;
         //also change array size of output and input in frag
     }
+
+    outShadowDot = dot(inNor, sun.sunDir);
+    outShadowDot = outShadowDot * 3; //"fade speed"
+    outShadowDot = clamp(outShadowDot, 0, 1);
 }

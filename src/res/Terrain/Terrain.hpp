@@ -273,11 +273,6 @@ struct Terrain
             settings.intersectionPos = intersection->pos;
             if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) {
 
-                auto const entityID = ecs.AddEntity(settings.prefabEnum);
-                auto& mainComponent = ecs.arrays.mainComponents.Get(entityID);
-                mainComponent.translation = intersection->pos;
-
-                //!for grass test
                 for(auto i = 0; i < 1; ++i)  
                 {
                     auto const entityID = ecs.AddEntity(settings.prefabEnum);
