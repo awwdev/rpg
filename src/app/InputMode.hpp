@@ -15,7 +15,7 @@ inline void ResetUpdateInputMode()
 {
     //reset and set on UI update
     if (glo::inputMode == glo::UI_Mode)
-        glo::inputMode = glo::Edit_Mode;
+        glo::inputMode  = glo::Edit_Mode;
 
     if (wnd::HasEvent<wnd::EventType::F1, wnd::EventState::Pressed>()){
         if (glo::inputMode == glo::PlayMode)

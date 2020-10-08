@@ -278,14 +278,14 @@ struct Terrain
                 mainComponent.translation = intersection->pos;
 
                 //!for grass test
-                for(auto i = 0; i < 10; ++i)  
+                for(auto i = 0; i < 1; ++i)  
                 {
                     auto const entityID = ecs.AddEntity(settings.prefabEnum);
                     auto& mainComponent = ecs.arrays.mainComponents.Get(entityID);
 
                     Vec3f pos = intersection->pos;
-                    pos.x += ((std::rand() % 100) / 100.f) * 2 - 1;
-                    pos.z += ((std::rand() % 100) / 100.f) * 2 - 1;
+                    pos.x += i == 0 ? 0 : ((std::rand() % 100) / 100.f) * 2 - 1;
+                    pos.z += i == 0 ? 0 : ((std::rand() % 100) / 100.f) * 2 - 1;
                     mainComponent.translation = pos;
 
                     const f32 randY = (f32) (std::rand() % 360);

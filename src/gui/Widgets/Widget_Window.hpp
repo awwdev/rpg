@@ -2,6 +2,7 @@
 
 #pragma once
 #include "gui/GUI_Base.hpp"
+#include "app/InputMode.hpp"
 
 namespace rpg::gui {
 
@@ -37,10 +38,14 @@ struct Widget_Window
         const com::Rectf resizer  { rect.x + rect.width -  8, rect.y + rect.height - 8, 8, 8 };
         const com::Rectf closeBtn { rect.x + rect.width - BAR_H, rect.y , BAR_H, BAR_H };
 
+        const bool isMouseOnWindow   = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, rect);
         const bool isMouseOnBar      = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, bar);
         const bool isMouseOnResizer  = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, resizer);
         const bool isMouseOnCloseBtn = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, closeBtn);
         
+        if (isMouseOnWindow)
+            app::glo::inputMode = app::glo::UI_Mode;
+
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>()) {
             mode = Widget_Window::Mode::None;
         }
