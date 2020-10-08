@@ -31,6 +31,9 @@ using chars_t = const char* const;
 //type traits
 
 template<class T>
+concept IsArithmeticConcept = std::is_arithmetic_v<T>;
+
+template<class T>
 using IsArithmetic = std::enable_if_t<std::is_arithmetic_v<T>>;
 
 template<class T>

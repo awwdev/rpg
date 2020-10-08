@@ -9,7 +9,7 @@ namespace rpg::gui {
 
 struct Widget_Table
 {
-    using Row = com::Array<com::String<30>, 5>;
+    using Row = com::Array<com::String<50>, 5>;
     com::Array<Row, 30> table;
     com::Rectf rect;
 

@@ -2,6 +2,7 @@
 - simple function ptr based system for gui callback
 (since updating the scene tree every frame is wasteful)
 
+- concepts for types :D
 
 - shadow cascade fade
 - cast shadow flag 

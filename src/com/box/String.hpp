@@ -8,6 +8,7 @@
 #include <iostream>
 #include <charconv>
 #include <string>
+#include <concepts>
 
 namespace rpg::com {
 
@@ -58,14 +59,14 @@ public:
     String(chars_t ptr)                               { Append(ptr, com::StrLen(ptr)); }
     String(chars_t ptr, const idx_t range)            { Append(ptr, range); }
 
-    //need of custom ones, since on copy the compilier WILL NOT ADD THE null-termination
+    //need of custom ones, since on copy the compilier WILL NOT ADD my null-termination
     String(const String& other)         { AppendString(other); }
     String(String&& other)              { AppendString(other); }
     void operator=(const String& other) { Clear(); AppendString(other); }
     void operator=(String&& other)      { Clear(); AppendString(other); }
 
-    template<class T, typename = std::enable_if_t<!std::is_same_v<std::decay_t<T>, DATA_T>>>
-    String(T&& arithemtic) { AppendArithemtic(std::forward<T>(arithemtic)); }
+    String          (IsArithmeticConcept auto const& arithemtic) { AppendArithemtic(arithemtic); }
+    void   operator=(IsArithmeticConcept auto const& arithemtic) { Clear(); AppendArithemtic(arithemtic); }
 
     //? MODIFICATION 
 
@@ -75,7 +76,7 @@ public:
     }
 
     template<idx_t N> void AppendString(const String<N>& str)   { Append(str.Data(), str.Length()); }
-    template<idx_t N> void AppendArray(const DATA_T (&arr)[N])  { Append(arr, N); }
+    template<idx_t N> void AppendArray(const DATA_T (&arr)[N])  { Append(arr, N - 1); }
     void Append(const DATA_T ch)                                { Append(&ch, 1); }
         
     void Append(const DATA_T* const ptr, const idx_t pLength)
