@@ -70,7 +70,7 @@ struct GameScene
         if (app::glo::inputMode != app::glo::InputMode::PlayMode) {
             guiLevel.Update(renderData, resources);
             guiStats.Update(renderData);
-            guiScene.Update(renderData);
+            guiScene.Update(renderData, ecs);
         }   
 
         //? META

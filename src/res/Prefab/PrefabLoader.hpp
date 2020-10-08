@@ -34,11 +34,18 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
 
         FOR_C_ARRAY(componentData, componentEnumIdx) {
             const auto& pairs = componentData[componentEnumIdx];
+            if (pairs.Empty())
+                continue;
             prefabComponentArrays.SetComponent((ecs::ID) currentPrefab, (ecs::ComponentEnum) componentEnumIdx, pairs);
         }
 
         FOR_C_ARRAY(componentData, i)
             componentData[i].Clear();
+
+        //give prefabs the prefab enum name
+        auto const& prefabName = res::PREFAB_ENUM_TO_STR.Get(currentPrefab);
+        const ecs::NameComponent nameComponent { prefabName.Data(), prefabName.Length() };
+        prefabComponentArrays.nameComponents.SetComponent((ecs::ID) currentPrefab, nameComponent);
     };
 
     //line parsing

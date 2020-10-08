@@ -3,6 +3,7 @@
 #pragma once
 #include "ecs/ComponentsMeta/ComponentArray.hpp"
 #include "ecs/Components/MainComponent.hpp"
+#include "ecs/Components/NameComponent.hpp"
 
 namespace rpg::ecs {
 
@@ -13,6 +14,7 @@ struct ComponentArrays
 
     //? COMPONENT ARRAYS
     ComponentArray<MainComponent, MAX_COMPONENT_COUNT>  mainComponents;
+    ComponentArray<NameComponent, MAX_COMPONENT_COUNT>  nameComponents;
 
     template<class... CtorArgs>
     void SetComponent(const ID entityID, const ComponentEnum componentType, CtorArgs&&... args)
@@ -23,7 +25,8 @@ struct ComponentArrays
         switch(componentType)
         {
             case ComponentEnum::MainComponent: mainComponents.SetComponent(entityID, std::forward<CtorArgs>(args)...); break;
-            default: dbg::Assert(false, "component to add not impl");
+            case ComponentEnum::NameComponent: nameComponents.SetComponent(entityID, std::forward<CtorArgs>(args)...); break;
+            default: dbg::Assert(false, "component missing");
         }
     }
 
@@ -39,6 +42,7 @@ struct ComponentArrays
 
         //? COMPONENT ADDING
         SetComponentOptional(mainComponents, srcComponentArrays.mainComponents);
+        SetComponentOptional(nameComponents, srcComponentArrays.nameComponents);
     }
 
     void Clear()
@@ -48,6 +52,7 @@ struct ComponentArrays
 
         //? COMPONENT CLEAR
         mainComponents.Clear();
+        nameComponents.Clear();
     }
 
 };

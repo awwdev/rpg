@@ -1,6 +1,6 @@
 
-
-- scene hierarchy
+- simple function ptr based system for gui callback
+(since updating the scene tree every frame is wasteful)
 
 
 - shadow cascade fade
@@ -8,7 +8,6 @@
 - better grass
 
 
-- simple function ptr based system for gui callback
 - load both material and mesh paths externally
 - FOR_ENUM_MAP macro for loop
 - terrain refactor

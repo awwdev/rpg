@@ -15,6 +15,8 @@ ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
     FOR_ARRAY(arrays.mainComponents.dense, i) 
     {
         auto const& mainComponent = arrays.mainComponents.dense[i];
+        if (mainComponent.meshEnum == res::MeshEnum::None)
+            continue;
 
         //render data
         auto const meshEnumIdx = (idx_t) mainComponent.meshEnum;

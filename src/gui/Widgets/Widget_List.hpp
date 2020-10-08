@@ -76,8 +76,9 @@ struct Widget_List
             if (isMouseOnItem && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>())
                 activeIdx = (IDX_T) idx;
 
-            if (activeIdx == (IDX_T) idx)
+            if (activeIdx == (IDX_T) idx) {
                 AddRect(renderData, itemRect, Colors::Black2_Alpha);
+            }
             
             AddText(renderData, item.itemName, itemRect.x + intend*4, itemRect.y, isMouseOnItem ? Colors::Green : Colors::White);
 

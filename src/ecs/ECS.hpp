@@ -15,21 +15,23 @@ namespace rpg::ecs {
 struct ECS
 {
     com::Bitset<MAX_ENTITY_COUNT>              entities;
+    com::Array<ID, MAX_ENTITY_COUNT>           entitiesUsed;
+
     ComponentArrays<MAX_ENTITY_COUNT>          arrays;
     ComponentArrays<res::PrefabEnum::ENUM_END> prefabsArrays;
     
     void Update(float const dt, gpu::RenderData& renderData)
     {
+        //? SYSTEMS
         TransformSystem(arrays, dt);
         RenderSystem(arrays, dt, renderData);
     }
-
-
 
     auto AddEntity() -> ID
     {
         const ID freeId = entities.FindFirstFreeBit();
         entities.Set(freeId, true);
+        entitiesUsed.Append(freeId);
         return freeId;
     }
 
@@ -50,10 +52,10 @@ struct ECS
         return freeId;
     }
 
-
     void RemoveEntity(ID const entityID)
     {
         dbg::Assert(false, "no impl yet");
+        //entitiesUsed 
     }
 
 };    
