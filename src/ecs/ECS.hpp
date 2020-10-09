@@ -15,11 +15,11 @@ namespace rpg::ecs {
 struct ECS
 {
     com::Bitset<MAX_ENTITY_COUNT>              entities;
-    com::Array<ID, MAX_ENTITY_COUNT>           entitiesUsed;
-
+    com::Array<ID, MAX_ENTITY_COUNT>           entitiesTopLevel;
     ComponentArrays<MAX_ENTITY_COUNT>          arrays;
     ComponentArrays<res::PrefabEnum::ENUM_END> prefabsArrays;
-    
+
+
     void Update(float const dt, gpu::RenderData& renderData)
     {
         //? SYSTEMS
@@ -27,35 +27,62 @@ struct ECS
         RenderSystem(arrays, dt, renderData);
     }
 
+
     auto AddEntity() -> ID
     {
-        const ID freeId = entities.FindFirstFreeBit();
-        entities.Set(freeId, true);
-        entitiesUsed.Append(freeId);
-        return freeId;
+        auto const entityID = RegisterEntity();
+        entitiesTopLevel.Append(entityID);
+        return entityID;
     }
+
+    auto AddChild(ID const parentID) -> ID
+    {
+        auto const childID = RegisterEntity();
+        RegisterChild(childID, parentID);
+        return childID;
+    }
+
 
     auto AddEntity(res::PrefabEnum const& prefabEnum) -> ID
     {
-        const ID freeId = AddEntity();
-        arrays.SetComponentFrom(freeId, (ID) prefabEnum, prefabsArrays);
-
-        //instantiate children (prefabs)
-        if (auto* mainComponent = arrays.mainComponents.GetOptional(freeId)) {
-            FOR_ARRAY(mainComponent->children, i){
-                auto const prefabID = mainComponent->children[i];
-                auto const childID  = AddEntity((res::PrefabEnum) prefabID);
-                mainComponent->children[i] = childID;
+        auto const entityID = AddEntity();
+        arrays.CopyComponents(entityID, (ID) prefabEnum, prefabsArrays);
+        //instantiate potential child prefabs (note that the entity has child prefab IDs (copied) and not real IDs yet)
+        if (auto* mainComponent = prefabsArrays.mainComponents.GetOptional(entityID)) {
+            auto const prefabChildren = mainComponent->children;
+            mainComponent->children.Clear();
+            //clear prefab children and add real children 
+            FOR_ARRAY(prefabChildren, i) { 
+                auto const prefabChildID = (res::PrefabEnum) prefabChildren[i];
+                AddChild(entityID, prefabChildID);
             }
         }
-
-        return freeId;
+        return entityID;
     }
 
-    void RemoveEntity(ID const entityID)
+    auto AddChild(ID const parentID, res::PrefabEnum const& prefabEnum) -> ID
     {
-        dbg::Assert(false, "no impl yet");
-        //entitiesUsed 
+        auto const childID = AddEntity(prefabEnum);
+        RegisterChild(childID, parentID);
+        return childID;
+    }
+
+    //TODO: remove entity, removed entity array
+
+private:
+    auto RegisterEntity() -> ID
+    {
+        auto const optionalEntityID = entities.FindFreeBitOptional();
+        dbg::Assert(optionalEntityID, "no free entity id");
+        entities.Set(*optionalEntityID, true);
+        return *optionalEntityID;
+    }
+
+    void RegisterChild(ID const childID, ID const parentID)
+    {
+        dbg::Assert(arrays.mainComponents.GetOptional(parentID), "trying to add child to non parent (no main component)");
+        auto& parentMainComponent = arrays.mainComponents.Get(parentID);
+        parentMainComponent.children.Append(childID);
     }
 
 };    

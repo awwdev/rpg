@@ -4,16 +4,23 @@
 
 namespace rpg::com {
     
+//COPY
 template<class T>
 struct Optional
 {
-    Optional()       : t{},     hasValue { false } {}
-    Optional(T&& pT) : t{ pT }, hasValue { true  } {}
-    operator bool() const { return hasValue; }
-    T*       operator-> ()        { return &t; }
-    const T* operator-> ()  const { return &t; }
+    Optional()                : value {},         hasValue { false } {}
+    Optional(T const& pValue) : value { pValue }, hasValue { true  } {}
 
-    T t;
+    operator bool() const { return hasValue; }
+
+    T*       operator->()       { return &value; }
+    const T* operator->() const { return &value; }
+
+    T&       operator* ()       { return value; }
+    T const& operator* () const { return value; }
+
+private:
+    T    value;
     bool hasValue;
 };
 

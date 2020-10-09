@@ -29,37 +29,35 @@ struct GUI_Scene
         //TODO: subscription model instead of hard update per frame
 
         //? UPDATE SCENE TREE
+
+        auto tmpEntities = ecs.entities;
         entityList.topLevelItems.Clear();
-        idx_t currentIdx = 0;
 
-        std::function<void(ecs::ID const, Widget_List<ecs::ID>::Item*)> addEntity = [&](ecs::ID const entityID, Widget_List<ecs::ID>::Item* parent)
+        std::function<void(ecs::ID const, Widget_List<ecs::ID>::Item*)> addItem = 
+        [&](ecs::ID const id, Widget_List<ecs::ID>::Item* parent) 
         {
-             if (auto* const nameComponent = ecs.arrays.nameComponents.GetOptional(entityID))
-             {
-                if (entityList.activeIdx == currentIdx)
-                    selectedID = entityID;
-                //! BUG: THIS GIVES NOT THE RIGHT E_IDX
-
+            if (auto const* nameComponent = ecs.arrays.nameComponents.GetOptional(id)){
                 com::String<100> entityName = nameComponent->name;
                 entityName.AppendArray(" #");
-                entityName.AppendArithemtic(entityID);
+                entityName.AppendArithemtic(id);
+                parent = entityList.AddItem(entityName.Data(), entityName.Length(), parent);
+            }
+            else return;
 
-                auto* currParent = entityList.AddItem(entityName.Data(), entityName.Length(), parent);
-                currentIdx++;
-
-                if (auto* const mainComponent = ecs.arrays.mainComponents.GetOptional(entityID)) {
-                    FOR_ARRAY(mainComponent->children, i)
-                        addEntity(mainComponent->children[i], currParent);
+            if (auto const* mainComponent = ecs.arrays.mainComponents.GetOptional(id)){
+                FOR_ARRAY(mainComponent->children, i){
+                    auto const childIdx = mainComponent->children[i];
+                    addItem(childIdx, parent);
+                    tmpEntities.Set(childIdx, false); //! does not work, also in general not great (because of shuffle)
                 }
             }
-        };
+        };      
 
-        FOR_ARRAY(ecs.entitiesUsed, i){
-            auto const entityID = ecs.entitiesUsed[i];
-            addEntity(entityID, nullptr);
-        }        
-
-        dbg::LogInfo(selectedID);
+        FOR_BITSET(tmpEntities, idx) {
+            if (tmpEntities.Test(idx) == false)
+                continue;
+            addItem(idx, nullptr);
+        }
 
         //? UPDATE
         wnd.Update(renderData);
@@ -67,5 +65,8 @@ struct GUI_Scene
         
     }
 };
+
+
+
 
 }//ns

@@ -31,7 +31,7 @@ struct ComponentArrays
     }
 
     template<auto SRC_MAX_COUNT>
-    void SetComponentFrom(
+    void CopyComponents(
     const ID desEntityID, 
     const ID srcEntityID, const ComponentArrays<SRC_MAX_COUNT>& srcComponentArrays)
     {

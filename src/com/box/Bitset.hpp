@@ -4,6 +4,7 @@
 #include "com/Types.hpp"
 #include "dbg/Assert.hpp"
 #include "dbg/Logger.hpp"
+#include "com/box/Optional.hpp"
 
 #include <cstring>
 
@@ -82,15 +83,14 @@ struct Bitset
 
     //? HELPER
 
-    constexpr idx_t FindFirstFreeBit(const idx_t startAt = 0) const
+    com::Optional<idx_t> FindFreeBitOptional(const idx_t startAt = 0) const
     {
         for (idx_t i = startAt; i < BITS; ++i) {
             const auto a = data[BYTE(i)] & (1 << BIT(i)); //Test() is due to Assert not constexpr
-            if (a == 0) return i;
+            if (a == 0) 
+                return { i };
         }
-        dbg::Assert(false, "cannot find free bit"); 
-        //return optional? does not have to be an error
-        return BITS;
+        return {};
     }
 
     constexpr auto Decimal() const

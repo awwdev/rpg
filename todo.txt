@@ -8,6 +8,8 @@
 - cast shadow flag 
 - better grass
 
+- ecs print out?
+
 
 - load both material and mesh paths externally
 - FOR_ENUM_MAP macro for loop
