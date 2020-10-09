@@ -29,52 +29,37 @@ struct GUI_Scene
         //TODO: subscription model instead of hard update per frame
 
         //? UPDATE SCENE TREE
-        entityList.topLevelItems.Clear();
 
-        FOR_ARRAY(ecs.entitiesTopLevel, i)
+        std::function<void(ecs::ID const, Widget_List<ecs::ID>::Item* const)> 
+        addItem = [&](ecs::ID const entityID, Widget_List<ecs::ID>::Item* const prevParentItem)
         {
-            auto const entityID = ecs.entitiesTopLevel[i];
-
             //entity name
             com::String<100> entityName {};
             if (auto const* nameComponent = ecs.arrays.nameComponents.GetPtr(entityID)) 
             {
                 entityName = nameComponent->name;
-                entityName.AppendArray(" #");
-                entityName.AppendArithemtic(entityID);
             }
-            entityList.AddItem(entityName.Data(), entityName.Length());
-            
+            entityName.AppendArray(" #");
+            entityName.AppendArithemtic(entityID);
+            auto* currParentItem = entityList.AddItem(entityName.Data(), entityName.Length(), prevParentItem);
 
-        }
-
-        /*
-        std::function<void(ecs::ID const, Widget_List<ecs::ID>::Item*)> addItem = 
-        [&](ecs::ID const id, Widget_List<ecs::ID>::Item* parent) 
-        {
-            if (auto const* nameComponent = ecs.arrays.nameComponents.GetOptional(id)){
-                com::String<100> entityName = nameComponent->name;
-                entityName.AppendArray(" #");
-                entityName.AppendArithemtic(id);
-                parent = entityList.AddItem(entityName.Data(), entityName.Length(), parent);
-            }
-            else return;
-
-            if (auto const* mainComponent = ecs.arrays.mainComponents.GetOptional(id)){
-                FOR_ARRAY(mainComponent->children, i){
-                    auto const childIdx = mainComponent->children[i];
-                    addItem(childIdx, parent);
-                    tmpEntities.Set(childIdx, false); //! does not work, also in general not great (because of shuffle)
+            //children
+            if (auto const* mainComponent = ecs.arrays.mainComponents.GetPtr(entityID)) 
+            {
+                auto const& children = mainComponent->children;
+                FOR_ARRAY(children, i){
+                    auto const childID = children[i];
+                    addItem(childID, currParentItem);
                 }
             }
-        };      
+        };
 
-        FOR_BITSET(tmpEntities, idx) {
-            if (tmpEntities.Test(idx) == false)
-                continue;
-            addItem(idx, nullptr);
+        entityList.topLevelItems.Clear();
+        FOR_ARRAY(ecs.entitiesTopLevel, i)
+        {
+            auto const entityID = ecs.entitiesTopLevel[i];
+            addItem(entityID, nullptr);           
         }
-        */
 
         //? UPDATE
         wnd.Update(renderData);

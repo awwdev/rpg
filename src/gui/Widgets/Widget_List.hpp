@@ -8,7 +8,7 @@
 namespace rpg::gui {
 
 //allows nesting
-template<class IDX_T = idx_t>
+template<class IDX_T = idx_t> //TODO: remove template
 struct Widget_List
 {
     using ListString = com::String<50>;
@@ -57,13 +57,15 @@ struct Widget_List
 
         //? DRAW (SUB) ITEM FN
         float intend = -1;
-        std::function<void(idx_t&, Item const&)> drawItemFn = [&](idx_t& idx, Item const& item)
+        idx_t itemIdx = scroll;
+        std::function<void(Item const&)> drawItemFn = 
+        [&](Item const& item)
         {
             intend++;
 
             const com::Rectf itemRect {
                 back.x + PADDING,
-                back.y + PADDING + (idx - scroll) * LINE_HEIGHT,
+                back.y + PADDING + (itemIdx - scroll) * LINE_HEIGHT,
                 back.width - PADDING * 2,
                 LINE_HEIGHT
             };
@@ -74,27 +76,29 @@ struct Widget_List
 
             const bool isMouseOnItem = isMouseOnList && com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, itemRect);
             if (isMouseOnItem && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>())
-                activeIdx = (IDX_T) idx;
+                activeIdx = (IDX_T) itemIdx;
 
-            if (activeIdx == (IDX_T) idx) {
+            if (activeIdx == (IDX_T) itemIdx) {
                 AddRect(renderData, itemRect, Colors::Black3);
             }
             AddText(renderData, item.itemName, itemRect.x + intend*4, itemRect.y, isMouseOnItem ? Colors::Green : Colors::White);
 
             FOR_ARRAY(item.subItems, subIdx)
             {
-                ++idx;
                 auto& ptrItem = item.subItems[subIdx];
-                drawItemFn(idx, *ptrItem);
+                drawItemFn(*ptrItem);
             }
 
+            //TODO: still off
+
+            itemIdx++;
             intend--;
         };
 
         //? iterate top level
-        for(idx_t idx = scroll; idx < topLevelItems.Count(); ++idx) {
-            auto& ptrItem = topLevelItems[idx];
-            drawItemFn(idx, *ptrItem);
+        for(idx_t i = 0; i < topLevelItems.Count(); ++i) {
+            auto& ptrItem = topLevelItems[i];
+            drawItemFn(*ptrItem);
         }
     }
 
