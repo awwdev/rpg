@@ -72,7 +72,7 @@ struct Bitset
     template<class IDX>
     void Flip(const IDX i)
     {
-        BitsetAssert((idx_t)i < BITS);
+        BitsetAssert(static_cast<idx_t>(i) < BITS);
         data[BYTE(i)] ^= 1 << BIT(i);
     }
 

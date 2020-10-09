@@ -29,10 +29,26 @@ struct GUI_Scene
         //TODO: subscription model instead of hard update per frame
 
         //? UPDATE SCENE TREE
-
-        auto tmpEntities = ecs.entities;
         entityList.topLevelItems.Clear();
 
+        FOR_ARRAY(ecs.entitiesTopLevel, i)
+        {
+            auto const entityID = ecs.entitiesTopLevel[i];
+
+            //entity name
+            com::String<100> entityName {};
+            if (auto const* nameComponent = ecs.arrays.nameComponents.GetPtr(entityID)) 
+            {
+                entityName = nameComponent->name;
+                entityName.AppendArray(" #");
+                entityName.AppendArithemtic(entityID);
+            }
+            entityList.AddItem(entityName.Data(), entityName.Length());
+            
+
+        }
+
+        /*
         std::function<void(ecs::ID const, Widget_List<ecs::ID>::Item*)> addItem = 
         [&](ecs::ID const id, Widget_List<ecs::ID>::Item* parent) 
         {
@@ -58,6 +74,7 @@ struct GUI_Scene
                 continue;
             addItem(idx, nullptr);
         }
+        */
 
         //? UPDATE
         wnd.Update(renderData);

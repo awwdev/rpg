@@ -48,7 +48,7 @@ struct ECS
         auto const entityID = AddEntity();
         arrays.CopyComponents(entityID, (ID) prefabEnum, prefabsArrays);
         //instantiate potential child prefabs (note that the entity has child prefab IDs (copied) and not real IDs yet)
-        if (auto* mainComponent = prefabsArrays.mainComponents.GetOptional(entityID)) {
+        if (auto* mainComponent = prefabsArrays.mainComponents.GetPtr(entityID)) {
             auto const prefabChildren = mainComponent->children;
             mainComponent->children.Clear();
             //clear prefab children and add real children 
@@ -80,7 +80,7 @@ private:
 
     void RegisterChild(ID const childID, ID const parentID)
     {
-        dbg::Assert(arrays.mainComponents.GetOptional(parentID), "trying to add child to non parent (no main component)");
+        dbg::Assert(arrays.mainComponents.GetPtr(parentID), "trying to add child to non parent (no main component)");
         auto& parentMainComponent = arrays.mainComponents.Get(parentID);
         parentMainComponent.children.Append(childID);
     }

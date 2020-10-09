@@ -18,7 +18,7 @@ struct ComponentArray
     ID componentLookup [(idx_t) MAX_COMPONENT_COUNT];
     ID entityLookup    [(idx_t) MAX_COMPONENT_COUNT];
 
-    auto*       GetOptional(const ID entityID)       { return componentLookup[entityID] == ECS_NULL ? nullptr : &dense[componentLookup[entityID]]; }
+    auto*       GetPtr(const ID entityID)       { return componentLookup[entityID] == ECS_NULL ? nullptr : &dense[componentLookup[entityID]]; }
     const auto* GetOptional(const ID entityID) const { return componentLookup[entityID] == ECS_NULL ? nullptr : &dense[componentLookup[entityID]]; }
     auto&       Get        (const ID entityID)       { return dense[componentLookup[entityID]]; }
     const auto& Get        (const ID entityID) const { return dense[componentLookup[entityID]]; }

@@ -165,8 +165,11 @@ auto ClaimBlock(CtorArgs&&... args)
         //!no appropriate block size found (compile time error)
     }();
 
-    const auto freeBlockId = priv::blocksUsed.FindFreeBitOptional(FITTING_BLOCK_ARRAY.blockId);
+    const auto freeBlockIdOptional = priv::blocksUsed.FindFreeBitOptional(FITTING_BLOCK_ARRAY.blockId);
+    dbg::Assert(freeBlockIdOptional, "all mem block exhausted");
+    const auto freeBlockId = *freeBlockIdOptional;
     dbg::Assert(freeBlockId < FITTING_BLOCK_ARRAY.blockId + BLOCK_ARRAYS[FITTING_BLOCK_ARRAY.arrayIdx].count, "not enough free blocks");
+    
     priv::blocksUsed.Flip(freeBlockId);
 
     s8* blockAddress = priv::BlockAddress<FITTING_BLOCK_ARRAY.arrayIdx>(freeBlockId - FITTING_BLOCK_ARRAY.blockId);
