@@ -11,7 +11,7 @@ struct Optional
     Optional()                : value {},         hasValue { false } {}
     Optional(T const& pValue) : value { pValue }, hasValue { true  } {}
 
-    operator bool() const { return hasValue; }
+    operator bool() const { return hasValue; } //! issue that it can lead to implicit conversion
     //operator T()    const { return value; }
 
     T*       operator->()       { return &value; }

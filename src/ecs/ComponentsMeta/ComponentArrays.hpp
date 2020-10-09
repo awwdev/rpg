@@ -36,7 +36,7 @@ struct ComponentArrays
     const ID srcEntityID, const ComponentArrays<SRC_MAX_COUNT>& srcComponentArrays)
     {
         const auto SetComponentOptional = [&](auto& dst, const auto& src){
-            if (const auto ptr = src.GetOptional(srcEntityID))
+            if (const auto* ptr = src.GetPtr(srcEntityID))
                 dst.SetComponent(desEntityID, *ptr);
         };
 
