@@ -19,6 +19,7 @@ struct Widget_List
     f32 scroll      = 0;
     IDX_T activeIdx = {};
     
+    
     struct Item
     {
         Item() = default;
@@ -27,15 +28,22 @@ struct Widget_List
         { }
 
         ListString itemName;
+        IDX_T      itemValue = {};
         com::Array<com::mem::BlockPtr<Item>, 20> subItems;
         bool isToggled = false; 
     };
+
     com::Array<com::mem::BlockPtr<Item>, 100> topLevelItems;
 
-    auto AddItem(chars_t str, idx_t const strLen, Item *const parent = nullptr) -> Item*
+    auto AddItem(
+    chars_t str, idx_t const strLen, 
+    IDX_T pItemValue,
+    Item *const parent = nullptr) -> Item*
     {   
         auto& blockPtr = parent ? parent->subItems.Append() : topLevelItems.Append();
-        com::mem::ClaimBlock(blockPtr, str, strLen);
+        com::mem::ClaimBlock(blockPtr);
+        blockPtr->itemName  = { str, strLen };
+        blockPtr->itemValue = pItemValue;
         return blockPtr.ptr;
     }
 
@@ -50,14 +58,15 @@ struct Widget_List
 
         if (isMouseOnList && wnd::glo::mouse_scroll_delta != 0){
             scroll += wnd::glo::mouse_scroll_delta < 0 ? +1 : -1;
-            com::Clamp(scroll, 0, topLevelItems.Count() - 1);
+            //com::Clamp(scroll, 0, topLevelItems.Count() - 1);
             if (topLevelItems.Empty())
                 scroll = 0;
         }
 
         //? DRAW (SUB) ITEM FN
         float intend = -1;
-        idx_t itemIdx = scroll;
+        idx_t itemIdx = 0;
+
         std::function<void(Item const&)> drawItemFn = 
         [&](Item const& item)
         {
@@ -65,7 +74,7 @@ struct Widget_List
 
             const com::Rectf itemRect {
                 back.x + PADDING,
-                back.y + PADDING + (itemIdx - scroll) * LINE_HEIGHT,
+                back.y + PADDING + (itemIdx + scroll) * LINE_HEIGHT,
                 back.width - PADDING * 2,
                 LINE_HEIGHT
             };
@@ -74,14 +83,19 @@ struct Widget_List
             if (itemRect.y + itemRect.height > rect.y + rect.height)
                 return;
 
-            const bool isMouseOnItem = isMouseOnList && com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, itemRect);
-            if (isMouseOnItem && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>())
-                activeIdx = (IDX_T) itemIdx;
+            if (itemRect.y > back.y)
+            {
+                const bool isMouseOnItem = isMouseOnList && com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, itemRect);
+                if (isMouseOnItem && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>())
+                    activeIdx = (IDX_T) itemIdx;
 
-            if (activeIdx == (IDX_T) itemIdx) {
-                AddRect(renderData, itemRect, Colors::Black3);
+                if (activeIdx == (IDX_T) itemIdx) {
+                    AddRect(renderData, itemRect, Colors::Black3);
+                }
+                AddText(renderData, item.itemName, itemRect.x + intend*4, itemRect.y, isMouseOnItem ? Colors::Green : Colors::White);
             }
-            AddText(renderData, item.itemName, itemRect.x + intend*4, itemRect.y, isMouseOnItem ? Colors::Green : Colors::White);
+            
+            itemIdx++;
 
             FOR_ARRAY(item.subItems, subIdx)
             {
@@ -89,9 +103,6 @@ struct Widget_List
                 drawItemFn(*ptrItem);
             }
 
-            //TODO: still off
-
-            itemIdx++;
             intend--;
         };
 

@@ -41,7 +41,7 @@ struct GUI_Scene
             }
             entityName.AppendArray(" #");
             entityName.AppendArithemtic(entityID);
-            auto* currParentItem = entityList.AddItem(entityName.Data(), entityName.Length(), prevParentItem);
+            auto* currParentItem = entityList.AddItem(entityName.Data(), entityName.Length(), entityID, prevParentItem);
 
             //children
             if (auto const* mainComponent = ecs.arrays.mainComponents.GetPtr(entityID)) 

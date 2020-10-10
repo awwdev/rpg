@@ -37,7 +37,7 @@ struct GUI_Level
         {
             dbg::Assert(res::PREFAB_ENUM_TO_STR.Contains(prefabIdx), "prefab missing");
             auto const prefabStr = res::PREFAB_ENUM_TO_STR.Get(prefabIdx);
-            auto* item = prefabList.AddItem(prefabStr.Data(), prefabStr.Length());
+            auto* item = prefabList.AddItem(prefabStr.Data(), prefabStr.Length(), (res::PrefabEnum) prefabIdx);
         }
 
         {
