@@ -1,3 +1,5 @@
+//https://github.com/awwdev
+
 #pragma once
 #include "com/Types.hpp"
 #include "dbg/Assert.hpp"
@@ -23,12 +25,21 @@ struct Array
 
     //? constructors
 
+    constexpr
     Array() 
         : count { 0 }  
         //leave bytes array uninit
-    {} 
+    {
+        if (std::is_constant_evaluated())
+        {
+            //this is needed for constexpr while leaving bytes uninit at runtime
+            FOR_C_ARRAY(bytes, i)
+                bytes[i] = {};
+        }            
+    } 
 
     explicit 
+    constexpr     
     Array(std::convertible_to<T> auto&&... elements)
         : Array()
     {
@@ -40,6 +51,7 @@ struct Array
         (emplaceFn(std::forward<decltype(elements)>(elements)), ...);
     }
 
+    constexpr
     ~Array()
     {
         Clear();
@@ -47,6 +59,7 @@ struct Array
 
     //? methods
 
+    constexpr
     void Clear(idx_t beginIdx = 0)
     {
         ArrayAssert(beginIdx >= 0 && beginIdx <= count, "[Clear] beginIdx out of bounds");
@@ -65,6 +78,7 @@ struct Array
     //? append
 
     template<typename... Ts>
+    constexpr
     T& AppendElement(Ts&&... args) requires is_constructible_with<T, Ts...>
     {
         ArrayAssert(count + 1 <= COUNT_MAX, "[AppendElement] array exhausted");
@@ -72,6 +86,7 @@ struct Array
     }
 
     template<typename OTHER_T, auto OTHER_N>
+    constexpr
     void AppendArray(Array<OTHER_T, OTHER_N> const& other)
     {
         ArrayAssert(count + other.Count() <= COUNT_MAX, "[AppendArray] array exhausted");
@@ -80,7 +95,8 @@ struct Array
     }
 
     template<typename OTHER_T, auto OTHER_N>
-    void AppendArray(const OTHER_T (&arr)[OTHER_N])
+    constexpr
+    void AppendArray(OTHER_T const (&arr)[OTHER_N])
     {
         ArrayAssert(count + OTHER_N <= COUNT_MAX, "array exhausted");
         FOR_C_ARRAY(arr, i)
@@ -88,6 +104,7 @@ struct Array
     }
 
     template<typename OTHER_T>
+    constexpr
     void AppendArray(OTHER_T const* ptr, idx_t const pCount)
     {
         ArrayAssert(count + pCount <= COUNT_MAX, "array exhausted");
@@ -97,13 +114,15 @@ struct Array
 
     //? access
 
-    T& operator[](idx_t idx) 
+    constexpr
+    T& operator[](idx_t const idx) 
     { 
         ArrayAssert(idx >= 0 && idx < count, "array access out of bounds");
         return reinterpret_cast<T*> (bytes)[idx]; 
     } 
 
-    T const& operator[](idx_t idx) const 
+    constexpr
+    T const& operator[](idx_t const idx) const 
     { 
         ArrayAssert(idx >= 0 && idx < count, "array access out of bounds");
         return reinterpret_cast<T const*>(bytes)[idx];
@@ -111,15 +130,16 @@ struct Array
 
     //? helper
 
-    auto Count() const -> auto     { return count; }
-    auto Empty() const -> bool     { return count == 0; }
-    auto Data()        -> T*       { return &this->operator[](0); }
-    auto Data()  const -> T const* { return &this->operator[](0); }
-    auto Last()        -> T&       { return  this->operator[](count - 1); }
-    auto Last()  const -> T const& { return  this->operator[](count - 1); }
+    constexpr auto Count() const -> auto     { return count; }
+    constexpr auto Empty() const -> bool     { return count == 0; }
+    constexpr auto Data()        -> T*       { return &this->operator[](0); }
+    constexpr auto Data()  const -> T const* { return &this->operator[](0); }
+    constexpr auto Last()        -> T&       { return  this->operator[](count - 1); }
+    constexpr auto Last()  const -> T const& { return  this->operator[](count - 1); }
 
-    auto CurrentByteSize() const { return sizeof(T) * count; }
+    constexpr auto CurrentByteSize() const { return sizeof(T) * count; }
 
+    constexpr
     bool Contains(auto const& element) //allows for custom operator==
     {
         FOR_ARRAY((*this), i) {
@@ -157,13 +177,16 @@ private:
 
     //? internal helper
 
+    constexpr
     auto PlacementNew(auto&&... args) -> T*
     {
         auto address = &this->operator[](count++);
+        //TODO: new placement is not constexpr yet
         return new(address) T { std::forward<decltype(args)>(args)... };
     }
 
-    void ArrayAssert(const bool expr, chars_t msg) const 
+    constexpr
+    void ArrayAssert(bool const expr, chars_t msg) const 
     {
         if constexpr (!DO_ARRAY_ASSERTS) return;
         dbg::Assert(expr, msg);

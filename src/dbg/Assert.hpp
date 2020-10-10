@@ -12,15 +12,15 @@
 
 namespace rpg::dbg {
 
-//DO NOT EXCLUDE THIS ASSERT VIA CONSTEXPR FLAG (OR MACRO) BUT DEFINE WRAPPER
-template<class T>
-void Assert(const bool expression, const T& msg) 
+constexpr void Assert(bool const expr, const auto& msg) 
 { 
-    if (!expression)  {
+    if (expr == true)
+        return;
+
+    if (!std::is_constant_evaluated())
         dbg::LogError("[ASSERTION FAILED]", msg);
-        BringWindowToTop(GetConsoleWindow()); 
-        __debugbreak();
-    }
+
+    __debugbreak();
 } 
 
 }//NS
