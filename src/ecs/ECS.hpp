@@ -35,6 +35,7 @@ struct ECS
         if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
         {
             entitiesTopLevel.WriteBinaryFile("res/ECS/entitiesTopLevel.ecs");
+            entities.WriteBinaryFile("res/ECS/entities.ecs");
             arrays.SaveComponents();
         }
 
@@ -42,6 +43,7 @@ struct ECS
         if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>())
         {
             entitiesTopLevel.ReadBinaryFile("res/ECS/entitiesTopLevel.ecs");
+            entities.ReadBinaryFile("res/ECS/entities.ecs");
             arrays.LoadComponents();
         }
 

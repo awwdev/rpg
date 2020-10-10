@@ -65,11 +65,7 @@ struct ComponentArray
             com::String<100> path { "res/ECS/" }; 
             path.AppendString(filename);
             path.AppendArray("_dense.ecs");
-
-            auto file = std::ofstream(path.Data(), std::ios::binary);
-            dbg::Assert(file.is_open(), "cannot open file");
-
-            file.write(reinterpret_cast<char const*>(dense.Data()), dense.TOTAL_BYTE_SIZE);
+            dense.WriteBinaryFile(path.Data());
         }
 
         //componentLookup
@@ -104,11 +100,7 @@ struct ComponentArray
             com::String<100> path { "res/ECS/" }; 
             path.AppendString(filename);
             path.AppendArray("_dense.ecs");
-
-            auto file = std::ifstream(path.Data(), std::ios::binary);
-            dbg::Assert(file.is_open(), "cannot open file");
-
-            file.read(reinterpret_cast<char*>(dense.Data()), dense.TOTAL_BYTE_SIZE);
+            dense.ReadBinaryFile(path.Data());
         }
 
         //componentLookup

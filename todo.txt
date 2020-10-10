@@ -1,3 +1,5 @@
+- scene reload
+
 - terrain refactor
 - mesh collision general
 - concepts for types :D
@@ -5,9 +7,6 @@
 
 - simple function ptr based system for gui callback
 (since updating the scene tree every frame is wasteful)
-
-
-
 
 
 - shadow cascade fade
