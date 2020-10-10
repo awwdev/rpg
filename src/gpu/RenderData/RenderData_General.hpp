@@ -31,8 +31,12 @@ struct RenderData_General
     struct MeshInstance
     {
         alignas(64) com::Mat4f transform;
-        alignas(64) float metallic; 
-        //should not be per instance! but per mesh, could use pushConst or ubo for material data 
+        alignas(64) struct 
+        {
+            float metallic;
+            float glow;
+        } 
+        renderSettings;
     };
  
     //? DATA

@@ -8,7 +8,8 @@ layout(location = 1) in vec2  inTex;
 layout(location = 2) in vec3  inNormal;
 layout(location = 3) in vec3  inViewDir;
 layout(location = 4) in flat int inMetallic;
-layout(location = 5) in vec4  inShadowCoord [CASCADE_COUNT];
+layout(location = 5) in flat int inGlow;
+layout(location = 6) in vec4  inShadowCoord [CASCADE_COUNT];
 
 layout(location = 0) out vec4 outCol;
 
@@ -54,5 +55,13 @@ void main()
         * shadowAmbient 
         * (1 + inMetallic * voronoi2)
     , 1);
+
+    if (inGlow > 0)
+    {
+        outCol.r = 1;
+        outCol.g = 1;
+        outCol.b = 1;
+    }
+    
 
 }

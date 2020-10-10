@@ -12,7 +12,8 @@ layout(location = 1) out vec2  outTex;
 layout(location = 2) out vec3  outNormal;
 layout(location = 3) out vec3  outViewDir;
 layout(location = 4) out flat int outMetallic;
-layout(location = 5) out vec4  outShadowPos [CASCADE_COUNT];
+layout(location = 5) out flat int outGlow;
+layout(location = 6) out vec4  outShadowPos [CASCADE_COUNT];
 
 layout(binding = 0) uniform Meta { 
     mat4  view;
@@ -24,7 +25,7 @@ layout(binding = 0) uniform Meta {
 struct MeshInstance 
 {
     mat4 transform;
-    mat4 metallic; //some settings
+    mat4 settings; //metallic, glow
 };
 
 layout(std430, binding = 1) readonly buffer MeshInstances { 
@@ -57,6 +58,7 @@ void main()
     vec3 normal = normalize((norMat * vec4(inNor, 1)).xyz);
 
     outNormal = normal;
-    outMetallic = int(instance.metallic[0][0]);
+    outMetallic = int(instance.settings[0][0]);
     outViewDir = normalize(meta.viewDir.xyz);
+    outGlow = int(instance.settings[0][1]);
 }

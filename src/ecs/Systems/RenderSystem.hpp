@@ -22,7 +22,10 @@ ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
         auto const meshEnumIdx = (idx_t) mainComponent.meshEnum;
         gpu::RenderData_General::MeshInstance const meshInstance {
             .transform = mainComponent.transform,
-            .metallic  = mainComponent.metallic,
+            .renderSettings = { 
+                .metallic = mainComponent.metallic,
+                .glow     = mainComponent.glow,
+            },
         };
         renderData.general.meshInstances[meshEnumIdx].Append(meshInstance);   
     }

@@ -29,7 +29,6 @@ struct GUI_Scene
         //TODO: subscription model instead of hard update per frame
 
         //? UPDATE SCENE TREE
-
         std::function<void(ecs::ID const, Widget_List<ecs::ID>::Item* const)> 
         addItem = [&](ecs::ID const entityID, Widget_List<ecs::ID>::Item* const prevParentItem)
         {
@@ -61,10 +60,15 @@ struct GUI_Scene
             addItem(entityID, nullptr);           
         }
 
+        
+
         //? UPDATE
         wnd.Update(renderData);
+
+        ecs.arrays.mainComponents.Get(entityList.activeIdx).glow = 0;  
         entityList.Update(renderData, wnd);
-        
+        ecs.arrays.mainComponents.Get(entityList.activeIdx).glow = 1;  
+            
     }
 };
 

@@ -14,6 +14,7 @@ enum class ComponentDataEnum
     Mesh,
     Scale, 
     Metallic,
+    Glow,
     Name,
     ENUM_END
 };
@@ -24,6 +25,7 @@ const com::EnumMap<ComponentDataEnum::ENUM_END, com::String<res::PREFAB_FILE_LIN
     { ComponentDataEnum::Mesh,      "Mesh"          },
     { ComponentDataEnum::Scale,     "Scale"         },
     { ComponentDataEnum::Metallic,  "Metallic"      },
+    { ComponentDataEnum::Glow,      "Glow"      },
     { ComponentDataEnum::Name,      "Name"          },
 };
 const auto COMPONENT_DATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentDataEnum, res::PREFAB_FILE_LINE_LEN_MAX>(COMPONENT_DATA_ENUM_TO_STR);
