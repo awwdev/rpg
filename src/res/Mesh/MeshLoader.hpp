@@ -62,7 +62,7 @@ MeshVertexRange (&meshVertexRanges) [MESHES_TOTAL])
             commaCount++;    
         }
 
-        allVertices.Append(vertex);
+        allVertices.AppendElement(vertex);
     }
 
     const auto vertexRangeCount = allVertices.Count() - vertexRangeIndex;

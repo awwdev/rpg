@@ -29,61 +29,19 @@ struct ECS
         TransformSystem(arrays, dt);
         RenderSystem(arrays, dt, renderData);
 
-        //TODO: NEED SERIALIZATION FOR CONTAINERS
+        //TODO: NEED SERIALIZATION FOR CONTAINERS (count and other data)
 
         //save
         if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
         {
-            //entities
-            {
-                com::String<100> path { "res/ECS/" }; 
-                path.AppendArray("_entities.ecs");
-
-                auto file = std::ofstream(path.Data(), std::ios::binary);
-                dbg::Assert(file.is_open(), "cannot open file");
-
-                file.write(reinterpret_cast<char const*>(entities.data), entities.BYTES);
-            }
-
-            //entities top level
-            {
-                com::String<100> path { "res/ECS/" }; 
-                path.AppendArray("_entitiesTopLevel.ecs");
-
-                auto file = std::ofstream(path.Data(), std::ios::binary);
-                dbg::Assert(file.is_open(), "cannot open file");
-
-                file.write(reinterpret_cast<char const*>(entitiesTopLevel.Data()), entitiesTopLevel.BYTE_COUNT);
-            }
-
+            entitiesTopLevel.WriteBinaryFile("res/ECS/entitiesTopLevel.ecs");
             arrays.SaveComponents();
         }
 
         //load
         if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>())
         {
-            //entities
-            {
-                com::String<100> path { "res/ECS/" }; 
-                path.AppendArray("_entities.ecs");
-
-                auto file = std::ifstream(path.Data(), std::ios::binary);
-                dbg::Assert(file.is_open(), "cannot open file");
-
-                file.read(reinterpret_cast<char*>(entities.data), entities.BYTES);
-            }
-
-            //entities top level
-            {
-                com::String<100> path { "res/ECS/" }; 
-                path.AppendArray("_entitiesTopLevel.ecs");
-
-                auto file = std::ifstream(path.Data(), std::ios::binary);
-                dbg::Assert(file.is_open(), "cannot open file");
-
-                file.read(reinterpret_cast<char*>(entitiesTopLevel.Data()), entitiesTopLevel.BYTE_COUNT);
-            }
-
+            entitiesTopLevel.ReadBinaryFile("res/ECS/entitiesTopLevel.ecs");
             arrays.LoadComponents();
         }
 
@@ -93,7 +51,7 @@ struct ECS
     ID AddEntity()
     {
         auto const entityID = RegisterEntity();
-        entitiesTopLevel.Append(entityID);
+        entitiesTopLevel.AppendElement(entityID);
         return entityID;
     }
 
@@ -133,7 +91,7 @@ private:
     {
         dbg::Assert(arrays.mainComponents.GetPtr(parentID), "trying to add child to non parent (no main component)");
         auto& parentMainComponent = arrays.mainComponents.Get(parentID);
-        parentMainComponent.children.Append(childID);
+        parentMainComponent.children.AppendElement(childID);
     }
 
     void InitPrefab(ID const entityID, res::PrefabEnum const prefabEnum)

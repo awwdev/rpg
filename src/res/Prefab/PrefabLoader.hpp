@@ -115,7 +115,7 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
         {
             dbg::Assert(currentComponent != NO_CURRENT_COMPONENT, "no current component");
             auto const pair = ecs::LineStrToComponentDataPair(line);
-            componentData[(idx_t) currentComponent].Append(pair);
+            componentData[(idx_t) currentComponent].AppendElement(pair);
             continue;
         } 
         

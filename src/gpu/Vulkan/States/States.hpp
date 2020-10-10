@@ -65,28 +65,28 @@ struct States
         com::Array<VkCommandBuffer, 4> cmds;
         VkCommandBuffer cmdBuffer = nullptr;
 
-        cmdBuffer = cmds.Append(commands.threadCommands[SHADOW_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        cmdBuffer = cmds.AppendElement(commands.threadCommands[SHADOW_STATE_IDX].cmdBuffers[cmdBufferIdx]);
         threadPool.AssignTask(0, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
             VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             shadow.Record(cmdBuffer, general);
             VkCheck(vkEndCommandBuffer(cmdBuffer));
         });
         
-        cmdBuffer = cmds.Append(commands.threadCommands[GENERAL_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        cmdBuffer = cmds.AppendElement(commands.threadCommands[GENERAL_STATE_IDX].cmdBuffers[cmdBufferIdx]);
         threadPool.AssignTask(1, [this, cmdBuffer, beginInfo, cmdBufferIdx, &renderData]{
             VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             general.Record(cmdBuffer, renderData.general);
             VkCheck(vkEndCommandBuffer(cmdBuffer));
         });
             
-        cmdBuffer = cmds.Append(commands.threadCommands[POST_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        cmdBuffer = cmds.AppendElement(commands.threadCommands[POST_STATE_IDX].cmdBuffers[cmdBufferIdx]);
         threadPool.AssignTask(2, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
             VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             post.Record(cmdBuffer, cmdBufferIdx);
             VkCheck(vkEndCommandBuffer(cmdBuffer));
         });
 
-        cmdBuffer = cmds.Append(commands.threadCommands[GUI_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        cmdBuffer = cmds.AppendElement(commands.threadCommands[GUI_STATE_IDX].cmdBuffers[cmdBufferIdx]);
         threadPool.AssignTask(3, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
             VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             gui.Record(cmdBuffer, cmdBufferIdx);

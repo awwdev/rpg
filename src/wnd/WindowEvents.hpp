@@ -72,7 +72,7 @@ template<auto TYPE, auto STATE = EventState::Set>
 void AddEvent()
 {
     glo::events[(idx_t)TYPE] = STATE;
-    glo::frameEvents.Append(TYPE);
+    glo::frameEvents.AppendElement(TYPE);
 }
 
 }//NS

@@ -41,9 +41,9 @@ struct GUI_Level
         }
 
         {
-            auto& row = table.table.Append();
-            row.Append("mode");
-            row.Append("");
+            auto& row = table.table.AppendElement();
+            row.AppendElement("mode");
+            row.AppendElement("");
         }
     }
 

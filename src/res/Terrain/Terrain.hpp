@@ -144,7 +144,7 @@ struct Terrain
         settings.dirtyQuadrants.Clear();
         for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
         for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
-            settings.dirtyQuadrants.Append(GetQuadrantIndex(z, x));
+            settings.dirtyQuadrants.AppendElement(GetQuadrantIndex(z, x));
         }}
     }
 
@@ -196,7 +196,7 @@ struct Terrain
             const auto  dist = com::Distance(vec2, vec1);
 
             if(dist < settings.brushSize)
-                settings.editingVertIndices.Append(i, 1 - com::Ease(dist/settings.brushSize));
+                settings.editingVertIndices.AppendElement(i, 1 - com::Ease(dist/settings.brushSize));
         }
     }
 
@@ -220,7 +220,7 @@ struct Terrain
                     quadrant.verts[idx].col.z = settings.vertexColor.z;
                 }
 
-                settings.dirtyQuadrants.Append(settings.quadrantIdx);
+                settings.dirtyQuadrants.AppendElement(settings.quadrantIdx);
             }
         }
     }
@@ -258,7 +258,7 @@ struct Terrain
             }
 
             settings.intersectionPos.y += yDelta * settings.dragScale; //TODO: would need falloff of closest intersection vertex
-            settings.dirtyQuadrants.Append(settings.quadrantIdx);
+            settings.dirtyQuadrants.AppendElement(settings.quadrantIdx);
         }        
     }
 
@@ -309,9 +309,9 @@ struct Terrain
             auto& quadrant = quadrants[qcz - 1][qcx - 1];
             const auto vertIndices = quadrant.GetVerticesByCorner({quadrant.CORNER_COUNT - 1, quadrant.CORNER_COUNT - 1});
             FOR_ARRAY(vertIndices, i){
-                verts.Append(&quadrant.verts[vertIndices[i]]);
+                verts.AppendElement(&quadrant.verts[vertIndices[i]]);
             }
-            positions.Append(quadrant.verts[vertIndices[0]].pos);
+            positions.AppendElement(quadrant.verts[vertIndices[0]].pos);
         }
 
         //BL
@@ -319,9 +319,9 @@ struct Terrain
             auto& quadrant = quadrants[qcz - 0][qcx - 1];
             const auto  vertIndices = quadrant.GetVerticesByCorner({0, quadrant.CORNER_COUNT - 1});
             FOR_ARRAY(vertIndices, i){
-                verts.Append(&quadrant.verts[vertIndices[i]]);
+                verts.AppendElement(&quadrant.verts[vertIndices[i]]);
             }
-            positions.Append(quadrant.verts[vertIndices[0]].pos);
+            positions.AppendElement(quadrant.verts[vertIndices[0]].pos);
         }
 
         //TR
@@ -329,9 +329,9 @@ struct Terrain
             auto& quadrant = quadrants[qcz - 1][qcx - 0];
             const auto  vertIndices = quadrant.GetVerticesByCorner({quadrant.CORNER_COUNT - 1, 0});
             FOR_ARRAY(vertIndices, i){
-                verts.Append(&quadrant.verts[vertIndices[i]]);
+                verts.AppendElement(&quadrant.verts[vertIndices[i]]);
             }
-            positions.Append(quadrant.verts[vertIndices[0]].pos);
+            positions.AppendElement(quadrant.verts[vertIndices[0]].pos);
         }
 
         //BR
@@ -339,9 +339,9 @@ struct Terrain
             auto& quadrant = quadrants[qcz - 0][qcx - 0];
             const auto  vertIndices = quadrant.GetVerticesByCorner({0, 0});
             FOR_ARRAY(vertIndices, i){
-                verts.Append(&quadrant.verts[vertIndices[i]]);
+                verts.AppendElement(&quadrant.verts[vertIndices[i]]);
             }
-            positions.Append(quadrant.verts[vertIndices[0]].pos);
+            positions.AppendElement(quadrant.verts[vertIndices[0]].pos);
         }
 
         const auto avgPos = [&]{
@@ -368,7 +368,7 @@ struct Terrain
         //current coord of active editing quadrant
         const auto z = settings.quadrantIdx / QUADRANT_COUNT;
         const auto x = settings.quadrantIdx % QUADRANT_COUNT;
-        settings.dirtyQuadrants.Append(settings.quadrantIdx); //!cleared by renderer
+        settings.dirtyQuadrants.AppendElement(settings.quadrantIdx); //!cleared by renderer
         auto& quadrant = quadrants[z][x]; //current active one
 
         //neighbors
@@ -417,7 +417,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z][x+1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z, x+1);
-            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.AppendElement(quadrantIdxNeighbor);
 
             for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
                 auto& edgeVerts         = quadrant.corners[z][quadrant.CORNER_COUNT - 1]; //right edge
@@ -430,7 +430,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z+1][x];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x);
-            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.AppendElement(quadrantIdxNeighbor);
 
             for(idx_t x = 0; x < quadrant.CORNER_COUNT; ++x){
                 auto& edgeVerts         = quadrant.corners[quadrant.CORNER_COUNT - 1][x]; //bottom edge
@@ -443,7 +443,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z, x-1);
-            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.AppendElement(quadrantIdxNeighbor);
 
             for(idx_t z = 0; z < quadrant.CORNER_COUNT; ++z){
                 auto& edgeVerts         = quadrant.corners[z][0]; //left edge
@@ -456,7 +456,7 @@ struct Terrain
         {
             auto& neighborQuadrant = quadrants[z-1][x];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x);
-            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.AppendElement(quadrantIdxNeighbor);
 
             for(idx_t x = 0; x < quadrant.CORNER_COUNT; ++x){
                 auto& edgeVerts         = quadrant.corners[0][x]; //top edge
@@ -469,7 +469,7 @@ struct Terrain
         {
             //auto& neighborQuadrant = quadrants[z-1][x+1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x+1);
-            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.AppendElement(quadrantIdxNeighbor);
             StichCorner(z-1, x+1, quadrant.CORNER_COUNT);
         }
 
@@ -477,7 +477,7 @@ struct Terrain
         {
             //auto& neighborQuadrant = quadrants[z-1][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z-1, x-1);
-            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.AppendElement(quadrantIdxNeighbor);
             StichCorner(z-1, x-1, quadrant.CORNER_COUNT);
         }
 
@@ -485,7 +485,7 @@ struct Terrain
         {
             //auto& neighborQuadrant = quadrants[z+1][x+1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x+1);
-            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.AppendElement(quadrantIdxNeighbor);
             StichCorner(z+1, x+1, quadrant.CORNER_COUNT);
         }
 
@@ -493,7 +493,7 @@ struct Terrain
         {
             //auto& neighborQuadrant = quadrants[z+1][x-1];
             const auto quadrantIdxNeighbor = GetQuadrantIndex(z+1, x-1);
-            settings.dirtyQuadrants.Append(quadrantIdxNeighbor);
+            settings.dirtyQuadrants.AppendElement(quadrantIdxNeighbor);
             StichCorner(z+1, x-1, quadrant.CORNER_COUNT);
         }
 

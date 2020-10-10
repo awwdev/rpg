@@ -50,9 +50,9 @@ struct GUI_Stats
         {
             dbg::Assert(RowStrings.Contains(i), "enum map entry missing");
             const auto str = RowStrings.Get(i);
-            auto& row = table.table.Append();
-            row.Append(str);
-            row.Append("0");
+            auto& row = table.table.AppendElement();
+            row.AppendElement(str);
+            row.AppendElement("0");
         }
     }
 

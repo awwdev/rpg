@@ -43,7 +43,7 @@ struct ComponentArray
             return dense[componentLookup[entityID]];
         }
         //new
-        dense.Append(std::forward<CtorArgs>(args)...);
+        dense.AppendElement(std::forward<CtorArgs>(args)...);
         componentLookup[entityID] = dense.Count() - 1;
         entityLookup[dense.Count() - 1] = entityID;
         return dense.Last();
@@ -69,7 +69,7 @@ struct ComponentArray
             auto file = std::ofstream(path.Data(), std::ios::binary);
             dbg::Assert(file.is_open(), "cannot open file");
 
-            file.write(reinterpret_cast<char const*>(dense.Data()), dense.BYTE_COUNT);
+            file.write(reinterpret_cast<char const*>(dense.Data()), dense.TOTAL_BYTE_SIZE);
         }
 
         //componentLookup
@@ -108,7 +108,7 @@ struct ComponentArray
             auto file = std::ifstream(path.Data(), std::ios::binary);
             dbg::Assert(file.is_open(), "cannot open file");
 
-            file.read(reinterpret_cast<char*>(dense.Data()), dense.BYTE_COUNT);
+            file.read(reinterpret_cast<char*>(dense.Data()), dense.TOTAL_BYTE_SIZE);
         }
 
         //componentLookup

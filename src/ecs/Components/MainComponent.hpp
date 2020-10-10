@@ -46,7 +46,7 @@ struct MainComponent
                     FOR_ARRAY(values, i){
                         auto prefabEnum = res::PREFAB_STR_TO_ENUM.GetOptional(values[i].Data());
                         dbg::Assert(prefabEnum, "child prefab enum wrong");
-                        children.Append((ID) *prefabEnum);
+                        children.AppendElement((ID) *prefabEnum);
                     }
                 }
                 break;

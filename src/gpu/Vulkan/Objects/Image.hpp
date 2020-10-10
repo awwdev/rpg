@@ -165,7 +165,7 @@ struct Image
         com::Array<VkBufferImageCopy, LAYER_COUNT_MAX> imageCopyInfos;
         for(uint32_t layerIdx = 0; layerIdx < layerCount; ++layerIdx)
         {
-            imageCopyInfos.Append(VkBufferImageCopy {
+            imageCopyInfos.AppendElement(VkBufferImageCopy {
                 .bufferOffset       = layerIdx * singleTextureSize,
                 .bufferRowLength    = 0,
                 .bufferImageHeight  = 0,

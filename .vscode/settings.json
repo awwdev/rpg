@@ -399,8 +399,8 @@
 			"regexFlags": "g", 
 			"decorations": [
 				{ 
-					"color": "#ffa",
-					"backgroundColor": "#ffa1", 
+					"color": "#aaf",
+					"backgroundColor": "#aaf1", 
 				},
 			]
 		},
@@ -538,12 +538,12 @@
 		"ranges": "cpp",
 		"codecvt": "cpp",
 		"queue": "cpp",
-		"memory": "cpp",
 		"memory_resource": "cpp",
 		"stop_token": "cpp",
 		"thread": "cpp",
 		"condition_variable": "cpp",
-		"mutex": "cpp"
+		"mutex": "cpp",
+		"source_location": "cpp"
 	},
 
 }

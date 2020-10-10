@@ -27,7 +27,7 @@ ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
                 .glow     = mainComponent.glow,
             },
         };
-        renderData.general.meshInstances[meshEnumIdx].Append(meshInstance);   
+        renderData.general.meshInstances[meshEnumIdx].AppendElement(meshInstance);   
     }
 
 }

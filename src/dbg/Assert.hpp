@@ -1,6 +1,9 @@
 #pragma once
 #include "dbg/Logger.hpp"
 
+//TODO: const std::source_location& location = std::source_location::current()
+//#include <source_location>
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #undef max

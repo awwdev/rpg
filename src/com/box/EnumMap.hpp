@@ -71,7 +71,7 @@ struct EnumMap
         dbg::Assert(bitset.Test(keyOffsetted) == false, "enum entry already exists");
 
         bitset.Set(keyOffsetted, true);
-        usedIndices.Append(keyOffsetted);
+        usedIndices.AppendElement(keyOffsetted);
     }
 
     void Remove(const KEY key)

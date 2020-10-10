@@ -65,8 +65,8 @@ public:
     void operator=(const String& other) { Clear(); AppendString(other); }
     void operator=(String&& other)      { Clear(); AppendString(other); }
 
-    String          (IsArithmeticConcept auto const& arithemtic) { AppendArithemtic(arithemtic); }
-    void   operator=(IsArithmeticConcept auto const& arithemtic) { Clear(); AppendArithemtic(arithemtic); }
+    String          (as_arithmetic auto const& arithemtic) { AppendArithemtic(arithemtic); }
+    void   operator=(as_arithmetic auto const& arithemtic) { Clear(); AppendArithemtic(arithemtic); }
 
     //? MODIFICATION 
 

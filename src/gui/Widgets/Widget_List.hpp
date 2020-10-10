@@ -40,7 +40,7 @@ struct Widget_List
     IDX_T pItemValue,
     Item *const parent = nullptr) -> Item*
     {   
-        auto& blockPtr = parent ? parent->subItems.Append() : topLevelItems.Append();
+        auto& blockPtr = parent ? parent->subItems.AppendElement() : topLevelItems.AppendElement();
         com::mem::ClaimBlock(blockPtr);
         blockPtr->itemName  = { str, strLen };
         blockPtr->itemValue = pItemValue;

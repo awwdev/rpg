@@ -140,13 +140,13 @@ inline void WmRButtonUp(WPARAM, LPARAM lParam)
 inline void WmKeyDown(WPARAM wParam, LPARAM)
 {
     glo::events[wParam] = wnd::EventState::Pressed;
-    glo::frameEvents.Append((EventType)wParam);
+    glo::frameEvents.AppendElement((EventType)wParam);
 }
 
 inline void WmKeyUp(WPARAM wParam, LPARAM)
 {
     glo::events[wParam] = wnd::EventState::Released;
-    glo::frameEvents.Append((EventType)wParam);
+    glo::frameEvents.AppendElement((EventType)wParam);
 }
 
 inline void WmChar(WPARAM wParam, LPARAM)

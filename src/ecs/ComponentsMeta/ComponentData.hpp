@@ -70,12 +70,12 @@ auto ValStrToValArray(chars_t valStr)
     while(valStr[endIdx] != '\0') 
     {
         if (valStr[endIdx] == ',') {
-            arr.Append(&valStr[beginIdx], endIdx - beginIdx);
+            arr.AppendElement(&valStr[beginIdx], endIdx - beginIdx);
             beginIdx = endIdx + 1;
         }
         ++endIdx;
     }
-    arr.Append(&valStr[beginIdx], endIdx - beginIdx); //last one
+    arr.AppendElement(&valStr[beginIdx], endIdx - beginIdx); //last one
 
     return arr;
 }

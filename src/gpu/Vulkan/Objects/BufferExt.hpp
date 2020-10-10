@@ -95,7 +95,7 @@ struct BufferExt
     template<auto N>
     void Append(const com::Array<ELEMENT_TYPE, N>& arr)
     {
-        activeBuffer->Store(arr.Data(), arr.CurrentSize(), CurrentByteSize());
+        activeBuffer->Store(arr.Data(), arr.CurrentByteSize(), CurrentByteSize());
         count += arr.Count();
     }
 
