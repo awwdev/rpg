@@ -30,6 +30,7 @@ struct GUI_Stats
         shadowCascades,
         instancedVerts,
         terrainVerts,
+        guiVerts,
         ENUM_END
     };
     const com::EnumMap<RowEnum::ENUM_END, com::String<100>> RowStrings
@@ -40,6 +41,7 @@ struct GUI_Stats
         { RowEnum::shadowCascades,      "shadowCascades"  },
         { RowEnum::instancedVerts,      "instancedVerts"  },
         { RowEnum::terrainVerts,        "terrainVerts"  },
+        { RowEnum::guiVerts,            "guiVerts"  },
     };    
 
     GUI_Stats()
@@ -68,6 +70,8 @@ struct GUI_Stats
 
             table.table[(idx_t) RowEnum::instancedVerts][1] = renderData.general.dbgVertCountInstancedPrev;
             table.table[(idx_t) RowEnum::terrainVerts][1] = renderData.general.dbgVertCountTerrainPrev;
+
+            table.table[(idx_t) RowEnum::guiVerts][1] = renderData.gui.dbgVertCount;
 
         }
         

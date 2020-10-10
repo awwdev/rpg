@@ -29,8 +29,12 @@ struct RenderData_GUI
     //? DATA
     com::Array<UBO_Text, UBO_TEXT_MAX> uboText;
 
+    //debug
+    idx_t dbgVertCount = 0;
+
     void Clear()
     {
+        dbgVertCount = uboText.Count() * 6;
         uboText.Clear();
     }
 };

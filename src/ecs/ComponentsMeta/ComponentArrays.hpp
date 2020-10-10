@@ -13,8 +13,8 @@ struct ComponentArrays
     com::Bitset<ComponentEnum::ENUM_END> signatures[(idx_t) MAX_COMPONENT_COUNT];
 
     //? COMPONENT ARRAYS
-    ComponentArray<MainComponent, MAX_COMPONENT_COUNT>  mainComponents;
-    ComponentArray<NameComponent, MAX_COMPONENT_COUNT>  nameComponents;
+    ComponentArray<MainComponent, MAX_COMPONENT_COUNT>  mainComponents { "mainComponents" };
+    ComponentArray<NameComponent, MAX_COMPONENT_COUNT>  nameComponents { "nameComponents" };
 
     template<class... CtorArgs>
     void SetComponent(const ID entityID, const ComponentEnum componentType, CtorArgs&&... args)
@@ -30,7 +30,7 @@ struct ComponentArrays
         }
     }
 
-    template<auto SRC_MAX_COUNT>
+    template<auto SRC_MAX_COUNT> //used both by serialization and prefab loading
     void CopyComponents(
     const ID desEntityID, 
     const ID srcEntityID, const ComponentArrays<SRC_MAX_COUNT>& srcComponentArrays)
@@ -43,6 +43,18 @@ struct ComponentArrays
         //? COMPONENT ADDING
         SetComponentOptional(mainComponents, srcComponentArrays.mainComponents);
         SetComponentOptional(nameComponents, srcComponentArrays.nameComponents);
+    }
+
+    void LoadComponents()
+    {
+        mainComponents.Load();
+        nameComponents.Load();
+    }
+
+    void SaveComponents()
+    {
+        mainComponents.Save();
+        nameComponents.Save();
     }
 
     void Clear()

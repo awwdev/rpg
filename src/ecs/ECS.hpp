@@ -2,6 +2,7 @@
 
 #pragma once
 #include "com/box/Bitset.hpp"
+#include "com/box/String.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
 
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
@@ -9,6 +10,8 @@
 
 #include "ecs/Systems/RenderSystem.hpp"
 #include "ecs/Systems/TransformSystem.hpp"
+
+#include <fstream>
 
 namespace rpg::ecs {
 
@@ -25,6 +28,65 @@ struct ECS
         //? SYSTEMS
         TransformSystem(arrays, dt);
         RenderSystem(arrays, dt, renderData);
+
+        //TODO: NEED SERIALIZATION FOR CONTAINERS
+
+        //save
+        if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
+        {
+            //entities
+            {
+                com::String<100> path { "res/ECS/" }; 
+                path.AppendArray("_entities.ecs");
+
+                auto file = std::ofstream(path.Data(), std::ios::binary);
+                dbg::Assert(file.is_open(), "cannot open file");
+
+                file.write(reinterpret_cast<char const*>(entities.data), entities.BYTES);
+            }
+
+            //entities top level
+            {
+                com::String<100> path { "res/ECS/" }; 
+                path.AppendArray("_entitiesTopLevel.ecs");
+
+                auto file = std::ofstream(path.Data(), std::ios::binary);
+                dbg::Assert(file.is_open(), "cannot open file");
+
+                file.write(reinterpret_cast<char const*>(entitiesTopLevel.Data()), entitiesTopLevel.BYTE_COUNT);
+            }
+
+            arrays.SaveComponents();
+        }
+
+        //load
+        if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>())
+        {
+            //entities
+            {
+                com::String<100> path { "res/ECS/" }; 
+                path.AppendArray("_entities.ecs");
+
+                auto file = std::ifstream(path.Data(), std::ios::binary);
+                dbg::Assert(file.is_open(), "cannot open file");
+
+                file.read(reinterpret_cast<char*>(entities.data), entities.BYTES);
+            }
+
+            //entities top level
+            {
+                com::String<100> path { "res/ECS/" }; 
+                path.AppendArray("_entitiesTopLevel.ecs");
+
+                auto file = std::ifstream(path.Data(), std::ios::binary);
+                dbg::Assert(file.is_open(), "cannot open file");
+
+                file.read(reinterpret_cast<char*>(entitiesTopLevel.Data()), entitiesTopLevel.BYTE_COUNT);
+            }
+
+            arrays.LoadComponents();
+        }
+
     }
 
 

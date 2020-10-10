@@ -1,17 +1,18 @@
+- terrain refactor
+- mesh collision general
+- concepts for types :D
+- widget list refactor (only update the visible region)
 
 - simple function ptr based system for gui callback
 (since updating the scene tree every frame is wasteful)
 
-- concepts for types :D
+
+
+
 
 - shadow cascade fade
 - cast shadow flag 
 - better grass
-
-- ecs print out?
-
-
 - load both material and mesh paths externally
 - FOR_ENUM_MAP macro for loop
-- terrain refactor
 - ecs serialization

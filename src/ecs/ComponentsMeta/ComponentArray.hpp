@@ -7,6 +7,8 @@
 #include "ecs/EntityID.hpp"
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"
 
+#include <fstream>
+
 namespace rpg::ecs {
     
 template<class COMPONENT_T, auto MAX_COMPONENT_COUNT = MAX_ENTITY_COUNT>
@@ -23,7 +25,10 @@ struct ComponentArray
     auto&       Get    (const ID entityID)       { return dense[componentLookup[entityID]]; }
     const auto& Get    (const ID entityID) const { return dense[componentLookup[entityID]]; }
 
-    ComponentArray() 
+    com::String<30> filename;
+
+    ComponentArray(chars_t name) 
+        : filename { name }
     {
         Clear(); //used for initialization          
     }
@@ -51,6 +56,84 @@ struct ComponentArray
             componentLookup[i] = ECS_NULL;
             entityLookup[i]    = ECS_NULL;
         }  
+    }
+
+    void Save()
+    {
+        //dense
+        {
+            com::String<100> path { "res/ECS/" }; 
+            path.AppendString(filename);
+            path.AppendArray("_dense.ecs");
+
+            auto file = std::ofstream(path.Data(), std::ios::binary);
+            dbg::Assert(file.is_open(), "cannot open file");
+
+            file.write(reinterpret_cast<char const*>(dense.Data()), dense.BYTE_COUNT);
+        }
+
+        //componentLookup
+        {
+            com::String<100> path { "res/ECS/" }; 
+            path.AppendString(filename);
+            path.AppendArray("_componentLookup.ecs");
+
+            auto file = std::ofstream(path.Data(), std::ios::binary);
+            dbg::Assert(file.is_open(), "cannot open file");
+
+            file.write(reinterpret_cast<char const*>(componentLookup), MAX_COMPONENT_COUNT * sizeof(ID));
+        }
+
+        //entityLookup
+        {
+            com::String<100> path { "res/ECS/" }; 
+            path.AppendString(filename);
+            path.AppendArray("_entityLookup.ecs");
+
+            auto file = std::ofstream(path.Data(), std::ios::binary);
+            dbg::Assert(file.is_open(), "cannot open file");
+
+            file.write(reinterpret_cast<char const*>(entityLookup), MAX_COMPONENT_COUNT * sizeof(ID));
+        }
+    }
+
+    void Load()
+    {
+        //dense
+        {
+            com::String<100> path { "res/ECS/" }; 
+            path.AppendString(filename);
+            path.AppendArray("_dense.ecs");
+
+            auto file = std::ifstream(path.Data(), std::ios::binary);
+            dbg::Assert(file.is_open(), "cannot open file");
+
+            file.read(reinterpret_cast<char*>(dense.Data()), dense.BYTE_COUNT);
+        }
+
+        //componentLookup
+        {
+            com::String<100> path { "res/ECS/" }; 
+            path.AppendString(filename);
+            path.AppendArray("_componentLookup.ecs");
+
+            auto file = std::ifstream(path.Data(), std::ios::binary);
+            dbg::Assert(file.is_open(), "cannot open file");
+
+            file.read(reinterpret_cast<char*>(componentLookup), MAX_COMPONENT_COUNT * sizeof(ID));
+        }
+
+        //entityLookup
+        {
+            com::String<100> path { "res/ECS/" }; 
+            path.AppendString(filename);
+            path.AppendArray("_entityLookup.ecs");
+
+            auto file = std::ifstream(path.Data(), std::ios::binary);
+            dbg::Assert(file.is_open(), "cannot open file");
+
+            file.read(reinterpret_cast<char*>(entityLookup), MAX_COMPONENT_COUNT * sizeof(ID));
+        }
     }
 
 };

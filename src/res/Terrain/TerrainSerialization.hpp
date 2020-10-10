@@ -28,7 +28,7 @@ void WriteOrRead(QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
             else                  return std::ifstream(path, std::ios::binary);
         }();
         
-        if (!file) dbg::LogError("cannot open file");
+        dbg::Assert(file.is_open(), "cannot open file");
 
         if constexpr (DoSave)  file.write((const char*)quadrant.verts, sizeof(gpu::RenderData_General::Vertex) * quadrant.VERT_COUNT_TOTAL);
         else                   file.read((char*)quadrant.verts, sizeof(gpu::RenderData_General::Vertex) * quadrant.VERT_COUNT_TOTAL);

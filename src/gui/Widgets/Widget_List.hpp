@@ -33,7 +33,7 @@ struct Widget_List
         bool isToggled = false; 
     };
 
-    com::Array<com::mem::BlockPtr<Item>, 100> topLevelItems;
+    com::Array<com::mem::BlockPtr<Item>, 1000> topLevelItems;
 
     auto AddItem(
     chars_t str, idx_t const strLen, 
