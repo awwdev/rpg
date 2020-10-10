@@ -64,6 +64,13 @@ struct GameScene
         auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
         swordMainComponent.rotation.y += dt * 100;
 
+        //TEST movement 
+        //TODO: move into editor controller
+        //auto& selectedMainComponent = ecs.arrays.mainComponents.Get(guiScene.entityList.activeIdx);
+        //if(wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>())
+        //    selectedMainComponent.translation = resources.terrain.terrain.settings.intersectionPos;
+        //TODO: mouse on mesh (triangle intersection)
+
         renderData.Clear();
         renderData.general.meta.time += dt;     
 
