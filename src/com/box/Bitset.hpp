@@ -11,83 +11,67 @@
 
 namespace rpg::com {
 
-#define FOR_BITSET(bitset, i) for(idx_t i = 0; i < bitset.BITS; ++i)
-
 constexpr bool USE_BITSET_ASSERTS = true;
 
-inline void BitsetAssert(const bool condition, chars_t msg = "bitset assertion failed")
-{
-    if constexpr(USE_BITSET_ASSERTS) {
-        dbg::Assert(condition, msg);
-    }
-}
-
-//TODO: as function instead of macro:
-#define BIT(i)  (idx_t)i % (idx_t)8
-#define BYTE(i) (idx_t)i / (idx_t)8
-
-constexpr idx_t BytesNeeded(idx_t num)
-{
-    int n = 0;
-    do { num >>= 8; n++; } while (num);
-    return n;
-}
+#define FOR_BITSET(bitset, i) \
+for(idx_t i = 0; i < bitset.BIT_COUNT; ++i)
 
 template<auto N>
 struct Bitset
 {
-    //? DATA
+    static constexpr idx_t BIT_COUNT  = static_cast<idx_t>(N);
+    static constexpr idx_t BYTE_COUNT = BIT_COUNT / 8 + 1;
 
-    static constexpr idx_t BITS  = (idx_t)N;
-    static constexpr idx_t BYTES = BITS/8 + 1;
-    u8 bytes [BYTES] = { 0 };
+    //? constructors
 
-    constexpr Bitset(const idx_t num = 0)
+    constexpr 
+    Bitset(idx_t const num = 0)
+        : bytes {} //nullify
+        , count {}
     {
-        BitsetAssert(BytesNeeded(num) <= BYTES, "bitset ctor input to big");
-
-        for(idx_t i = 0; i < BYTES; ++i) {
+        BitsetAssert(BytesNeeded(num) <= BYTE_COUNT, "[Bitset::Ctor] bitset ctor input to big");
+        for(idx_t i = 0; i < BYTE_COUNT; ++i) 
+        {
             const idx_t bits = i * 8;
-            bytes[i] = static_cast<u8>((num >> bits) & 0xFF); //0xFF prevents wrapping?
+            bytes[i] = static_cast<u8>((num >> bits) & 0xFF);
         }
     }
 
-    //? MODIFICATION
+    //? methods
 
-    template<class IDX> 
-    void Set(const IDX i, const bool setTrue = true)
+    void Set(const auto i, const bool setTrue = true)
     {
-        BitsetAssert((idx_t)i < BITS);
-        bytes[BYTE(i)] = setTrue
-            ? bytes[BYTE(i)] |  (1 << BIT(i))
-            : bytes[BYTE(i)] & ~(1 << BIT(i));
+        BitsetAssert((idx_t)i < BIT_COUNT, "[BitsetAssert::Set] idx out of bounds");
+
+        bytes[Byte(i)] = setTrue
+            ? bytes[Byte(i)] |  (1 << Bit(i))
+            : bytes[Byte(i)] & ~(1 << Bit(i));
     }
 
-    template<class IDX> 
-    bool Test(const IDX i) const
+    bool Test(const auto i) const
     {
-        BitsetAssert((idx_t)i < BITS);
-        return bytes[BYTE(i)] & (1 << BIT(i));
+        BitsetAssert((idx_t)i < BIT_COUNT, "[Bitset] idx out of bounds");
+        return bytes[Byte(i)] & (1 << Bit(i));
     }
 
-    template<class IDX>
-    void Flip(const IDX i)
+    void Flip(const auto i)
     {
-        BitsetAssert(static_cast<idx_t>(i) < BITS);
-        bytes[BYTE(i)] ^= 1 << BIT(i);
+        BitsetAssert(static_cast<idx_t>(i) < BIT_COUNT, "[Bitset] idx out of bounds");
+        bytes[Byte(i)] ^= 1 << Bit(i);
     }
 
     void Clear()
     {
-        std::memset(bytes, 0, BYTES);
+        std::memset(bytes, 0, BYTE_COUNT);
     }
 
-    //? HELPER
+    //? helper
 
-    com::Optional<idx_t> FindFreeBitOptional(const idx_t startAt = 0) const
+    com::Optional<idx_t> FindFreeBit_Optional(const idx_t startAt = 0) const
     {
-        for (idx_t i = startAt; i < BITS; ++i) {
-            const auto a = bytes[BYTE(i)] & (1 << BIT(i)); //Test() is due to Assert not constexpr
+        for (idx_t i = startAt; i < BIT_COUNT; ++i) 
+        {
+            const auto a = bytes[Byte(i)] & (1 << Bit(i));
             if (a == 0) 
                 return { i };
         }
@@ -97,7 +81,7 @@ struct Bitset
     constexpr auto Decimal() const
     {
         std::size_t num = 0;
-        for (auto i = 0; i < BYTES; ++i)
+        for (auto i = 0; i < BYTE_COUNT; ++i)
         {
             num += (((std::size_t)bytes[i]) << (i*8));
         }            
@@ -110,18 +94,40 @@ struct Bitset
     {
         std::ofstream file { path, std::ios::binary };
         dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
-        file.write(reinterpret_cast<char const*>(bytes), BYTES);
+        file.write(reinterpret_cast<char const*>(bytes), BYTE_COUNT);
     }
 
     void ReadBinaryFile(chars_t path)
     {
         std::ifstream file { path, std::ios::binary };
         dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
-        file.read(reinterpret_cast<char*>(bytes), BYTES);
+        file.read(reinterpret_cast<char*>(bytes), BYTE_COUNT);
     }
-};
 
-#undef BIT
-#undef BYTE
+private:
+
+    //? internal helper
+
+    void BitsetAssert(bool const expr, chars_t msg) const 
+    {
+        if constexpr (!DO_ARRAY_ASSERTS) return;
+        dbg::Assert(expr, msg);
+    }
+
+    constexpr idx_t Bit (auto const i) const { return static_cast<idx_t>(i) % idx_t { 8 }; }
+    constexpr idx_t Byte(auto const i) const { return static_cast<idx_t>(i) / idx_t { 8 }; }
+
+    constexpr idx_t BytesNeeded(idx_t num)
+    {
+        idx_t n = 0;
+        do { num >>= 8; n++; } while (num);
+        return n;
+    }
+
+    //? data 
+    u8 bytes [BYTE_COUNT];
+    idx_t count;
+
+};
 
 }//ns

@@ -6,7 +6,6 @@
 #include "dbg/Logger.hpp"
 
 #include <cstddef>
-#include <iostream>
 #include <fstream>
 
 namespace rpg::com {
@@ -19,8 +18,8 @@ for(idx_t i = 0; i < arr.Count(); ++i)
 template<typename T, auto N>
 struct Array
 {
-    static constexpr auto COUNT_MAX = (idx_t) N;
-    static constexpr auto TOTAL_BYTE_SIZE = (idx_t) N * sizeof(T);
+    static constexpr auto COUNT_MAX = static_cast<idx_t>(N);
+    static constexpr auto TOTAL_BYTE_SIZE = COUNT_MAX * sizeof(T);
     using TYPE = T;
 
     //? constructors
@@ -38,20 +37,19 @@ struct Array
         }            
     } 
 
-    explicit 
-    constexpr     
-    Array(std::convertible_to<T> auto&&... elements)
-        : Array()
+    explicit constexpr     
+    Array(std::convertible_to<T> auto&&... elements) : Array()
     {
         auto const emplaceFn = [this](auto&& element) 
         {
-            ArrayAssert(count + 1 <= COUNT_MAX, "[Ctor] array exhausted");
+            ArrayAssert(count + 1 <= COUNT_MAX, "[Array::Ctor] array exhausted");
             PlacementNew(std::forward<decltype(element)>(element));
         };
         (emplaceFn(std::forward<decltype(elements)>(elements)), ...);
     }
 
-    constexpr
+    
+    constexpr 
     ~Array()
     {
         Clear();
@@ -62,7 +60,7 @@ struct Array
     constexpr
     void Clear(idx_t beginIdx = 0)
     {
-        ArrayAssert(beginIdx >= 0 && beginIdx <= count, "[Clear] beginIdx out of bounds");
+        ArrayAssert(beginIdx >= 0 && beginIdx <= count, "[Array::Clear] beginIdx out of bounds");
 
         if constexpr (!std::is_trivially_destructible_v<T>)
         {
@@ -77,37 +75,33 @@ struct Array
 
     //? append
 
-    template<typename... Ts>
-    constexpr
+    template<typename... Ts> constexpr
     T& AppendElement(Ts&&... args) requires is_constructible_with<T, Ts...>
     {
-        ArrayAssert(count + 1 <= COUNT_MAX, "[AppendElement] array exhausted");
+        ArrayAssert(count + 1 <= COUNT_MAX, "[Array::AppendElement] array exhausted");
         return *PlacementNew(std::forward<decltype(args)>(args)...);
     }
 
-    template<typename OTHER_T, auto OTHER_N>
-    constexpr
+    template<typename OTHER_T, auto OTHER_N> constexpr
     void AppendArray(Array<OTHER_T, OTHER_N> const& other)
     {
-        ArrayAssert(count + other.Count() <= COUNT_MAX, "[AppendArray] array exhausted");
+        ArrayAssert(count + other.Count() <= COUNT_MAX, "[Array::AppendArray] array exhausted");
         FOR_ARRAY(other, i)
             PlacementNew(static_cast<T>(other[i]));
     }
 
-    template<typename OTHER_T, auto OTHER_N>
-    constexpr
+    template<typename OTHER_T, auto OTHER_N> constexpr
     void AppendArray(OTHER_T const (&arr)[OTHER_N])
     {
-        ArrayAssert(count + OTHER_N <= COUNT_MAX, "array exhausted");
+        ArrayAssert(count + OTHER_N <= COUNT_MAX, "[Array::AppendArray] array exhausted");
         FOR_C_ARRAY(arr, i)
             PlacementNew(static_cast<T>(arr[i]));
     }
 
-    template<typename OTHER_T>
-    constexpr
+    template<typename OTHER_T> constexpr
     void AppendArray(OTHER_T const* ptr, idx_t const pCount)
     {
-        ArrayAssert(count + pCount <= COUNT_MAX, "array exhausted");
+        ArrayAssert(count + pCount <= COUNT_MAX, "[Array::AppendArray] array exhausted");
         for(idx_t i = 0; i < pCount; ++i)
             PlacementNew(static_cast<T>(ptr[i]));
     }
@@ -117,14 +111,14 @@ struct Array
     constexpr
     T& operator[](idx_t const idx) 
     { 
-        ArrayAssert(idx >= 0 && idx < count, "array access out of bounds");
+        ArrayAssert(idx >= 0 && idx < count, "[Array::[]] array access out of bounds");
         return reinterpret_cast<T*> (bytes)[idx]; 
     } 
 
     constexpr
     T const& operator[](idx_t const idx) const 
     { 
-        ArrayAssert(idx >= 0 && idx < count, "array access out of bounds");
+        ArrayAssert(idx >= 0 && idx < count, "[Array::[]] array access out of bounds");
         return reinterpret_cast<T const*>(bytes)[idx];
     }
 

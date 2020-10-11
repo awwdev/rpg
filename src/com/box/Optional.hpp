@@ -3,26 +3,31 @@
 #pragma once
 
 namespace rpg::com {
-    
-//COPY
-template<class T>
+
+template<typename T>
 struct Optional
 {
-    Optional()                : value {},         hasValue { false } {}
-    Optional(T const& pValue) : value { pValue }, hasValue { true  } {}
+    bool hasValue;
+    T    value;
 
-    operator bool() const { return hasValue; } //! issue that it can lead to implicit conversion
-    //operator T()    const { return value; }
+    Optional()
+        : hasValue { false }
+        , value    {}
+    {}
+
+    Optional(T const& pValue)
+        : hasValue { true }
+        , value    { pValue }
+    {}
+
+    //! watch to not use "auto value = optional", but *optional or optional.value
+    //! since it will implicitly convert to bool
+    operator bool() const { return hasValue; }
 
     T*       operator->()       { return &value; }
     const T* operator->() const { return &value; }
-
-    T&       operator* ()       { return value; }
-    T const& operator* () const { return value; }
-
-private:
-    T    value;
-    bool hasValue;
+    T&       operator* ()       { return  value; }
+    T const& operator* () const { return  value; }
 };
 
 }//ns

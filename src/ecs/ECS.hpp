@@ -83,7 +83,7 @@ struct ECS
 private:
     auto RegisterEntity() -> ID
     {
-        auto const optionalEntityID = entities.FindFreeBitOptional();
+        auto const optionalEntityID = entities.FindFreeBit_Optional();
         dbg::Assert(optionalEntityID, "no free entity id");
         entities.Set(*optionalEntityID, true);
         return *optionalEntityID;
