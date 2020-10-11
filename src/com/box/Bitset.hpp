@@ -14,7 +14,7 @@ namespace rpg::com {
 constexpr bool USE_BITSET_ASSERTS = true;
 
 #define FOR_BITSET(bitset, i) \
-for(idx_t i = 0; i < bitset.BIT_COUNT; ++i)
+for(idx_t i = 0; i < bitset.LastActiveBit(); ++i)
 
 template<auto N>
 struct Bitset
@@ -27,13 +27,15 @@ struct Bitset
     constexpr 
     Bitset(idx_t const num = 0)
         : bytes {} //nullify
-        , count {}
+        , lastActiveBit {}
     {
         BitsetAssert(BytesNeeded(num) <= BYTE_COUNT, "[Bitset::Ctor] bitset ctor input to big");
         for(idx_t i = 0; i < BYTE_COUNT; ++i) 
         {
             const idx_t bits = i * 8;
             bytes[i] = static_cast<u8>((num >> bits) & 0xFF);
+            if (bytes[i])
+                ++lastActiveBit;
         }
     }
 
@@ -41,11 +43,13 @@ struct Bitset
 
     void Set(const auto i, const bool setTrue = true)
     {
-        BitsetAssert((idx_t)i < BIT_COUNT, "[BitsetAssert::Set] idx out of bounds");
+        BitsetAssert(static_cast<idx_t>(i) < BIT_COUNT, "[BitsetAssert::Set] idx out of bounds");
 
         bytes[Byte(i)] = setTrue
             ? bytes[Byte(i)] |  (1 << Bit(i))
             : bytes[Byte(i)] & ~(1 << Bit(i));
+
+        CheckLastActiveBit(i, setTrue);
     }
 
     bool Test(const auto i) const
@@ -58,11 +62,18 @@ struct Bitset
     {
         BitsetAssert(static_cast<idx_t>(i) < BIT_COUNT, "[Bitset] idx out of bounds");
         bytes[Byte(i)] ^= 1 << Bit(i);
+        CheckLastActiveBit(i, bytes[Byte(i)]);
     }
 
     void Clear()
     {
         std::memset(bytes, 0, BYTE_COUNT);
+        lastActiveBit = {};
+    }
+
+    auto LastActiveBit() const 
+    {
+        return lastActiveBit;
     }
 
     //? helper
@@ -94,6 +105,7 @@ struct Bitset
     {
         std::ofstream file { path, std::ios::binary };
         dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
+        file << lastActiveBit;
         file.write(reinterpret_cast<char const*>(bytes), BYTE_COUNT);
     }
 
@@ -101,6 +113,7 @@ struct Bitset
     {
         std::ifstream file { path, std::ios::binary };
         dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
+        file >> lastActiveBit;
         file.read(reinterpret_cast<char*>(bytes), BYTE_COUNT);
     }
 
@@ -124,9 +137,15 @@ private:
         return n;
     }
 
+    constexpr void CheckLastActiveBit(auto const idx, bool const expr = true)
+    {
+        if (static_cast<idx_t>(idx) > lastActiveBit && expr)
+            lastActiveBit = static_cast<idx_t>(idx);
+    }
+
     //? data 
     u8 bytes [BYTE_COUNT];
-    idx_t count;
+    idx_t lastActiveBit;
 
 };
 
