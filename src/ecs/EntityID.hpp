@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Types.hpp"
+#include "com/Utils.hpp"
 
 namespace rpg::ecs {
     

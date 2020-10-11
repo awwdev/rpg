@@ -2,7 +2,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Types.hpp"
+#include "com/Utils.hpp"
 #include "res/Terrain/TerrainQuadrant.hpp"
 
 #include <fstream>

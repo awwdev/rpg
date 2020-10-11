@@ -1,14 +1,13 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Types.hpp"
+#include "com/Utils.hpp"
 #include "com/box/Bitset.hpp"
 #include "com/box/Array.hpp"
-#include <concepts>
 
 namespace rpg::com {
     
-template<class KEY, class VAL, typename = IsIntegralOrEnum<KEY>>
+template<as_enum_integral KEY, class VAL>
 struct EnumPair
 {
     using KEY_T = KEY;
@@ -17,13 +16,10 @@ struct EnumPair
     VAL val;
 };
 
-template<class T>
-concept PairConcept = requires (T) { T::KEY_T; T::VAL_T; };
-
 //wrapper over array that uses enum for max count and index
 //the wrapper allows for order independent init, removal, add, and is capacity based (last enum item)
 
-template<auto ENUM_END_T, class VAL, auto OFFSET = 0>
+template<auto ENUM_END_T, typename VAL, auto OFFSET = 0>
 struct EnumMap
 {
     //? DATA
