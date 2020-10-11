@@ -8,10 +8,10 @@ namespace rpg::gui {
 template<class T>
 struct Widget_Slider
 {
-    com::Rectf  rect;
+    com::Rectf rect;
     com::String<30> label;
-    T value;
-    T min, max;
+    T min, max; //ctor could assert when min == max (would cause nan)
+    T value = min;
 
     bool isDragging; //internal
     f32 dragInitX;   //internal
@@ -27,7 +27,7 @@ struct Widget_Slider
 
         constexpr f32 KNOB_SIZE = LINE_HEIGHT;
         const f32 knobXNorm = (value - min) / (max - min);
-        const f32 knobX = knobXNorm * (back.w - KNOB_SIZE);
+        const f32 knobX = knobXNorm * (back.width - KNOB_SIZE);
 
         const com::Rectf knob { 
             back.x + 1 + knobX,
@@ -48,7 +48,7 @@ struct Widget_Slider
         if (isDragging){
             const f32 delta = (f32)wnd::glo::mouse_wx - dragInitX;
             dragInitX = (f32)wnd::glo::mouse_wx;
-            const f32 pxVal = (max-min) / (back.w - KNOB_SIZE);
+            const f32 pxVal = (max-min) / (back.width - KNOB_SIZE);
             value += delta * pxVal;
             com::Clamp(value, min, max);
         }
@@ -64,16 +64,12 @@ struct Widget_Slider
     T Update(gpu::RenderData& renderData, Widget_Window& wnd)
     {
         if (wnd.isClosed)
-            return;
+            return {};
 
         wnd.CalculateRow(rect, LINE_HEIGHT);
         return Update(renderData);
     }
-
-    T GetValue() const
-    {
-        return (T) std::atof(value.data);
-    }
+    
 };
 
 }//ns

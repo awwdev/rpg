@@ -43,7 +43,7 @@ struct Widget_Window
         const bool isMouseOnResizer  = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, resizer);
         const bool isMouseOnCloseBtn = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, closeBtn);
         
-        if (isMouseOnWindow)
+        if (!isClosed && isMouseOnWindow)
             app::glo::inputMode = app::glo::UI_Mode;
 
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>()) {

@@ -27,6 +27,7 @@ struct Mat
         struct {
             T x, y; 
             union {
+                //! w is not width (this can lead to confusion)
                 struct { T z, w; };
                 struct { T width, height; };
             };

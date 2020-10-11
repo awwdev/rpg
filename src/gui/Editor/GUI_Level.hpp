@@ -4,6 +4,7 @@
 #include "gui/Widgets/Widget_List.hpp"
 #include "gui/Widgets/Widget_Table.hpp"
 #include "gui/Widgets/Widget_Checkbox.hpp"
+#include "gui/Widgets/Widget_Slider.hpp"
 #include "res/Resources.hpp"
 
 namespace rpg::gui {
@@ -30,6 +31,11 @@ struct GUI_Level
         .label = "Terrain Wire",
         .isChecked = true,
     };
+
+    //TODO: color picker
+    Widget_Slider<float> rSlider { .label = "R", .min = 0, .max = 1 };
+    Widget_Slider<float> gSlider { .label = "G", .min = 0, .max = 1 };
+    Widget_Slider<float> bSlider { .label = "B", .min = 0, .max = 1 };
 
     void Init(res::Resources_Prefabs const& resPrefabs)
     {
@@ -59,12 +65,21 @@ struct GUI_Level
         }();
 
         wnd         .Update(renderData);
+
         table       .Update(renderData, wnd);
         prefabList  .Update(renderData, wnd);
         checkbox    .Update(renderData, wnd);
 
+        rSlider     .Update(renderData, wnd);
+        gSlider     .Update(renderData, wnd);
+        bSlider     .Update(renderData, wnd);
+
         res.terrain.terrain.settings.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
         renderData.general.enableTerrainWire = checkbox.isChecked;
+
+        res.terrain.terrain.settings.vertexColor.r = rSlider.value;
+        res.terrain.terrain.settings.vertexColor.g = gSlider.value;
+        res.terrain.terrain.settings.vertexColor.b = bSlider.value;
     }
 };
 
