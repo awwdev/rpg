@@ -47,10 +47,10 @@ struct EnumMap
 
     #define KEY_T template<class KEY>
 
-    KEY_T VAL&       Get        (const KEY key)       { return data[(idx_t)key]; }
-    KEY_T const VAL& Get        (const KEY key) const { return data[(idx_t)key]; }
-    KEY_T VAL*       GetOptional(const KEY key)       { return Contains(key) ? &data[(idx_t)key] : nullptr; }
-    KEY_T const VAL* GetOptional(const KEY key) const { return Contains(key) ? &data[(idx_t)key] : nullptr; }
+    KEY_T VAL&       Get    (const KEY key)       { return data[(idx_t)key]; }
+    KEY_T const VAL& Get    (const KEY key) const { return data[(idx_t)key]; }
+    KEY_T VAL*       GetPtr (const KEY key)       { return Contains(key) ? &data[(idx_t)key] : nullptr; }
+    KEY_T const VAL* GetPtr (const KEY key) const { return Contains(key) ? &data[(idx_t)key] : nullptr; }
 
     KEY_T bool Contains(const KEY key) const
     {

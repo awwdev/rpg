@@ -3,11 +3,10 @@
 #pragma once
 #include "com/box/Array.hpp"
 #include "com/box/Bitset.hpp"
+#include "com/Utils.hpp"
 
 #include "ecs/EntityID.hpp"
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"
-
-#include <fstream>
 
 namespace rpg::ecs {
     
@@ -25,10 +24,10 @@ struct ComponentArray
     auto&       Get    (const ID entityID)       { return dense[componentLookup[entityID]]; }
     const auto& Get    (const ID entityID) const { return dense[componentLookup[entityID]]; }
 
-    com::String<30> filename;
+    ComponentEnum componentEnum;
 
-    ComponentArray(chars_t name) 
-        : filename { name }
+    ComponentArray(ComponentEnum const pComponentEnum) 
+        : componentEnum { pComponentEnum }
     {
         Clear(); //used for initialization          
     }
@@ -60,72 +59,22 @@ struct ComponentArray
 
     void Save()
     {
-        //dense
-        {
-            com::String<100> path { "res/ECS/" }; 
-            path.AppendString(filename);
-            path.AppendArray("_dense.ecs");
-            dense.WriteBinaryFile(path.Data());
-        }
+        dbg::Assert(COMPONENT_SERIALIZATION_PATHS.Contains(componentEnum), "component path missing");
+        auto const& paths = COMPONENT_SERIALIZATION_PATHS.Get(componentEnum);
 
-        //componentLookup
-        {
-            com::String<100> path { "res/ECS/" }; 
-            path.AppendString(filename);
-            path.AppendArray("_componentLookup.ecs");
-
-            auto file = std::ofstream(path.Data(), std::ios::binary);
-            dbg::Assert(file.is_open(), "cannot open file");
-
-            file.write(reinterpret_cast<char const*>(componentLookup), MAX_COMPONENT_COUNT * sizeof(ID));
-        }
-
-        //entityLookup
-        {
-            com::String<100> path { "res/ECS/" }; 
-            path.AppendString(filename);
-            path.AppendArray("_entityLookup.ecs");
-
-            auto file = std::ofstream(path.Data(), std::ios::binary);
-            dbg::Assert(file.is_open(), "cannot open file");
-
-            file.write(reinterpret_cast<char const*>(entityLookup), MAX_COMPONENT_COUNT * sizeof(ID));
-        }
+        dense.WriteBinaryFile(paths.dense.Data());
+        com::WriteBinaryFile_C_Array(paths.componentLookup.Data(), componentLookup);
+        com::WriteBinaryFile_C_Array(paths.entityLookup.Data(), entityLookup);
     }
 
     void Load()
     {
-        //dense
-        {
-            com::String<100> path { "res/ECS/" }; 
-            path.AppendString(filename);
-            path.AppendArray("_dense.ecs");
-            dense.ReadBinaryFile(path.Data());
-        }
+        dbg::Assert(COMPONENT_SERIALIZATION_PATHS.Contains(componentEnum), "component path missing");
+        auto const& paths = COMPONENT_SERIALIZATION_PATHS.Get(componentEnum);
 
-        //componentLookup
-        {
-            com::String<100> path { "res/ECS/" }; 
-            path.AppendString(filename);
-            path.AppendArray("_componentLookup.ecs");
-
-            auto file = std::ifstream(path.Data(), std::ios::binary);
-            dbg::Assert(file.is_open(), "cannot open file");
-
-            file.read(reinterpret_cast<char*>(componentLookup), MAX_COMPONENT_COUNT * sizeof(ID));
-        }
-
-        //entityLookup
-        {
-            com::String<100> path { "res/ECS/" }; 
-            path.AppendString(filename);
-            path.AppendArray("_entityLookup.ecs");
-
-            auto file = std::ifstream(path.Data(), std::ios::binary);
-            dbg::Assert(file.is_open(), "cannot open file");
-
-            file.read(reinterpret_cast<char*>(entityLookup), MAX_COMPONENT_COUNT * sizeof(ID));
-        }
+        dense.ReadBinaryFile(paths.dense.Data());
+        com::ReadBinaryFile_C_Array(paths.componentLookup.Data(), componentLookup);
+        com::ReadBinaryFile_C_Array(paths.entityLookup.Data(), entityLookup);
     }
 
 };
