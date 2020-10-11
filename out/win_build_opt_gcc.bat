@@ -1,5 +1,6 @@
 @echo off ^
  & mkdir out\\Optimized ^
+ & mkdir out\\tmp ^
  & xcopy /s /y /d res\* out\\Optimized\\res\* ^
  & Pushd G:\\DEV2020\\buildtools\\msys2\\mingw64\\bin ^
  & g++ ^

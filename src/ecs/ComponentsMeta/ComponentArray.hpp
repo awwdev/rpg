@@ -16,8 +16,8 @@ struct ComponentArray
     using COMPONENT = COMPONENT_T;
 
     com::Array<COMPONENT_T, MAX_COMPONENT_COUNT> dense;
-    ID componentLookup [(idx_t) MAX_COMPONENT_COUNT];
-    ID entityLookup    [(idx_t) MAX_COMPONENT_COUNT];
+    ID componentLookup [static_cast<idx_t>(MAX_COMPONENT_COUNT)];
+    ID entityLookup    [static_cast<idx_t>(MAX_COMPONENT_COUNT)];
 
     auto*       GetPtr (const ID entityID)       { return componentLookup[entityID] == ECS_NULL ? nullptr : &dense[componentLookup[entityID]]; }
     const auto* GetPtr (const ID entityID) const { return componentLookup[entityID] == ECS_NULL ? nullptr : &dense[componentLookup[entityID]]; }
@@ -63,8 +63,8 @@ struct ComponentArray
         auto const& paths = COMPONENT_SERIALIZATION_PATHS.Get(componentEnum);
 
         dense.WriteBinaryFile(paths.dense.Data());
-        com::WriteBinaryFile_C_Array(paths.componentLookup.Data(), componentLookup);
-        com::WriteBinaryFile_C_Array(paths.entityLookup.Data(), entityLookup);
+        com::WriteBinaryFile_C_Array(paths.componentLookup.Data(), componentLookup, ArrayCount(componentLookup));
+        com::WriteBinaryFile_C_Array(paths.entityLookup.Data(), entityLookup, ArrayCount(entityLookup));
     }
 
     void Load()

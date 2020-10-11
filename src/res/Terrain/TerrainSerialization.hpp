@@ -14,14 +14,14 @@ void WriteOrRead(QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
 {
     using namespace com;
 
-    char path[] { "res/Terrain/txx" };
+    char path[] { "out/tmp/txx" }; //TODO: replace with current working dir
 
     for(idx_t z = 0; z < QUADRANT_COUNT; ++z) {
     for(idx_t x = 0; x < QUADRANT_COUNT; ++x) {
         
         const auto& quadrant = quadrants[z][x];
-        path[13] = (char)(48 + z);
-        path[14] = (char)(48 + x);
+        path[9] = (char)(48 + z);
+        path[10] = (char)(48 + x);
         
         auto file = [&] {
             if constexpr (DoSave) return std::ofstream(path, std::ios::binary);

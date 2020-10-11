@@ -44,8 +44,9 @@ struct ComponentFiles
 
 const com::EnumMap<ComponentEnum::ENUM_END, ComponentFiles> COMPONENT_SERIALIZATION_PATHS
 {
-    { ComponentEnum::MainComponent, "res/ecs/MainComponent" },
-    { ComponentEnum::NameComponent, "res/ecs/NameComponent" },
+    //TODO: replace with current working dir
+    { ComponentEnum::MainComponent, "out/tmp/MainComponent" },
+    { ComponentEnum::NameComponent, "out/tmp/NameComponent" },
 };
 
 }//NS

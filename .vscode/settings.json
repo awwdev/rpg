@@ -7,9 +7,10 @@
 	//"editor.fontFamily": "Fira Code",
 	//"editor.fontFamily": "Consolas",
 	"editor.fontFamily": "Cousine",
+	//"editor.fontFamily": "SF Mono",
 	"editor.fontSize": 11.49,
-	"editor.fontWeight": "100",
-	"editor.fontLigatures": true,
+	"editor.fontWeight": "600",
+	"editor.fontLigatures": "false",
 	"editor.lineHeight": 24,
 	"editor.tabSize": 4,
 	"editor.letterSpacing": -0.15,
@@ -58,7 +59,7 @@
 	// VS Colors
 	"workbench.colorCustomizations": {
 		"scrollbar.shadow": "#00000000",
-		"editor.background": "#2c3236",
+		"editor.background": "#303e49",
 		"panel.border": "#222",
 		"tab.border": "#222",
 		"contrastBorder": "#222",
@@ -212,7 +213,7 @@
 				],
 				"settings": {
 					"foreground": "#d8d8d8",
-					"fontStyle": "bold"
+					//"fontStyle": "bold"
 				}
 			},
 
@@ -246,7 +247,7 @@
 				],
 				"settings": {
 					"foreground": "#d8d8d8",
-					"fontStyle": "bold"
+					//"fontStyle": "bold"
 				}
 			},
 			
@@ -259,7 +260,7 @@
 				],
 				"settings": {
 					"foreground": "#d8d8d8",
-					"fontStyle": "bold"
+					//"fontStyle": "bold"
 				}
 			},
 				
@@ -272,7 +273,7 @@
 				],
 				"settings": {
 					"foreground": "#9496aa",
-					"fontStyle": "bold"
+					//"fontStyle": "bold"
 				}
 			},
 
@@ -283,7 +284,7 @@
 				],
 				"settings": {
 					"foreground": "#e46262",
-					"fontStyle": ""
+					//"fontStyle": ""
 				}
 			},
 
@@ -295,7 +296,7 @@
 				],
 				"settings": {
 					"foreground": "#ecb06c",
-					"fontStyle": "bold"
+					//"fontStyle": "bold"
 				}
 			},
 
@@ -316,7 +317,7 @@
 				],
 				"settings": {
 					"foreground": "#ecb06c",
-					"fontStyle": "bold"
+					//"fontStyle": "bold"
 				}
 			},
 
@@ -328,7 +329,7 @@
 				],
 				"settings": {
 					"foreground": "#ecb06c",
-					"fontStyle": "bold"
+					//"fontStyle": "bold"
 				}
 			},
 
@@ -345,7 +346,7 @@
 				],
 				"settings": {
 					"foreground": "#93acda",
-					"fontStyle": "bold"
+					//"fontStyle": "bold"
 				}
 			},
 
@@ -356,7 +357,7 @@
 				],
 				"settings": {
 					"foreground": "#75b3e6",
-					"fontStyle": "bold"
+					 //"fontStyle": "bold"
 				}
 			},
 
@@ -435,7 +436,7 @@
 			"decorations": [
 				{ 
 					"color": "#CC5555",
-					"fontWeight": "bold"
+					//"fontWeight": "bold"
 				},
 			]
 		},
@@ -445,7 +446,7 @@
 			"decorations": [
 				{ 
 					"color": "#cc8010",
-					"fontWeight": "bold"
+					//"fontWeight": "bold"
 				},
 			]
 		},

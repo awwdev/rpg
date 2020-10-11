@@ -48,10 +48,10 @@ concept as_enum_integral = std::is_enum_v<T> || std::is_integral_v<T>;
 
 //? array
 
-template<class T, idx_t N>
-inline constexpr idx_t ArrayCount(const T (&arr)[N])
+template<typename T, auto N>
+constexpr auto ArrayCount(const T (&arr)[N])
 {
-    return N;
+    return static_cast<idx_t>(N);
 }
 
 #define FOR_C_ARRAY(arr, i) for(idx_t i = 0; i < ArrayCount(arr); ++i)
@@ -60,20 +60,22 @@ inline constexpr idx_t ArrayCount(const T (&arr)[N])
 
 namespace com
 {
-    template<typename T, auto N>
-    void WriteBinaryFile_C_Array(chars_t path, T const (&arr) [N])
+    template<typename T>
+    void WriteBinaryFile_C_Array(chars_t path, T const* ptr, idx_t const count)
     {
         auto file = std::ofstream(path, std::ios::binary);
         dbg::Assert(file.is_open(), "[IO] cannot open file");
-        file.write(reinterpret_cast<char const*>(arr), N * sizeof(T));
+        file.write(reinterpret_cast<char const*>(ptr), count * sizeof(T));
     }
 
-    template<typename T, auto N>
-    void ReadBinaryFile_C_Array(chars_t path, T (&arr) [N])
+    template<typename T>
+    void ReadBinaryFile_C_Array(chars_t path, T* ptr)
     {
-        auto file = std::ifstream(path, std::ios::binary);
+        auto file = std::ifstream(path, std::ios::binary | std::ios::ate);
         dbg::Assert(file.is_open(), "[IO] cannot open file");
-        file.read(reinterpret_cast<char*>(arr), N * sizeof(T));
+        auto size = file.tellg();
+        file.seekg(std::ios::beg);
+        file.read(reinterpret_cast<char*>(ptr), size);
     }
 }
 

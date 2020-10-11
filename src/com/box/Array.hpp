@@ -156,7 +156,7 @@ struct Array
         std::ofstream file { path, std::ios::binary };
         dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
         file << count;
-        file.write(reinterpret_cast<char const*>(bytes), TOTAL_BYTE_SIZE);
+        file.write(reinterpret_cast<char const*>(bytes), sizeof(T) * count);
     }
 
     void ReadBinaryFile(chars_t path)
@@ -164,7 +164,7 @@ struct Array
         std::ifstream file { path, std::ios::binary };
         dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
         file >> count;
-        file.read(reinterpret_cast<char*>(bytes), TOTAL_BYTE_SIZE);
+        file.read(reinterpret_cast<char*>(bytes), sizeof(T) * count);
     }
 
 private:

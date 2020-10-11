@@ -5,9 +5,8 @@
 
 - terrain refactor
 - terrain gizmo
-- vertex paint
 
-
+- RLE on binary dumps
 
 - scene reload
 

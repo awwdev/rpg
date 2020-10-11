@@ -1,5 +1,6 @@
 @echo off ^
  & mkdir out\\Debug ^
+ & mkdir out\\tmp ^
  & xcopy /s /y /d res\* out\\Debug\\res\* ^
  & call G:\DEV2020\buildtools\msvc\VC\Auxiliary\Build\vcvars64.bat ^
  & cl ^

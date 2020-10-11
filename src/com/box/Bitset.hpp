@@ -106,15 +106,17 @@ struct Bitset
         std::ofstream file { path, std::ios::binary };
         dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
         file << lastActiveBit;
-        file.write(reinterpret_cast<char const*>(bytes), BYTE_COUNT);
+        file.write(reinterpret_cast<char const*>(bytes), BytesNeeded(lastActiveBit));
     }
 
     void ReadBinaryFile(chars_t path)
     {
-        std::ifstream file { path, std::ios::binary };
+        std::ifstream file { path, std::ios::binary | std::ios::ate };
         dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
+        auto size = file.tellg();
+        file.seekg(std::ios::beg);
         file >> lastActiveBit;
-        file.read(reinterpret_cast<char*>(bytes), BYTE_COUNT);
+        file.read(reinterpret_cast<char*>(bytes), size);
     }
 
 private:
@@ -130,7 +132,7 @@ private:
     constexpr idx_t Bit (auto const i) const { return static_cast<idx_t>(i) % idx_t { 8 }; }
     constexpr idx_t Byte(auto const i) const { return static_cast<idx_t>(i) / idx_t { 8 }; }
 
-    constexpr idx_t BytesNeeded(idx_t num)
+    constexpr idx_t BytesNeeded(idx_t num) const
     {
         idx_t n = 0;
         do { num >>= 8; n++; } while (num);

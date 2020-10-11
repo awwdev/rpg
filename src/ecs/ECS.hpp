@@ -34,16 +34,16 @@ struct ECS
         //save
         if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
         {
-            entitiesTopLevel.WriteBinaryFile("res/ECS/entitiesTopLevel.ecs");
-            entities.WriteBinaryFile("res/ECS/entities.ecs");
+            entitiesTopLevel.WriteBinaryFile("out/tmp/entitiesTopLevel.ecs");
+            entities.WriteBinaryFile("out/tmp/entities.ecs");
             arrays.SaveComponents();
         }
 
         //load
         if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>())
         {
-            entitiesTopLevel.ReadBinaryFile("res/ECS/entitiesTopLevel.ecs");
-            entities.ReadBinaryFile("res/ECS/entities.ecs");
+            entitiesTopLevel.ReadBinaryFile("out/tmp/entitiesTopLevel.ecs");
+            entities.ReadBinaryFile("out/tmp/entities.ecs");
             arrays.LoadComponents();
         }
 
