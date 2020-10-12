@@ -11,8 +11,11 @@ template<auto BYTE_CAPACITY_T>
 struct BinaryMemory
 {
     static constexpr idx_t BYTE_CAPACITY = static_cast<idx_t>(BYTE_CAPACITY_T);
-    char data [BYTE_CAPACITY];
-    idx_t byteIdx = 0;
+
+    void ResetByteIdx()
+    {
+        byteIdx = 0;
+    }
 
     template<typename T>
     void operator<<(T const& pData)
@@ -28,7 +31,7 @@ struct BinaryMemory
     {
         //TODO: decompress
         std::memcpy(&pData, &data[byteIdx], sizeof(T));
-        byteIdx -= sizeof(T);
+        byteIdx += sizeof(T);
         dbg::Assert(byteIdx < BYTE_CAPACITY && byteIdx >= 0, "[BinaryBlob] idx out of bounds");
     }
 
@@ -40,13 +43,17 @@ struct BinaryMemory
         dbg::Assert(byteIdx < BYTE_CAPACITY && byteIdx >= 0, "[BinaryBlob] idx out of bounds");
     }
 
-    void Read(char* const pData, std::size_t const size)
+    void Read(char* pData, std::size_t const size)
     {
         //TODO: decompress
         std::memcpy(&pData, &data[byteIdx], size);
-        byteIdx -= size;
+        byteIdx += size;
         dbg::Assert(byteIdx < BYTE_CAPACITY && byteIdx >= 0, "[BinaryBlob] idx out of bounds");
     }
+
+private:
+    char data [BYTE_CAPACITY];
+    idx_t byteIdx = 0;
 
 };
 

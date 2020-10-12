@@ -169,16 +169,6 @@ struct Array
         file.read(reinterpret_cast<char*>(bytes), sizeof(T) * count);
     }
 
-    auto WriteBinaryMemory() const
-    {
-        constexpr auto SIZE = TOTAL_BYTE_SIZE + sizeof(count);
-        auto  blockPtr = mem::ClaimBlock<mem::BinaryMemory<SIZE>>();
-        auto& binaryMem = *blockPtr;
-        binaryMem << count;
-        binaryMem.Write(reinterpret_cast<char const*>(bytes), sizeof(T) * count);
-        return blockPtr;
-    }
-
 private:
 
     //? internal helper
@@ -202,6 +192,28 @@ private:
 
     alignas(alignof(T)) std::byte bytes [TOTAL_BYTE_SIZE]; //uninit
     idx_t count;
+
+public:
+
+    static constexpr auto BINARY_SIZE = TOTAL_BYTE_SIZE + sizeof(decltype(count));
+    using BINARY_MEMORY_T = mem::BinaryMemory<BINARY_SIZE>;
+
+    auto WriteBinaryMemory() const
+    {
+        auto  blockPtr = mem::ClaimBlock<BINARY_MEMORY_T>();
+        auto& binaryMem = *blockPtr;
+        binaryMem << count;
+        binaryMem.Write(reinterpret_cast<char const*>(bytes), sizeof(T) * count);
+        return blockPtr;
+    }
+
+    void ReadBinaryMemory(com::mem::BlockPtr<BINARY_MEMORY_T>& blockPtr)
+    {
+        auto& binaryMem = *blockPtr;
+        binaryMem.ResetByteIdx();
+        binaryMem >> count;
+        binaryMem.Read(reinterpret_cast<char*>(bytes), sizeof(T) * count);
+    }
 };
 
 

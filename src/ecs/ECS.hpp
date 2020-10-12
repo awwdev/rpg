@@ -3,6 +3,7 @@
 #pragma once
 #include "com/box/Bitset.hpp"
 #include "com/box/String.hpp"
+#include "com/mem/Allocator.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
 
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
@@ -21,6 +22,8 @@ struct ECS
     com::Array<ID, MAX_ENTITY_COUNT>           entitiesTopLevel;
     ComponentArrays<MAX_ENTITY_COUNT>          arrays;
     ComponentArrays<res::PrefabEnum::ENUM_END> prefabsArrays;
+
+    com::mem::BlockPtr<decltype(entitiesTopLevel)::BINARY_MEMORY_T> blockPtr;
 
 
     void Update(float const dt, gpu::RenderData& renderData)
@@ -67,13 +70,13 @@ struct ECS
 
     //? serialization
 
-    void Save() const 
+    void Save() 
     {
         entitiesTopLevel.WriteBinaryFile("out/tmp/entitiesTopLevel.ecs");
         entities.WriteBinaryFile("out/tmp/entities.ecs");
         arrays.SaveComponents();
 
-        auto blockPtr = entitiesTopLevel.WriteBinaryMemory();
+        blockPtr = std::move(entitiesTopLevel.WriteBinaryMemory());
         //TODO: could be fine that every system stores own history and you can revert what you like
     }
 
@@ -82,6 +85,8 @@ struct ECS
         entitiesTopLevel.ReadBinaryFile("out/tmp/entitiesTopLevel.ecs");
         entities.ReadBinaryFile("out/tmp/entities.ecs");
         arrays.LoadComponents();
+
+        entitiesTopLevel.ReadBinaryMemory(blockPtr);
     }
 
 private:
