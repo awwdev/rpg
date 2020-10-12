@@ -25,30 +25,13 @@ struct ECS
 
     void Update(float const dt, gpu::RenderData& renderData)
     {
-        //? SYSTEMS
+        //? system updates
         TransformSystem(arrays, dt);
         RenderSystem(arrays, dt, renderData);
-
-        //TODO: NEED SERIALIZATION FOR CONTAINERS (count and other data)
-
-        //save
-        if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
-        {
-            entitiesTopLevel.WriteBinaryFile("out/tmp/entitiesTopLevel.ecs");
-            entities.WriteBinaryFile("out/tmp/entities.ecs");
-            arrays.SaveComponents();
-        }
-
-        //load
-        if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>())
-        {
-            entitiesTopLevel.ReadBinaryFile("out/tmp/entitiesTopLevel.ecs");
-            entities.ReadBinaryFile("out/tmp/entities.ecs");
-            arrays.LoadComponents();
-        }
-
     }
 
+
+    //? adding
 
     ID AddEntity()
     {
@@ -78,9 +61,33 @@ struct ECS
         return childID;
     }
 
+    //? removing
     //TODO: remove entity, removed entity array
 
+
+    //? serialization
+
+    void Save() const 
+    {
+        entitiesTopLevel.WriteBinaryFile("out/tmp/entitiesTopLevel.ecs");
+        entities.WriteBinaryFile("out/tmp/entities.ecs");
+        arrays.SaveComponents();
+
+        auto blockPtr = entitiesTopLevel.WriteBinaryMemory();
+        //TODO: could be fine that every system stores own history and you can revert what you like
+    }
+
+    void Load()
+    {
+        entitiesTopLevel.ReadBinaryFile("out/tmp/entitiesTopLevel.ecs");
+        entities.ReadBinaryFile("out/tmp/entities.ecs");
+        arrays.LoadComponents();
+    }
+
 private:
+
+    //? internal helpers
+
     auto RegisterEntity() -> ID
     {
         auto const optionalEntityID = entities.FindFreeBit_Optional();

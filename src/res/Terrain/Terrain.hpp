@@ -95,12 +95,6 @@ struct Terrain
             Placing(camera, ecs);
 
         //? MODES
-        if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
-            SaveTerrain(quadrants);
-        if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>()){
-            LoadTerrain(quadrants);
-            MarkAllDirty();
-        }
         if (wnd::HasEvent<wnd::EventType::F7, wnd::EventState::Pressed>())
             Stiching();
          if (wnd::HasEvent<wnd::EventType::F8, wnd::EventState::Pressed>())

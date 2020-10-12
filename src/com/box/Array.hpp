@@ -4,13 +4,15 @@
 #include "com/Utils.hpp"
 #include "dbg/Assert.hpp"
 #include "dbg/Logger.hpp"
+#include "com/mem/Allocator.hpp"
+#include "com/mem/BinaryMemory.hpp"
 
 #include <cstddef>
 #include <fstream>
 
 namespace rpg::com {
 
-constexpr bool DO_ARRAY_ASSERTS = true;
+constexpr bool USE_ARRAY_ASSERTS = true;
 
 #define FOR_ARRAY(arr, i) \
 for(idx_t i = 0; i < arr.Count(); ++i)
@@ -167,6 +169,16 @@ struct Array
         file.read(reinterpret_cast<char*>(bytes), sizeof(T) * count);
     }
 
+    auto WriteBinaryMemory() const
+    {
+        constexpr auto SIZE = TOTAL_BYTE_SIZE + sizeof(count);
+        auto  blockPtr = mem::ClaimBlock<mem::BinaryMemory<SIZE>>();
+        auto& binaryMem = *blockPtr;
+        binaryMem << count;
+        binaryMem.Write(reinterpret_cast<char const*>(bytes), sizeof(T) * count);
+        return blockPtr;
+    }
+
 private:
 
     //? internal helper
@@ -182,7 +194,7 @@ private:
     constexpr
     void ArrayAssert(bool const expr, chars_t msg) const 
     {
-        if constexpr (!DO_ARRAY_ASSERTS) return;
+        if constexpr (!USE_ARRAY_ASSERTS) return;
         dbg::Assert(expr, msg);
     }
 

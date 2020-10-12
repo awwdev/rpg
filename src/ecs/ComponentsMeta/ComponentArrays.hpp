@@ -51,7 +51,7 @@ struct ComponentArrays
         nameComponents.Load();
     }
 
-    void SaveComponents()
+    void SaveComponents() const
     {
         mainComponents.Save();
         nameComponents.Save();

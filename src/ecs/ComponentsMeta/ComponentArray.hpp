@@ -57,7 +57,7 @@ struct ComponentArray
         }  
     }
 
-    void Save()
+    void Save() const
     {
         dbg::Assert(COMPONENT_SERIALIZATION_PATHS.Contains(componentEnum), "component path missing");
         auto const& paths = COMPONENT_SERIALIZATION_PATHS.Get(componentEnum);

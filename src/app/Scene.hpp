@@ -86,7 +86,7 @@ struct GameScene
         if (app::glo::inputMode == app::glo::InputMode::PlayMode) 
             playerController.Update(dt, ecs, renderData);
         else 
-            editorController.Update(dt, ecs, renderData);
+            editorController.Update(dt, ecs, resources, renderData);
 
         resources.terrain.terrain.Update(dt, editorController.camera, ecs); //move into editor?
         sun.Update(ecs, dt, renderData);

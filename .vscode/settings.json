@@ -59,7 +59,7 @@
 	// VS Colors
 	"workbench.colorCustomizations": {
 		"scrollbar.shadow": "#00000000",
-		"editor.background": "#303e49",
+		"editor.background": "#33363d",
 		"panel.border": "#222",
 		"tab.border": "#222",
 		"contrastBorder": "#222",

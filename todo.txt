@@ -1,18 +1,14 @@
 
-- undo / redo 
+- undo / redo (without command manager but just serialization but with compression)
+- scene reload
+- RLE on binary dumps
 
 
 
 - terrain refactor
 - terrain gizmo
 
-- RLE on binary dumps
-
-- scene reload
-
-
 - mesh collision general
-- concepts for types :D
 - widget list refactor (only update the visible region)
 
 - simple function ptr based system for gui callback
@@ -21,7 +17,7 @@
 
 - shadow cascade fade
 - cast shadow flag 
+
 - better grass
 - load both material and mesh paths externally
 - FOR_ENUM_MAP macro for loop
-- ecs serialization

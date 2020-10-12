@@ -125,7 +125,7 @@ private:
 
     void BitsetAssert(bool const expr, chars_t msg) const 
     {
-        if constexpr (!DO_ARRAY_ASSERTS) return;
+        if constexpr (!USE_BITSET_ASSERTS) return;
         dbg::Assert(expr, msg);
     }
 
