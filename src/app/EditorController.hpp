@@ -39,13 +39,13 @@ struct EditorController
 
         if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
         {
-            ecs.Save();
+            ecs.WriteBinaryFile();
             res::SaveTerrain(res.terrain.terrain.quadrants);
         }
 
         if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>())
         {
-            ecs.Load();
+            ecs.ReadBinaryFile();
             res::LoadTerrain(res.terrain.terrain.quadrants);
             res.terrain.terrain.MarkAllDirty();
         }

@@ -54,9 +54,9 @@ struct GUI_Scene
         };
 
         entityList.topLevelItems.Clear();
-        FOR_ARRAY(ecs.entitiesTopLevel, i)
+        FOR_ARRAY(ecs.entitiesParentless, i)
         {
-            auto const entityID = ecs.entitiesTopLevel[i];
+            auto const entityID = ecs.entitiesParentless[i];
             addItem(entityID, nullptr);           
         }
 

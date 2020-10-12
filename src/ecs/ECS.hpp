@@ -22,7 +22,7 @@ struct ECS
     //? data arrays
 
     com::Bitset<MAX_ENTITY_COUNT> entities;
-    com::Array<ID, MAX_ENTITY_COUNT> entitiesTopLevel;
+    com::Array<ID, MAX_ENTITY_COUNT> entitiesParentless;
     ComponentArrays<MAX_ENTITY_COUNT> arrays;
     ComponentArrays<res::PrefabEnum::ENUM_END> prefabsArrays;
 
@@ -33,8 +33,10 @@ struct ECS
     struct Snapshots
     {
         static constexpr int SNAPSHOT_COUNT = 10;
-        com::mem::BlockPtr<decltype(entitiesTopLevel)::BINARY_MEMORY_T> ptrs_entitiesTopLevel;
-        //TODO: ring buffer
+
+        com::RingBuffer<decltype(entitiesParentless), 5> entitiesTopLevel;
+        //only snaphot in a per second interval, when there was any action (dirty flag) within the last second
+        //partial dumps (a component array of a specific type) instead of whole ECS dump
     }
     snapshots; 
 
@@ -54,7 +56,7 @@ struct ECS
     ID AddEntity()
     {
         auto const entityID = RegisterEntity();
-        entitiesTopLevel.AppendElement(entityID);
+        entitiesParentless.AppendElement(entityID);
         return entityID;
     }
 
@@ -86,22 +88,23 @@ struct ECS
 
     //? serialization
 
-    void Save() 
+    void WriteBinaryFile() 
     {
-        entitiesTopLevel.WriteBinaryFile("out/tmp/entitiesTopLevel.ecs");
+        entitiesParentless.WriteBinaryFile("out/tmp/entitiesTopLevel.ecs");
         entities.WriteBinaryFile("out/tmp/entities.ecs");
-        arrays.SaveComponents();
-
-        entitiesTopLevel.WriteBinaryMemory(snapshots.ptrs_entitiesTopLevel);
+        arrays.WriteBinaryFile();
     }
 
-    void Load()
+    void ReadBinaryFile()
     {
-        entitiesTopLevel.ReadBinaryFile("out/tmp/entitiesTopLevel.ecs");
+        entitiesParentless.ReadBinaryFile("out/tmp/entitiesTopLevel.ecs");
         entities.ReadBinaryFile("out/tmp/entities.ecs");
-        arrays.LoadComponents();
+        arrays.ReadBinaryFile();
+    }
 
-        entitiesTopLevel.ReadBinaryMemory(snapshots.ptrs_entitiesTopLevel);
+    void Snapshot()
+    {
+        snapshots.entitiesTopLevel.Append(entitiesParentless);
     }
 
 private:

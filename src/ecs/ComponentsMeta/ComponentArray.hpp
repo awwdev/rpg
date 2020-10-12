@@ -57,7 +57,7 @@ struct ComponentArray
         }  
     }
 
-    void Save() const
+    void WriteBinaryFile() const
     {
         dbg::Assert(COMPONENT_SERIALIZATION_PATHS.Contains(componentEnum), "component path missing");
         auto const& paths = COMPONENT_SERIALIZATION_PATHS.Get(componentEnum);
@@ -67,7 +67,7 @@ struct ComponentArray
         com::WriteBinaryFile_C_Array(paths.entityLookup.Data(), entityLookup, ArrayCount(entityLookup));
     }
 
-    void Load()
+    void ReadBinaryFile()
     {
         dbg::Assert(COMPONENT_SERIALIZATION_PATHS.Contains(componentEnum), "component path missing");
         auto const& paths = COMPONENT_SERIALIZATION_PATHS.Get(componentEnum);

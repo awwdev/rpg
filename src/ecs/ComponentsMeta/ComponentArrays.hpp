@@ -45,16 +45,16 @@ struct ComponentArrays
         SetComponentOptional(nameComponents, srcComponentArrays.nameComponents);
     }
 
-    void LoadComponents()
+    void ReadBinaryFile()
     {
-        mainComponents.Load();
-        nameComponents.Load();
+        mainComponents.ReadBinaryFile();
+        nameComponents.ReadBinaryFile();
     }
 
-    void SaveComponents() const
+    void WriteBinaryFile() const
     {
-        mainComponents.Save();
-        nameComponents.Save();
+        mainComponents.WriteBinaryFile();
+        nameComponents.WriteBinaryFile();
     }
 
     void Clear()
