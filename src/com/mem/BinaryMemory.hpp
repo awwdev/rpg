@@ -18,35 +18,35 @@ struct BinaryMemory
     }
 
     template<typename T>
-    void operator<<(T const& pData)
+    void operator<<(T const& src)
     {
-        //TODO: compress
-        std::memcpy(&data[byteIdx], &pData, sizeof(T));
+        std::memcpy(&data[byteIdx], &src, sizeof(T));
         byteIdx += sizeof(T);
         dbg::Assert(byteIdx < BYTE_CAPACITY && byteIdx >= 0, "[BinaryBlob] idx out of bounds");
     }
 
     template<typename T>
-    void operator>>(T& pData)
+    void operator>>(T& dst)
     {
-        //TODO: decompress
-        std::memcpy(&pData, &data[byteIdx], sizeof(T));
+        std::memcpy(&dst, &data[byteIdx], sizeof(T));
         byteIdx += sizeof(T);
         dbg::Assert(byteIdx < BYTE_CAPACITY && byteIdx >= 0, "[BinaryBlob] idx out of bounds");
     }
 
-    void Write(char const* const pData, std::size_t const size)
+    template<typename T>
+    void Write(T const* const pSrc, std::size_t const size)
     {
-        //TODO: compress
-        std::memcpy(&data[byteIdx], &pData, size);
+        char const* const src = reinterpret_cast<char const*>(pSrc);
+        std::memcpy(&data[byteIdx], &src, size);
         byteIdx += size;
         dbg::Assert(byteIdx < BYTE_CAPACITY && byteIdx >= 0, "[BinaryBlob] idx out of bounds");
     }
 
-    void Read(char* pData, std::size_t const size)
+    template<typename T>
+    void Read(T* pDst, std::size_t const size)
     {
-        //TODO: decompress
-        std::memcpy(&pData, &data[byteIdx], size);
+        char* dst = reinterpret_cast<char*>(pDst);
+        std::memcpy(&dst, &data[byteIdx], size);
         byteIdx += size;
         dbg::Assert(byteIdx < BYTE_CAPACITY && byteIdx >= 0, "[BinaryBlob] idx out of bounds");
     }

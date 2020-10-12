@@ -151,24 +151,6 @@ struct Array
             dbg::LogInfo(this->operator[](i));
     }
 
-    //? serialization
-
-    void WriteBinaryFile(chars_t path) const
-    {
-        std::ofstream file { path, std::ios::binary };
-        dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
-        file << count;
-        file.write(reinterpret_cast<char const*>(bytes), sizeof(T) * count);
-    }
-
-    void ReadBinaryFile(chars_t path)
-    {
-        std::ifstream file { path, std::ios::binary };
-        dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
-        file >> count;
-        file.read(reinterpret_cast<char*>(bytes), sizeof(T) * count);
-    }
-
 private:
 
     //? internal helper
@@ -195,16 +177,32 @@ private:
 
 public:
 
+    //? serialization
+
+    void WriteBinaryFile(chars_t path) const
+    {
+        std::ofstream file { path, std::ios::binary };
+        dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
+        file << count;
+        file.write(reinterpret_cast<char const*>(bytes), sizeof(T) * count);
+    }
+
+    void ReadBinaryFile(chars_t path)
+    {
+        std::ifstream file { path, std::ios::binary };
+        dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
+        file >> count;
+        file.read(reinterpret_cast<char*>(bytes), sizeof(T) * count);
+    }
+
     static constexpr auto BINARY_SIZE = TOTAL_BYTE_SIZE + sizeof(decltype(count));
     using BINARY_MEMORY_T = mem::BinaryMemory<BINARY_SIZE>;
 
-    auto WriteBinaryMemory() const
+    void WriteBinaryMemory(mem::BlockPtr<BINARY_MEMORY_T>& blockPtr) const
     {
-        auto  blockPtr = mem::ClaimBlock<BINARY_MEMORY_T>();
         auto& binaryMem = *blockPtr;
         binaryMem << count;
-        binaryMem.Write(reinterpret_cast<char const*>(bytes), sizeof(T) * count);
-        return blockPtr;
+        binaryMem.Write(bytes, sizeof(T) * count);
     }
 
     void ReadBinaryMemory(com::mem::BlockPtr<BINARY_MEMORY_T>& blockPtr)
@@ -212,10 +210,10 @@ public:
         auto& binaryMem = *blockPtr;
         binaryMem.ResetByteIdx();
         binaryMem >> count;
-        binaryMem.Read(reinterpret_cast<char*>(bytes), sizeof(T) * count);
+        binaryMem.Read(bytes, sizeof(T) * count);
     }
-};
 
+};
 
 //? CTAD
 

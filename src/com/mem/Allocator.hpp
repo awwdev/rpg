@@ -135,17 +135,23 @@ struct BlockPtr
 
     BlockPtr& operator=(BlockPtr&& other)           
     { 
-        ptr         = other.ptr; 
-        blockId     = other.blockId;
-        other.ptr   = nullptr; 
+        Free();
+        ptr = other.ptr; 
+        blockId = other.blockId;
+        other.ptr = nullptr; 
         return *this; 
+    }
+
+    void Free()
+    {
+        if (ptr == nullptr) return;
+        ptr->~T(); 
+        priv::FreeBlock(blockId);
     }
 
     ~BlockPtr()
     { 
-        if (ptr == nullptr) return;
-        ptr->~T(); 
-        priv::FreeBlock(blockId);
+        Free();
     }
 };
 

@@ -3,6 +3,7 @@
 #pragma once
 #include "com/box/Bitset.hpp"
 #include "com/box/String.hpp"
+#include "com/box/RingBuffer.hpp"
 #include "com/mem/Allocator.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
 
@@ -18,13 +19,27 @@ namespace rpg::ecs {
 
 struct ECS
 {
-    com::Bitset<MAX_ENTITY_COUNT>              entities;
-    com::Array<ID, MAX_ENTITY_COUNT>           entitiesTopLevel;
-    ComponentArrays<MAX_ENTITY_COUNT>          arrays;
+    //? data arrays
+
+    com::Bitset<MAX_ENTITY_COUNT> entities;
+    com::Array<ID, MAX_ENTITY_COUNT> entitiesTopLevel;
+    ComponentArrays<MAX_ENTITY_COUNT> arrays;
     ComponentArrays<res::PrefabEnum::ENUM_END> prefabsArrays;
 
-    com::mem::BlockPtr<decltype(entitiesTopLevel)::BINARY_MEMORY_T> blockPtr;
 
+    //? snapshots
+    //undo/redo
+
+    struct Snapshots
+    {
+        static constexpr int SNAPSHOT_COUNT = 10;
+        com::mem::BlockPtr<decltype(entitiesTopLevel)::BINARY_MEMORY_T> ptrs_entitiesTopLevel;
+        //TODO: ring buffer
+    }
+    snapshots; 
+
+
+    //? update
 
     void Update(float const dt, gpu::RenderData& renderData)
     {
@@ -64,6 +79,7 @@ struct ECS
         return childID;
     }
 
+
     //? removing
     //TODO: remove entity, removed entity array
 
@@ -76,8 +92,7 @@ struct ECS
         entities.WriteBinaryFile("out/tmp/entities.ecs");
         arrays.SaveComponents();
 
-        blockPtr = std::move(entitiesTopLevel.WriteBinaryMemory());
-        //TODO: could be fine that every system stores own history and you can revert what you like
+        entitiesTopLevel.WriteBinaryMemory(snapshots.ptrs_entitiesTopLevel);
     }
 
     void Load()
@@ -86,7 +101,7 @@ struct ECS
         entities.ReadBinaryFile("out/tmp/entities.ecs");
         arrays.LoadComponents();
 
-        entitiesTopLevel.ReadBinaryMemory(blockPtr);
+        entitiesTopLevel.ReadBinaryMemory(snapshots.ptrs_entitiesTopLevel);
     }
 
 private:
