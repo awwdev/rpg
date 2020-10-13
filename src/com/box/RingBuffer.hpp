@@ -20,15 +20,32 @@ struct RingBuffer
         return data[idx % N]; 
     }
 
-    void Append(T const& element)
+    void Add(T const& pElement)
     {
-        this->operator[](index) = element;
-        ++index;
+        auto& element = this->operator[](count);
+        if constexpr(std::is_array_v<T>)
+        {
+            FOR_C_ARRAY(element, i)
+                element[i] = pElement[i];
+        }
+        else
+        {
+            element = pElement;
+        }
+        ++count;
+    }
+
+    T const& Pop()
+    {
+        --count;
+        auto& element = this->operator[](count);
+        return element;
     }
 
 private:
+
     T data [N];
-    size_t index = 0;
+    size_t count = 0;
 };
 
 }//ns

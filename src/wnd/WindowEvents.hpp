@@ -10,6 +10,7 @@ enum class EventType
 {
     //ascii
     Shift = 16,
+    Ctrl  = 17,
     ESC   = 27,
 
     N0 = 48, N1, N2, N3, N4, N5, N6, N7, N8, N9,

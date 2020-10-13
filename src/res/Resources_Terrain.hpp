@@ -13,6 +13,8 @@ struct Resources_Terrain
     {
         terrain.Create();
     }
+
+    
 };
 
 }//ns

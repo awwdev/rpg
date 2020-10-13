@@ -3,7 +3,6 @@
 #pragma once
 #include "com/box/Bitset.hpp"
 #include "com/box/String.hpp"
-#include "com/box/RingBuffer.hpp"
 #include "com/mem/Allocator.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
 
@@ -25,21 +24,6 @@ struct ECS
     com::Array<ID, MAX_ENTITY_COUNT> entitiesParentless;
     ComponentArrays<MAX_ENTITY_COUNT> arrays;
     ComponentArrays<res::PrefabEnum::ENUM_END> prefabsArrays;
-
-
-    //? snapshots
-    //undo/redo
-
-    struct Snapshots
-    {
-        static constexpr int SNAPSHOT_COUNT = 10;
-
-        com::RingBuffer<decltype(entitiesParentless), 5> entitiesTopLevel;
-        //only snaphot in a per second interval, when there was any action (dirty flag) within the last second
-        //partial dumps (a component array of a specific type) instead of whole ECS dump
-    }
-    snapshots; 
-
 
     //? update
 
@@ -100,11 +84,6 @@ struct ECS
         entitiesParentless.ReadBinaryFile("out/tmp/entitiesTopLevel.ecs");
         entities.ReadBinaryFile("out/tmp/entities.ecs");
         arrays.ReadBinaryFile();
-    }
-
-    void Snapshot()
-    {
-        snapshots.entitiesTopLevel.Append(entitiesParentless);
     }
 
 private:

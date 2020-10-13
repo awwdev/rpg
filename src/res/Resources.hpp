@@ -25,6 +25,7 @@ struct Resources
         terrain.Load();
         animation.Load();
     }
+
 };
 
 }//ns

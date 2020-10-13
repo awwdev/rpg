@@ -15,6 +15,9 @@ struct EditorController
 {
     gpu::EgoCamera camera;
 
+    float  snapshotTimer = 0;
+
+
     EditorController()
     {
         camera.Update(0);
@@ -50,7 +53,22 @@ struct EditorController
             res.terrain.terrain.MarkAllDirty();
         }
 
+        //? undo/redo
+
+        if (wnd::HasEvent<wnd::EventType::Ctrl, wnd::EventState::PressedOrHeld>())
+        {
+            //undo
+            if (wnd::HasEvent<wnd::EventType::Z, wnd::EventState::Pressed>())
+            {
+            }
+            //redo
+            if (wnd::HasEvent<wnd::EventType::Y, wnd::EventState::Pressed>())
+            {
+            }
+        }
+
     }
+
 };
 
 }//ns

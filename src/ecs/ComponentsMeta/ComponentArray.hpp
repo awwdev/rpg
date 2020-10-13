@@ -13,6 +13,8 @@ namespace rpg::ecs {
 template<class COMPONENT_T, auto MAX_COMPONENT_COUNT = MAX_ENTITY_COUNT>
 struct ComponentArray
 {
+    //? data
+
     using COMPONENT = COMPONENT_T;
 
     com::Array<COMPONENT_T, MAX_COMPONENT_COUNT> dense;
@@ -26,11 +28,16 @@ struct ComponentArray
 
     ComponentEnum componentEnum;
 
+    //? constructor
+
     ComponentArray(ComponentEnum const pComponentEnum) 
         : componentEnum { pComponentEnum }
     {
-        Clear(); //used for initialization          
+        SetLookupsToNull();    
+        //TODO: just using 0 as null entity is probably better than max value ? 
     }
+
+    //? methods
 
     template<class... CtorArgs>
     COMPONENT_T& SetComponent(const ID entityID, CtorArgs&&... args)
@@ -51,11 +58,10 @@ struct ComponentArray
     void Clear()
     {
         dense.Clear();
-        for(idx_t i = 0; i < (idx_t) MAX_COMPONENT_COUNT; ++i) {
-            componentLookup[i] = ECS_NULL;
-            entityLookup[i]    = ECS_NULL;
-        }  
+        SetLookupsToNull();
     }
+
+    //? serialization
 
     void WriteBinaryFile() const
     {
@@ -75,6 +81,18 @@ struct ComponentArray
         dense.ReadBinaryFile(paths.dense.Data());
         com::ReadBinaryFile_C_Array(paths.componentLookup.Data(), componentLookup);
         com::ReadBinaryFile_C_Array(paths.entityLookup.Data(), entityLookup);
+    }
+
+private:
+
+    //? internal helper
+
+    void SetLookupsToNull()
+    {
+        for(idx_t i = 0; i < (idx_t) MAX_COMPONENT_COUNT; ++i) {
+            componentLookup[i] = ECS_NULL;
+            entityLookup[i]    = ECS_NULL;
+        } 
     }
 
 };

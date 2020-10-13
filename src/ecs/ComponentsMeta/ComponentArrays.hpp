@@ -16,6 +16,7 @@ struct ComponentArrays
     ComponentArray<MainComponent, MAX_COMPONENT_COUNT>  mainComponents { ComponentEnum::MainComponent };
     ComponentArray<NameComponent, MAX_COMPONENT_COUNT>  nameComponents { ComponentEnum::NameComponent };
 
+
     template<class... CtorArgs>
     void SetComponent(const ID entityID, const ComponentEnum componentType, CtorArgs&&... args)
     {
