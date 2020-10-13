@@ -37,44 +37,21 @@ struct GameScene
     gui::GUI_Stats  guiStats;
     gui::GUI_Scene  guiScene;
 
-    ecs::ID swordID = 0; //TEST
-
     GameScene(res::Resources& resources)
     {
         guiLevel.Init(resources.prefabs);
-        
         sun.Create(ecs);
         playerController.Create(ecs);
         resources.terrain.terrain.InitGizmos(ecs);
-        ecs.prefabsArrays = resources.prefabs.prefabsArrays;
-
-        //TEST
-        {
-            swordID = ecs.AddEntity(res::PrefabEnum::Sword);
-            ecs::MainComponent& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
-            swordMainComponent.translation = { 2, 0, 2 };
-            
-            ecs.AddEntity(res::PrefabEnum::Cube);
-        }       
+        ecs.prefabsArrays = resources.prefabs.prefabsArrays;    
     }
 
     void Update(const double dt, res::Resources& resources)
     {
-        //TEST
-        auto& swordMainComponent = ecs.arrays.mainComponents.Get(swordID);
-        swordMainComponent.rotation.y += dt * 100;
-
-        //TEST movement 
-        //TODO: move into editor controller
-        //auto& selectedMainComponent = ecs.arrays.mainComponents.Get(guiScene.entityList.activeIdx);
-        //if(wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>())
-        //    selectedMainComponent.translation = resources.terrain.terrain.settings.intersectionPos;
-        //TODO: mouse on mesh (triangle intersection)
-
         renderData.Clear();
         renderData.general.meta.time += dt;     
 
-        //? UI
+        //? ui
         app::ResetUpdateInputMode();
         if (app::glo::inputMode != app::glo::InputMode::PlayMode) {
             guiLevel.Update(renderData, resources);
@@ -82,16 +59,16 @@ struct GameScene
             guiScene.Update(renderData, ecs);
         }   
 
-        //? META
+        //? meta
         if (app::glo::inputMode == app::glo::InputMode::PlayMode) 
             playerController.Update(dt, ecs, renderData);
         else 
             editorController.Update(dt, ecs, resources, renderData);
 
-        resources.terrain.terrain.Update(dt, editorController.camera, ecs); //move into editor?
+        resources.terrain.terrain.Update(dt, editorController.camera, ecs, editorController.commands); //move into editor?
         sun.Update(ecs, dt, renderData);
 
-        //? ECS
+        //? ecs
         ecs.Update(dt, renderData);
     }
 

@@ -25,6 +25,7 @@ struct ECS
     ComponentArrays<MAX_ENTITY_COUNT> arrays;
     ComponentArrays<res::PrefabEnum::ENUM_END> prefabsArrays;
 
+
     //? update
 
     void Update(float const dt, gpu::RenderData& renderData)

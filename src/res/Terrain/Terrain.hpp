@@ -5,6 +5,7 @@
 #include "com/box/Array.hpp"
 #include "ecs/ECS.hpp"
 #include "gpu/Meta/Cameras.hpp"
+#include "app/EditorCommands.hpp"
 #include "res/Terrain/TerrainQuadrant.hpp"
 #include "res/Terrain/TerrainSerialization.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
@@ -76,7 +77,7 @@ struct Terrain
         }}
     }
 
-    void Update(const double, const gpu::EgoCamera& camera, ecs::ECS& ecs)
+    void Update(const double, const gpu::EgoCamera& camera, ecs::ECS& ecs, app::EditorCommands& editorCmds)
     {   
         //? META
         if (app::glo::inputMode != app::glo::Edit_Mode)
@@ -92,7 +93,7 @@ struct Terrain
         if (settings.mode == EditMode::VertexPaint)
             Painting(camera);
         if (settings.mode == EditMode::PropPlacement)
-            Placing(camera, ecs);
+            Placing(camera, ecs, editorCmds);
 
         //? MODES
         if (wnd::HasEvent<wnd::EventType::F7, wnd::EventState::Pressed>())
@@ -257,7 +258,7 @@ struct Terrain
     }
 
     //TODO: we don't acutally place in terrain, but use terrain to cast ray against
-    void Placing(const gpu::EgoCamera& camera, ecs::ECS& ecs)
+    void Placing(const gpu::EgoCamera& camera, ecs::ECS& ecs, app::EditorCommands& editorCmds)
     {
         using namespace com;
         //auto& quadrant = GetQuadrant(settings.quadrantIdx);
@@ -267,26 +268,25 @@ struct Terrain
             settings.intersectionPos = intersection->pos;
             if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) {
 
-                for(auto i = 0; i < 1; ++i)  
+                const f32 RY = (f32) (std::rand() % 360);
+                const f32 SX = 0.8f + (std::rand() % 40) / 40.f;
+                const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
+                const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
+
+                const app::EditorCommand cmd 
                 {
-                    auto const entityID = ecs.AddEntity(settings.prefabEnum);
-                    auto& mainComponent = ecs.arrays.mainComponents.Get(entityID);
+                    .cmdEnum = app::EditorCommandEnum::CreateEntity,
+                    .createEntity = 
+                    {
+                        .prefabEnum = settings.prefabEnum,
+                        .position   = intersection->pos,
+                        .rotation   = {  0, RY,  0 },
+                        .scale      = { 1, 1, 1 },
+                    }
+                };
 
-                    Vec3f pos = intersection->pos;
-                    pos.x += i == 0 ? 0 : ((std::rand() % 100) / 100.f) * 2 - 1;
-                    pos.z += i == 0 ? 0 : ((std::rand() % 100) / 100.f) * 2 - 1;
-                    mainComponent.translation = pos;
+                editorCmds.DeferCommand(cmd);
 
-                    const f32 randY = (f32) (std::rand() % 360);
-                    mainComponent.rotation = { 0, randY, 0 };
-
-                    //const f32 SX = 0.8f + (std::rand() % 40) / 40.f;
-                    //const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
-                    //const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
-                    //mainComponent.scale = { SX, SY, SZ };
-                }
-
-                
             }
         }
     }

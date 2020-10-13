@@ -59,15 +59,14 @@ struct GUI_Scene
             auto const entityID = ecs.entitiesParentless[i];
             addItem(entityID, nullptr);           
         }
-
         
 
         //? UPDATE
         wnd.Update(renderData);
 
-        ecs.arrays.mainComponents.Get(entityList.activeIdx).glow = 0;  
+        //ecs.arrays.mainComponents.Get(entityList.activeIdx).glow = 0;  
         entityList.Update(renderData, wnd);
-        ecs.arrays.mainComponents.Get(entityList.activeIdx).glow = 1;  
+        //ecs.arrays.mainComponents.Get(entityList.activeIdx).glow = 1;  
             
     }
 };

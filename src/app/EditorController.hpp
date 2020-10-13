@@ -8,15 +8,15 @@
 #include "app/InputMode.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "res/Terrain/TerrainSerialization.hpp"
+#include "app/EditorCommands.hpp"
+#include "res/Resources.hpp"
 
 namespace rpg::app {
 
 struct EditorController
 {
     gpu::EgoCamera camera;
-
-    float  snapshotTimer = 0;
-
+    EditorCommands commands;
 
     EditorController()
     {
@@ -54,6 +54,8 @@ struct EditorController
         }
 
         //? undo/redo
+
+        commands.ExecuteCommands(ecs);
 
         if (wnd::HasEvent<wnd::EventType::Ctrl, wnd::EventState::PressedOrHeld>())
         {
