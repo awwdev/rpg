@@ -74,6 +74,11 @@ struct Array
         else count = beginIdx;        
     }
 
+    void Remove(idx_t const idx)
+    {
+        //TODO: swap remove
+    }
+
     //? append
 
     template<typename... Ts> constexpr

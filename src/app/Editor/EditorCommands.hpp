@@ -5,6 +5,9 @@
 #include "com/box/RingBuffer.hpp"
 #include "app/Editor/EditorCommand.hpp"
 
+#include "ecs/ECS.hpp"
+#include "res/Resources.hpp"
+
 namespace rpg::app {
 
 struct EditorCommands
@@ -17,26 +20,27 @@ struct EditorCommands
         deferredCmds.AppendElement(cmd);
     }
 
-    void ExecuteDeferredCommands(ecs::ECS& ecs)
+    void ExecuteDeferredCommands(ecs::ECS& ecs, res::Resources& res)
     {
         FOR_ARRAY(deferredCmds, i)
         {
-            auto const& cmd = deferredCmds[i];
+            auto& cmd = deferredCmds[i];
+            cmd.Execute(ecs, res);
             cmdHistory.Append(cmd);
-            cmd.Execute(ecs);
         }
+        deferredCmds.Clear();
     }
 
     void Undo(ecs::ECS& ecs, res::Resources& res)
     {
-        auto const& cmd = cmdHistory.StepBackward();
+        auto& cmd = cmdHistory.StepBackward();
         cmd.ExecuteReverse(ecs, res);
     }
 
-    void Redo(ecs::ECS& ecs)
+    void Redo(ecs::ECS& ecs, res::Resources& res)
     {
-        auto const& cmd = cmdHistory.StepForward();
-        cmd.ExecuteReverse(ecs, res);
+        auto& cmd = cmdHistory.StepForward();
+        cmd.Execute(ecs, res);
     }
 
 };

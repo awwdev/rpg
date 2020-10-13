@@ -59,7 +59,7 @@ struct GUI_Level
             switch(res.terrain.terrain.settings.mode) {
                 case res::EditMode::VertexGrab:     return "VertexGrab";
                 case res::EditMode::VertexPaint:    return "VertexPaint";
-                case res::EditMode::PropPlacement:  return "PrefabPlacement";
+                case res::EditMode::PrefabPlacement:  return "PrefabPlacement";
                 default: dbg::Assert(false, "EditMode missing"); return "";
             }
         }();

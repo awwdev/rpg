@@ -5,7 +5,6 @@
 #include "com/box/Array.hpp"
 #include "ecs/ECS.hpp"
 #include "gpu/Meta/Cameras.hpp"
-#include "app/Editor/EditorCommands.hpp"
 #include "res/Terrain/TerrainQuadrant.hpp"
 #include "res/Terrain/TerrainSerialization.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
@@ -15,7 +14,7 @@
 
 namespace rpg::res {
 
-enum EditMode { VertexGrab, VertexPaint, PropPlacement };
+enum EditMode { VertexGrab, VertexPaint, PrefabPlacement };
 
 //used by UI to set stuff
 template<auto VERT_COUNT_TOTAL, auto QUADRANT_COUNT_TOTAL>
@@ -77,7 +76,7 @@ struct Terrain
         }}
     }
 
-    void Update(const double, const gpu::EgoCamera& camera, ecs::ECS& ecs, app::EditorCommands& editorCmds)
+    void Update(const double, const gpu::EgoCamera& camera, ecs::ECS& ecs)
     {   
         //? META
         if (app::glo::inputMode != app::glo::Edit_Mode)
@@ -89,11 +88,9 @@ struct Terrain
 
         //? INTERACTION
         if (settings.mode == EditMode::VertexGrab)
-            Grabbing(camera, editorCmds);
+            Grabbing(camera);
         if (settings.mode == EditMode::VertexPaint)
-            Painting(camera, editorCmds);
-        if (settings.mode == EditMode::PropPlacement)
-            Placing(camera, ecs, editorCmds);
+            Painting(camera);
 
         //? MODES
         if (wnd::HasEvent<wnd::EventType::F7, wnd::EventState::Pressed>())
@@ -104,7 +101,7 @@ struct Terrain
         if (wnd::HasEvent<wnd::EventType::F2, wnd::EventState::Pressed>())
             settings.mode = (settings.mode == EditMode::VertexGrab) ? EditMode::VertexPaint : EditMode::VertexGrab;
         if (wnd::HasEvent<wnd::EventType::F3, wnd::EventState::Pressed>())
-            settings.mode = EditMode::PropPlacement;
+            settings.mode = EditMode::PrefabPlacement;
 
         if (wnd::HasEvent<wnd::EventType::N0, wnd::EventState::Pressed>()) settings.quadrantIdx = 0;
         if (wnd::HasEvent<wnd::EventType::N1, wnd::EventState::Pressed>()) settings.quadrantIdx = 1;
@@ -195,7 +192,7 @@ struct Terrain
         }
     }
 
-    void Painting(const gpu::EgoCamera& camera, app::EditorCommands& editorCmds)
+    void Painting(const gpu::EgoCamera& camera)
     {
         using namespace com;
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
@@ -220,7 +217,7 @@ struct Terrain
         }
     }
 
-    void Grabbing(const gpu::EgoCamera& camera, app::EditorCommands& editorCmds)
+    void Grabbing(const gpu::EgoCamera& camera)
     {
         using namespace com;
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
@@ -261,41 +258,6 @@ struct Terrain
             settings.intersectionPos.y += yDelta * settings.dragScale; //TODO: would need falloff of closest intersection vertex
             settings.dirtyQuadrants.AppendElement(settings.quadrantIdx);
         }        
-    }
-
-    //TODO: we don't acutally place in terrain, but use terrain to cast ray against
-    void Placing(const gpu::EgoCamera& camera, ecs::ECS& ecs, app::EditorCommands& editorCmds)
-    {
-        //TODO: now is the point to remove this from terrain
-        //include trouble
-
-        using namespace com;
-        //auto& quadrant = GetQuadrant(settings.quadrantIdx);
-
-        if (const auto intersection = CheckIntersection(camera))
-        {
-            settings.intersectionPos = intersection->pos;
-            if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) {
-
-                const f32 RY = (f32) (std::rand() % 360);
-                const f32 SX = 0.8f + (std::rand() % 40) / 40.f;
-                const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
-                const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
-
-                const app::EditorCommand cmd 
-                {
-                    .cmdEnum = app::EditorCommandEnum::CreateEntityFromPrefab,
-                    .dataCreateEntityFromPrefab = 
-                    {
-                        .prefabEnum = settings.prefabEnum,
-                        .position   = intersection->pos,
-                        .rotation   = {  0, RY,  0 },
-                    }
-                };
-
-                editorCmds.DeferCommand(cmd);
-            }
-        }
     }
 
     //? STICHING

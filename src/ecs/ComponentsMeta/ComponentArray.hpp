@@ -61,6 +61,11 @@ struct ComponentArray
         SetLookupsToNull();
     }
 
+    void Remove(ID const entityID)
+    {
+        //TODO:
+    }
+
     //? serialization
 
     void WriteBinaryFile() const

@@ -55,7 +55,7 @@ struct EditorController
 
         //? undo/redo
 
-        commands.ExecuteDeferredCommands(ecs);
+        commands.ExecuteDeferredCommands(ecs, res);
 
         if (wnd::HasEvent<wnd::EventType::Ctrl, wnd::EventState::PressedOrHeld>())
         {
@@ -64,6 +64,38 @@ struct EditorController
             if (wnd::HasEvent<wnd::EventType::Y, wnd::EventState::Pressed>())
                 commands.Redo(ecs, res);
         }
+
+
+
+        auto& terrain = res.terrain.terrain;
+        if (terrain.settings.mode == res::EditMode::PrefabPlacement)
+        {
+            if (const auto intersection = terrain.CheckIntersection(camera)) //more global to show gizmo
+            {
+                terrain.settings.intersectionPos = intersection->pos;
+                if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) 
+                {
+                    const f32 RY = (f32) (std::rand() % 360);
+                    const f32 SX = 0.8f + (std::rand() % 40) / 40.f;
+                    const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
+                    const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
+
+                    const app::EditorCommand cmd 
+                    {
+                        .cmdEnum = app::EditorCommandEnum::CreateEntityFromPrefab,
+                        .dataCreateEntityFromPrefab = 
+                        {
+                            .prefabEnum = terrain.settings.prefabEnum, //no need to save in terrain settings but grab from ui
+                            .position   = intersection->pos,
+                            .rotation   = {  0, RY,  0 },
+                        }
+                    };
+
+                    commands.DeferCommand(cmd);
+                }
+            }
+        }   
+
 
     }
 

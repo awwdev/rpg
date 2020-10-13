@@ -68,7 +68,25 @@ struct ECS
 
 
     //? removing
-    //TODO: remove entity, removed entity array
+
+    void RemoveEntity(ID const entityID)
+    {
+        entities.Set(entityID, false);
+
+        FOR_ARRAY(entitiesParentless, i)
+        {
+            if (entitiesParentless[i] == entityID)
+            {
+                entitiesParentless.Remove(i);
+                break;    
+            }
+        }
+
+        //TODO: check signature to get active components
+        arrays.mainComponents.Remove(entityID);
+        arrays.nameComponents.Remove(entityID);
+
+    }
 
 
     //? serialization

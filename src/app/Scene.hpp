@@ -65,7 +65,7 @@ struct GameScene
         else 
             editorController.Update(dt, ecs, resources, renderData);
 
-        resources.terrain.terrain.Update(dt, editorController.camera, ecs, editorController.commands); //move into editor?
+        resources.terrain.terrain.Update(dt, editorController.camera, ecs); 
         sun.Update(ecs, dt, renderData);
 
         //? ecs

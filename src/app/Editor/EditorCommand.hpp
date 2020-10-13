@@ -22,7 +22,7 @@ struct EditorCommand
         CmdCreateEntityFromPrefab dataCreateEntityFromPrefab;
     };
 
-    void Execute(ecs::ECS& ecs, res::Resources& res) const
+    void Execute(ecs::ECS& ecs, res::Resources& res)
     {
         switch(cmdEnum)
         {
@@ -32,7 +32,7 @@ struct EditorCommand
         }
     }
 
-    void ExecuteReverse(ecs::ECS& ecs, res::Resources& res) const
+    void ExecuteReverse(ecs::ECS& ecs, res::Resources& res)
     {
         switch(cmdEnum)
         {

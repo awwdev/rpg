@@ -15,9 +15,11 @@ struct CmdCreateEntityFromPrefab
     com::Vec3f rotation         = {};
     com::Vec3f scale            = { 1, 1, 1 };
 
-    void Execute(ecs::ECS& ecs) const
+    ecs::ID entityID;
+
+    void Execute(ecs::ECS& ecs)
     {
-        auto const entityID = ecs.AddEntity(prefabEnum);
+        entityID = ecs.AddEntity(prefabEnum);
         auto& mainComponent = ecs.arrays.mainComponents.Get(entityID);
         mainComponent.translation = position;
         mainComponent.rotation = rotation;
@@ -26,7 +28,7 @@ struct CmdCreateEntityFromPrefab
 
     void ExecuteReverse(ecs::ECS& ecs) const
     {
-        //TODO
+        ecs.RemoveEntity(entityID);
     }
 };
 
