@@ -7,8 +7,8 @@
 #include "gpu/Meta/Cameras.hpp"
 #include "app/InputMode.hpp"
 #include "gpu/RenderData/RenderData.hpp"
-#include "res/Terrain/TerrainSerialization.hpp"
 #include "app/Editor/EditorCommands.hpp"
+#include "res/Terrain/TerrainSerialization.hpp"
 #include "res/Resources.hpp"
 
 namespace rpg::app {
@@ -55,18 +55,14 @@ struct EditorController
 
         //? undo/redo
 
-        commands.ExecuteCommands(ecs);
+        commands.ExecuteDeferredCommands(ecs);
 
         if (wnd::HasEvent<wnd::EventType::Ctrl, wnd::EventState::PressedOrHeld>())
         {
-            //undo
             if (wnd::HasEvent<wnd::EventType::Z, wnd::EventState::Pressed>())
-            {
-            }
-            //redo
+                commands.Undo();
             if (wnd::HasEvent<wnd::EventType::Y, wnd::EventState::Pressed>())
-            {
-            }
+                commands.Redo();
         }
 
     }

@@ -8,12 +8,12 @@
 
 namespace rpg::app {
 
-struct CmdCreateEntity
+struct CmdCreateEntityFromPrefab
 {
-    res::PrefabEnum prefabEnum;
-    com::Vec3f position;
-    com::Vec3f rotation;
-    com::Vec3f scale;
+    res::PrefabEnum prefabEnum  = res::PrefabEnum::Cube;
+    com::Vec3f position         = {};
+    com::Vec3f rotation         = {};
+    com::Vec3f scale            = { 1, 1, 1 };
 
     void Execute(ecs::ECS& ecs) const
     {
@@ -22,6 +22,11 @@ struct CmdCreateEntity
         mainComponent.translation = position;
         mainComponent.rotation = rotation;
         mainComponent.scale = scale;
+    }
+
+    void Revert(ecs::ECS& ecs) const
+    {
+        //TODO
     }
 };
 

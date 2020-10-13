@@ -3,16 +3,18 @@
 #pragma once
 #include "com/Utils.hpp"
 #include "com/box/Array.hpp"
+#include "com/box/RingBuffer.hpp"
 #include "ecs/ECS.hpp"
 
 #include "app/Editor/Commands/Cmd_CreateEntity.hpp"
+#include "app/Editor/Commands/Cmd_TerrainEdit.hpp"
 
 
 namespace rpg::app {
 
 enum class EditorCommandEnum
 {
-    CreateEntity,
+    CreateEntityFromPrefab,
 };
 
 struct EditorCommand
@@ -20,30 +22,45 @@ struct EditorCommand
     EditorCommandEnum cmdEnum;
     union 
     {
-        CmdCreateEntity createEntity;
+        CmdCreateEntityFromPrefab dataCreateEntityFromPrefab;
     };
 };
 
 struct EditorCommands
 {
-    com::Array<EditorCommand, 20> cmds;
-    idx_t cmdExeIndex = 0;
+    com::Array<EditorCommand, 20> deferredCmds;
+    com::RingBuffer<EditorCommand, 20> cmdHistory;
 
     void DeferCommand(EditorCommand const& cmd)
     {
-        cmds.AppendElement(cmd);
+        deferredCmds.AppendElement(cmd);
     }
 
-    void ExecuteCommands(ecs::ECS& ecs)
+    void ExecuteDeferredCommands(ecs::ECS& ecs)
     {
-        for(; cmdExeIndex < cmds.Count(); ++cmdExeIndex)
+        FOR_ARRAY(deferredCmds, i)
         {
-            auto const& cmd = cmds[cmdExeIndex];
+            auto const& cmd = deferredCmds[i];
+            cmdHistory.Append(cmd);
+
             switch(cmd.cmdEnum)
             {
-                case app::EditorCommandEnum::CreateEntity: cmd.createEntity.Execute(ecs); break;
+                case app::EditorCommandEnum::CreateEntityFromPrefab: 
+                cmd.dataCreateEntityFromPrefab.Execute(ecs); break;
             }
         }
+    }
+
+    void Undo()
+    {
+        //TODO
+        //cmdHistory
+    }
+
+    void Redo()
+    {
+        //TODO
+        //cmdHistory
     }
 
 };

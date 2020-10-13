@@ -89,9 +89,9 @@ struct Terrain
 
         //? INTERACTION
         if (settings.mode == EditMode::VertexGrab)
-            Grabbing(camera);
+            Grabbing(camera, editorCmds);
         if (settings.mode == EditMode::VertexPaint)
-            Painting(camera);
+            Painting(camera, editorCmds);
         if (settings.mode == EditMode::PropPlacement)
             Placing(camera, ecs, editorCmds);
 
@@ -195,7 +195,7 @@ struct Terrain
         }
     }
 
-    void Painting(const gpu::EgoCamera& camera)
+    void Painting(const gpu::EgoCamera& camera, app::EditorCommands& editorCmds)
     {
         using namespace com;
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
@@ -220,13 +220,19 @@ struct Terrain
         }
     }
 
-    void Grabbing(const gpu::EgoCamera& camera)
+    void Grabbing(const gpu::EgoCamera& camera, app::EditorCommands& editorCmds)
     {
         using namespace com;
         auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>())
+        {
             settings.intersection = {};
+
+            //TODO: STORE COMMAND BUT KEEP IT DYNAMIC
+            //editorCmds.DeferCommand();
+        }
+            
 
         if (const auto intersection = CheckIntersection(camera))
         {
@@ -275,18 +281,16 @@ struct Terrain
 
                 const app::EditorCommand cmd 
                 {
-                    .cmdEnum = app::EditorCommandEnum::CreateEntity,
-                    .createEntity = 
+                    .cmdEnum = app::EditorCommandEnum::CreateEntityFromPrefab,
+                    .dataCreateEntityFromPrefab = 
                     {
                         .prefabEnum = settings.prefabEnum,
                         .position   = intersection->pos,
                         .rotation   = {  0, RY,  0 },
-                        .scale      = { 1, 1, 1 },
                     }
                 };
 
                 editorCmds.DeferCommand(cmd);
-
             }
         }
     }
