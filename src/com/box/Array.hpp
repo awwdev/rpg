@@ -5,7 +5,6 @@
 #include "dbg/Assert.hpp"
 #include "dbg/Logger.hpp"
 #include "com/mem/Allocator.hpp"
-#include "com/mem/BinaryMemory.hpp"
 
 #include <cstddef>
 #include <fstream>
@@ -193,24 +192,6 @@ public:
         dbg::Assert(file.is_open(), "[IO] cannot open file"); //not an array assert
         file >> count;
         file.read(reinterpret_cast<char*>(bytes), sizeof(T) * count);
-    }
-
-    static constexpr auto BINARY_SIZE = TOTAL_BYTE_SIZE + sizeof(decltype(count));
-    using BINARY_MEMORY_T = mem::BinaryMemory<BINARY_SIZE>;
-
-    void WriteBinaryMemory(mem::BlockPtr<BINARY_MEMORY_T>& blockPtr) const
-    {
-        auto& binaryMem = *blockPtr;
-        binaryMem << count;
-        binaryMem.Write(bytes, sizeof(T) * count);
-    }
-
-    void ReadBinaryMemory(com::mem::BlockPtr<BINARY_MEMORY_T>& blockPtr)
-    {
-        auto& binaryMem = *blockPtr;
-        binaryMem.ResetByteIdx();
-        binaryMem >> count;
-        binaryMem.Read(bytes, sizeof(T) * count);
     }
 
 };
