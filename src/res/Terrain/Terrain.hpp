@@ -5,7 +5,7 @@
 #include "com/box/Array.hpp"
 #include "ecs/ECS.hpp"
 #include "gpu/Meta/Cameras.hpp"
-#include "app/EditorCommands.hpp"
+#include "app/Editor/EditorCommands.hpp"
 #include "res/Terrain/TerrainQuadrant.hpp"
 #include "res/Terrain/TerrainSerialization.hpp"
 #include "res/Prefab/PrefabEnum.hpp"

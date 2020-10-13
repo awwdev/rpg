@@ -16,8 +16,8 @@
 #include "res/Prefab/PrefabLoader.hpp"
 #include "res/Resources.hpp"
 
-#include "app/PlayerController.hpp"
-#include "app/EditorController.hpp"
+#include "app/Player/PlayerController.hpp"
+#include "app/Editor/EditorController.hpp"
 #include "app/InputMode.hpp"
 
 namespace rpg::app {

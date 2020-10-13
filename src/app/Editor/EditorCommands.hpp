@@ -5,19 +5,14 @@
 #include "com/box/Array.hpp"
 #include "ecs/ECS.hpp"
 
+#include "app/Editor/Commands/Cmd_CreateEntity.hpp"
+
+
 namespace rpg::app {
 
 enum class EditorCommandEnum
 {
     CreateEntity,
-};
-
-struct CmdCreateEntity
-{
-    res::PrefabEnum prefabEnum;
-    com::Vec3f position;
-    com::Vec3f rotation;
-    com::Vec3f scale;
 };
 
 struct EditorCommand
@@ -46,16 +41,7 @@ struct EditorCommands
             auto const& cmd = cmds[cmdExeIndex];
             switch(cmd.cmdEnum)
             {
-                case app::EditorCommandEnum::CreateEntity:
-                {
-                    auto const& cmdUnion = cmd.createEntity;
-                    auto const entityID = ecs.AddEntity(cmdUnion.prefabEnum);
-                    auto& mainComponent = ecs.arrays.mainComponents.Get(entityID);
-                    mainComponent.translation = cmdUnion.position;
-                    mainComponent.rotation = cmdUnion.rotation;
-                    mainComponent.scale = cmdUnion.scale;
-                }
-                break;
+                case app::EditorCommandEnum::CreateEntity: cmd.createEntity.Execute(ecs); break;
             }
         }
     }
