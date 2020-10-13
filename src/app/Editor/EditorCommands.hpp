@@ -1,52 +1,11 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Utils.hpp"
 #include "com/box/Array.hpp"
 #include "com/box/RingBuffer.hpp"
-#include "ecs/ECS.hpp"
-
-#include "app/Editor/Commands/Cmd_CreateEntity.hpp"
-#include "app/Editor/Commands/Cmd_TerrainEdit.hpp"
-
+#include "app/Editor/EditorCommand.hpp"
 
 namespace rpg::app {
-
-enum class EditorCommandEnum
-{
-    CreateEntityFromPrefab,
-};
-
-
-struct EditorCommand
-{
-    EditorCommandEnum cmdEnum;
-    union 
-    {
-        CmdCreateEntityFromPrefab dataCreateEntityFromPrefab;
-    };
-
-    void Execute(ecs::ECS& ecs) const
-    {
-        switch(cmdEnum)
-        {
-            case app::EditorCommandEnum::CreateEntityFromPrefab: 
-                dataCreateEntityFromPrefab.Execute(ecs); 
-                break;
-        }
-    }
-
-    void ExecuteReverse(ecs::ECS& ecs) const
-    {
-        switch(cmdEnum)
-        {
-            case app::EditorCommandEnum::CreateEntityFromPrefab: 
-                dataCreateEntityFromPrefab.ExecuteReverse(ecs); 
-                break;
-        }
-    }
-};
-
 
 struct EditorCommands
 {
@@ -68,16 +27,16 @@ struct EditorCommands
         }
     }
 
-    void Undo(ecs::ECS& ecs)
+    void Undo(ecs::ECS& ecs, res::Resources& res)
     {
         auto const& cmd = cmdHistory.StepBackward();
-        cmd.ExecuteReverse(ecs);
+        cmd.ExecuteReverse(ecs, res);
     }
 
     void Redo(ecs::ECS& ecs)
     {
         auto const& cmd = cmdHistory.StepForward();
-        cmd.ExecuteReverse(ecs);
+        cmd.ExecuteReverse(ecs, res);
     }
 
 };

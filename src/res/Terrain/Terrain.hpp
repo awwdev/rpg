@@ -266,6 +266,9 @@ struct Terrain
     //TODO: we don't acutally place in terrain, but use terrain to cast ray against
     void Placing(const gpu::EgoCamera& camera, ecs::ECS& ecs, app::EditorCommands& editorCmds)
     {
+        //TODO: now is the point to remove this from terrain
+        //include trouble
+
         using namespace com;
         //auto& quadrant = GetQuadrant(settings.quadrantIdx);
 
