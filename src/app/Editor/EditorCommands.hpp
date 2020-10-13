@@ -17,6 +17,7 @@ enum class EditorCommandEnum
     CreateEntityFromPrefab,
 };
 
+
 struct EditorCommand
 {
     EditorCommandEnum cmdEnum;
@@ -24,7 +25,28 @@ struct EditorCommand
     {
         CmdCreateEntityFromPrefab dataCreateEntityFromPrefab;
     };
+
+    void Execute(ecs::ECS& ecs) const
+    {
+        switch(cmdEnum)
+        {
+            case app::EditorCommandEnum::CreateEntityFromPrefab: 
+                dataCreateEntityFromPrefab.Execute(ecs); 
+                break;
+        }
+    }
+
+    void ExecuteReverse(ecs::ECS& ecs) const
+    {
+        switch(cmdEnum)
+        {
+            case app::EditorCommandEnum::CreateEntityFromPrefab: 
+                dataCreateEntityFromPrefab.ExecuteReverse(ecs); 
+                break;
+        }
+    }
 };
+
 
 struct EditorCommands
 {
@@ -42,25 +64,20 @@ struct EditorCommands
         {
             auto const& cmd = deferredCmds[i];
             cmdHistory.Append(cmd);
-
-            switch(cmd.cmdEnum)
-            {
-                case app::EditorCommandEnum::CreateEntityFromPrefab: 
-                cmd.dataCreateEntityFromPrefab.Execute(ecs); break;
-            }
+            cmd.Execute(ecs);
         }
     }
 
-    void Undo()
+    void Undo(ecs::ECS& ecs)
     {
-        //TODO
-        //cmdHistory
+        auto const& cmd = cmdHistory.StepBackward();
+        cmd.ExecuteReverse(ecs);
     }
 
-    void Redo()
+    void Redo(ecs::ECS& ecs)
     {
-        //TODO
-        //cmdHistory
+        auto const& cmd = cmdHistory.StepForward();
+        cmd.ExecuteReverse(ecs);
     }
 
 };

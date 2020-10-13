@@ -60,9 +60,9 @@ struct EditorController
         if (wnd::HasEvent<wnd::EventType::Ctrl, wnd::EventState::PressedOrHeld>())
         {
             if (wnd::HasEvent<wnd::EventType::Z, wnd::EventState::Pressed>())
-                commands.Undo();
+                commands.Undo(ecs);
             if (wnd::HasEvent<wnd::EventType::Y, wnd::EventState::Pressed>())
-                commands.Redo();
+                commands.Redo(ecs);
         }
 
     }

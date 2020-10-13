@@ -21,6 +21,20 @@ struct RingBuffer
         return data[idx % N];
     }
 
+    auto& StepForward()
+    {
+        --index;
+        auto& element = this->operator[](index);
+        return element;
+    }
+
+    auto& StepBackward()
+    {
+        ++index;
+        auto& element = this->operator[](index);
+        return element;
+    }
+
     void Append(T const& pElement)
     {
         auto& element = this->operator[](index);

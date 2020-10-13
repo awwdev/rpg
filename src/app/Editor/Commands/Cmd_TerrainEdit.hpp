@@ -16,7 +16,7 @@ struct CmdTerrainVertexGrab
     {
     }
 
-    void Revert(/*res::Resources_Terrain& resTerrain*/) const
+    void ExecuteReverse(/*res::Resources_Terrain& resTerrain*/) const
     {
 
     }

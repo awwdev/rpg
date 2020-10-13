@@ -24,7 +24,7 @@ struct CmdCreateEntityFromPrefab
         mainComponent.scale = scale;
     }
 
-    void Revert(ecs::ECS& ecs) const
+    void ExecuteReverse(ecs::ECS& ecs) const
     {
         //TODO
     }
