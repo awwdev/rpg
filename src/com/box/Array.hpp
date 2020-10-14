@@ -67,16 +67,11 @@ struct Array
         {
             while(count > beginIdx)
             {
-                this->operator[](count - 1).~T();
+                operator[](count - 1).~T();
                 --count;
             }
         }
         else count = beginIdx;        
-    }
-
-    void Remove(idx_t const idx)
-    {
-        //TODO: swap remove
     }
 
     //? append
@@ -112,6 +107,31 @@ struct Array
             PlacementNew(static_cast<T>(ptr[i]));
     }
 
+    //? remove
+
+    void Remove_Swap(idx_t const idx)
+    {
+        dbg::Assert(idx < count && idx >= 0, "[Array:Remove_Unordered] idx out of bounds");
+        if (idx != count - 1) 
+            Swap(idx, count - 1);
+        Pop();
+    }
+
+    void Remove_PreserveOrder(idx_t const idx)
+    {
+        dbg::Assert(idx < count && idx >= 0, "[Array:Remove_Ordered] idx out of bounds");
+        //if constexpr(std::is_trivial_v<T>) //TODO: memmove
+        for(idx_t i = idx + 1; i < count; ++i)
+            operator[](i - 1) = operator[](i);
+        Pop();
+    }
+
+    void Pop()
+    {
+        operator[](count - 1).~T();
+        count--;
+    }
+
     //? access
 
     constexpr
@@ -132,27 +152,27 @@ struct Array
 
     constexpr auto Count() const -> auto     { return count; }
     constexpr auto Empty() const -> bool     { return count == 0; }
-    constexpr auto Data()        -> T*       { return &this->operator[](0); }
-    constexpr auto Data()  const -> T const* { return &this->operator[](0); }
-    constexpr auto Last()        -> T&       { return  this->operator[](count - 1); }
-    constexpr auto Last()  const -> T const& { return  this->operator[](count - 1); }
+    constexpr auto Data()        -> T*       { return &operator[](0); }
+    constexpr auto Data()  const -> T const* { return &operator[](0); }
+    constexpr auto Last()        -> T&       { return  operator[](count - 1); }
+    constexpr auto Last()  const -> T const& { return  operator[](count - 1); }
 
     constexpr auto CurrentByteSize() const { return sizeof(T) * count; }
 
-    constexpr
-    bool Contains(auto const& element) //allows for custom operator==
+    //allows for custom operator==
+    Optional<idx_t> Find(auto const& element) const 
     {
         FOR_ARRAY((*this), i) {
-            if (this->operator[](i) == element)
-                return true;
+            if (operator[](i) == element)
+                return { i };
         }
-        return false;
+        return {};
     }
 
     void Print() const
     {
         FOR_ARRAY((*this), i)
-            dbg::LogInfo(this->operator[](i));
+            dbg::LogInfo(operator[](i));
     }
 
 private:
@@ -162,7 +182,7 @@ private:
     constexpr
     auto PlacementNew(auto&&... args) -> T*
     {
-        auto address = &this->operator[](count++);
+        auto address = &operator[](count++);
         //TODO: new placement is not constexpr yet
         return new(address) T { std::forward<decltype(args)>(args)... };
     }
@@ -174,7 +194,14 @@ private:
         dbg::Assert(expr, msg);
     }
 
-    //? DATA
+    void Swap(idx_t const idx1, idx_t const idx2)
+    {
+        auto const tmp   = operator[](idx1);
+        operator[](idx1) = operator[](idx2);
+        operator[](idx2) = tmp;
+    }
+
+    //? data
 
     alignas(alignof(T)) std::byte bytes [TOTAL_BYTE_SIZE]; //uninit
     idx_t count;

@@ -3,6 +3,7 @@
 #pragma once
 #include "com/box/Array.hpp"
 #include "com/box/Bitset.hpp"
+#include "com/box/Optional.hpp"
 #include "com/Utils.hpp"
 
 #include "ecs/EntityID.hpp"
@@ -63,8 +64,20 @@ struct ComponentArray
 
     void Remove(ID const entityID)
     {
-        //TODO:
-    }
+        auto const dst_denseIdx = componentLookup[entityID];
+
+        //swapping
+        auto const src_denseIdx = dense.Count() - 1;
+        auto const src_entityID = entityLookup[src_denseIdx];
+
+        entityLookup   [src_denseIdx] = ECS_NULL;
+        componentLookup[src_entityID] = ECS_NULL;
+
+        dense.Remove_Swap(dst_denseIdx);
+
+        entityLookup   [dst_denseIdx] = src_entityID;
+        componentLookup[src_entityID] = dst_denseIdx;
+    }   
 
     //? serialization
 

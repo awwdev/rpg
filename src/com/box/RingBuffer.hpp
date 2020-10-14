@@ -23,16 +23,12 @@ struct RingBuffer
 
     auto& StepForward()
     {
-        --index;
-        auto& element = this->operator[](index);
-        return element;
+        return operator[](index++);
     }
 
     auto& StepBackward()
     {
-        ++index;
-        auto& element = this->operator[](index);
-        return element;
+        return operator[](--index);
     }
 
     void Append(T const& pElement)

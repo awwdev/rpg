@@ -73,19 +73,12 @@ struct ECS
     {
         entities.Set(entityID, false);
 
-        FOR_ARRAY(entitiesParentless, i)
-        {
-            if (entitiesParentless[i] == entityID)
-            {
-                entitiesParentless.Remove(i);
-                break;    
-            }
-        }
+        if (auto const found = entitiesParentless.Find(entityID))
+            entitiesParentless.Remove_PreserveOrder(*found);
 
         //TODO: check signature to get active components
         arrays.mainComponents.Remove(entityID);
         arrays.nameComponents.Remove(entityID);
-
     }
 
 

@@ -74,7 +74,7 @@ inline void WmSize(WPARAM, LPARAM lParam)
 
 inline void WmMove(WPARAM, LPARAM lParam)
 {
-    if (!wnd::glo::frameEvents.Contains(EventType::Window_Move))
+    if (!wnd::glo::frameEvents.Find(EventType::Window_Move))
         AddEvent<EventType::Window_Move>();
     wnd::glo::window_x = (s32) LOWORD(lParam); 
     wnd::glo::window_y = (s32) HIWORD(lParam);
