@@ -22,6 +22,7 @@ struct EditorCommand
         CmdCreateEntityFromPrefab dataCreateEntityFromPrefab;
     };  
 
+
     void Execute(ecs::ECS& ecs, res::Resources& res)
     {
         switch(cmdEnum)

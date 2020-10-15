@@ -18,28 +18,29 @@ struct EditorController
     gpu::EgoCamera camera;
     EditorCommands commands;
 
-    EditorController()
+    void Update(const double dt, ecs::ECS& ecs, res::Resources& res, gpu::RenderData& renderData)
     {
-        camera.Update(0);
+        InputCamera(dt, renderData);
+        Serialization(ecs, res);
+        EditorCommands(ecs, res);
+        PrefabPlacement(res);
+        TerrainVertexGrab(res);
     }
 
-    void Update(
-    const double dt, 
-    ecs::ECS& ecs, 
-    res::Resources& res,
-    gpu::RenderData& renderData)
+
+    void InputCamera(const double dt, gpu::RenderData& renderData)
     {
         if (app::glo::inputMode == app::glo::FlyMode)
             camera.Update(dt);
         if (wnd::glo::resizeState == wnd::glo::ResizeState::End)
             camera.UpdatePerspective();
 
-        renderData.general.meta.view = camera.view;
-        renderData.general.meta.proj = camera.perspective;
-        renderData.general.meta.viewDir = com::Normalize(camera.rotation);
+        camera.UpdateRenderData(renderData);
+    }
 
-        //? serialization 
 
+    void Serialization(ecs::ECS& ecs, res::Resources& res)
+    {
         if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
         {
             ecs.WriteBinaryFile();
@@ -52,11 +53,12 @@ struct EditorController
             res::LoadTerrain(res.terrain.terrain.quadrants);
             res.terrain.terrain.MarkAllDirty();
         }
+    }
 
-        //? undo/redo
 
+    void EditorCommands(ecs::ECS& ecs, res::Resources& res)
+    {
         commands.ExecuteDeferredCommands(ecs, res);
-
         if (wnd::HasEvent<wnd::EventType::Ctrl, wnd::EventState::PressedOrHeld>())
         {
             if (wnd::HasEvent<wnd::EventType::Z, wnd::EventState::Pressed>())
@@ -64,11 +66,13 @@ struct EditorController
             if (wnd::HasEvent<wnd::EventType::Y, wnd::EventState::Pressed>())
                 commands.Redo(ecs, res);
         }
+    }
 
 
-
+    void PrefabPlacement(res::Resources& res)
+    {
         auto& terrain = res.terrain.terrain;
-        if (terrain.settings.mode == res::EditMode::PrefabPlacement)
+        if (terrain.settings.mode == res::EditMode::PrefabPlacement) //TODO: should be in controller
         {
             if (const auto intersection = terrain.CheckIntersection(camera)) //more global to show gizmo
             {
@@ -95,8 +99,11 @@ struct EditorController
                 }
             }
         }   
+    }
 
-
+    void TerrainVertexGrab(res::Resources& res)
+    {
+        
     }
 
 };

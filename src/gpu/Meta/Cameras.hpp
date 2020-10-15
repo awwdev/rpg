@@ -4,6 +4,7 @@
 #include "ecs/ECS.hpp"
 #include "com/Matrix.hpp"
 #include "wnd/WindowEvents.hpp"
+#include "gpu/RenderData/RenderData.hpp"
 
 namespace rpg::gpu
 {
@@ -24,6 +25,7 @@ struct EgoCamera
     EgoCamera()
     {
         UpdatePerspective();
+        Update(0);
     }
 
     void Update(const double dt)
@@ -57,7 +59,6 @@ struct EgoCamera
             fov -= wnd::glo::mouse_scroll_delta * scrollSpd;
             UpdatePerspective();
         }
-        
 
         view = {
             1, 0, 0, 0,
@@ -68,6 +69,13 @@ struct EgoCamera
 
         const auto mRot = QuatToMat(qRot);
         view = mRot * view;
+    }
+
+    void UpdateRenderData(gpu::RenderData& renderData)
+    {
+        renderData.general.meta.view = view;
+        renderData.general.meta.proj = perspective;
+        renderData.general.meta.viewDir = com::Normalize(rotation);
     }
 
     void UpdatePerspective()
