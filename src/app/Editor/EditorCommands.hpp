@@ -12,25 +12,12 @@ namespace rpg::app {
 
 struct EditorCommands
 {
-    com::Array     <EditorCommand, 10> deferredCmds; //a command should be singular, but I leave it as multiple for now 
+    //com::Array     <EditorCommand, 10> deferredCmds; //a command should be singular, but I leave it as multiple for now 
     com::RingBuffer<EditorCommand, 20> cmdHistory;
 
-    void DeferCommand(EditorCommand const& cmd)
+    void StoreCommand(EditorCommand const& cmd)
     {
-        //immediate commands would need immediate information for execution (strong dependency injection)
-        //this is why I prefer deferring  
-        deferredCmds.AppendElement(cmd);
-    }
-
-    void ExecuteDeferredCommands(ecs::ECS& ecs, res::Resources& res)
-    {
-        FOR_ARRAY(deferredCmds, i)
-        {
-            auto& cmd = deferredCmds[i];
-            cmd.Execute(ecs, res);
-            cmdHistory.Append(cmd);
-        }
-        deferredCmds.Clear();
+        cmdHistory.Append(cmd);
     }
 
     void Undo(ecs::ECS& ecs, res::Resources& res)

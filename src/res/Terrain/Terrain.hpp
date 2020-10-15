@@ -15,6 +15,7 @@
 namespace rpg::res {
 
 enum EditMode { VertexGrab, VertexPaint, PrefabPlacement };
+struct VertexBrushInfo { idx_t idx; f32 falloff; };
 
 //used by UI to set stuff
 template<auto VERT_COUNT_TOTAL, auto QUADRANT_COUNT_TOTAL>
@@ -23,12 +24,13 @@ struct Settings
     EditMode mode = VertexGrab;
     com::Optional<com::Intersection> intersection {};
 
-    struct VertexBrushInfo { idx_t idx; f32 falloff; };
+    
     com::Array<VertexBrushInfo, VERT_COUNT_TOTAL> editingVertIndices;
 
     com::Array<idx_t, QUADRANT_COUNT_TOTAL> dirtyQuadrants;
     bool  isDragging  = false;
     f32   yGrabRef    = 0;
+    f32   yGrabDist   = 0;
     f32   dragScale   = 0.3f;
     idx_t quadrantIdx = 0;
     f32   brushSize   = 1;
@@ -225,11 +227,8 @@ struct Terrain
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>())
         {
             settings.intersection = {};
-
-            //TODO: STORE COMMAND BUT KEEP IT DYNAMIC
-            //editorCmds.DeferCommand();
+            settings.yGrabDist = 0;
         }
-            
 
         if (const auto intersection = CheckIntersection(camera))
         {
@@ -244,6 +243,7 @@ struct Terrain
 
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Held>() && settings.intersection){
             const f32 yDelta = wnd::glo::mouse_wy - settings.yGrabRef;
+            settings.yGrabDist += yDelta;
             settings.yGrabRef = (f32)wnd::glo::mouse_wy;
         
             FOR_ARRAY(settings.editingVertIndices, i){

@@ -36,13 +36,13 @@ void WriteOrRead(QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
 }
 
 template<class QUADRANT_T, auto QUADRANT_COUNT>
-void SaveTerrain(const QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
+void WriteBinaryFile(const QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
 {
     WriteOrRead<true>(quadrants);
 }
 
 template<class QUADRANT_T, auto QUADRANT_COUNT>
-void LoadTerrain(QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
+void ReadBinaryFile(QUADRANT_T (&quadrants)[QUADRANT_COUNT][QUADRANT_COUNT])
 {
     WriteOrRead<false>(quadrants);
 }

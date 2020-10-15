@@ -8,7 +8,7 @@
 
 namespace rpg::app {
 
-struct CmdCreateEntityFromPrefab
+struct Cmd_CreateEntityFromPrefab
 {
     res::PrefabEnum prefabEnum  = res::PrefabEnum::Cube;
     com::Vec3f position         = {};

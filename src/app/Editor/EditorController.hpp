@@ -23,8 +23,8 @@ struct EditorController
         InputCamera(dt, renderData);
         Serialization(ecs, res);
         EditorCommands(ecs, res);
-        PrefabPlacement(res);
-        TerrainVertexGrab(res);
+        PrefabPlacement(res, ecs);
+        TerrainVertexGrab(res, ecs);
     }
 
 
@@ -44,13 +44,13 @@ struct EditorController
         if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
         {
             ecs.WriteBinaryFile();
-            res::SaveTerrain(res.terrain.terrain.quadrants);
+            res::WriteBinaryFile(res.terrain.terrain.quadrants);
         }
 
         if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>())
         {
             ecs.ReadBinaryFile();
-            res::LoadTerrain(res.terrain.terrain.quadrants);
+            res::ReadBinaryFile(res.terrain.terrain.quadrants);
             res.terrain.terrain.MarkAllDirty();
         }
     }
@@ -58,7 +58,6 @@ struct EditorController
 
     void EditorCommands(ecs::ECS& ecs, res::Resources& res)
     {
-        commands.ExecuteDeferredCommands(ecs, res);
         if (wnd::HasEvent<wnd::EventType::Ctrl, wnd::EventState::PressedOrHeld>())
         {
             if (wnd::HasEvent<wnd::EventType::Z, wnd::EventState::Pressed>())
@@ -69,41 +68,62 @@ struct EditorController
     }
 
 
-    void PrefabPlacement(res::Resources& res)
+    void PrefabPlacement(res::Resources& res, ecs::ECS& ecs)
     {
         auto& terrain = res.terrain.terrain;
-        if (terrain.settings.mode == res::EditMode::PrefabPlacement) //TODO: should be in controller
+        if (terrain.settings.mode != res::EditMode::PrefabPlacement) //TODO: should be in controller
+            return;
+
+        if (const auto intersection = terrain.CheckIntersection(camera)) //more global to show gizmo
         {
-            if (const auto intersection = terrain.CheckIntersection(camera)) //more global to show gizmo
+            terrain.settings.intersectionPos = intersection->pos;
+            if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) 
             {
-                terrain.settings.intersectionPos = intersection->pos;
-                if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) 
+                const f32 RY = (f32) (std::rand() % 360);
+                const f32 SX = 0.8f + (std::rand() % 40) / 40.f;
+                const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
+                const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
+
+                app::EditorCommand cmd
                 {
-                    const f32 RY = (f32) (std::rand() % 360);
-                    const f32 SX = 0.8f + (std::rand() % 40) / 40.f;
-                    const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
-                    const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
-
-                    const app::EditorCommand cmd
+                    .cmdEnum = app::EditorCommandEnum::CreateEntityFromPrefab,
+                    .cmd_createEntityFromPrefab = 
                     {
-                        .cmdEnum = app::EditorCommandEnum::CreateEntityFromPrefab,
-                        .dataCreateEntityFromPrefab = 
-                        {
-                            .prefabEnum = terrain.settings.prefabEnum, //no need to save in terrain settings but grab from ui
-                            .position   = intersection->pos,
-                            .rotation   = {  0, RY,  0 },
-                        }
-                    };
+                        .prefabEnum = terrain.settings.prefabEnum, //no need to save in terrain settings but grab from ui
+                        .position   = intersection->pos,
+                        .rotation   = {  0, RY,  0 },
+                    }
+                };
 
-                    commands.DeferCommand(cmd);
-                }
+                cmd.cmd_createEntityFromPrefab.Execute(ecs);
+                commands.StoreCommand(cmd);
             }
-        }   
+        }
     }
 
-    void TerrainVertexGrab(res::Resources& res)
+    void TerrainVertexGrab(res::Resources& res, ecs::ECS& ecs)
     {
-        
+        auto& terrain = res.terrain.terrain;
+        if (terrain.settings.mode != res::EditMode::VertexGrab) //TODO: should be in controller
+            return;
+
+        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>())
+        {
+            auto const& editingVertIndices = terrain.settings.editingVertIndices;
+            app::EditorCommand cmd
+            {
+                .cmdEnum = app::EditorCommandEnum::TerrainVertexGrab,
+                .cmd_terrainVertexGrab = 
+                {
+                    .yGrabDist = terrain.settings.yGrabDist,
+                }
+            };
+            cmd.cmd_terrainVertexGrab.editingVertIndices.AppendArray(editingVertIndices);
+
+            //cmd.cmd_terrainVertexGrab.Execute(res.terrain);
+            //do not execute (since it is alread done by terrain)
+            commands.StoreCommand(cmd);
+        }
     }
 
 };
