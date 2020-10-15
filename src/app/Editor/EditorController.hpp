@@ -80,7 +80,7 @@ struct EditorController
                     const f32 SZ = 0.8f + (std::rand() % 40) / 40.f;
                     const f32 SY = 0.8f + (std::rand() % 40) / 40.f;
 
-                    const app::EditorCommand cmd 
+                    const app::EditorCommand cmd
                     {
                         .cmdEnum = app::EditorCommandEnum::CreateEntityFromPrefab,
                         .dataCreateEntityFromPrefab = 

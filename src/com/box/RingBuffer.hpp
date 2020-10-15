@@ -8,42 +8,39 @@ namespace rpg::com {
 template<typename T, auto N>
 struct RingBuffer
 {
-    T data [N] {};
-    std::size_t index = 0;
+    T data [N] {}; //init needed for union
+    s32 idx   = -1;
+    s32 count =  0;
+    s32 maxIdx = idx;
 
-    auto& operator[](auto const idx) 
+    auto& operator[](auto const i)       { return data[i % N]; }
+    auto& operator[](auto const i) const { return data[i % N]; }
+
+    void Append(T const& element)
     {
-        return data[idx % N];
+        ++idx;
+        ++count;
+        maxIdx = idx;
+        com::Clamp(count, 0, N);
+        operator[](idx) = element; //TODO: array
     }
 
-    auto& operator[](auto const idx) const
+    T* StepBackwards()
     {
-        return data[idx % N];
+        if (idx - 1 < -1 || count - 1 < 0) return nullptr;
+        --count;
+        return &operator[](idx--); //return current and then decrement
     }
 
-    auto& StepForward()
+    T* StepForwards()
     {
-        return operator[](index++);
-    }
+        if (idx + 1 > maxIdx) return nullptr;
+        ++count;
+        return &operator[](++idx);
+    }  
 
-    auto& StepBackward()
-    {
-        return operator[](--index);
-    }
-
-    void Append(T const& pElement)
-    {
-        auto& element = this->operator[](index);
-        if constexpr(std::is_array_v<T>)
-        {
-            dbg::Assert(false, "not impl yet");
-        }
-        else
-        {
-            element = pElement;
-        }
-        ++index;
-    }
+    auto& Current()       { return operator[](idx); }
+    auto& Current() const { return operator[](idx); }
 
 };
 

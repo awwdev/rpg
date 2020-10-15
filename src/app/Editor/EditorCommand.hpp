@@ -20,7 +20,7 @@ struct EditorCommand
     union 
     {
         CmdCreateEntityFromPrefab dataCreateEntityFromPrefab;
-    };
+    };  
 
     void Execute(ecs::ECS& ecs, res::Resources& res)
     {

@@ -64,19 +64,23 @@ struct ComponentArray
 
     void Remove(ID const entityID)
     {
-        auto const dst_denseIdx = componentLookup[entityID];
+        //get the component in dense array
+        auto const denseIdx = componentLookup[entityID];
 
-        //swapping
-        auto const src_denseIdx = dense.Count() - 1;
-        auto const src_entityID = entityLookup[src_denseIdx];
+        //nullify lookups
+        componentLookup[entityID] = ECS_NULL;
+        entityLookup[denseIdx] = ECS_NULL;
 
-        entityLookup   [src_denseIdx] = ECS_NULL;
-        componentLookup[src_entityID] = ECS_NULL;
+        //swap element at idx with the last element, and remove last element
+        //store last element lookups first
+        auto const swapped_entityID = entityLookup[dense.Count() - 1];
+        if (denseIdx < dense.Count() - 1) 
+        {
+            componentLookup[swapped_entityID] = denseIdx;
+            entityLookup[denseIdx] = swapped_entityID;
+        }
 
-        dense.Remove_Swap(dst_denseIdx);
-
-        entityLookup   [dst_denseIdx] = src_entityID;
-        componentLookup[src_entityID] = dst_denseIdx;
+        dense.Remove_Swap(denseIdx);      
     }   
 
     //? serialization

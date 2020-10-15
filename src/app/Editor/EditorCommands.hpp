@@ -12,8 +12,8 @@ namespace rpg::app {
 
 struct EditorCommands
 {
-    com::Array<EditorCommand, 20> deferredCmds;
-    com::RingBuffer<EditorCommand, 20> cmdHistory;
+    com::Array<EditorCommand, 10> deferredCmds;
+    com::RingBuffer<EditorCommand, 10> cmdHistory;
 
     void DeferCommand(EditorCommand const& cmd)
     {
@@ -33,14 +33,14 @@ struct EditorCommands
 
     void Undo(ecs::ECS& ecs, res::Resources& res)
     {
-        auto& cmd = cmdHistory.StepBackward();
-        cmd.ExecuteReverse(ecs, res);
+        if (auto* cmd = cmdHistory.StepBackwards())
+            cmd->ExecuteReverse(ecs, res);
     }
 
     void Redo(ecs::ECS& ecs, res::Resources& res)
     {
-        auto& cmd = cmdHistory.StepForward();
-        cmd.Execute(ecs, res);
+        if (auto* cmd = cmdHistory.StepForwards())
+            cmd->Execute(ecs, res);
     }
 
 };
