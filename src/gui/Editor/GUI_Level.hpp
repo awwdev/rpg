@@ -14,7 +14,7 @@ struct GUI_Level
     Widget_Window wnd 
     {
         .title  = "Level",
-        .rect   = { (f32)wnd::glo::window_w - 300, 200, 300, 200 },
+        .rect   = { 0, Widget_Window::BAR_H * 2, 300, 200 },
         .limits = { 128, 128, f32max, f32max }
     };
 

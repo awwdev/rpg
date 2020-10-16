@@ -13,7 +13,7 @@ struct GUI_Scene
     Widget_Window wnd 
     {
         .title = "Scene",
-        .rect  = { 0, 0, 300, 500 }
+        .rect  = { 0, Widget_Window::BAR_H * 1, 300, 500 }
     };
 
     Widget_List<ecs::ID> entityList

@@ -11,9 +11,9 @@ struct Widget_Window
     static constexpr f32 ROW_H = 18;
     static constexpr f32 BAR_H = 20;
 
-    com::String<30> title  { "Window" };
-    com::Rectf  rect  { 0, 0, 300, 300 };
-    const com::Rectf  limits { 32, 32, f32max, f32max };
+    com::String<30> title { "Window" };
+    com::Rectf rect { 0, 0, 300, 300 };
+    const com::Rectf limits { 32, 32, f32max, f32max };
     
     enum class Mode
     { 
@@ -22,7 +22,7 @@ struct Widget_Window
         Move,
     }; 
     Mode mode = Widget_Window::Mode::None;
-    bool isClosed = false;
+    bool isClosed = true;
     s32 rowY = 0; //for element arrangement
 
     void Update(gpu::RenderData& renderData)

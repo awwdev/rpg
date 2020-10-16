@@ -63,17 +63,16 @@ struct State_General
                                  generalUniforms.descriptors.descSets.count, generalUniforms.descriptors.descSets.data, 0, nullptr);
 
         //?terrain
+        vkCmdBindIndexBuffer    (cmdBuffer, generalVertices.iboTerrain.activeBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &generalVertices.vboTerrain.activeBuffer->buffer, generalVertices.offsets);
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrain.pipeline.pipeline);
-        vkCmdDraw               (cmdBuffer, generalVertices.vboTerrain.count, 1, 0, 0);
-        rdGeneral.dbgVertCountTerrain += generalVertices.vboTerrain.count;
+        vkCmdDrawIndexed        (cmdBuffer, generalVertices.iboTerrain.count, 1, 0, 0 , 0);
 
         //?terrain wire
         if (rdGeneral.enableTerrainWire)
         {
-            vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrain.wirePipeline.pipeline);
-            vkCmdDraw(cmdBuffer, generalVertices.vboTerrain.count, 1, 0, 0);
-            rdGeneral.dbgVertCountTerrain += generalVertices.vboTerrain.count;
+            vkCmdBindPipeline   (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrain.wirePipeline.pipeline);
+            vkCmdDrawIndexed    (cmdBuffer, generalVertices.iboTerrain.count, 1, 0, 0 , 0);
         }
 
         //?meshes 
