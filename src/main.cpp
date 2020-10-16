@@ -11,11 +11,27 @@
 #include "com/DeltaTime.hpp"
 #include "res/Resources.hpp"
 
+#include "res/Terrain/Terrain2.hpp"
+#include "res/Terrain/TerrainDebug.hpp"
+
 using namespace rpg;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int)
 {
     dbg::Console console{};
+
+
+    {
+        res2::Terrain terrain;
+        terrain.Create();
+        PrintTerrain(terrain);
+
+    }
+    system("pause");
+    std::exit(0);
+
+
+
     com::mem::GlobalAllocate();
 
     {

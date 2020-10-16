@@ -79,4 +79,23 @@ namespace com
     }
 }
 
+//? printing
+
+template<typename T, auto Y, auto X>
+void Print2DArray(T const (&arr)[Y][X])
+{
+    for(idx_t y = 0; y < Y; ++y) {
+    for(idx_t x = 0; x < X; ++x) {
+        std::cout << arr[y][x] << '\n';
+    }}
+}
+
+template<typename T, auto N>
+void Print1DArray(T const (&arr)[N])
+{
+    for(idx_t i = 0; i < N; ++i) {
+        std::cout << arr[i] << '\n';
+    }
+}
+
 }//ns

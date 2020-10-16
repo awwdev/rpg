@@ -26,6 +26,7 @@ struct RenderData_General
         alignas(64) com::Mat4f proj;
         alignas(16) com::Vec3f viewDir;
         alignas(16) float time;
+        //TODO: global world offset
     };
 
     struct MeshInstance
@@ -61,5 +62,14 @@ struct RenderData_General
         dbgVertCountTerrain = 0;
     }
 };
+
+std::ostream& operator<<(std::ostream& os, RenderData_General::Vertex const& vertex)
+{
+    PrintMatrix(vertex.pos);
+    PrintMatrix(vertex.nor);
+    PrintMatrix(vertex.col);
+    PrintMatrix(vertex.tex);
+    return os;
+}
 
 }//ns
