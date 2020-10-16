@@ -1,15 +1,14 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ecs/ECS.hpp"
-#include "com/Matrix.hpp"
-#include "wnd/WindowEvents.hpp"
-#include "gpu/Meta/Cameras.hpp"
 #include "app/InputMode.hpp"
-#include "gpu/RenderData/RenderData.hpp"
-#include "app/Editor/EditorCommands.hpp"
-#include "res/Terrain/_Old/TerrainSerialization.hpp"
+#include "gpu/Meta/Cameras.hpp"
+#include "ecs/ECS.hpp"
 #include "res/Resources.hpp"
+#include "gpu/RenderData/RenderData.hpp"
+
+#include "app/Editor/EditorCommands.hpp"
+#include "app/Editor/EditorMode.hpp"
 
 namespace rpg::app {
 
@@ -18,13 +17,19 @@ struct EditorController
     gpu::EgoCamera camera;
     EditorCommands commands;
 
+    EditorMode editorMode = EditorMode::TerrainVertexGrab;
+
+
     void Update(const double dt, ecs::ECS& ecs, res::Resources& res, gpu::RenderData& renderData)
     {
         InputCamera(dt, renderData);
         Serialization(ecs, res);
-        EditorCommands(ecs, res);
+        UndoRedo(ecs, res);
         PrefabPlacement(res, ecs);
         TerrainVertexGrab(res, ecs);
+
+        if (wnd::HasEvent<wnd::EventType::F3, wnd::EventState::Pressed>())
+            editorMode = (EditorMode)(((idx_t)editorMode + 1) % (idx_t)EditorMode::ENUM_END);
     }
 
 
@@ -32,6 +37,7 @@ struct EditorController
     {
         if (app::glo::inputMode == app::glo::FlyMode)
             camera.Update(dt);
+
         if (wnd::glo::resizeState == wnd::glo::ResizeState::End)
             camera.UpdatePerspective();
 
@@ -44,25 +50,19 @@ struct EditorController
         if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
         {
             ecs.WriteBinaryFile();
-            
-            /*
-            res::WriteBinaryFile(res.terrain.terrain.quadrants);
-            */
-           
+            ///res::WriteBinaryFile(res.terrain.terrain.quadrants);           
         }
 
         if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>())
         {
             ecs.ReadBinaryFile();
-            /*
-            res::ReadBinaryFile(res.terrain.terrain.quadrants);
-            res.terrain.terrain.MarkAllDirty();
-             */
+            //res::ReadBinaryFile(res.terrain.terrain.quadrants);
+            //res.terrain.terrain.MarkAllDirty();
         }
     }
 
 
-    void EditorCommands(ecs::ECS& ecs, res::Resources& res)
+    void UndoRedo(ecs::ECS& ecs, res::Resources& res)
     {
         if (wnd::HasEvent<wnd::EventType::Ctrl, wnd::EventState::PressedOrHeld>())
         {
@@ -72,6 +72,42 @@ struct EditorController
                 commands.Redo(ecs, res);
         }
     }
+
+
+    void TerrainVertexGrab(res::Resources& res, ecs::ECS& ecs)
+    {
+        auto& terrain = res.terrain.terrain;
+        /*
+        if (terrain.settings.mode != res::EditMode::VertexGrab) //TODO: should be in controller
+            return;
+
+        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>())
+        {
+            auto const& editingVertIndices = terrain.settings.editingVertIndices;
+            app::EditorCommand cmd
+            {
+                .cmdEnum = app::EditorCommandEnum::TerrainVertexGrab,
+                .cmd_terrainVertexGrab = 
+                {
+                    .yGrabDist = terrain.settings.yGrabDist,
+                }
+            };
+            cmd.cmd_terrainVertexGrab.editingVertIndices.AppendArray(editingVertIndices);
+
+            //cmd.cmd_terrainVertexGrab.Execute(res.terrain);
+            //do not execute (since it is alread done by terrain)
+            commands.StoreCommand(cmd);
+        }
+        */
+    }
+
+
+
+
+
+
+
+
 
 
     void PrefabPlacement(res::Resources& res, ecs::ECS& ecs)
@@ -109,32 +145,7 @@ struct EditorController
         */
     }
 
-    void TerrainVertexGrab(res::Resources& res, ecs::ECS& ecs)
-    {
-        auto& terrain = res.terrain.terrain;
-        /*
-        if (terrain.settings.mode != res::EditMode::VertexGrab) //TODO: should be in controller
-            return;
-
-        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>())
-        {
-            auto const& editingVertIndices = terrain.settings.editingVertIndices;
-            app::EditorCommand cmd
-            {
-                .cmdEnum = app::EditorCommandEnum::TerrainVertexGrab,
-                .cmd_terrainVertexGrab = 
-                {
-                    .yGrabDist = terrain.settings.yGrabDist,
-                }
-            };
-            cmd.cmd_terrainVertexGrab.editingVertIndices.AppendArray(editingVertIndices);
-
-            //cmd.cmd_terrainVertexGrab.Execute(res.terrain);
-            //do not execute (since it is alread done by terrain)
-            commands.StoreCommand(cmd);
-        }
-        */
-    }
+    
 
 };
 

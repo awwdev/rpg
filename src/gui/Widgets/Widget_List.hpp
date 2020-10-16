@@ -54,7 +54,7 @@ struct Widget_List
         const bool isMouseOnList = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);
 
         AddText(renderData, listName, rect.x, rect.y); 
-        AddRectOutline(renderData, back, Colors::Black2_Alpha);
+        AddRectOutline(renderData, back, isMouseOnList ? Colors::Orange : Colors::Black5);
 
         if (isMouseOnList && wnd::glo::mouse_scroll_delta != 0){
             scroll += wnd::glo::mouse_scroll_delta < 0 ? +1 : -1;

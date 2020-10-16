@@ -5,7 +5,9 @@
 #include "gui/Widgets/Widget_Table.hpp"
 #include "gui/Widgets/Widget_Checkbox.hpp"
 #include "gui/Widgets/Widget_Slider.hpp"
+
 #include "res/Resources.hpp"
+#include "app/Editor/EditorMode.hpp"
 
 namespace rpg::gui {
 
@@ -14,7 +16,7 @@ struct GUI_Level
     Widget_Window wnd 
     {
         .title  = "Level",
-        .rect   = { 0, Widget_Window::BAR_H * 2, 300, 200 },
+        .rect   = { 0, Widget_Window::BAR_H * 2, 300, 300 },
         .limits = { 128, 128, f32max, f32max }
     };
 
@@ -53,30 +55,23 @@ struct GUI_Level
         }
     }
 
-    void Update(gpu::RenderData& renderData, res::Resources& res)
+    void Update(gpu::RenderData& renderData, res::Resources& res, app::EditorMode editorMode)
     {
-        //table.table[0][1] = [&] {
-        //    switch(res.terrain.terrain.settings.mode) {
-        //        case res::EditMode::VertexGrab:     return "VertexGrab";
-        //        case res::EditMode::VertexPaint:    return "VertexPaint";
-        //        case res::EditMode::PrefabPlacement:  return "PrefabPlacement";
-        //        default: dbg::Assert(false, "EditMode missing"); return "";
-        //    }
-        //}();
+        table.table[0][1] = app::EDIT_MODE_ENUM_TO_STR.Get(editorMode);
 
-        wnd         .Update(renderData);
+        wnd.Update(renderData);
 
-        //table       .Update(renderData, wnd);
-        prefabList  .Update(renderData, wnd);
-        checkbox    .Update(renderData, wnd);
+        table.Update(renderData, wnd);
+        prefabList.Update(renderData, wnd);
+        checkbox.Update(renderData, wnd);
 
-        rSlider     .Update(renderData, wnd);
-        gSlider     .Update(renderData, wnd);
-        bSlider     .Update(renderData, wnd);
+        //vertex colors
+        rSlider.Update(renderData, wnd);
+        gSlider.Update(renderData, wnd);
+        bSlider.Update(renderData, wnd);
 
         //res.terrain.terrain.settings.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
         renderData.general.enableTerrainWire = checkbox.isChecked;
-
         //res.terrain.terrain.settings.vertexColor.r = rSlider.value;
         //res.terrain.terrain.settings.vertexColor.g = gSlider.value;
         //res.terrain.terrain.settings.vertexColor.b = bSlider.value;
