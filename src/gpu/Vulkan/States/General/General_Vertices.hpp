@@ -8,6 +8,7 @@
 #include "com/box/Array.hpp"
 
 #include "res/Resources_Meshes.hpp"
+#include "res/Resources_Terrain.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {

@@ -12,7 +12,7 @@
 #include "gui/Editor/GUI_Level.hpp"
 #include "gui/Editor/GUI_Scene.hpp"
 
-#include "res/Terrain/Terrain.hpp"
+#include "res/Terrain/_Old/Terrain.hpp"
 #include "res/Prefab/PrefabLoader.hpp"
 #include "res/Resources.hpp"
 

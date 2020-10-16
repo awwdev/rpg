@@ -8,7 +8,7 @@
 #include "app/InputMode.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "app/Editor/EditorCommands.hpp"
-#include "res/Terrain/TerrainSerialization.hpp"
+#include "res/Terrain/_Old/TerrainSerialization.hpp"
 #include "res/Resources.hpp"
 
 namespace rpg::app {
