@@ -28,7 +28,7 @@ struct State_General
 
     void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::Resources& res)
     {
-        generalVertices     .Create(cmdPool, res.meshes);
+        generalVertices     .Create(cmdPool, res.meshes, res.terrain);
         generalUniforms     .Create(cmdPool, uboSun, shadowMaps, res.textures);
         generalRenderPass   .Create(cmdPool);
         generalShader       .Create();

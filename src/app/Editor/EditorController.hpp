@@ -44,14 +44,20 @@ struct EditorController
         if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
         {
             ecs.WriteBinaryFile();
+            
+            /*
             res::WriteBinaryFile(res.terrain.terrain.quadrants);
+            */
+           
         }
 
         if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>())
         {
             ecs.ReadBinaryFile();
+            /*
             res::ReadBinaryFile(res.terrain.terrain.quadrants);
             res.terrain.terrain.MarkAllDirty();
+             */
         }
     }
 
@@ -71,6 +77,7 @@ struct EditorController
     void PrefabPlacement(res::Resources& res, ecs::ECS& ecs)
     {
         auto& terrain = res.terrain.terrain;
+        /*
         if (terrain.settings.mode != res::EditMode::PrefabPlacement) //TODO: should be in controller
             return;
 
@@ -99,11 +106,13 @@ struct EditorController
                 commands.StoreCommand(cmd);
             }
         }
+        */
     }
 
     void TerrainVertexGrab(res::Resources& res, ecs::ECS& ecs)
     {
         auto& terrain = res.terrain.terrain;
+        /*
         if (terrain.settings.mode != res::EditMode::VertexGrab) //TODO: should be in controller
             return;
 
@@ -124,6 +133,7 @@ struct EditorController
             //do not execute (since it is alread done by terrain)
             commands.StoreCommand(cmd);
         }
+        */
     }
 
 };

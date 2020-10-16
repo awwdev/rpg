@@ -12,6 +12,7 @@ enum class BufferExtType
     UniformBuffer, 
     VertexBuffer,
     StorageBuffer,
+    IndexBuffer,
 };
 
 template<BufferExtType BUFFER_EXT_TYPE, class ELEMENT_TYPE, idx_t MAX_COUNT_T>
@@ -33,6 +34,8 @@ struct BufferExt
             case BufferExtType::UniformBuffer: return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
             case BufferExtType::VertexBuffer:  return VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
             case BufferExtType::StorageBuffer: return VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+            case BufferExtType::IndexBuffer:   return VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+            default: dbg::Assert(false, "BufferExtType missing");
         }
     }();
 
@@ -128,5 +131,8 @@ using StorageBuffer = BufferExt<BufferExtType::StorageBuffer, ELEMENT_TYPE, MAX_
 
 template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
 using VertexBuffer  = BufferExt<BufferExtType::VertexBuffer, ELEMENT_TYPE, MAX_COUNT_T>;
+
+template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
+using IndexBuffer  = BufferExt<BufferExtType::IndexBuffer, ELEMENT_TYPE, MAX_COUNT_T>;
 
 }//ns

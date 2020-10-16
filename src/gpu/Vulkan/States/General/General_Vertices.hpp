@@ -18,7 +18,8 @@ struct General_Vertices
     using RD = RenderData_General;
     using GeneralVertex = RD::Vertex;
 
-    VertexBuffer<GeneralVertex, RD::TERRA_VERT_MAX_ALL> vboTerrain;
+    VertexBuffer<GeneralVertex, RD::TERRA_VERTICES_MAX_ALL> vboTerrain;
+    IndexBuffer<uint32_t, RD::TERRA_INDICES_MAX_ALL> iboTerrain;
 
     VertexBuffer<GeneralVertex, res::MESHES_VERTS_TOTAL> vboMeshes;
     res::MeshVertexRange vboMeshesVertexRanges [(idx_t) res::MESHES_TOTAL];
@@ -64,18 +65,22 @@ struct General_Vertices
     void Update(gpu::RenderData_General& renderData, const res::Resources_Terrain& resTerrain)
     {
         vboTerrain.Reset();
-        //TODO: all quadrants
-        const auto& verts    = resTerrain.terrain.quadrants[0][0].verts;
-        const auto vertCount = resTerrain.terrain.quadrants[0][0].VERT_COUNT_TOTAL;
-        vboTerrain.Append(verts, vertCount);
-
-        //renderData.debugInfo.vboData_general_vertCount = vertCount;
+        
+        //? terrain vertices
+        auto const& terrain = resTerrain.terrain;
+        for(auto z = 0; z < terrain.QUADRANT_COUNT; ++z) {
+        for(auto x = 0; x < terrain.QUADRANT_COUNT; ++x) {
+            auto const& quadrant = terrain.quadrants[z][x];
+            vboTerrain.Append(&quadrant.vertices[0][0], quadrant.VERT_COUNT);
+        }}
     }
 
-    void Create(VkCommandPool cmdPool, const res::Resources_Meshes& resMeshes)
+    void Create(VkCommandPool cmdPool, res::Resources_Meshes const& resMeshes, const res::Resources_Terrain& resTerrain)
     {
         vboTerrain.Create();
+        iboTerrain.Create();
 
+        //? meshes
         vboMeshes.Create();
         if (resMeshes.allVertices.Empty() == false) {
             vboMeshes.Append(resMeshes.allVertices);
@@ -83,11 +88,21 @@ struct General_Vertices
             FOR_C_ARRAY(resMeshes.meshVertexRanges, i)
                 vboMeshesVertexRanges[i] = resMeshes.meshVertexRanges[i];
         }
+
+        //? terrain indices
+        auto const& terrain = resTerrain.terrain;
+        for(auto z = 0; z < terrain.QUADRANT_COUNT; ++z) {
+        for(auto x = 0; x < terrain.QUADRANT_COUNT; ++x) {
+            auto const& quadrant = terrain.quadrants[z][x];
+            iboTerrain.Append(quadrant.indices, quadrant.INDEX_COUNT);
+        }}
+        iboTerrain.Bake(cmdPool);
     }
 
     void Destroy()
     {
         vboTerrain.Destroy();
+        iboTerrain.Destroy();
         vboMeshes.Destroy();
         FOR_C_ARRAY(vboMeshesVertexRanges, i)
             vboMeshesVertexRanges[i] = {};

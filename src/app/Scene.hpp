@@ -42,7 +42,6 @@ struct GameScene
         guiLevel.Init(resources.prefabs);
         sun.Create(ecs);
         playerController.Create(ecs);
-        resources.terrain.terrain.InitGizmos(ecs);
         ecs.prefabsArrays = resources.prefabs.prefabsArrays;    
     }
 
@@ -65,7 +64,6 @@ struct GameScene
         else 
             editorController.Update(dt, ecs, resources, renderData);
 
-        resources.terrain.terrain.Update(dt, editorController.camera, ecs); 
         sun.Update(ecs, dt, renderData);
 
         //? ecs

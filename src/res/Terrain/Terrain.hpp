@@ -9,15 +9,17 @@ namespace rpg::res2 {
 struct Quadrant
 {   
     //? settings
-    using Vertex = gpu::RenderData_General::Vertex;
     static constexpr float QUAD_SIZE  = 1;
     static constexpr idx_t QUAD_COUNT = 10;
+
     static constexpr idx_t VERT_COUNT = (QUAD_COUNT + 1) * (QUAD_COUNT + 1);
+    static constexpr idx_t INDEX_COUNT = VERT_COUNT * 6;
     static constexpr float QUADRANT_SIZE = QUAD_SIZE * QUAD_COUNT;
+    using Vertex = gpu::RenderData_General::Vertex;
 
     //? data
     Vertex   vertices [QUAD_COUNT + 1][QUAD_COUNT + 1];
-    uint32_t indices  [VERT_COUNT * 6];
+    uint32_t indices  [INDEX_COUNT];
 
     void Create(float const index_z, float const index_x)
     {

@@ -16,6 +16,7 @@ struct Cmd_TerrainVertexGrab
 
     void Execute(res::Resources_Terrain& resTerrain) const
     {
+        /*
         auto& terrain = resTerrain.terrain;
         auto& quadrant = terrain.GetQuadrant(terrain.settings.quadrantIdx);
         FOR_ARRAY(editingVertIndices, i)
@@ -27,10 +28,12 @@ struct Cmd_TerrainVertexGrab
             quadrant.RecalculateNormalsOfTriangle(triangleIdx);
         }
         terrain.settings.dirtyQuadrants.AppendElement(terrain.settings.quadrantIdx);
+        */
     }
 
     void ExecuteReverse(res::Resources_Terrain& resTerrain)
     {
+        /*
         auto& terrain = resTerrain.terrain;
         auto& quadrant = terrain.GetQuadrant(terrain.settings.quadrantIdx);
         FOR_ARRAY(editingVertIndices, i)
@@ -42,6 +45,7 @@ struct Cmd_TerrainVertexGrab
             quadrant.RecalculateNormalsOfTriangle(triangleIdx);
         }
         terrain.settings.dirtyQuadrants.AppendElement(terrain.settings.quadrantIdx);
+        */
     }
 
 };

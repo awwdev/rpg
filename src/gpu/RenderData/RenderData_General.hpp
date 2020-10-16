@@ -9,8 +9,9 @@ namespace rpg::gpu {
 
 struct RenderData_General
 {
-    static constexpr uint32_t TERRA_VERT_MAX_ALL = 1'000'000;
-    static constexpr uint32_t MESH_INSTANCES_MAX =     1'000;
+    static constexpr uint32_t TERRA_VERTICES_MAX_ALL = 1'000'000;
+    static constexpr uint32_t TERRA_INDICES_MAX_ALL  = 1'000'000;
+    static constexpr uint32_t MESH_INSTANCES_MAX = 1'000;
 
     struct Vertex
     {
