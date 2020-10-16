@@ -12,11 +12,10 @@
 
 namespace rpg::app {
 
-struct EditorController
+struct Editor
 {
     gpu::EgoCamera camera;
     EditorCommands commands;
-
     EditorMode editorMode = EditorMode::TerrainVertexGrab;
 
 
@@ -28,8 +27,9 @@ struct EditorController
         PrefabPlacement(res, ecs);
         TerrainVertexGrab(res, ecs);
 
+        //zap through editor modes
         if (wnd::HasEvent<wnd::EventType::F3, wnd::EventState::Pressed>())
-            editorMode = (EditorMode)(((idx_t)editorMode + 1) % (idx_t)EditorMode::ENUM_END);
+            editorMode = ScrollEnum(editorMode);
     }
 
 

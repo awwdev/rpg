@@ -16,8 +16,8 @@
 #include "res/Prefab/PrefabLoader.hpp"
 #include "res/Resources.hpp"
 
-#include "app/Player/PlayerController.hpp"
-#include "app/Editor/EditorController.hpp"
+#include "app/Player/Player.hpp"
+#include "app/Editor/Editor.hpp"
 #include "app/InputMode.hpp"
 
 namespace rpg::app {
@@ -29,8 +29,8 @@ struct GameScene
     gpu::RenderData   renderData;
     gpu::Sun          sun;
 
-    app::PlayerController playerController;
-    app::EditorController editorController;
+    app::Player playerController;
+    app::Editor editorController;
 
     gui::GUI_Level  guiLevel;
     gui::GUI_Shadow guiShadow;

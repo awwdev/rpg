@@ -46,6 +46,12 @@ concept is_constructible_with = requires (Ts&&... args)
 template<typename T>
 concept as_enum_integral = std::is_enum_v<T> || std::is_integral_v<T>;
 
+template<typename T>
+concept as_scrollable_enum = requires {
+    std::is_enum_v<T>;
+    T::ENUM_END;
+};
+
 //? array
 
 template<typename T, auto N>
@@ -97,5 +103,18 @@ void Print1DArray(T const (&arr)[N])
         std::cout << arr[i] << '\n';
     }
 }
+
+//? scroll / zap through enum
+
+inline auto ScrollEnum(as_scrollable_enum auto pEnum)
+{
+    using T = decltype(pEnum);
+    using U = std::underlying_type_t<T>;
+    return static_cast<T>(
+        (static_cast<U>(pEnum) + 1) % 
+         static_cast<U>(T::ENUM_END)
+    );
+}
+
 
 }//ns

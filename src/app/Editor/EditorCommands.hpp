@@ -12,7 +12,6 @@ namespace rpg::app {
 
 struct EditorCommands
 {
-    //com::Array     <EditorCommand, 10> deferredCmds; //a command should be singular, but I leave it as multiple for now 
     com::RingBuffer<EditorCommand, 20> cmdHistory;
 
     void StoreCommand(EditorCommand const& cmd)

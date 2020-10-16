@@ -9,7 +9,7 @@
 
 namespace rpg::app {
     
-struct PlayerController
+struct Player
 {
     gpu::ThirdCamera camera;
 
