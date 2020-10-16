@@ -68,12 +68,16 @@ struct State_General
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrain.pipeline.pipeline);
         vkCmdDrawIndexed        (cmdBuffer, generalVertices.iboTerrain.count, 1, 0, 0 , 0);
 
+        rdGeneral.dbgVertCountTerrain += generalVertices.vboTerrain.count;
+
         //?terrain wire
         if (rdGeneral.enableTerrainWire)
         {
             vkCmdBindPipeline   (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrain.wirePipeline.pipeline);
             vkCmdDrawIndexed    (cmdBuffer, generalVertices.iboTerrain.count, 1, 0, 0 , 0);
         }
+
+        rdGeneral.dbgVertCountTerrain += generalVertices.vboTerrain.count;
 
         //?meshes 
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.pipeline);

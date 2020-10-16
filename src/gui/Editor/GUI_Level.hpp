@@ -17,7 +17,6 @@ struct GUI_Level
     {
         .title  = "Level",
         .rect   = { 0, Widget_Window::BAR_H * 2, 300, 300 },
-        .limits = { 128, 128, f32max, f32max }
     };
 
     Widget_List<res::PrefabEnum> prefabList

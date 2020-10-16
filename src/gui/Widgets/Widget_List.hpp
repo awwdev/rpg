@@ -48,8 +48,11 @@ struct Widget_List
     }
 
 
-    void Update(gpu::RenderData& renderData)
+    void Update(gpu::RenderData& renderData, bool const insideWindow = true)
     {
+        if (insideWindow == false)
+            return;
+
         const com::Rectf back { rect.x, rect.y + LINE_HEIGHT, rect.width, rect.height - LINE_HEIGHT };
         const bool isMouseOnList = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);
 
@@ -118,8 +121,8 @@ struct Widget_List
         if (wnd.isClosed)
             return;
 
-        wnd.CalculateRow(rect, maxHeight);
-        Update(renderData);
+        const bool insideWindow = wnd.CalculateRow(rect, maxHeight);
+        Update(renderData, insideWindow);
     }
 };
 

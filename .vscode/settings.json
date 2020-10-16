@@ -544,7 +544,8 @@
 		"thread": "cpp",
 		"condition_variable": "cpp",
 		"mutex": "cpp",
-		"source_location": "cpp"
+		"source_location": "cpp",
+		"climits": "cpp"
 	},
 
 }

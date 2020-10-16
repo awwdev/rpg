@@ -13,8 +13,11 @@ struct Widget_InputField
     com::String<30> value;
     bool isActive = false;
 
-    T Update(gpu::RenderData& renderData)
+    T Update(gpu::RenderData& renderData, bool const insideWindow = true)
     {
+        if (insideWindow == false)
+            return;
+
         const com::Rectf back { 
             rect.x + rect.width/2,
             rect.y,
@@ -55,8 +58,8 @@ struct Widget_InputField
         if (wnd.isClosed)
             return;
 
-        wnd.CalculateRow(rect, LINE_HEIGHT);
-        return Update(renderData);
+        const bool insideWindow = wnd.CalculateRow(rect, LINE_HEIGHT);
+        return Update(renderData, insideWindow);
     }
 
     T GetValue() const

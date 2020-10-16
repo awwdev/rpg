@@ -16,7 +16,6 @@ struct GUI_Stats
     {
         .title  = "Stats",
         .rect   = { 0, Widget_Window::BAR_H * 0, 300, 200 },
-        .limits = { 128, 128, f32max, f32max }
     };
     Widget_Table table;
 

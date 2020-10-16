@@ -11,8 +11,11 @@ struct Widget_Checkbox
     com::String<30> label;
     bool isChecked = false;
 
-    void Update(gpu::RenderData& renderData)
+    void Update(gpu::RenderData& renderData, bool const insideWindow = true)
     {
+        if (insideWindow == false)
+            return;
+
         const com::Rectf boxOutline { 
             rect.x + rect.width/2,
             rect.y,
@@ -45,8 +48,8 @@ struct Widget_Checkbox
         if (wnd.isClosed)
             return;
 
-        wnd.CalculateRow(rect, LINE_HEIGHT);
-        return Update(renderData);
+        bool const insideWindow = wnd.CalculateRow(rect, LINE_HEIGHT);
+        return Update(renderData, insideWindow);
     }
 
 };

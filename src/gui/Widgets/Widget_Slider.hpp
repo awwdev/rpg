@@ -16,8 +16,11 @@ struct Widget_Slider
     bool isDragging; //internal
     f32 dragInitX;   //internal
 
-    T Update(gpu::RenderData& renderData)
+    T Update(gpu::RenderData& renderData, bool const insideWindow = true)
     {
+        if (insideWindow == false)
+            return value;
+
         const com::Rectf back { 
             rect.x + rect.width/2,
             rect.y,
@@ -66,8 +69,8 @@ struct Widget_Slider
         if (wnd.isClosed)
             return {};
 
-        wnd.CalculateRow(rect, LINE_HEIGHT);
-        return Update(renderData);
+        bool const insideWindow = wnd.CalculateRow(rect, LINE_HEIGHT);
+        return Update(renderData, insideWindow);
     }
     
 };

@@ -20,7 +20,9 @@ struct Terrain
         for(auto z = 0; z < QUADRANT_COUNT; ++z) {
         for(auto x = 0; x < QUADRANT_COUNT; ++x) {
             auto const quadrantIdx = x + z * QUADRANT_COUNT;
-            quadrants[z][x].Create(z, x, quadrantIdx, { z/(float)QUADRANT_COUNT, x/(float)QUADRANT_COUNT, 1, 1});
+            quadrants[z][x].Create(z, x, quadrantIdx, 
+            //test color
+            { z/(float)QUADRANT_COUNT, x/(float)QUADRANT_COUNT, 1, 1});
         }}
     }
 

@@ -10,10 +10,11 @@ struct Widget_Window
 {
     static constexpr f32 ROW_H = 18;
     static constexpr f32 BAR_H = 20;
+    static constexpr f32 RESIZER = 8;
 
     com::String<30> title { "Window" };
     com::Rectf rect { 0, 0, 300, 300 };
-    const com::Rectf limits { 32, 32, f32max, f32max };
+    const com::Rectf limits { 32, BAR_H + RESIZER, f32max, f32max };
     
     enum class Mode
     { 
@@ -35,7 +36,7 @@ struct Widget_Window
         }
 
         const com::Rectf bar      { rect.x, rect.y, rect.width, BAR_H };
-        const com::Rectf resizer  { rect.x + rect.width -  8, rect.y + rect.height - 8, 8, 8 };
+        const com::Rectf resizer  { rect.x + rect.width - RESIZER, rect.y + rect.height - RESIZER, RESIZER, RESIZER };
         const com::Rectf closeBtn { rect.x + rect.width - BAR_H, rect.y , BAR_H, BAR_H };
 
         const bool isMouseOnWindow   = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, rect);
@@ -78,14 +79,19 @@ struct Widget_Window
         AddRect(renderData, resizer, isMouseOnResizer ? Colors::Red : Colors::Black3);
     }
 
-    void CalculateRow(f32& pX, f32& pY)
+    bool CalculateRow(f32& pX, f32& pY)
     {
         pX = rect.x + PADDING;
         pY = rowY;
         rowY += ROW_H;
+
+        if (rowY > rect.y + rect.height)
+            return false;
+
+        return true;
     }
 
-    void CalculateRow(com::Rectf& pRect, const f32 maxHeight)
+    bool CalculateRow(com::Rectf& pRect, const f32 maxHeight)
     {
         pRect.x = rect.x + PADDING;
         pRect.width = rect.width - PADDING * 2;
@@ -93,6 +99,11 @@ struct Widget_Window
         pRect.height = maxHeight;
         com::Clamp(pRect.height, 0, (rect.y + rect.height - PADDING) - pRect.y);
         rowY += pRect.height + PADDING;
+
+        if (rowY > rect.y + rect.height)
+            return false;
+
+        return true;
     }
 };
 

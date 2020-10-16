@@ -13,8 +13,11 @@ struct Widget_Table
     com::Array<Row, 30> table;
     com::Rectf rect;
 
-    void Update(gpu::RenderData& renderData)
+    void Update(gpu::RenderData& renderData, bool const insideWindow = true)
     {
+        if (insideWindow == false)
+            return;
+
         const auto CELL_H = LINE_HEIGHT;
         const auto CELL_W = [&]{
             idx_t count = 1;
@@ -25,13 +28,19 @@ struct Widget_Table
             return rect.width / count;
         }();
 
-        FOR_ARRAY(table, y) {
-        FOR_ARRAY(table [y], x) {
-            AddText(renderData, table[y][x], 
-            rect.x + x * CELL_W, 
-            rect.y + y * CELL_H, 
-            x == 0 ? Colors::White : Colors::Orange ); 
-        }}
+        FOR_ARRAY(table, y) 
+        {
+            if (y * CELL_H > rect.height)
+                break;
+
+            FOR_ARRAY(table [y], x) 
+            {
+                AddText(renderData, table[y][x], 
+                rect.x + x * CELL_W, 
+                rect.y + y * CELL_H, 
+                x == 0 ? Colors::White : Colors::Orange); 
+            }
+        }
     }
 
     void Update(gpu::RenderData& renderData, Widget_Window& wnd)
@@ -39,9 +48,9 @@ struct Widget_Table
         if (wnd.isClosed)
             return;
 
-        const auto maxHeight = table.Count() * LINE_HEIGHT;
-        wnd.CalculateRow(rect, maxHeight);
-        Update(renderData);
+        auto const maxHeight = table.Count() * LINE_HEIGHT;
+        bool const insideWindow = wnd.CalculateRow(rect, maxHeight);
+        Update(renderData, insideWindow);
     }
 };
 

@@ -19,11 +19,11 @@ struct Quadrant
     Vertex   vertices [QUAD_COUNT + 1][QUAD_COUNT + 1];
     uint32_t indices  [INDEX_COUNT];
 
-    void Create(float const index_z, float const index_x, idx_t const quadrantIdx,
+    void Create(float const qIndex_z, float const qIndex_x, idx_t const quadrantIdx,
     com::Vec4f const& color = { 0.1f, 0.7f, 0.1f, 1 })
     {
-        float const offset_z = index_z * QUADRANT_SIZE;
-        float const offset_x = index_x * QUADRANT_SIZE;
+        float const offset_z = qIndex_z * QUADRANT_SIZE;
+        float const offset_x = qIndex_x * QUADRANT_SIZE;
         idx_t const offset_v = quadrantIdx * VERTEX_COUNT;
         CreateGridIndexed(vertices, indices, QUAD_SIZE, QUAD_SIZE, offset_z, offset_x, offset_v, color);
     }
