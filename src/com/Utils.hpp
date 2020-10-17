@@ -1,88 +1,106 @@
 //https://github.com/awwdev
 
 #pragma once
+#include "com/Types.hpp"
+#include "com/Matrix.hpp"
 #include "dbg/Assert.hpp"
+#include "com/box/Optional.hpp"
 
-#include <numeric>
-#include <cstdint>
-#include <type_traits>
-#include <concepts>
-#undef max
-
-namespace rpg {
+namespace rpg::com {
     
-//? fixed-size types
+//? clamping
 
-using u64 = std::uint64_t;
-using s64 = std::int64_t;
-using u32 = std::uint32_t;
-using s32 = std::int32_t;
-using u16 = std::uint16_t;
-using s16 = std::int16_t;
-using u8  = std::uint8_t;
-using s8  = std::int8_t;
-
-using f64 = double;
-using f32 = float;
-
-constexpr auto u16max = std::numeric_limits<u16>::max();
-constexpr auto u32max = std::numeric_limits<u32>::max();
-constexpr auto f32max = std::numeric_limits<f32>::max();
-
-using idx_t   = s32; //default index type
-using chars_t = char const* const;
-
-//? concepts
-
-template<class T>
-concept as_arithmetic = std::is_arithmetic_v<T>;
-
-template<typename T, typename... Ts>
-concept is_constructible_with = requires (Ts&&... args)
+template<typename VAL1, typename VAL2>
+auto Max(const VAL1& val1, const VAL2& val2)
 {
-    T { std::forward<Ts>(args)... };
-};
-
-template<typename T>
-concept as_enum_integral = std::is_enum_v<T> || std::is_integral_v<T>;
-
-template<typename T>
-concept as_scrollable_enum = requires {
-    std::is_enum_v<T>;
-    T::ENUM_END;
-};
-
-//? array
-
-template<typename T, auto N>
-constexpr auto ArrayCount(const T (&arr)[N])
-{
-    return static_cast<idx_t>(N);
+    return (val1 > val2) ? val1 : val2;
 }
 
-#define FOR_C_ARRAY(arr, i) for(idx_t i = 0; i < ArrayCount(arr); ++i)
+template<auto MIN, auto MAX, typename T>
+void Clamp(T& val)
+{
+    if (val > MAX) {
+        val = MAX;
+    }
+    else if (val < MIN) {
+        val = MIN;
+    }
+}
+
+template<typename MIN, typename MAX, typename T>
+void Clamp(T& val, const MIN min, const MAX max)
+{
+    if (val > max) {
+        val = max;
+    }
+    else if (val < min) {
+        val = min;
+    }
+}
+
+template<typename MIN, typename MAX, typename T>
+bool ClampReturnBool(T& val, const MIN min, const MAX max)
+{
+    if (val > max) {
+        val = max;
+        return true;
+    }
+    else if (val < min) {
+        val = min;
+        return true;
+    }
+    return false;
+}
+
+//? trigonometry
+
+template<class T>
+constexpr T Sin(const T val)
+{
+    return T{2}*val / (T{1} + val*val);
+}
+
+template<class T>
+constexpr T Cos(const T val)
+{
+    return (T{1} - val*val) / (T{1} + val*val);
+}
+
+//? easing
+
+template<class T>
+constexpr T Ease(const T val, const T p = 2)
+{
+    return (T)std::pow(val, p);
+}
+
+//? strlen
+
+inline auto StrLen(chars_t str)
+{
+    idx_t len = 0;
+    while(str[len] != '\0') ++len;
+    return len;
+}
 
 //? serialization
 
-namespace com
+template<typename T>
+void WriteBinaryFile_C_Array(chars_t path, T const* ptr, idx_t const count)
 {
-    template<typename T>
-    void WriteBinaryFile_C_Array(chars_t path, T const* ptr, idx_t const count)
-    {
-        auto file = std::ofstream(path, std::ios::binary);
-        dbg::Assert(file.is_open(), "[IO] cannot open file");
-        file.write(reinterpret_cast<char const*>(ptr), count * sizeof(T));
-    }
+    auto file = std::ofstream(path, std::ios::binary);
+    dbg::Assert(file.is_open(), "[IO] cannot open file");
+    file.write(reinterpret_cast<char const*>(ptr), count * sizeof(T));
+}
 
-    template<typename T>
-    void ReadBinaryFile_C_Array(chars_t path, T* ptr)
-    {
-        auto file = std::ifstream(path, std::ios::binary | std::ios::ate);
-        dbg::Assert(file.is_open(), "[IO] cannot open file");
-        auto size = file.tellg();
-        file.seekg(std::ios::beg);
-        file.read(reinterpret_cast<char*>(ptr), size);
-    }
+template<typename T>
+void ReadBinaryFile_C_Array(chars_t path, T* ptr)
+{
+    auto file = std::ifstream(path, std::ios::binary | std::ios::ate);
+    dbg::Assert(file.is_open(), "[IO] cannot open file");
+    auto size = file.tellg();
+    file.seekg(std::ios::beg);
+    file.read(reinterpret_cast<char*>(ptr), size);
 }
 
 //? printing
@@ -116,5 +134,95 @@ inline auto ScrollEnum(as_scrollable_enum auto pEnum)
     );
 }
 
+//? collision
+
+template<class POINT>
+bool IsPointInsideRect(const POINT x, const POINT y, const com::Rectf& rect)
+{
+    return (x > rect.x && x < rect.x + rect.width &&
+            y > rect.y && y < rect.y + rect.height);
+}
+
+template<typename T>
+struct Ray
+{
+    com::Vec3<T> position;
+    com::Vec3<T> normal;
+};
+
+com::Optional<com::Vec3f> RayPlaneIntersection(
+com::Vec3f const (&cornerPoints)[2][2], com::Ray<f32> const& ray)
+{
+    auto const& planePoint  = cornerPoints[0][0];
+    auto const  planeNormal = com::Normalize(planePoint);
+    auto const  denominator = com::Dot(planeNormal, ray.normal); 
+    auto constexpr EPSILON = 1e-6f;
+    if (denominator > EPSILON)
+    {
+        auto const t = com::Dot(planePoint - ray.position, planeNormal) / denominator;
+        if (t >= 0)
+            return { ray.position + ray.normal * t };
+    }
+    return {};
+}
 
 }//ns
+
+
+
+/*
+struct Intersection
+{
+    com::Vec3f pos;
+    float u, v;
+
+    //TODO: write better
+    idx_t GetClosestVertex(const idx_t vIdx) const
+    {
+        if      (u > 0.5) return vIdx + 1;
+        else if (v > 0.5) return vIdx + 2;
+        else if (u > 0.25 && v > 0.25)
+        {
+            if  (u > v) return vIdx + 1;
+            else        return vIdx + 2;
+        }
+        return vIdx;
+    }
+};
+
+com::Optional<Intersection> RayTriangleIntersection(
+    const com::Vec3f& rayOrigin, 
+    const com::Vec3f& rayDir, 
+    const com::Vec3f& v0,
+    const com::Vec3f& v1,
+    const com::Vec3f& v2)
+{
+    using namespace com;
+    constexpr float EPSILON = 0.0000001f;
+
+    const auto edge1 = v1 - v0;
+    const auto edge2 = v2 - v0;
+
+    const auto h = Cross(rayDir, edge2);
+    const auto a = Dot(edge1, h);
+    if (a > -EPSILON && a < EPSILON)
+        return {};
+
+    const auto f = 1.f / a;
+    const auto s = (rayOrigin*-1.f) - v0;
+    const auto u = f * Dot(s, h);
+    if (u < 0.0 || u > 1.0)
+        return {};
+
+    const auto q = Cross(s, edge1);
+    const auto v = f * Dot(rayDir, q);
+    if (v < 0.0 || u + v > 1.0)
+        return {};
+
+    const float t = f * Dot(edge2, q);
+    if (t > EPSILON) 
+        return Intersection{ (rayOrigin*-1.f) + rayDir * t, u, v };
+
+    return {};
+}
+*/

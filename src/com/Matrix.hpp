@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Utils.hpp"
+#include "com/Types.hpp"
 #include <cmath>
 #include <cstring>
 #include <iostream>
@@ -43,8 +43,13 @@ struct Mat
 
 using Mat4f = Mat<float, 4, 4>;
 
-template<class T, auto X>
-using Vec   = Mat<T, 1, X>;
+template<typename T, auto X>
+using Vec = Mat<T, 1, X>;
+template<typename T>
+using Vec3 = Mat<T, 1, 3>;
+template<typename T>
+using Vec4 = Mat<T, 1, 4>;
+
 using Vec2u = Vec<u32, 2>;
 using Vec2i = Vec<s32, 2>;
 using Vec4f = Vec<float, 4>;

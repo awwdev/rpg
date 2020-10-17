@@ -2,6 +2,7 @@
 
 #pragma once
 #include "res/Terrain/TerrainQuadrant.hpp"
+#include "com/Utils.hpp"
 
 namespace rpg::res2 {
 
@@ -24,6 +25,19 @@ struct Terrain
             //test color
             { z/(float)QUADRANT_COUNT, x/(float)QUADRANT_COUNT, 1, 1});
         }}
+    }
+
+    auto GetQuadrantByRaycast(com::Ray<f32> const& ray) -> QUADRANT_T*
+    {
+        for(auto z = 0; z < QUADRANT_COUNT; ++z) {
+        for(auto x = 0; x < QUADRANT_COUNT; ++x) {
+            auto& quadrant = quadrants[z][x];
+            com::Vec3f cornerPoints[2][2];
+            quadrant.GetCornerPoints(cornerPoints);
+            if (auto intersection = RayPlaneIntersection(cornerPoints, ray))
+                return &quadrant;
+        }}
+        return nullptr;
     }
 
 };

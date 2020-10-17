@@ -3,6 +3,7 @@
 #pragma once
 #include "ecs/ECS.hpp"
 #include "com/Matrix.hpp"
+#include "com/Utils.hpp"
 #include "wnd/WindowEvents.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 
@@ -12,6 +13,7 @@ struct EgoCamera
 {
     com::Vec3f position { 0,  4, -4 };
     com::Vec3f rotation {45,  0,  0 };
+    com::Ray<f32> ray {};
 
     com::Mat4f perspective;
     com::Mat4f view;
@@ -69,6 +71,10 @@ struct EgoCamera
 
         const auto mRot = QuatToMat(qRot);
         view = mRot * view;
+
+        //? ray
+        ray.position = position * -1; //position is currently not the camera position but how it will transform the world
+        ray.normal   = com::Normalize(ray.position * -1);
     }
 
     void UpdateRenderData(gpu::RenderData& renderData)

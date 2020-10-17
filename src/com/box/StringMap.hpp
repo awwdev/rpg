@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
+#include "com/Types.hpp"
 #include "com/Utils.hpp"
-#include "com/Algorithms.hpp"
 #include "dbg/Logger.hpp"
 #include "dbg/Assert.hpp"
 #include "com/box/String.hpp"

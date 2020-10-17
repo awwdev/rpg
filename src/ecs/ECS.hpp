@@ -12,8 +12,6 @@
 #include "ecs/Systems/RenderSystem.hpp"
 #include "ecs/Systems/TransformSystem.hpp"
 
-#include <fstream>
-
 namespace rpg::ecs {
 
 struct ECS
@@ -66,7 +64,6 @@ struct ECS
         return childID;
     }
 
-
     //? removing
 
     void RemoveEntity(ID const entityID)
@@ -79,23 +76,6 @@ struct ECS
         //TODO: check signature to get active components
         arrays.mainComponents.Remove(entityID);
         arrays.nameComponents.Remove(entityID);
-    }
-
-
-    //? serialization
-
-    void WriteBinaryFile() 
-    {
-        entitiesParentless.WriteBinaryFile("out/tmp/entitiesTopLevel.ecs");
-        entities.WriteBinaryFile("out/tmp/entities.ecs");
-        arrays.WriteBinaryFile();
-    }
-
-    void ReadBinaryFile()
-    {
-        entitiesParentless.ReadBinaryFile("out/tmp/entitiesTopLevel.ecs");
-        entities.ReadBinaryFile("out/tmp/entities.ecs");
-        arrays.ReadBinaryFile();
     }
 
 private:

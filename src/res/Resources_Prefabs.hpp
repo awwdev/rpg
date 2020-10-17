@@ -18,7 +18,7 @@ struct Resources_Prefabs
     {
         prefabsArrays.Clear();
         LoadPrefabs("res/Prefabs/Prefabs.fab", prefabsArrays);
-    }
+    }  
 };
 
 }//ns

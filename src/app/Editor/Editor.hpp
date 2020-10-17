@@ -7,6 +7,9 @@
 #include "res/Resources.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 
+#include "res/Terrain/TerrainSerialization.hpp"
+#include "ecs/ECS_Serialization.hpp"
+
 #include "app/Editor/EditorCommands.hpp"
 #include "app/Editor/EditorMode.hpp"
 
@@ -16,7 +19,7 @@ struct Editor
 {
     gpu::EgoCamera camera;
     EditorCommands commands;
-    EditorMode editorMode = EditorMode::TerrainVertexGrab;
+    EditorMode     editorMode = EditorMode::TerrainVertexMove;
 
 
     void Update(const double dt, ecs::ECS& ecs, res::Resources& res, gpu::RenderData& renderData)
@@ -24,43 +27,37 @@ struct Editor
         InputCamera(dt, renderData);
         Serialization(ecs, res);
         UndoRedo(ecs, res);
-        PrefabPlacement(res, ecs);
-        TerrainVertexGrab(res, ecs);
 
-        //zap through editor modes
-        if (wnd::HasEvent<wnd::EventType::F3, wnd::EventState::Pressed>())
-            editorMode = ScrollEnum(editorMode);
+        switch(editorMode)
+        {
+            case EditorMode::TerrainVertexMove:  TerrainVertexMove(res.terrain); break;
+            case EditorMode::TerrainVertexPaint: TerrainVertexPaint(res.terrain); break;
+            case EditorMode::PrefabPlacement:    PrefabPlacement(); break;
+            default: break;
+        }
     }
-
 
     void InputCamera(const double dt, gpu::RenderData& renderData)
     {
-        if (app::glo::inputMode == app::glo::FlyMode)
+        if (app::glo::inputMode == app::glo::FlyMode) 
             camera.Update(dt);
-
-        if (wnd::glo::resizeState == wnd::glo::ResizeState::End)
+        if (wnd::glo::resizeState == wnd::glo::ResizeState::End) 
             camera.UpdatePerspective();
-
         camera.UpdateRenderData(renderData);
     }
 
-
     void Serialization(ecs::ECS& ecs, res::Resources& res)
     {
-        if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>())
-        {
-            ecs.WriteBinaryFile();
-            ///res::WriteBinaryFile(res.terrain.terrain.quadrants);           
+        if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>()) {
+            ecs::SaveECS(ecs);
+            res2::SaveTerrain();     
         }
 
-        if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>())
-        {
-            ecs.ReadBinaryFile();
-            //res::ReadBinaryFile(res.terrain.terrain.quadrants);
-            //res.terrain.terrain.MarkAllDirty();
+        if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>()) {
+            ecs::LoadECS(ecs);
+            res2::LoadTerrain(); 
         }
     }
-
 
     void UndoRedo(ecs::ECS& ecs, res::Resources& res)
     {
@@ -73,10 +70,54 @@ struct Editor
         }
     }
 
+    //? editor mode
 
-    void TerrainVertexGrab(res::Resources& res, ecs::ECS& ecs)
+    void TerrainVertexMove(res::Resources_Terrain& resTerrain)
     {
-        auto& terrain = res.terrain.terrain;
+        com::PrintMatrix(camera.ray.position);
+        com::PrintMatrix(camera.ray.normal);
+        dbg::LogInfo("----");
+        if (auto* quadrant = resTerrain.terrain.GetQuadrantByRaycast(camera.ray))
+        {
+            //dbg::LogInfo(quadrant->quadrantIdx);
+        }
+    }
+
+    void TerrainVertexPaint(res::Resources_Terrain& resTerrain)
+    {
+
+    }
+
+    void PrefabPlacement()
+    {
+
+    }
+
+
+
+
+
+
+
+
+    
+
+
+   
+
+
+    
+
+
+    void TerrainVertexGrab(res::Resources_Terrain& resTerrain, ecs::ECS& ecs)
+    {
+        auto& terrain = resTerrain.terrain;
+
+
+
+
+
+
         /*
         if (terrain.settings.mode != res::EditMode::VertexGrab) //TODO: should be in controller
             return;

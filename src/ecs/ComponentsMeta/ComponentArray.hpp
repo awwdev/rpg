@@ -4,6 +4,7 @@
 #include "com/box/Array.hpp"
 #include "com/box/Bitset.hpp"
 #include "com/box/Optional.hpp"
+#include "com/Types.hpp"
 #include "com/Utils.hpp"
 
 #include "ecs/EntityID.hpp"

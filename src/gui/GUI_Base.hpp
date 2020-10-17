@@ -4,7 +4,7 @@
 #include "gpu/RenderData/RenderData.hpp"
 
 #include "com/DeltaTime.hpp"
-#include "com/Algorithms.hpp"
+#include "com/Utils.hpp"
 #include "com/box/EnumMap.hpp"
 
 #include "wnd/WindowEvents.hpp"

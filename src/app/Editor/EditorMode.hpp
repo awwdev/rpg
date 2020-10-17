@@ -9,7 +9,7 @@ namespace rpg::app {
 enum class EditorMode
 { 
     None,
-    TerrainVertexGrab,
+    TerrainVertexMove,
     TerrainVertexPaint,
     PrefabPlacement,
     ENUM_END
@@ -17,7 +17,7 @@ enum class EditorMode
 com::EnumMap<EditorMode::ENUM_END, com::String<50>> EDIT_MODE_ENUM_TO_STR 
 {
     { EditorMode::None, "None" },
-    { EditorMode::TerrainVertexGrab, "TerrainVertexGrab" },
+    { EditorMode::TerrainVertexMove, "TerrainVertexMove" },
     { EditorMode::TerrainVertexPaint, "TerrainVertexPaint" },
     { EditorMode::PrefabPlacement, "PrefabPlacement" },
 };

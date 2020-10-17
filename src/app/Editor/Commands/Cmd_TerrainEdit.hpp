@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "com/Utils.hpp"
+#include "com/Types.hpp"
 #include "com/Matrix.hpp"
 #include "com/box/Array.hpp"
 #include "res/Resources_Terrain.hpp"
@@ -12,7 +12,7 @@ namespace rpg::app {
 struct Cmd_TerrainVertexGrab
 {
     float yGrabDist;
-    com::Array<res::VertexBrushInfo, 100> editingVertIndices;
+    //com::Array<res::VertexBrushInfo, 100> editingVertIndices;
 
     void Execute(res::Resources_Terrain& resTerrain) const
     {
