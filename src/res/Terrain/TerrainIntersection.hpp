@@ -8,27 +8,31 @@
 
 namespace rpg::res2 {
 
-using OptionalVertexIndex = com::Optional<idx_t>;
+using Optional_VertexIndex = com::Optional<idx_t>;
 
 
-OptionalVertexIndex 
+Optional_VertexIndex 
 RayTriangleIntersection(auto& triangle, com::Ray<f32> const& ray)
 {
     return {};
 }
 
 
-OptionalVertexIndex 
-RayQuadrantIntersection(auto& quadrant, com::Ray<f32> const& ray)
+template<auto QUAD_COUNT, auto QUAD_SIZE>
+Optional_VertexIndex 
+RayQuadrantIntersection
+(Quadrant<QUAD_COUNT, QUAD_SIZE> const& quadrant, com::Ray<f32> const& ray)
 {
+    auto const& aabb = quadrant.aabb;
     //TODO: get aabo from vertices
     //https://tavianator.com/2015/ray_box_nan.html
     return {};
 }
 
-
-OptionalVertexIndex 
-RayTerrainIntersection(auto& terrain, com::Ray<f32> const& ray)
+template<auto QUADRANT_COUNT_T, auto QUAD_COUNT, auto QUAD_SIZE>
+Optional_VertexIndex 
+RayTerrainIntersection
+(Terrain<QUADRANT_COUNT_T, QUAD_COUNT, QUAD_SIZE> const& terrain, com::Ray<f32> const& ray)
 {
     for(auto z = 0; z < terrain.QUADRANT_COUNT; ++z) {
     for(auto x = 0; x < terrain.QUADRANT_COUNT; ++x) {

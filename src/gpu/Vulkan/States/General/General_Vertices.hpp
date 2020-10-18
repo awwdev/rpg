@@ -71,7 +71,7 @@ struct General_Vertices
         for(auto z = 0; z < terrain.QUADRANT_COUNT; ++z) {
         for(auto x = 0; x < terrain.QUADRANT_COUNT; ++x) {
             auto const& quadrant = terrain.quadrants[z][x];
-            vboTerrain.Append(&quadrant.vertices[0][0], quadrant.VERTEX_COUNT);
+            vboTerrain.Append(&quadrant.vertices[0][0], quadrant.VERTEX_COUNT_TOTAL);
         }}
     }
 

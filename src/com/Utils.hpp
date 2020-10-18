@@ -143,6 +143,39 @@ bool IsPointInsideRect(const POINT x, const POINT y, const com::Rectf& rect)
             y > rect.y && y < rect.y + rect.height);
 }
 
+struct AABB
+{
+    com::Vec3f min;
+    com::Vec3f max;
+};
+
+template<typename VERTEX>
+AABB CalculateAABB(VERTEX const* const vertices, idx_t const count)
+{
+    AABB box {};
+    for(idx_t i = 0; i < count; ++i)
+    {
+        auto const& pos = vertices[i].pos;
+        if  (box.min.x > pos.x)
+             box.min.x = pos.x;
+        else box.max.x = pos.x;
+
+        if  (box.min.y > pos.y)
+             box.min.y = pos.y;
+        else box.max.y = pos.y;
+
+        if  (box.min.z > pos.z)
+             box.min.z = pos.z;
+        else box.max.z = pos.z;
+    }
+    return box;
+}
+
+
+
+
+
+
 template<typename T>
 struct Ray
 {
