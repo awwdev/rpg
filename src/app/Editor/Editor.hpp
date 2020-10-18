@@ -75,18 +75,12 @@ struct Editor
 
     void TerrainVertexMove(res::Resources_Terrain& resTerrain)
     {
-        //TODO: aabb ray box intersection to choose quadrant (also for culling)
-        auto& quadrant = resTerrain.terrain.quadrants[0][0];
-
-
-
-        //TODO: if any vertex was edge, then auto stich
     }
 
     void TerrainVertexPaint(res::Resources_Terrain& resTerrain)
     {
         auto& terrain = resTerrain.terrain;
-        if (auto const vertexIdx = res2::RayTerrainIntersection(terrain, camera.ray))
+        if (auto const vertexIdx = res2::RayTerrainIntersection(camera.ray, terrain))
         {
 
         }
@@ -94,8 +88,6 @@ struct Editor
 
     void PrefabPlacement(res::Resources_Terrain& resTerrain)
     {
-        //TODO: aabb ray box intersection to choose quadrant (also for culling)
-        auto& quadrant = resTerrain.terrain.quadrants[0][0];
     }
 
 

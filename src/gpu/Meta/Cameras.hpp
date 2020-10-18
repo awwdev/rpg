@@ -44,7 +44,7 @@ struct EgoCamera
 {
     com::Vec3f position { 0,  4, -4 };
     com::Vec3f rotation {45,  0,  0 };
-    com::Ray<f32> ray {};
+    com::Ray ray {};
 
     com::Mat4f perspective;
     com::Mat4f view;
@@ -106,6 +106,7 @@ struct EgoCamera
         //? ray
         ray.origin = position * -1;
         ray.direction   = ScreenRay(*this);
+        //ray.dir_inv = 1 / ray.direction;
     }
 
     void UpdateRenderData(gpu::RenderData& renderData)

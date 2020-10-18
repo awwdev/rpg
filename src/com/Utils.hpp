@@ -134,14 +134,7 @@ inline auto ScrollEnum(as_scrollable_enum auto pEnum)
     );
 }
 
-//? collision
-
-template<class POINT>
-bool IsPointInsideRect(const POINT x, const POINT y, const com::Rectf& rect)
-{
-    return (x > rect.x && x < rect.x + rect.width &&
-            y > rect.y && y < rect.y + rect.height);
-}
+//? axis-aligned bounding box
 
 struct AABB
 {
@@ -171,20 +164,66 @@ AABB CalculateAABB(VERTEX const* const vertices, idx_t const count)
     return box;
 }
 
+//? intersections
 
-
-
-
-
-template<typename T>
 struct Ray
 {
-    com::Vec3<T> origin;
-    com::Vec3<T> direction;
+    com::Vec3f origin;
+    com::Vec3f direction;
+    com::Vec3f dir_inv;
 };
 
+inline bool IsPointInsideRect(as_arithmetic auto x, as_arithmetic auto y, const com::Rectf& rect)
+{
+    return (static_cast<f32>(x) > rect.x && static_cast<f32>(x) < rect.x + rect.width &&
+            static_cast<f32>(y) > rect.y && static_cast<f32>(y) < rect.y + rect.height);
+}
+
+using Optional_IntersectionPoint = com::Optional<com::Vec3f>;
+
+inline 
+Optional_IntersectionPoint
+RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
+{
+    
+    /*
+    double t1 = (aabb.min[0] - ray.origin[0]) * ray.dir_inv[0];
+    double t2 = (aabb.max[0] - ray.origin[0]) * ray.dir_inv[0];
+
+    double tmin = min(t1, t2);
+    double tmax = max(t1, t2);
+
+    for (int i = 1; i < 3; ++i) {
+    t1 = (b.min[i] - r.origin[i])*r.dir_inv[i];
+    t2 = (b.max[i] - r.origin[i])*r.dir_inv[i];
+
+    tmin = max(tmin, min(min(t1, t2), tmax));
+    tmax = min(tmax, max(max(t1, t2), tmin));
+    }
+
+    return tmax > max(tmin, 0.0);
+    */
+
+    return {};
+}
+
+inline 
+Optional_IntersectionPoint
+RayTriangle_Intersection(com::Ray const& ray)
+{
+    return {};
+};
+
+}//ns
+
+
+
+
+
+
+/*
 com::Optional<com::Vec3f> RayPlaneIntersection(
-com::Vec3f const (&cornerPoints)[2][2], com::Ray<f32> const& ray)
+com::Vec3f const (&cornerPoints)[2][2], com::Ray const& ray)
 {
     //TODO: ray from mouse point into world
     //TODO: confined to plane space not endless plane
@@ -203,8 +242,9 @@ com::Vec3f const (&cornerPoints)[2][2], com::Ray<f32> const& ray)
     }
     return {};
 }
+*/
 
-}//ns
+
 
 /*
 struct Intersection
