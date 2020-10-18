@@ -27,17 +27,11 @@ struct Terrain
         }}
     }
 
-    auto GetQuadrantByRaycast(com::Ray<f32> const& ray) -> QUADRANT_T*
+    auto& GetQuadrantByIndex(auto const idx) 
     {
-        for(auto z = 0; z < QUADRANT_COUNT; ++z) {
-        for(auto x = 0; x < QUADRANT_COUNT; ++x) {
-            auto& quadrant = quadrants[z][x];
-            com::Vec3f cornerPoints[2][2];
-            quadrant.GetCornerPoints(cornerPoints);
-            if (auto intersection = RayPlaneIntersection(cornerPoints, ray))
-                return &quadrant;
-        }}
-        return nullptr;
+        idx_t const z = idx / QUADRANT_COUNT;
+        idx_t const x = idx % QUADRANT_COUNT;
+        return quadrants[z][x];
     }
 
 };

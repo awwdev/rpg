@@ -8,6 +8,7 @@
 #include "gpu/RenderData/RenderData.hpp"
 
 #include "res/Terrain/TerrainSerialization.hpp"
+#include "res/Terrain/TerrainIntersection.hpp"
 #include "ecs/ECS_Serialization.hpp"
 
 #include "app/Editor/EditorCommands.hpp"
@@ -30,9 +31,9 @@ struct Editor
 
         switch(editorMode)
         {
-            case EditorMode::TerrainVertexMove:  TerrainVertexMove(res.terrain); break;
-            case EditorMode::TerrainVertexPaint: TerrainVertexPaint(res.terrain); break;
-            case EditorMode::PrefabPlacement:    PrefabPlacement(); break;
+            case EditorMode::TerrainVertexMove:  TerrainVertexMove  (res.terrain); break;
+            case EditorMode::TerrainVertexPaint: TerrainVertexPaint (res.terrain); break;
+            case EditorMode::PrefabPlacement:    PrefabPlacement    (res.terrain); break;
             default: break;
         }
     }
@@ -74,23 +75,27 @@ struct Editor
 
     void TerrainVertexMove(res::Resources_Terrain& resTerrain)
     {
-        com::PrintMatrix(camera.ray.position);
-        com::PrintMatrix(camera.ray.normal);
-        dbg::LogInfo("----");
-        if (auto* quadrant = resTerrain.terrain.GetQuadrantByRaycast(camera.ray))
-        {
-            //dbg::LogInfo(quadrant->quadrantIdx);
-        }
+        //TODO: aabb ray box intersection to choose quadrant (also for culling)
+        auto& quadrant = resTerrain.terrain.quadrants[0][0];
+
+
+
+        //TODO: if any vertex was edge, then auto stich
     }
 
     void TerrainVertexPaint(res::Resources_Terrain& resTerrain)
     {
+        auto& terrain = resTerrain.terrain;
+        if (auto const vertexIdx = res2::RayTerrainIntersection(terrain, camera.ray))
+        {
 
+        }
     }
 
-    void PrefabPlacement()
+    void PrefabPlacement(res::Resources_Terrain& resTerrain)
     {
-
+        //TODO: aabb ray box intersection to choose quadrant (also for culling)
+        auto& quadrant = resTerrain.terrain.quadrants[0][0];
     }
 
 

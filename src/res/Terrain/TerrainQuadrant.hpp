@@ -3,6 +3,7 @@
 #pragma once
 #include "res/Terrain/TerrainGrid.hpp"
 #include "gpu/RenderData/RenderData_General.hpp"
+#include "com/box/Optional.hpp"
 
 namespace rpg::res2 {
 
@@ -26,19 +27,17 @@ struct Quadrant
         quadrantIdx = pQuadrantIdx;
         float const offset_z = qIndex_z * QUADRANT_SIZE;
         float const offset_x = qIndex_x * QUADRANT_SIZE;
-        idx_t const offset_v = quadrantIdx * VERTEX_COUNT;
+        idx_t const offset_v = quadrantIdx * VERTEX_COUNT; //vertex index offset (one holistic vbo)
         CreateGridIndexed(vertices, indices, QUAD_SIZE, QUAD_SIZE, offset_z, offset_x, offset_v, color);
     }
 
-    //? helper
-
-    void GetCornerPoints(com::Vec3f (&cornerPoints)[2][2])
+    Vertex& GetVertexByIndex(const auto idx) 
     {
-        cornerPoints[0][0] = vertices[0][0].pos;
-        cornerPoints[0][1] = vertices[0][VERTEX_ROW_COUNT].pos;
-        cornerPoints[1][1] = vertices[VERTEX_ROW_COUNT][VERTEX_ROW_COUNT].pos;
-        cornerPoints[1][0] = vertices[VERTEX_ROW_COUNT][0].pos;
+        idx_t const z = idx / VERTEX_ROW_COUNT;
+        idx_t const x = idx % VERTEX_ROW_COUNT;
+        return vertices[z][x];
     }
+
 };
 
 }//ns

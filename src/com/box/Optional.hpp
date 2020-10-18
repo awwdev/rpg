@@ -22,7 +22,7 @@ struct Optional
 
     //! watch to not use "auto value = optional", but *optional or optional.value
     //! since it will implicitly convert to bool
-    operator bool() const { return hasValue; }
+    explicit operator bool() const { return hasValue; }
 
     T*       operator->()       { return &value; }
     const T* operator->() const { return &value; }

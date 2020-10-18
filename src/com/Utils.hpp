@@ -146,29 +146,32 @@ bool IsPointInsideRect(const POINT x, const POINT y, const com::Rectf& rect)
 template<typename T>
 struct Ray
 {
-    com::Vec3<T> position;
-    com::Vec3<T> normal;
+    com::Vec3<T> origin;
+    com::Vec3<T> direction;
 };
 
 com::Optional<com::Vec3f> RayPlaneIntersection(
 com::Vec3f const (&cornerPoints)[2][2], com::Ray<f32> const& ray)
 {
-    auto const& planePoint  = cornerPoints[0][0];
-    auto const  planeNormal = com::Normalize(planePoint);
-    auto const  denominator = com::Dot(planeNormal, ray.normal); 
+    //TODO: ray from mouse point into world
+    //TODO: confined to plane space not endless plane
+    //TODO: ray against box (height)
+
+    auto const planeVector1 = cornerPoints[0][0] - cornerPoints[0][1];
+    auto const planeVector2 = cornerPoints[0][0] - cornerPoints[1][0];
+    auto const planeNormal = com::Normalize(com::Cross(planeVector1, planeVector2)) * -1;
+    auto const denominator = com::Dot(planeNormal, ray.direction); 
     auto constexpr EPSILON = 1e-6f;
     if (denominator > EPSILON)
     {
-        auto const t = com::Dot(planePoint - ray.position, planeNormal) / denominator;
+        auto const t = com::Dot(cornerPoints[0][0] - ray.origin, planeNormal) / denominator;
         if (t >= 0)
-            return { ray.position + ray.normal * t };
+            return { ray.origin + ray.direction * t };
     }
     return {};
 }
 
 }//ns
-
-
 
 /*
 struct Intersection

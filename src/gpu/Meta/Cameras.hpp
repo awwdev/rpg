@@ -9,6 +9,37 @@
 
 namespace rpg::gpu
 {
+
+template<class CAMERA>
+com::Vec3f ScreenRay(const CAMERA& camera)
+{
+    using namespace com;
+
+    const auto mx = (f32)wnd::glo::mouse_wx;
+    const auto my = (f32)wnd::glo::mouse_wy;
+    const auto ww = (f32)wnd::glo::window_w;
+    const auto wh = (f32)wnd::glo::window_h;
+
+    const com::Vec4f homo {
+        ((mx / ww) * 2) - 1,
+        ((my / wh) * 2) - 1,
+        -1,                
+        1
+    };
+
+    const auto projInv = Inverse(camera.perspective);
+    auto eye = projInv * homo;
+    eye.z = -1;
+    eye.w =  0;
+    
+    const auto viewInv = Inverse(camera.view);
+    auto world = viewInv * eye;
+
+    return { world.x, world.y, world.z };
+}
+
+
+
 struct EgoCamera
 {
     com::Vec3f position { 0,  4, -4 };
@@ -73,8 +104,8 @@ struct EgoCamera
         view = mRot * view;
 
         //? ray
-        ray.position = position * -1; //position is currently not the camera position but how it will transform the world
-        ray.normal   = com::Normalize(ray.position * -1);
+        ray.origin = position * -1;
+        ray.direction   = ScreenRay(*this);
     }
 
     void UpdateRenderData(gpu::RenderData& renderData)
@@ -179,32 +210,6 @@ struct ThirdCamera
     }
 };
 
-template<class CAMERA>
-com::Vec3f ScreenRay(const CAMERA& camera)
-{
-    using namespace com;
 
-    const auto mx = (f32)wnd::glo::mouse_wx;
-    const auto my = (f32)wnd::glo::mouse_wy;
-    const auto ww = (f32)wnd::glo::window_w;
-    const auto wh = (f32)wnd::glo::window_h;
-
-    const com::Vec4f homo {
-        ((mx / ww) * 2) - 1,
-        ((my / wh) * 2) - 1,
-        -1,                
-        1
-    };
-
-    const auto projInv = Inverse(camera.perspective);
-    auto eye = projInv * homo;
-    eye.z = -1;
-    eye.w =  0;
-    
-    const auto viewInv = Inverse(camera.view);
-    auto world = viewInv * eye;
-
-    return { world.x, world.y, world.z };
-}
 
 }//ns
