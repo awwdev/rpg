@@ -105,8 +105,7 @@ struct EgoCamera
 
         //? ray
         ray.origin = position * -1;
-        ray.direction   = ScreenRay(*this);
-        //ray.dir_inv = 1 / ray.direction;
+        ray.length = ScreenRay(*this);
     }
 
     void UpdateRenderData(gpu::RenderData& renderData)

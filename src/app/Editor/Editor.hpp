@@ -8,7 +8,6 @@
 #include "gpu/RenderData/RenderData.hpp"
 
 #include "res/Terrain/TerrainSerialization.hpp"
-#include "res/Terrain/TerrainIntersection.hpp"
 #include "ecs/ECS_Serialization.hpp"
 
 #include "app/Editor/EditorCommands.hpp"
@@ -20,7 +19,7 @@ struct Editor
 {
     gpu::EgoCamera camera;
     EditorCommands commands;
-    EditorMode     editorMode = EditorMode::TerrainVertexMove;
+    EditorMode     editorMode = EditorMode::TerrainVertexPaint;
 
 
     void Update(const double dt, ecs::ECS& ecs, res::Resources& res, gpu::RenderData& renderData)
@@ -80,7 +79,7 @@ struct Editor
     void TerrainVertexPaint(res::Resources_Terrain& resTerrain)
     {
         auto& terrain = resTerrain.terrain;
-        if (auto const vertexIdx = res2::RayTerrainIntersection(camera.ray, terrain))
+        if (terrain.RayIntersection(camera.ray))
         {
 
         }

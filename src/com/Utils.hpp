@@ -4,16 +4,21 @@
 #include "com/Types.hpp"
 #include "com/Matrix.hpp"
 #include "dbg/Assert.hpp"
-#include "com/box/Optional.hpp"
 
 namespace rpg::com {
     
 //? clamping
 
-template<typename VAL1, typename VAL2>
-auto Max(const VAL1& val1, const VAL2& val2)
+inline constexpr
+auto Max(auto const val1, auto const val2)
 {
     return (val1 > val2) ? val1 : val2;
+}
+
+inline constexpr
+auto Min(auto const val1, auto const val2)
+{
+    return (val1 < val2) ? val1 : val2;
 }
 
 template<auto MIN, auto MAX, typename T>
@@ -169,8 +174,7 @@ AABB CalculateAABB(VERTEX const* const vertices, idx_t const count)
 struct Ray
 {
     com::Vec3f origin;
-    com::Vec3f direction;
-    com::Vec3f dir_inv;
+    com::Vec3f length;
 };
 
 inline bool IsPointInsideRect(as_arithmetic auto x, as_arithmetic auto y, const com::Rectf& rect)
@@ -179,36 +183,45 @@ inline bool IsPointInsideRect(as_arithmetic auto x, as_arithmetic auto y, const 
             static_cast<f32>(y) > rect.y && static_cast<f32>(y) < rect.y + rect.height);
 }
 
-using Optional_IntersectionPoint = com::Optional<com::Vec3f>;
+
+struct RayAABB_Intersection
+{
+    f32 fmax = 0;
+    f32 fmin = 1; //so, it will evaluate false on default ctor
+    explicit operator bool() const { return fmin <= fmax; }
+};
 
 inline 
-Optional_IntersectionPoint
+RayAABB_Intersection
 RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
 {
-    
-    /*
-    double t1 = (aabb.min[0] - ray.origin[0]) * ray.dir_inv[0];
-    double t2 = (aabb.max[0] - ray.origin[0]) * ray.dir_inv[0];
+    auto const length_inv = 1 / ray.length;
 
-    double tmin = min(t1, t2);
-    double tmax = max(t1, t2);
-
-    for (int i = 1; i < 3; ++i) {
-    t1 = (b.min[i] - r.origin[i])*r.dir_inv[i];
-    t2 = (b.max[i] - r.origin[i])*r.dir_inv[i];
-
-    tmin = max(tmin, min(min(t1, t2), tmax));
-    tmax = min(tmax, max(max(t1, t2), tmin));
+    f32 fmin[3], fmax[3];
+    for(auto i = 0; i < 3; ++i)
+    {
+        fmin[i] = (aabb.min.x - ray.origin.x) * length_inv.x;
+        fmax[i] = (aabb.max.x - ray.origin.x) * length_inv.x;
     }
 
-    return tmax > max(tmin, 0.0);
-    */
+    f32 fmin_total, fmax_total;
+    for(auto i = 0; i < 3; ++i)
+    {
+        fmin_total = Min(fmin_total, fmin[i]);
+        fmax_total = Max(fmin_total, fmin[i]);
+    }
 
-    return {};
+    return { fmin_total, fmax_total };
 }
 
+
+struct RayTriangle_Intersection
+{
+     explicit operator bool() const { return false; }
+};
+
 inline 
-Optional_IntersectionPoint
+RayTriangle_Intersection
 RayTriangle_Intersection(com::Ray const& ray)
 {
     return {};

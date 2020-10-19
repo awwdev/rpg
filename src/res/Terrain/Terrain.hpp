@@ -34,6 +34,17 @@ struct Terrain
         return quadrants[z][x];
     }
 
+    auto RayIntersection(com::Ray const& ray)
+    {
+        for(auto z = 0; z < QUADRANT_COUNT; ++z) {
+        for(auto x = 0; x < QUADRANT_COUNT; ++x) {
+            auto& quadrant = terrain.quadrants[z][x];
+            if (auto const intersection = quadrant.RayIntersection(ray, quadrant))
+                return intersection;
+        }}
+        return {};
+    }
+
 };
 
 } //ns

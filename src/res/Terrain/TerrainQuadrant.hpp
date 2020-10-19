@@ -31,7 +31,7 @@ struct Quadrant
         float const offset_x = qIndex_x * QUADRANT_SIZE;
         idx_t const offset_v = quadrantIdx * VERTEX_COUNT_TOTAL; //vertex index offset (one holistic vbo)
         CreateGridIndexed(vertices, indices, QUAD_SIZE, QUAD_SIZE, offset_z, offset_x, offset_v, color);
-        CalculateAABB();
+        UpdateAABB();
     }
 
     Vertex& GetVertexByIndex(const auto idx) 
@@ -41,9 +41,15 @@ struct Quadrant
         return vertices[z][x];
     }
 
-    void CalculateAABB() 
+    void UpdateAABB() 
     {
         aabb = com::CalculateAABB(&vertices[0][0], VERTEX_COUNT_TOTAL);
+    }
+
+    auto RayIntersection()
+    {
+
+        return 0;
     }
 
 };
