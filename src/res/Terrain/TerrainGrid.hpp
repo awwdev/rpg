@@ -19,7 +19,7 @@ void CreateGridIndexed(
     for(idx_t z = 0; z < COUNT_Z; ++z) {
     for(idx_t x = 0; x < COUNT_X; ++x) {
         vertices[z][x] = VERTEX {
-            .pos = { offset_x + x * size_x, 0, offset_z + z * size_z },
+            .pos = { offset_x + x * size_x, (f32)(rand() % 2), offset_z + z * size_z },
             .nor = { 0, -1, 0 },
             .col = color,
             .tex = {}

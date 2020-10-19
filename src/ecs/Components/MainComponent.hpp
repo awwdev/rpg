@@ -20,7 +20,7 @@ struct MainComponent
     com::Vec3f scale        { 1, 1, 1 }; 
     com::Vec3f rotation     {};
     com::Vec3f translation  {};
-    com::Mat4f transform    {};
+    com::Mat4f transform    { com::Identity4() };
 
     //render data
     res::MeshEnum  meshEnum { res::MeshEnum::None };
@@ -28,6 +28,7 @@ struct MainComponent
     float glow { 0.f };
 
     //parsing
+    MainComponent() = default;
     MainComponent(ecs::ComponentDataPairs const& pairs)
     {
         FOR_ARRAY(pairs, i) {

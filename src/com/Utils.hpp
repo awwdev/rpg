@@ -190,8 +190,7 @@ struct RayAABB_Intersection
     f32 fmax = 0;
     explicit operator bool() const
     { 
-        dbg::LogInfo(fmin, fmax);
-        return fmax > fmin;
+        return fmax > Max(fmin, 0); //if aabb is begind ray origin
     }
 };
 
@@ -215,11 +214,11 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
     auto fmin_total = fmin_x;
     auto fmax_total = fmax_x;
 
-    fmin_total = Max(fmin_y, fmin_total);
-    fmax_total = Min(fmax_y, fmin_total);
+    fmin_total = Max(fmin_total, fmin_y);
+    fmax_total = Min(fmax_total, fmax_y);
 
-    fmin_total = Max(fmin_z, fmin_total);
-    fmax_total = Min(fmax_z, fmin_total);
+    fmin_total = Max(fmin_total, fmin_z);
+    fmax_total = Min(fmax_total, fmax_z);
 
     return { .fmin = fmin_total, .fmax = fmax_total };
 }

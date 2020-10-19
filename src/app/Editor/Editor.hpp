@@ -38,7 +38,7 @@ struct Editor
             rayInit = true;
             auto const id = ecs.AddEntity(res::PrefabEnum::Cube);
             rayMainComponent = &ecs.arrays.mainComponents.Get(id);
-            rayMainComponent->scale = { 0.1, 5, 0.1 };
+            rayMainComponent->scale = { 0.02, 3, 0.02 };
         }
 
         InputCamera(dt, renderData);
@@ -96,17 +96,20 @@ struct Editor
     void TerrainVertexPaint(res::Resources_Terrain& resTerrain)
     {
         //ray test
-        if(wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>())
-            ray.origin.z += 0.1;
-        if(wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>())
-            ray.origin.z -= 0.1;
-        if(wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>())
-            ray.origin.x -= 0.1;
-        if(wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>())
-            ray.origin.x += 0.1;
+        if(wnd::HasEvent<wnd::EventType::U, wnd::EventState::PressedOrHeld>())
+            ray.origin.y -= 0.02;
+        if(wnd::HasEvent<wnd::EventType::J, wnd::EventState::PressedOrHeld>())
+            ray.origin.y += 0.02;
+        if(wnd::HasEvent<wnd::EventType::T, wnd::EventState::PressedOrHeld>())
+            ray.origin.z += 0.02;
+        if(wnd::HasEvent<wnd::EventType::G, wnd::EventState::PressedOrHeld>())
+            ray.origin.z -= 0.02;
+        if(wnd::HasEvent<wnd::EventType::F, wnd::EventState::PressedOrHeld>())
+            ray.origin.x -= 0.02;
+        if(wnd::HasEvent<wnd::EventType::H, wnd::EventState::PressedOrHeld>())
+            ray.origin.x += 0.02;
 
         rayMainComponent->translation = ray.origin;
-
 
         auto& terrain = resTerrain.terrain;
         if (auto const intersectionPoint = terrain.RayIntersection(ray))
