@@ -2,6 +2,7 @@
 
 #pragma once
 #include "res/Terrain/TerrainQuadrant.hpp"
+#include "com/box/optional.hpp"
 #include "com/Utils.hpp"
 
 namespace rpg::res2 {
@@ -34,13 +35,13 @@ struct Terrain
         return quadrants[z][x];
     }
 
-    auto RayIntersection(com::Ray const& ray)
+    auto RayIntersection(com::Ray const& ray) const -> com::Optional<com::Vec3f>
     {
         for(auto z = 0; z < QUADRANT_COUNT; ++z) {
         for(auto x = 0; x < QUADRANT_COUNT; ++x) {
-            auto& quadrant = terrain.quadrants[z][x];
-            if (auto const intersection = quadrant.RayIntersection(ray, quadrant))
-                return intersection;
+            auto const& quadrant = quadrants[z][x];
+            if (auto const intersectionPoint = quadrant.RayIntersection(ray))
+                return intersectionPoint;
         }}
         return {};
     }

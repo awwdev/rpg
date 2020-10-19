@@ -21,9 +21,26 @@ struct Editor
     EditorCommands commands;
     EditorMode     editorMode = EditorMode::TerrainVertexPaint;
 
+    //ray test
+    com::Ray ray {
+        .origin { 0, -4, 0 },
+        .length { 0,  5, 0 }, 
+    };
+    ecs::MainComponent* rayMainComponent;
+
 
     void Update(const double dt, ecs::ECS& ecs, res::Resources& res, gpu::RenderData& renderData)
     {
+        //ray test
+        static bool rayInit = false;
+        if (!rayInit)
+        {
+            rayInit = true;
+            auto const id = ecs.AddEntity(res::PrefabEnum::Cube);
+            rayMainComponent = &ecs.arrays.mainComponents.Get(id);
+            rayMainComponent->scale = { 0.1, 5, 0.1 };
+        }
+
         InputCamera(dt, renderData);
         Serialization(ecs, res);
         UndoRedo(ecs, res);
@@ -78,10 +95,23 @@ struct Editor
 
     void TerrainVertexPaint(res::Resources_Terrain& resTerrain)
     {
-        auto& terrain = resTerrain.terrain;
-        if (terrain.RayIntersection(camera.ray))
-        {
+        //ray test
+        if(wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>())
+            ray.origin.z += 0.1;
+        if(wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>())
+            ray.origin.z -= 0.1;
+        if(wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>())
+            ray.origin.x -= 0.1;
+        if(wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>())
+            ray.origin.x += 0.1;
 
+        rayMainComponent->translation = ray.origin;
+
+
+        auto& terrain = resTerrain.terrain;
+        if (auto const intersectionPoint = terrain.RayIntersection(ray))
+        {
+            com::PrintMatrix(*intersectionPoint);
         }
     }
 

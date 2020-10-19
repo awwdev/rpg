@@ -46,10 +46,11 @@ struct Quadrant
         aabb = com::CalculateAABB(&vertices[0][0], VERTEX_COUNT_TOTAL);
     }
 
-    auto RayIntersection()
+    auto RayIntersection(com::Ray const& ray) const -> com::Optional<com::Vec3f>
     {
-
-        return 0;
+        if (auto const intersection = RayAABB_Intersection(ray, aabb))
+            return ray.origin + (ray.length * intersection.fmin);
+        return {};
     }
 
 };

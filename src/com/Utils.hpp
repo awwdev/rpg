@@ -186,9 +186,13 @@ inline bool IsPointInsideRect(as_arithmetic auto x, as_arithmetic auto y, const 
 
 struct RayAABB_Intersection
 {
+    f32 fmin = 0;
     f32 fmax = 0;
-    f32 fmin = 1; //so, it will evaluate false on default ctor
-    explicit operator bool() const { return fmin <= fmax; }
+    explicit operator bool() const
+    { 
+        dbg::LogInfo(fmin, fmax);
+        return fmax > fmin;
+    }
 };
 
 inline 
@@ -197,22 +201,31 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
 {
     auto const length_inv = 1 / ray.length;
 
-    f32 fmin[3], fmax[3];
-    for(auto i = 0; i < 3; ++i)
-    {
-        fmin[i] = (aabb.min.x - ray.origin.x) * length_inv.x;
-        fmax[i] = (aabb.max.x - ray.origin.x) * length_inv.x;
-    }
+    //fractions
+    const auto fmin_x = (aabb.min.x - ray.origin.x) / ray.length.x;
+    const auto fmax_x = (aabb.max.x - ray.origin.x) / ray.length.x;
 
-    f32 fmin_total, fmax_total;
-    for(auto i = 0; i < 3; ++i)
-    {
-        fmin_total = Min(fmin_total, fmin[i]);
-        fmax_total = Max(fmin_total, fmin[i]);
-    }
+    const auto fmin_y = (aabb.min.y - ray.origin.y) / ray.length.y;
+    const auto fmax_y = (aabb.max.y - ray.origin.y) / ray.length.y;
 
-    return { fmin_total, fmax_total };
+    const auto fmin_z = (aabb.min.z - ray.origin.z) / ray.length.z;
+    const auto fmax_z = (aabb.max.z - ray.origin.z) / ray.length.z;
+
+    //clamping
+    auto fmin_total = fmin_x;
+    auto fmax_total = fmax_x;
+
+    fmin_total = Max(fmin_y, fmin_total);
+    fmax_total = Min(fmax_y, fmin_total);
+
+    fmin_total = Max(fmin_z, fmin_total);
+    fmax_total = Min(fmax_z, fmin_total);
+
+    return { .fmin = fmin_total, .fmax = fmax_total };
 }
+
+
+
 
 
 struct RayTriangle_Intersection
