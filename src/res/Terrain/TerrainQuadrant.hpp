@@ -48,8 +48,13 @@ struct Quadrant
 
     auto RayIntersection(com::Ray const& ray) const -> com::Optional<com::Vec3f>
     {
-        if (auto const intersection = RayAABB_Intersection(ray, aabb))
-            return ray.origin + (ray.length * intersection.fmin);
+        if (auto const aabbIntersection = RayAABB_Intersection(ray, aabb)) {
+            auto const aabbIntersectionPoint = aabbIntersection.IntersectionPoint(ray); //hint for in-depth testing
+            
+            //TODO: loop triangles and do collision detection 
+            //TODO: use intersection hint of AABB 
+
+        }            
         return {};
     }
 

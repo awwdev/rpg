@@ -195,9 +195,15 @@ struct RayAABB_Intersection
 {
     f32 fmin = 0;
     f32 fmax = 0;
+
     explicit operator bool() const
     { 
-        return fmax > Max(fmin, 0); //if aabb is begind ray origin
+        return fmax > Max(fmin, 0); //if aabb is behind ray origin
+    }
+
+    auto IntersectionPoint(com::Ray const& ray) const 
+    {
+        return ray.origin + (ray.length * fmin);
     }
 };
 
