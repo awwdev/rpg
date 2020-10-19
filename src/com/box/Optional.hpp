@@ -1,6 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
+#include "com/Types.hpp"
 
 namespace rpg::com {
 
@@ -15,9 +16,9 @@ struct Optional
         , value    {}
     {}
 
-    Optional(T const& pValue)
+    Optional(constructible_with auto const&... args)
         : hasValue { true }
-        , value    { pValue }
+        , value    { args... }
     {}
 
     //! watch to not use "auto value = optional", but *optional or optional.value

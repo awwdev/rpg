@@ -50,6 +50,9 @@ concept as_scrollable_enum = requires {
     T::ENUM_END;
 };
 
+template<typename T, typename... Ts>
+concept constructible_with = std::is_trivially_constructible_v<T, Ts...> || std::is_constructible_v<T, Ts...>;
+
 //? array
 
 template<typename T, auto N>

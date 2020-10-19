@@ -35,13 +35,24 @@ struct Terrain
         return quadrants[z][x];
     }
 
-    auto RayIntersection(com::Ray const& ray) const -> com::Optional<com::Vec3f>
+    idx_t GetQuadrantIndexByCoord(auto const z, auto const x) const 
+    {
+        return (z * QUADRANT_COUNT) + x;
+    }
+
+    struct RayTerrain_Intersection
+    {
+        com::Vec3f point;
+        idx_t quadrantIdx;
+    };
+
+    auto RayIntersection(com::Ray const& ray) const -> com::Optional<RayTerrain_Intersection>
     {
         for(auto z = 0; z < QUADRANT_COUNT; ++z) {
         for(auto x = 0; x < QUADRANT_COUNT; ++x) {
             auto const& quadrant = quadrants[z][x];
             if (auto const intersectionPoint = quadrant.RayIntersection(ray))
-                return intersectionPoint;
+                return { *intersectionPoint,  GetQuadrantIndexByCoord(z, x) };
         }}
         return {};
     }

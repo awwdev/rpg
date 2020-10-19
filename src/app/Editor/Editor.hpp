@@ -112,9 +112,10 @@ struct Editor
         rayMainComponent->translation = ray.origin;
 
         auto& terrain = resTerrain.terrain;
-        if (auto const intersectionPoint = terrain.RayIntersection(ray))
+        if (auto const intersection = terrain.RayIntersection(ray))
         {
-            com::PrintMatrix(*intersectionPoint);
+            dbg::LogInfo(intersection->quadrantIdx);
+            com::PrintMatrix(intersection->point);
         }
     }
 

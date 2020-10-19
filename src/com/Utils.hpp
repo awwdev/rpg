@@ -154,17 +154,24 @@ AABB CalculateAABB(VERTEX const* const vertices, idx_t const count)
     for(idx_t i = 0; i < count; ++i)
     {
         auto const& pos = vertices[i].pos;
-        if  (box.min.x > pos.x)
-             box.min.x = pos.x;
-        else box.max.x = pos.x;
+        
+        if (box.min.x > pos.x)
+            box.min.x = pos.x;
+        else 
+        if (box.max.x < pos.x)
+            box.max.x = pos.x;
 
-        if  (box.min.y > pos.y)
-             box.min.y = pos.y;
-        else box.max.y = pos.y;
+        if (box.min.y > pos.y)
+            box.min.y = pos.y;
+        else 
+        if (box.max.y < pos.y)
+            box.max.y = pos.y;
 
-        if  (box.min.z > pos.z)
-             box.min.z = pos.z;
-        else box.max.z = pos.z;
+        if (box.min.z > pos.z)
+            box.min.z = pos.z;
+        else 
+        if (box.max.z < pos.z)
+            box.max.z = pos.z;
     }
     return box;
 }
@@ -200,25 +207,21 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
 {
     auto const length_inv = 1 / ray.length;
 
-    //fractions
-    const auto fmin_x = (aabb.min.x - ray.origin.x) / ray.length.x;
-    const auto fmax_x = (aabb.max.x - ray.origin.x) / ray.length.x;
+    //float/0 will give infinity
+    //clamping on infinity may produce nan (so we multiple clamp)
+    //https://tavianator.com/2015/ray_box_nan.html
 
-    const auto fmin_y = (aabb.min.y - ray.origin.y) / ray.length.y;
-    const auto fmax_y = (aabb.max.y - ray.origin.y) / ray.length.y;
+    f32 fmin = (aabb.min[0][0] - ray.origin[0][0]) * length_inv[0][0];
+    f32 fmax = (aabb.max[0][0] - ray.origin[0][0]) * length_inv[0][0];
+    f32 fmin_total = Min(fmin, fmax);
+    f32 fmax_total = Max(fmin, fmax);
 
-    const auto fmin_z = (aabb.min.z - ray.origin.z) / ray.length.z;
-    const auto fmax_z = (aabb.max.z - ray.origin.z) / ray.length.z;
-
-    //clamping
-    auto fmin_total = fmin_x;
-    auto fmax_total = fmax_x;
-
-    fmin_total = Max(fmin_total, fmin_y);
-    fmax_total = Min(fmax_total, fmax_y);
-
-    fmin_total = Max(fmin_total, fmin_z);
-    fmax_total = Min(fmax_total, fmax_z);
+    for (auto i = 1; i < 3; ++i) {
+        fmin = (aabb.min[0][i] - ray.origin[0][i]) * length_inv[0][i];
+        fmax = (aabb.max[0][i] - ray.origin[0][i]) * length_inv[0][i];
+        fmin_total = Max(fmin_total, Min(Min(fmin, fmax), fmax_total));
+        fmax_total = Min(fmax_total, Max(Max(fmin, fmax), fmin_total));
+    }
 
     return { .fmin = fmin_total, .fmax = fmax_total };
 }
