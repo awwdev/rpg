@@ -172,7 +172,8 @@ struct Array
     void Print() const
     {
         FOR_ARRAY((*this), i)
-            dbg::LogInfo(operator[](i));
+            std::cout << operator[](i) << ", ";
+        std::cout << '\n';
     }
 
 private:

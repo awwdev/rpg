@@ -111,7 +111,7 @@ void ReadBinaryFile_C_Array(chars_t path, T* ptr)
 //? printing
 
 template<typename T, auto Y, auto X>
-void Print2DArray(T const (&arr)[Y][X])
+void PrintArray(T const (&arr)[Y][X])
 {
     for(idx_t y = 0; y < Y; ++y) {
     for(idx_t x = 0; x < X; ++x) {
@@ -120,7 +120,7 @@ void Print2DArray(T const (&arr)[Y][X])
 }
 
 template<typename T, auto N>
-void Print1DArray(T const (&arr)[N])
+void PrintArray(T const (&arr)[N])
 {
     for(idx_t i = 0; i < N; ++i) {
         std::cout << arr[i] << '\n';
@@ -190,6 +190,12 @@ inline bool IsPointInsideRect(as_arithmetic auto x, as_arithmetic auto y, const 
             static_cast<f32>(y) > rect.y && static_cast<f32>(y) < rect.y + rect.height);
 }
 
+inline bool IsPointInsideAABB(com::Vec3f const& point, const com::AABB& box)
+{
+    return (point.x > box.min.x && point.x < box.max.x &&
+            point.y > box.min.y && point.y < box.max.y &&
+            point.z > box.min.z && point.z < box.max.z);
+}
 
 struct RayAABB_Intersection
 {
@@ -201,9 +207,19 @@ struct RayAABB_Intersection
         return fmax > Max(fmin, 0); //if aabb is behind ray origin
     }
 
-    auto IntersectionPoint(com::Ray const& ray) const 
+    auto EntryPoint(com::Ray const& ray) const 
     {
         return ray.origin + (ray.length * fmin);
+    }
+
+    auto MidPoint(com::Ray const& ray) const 
+    {
+        return ray.origin + (ray.length * (fmin + fmax) * 0.5);
+    }
+
+    auto ExitPoint(com::Ray const& ray) const 
+    {
+        return ray.origin + (ray.length * fmax);
     }
 };
 

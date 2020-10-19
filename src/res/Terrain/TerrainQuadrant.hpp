@@ -4,6 +4,7 @@
 #include "res/Terrain/TerrainGrid.hpp"
 #include "gpu/RenderData/RenderData_General.hpp"
 #include "com/box/Optional.hpp"
+#include "com/box/Array.hpp"
 #include "com/Utils.hpp"
 
 namespace rpg::res2 {
@@ -19,8 +20,12 @@ struct Quadrant
     using Vertex = gpu::RenderData_General::Vertex;
 
     //? data
-    Vertex   vertices [VERTEX_COUNT_ROW][VERTEX_COUNT_ROW];
-    uint32_t indices  [INDEX_COUNT];
+    union //UB 
+    {
+        Vertex vertices2D [VERTEX_COUNT_ROW][VERTEX_COUNT_ROW];
+        Vertex vertices1D [VERTEX_COUNT_TOTAL];
+    };    
+    uint32_t indices [INDEX_COUNT];
     idx_t quadrantIdx = 0; //assigned by create function
     com::AABB aabb {};
 
@@ -30,7 +35,7 @@ struct Quadrant
         float const offset_z = qIndex_z * QUADRANT_SIZE;
         float const offset_x = qIndex_x * QUADRANT_SIZE;
         idx_t const offset_v = quadrantIdx * VERTEX_COUNT_TOTAL; //vertex index offset (one holistic vbo)
-        CreateGridIndexed(vertices, indices, QUAD_SIZE, QUAD_SIZE, offset_z, offset_x, offset_v, color);
+        CreateGridIndexed(vertices2D, indices, QUAD_SIZE, QUAD_SIZE, offset_z, offset_x, offset_v, color);
         UpdateAABB();
     }
 
@@ -38,21 +43,31 @@ struct Quadrant
     {
         idx_t const z = idx / VERTEX_COUNT_ROW;
         idx_t const x = idx % VERTEX_COUNT_ROW;
-        return vertices[z][x];
+        return vertices2D[z][x];
     }
 
     void UpdateAABB() 
     {
-        aabb = com::CalculateAABB(&vertices[0][0], VERTEX_COUNT_TOTAL);
+        aabb = com::CalculateAABB(vertices1D, VERTEX_COUNT_TOTAL);
     }
 
     auto RayIntersection(com::Ray const& ray) const -> com::Optional<com::Vec3f>
     {
-        if (auto const aabbIntersection = RayAABB_Intersection(ray, aabb)) {
-            auto const aabbIntersectionPoint = aabbIntersection.IntersectionPoint(ray); //hint for in-depth testing
-            
-            //TODO: loop triangles and do collision detection 
-            //TODO: use intersection hint of AABB 
+        if (auto const intersection = RayAABB_Intersection(ray, aabb)) 
+        {
+            auto const distance = com::Distance(intersection.EntryPoint(ray), intersection.ExitPoint(ray));
+            auto const midpoint = intersection.MidPoint(ray);
+
+            com::Array<idx_t, VERTEX_COUNT_TOTAL> closeVertices;
+            for(auto i = 0; i < VERTEX_COUNT_TOTAL; ++i)
+            {
+                if (com::Distance(vertices1D[i].pos, midpoint) < distance)
+                    closeVertices.AppendElement(i);
+                     
+            }
+
+            closeVertices.Print();         
+            return { 0.f, 0.f, 0.f };
 
         }            
         return {};
