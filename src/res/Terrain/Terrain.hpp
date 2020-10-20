@@ -3,7 +3,7 @@
 #pragma once
 #include "res/Terrain/TerrainQuadrant.hpp"
 #include "com/box/optional.hpp"
-#include "com/Utils.hpp"
+#include "com/utils/Utils.hpp"
 
 namespace rpg::res2 {
 

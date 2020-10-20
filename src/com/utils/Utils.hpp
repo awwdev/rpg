@@ -7,6 +7,8 @@
 
 namespace rpg::com {
     
+//TODO: seperate into multiple files
+
 //? clamping
 
 inline constexpr
@@ -256,16 +258,17 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
 
 
 
-
+struct Triangle { uint32_t indices [3]; };
 
 struct RayTriangle_Intersection
 {
      explicit operator bool() const { return false; }
 };
 
-inline 
+inline
 RayTriangle_Intersection
-RayTriangle_Intersection(com::Ray const& ray)
+RayTriangle_Intersection(
+com::Ray const& ray, com::Vec3f const& v0, com::Vec3f  const& v1, com::Vec3f  const& v2)
 {
     return {};
 };

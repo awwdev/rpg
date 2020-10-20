@@ -5,7 +5,7 @@
 #include "com/box/Bitset.hpp"
 #include "com/box/Optional.hpp"
 #include "com/Types.hpp"
-#include "com/Utils.hpp"
+#include "com/utils/Utils.hpp"
 
 #include "ecs/EntityID.hpp"
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"

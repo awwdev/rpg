@@ -2,7 +2,7 @@
 
 #pragma once
 #include "com/Types.hpp"
-#include "com/Utils.hpp"
+#include "com/utils/Utils.hpp"
 #include "com/Matrix.hpp"
 
 namespace rpg::res2 {
@@ -19,10 +19,8 @@ struct TerrainMeshIndexed
     using Vertex = VERTEX_T;
 
     //? data
-    Vertex   vertices [VERTEX_COUNT_TOTAL];
-    uint32_t indices  [INDEX_COUNT];
-
-    com::Array<idx_t, 6> adjacentVertices [VERTEX_COUNT_TOTAL];
+    Vertex    vertices [VERTEX_COUNT_TOTAL];
+    uint32_t  indices  [INDEX_COUNT];
     com::AABB aabb;
 
     //? triangle lookups
@@ -34,7 +32,7 @@ struct TerrainMeshIndexed
         float const offset_z, float const offset_x,
         idx_t const offset_indices, com::Vec4f const& color)
     {
-        //? vertices
+        //vertices
         FOR_C_ARRAY(vertices, i) 
         {
             const auto x = i % VERTEX_COUNT_ROW;
@@ -51,47 +49,6 @@ struct TerrainMeshIndexed
                 .nor = { 0, -1, 0 },
                 .col = color,
             };
-
-            //? vertex neighbours (clock-wise, starting from top)
-            s64 signedIdx = i; 
-
-            //north
-            if (signedIdx - VERTEX_COUNT_ROW >= 0)
-                adjacentVertices[i].AppendElement(i - VERTEX_COUNT_ROW);
-
-            //east
-            if ((signedIdx + 1) % VERTEX_COUNT_ROW != 0)
-            {
-                adjacentVertices[signedIdx].AppendElement(i + 1);
-                 //south-east
-                if (signedIdx + VERTEX_COUNT_ROW + 1 < VERTEX_COUNT_TOTAL)
-                    adjacentVertices[signedIdx].AppendElement(i + VERTEX_COUNT_ROW + 1);
-            }
-                
-            //south
-            if (signedIdx + VERTEX_COUNT_ROW < VERTEX_COUNT_TOTAL)
-                adjacentVertices[i].AppendElement(i + VERTEX_COUNT_ROW);
-
-            //west
-            if (signedIdx % VERTEX_COUNT_ROW != 0)
-            {
-                adjacentVertices[i].AppendElement(i - 1);
-                //north-west
-                if (signedIdx - VERTEX_COUNT_ROW - 1 >= 0)
-                    adjacentVertices[i].AppendElement(i - VERTEX_COUNT_ROW - 1);
-            }
-                
-
-        }
-
-        FOR_C_ARRAY(adjacentVertices, i)
-        {
-            std::cout << i << '\n';
-            FOR_ARRAY(adjacentVertices[i], a)
-            {
-                std::cout << adjacentVertices[i][a] << ',';
-            }
-            std::cout << '\n';
         }
 
         //indices
@@ -124,3 +81,47 @@ struct TerrainMeshIndexed
 };
 
 }//ns
+
+
+
+
+/*
+s64 signedIdx = i; 
+
+//north
+if (signedIdx - VERTEX_COUNT_ROW >= 0)
+    adjacentVertices[i].AppendElement(i - VERTEX_COUNT_ROW);
+
+//east
+if ((signedIdx + 1) % VERTEX_COUNT_ROW != 0)
+{
+    adjacentVertices[signedIdx].AppendElement(i + 1);
+        //south-east
+    if (signedIdx + VERTEX_COUNT_ROW + 1 < VERTEX_COUNT_TOTAL)
+        adjacentVertices[signedIdx].AppendElement(i + VERTEX_COUNT_ROW + 1);
+}
+    
+//south
+if (signedIdx + VERTEX_COUNT_ROW < VERTEX_COUNT_TOTAL)
+    adjacentVertices[i].AppendElement(i + VERTEX_COUNT_ROW);
+
+//west
+if (signedIdx % VERTEX_COUNT_ROW != 0)
+{
+    adjacentVertices[i].AppendElement(i - 1);
+    //north-west
+    if (signedIdx - VERTEX_COUNT_ROW - 1 >= 0)
+        adjacentVertices[i].AppendElement(i - VERTEX_COUNT_ROW - 1);
+}
+}
+
+FOR_C_ARRAY(adjacentVertices, i)
+{
+std::cout << i << '\n';
+FOR_ARRAY(adjacentVertices[i], a)
+{
+    std::cout << adjacentVertices[i][a] << ',';
+}
+std::cout << '\n';
+}
+*/

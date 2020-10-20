@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "com/Utils.hpp"
+#include "com/utils/Utils.hpp"
 #include "ecs/ECS.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 

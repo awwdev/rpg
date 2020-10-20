@@ -4,7 +4,7 @@
 #include "dbg/Assert.hpp"
 #include "com/box/String.hpp"
 #include "com/box/Array.hpp"
-#include "com/Utils.hpp"
+#include "com/utils/Utils.hpp"
 
 namespace rpg::ecs {
 

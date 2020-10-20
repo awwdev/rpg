@@ -5,7 +5,7 @@
 #include "gpu/RenderData/RenderData_General.hpp"
 #include "com/box/Optional.hpp"
 #include "com/box/Array.hpp"
-#include "com/Utils.hpp"
+#include "com/utils/Utils.hpp"
 
 namespace rpg::res2 {
 
@@ -31,22 +31,29 @@ struct Quadrant
 
     auto RayIntersection(com::Ray const& ray) const -> com::Optional<com::Vec3f>
     {
-        if (auto const intersection = RayAABB_Intersection(ray, mesh.aabb)) 
+        if (auto const aabb_intersection = RayAABB_Intersection(ray, mesh.aabb)) 
         {
-            auto const distance = intersection.InnerDistance();
-            auto const midpoint = intersection.MidPoint();
+            auto const distance = aabb_intersection.InnerDistance();
+            auto const midpoint = aabb_intersection.MidPoint();
 
             FOR_C_ARRAY(mesh.vertices, i)
             {
                 auto const& vertPos = mesh.vertices[i].pos;
-                if (com::Distance(vertPos, midpoint) < distance) //sphere distance
+
+                for (idx_t i = 0; i < mesh.INDEX_COUNT; i+=3)
                 {
-                    dbg::LogInfo("vert idx", i);
-                    //TODO: triangle intersection
+                    auto const& p0 = mesh.vertices[mesh.indices[i+0]].pos;
+                    auto const& p1 = mesh.vertices[mesh.indices[i+1]].pos;
+                    auto const& p2 = mesh.vertices[mesh.indices[i+2]].pos;
+                    if (auto const triangle_intersection = com::RayTriangle_Intersection(ray, p0, p1, p2))
+                    {
+
+                    }
                 }
+
             }
 
-            return { intersection.EntryPoint() }; //currently the aabb pos (but not the real mesh pos)
+            return { aabb_intersection.EntryPoint() }; //currently the aabb pos (but not the real mesh pos)
         }       
 
         return {};

@@ -3,7 +3,7 @@
 #pragma once
 #include "ecs/ECS.hpp"
 #include "com/Matrix.hpp"
-#include "com/Utils.hpp"
+#include "com/utils/Utils.hpp"
 #include "wnd/WindowEvents.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 

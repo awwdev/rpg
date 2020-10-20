@@ -10,7 +10,7 @@
 #include "res/Terrain/_Old/TerrainQuadrant.hpp"
 #include "res/Terrain/_Old/TerrainSerialization.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
-#include "com/Utils.hpp"
+#include "com/utils/Utils.hpp"
 
 #include <cstdlib> //rand
 
