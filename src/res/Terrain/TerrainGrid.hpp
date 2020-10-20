@@ -6,14 +6,16 @@
 
 namespace rpg::res2 {
 
-template<typename VERTEX, auto COUNT_Z, auto COUNT_X, auto INDEX_COUNT>
+struct Triangle { uint32_t indices [3]; };
+
+template<typename VERTEX, auto COUNT_Z, auto COUNT_X, auto INDEX_COUNT, auto TRIANGLE_COUNT>
 void CreateGridIndexed(
-    VERTEX   (&vertices)[COUNT_Z][COUNT_X], 
-    uint32_t (&indices) [INDEX_COUNT],
-    float const size_z,   float const size_x, 
+    VERTEX (&vertices)[COUNT_Z][COUNT_X], 
+    uint32_t (&indices)[INDEX_COUNT],
+    Triangle (&triangles)[TRIANGLE_COUNT], 
+    float const size_z, float const size_x, 
     float const offset_z, float const offset_x,
-    idx_t const offset_v,
-    com::Vec4f const& color)
+    idx_t const offset_v, com::Vec4f const& color)
 {
     //vertices sequential 
     for(idx_t z = 0; z < COUNT_Z; ++z) {
@@ -40,6 +42,14 @@ void CreateGridIndexed(
         indices[i+3] = v;
         indices[i+4] = v + COUNT_X + 1;
         indices[i+5] = v + COUNT_X;
+    }
+
+    //triangles
+    for(idx_t i = 0; i < TRIANGLE_COUNT; i+=2)
+    {
+        uint32_t const n = i;// + i/(COUNT_X*2 - 1);
+        triangles[i+0] = { n, n+6, n+5 };
+        triangles[i+1] = { n, n+1, n+6 };
     }
 }
 

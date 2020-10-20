@@ -20,14 +20,15 @@ struct Quadrant
     using Vertex = gpu::RenderData_General::Vertex;
 
     //? data
-    union //UB 
-    {
-        Vertex vertices2D [VERTEX_COUNT_ROW][VERTEX_COUNT_ROW];
-        Vertex vertices1D [VERTEX_COUNT_TOTAL];
-    };    
-    uint32_t indices [INDEX_COUNT];
+    Vertex   vertices  [VERTEX_COUNT_ROW][VERTEX_COUNT_ROW];
+    uint32_t indices   [INDEX_COUNT];
+    Triangle triangles [QUAD_COUNT * QUAD_COUNT * 2];
+
     idx_t quadrantIdx = 0; //assigned by create function
     com::AABB aabb {};
+
+    inline auto GetVertices1DArray()       { return &vertices[0][0]; }
+    inline auto GetVertices1DArray() const { return &vertices[0][0]; }
 
     void Create(float const qIndex_z, float const qIndex_x, idx_t const pQuadrantIdx, com::Vec4f const& color = { 0.1f, 0.7f, 0.1f, 1 })
     {
@@ -35,7 +36,7 @@ struct Quadrant
         float const offset_z = qIndex_z * QUADRANT_SIZE;
         float const offset_x = qIndex_x * QUADRANT_SIZE;
         idx_t const offset_v = quadrantIdx * VERTEX_COUNT_TOTAL; //vertex index offset (one holistic vbo)
-        CreateGridIndexed(vertices2D, indices, QUAD_SIZE, QUAD_SIZE, offset_z, offset_x, offset_v, color);
+        CreateGridIndexed(vertices, indices, triangles, QUAD_SIZE, QUAD_SIZE, offset_z, offset_x, offset_v, color);
         UpdateAABB();
     }
 
@@ -43,30 +44,29 @@ struct Quadrant
     {
         idx_t const z = idx / VERTEX_COUNT_ROW;
         idx_t const x = idx % VERTEX_COUNT_ROW;
-        return vertices2D[z][x];
+        return vertices[z][x];
     }
 
     void UpdateAABB() 
     {
-        aabb = com::CalculateAABB(vertices1D, VERTEX_COUNT_TOTAL);
+        aabb = com::CalculateAABB(GetVertices1DArray(), VERTEX_COUNT_TOTAL);
     }
 
     auto RayIntersection(com::Ray const& ray) const -> com::Optional<com::Vec3f>
     {
         if (auto const intersection = RayAABB_Intersection(ray, aabb)) 
         {
-            auto const distance = com::Distance(intersection.EntryPoint(ray), intersection.ExitPoint(ray));
+            auto const distance = intersection.InnerDistance(ray);
             auto const midpoint = intersection.MidPoint(ray);
 
-            com::Array<idx_t, VERTEX_COUNT_TOTAL> closeVertices;
             for(auto i = 0; i < VERTEX_COUNT_TOTAL; ++i)
             {
-                if (com::Distance(vertices1D[i].pos, midpoint) < distance)
-                    closeVertices.AppendElement(i);
-                     
+                if (com::Distance((GetVertices1DArray()[i]).pos, midpoint) < distance)
+                {
+                    //get all triangles by one vertex
+                }
             }
 
-            closeVertices.Print();         
             return { 0.f, 0.f, 0.f };
 
         }            

@@ -221,6 +221,11 @@ struct RayAABB_Intersection
     {
         return ray.origin + (ray.length * fmax);
     }
+
+    auto InnerDistance(com::Ray const& ray) const
+    {
+        return com::Magnitude(ray.length) * (fmax - fmin);
+    }
 };
 
 inline 
@@ -230,7 +235,7 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
     auto const length_inv = 1 / ray.length;
 
     //float/0 will give infinity
-    //clamping on infinity may produce nan (so we multiple clamp)
+    //clamping on infinity may produce nan (so multiple right way clamp)
     //https://tavianator.com/2015/ray_box_nan.html
 
     f32 fmin = (aabb.min[0][0] - ray.origin[0][0]) * length_inv[0][0];
