@@ -71,7 +71,7 @@ struct General_Vertices
         FOR_C_ARRAY(quadrants, i)
         {
             auto const& quadrant = quadrants[i];
-            vboTerrain.Append(quadrant.mesh.vertices, quadrant.mesh.VERTEX_COUNT);
+            vboTerrain.Append(quadrant.mesh.vertices, quadrant.mesh.VERTEX_COUNT_TOTAL);
         }
     }
 

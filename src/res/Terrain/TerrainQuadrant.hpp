@@ -41,6 +41,7 @@ struct Quadrant
                 auto const& vertPos = mesh.vertices[i].pos;
                 if (com::Distance(vertPos, midpoint) < distance) //sphere distance
                 {
+                    dbg::LogInfo("vert idx", i);
                     //TODO: triangle intersection
                 }
             }
