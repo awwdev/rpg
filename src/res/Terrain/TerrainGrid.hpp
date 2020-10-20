@@ -2,12 +2,37 @@
 
 #pragma once
 #include "com/Types.hpp"
+#include "com/Utils.hpp"
 #include "com/Matrix.hpp"
 
 namespace rpg::res2 {
 
-struct Triangle { uint32_t indices [3]; };
 
+
+template<typename VERTEX>
+struct GridMesh_Indexed
+{
+    VERTEX    vertices [2];
+    uint32_t  indices  [2];
+    com::AABB aabb;
+
+    //triangle lookups
+    struct Triangle { uint32_t indices [3]; };
+    uint32_t indexToTriangle [2];
+    Triangle triangleToIndex [2];
+
+    void Create()
+    {
+
+    }
+
+    void Recalculate()
+    {
+
+    }
+};
+
+/*
 template<typename VERTEX, auto COUNT_Z, auto COUNT_X, auto INDEX_COUNT, auto TRIANGLE_COUNT>
 void CreateGridIndexed(
     VERTEX (&vertices)[COUNT_Z][COUNT_X], 
@@ -52,5 +77,6 @@ void CreateGridIndexed(
         triangles[i+1] = { n, n+1, n+6 };
     }
 }
+*/
 
 }//ns

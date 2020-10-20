@@ -71,7 +71,7 @@ struct General_Vertices
         for(auto z = 0; z < terrain.QUADRANT_COUNT; ++z) {
         for(auto x = 0; x < terrain.QUADRANT_COUNT; ++x) {
             auto const& quadrant = terrain.quadrants[z][x];
-            vboTerrain.Append(quadrant.GetVertices1DArray(), quadrant.VERTEX_COUNT_TOTAL);
+            vboTerrain.Append(quadrant.gridMesh.vertices, quadrant.VERTEX_COUNT_TOTAL);
         }}
     }
 
@@ -94,7 +94,7 @@ struct General_Vertices
         for(auto z = 0; z < terrain.QUADRANT_COUNT; ++z) {
         for(auto x = 0; x < terrain.QUADRANT_COUNT; ++x) {
             auto const& quadrant = terrain.quadrants[z][x];
-            iboTerrain.Append(quadrant.indices, quadrant.INDEX_COUNT);
+            iboTerrain.Append(quadrant.gridMesh.indices, quadrant.INDEX_COUNT);
         }}
         iboTerrain.Bake(cmdPool);
     }
