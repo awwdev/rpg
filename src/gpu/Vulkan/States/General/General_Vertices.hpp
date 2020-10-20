@@ -67,18 +67,27 @@ struct General_Vertices
         vboTerrain.Reset();
         
         //? terrain vertices
-        auto const& terrain = resTerrain.terrain;
-        for(auto z = 0; z < terrain.QUADRANT_COUNT; ++z) {
-        for(auto x = 0; x < terrain.QUADRANT_COUNT; ++x) {
-            auto const& quadrant = terrain.quadrants[z][x];
-            vboTerrain.Append(quadrant.gridMesh.vertices, quadrant.gridMesh.VERTEX_COUNT);
-        }}
+        auto const& quadrants = resTerrain.terrain.quadrants;
+        FOR_C_ARRAY(quadrants, i)
+        {
+            auto const& quadrant = quadrants[i];
+            vboTerrain.Append(quadrant.mesh.vertices, quadrant.mesh.VERTEX_COUNT);
+        }
     }
 
     void Create(VkCommandPool cmdPool, res::Resources_Meshes const& resMeshes, const res::Resources_Terrain& resTerrain)
     {
+        //? terrain
         vboTerrain.Create();
         iboTerrain.Create();
+
+        auto const& quadrants = resTerrain.terrain.quadrants;
+        FOR_C_ARRAY(quadrants, i)
+        {
+            auto const& quadrant = quadrants[i];
+            iboTerrain.Append(quadrant.mesh.indices, quadrant.mesh.INDEX_COUNT);
+        }
+        iboTerrain.Bake(cmdPool);
 
         //? meshes
         vboMeshes.Create();
@@ -88,15 +97,6 @@ struct General_Vertices
             FOR_C_ARRAY(resMeshes.meshVertexRanges, i)
                 vboMeshesVertexRanges[i] = resMeshes.meshVertexRanges[i];
         }
-
-        //? terrain indices
-        auto const& terrain = resTerrain.terrain;
-        for(auto z = 0; z < terrain.QUADRANT_COUNT; ++z) {
-        for(auto x = 0; x < terrain.QUADRANT_COUNT; ++x) {
-            auto const& quadrant = terrain.quadrants[z][x];
-            iboTerrain.Append(quadrant.gridMesh.indices, quadrant.gridMesh.INDEX_COUNT);
-        }}
-        iboTerrain.Bake(cmdPool);
     }
 
     void Destroy()

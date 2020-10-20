@@ -17,41 +17,37 @@ struct Quadrant
     using Vertex = gpu::RenderData_General::Vertex;
 
     //? data
-    TerrainMeshIndexed<Vertex, QUAD_COUNT> gridMesh;
-    idx_t quadrantIdx = 0; //assigned by create function
+    TerrainMeshIndexed<Vertex, QUAD_COUNT> mesh;
 
-    void Create(float const qIndex_z, float const qIndex_x, idx_t const pQuadrantIdx, com::Vec4f const& color = { 0.1f, 0.7f, 0.1f, 1 })
-    {
-        quadrantIdx = pQuadrantIdx;
-        float const offset_z = qIndex_z * QUADRANT_SIZE;
-        float const offset_x = qIndex_x * QUADRANT_SIZE;
-        idx_t const offset_v = quadrantIdx * (QUAD_COUNT+1)*(QUAD_COUNT+1); //vertex index offset (one holistic vbo)
-        gridMesh.Create(QUAD_SIZE, QUAD_SIZE, offset_z, offset_x, offset_v, color);
-    }
 
-    void UpdateMesh()
+    void Create(float const quadrantIdx_z, float const quadrantIdx_x, idx_t const quadrantIdx, 
+        com::Vec4f const& color = { 0.1f, 0.7f, 0.1f, 1 })
     {
-        gridMesh.Recalculate();
+        float const z = quadrantIdx_z * QUADRANT_SIZE;
+        float const x = quadrantIdx_x * QUADRANT_SIZE;
+        idx_t const i = quadrantIdx   * (QUAD_COUNT+1)*(QUAD_COUNT+1);
+        mesh.Create(QUAD_SIZE, QUAD_SIZE, z, x, i, color);
     }
 
     auto RayIntersection(com::Ray const& ray) const -> com::Optional<com::Vec3f>
     {
-        if (auto const intersection = RayAABB_Intersection(ray, gridMesh.aabb)) 
+        if (auto const intersection = RayAABB_Intersection(ray, mesh.aabb)) 
         {
-            auto const distance = intersection.InnerDistance(ray);
-            auto const midpoint = intersection.MidPoint(ray);
+            auto const distance = intersection.InnerDistance();
+            auto const midpoint = intersection.MidPoint();
 
-            //for(auto i = 0; i < VERTEX_COUNT_TOTAL; ++i)
+            FOR_C_ARRAY(mesh.vertices, i)
             {
-                //if (com::Distance((GetVertices1DArray()[i]).pos, midpoint) < distance)
+                auto const& vertPos = mesh.vertices[i].pos;
+                if (com::Distance(vertPos, midpoint) < distance) //sphere distance
                 {
-                    //get all triangles by one vertex
+                    //TODO: triangle intersection
                 }
             }
 
-            return { 0.f, 0.f, 0.f };
+            return { intersection.EntryPoint() }; //currently the aabb pos (but not the real mesh pos)
+        }       
 
-        }            
         return {};
     }
 

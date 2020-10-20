@@ -199,30 +199,31 @@ inline bool IsPointInsideAABB(com::Vec3f const& point, const com::AABB& box)
 
 struct RayAABB_Intersection
 {
-    f32 fmin = 0;
-    f32 fmax = 0;
+    const f32 fmin;
+    const f32 fmax;
+    const Ray ray;
 
     explicit operator bool() const
     { 
         return fmax > Max(fmin, 0); //if aabb is behind ray origin
     }
 
-    auto EntryPoint(com::Ray const& ray) const 
+    auto EntryPoint() const 
     {
         return ray.origin + (ray.length * fmin);
     }
 
-    auto MidPoint(com::Ray const& ray) const 
+    auto MidPoint() const 
     {
         return ray.origin + (ray.length * (fmin + fmax) * 0.5);
     }
 
-    auto ExitPoint(com::Ray const& ray) const 
+    auto ExitPoint() const 
     {
         return ray.origin + (ray.length * fmax);
     }
 
-    auto InnerDistance(com::Ray const& ray) const
+    auto InnerDistance() const
     {
         return com::Magnitude(ray.length) * (fmax - fmin);
     }
@@ -250,7 +251,7 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
         fmax_total = Min(fmax_total, Max(Max(fmin, fmax), fmin_total));
     }
 
-    return { .fmin = fmin_total, .fmax = fmax_total };
+    return { .fmin = fmin_total, .fmax = fmax_total, .ray = ray };
 }
 
 

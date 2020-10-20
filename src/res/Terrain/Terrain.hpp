@@ -15,29 +15,15 @@ struct Terrain
     using QUADRANT_T = Quadrant<QUAD_COUNT, QUAD_SIZE>;
 
     //? data
-    QUADRANT_T quadrants [QUADRANT_COUNT][QUADRANT_COUNT];
+    QUADRANT_T quadrants [QUADRANT_COUNT * QUADRANT_COUNT];
 
     void Create()
     {
-        for(auto z = 0; z < QUADRANT_COUNT; ++z) {
-        for(auto x = 0; x < QUADRANT_COUNT; ++x) {
-            auto const quadrantIdx = x + z * QUADRANT_COUNT;
-            quadrants[z][x].Create(z, x, quadrantIdx, 
-            //test color
-            { z/(float)QUADRANT_COUNT, x/(float)QUADRANT_COUNT, 1, 1});
-        }}
-    }
-
-    auto& GetQuadrantByIndex(auto const idx) 
-    {
-        idx_t const z = idx / QUADRANT_COUNT;
-        idx_t const x = idx % QUADRANT_COUNT;
-        return quadrants[z][x];
-    }
-
-    idx_t GetQuadrantIndexByCoord(auto const z, auto const x) const 
-    {
-        return (z * QUADRANT_COUNT) + x;
+        FOR_C_ARRAY(quadrants, i) {
+            auto const z = i / QUADRANT_COUNT;
+            auto const x = i % QUADRANT_COUNT;
+            quadrants[i].Create(z, x, i, { z / (float)QUADRANT_COUNT, x / (float)QUADRANT_COUNT, 1, 1} );
+        }
     }
 
     struct RayTerrain_Intersection
@@ -48,12 +34,11 @@ struct Terrain
 
     auto RayIntersection(com::Ray const& ray) const -> com::Optional<RayTerrain_Intersection>
     {
-        for(auto z = 0; z < QUADRANT_COUNT; ++z) {
-        for(auto x = 0; x < QUADRANT_COUNT; ++x) {
-            auto const& quadrant = quadrants[z][x];
+        FOR_C_ARRAY(quadrants, i) {
+            auto const& quadrant = quadrants[i];
             if (auto const intersectionPoint = quadrant.RayIntersection(ray))
-                return { *intersectionPoint,  GetQuadrantIndexByCoord(z, x) };
-        }}
+                return {  *intersectionPoint, i };
+        }
         return {};
     }
 
