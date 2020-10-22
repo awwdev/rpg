@@ -30,7 +30,7 @@ struct Terrain
     {
         idx_t quadrantIdx;
         com::Vec3f point;
-        uint32_t closestVertex;
+        uint32_t closestVertexIndex;
     };
 
     com::Optional<RayTerrain_Intersection> RayIntersection(com::Ray const& ray) const
@@ -38,7 +38,7 @@ struct Terrain
         FOR_C_ARRAY(quadrants, i) {
             auto const& quadrant = quadrants[i];
             if (auto const intersection = quadrant.RayIntersection(ray))
-                return { i, intersection->point, intersection->closestVertex };
+                return { i, intersection->point, intersection->closestVertexIndex };
         }
         return {};
     }

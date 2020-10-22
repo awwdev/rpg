@@ -197,7 +197,6 @@ com::Optional<com::Vec3f>
 RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
 {
     //https://tavianator.com/2015/ray_box_nan.html
-
     auto const length_inv = 1 / ray.direction;
     
     f32 fmin = (aabb.min[0][0] - ray.origin[0][0]) * length_inv[0][0];
@@ -212,9 +211,7 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
         fmax_total = Min(fmax_total, Max(Max(fmin, fmax), fmin_total));
     }
 
-    dbg::LogInfo(fmin_total, fmax_total);
-
-    if (fmax <= Max(fmin, 0)) return {};
+    if (fmax_total <= Max(fmin_total, 0)) return {};
 
     return { ray.origin + (ray.direction * fmin_total) };
 }

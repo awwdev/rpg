@@ -20,8 +20,11 @@ struct TerrainMeshIndexed
 
     //? data
     Vertex    vertices [VERTEX_COUNT_TOTAL];
-    uint32_t  indices  [INDEX_COUNT];
+    uint32_t  absoluteIndices [INDEX_COUNT];
+    uint32_t  indicesOffset;
     com::AABB aabb;
+
+    auto GetRelativeIndex(auto const idx) const { return absoluteIndices[idx] - indicesOffset; }
 
     void Create(
         float const size_z, float const size_x, 
@@ -43,19 +46,20 @@ struct TerrainMeshIndexed
         }
 
         //indices
+        indicesOffset = offset_indices;
         for(idx_t i = 0; i < INDEX_COUNT; i+=6)
         {
             auto v = i / 6;
             auto n = v / (VERTEX_COUNT_ROW - 1);
             v += n;
-            v += offset_indices;
+            v += indicesOffset;
 
-            indices[i+0] = v;
-            indices[i+1] = v + VERTEX_COUNT_ROW + 1;
-            indices[i+2] = v + 1;
-            indices[i+3] = v;
-            indices[i+4] = v + VERTEX_COUNT_ROW;
-            indices[i+5] = v + VERTEX_COUNT_ROW + 1;
+            absoluteIndices[i+0] = v;
+            absoluteIndices[i+1] = v + VERTEX_COUNT_ROW + 1;
+            absoluteIndices[i+2] = v + 1;
+            absoluteIndices[i+3] = v;
+            absoluteIndices[i+4] = v + VERTEX_COUNT_ROW;
+            absoluteIndices[i+5] = v + VERTEX_COUNT_ROW + 1;
         }
 
         Recalculate();

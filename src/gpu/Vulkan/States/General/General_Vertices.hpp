@@ -85,7 +85,7 @@ struct General_Vertices
         FOR_C_ARRAY(quadrants, i)
         {
             auto const& quadrant = quadrants[i];
-            iboTerrain.Append(quadrant.mesh.indices, quadrant.mesh.INDEX_COUNT);
+            iboTerrain.Append(quadrant.mesh.absoluteIndices, quadrant.mesh.INDEX_COUNT);
         }
         iboTerrain.Bake(cmdPool);
 
