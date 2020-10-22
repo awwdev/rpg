@@ -145,8 +145,8 @@ inline auto ScrollEnum(as_scrollable_enum auto pEnum)
 
 struct AABB
 {
-    com::Vec3f min;
-    com::Vec3f max;
+    com::Vec3f min = { f32max, f32max, f32max };
+    com::Vec3f max = { f32min, f32min, f32min };
 };
 
 template<typename VERTEX>
@@ -200,7 +200,7 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
 
     auto const length_inv = 1 / ray.direction;
     
-    f32 fmin = (aabb.min[0][0] - ray.origin[0][0]) * length_inv[0][0]; //infinity
+    f32 fmin = (aabb.min[0][0] - ray.origin[0][0]) * length_inv[0][0];
     f32 fmax = (aabb.max[0][0] - ray.origin[0][0]) * length_inv[0][0];
     f32 fmin_total = Min(fmin, fmax);
     f32 fmax_total = Max(fmin, fmax);
@@ -208,9 +208,11 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
     for (auto i = 1; i < 3; ++i) {
         fmin = (aabb.min[0][i] - ray.origin[0][i]) * length_inv[0][i];
         fmax = (aabb.max[0][i] - ray.origin[0][i]) * length_inv[0][i];
-        fmin_total = Max(fmin_total, Min(Min(fmin, fmax), fmax_total)); //multi clamp to not get nan
+        fmin_total = Max(fmin_total, Min(Min(fmin, fmax), fmax_total));
         fmax_total = Min(fmax_total, Max(Max(fmin, fmax), fmin_total));
     }
+
+    dbg::LogInfo(fmin_total, fmax_total);
 
     if (fmax <= Max(fmin, 0)) return {};
 

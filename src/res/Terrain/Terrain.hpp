@@ -28,16 +28,17 @@ struct Terrain
 
     struct RayTerrain_Intersection
     {
-        com::Vec3f point;
         idx_t quadrantIdx;
+        com::Vec3f point;
+        uint32_t closestVertex;
     };
 
     com::Optional<RayTerrain_Intersection> RayIntersection(com::Ray const& ray) const
     {
         FOR_C_ARRAY(quadrants, i) {
             auto const& quadrant = quadrants[i];
-            if (auto const intersectionPoint = quadrant.RayIntersection(ray))
-                return {  *intersectionPoint, i };
+            if (auto const intersection = quadrant.RayIntersection(ray))
+                return { i, intersection->point, intersection->closestVertex };
         }
         return {};
     }
