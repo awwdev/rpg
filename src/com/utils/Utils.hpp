@@ -192,8 +192,20 @@ inline bool IsPointInsideRect(as_arithmetic auto x, as_arithmetic auto y, const 
             static_cast<f32>(y) > rect.y && static_cast<f32>(y) < rect.y + rect.height);
 }
 
+struct RayAABB_Intersection
+{
+    f32 fmin;
+    f32 fmax;
+    Ray ray;
+
+    explicit operator bool() const { return fmax > Max(fmin, 0); }
+
+    auto EntryPoint() const { ray.origin + (ray.direction * fmin); }
+    auto ExitPoint()  const { ray.origin + (ray.direction * fmax); }
+};
+
 inline 
-com::Optional<com::Vec3f>
+RayAABB_Intersection
 RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
 {
     //https://tavianator.com/2015/ray_box_nan.html
@@ -204,20 +216,27 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
     f32 fmin_total = Min(fmin, fmax);
     f32 fmax_total = Max(fmin, fmax);
 
-    for (auto i = 1; i < 3; ++i) {
+    for (auto i = 1; i < 3; ++i) 
+    {
         fmin = (aabb.min[0][i] - ray.origin[0][i]) * length_inv[0][i];
         fmax = (aabb.max[0][i] - ray.origin[0][i]) * length_inv[0][i];
         fmin_total = Max(fmin_total, Min(Min(fmin, fmax), fmax_total));
         fmax_total = Min(fmax_total, Max(Max(fmin, fmax), fmin_total));
     }
 
-    if (fmax_total <= Max(fmin_total, 0)) return {};
-
-    return { ray.origin + (ray.direction * fmin_total) };
+    return { .fmin = fmin_total, .fmax = fmax_total, .ray = ray };
 }
 
+struct RayTriangle_Intersection
+{
+    bool hasIntersection; 
+    com::Vec3f point;
+    f32 v, u;
+    explicit operator bool() const { return hasIntersection; }
+};
+
 inline
-com::Optional<com::Vec3f>
+RayTriangle_Intersection
 RayTriangle_Intersection(com::Ray const& ray, com::Vec3f const& v0, com::Vec3f const& v1, com::Vec3f const& v2)
 {
     ///Moeller-Trumbore
@@ -245,7 +264,7 @@ RayTriangle_Intersection(com::Ray const& ray, com::Vec3f const& v0, com::Vec3f c
     const auto t = f * Dot(edge2, q);
     if (t <= EPSILON) return {};
 
-    return { ray.origin + ray.direction * t };
+    return { .hasIntersection = true, .point = ray.origin + ray.direction * t, .v = v, .u = u };
 };
 
 }//ns

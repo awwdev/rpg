@@ -115,9 +115,9 @@ struct Editor
         auto& terrain = resTerrain.terrain;
         if (auto const intersection = terrain.RayIntersection(ray))
         {
-            dbg::LogInfo(intersection->quadrantIdx);
+            //dbg::LogInfo(intersection->quadrantIdx);
             dbg::LogInfo(intersection->closestVertexIndex);
-            com::PrintMatrix(intersection->point);
+            //com::PrintMatrix(intersection->point);
         }
     }
 
