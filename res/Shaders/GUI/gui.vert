@@ -21,20 +21,20 @@ layout (location = 1) out vec3 outUV;
 
 const vec2 quad [6] = {
     vec2( 0,  0), //top left
-    vec2( 1,  0), //top right
     vec2( 0,  1), //bot left
     vec2( 1,  0), //top right
+    vec2( 1,  0), //top right
+    vec2( 0,  1), //bot left
     vec2( 1,  1), //bot right
-    vec2( 0,  1), //bot left
 };
 
 const vec2 uv [6] = {
     vec2( 0,  0), //top left
-    vec2( 1,  0), //top right
     vec2( 0,  1), //bot left
     vec2( 1,  0), //top right
+    vec2( 1,  0), //top right
+    vec2( 0,  1), //bot leftd 
     vec2( 1,  1), //bot right
-    vec2( 0,  1), //bot left
 };
 
 void main() 
@@ -47,7 +47,7 @@ void main()
     const float vertOffX = quad[vertID].x * instData.rect.z;
     const float vertOffY = quad[vertID].y * instData.rect.w;
 
-    const float x = instData.rect.X + vertOffX;
+    const float x = instData.rect.x + vertOffX;
     const float y = instData.rect.y + vertOffY;
     gl_Position = vec4(x, y, 0, 1);
 

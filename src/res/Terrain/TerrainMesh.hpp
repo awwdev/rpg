@@ -11,21 +11,17 @@ template<typename VERTEX_T, auto QUAD_COUNT_T>
 struct TerrainMeshIndexed
 {
     //? meta
-    static constexpr idx_t QUAD_COUNT       = QUAD_COUNT_T;
+    static constexpr idx_t QUAD_COUNT = QUAD_COUNT_T;
     static constexpr idx_t VERTEX_COUNT_ROW = QUAD_COUNT + 1;
-    static constexpr idx_t VERTEX_COUNT_TOTAL     = VERTEX_COUNT_ROW * VERTEX_COUNT_ROW;
-    static constexpr idx_t INDEX_COUNT      = QUAD_COUNT * QUAD_COUNT * 6;
-    static constexpr idx_t TRIANGLE_COUNT   = QUAD_COUNT * QUAD_COUNT * 2;
+    static constexpr idx_t VERTEX_COUNT_TOTAL = VERTEX_COUNT_ROW * VERTEX_COUNT_ROW;
+    static constexpr idx_t INDEX_COUNT = QUAD_COUNT * QUAD_COUNT * 6;
+    static constexpr idx_t TRIANGLE_COUNT = QUAD_COUNT * QUAD_COUNT * 2;
     using Vertex = VERTEX_T;
 
     //? data
     Vertex    vertices [VERTEX_COUNT_TOTAL];
     uint32_t  indices  [INDEX_COUNT];
     com::AABB aabb;
-
-    //? triangle lookups
-    idx_t vertexToTriangle   [VERTEX_COUNT_TOTAL];
-    idx_t triangleToVertices [TRIANGLE_COUNT];
 
     void Create(
         float const size_z, float const size_x, 
@@ -40,12 +36,7 @@ struct TerrainMeshIndexed
             const auto z = i / VERTEX_COUNT_ROW;
             vertices[i] = 
             {
-                .pos = 
-                { 
-                    offset_x + x * size_x, 
-                    y, 
-                    offset_z + z * size_z 
-                },
+                .pos = { offset_x + x * size_x, y, offset_z + z * size_z },
                 .nor = { 0, -1, 0 },
                 .col = color,
             };
@@ -59,14 +50,12 @@ struct TerrainMeshIndexed
             v += n;
             v += offset_indices;
 
-            //triangle 1
             indices[i+0] = v;
-            indices[i+1] = v + 1;
-            indices[i+2] = v + VERTEX_COUNT_ROW + 1;
-            //triangle 2
+            indices[i+1] = v + VERTEX_COUNT_ROW + 1;
+            indices[i+2] = v + 1;
             indices[i+3] = v;
-            indices[i+4] = v + VERTEX_COUNT_ROW + 1;
-            indices[i+5] = v + VERTEX_COUNT_ROW;
+            indices[i+4] = v + VERTEX_COUNT_ROW;
+            indices[i+5] = v + VERTEX_COUNT_ROW + 1;
         }
 
         Recalculate();
@@ -81,47 +70,3 @@ struct TerrainMeshIndexed
 };
 
 }//ns
-
-
-
-
-/*
-s64 signedIdx = i; 
-
-//north
-if (signedIdx - VERTEX_COUNT_ROW >= 0)
-    adjacentVertices[i].AppendElement(i - VERTEX_COUNT_ROW);
-
-//east
-if ((signedIdx + 1) % VERTEX_COUNT_ROW != 0)
-{
-    adjacentVertices[signedIdx].AppendElement(i + 1);
-        //south-east
-    if (signedIdx + VERTEX_COUNT_ROW + 1 < VERTEX_COUNT_TOTAL)
-        adjacentVertices[signedIdx].AppendElement(i + VERTEX_COUNT_ROW + 1);
-}
-    
-//south
-if (signedIdx + VERTEX_COUNT_ROW < VERTEX_COUNT_TOTAL)
-    adjacentVertices[i].AppendElement(i + VERTEX_COUNT_ROW);
-
-//west
-if (signedIdx % VERTEX_COUNT_ROW != 0)
-{
-    adjacentVertices[i].AppendElement(i - 1);
-    //north-west
-    if (signedIdx - VERTEX_COUNT_ROW - 1 >= 0)
-        adjacentVertices[i].AppendElement(i - VERTEX_COUNT_ROW - 1);
-}
-}
-
-FOR_C_ARRAY(adjacentVertices, i)
-{
-std::cout << i << '\n';
-FOR_ARRAY(adjacentVertices[i], a)
-{
-    std::cout << adjacentVertices[i][a] << ',';
-}
-std::cout << '\n';
-}
-*/

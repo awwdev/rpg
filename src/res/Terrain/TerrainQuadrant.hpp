@@ -29,33 +29,20 @@ struct Quadrant
         mesh.Create(QUAD_SIZE, QUAD_SIZE, z, x, i, color);
     }
 
-    auto RayIntersection(com::Ray const& ray) const -> com::Optional<com::Vec3f>
+    com::Optional<com::Vec3f> RayIntersection(com::Ray const& ray) const
     {
-        if (auto const aabb_intersection = RayAABB_Intersection(ray, mesh.aabb)) 
+        if (auto const aabb_intersection = RayAABB_Intersection(ray, mesh.aabb))
         {
-            auto const distance = aabb_intersection.InnerDistance();
-            auto const midpoint = aabb_intersection.MidPoint();
-
-            FOR_C_ARRAY(mesh.vertices, i)
+            for(idx_t i = 0; i < mesh.INDEX_COUNT; i += 3) 
             {
-                auto const& vertPos = mesh.vertices[i].pos;
-
-                for (idx_t i = 0; i < mesh.INDEX_COUNT; i+=3)
-                {
-                    auto const& p0 = mesh.vertices[mesh.indices[i+0]].pos;
-                    auto const& p1 = mesh.vertices[mesh.indices[i+1]].pos;
-                    auto const& p2 = mesh.vertices[mesh.indices[i+2]].pos;
-                    if (auto const triangle_intersection = com::RayTriangle_Intersection(ray, p0, p1, p2))
-                    {
-
-                    }
-                }
-
+                auto const& v0 = mesh.vertices[mesh.indices[i+0]].pos;
+                auto const& v1 = mesh.vertices[mesh.indices[i+1]].pos;
+                auto const& v2 = mesh.vertices[mesh.indices[i+2]].pos;
+                
+                if (auto const ray_intersection = RayTriangle_Intersection(ray, v0, v1, v2))
+                    return ray_intersection;
             }
-
-            return { aabb_intersection.EntryPoint() }; //currently the aabb pos (but not the real mesh pos)
-        }       
-
+        }
         return {};
     }
 

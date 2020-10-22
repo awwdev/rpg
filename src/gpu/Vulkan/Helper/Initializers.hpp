@@ -49,7 +49,7 @@ const VkViewport& viewport, const VkRect2D& scissor)
 inline auto Rasterization(
 const VkCullModeFlags cullmode    = VK_CULL_MODE_BACK_BIT,
 const VkPolygonMode   polygonMode = VK_POLYGON_MODE_FILL,
-const VkFrontFace     frontFace   = VK_FRONT_FACE_CLOCKWISE,
+const VkFrontFace     frontFace   = VK_FRONT_FACE_COUNTER_CLOCKWISE,
 const VkBool32        depthBiasEnable = VK_FALSE)
 {
     return VkPipelineRasterizationStateCreateInfo {

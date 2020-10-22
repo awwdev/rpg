@@ -38,7 +38,7 @@
 	"workbench.sideBar.location": "left",
 	"workbench.tree.indent": 16,
 	// UI Settings
-	"window.zoomLevel": 0,
+	"window.zoomLevel": 1,
 	"window.menuBarVisibility": "toggle",
 	"workbench.statusBar.visible": false,
 	"workbench.activityBar.visible": true,

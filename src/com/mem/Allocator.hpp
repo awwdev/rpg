@@ -172,7 +172,7 @@ auto ClaimBlock(CtorArgs&&... args)
     }();
 
     const auto freeBlockIdOptional = priv::blocksUsed.FindFreeBit_Optional(FITTING_BLOCK_ARRAY.blockId);
-    dbg::Assert(freeBlockIdOptional.hasValue, "all mem block exhausted");
+    dbg::Assert(freeBlockIdOptional.HasValue(), "all mem block exhausted");
     const auto freeBlockId = *freeBlockIdOptional;
     dbg::Assert(freeBlockId < FITTING_BLOCK_ARRAY.blockId + BLOCK_ARRAYS[FITTING_BLOCK_ARRAY.arrayIdx].count, "not enough free blocks");
     

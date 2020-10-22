@@ -85,7 +85,7 @@ private:
     auto RegisterEntity() -> ID
     {
         auto const optionalEntityID = entities.FindFreeBit_Optional();
-        dbg::Assert(optionalEntityID.hasValue, "no free entity id");
+        dbg::Assert(optionalEntityID.HasValue(), "no free entity id");
         entities.Set(*optionalEntityID, true);
         return *optionalEntityID;
     }

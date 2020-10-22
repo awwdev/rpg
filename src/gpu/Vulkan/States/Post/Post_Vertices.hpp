@@ -58,8 +58,8 @@ struct Post_Vertices
 
         constexpr VERTEX_TYPE FULLSCREEN_TRIANGLE [3] {
             { {-1,-1 }, {0, 0}, 0 },
-            { { 3,-1 }, {2, 0}, 0 },
             { {-1, 3 }, {0, 2}, 0 },
+            { { 3,-1 }, {2, 0}, 0 },
         };
         gpuVbo.Append(FULLSCREEN_TRIANGLE);
     }

@@ -24,7 +24,7 @@ struct Editor
     //ray test
     com::Ray ray {
         .origin { 0, -4, 0 },
-        .length { 0,  5, 0 }, 
+        .direction { 0,  5, 0 }, 
     };
     ecs::MainComponent* rayMainComponent;
 
@@ -95,27 +95,28 @@ struct Editor
 
     void TerrainVertexPaint(res::Resources_Terrain& resTerrain)
     {
+        constexpr float spd = 0.01;
         //ray test
         if(wnd::HasEvent<wnd::EventType::U, wnd::EventState::PressedOrHeld>())
-            ray.origin.y -= 0.02;
+            ray.origin.y -= spd;
         if(wnd::HasEvent<wnd::EventType::J, wnd::EventState::PressedOrHeld>())
-            ray.origin.y += 0.02;
+            ray.origin.y += spd;
         if(wnd::HasEvent<wnd::EventType::T, wnd::EventState::PressedOrHeld>())
-            ray.origin.z += 0.02;
+            ray.origin.z -= spd;
         if(wnd::HasEvent<wnd::EventType::G, wnd::EventState::PressedOrHeld>())
-            ray.origin.z -= 0.02;
+            ray.origin.z += spd;
         if(wnd::HasEvent<wnd::EventType::F, wnd::EventState::PressedOrHeld>())
-            ray.origin.x -= 0.02;
+            ray.origin.x -= spd;
         if(wnd::HasEvent<wnd::EventType::H, wnd::EventState::PressedOrHeld>())
-            ray.origin.x += 0.02;
+            ray.origin.x += spd;
 
         rayMainComponent->translation = ray.origin;
 
         auto& terrain = resTerrain.terrain;
         if (auto const intersection = terrain.RayIntersection(ray))
         {
-            //dbg::LogInfo(intersection->quadrantIdx);
-            //com::PrintMatrix(intersection->point);
+            dbg::LogInfo(intersection->quadrantIdx);
+            com::PrintMatrix(intersection->point);
         }
     }
 

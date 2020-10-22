@@ -183,7 +183,7 @@ AABB CalculateAABB(VERTEX const* const vertices, idx_t const count)
 struct Ray
 {
     com::Vec3f origin;
-    com::Vec3f length;
+    com::Vec3f direction;
 };
 
 inline bool IsPointInsideRect(as_arithmetic auto x, as_arithmetic auto y, const com::Rectf& rect)
@@ -192,56 +192,15 @@ inline bool IsPointInsideRect(as_arithmetic auto x, as_arithmetic auto y, const 
             static_cast<f32>(y) > rect.y && static_cast<f32>(y) < rect.y + rect.height);
 }
 
-inline bool IsPointInsideAABB(com::Vec3f const& point, const com::AABB& box)
-{
-    return (point.x > box.min.x && point.x < box.max.x &&
-            point.y > box.min.y && point.y < box.max.y &&
-            point.z > box.min.z && point.z < box.max.z);
-}
-
-struct RayAABB_Intersection
-{
-    const f32 fmin;
-    const f32 fmax;
-    const Ray ray;
-
-    explicit operator bool() const
-    { 
-        return fmax > Max(fmin, 0); //if aabb is behind ray origin
-    }
-
-    auto EntryPoint() const 
-    {
-        return ray.origin + (ray.length * fmin);
-    }
-
-    auto MidPoint() const 
-    {
-        return ray.origin + (ray.length * (fmin + fmax) * 0.5);
-    }
-
-    auto ExitPoint() const 
-    {
-        return ray.origin + (ray.length * fmax);
-    }
-
-    auto InnerDistance() const
-    {
-        return com::Magnitude(ray.length) * (fmax - fmin);
-    }
-};
-
 inline 
-RayAABB_Intersection
+com::Optional<com::Vec3f>
 RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
 {
-    auto const length_inv = 1 / ray.length;
-
-    //float/0 will give infinity
-    //clamping on infinity may produce nan (so multiple right way clamp)
     //https://tavianator.com/2015/ray_box_nan.html
 
-    f32 fmin = (aabb.min[0][0] - ray.origin[0][0]) * length_inv[0][0];
+    auto const length_inv = 1 / ray.direction;
+    
+    f32 fmin = (aabb.min[0][0] - ray.origin[0][0]) * length_inv[0][0]; //infinity
     f32 fmax = (aabb.max[0][0] - ray.origin[0][0]) * length_inv[0][0];
     f32 fmin_total = Min(fmin, fmax);
     f32 fmax_total = Max(fmin, fmax);
@@ -249,28 +208,45 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
     for (auto i = 1; i < 3; ++i) {
         fmin = (aabb.min[0][i] - ray.origin[0][i]) * length_inv[0][i];
         fmax = (aabb.max[0][i] - ray.origin[0][i]) * length_inv[0][i];
-        fmin_total = Max(fmin_total, Min(Min(fmin, fmax), fmax_total));
+        fmin_total = Max(fmin_total, Min(Min(fmin, fmax), fmax_total)); //multi clamp to not get nan
         fmax_total = Min(fmax_total, Max(Max(fmin, fmax), fmin_total));
     }
 
-    return { .fmin = fmin_total, .fmax = fmax_total, .ray = ray };
+    if (fmax <= Max(fmin, 0)) return {};
+
+    return { ray.origin + (ray.direction * fmin_total) };
 }
 
-
-
-struct Triangle { uint32_t indices [3]; };
-
-struct RayTriangle_Intersection
-{
-     explicit operator bool() const { return false; }
-};
-
 inline
-RayTriangle_Intersection
-RayTriangle_Intersection(
-com::Ray const& ray, com::Vec3f const& v0, com::Vec3f  const& v1, com::Vec3f  const& v2)
+com::Optional<com::Vec3f>
+RayTriangle_Intersection(com::Ray const& ray, com::Vec3f const& v0, com::Vec3f const& v1, com::Vec3f const& v2)
 {
-    return {};
+    ///Moeller-Trumbore
+    
+    using namespace com;
+    constexpr auto EPSILON = 0.0000001f;
+        
+    auto const edge1 = v1 - v0;
+    auto const edge2 = v2 - v0;
+
+    auto const h = Cross(ray.direction, edge2);
+    auto const a = Dot(edge1, h);
+
+    if (a > -EPSILON && a < EPSILON) return {}; 
+    auto const f = 1.f / a;
+
+    auto const s = ray.origin - v0;
+    auto const u = f * Dot(s, h);
+    if (u < 0.0 || u > 1.0) return {};
+
+    const auto q = Cross(s, edge1);
+    const auto v = f * Dot(ray.direction, q);
+    if (v < 0.0 || u + v > 1.0) return {};
+        
+    const auto t = f * Dot(edge2, q);
+    if (t <= EPSILON) return {};
+
+    return { ray.origin + ray.direction * t };
 };
 
 }//ns

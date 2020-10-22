@@ -28,7 +28,7 @@ struct BufferExt
     idx_t count = 0;
     auto CurrentByteSize() const { return count * sizeof(ELEMENT_TYPE); }
     
-    static constexpr auto BUFFER_USAGE = []() constexpr {
+    static constexpr auto BUFFER_USAGE = [] {
         switch(BUFFER_EXT_TYPE) 
         {
             case BufferExtType::UniformBuffer: return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
@@ -39,7 +39,7 @@ struct BufferExt
         }
     }();
 
-    static constexpr auto DESCRIPTOR_TYPE = []() constexpr {
+    static constexpr auto DESCRIPTOR_TYPE = [] {
         switch(BUFFER_EXT_TYPE) 
         {
             case BufferExtType::UniformBuffer: return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
