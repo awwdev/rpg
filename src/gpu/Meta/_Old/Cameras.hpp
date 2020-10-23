@@ -17,8 +17,8 @@ com::Vec3f ScreenRay(const CAMERA& camera)
 {
     using namespace com;
 
-    const auto mx = (f32)wnd::glo::mouse_wx;
-    const auto my = (f32)wnd::glo::mouse_wy;
+    const auto mx = (f32)wnd::glo::mouse_window_x;
+    const auto my = (f32)wnd::glo::mouse_window_y;
     const auto ww = (f32)wnd::glo::window_w;
     const auto wh = (f32)wnd::glo::window_h;
 

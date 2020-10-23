@@ -10,31 +10,39 @@ namespace rpg::gpu {
 struct Camera
 {
     //? projection
-    enum class ProjectionMode { Perspective, Orthographic } projectionMode;
+    enum class ProjectionMode { Perspective, Orthographic } projectionMode = ProjectionMode::Perspective;
     com::Mat4f projection;
     com::Mat4f view; 
-    f32 fov;
-    f32 far;
-    f32 near;
+    f32 fov  = 45;
+    f32 far  = 0;
+    f32 near = 0.01f;
 
     //? transform
-    com::Vec3f position;
-    com::Vec3f rotation;
+    com::Vec3f position { 0, 4,-4 };
+    com::Vec3f rotation {45, 0, 0 };
 
     //? input
     enum class PersonMode { FirstPerson, ThirdPerson } personMode;
-    f32 mouseSpeed  = 0.1f;
-    f32 scrollSpeed = 0.01f;
+    f32 mouseSpeed = 0.3f;
+    f32 scrollSpeed = 0.05f;
     f32 moveSpeed = 10;
     f32 moveSpeedMultiplier = 10; //when shift is pressed
+    com::Vec3f targetPosition;
+    f32 targetDistance;
 
     //? rays
-    com::Ray cameraRay; //center of window
-    com::Ray mouseRay;
+    com::Ray cameraRay {}; //center of window
+    com::Ray mouseRay  {};
 
     //? methods
 
-    void UpdateView(float const dt)
+    Camera()
+    {
+        Update(0);
+        UpdateProjection();
+    }
+
+    void Update(double const dt)
     {
         //rotation (in degrees)
         rotation.y += wnd::glo::mouse_dx * mouseSpeed;
@@ -82,20 +90,38 @@ struct Camera
         }
     }
 
+    void UpdateRays() 
+    {
+        mouseRay.origin = position * -1;
+        mouseRay.direction = ScreenRay(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y) * 1;
+        cameraRay.origin = position * -1;
+        cameraRay.direction = ScreenRay(wnd::glo::window_w/2, wnd::glo::window_h/2) * 1;
+    }
+
     void UpdateProjection()
     {
+        auto const fovRad = fov * (3.14f / 180.f);
+        auto const n = near;
+        auto const f = far; 
+        auto const h = 1.f / tanf(fovRad * 0.5f);
+        auto const w = h / wnd::glo::window_aspect_ratio;
+
         if (projectionMode == ProjectionMode::Perspective)
         {
-            auto const fovRad = fov * (3.14f / 180.f);
-            auto const n = near;
-            auto const f = far; 
-            auto const h = 1.f / tanf(fovRad * 0.5f);
-            auto const w = h / wnd::glo::window_ratio;
             projection = {
                 w, 0, 0, 0,
                 0, h, 0, 0,
                 0, 0, f,-1,
                 0, 0, n, 0,
+            };
+        }
+        if (projectionMode == ProjectionMode::Orthographic)
+        {
+            projection = {
+                w, 0, 0, 0,
+                0, h, 0, 0,
+                0, 0, f, 0,
+                0, 0, n, 1,
             };
         }
     }
@@ -104,8 +130,32 @@ struct Camera
     {
         renderData.general.meta.view = view;
         renderData.general.meta.proj = projection;
-        renderData.general.meta.viewDir = com::Normalize(rotation);
+        renderData.general.meta.viewDir = cameraRay.direction;
     }
+
+    com::Vec3f ScreenRay(f32 const x, f32 const y) const
+    {
+        const auto ww = (f32)wnd::glo::window_w;
+        const auto wh = (f32)wnd::glo::window_h;
+
+         const com::Vec4f homo {
+            ((x / ww) * 2) - 1,
+            ((y / wh) * 2) - 1,
+            -1,                
+            1
+        };
+
+        const auto projInv = Inverse(projection);
+        auto eye = projInv * homo;
+        eye.z = -1;
+        eye.w =  0;
+        
+        const auto viewInv = Inverse(view);
+        auto world = viewInv * eye;
+
+        return { world.x, world.y, world.z };
+    }
+
 };
 
 }//ns

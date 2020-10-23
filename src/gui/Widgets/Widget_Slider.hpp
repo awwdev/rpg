@@ -39,18 +39,18 @@ struct Widget_Slider
             KNOB_SIZE - 2
         };
 
-        const bool isMouseOnKnob = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, knob);
+        const bool isMouseOnKnob = com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, knob);
         if (isMouseOnKnob && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
             isDragging = true;
-            dragInitX = (f32)wnd::glo::mouse_wx;
+            dragInitX = (f32)wnd::glo::mouse_window_x;
         }
         
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>())
             isDragging = false;
 
         if (isDragging){
-            const f32 delta = (f32)wnd::glo::mouse_wx - dragInitX;
-            dragInitX = (f32)wnd::glo::mouse_wx;
+            const f32 delta = (f32)wnd::glo::mouse_window_x - dragInitX;
+            dragInitX = (f32)wnd::glo::mouse_window_x;
             const f32 pxVal = (max-min) / (back.width - KNOB_SIZE);
             value += delta * pxVal;
             com::Clamp(value, min, max);

@@ -48,11 +48,11 @@ namespace glo
 
     inline s32 window_x, window_y;
     inline u32 window_w, window_h;
-    inline f32 window_ratio;
+    inline f32 window_aspect_ratio;
     inline s32 mouse_scroll_delta;
     inline s32 mouse_dx, mouse_dy; //delta
-    inline u32 mouse_wx, mouse_wy; //window
-    inline s32 mouse_x,  mouse_y;  //screen
+    inline u32 mouse_window_x, mouse_window_y;
+    inline s32 mouse_screen_x, mouse_screen_y;
 
     enum ResizeState { None, Begin, End } resizeState;
 

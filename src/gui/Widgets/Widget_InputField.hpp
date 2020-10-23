@@ -25,7 +25,7 @@ struct Widget_InputField
             rect.height
         };
 
-        const bool isMouseOnInput = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);
+        const bool isMouseOnInput = com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, back);
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
             isActive = isMouseOnInput;
         }

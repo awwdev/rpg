@@ -22,5 +22,4 @@ com::EnumMap<EditorMode::ENUM_END, com::String<50>> EDIT_MODE_ENUM_TO_STR
     { EditorMode::PrefabPlacement, "PrefabPlacement" },
 };
 
-
 }//ns

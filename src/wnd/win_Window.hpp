@@ -63,8 +63,8 @@ struct win_Window
 
         POINT point;
         GetCursorPos(&point);
-        wnd::glo::mouse_x = point.x;
-        wnd::glo::mouse_y = point.y;
+        wnd::glo::mouse_screen_x = point.x;
+        wnd::glo::mouse_screen_y = point.y;
 
         wnd::glo::window_x = (s32)wndRect.left;
         wnd::glo::window_y = (s32)wndRect.top;

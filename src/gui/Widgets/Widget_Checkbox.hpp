@@ -23,7 +23,7 @@ struct Widget_Checkbox
             rect.height
         };
 
-        const bool isMouseOnBox = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, boxOutline);
+        const bool isMouseOnBox = com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, boxOutline);
         if (isMouseOnBox && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>()){
             isChecked = !isChecked;
         }

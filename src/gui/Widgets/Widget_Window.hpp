@@ -39,10 +39,10 @@ struct Widget_Window
         const com::Rectf resizer  { rect.x + rect.width - RESIZER, rect.y + rect.height - RESIZER, RESIZER, RESIZER };
         const com::Rectf closeBtn { rect.x + rect.width - BAR_H, rect.y , BAR_H, BAR_H };
 
-        const bool isMouseOnWindow   = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, rect);
-        const bool isMouseOnBar      = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, bar);
-        const bool isMouseOnResizer  = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, resizer);
-        const bool isMouseOnCloseBtn = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, closeBtn);
+        const bool isMouseOnWindow   = com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, rect);
+        const bool isMouseOnBar      = com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, bar);
+        const bool isMouseOnResizer  = com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, resizer);
+        const bool isMouseOnCloseBtn = com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, closeBtn);
         
         if (!isClosed && isMouseOnWindow)
             app::glo::inputMode = app::glo::UI_Mode;

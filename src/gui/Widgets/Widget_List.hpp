@@ -54,7 +54,7 @@ struct Widget_List
             return;
 
         const com::Rectf back { rect.x, rect.y + LINE_HEIGHT, rect.width, rect.height - LINE_HEIGHT };
-        const bool isMouseOnList = com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, back);
+        const bool isMouseOnList = com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, back);
 
         AddText(renderData, listName, rect.x, rect.y); 
         AddRectOutline(renderData, back, isMouseOnList ? Colors::Orange : Colors::Black5);
@@ -88,7 +88,7 @@ struct Widget_List
 
             if (itemRect.y > back.y)
             {
-                const bool isMouseOnItem = isMouseOnList && com::IsPointInsideRect(wnd::glo::mouse_wx, wnd::glo::mouse_wy, itemRect);
+                const bool isMouseOnItem = isMouseOnList && com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, itemRect);
                 if (isMouseOnItem && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>())
                     activeIdx = (IDX_T) itemIdx;
 

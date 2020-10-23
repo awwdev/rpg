@@ -40,16 +40,16 @@ namespace priv
 
         POINT point;
         GetCursorPos(&point);
-        glo::mouse_dx = (s32)point.x - glo::mouse_x; 
-        glo::mouse_dy = (s32)point.y - glo::mouse_y;
-        glo::mouse_x  = (s32)point.x;
-        glo::mouse_y  = (s32)point.y;
+        glo::mouse_dx = (s32)point.x - glo::mouse_screen_x; 
+        glo::mouse_dy = (s32)point.y - glo::mouse_screen_y;
+        glo::mouse_screen_x  = (s32)point.x;
+        glo::mouse_screen_y  = (s32)point.y;
 
         if (app::glo::inputMode == app::glo::FlyMode ||
             app::glo::inputMode == app::glo::PlayMode) {
             SetCursorPos(cx, cy);
-            glo::mouse_x = cx;
-            glo::mouse_y = cy;
+            glo::mouse_screen_x = cx;
+            glo::mouse_screen_y = cy;
         }
 
     }
@@ -71,7 +71,7 @@ inline void WmSize(WPARAM, LPARAM lParam)
     glo::resizeState = glo::ResizeState::Begin;
     glo::window_w = LOWORD(lParam);
     glo::window_h = HIWORD(lParam);
-    glo::window_ratio = static_cast<f32>(glo::window_w) / static_cast<f32>(glo::window_h);
+    glo::window_aspect_ratio = static_cast<f32>(glo::window_w) / static_cast<f32>(glo::window_h);
 }
 
 inline void WmMove(WPARAM, LPARAM lParam)
@@ -90,8 +90,8 @@ inline void WmClose(WPARAM, WPARAM)
 inline void WmMouseMove(WPARAM, LPARAM lParam)
 {
     AddEvent<EventType::Mouse_Move>();
-    glo::mouse_wx = GET_X_LPARAM(lParam);
-    glo::mouse_wy = GET_Y_LPARAM(lParam);
+    glo::mouse_window_x = GET_X_LPARAM(lParam);
+    glo::mouse_window_y = GET_Y_LPARAM(lParam);
 }
 
 inline void WmMouseWheel(WPARAM wParam, LPARAM)
@@ -114,29 +114,29 @@ inline auto WmSetCursor(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> L
 inline void WmLButtonDown(WPARAM, LPARAM lParam)
 {
     AddEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>();
-    glo::mouse_wx = GET_X_LPARAM(lParam);
-    glo::mouse_wy = GET_Y_LPARAM(lParam);
+    glo::mouse_window_x = GET_X_LPARAM(lParam);
+    glo::mouse_window_y = GET_Y_LPARAM(lParam);
 }
 
 inline void WmLButtonUp(WPARAM, LPARAM lParam)
 {
     AddEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Released>();
-    glo::mouse_wx = GET_X_LPARAM(lParam);
-    glo::mouse_wy = GET_Y_LPARAM(lParam);
+    glo::mouse_window_x = GET_X_LPARAM(lParam);
+    glo::mouse_window_y = GET_Y_LPARAM(lParam);
 }
 
 inline void WmRButtonDown(WPARAM, LPARAM lParam)
 {
     AddEvent<wnd::EventType::Mouse_ButtonRight, wnd::EventState::Pressed>();
-    glo::mouse_wx = GET_X_LPARAM(lParam);
-    glo::mouse_wy = GET_Y_LPARAM(lParam);
+    glo::mouse_window_x = GET_X_LPARAM(lParam);
+    glo::mouse_window_y = GET_Y_LPARAM(lParam);
 }
 
 inline void WmRButtonUp(WPARAM, LPARAM lParam)
 {
     AddEvent<wnd::EventType::Mouse_ButtonRight, wnd::EventState::Released>();
-    glo::mouse_wx = GET_X_LPARAM(lParam);
-    glo::mouse_wy = GET_Y_LPARAM(lParam);
+    glo::mouse_window_x = GET_X_LPARAM(lParam);
+    glo::mouse_window_y = GET_Y_LPARAM(lParam);
 }
 
 inline void WmKeyDown(WPARAM wParam, LPARAM)

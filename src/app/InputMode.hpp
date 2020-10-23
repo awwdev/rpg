@@ -7,7 +7,7 @@ namespace rpg::app {
     
 namespace glo  
 {
-    enum InputMode { PlayMode, EditMode, UI_Mode, FlyMode } inputMode = FlyMode;
+    enum InputMode { PlayMode, EditMode, UI_Mode, FlyMode } inputMode = EditMode;
     InputMode prev = EditMode;
 }
 
