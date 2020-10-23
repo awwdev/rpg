@@ -5,7 +5,7 @@
 #include "com/box/optional.hpp"
 #include "com/utils/Utils.hpp"
 
-namespace rpg::res2 {
+namespace rpg::res {
 
 template<auto QUADRANT_COUNT_T, auto QUAD_COUNT, auto QUAD_SIZE>
 struct Terrain

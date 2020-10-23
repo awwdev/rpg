@@ -5,7 +5,7 @@
 #include "com/Matrix.hpp"
 #include "res/Terrain/Terrain2.hpp"
 
-namespace rpg::res2 {
+namespace rpg::res {
  
 inline void PrintTerrain(Terrain const& terrain)
 {

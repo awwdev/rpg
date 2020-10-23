@@ -36,11 +36,11 @@ struct Editor
         //? serialization
         if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>()) {
             ecs::SaveECS(ecs);
-            res2::SaveTerrain();     
+            res::SaveTerrain(res.terrain);     
         }
         if (wnd::HasEvent<wnd::EventType::F6, wnd::EventState::Pressed>()) {
             ecs::LoadECS(ecs);
-            res2::LoadTerrain(); 
+            res::LoadTerrain(res.terrain); 
         }
 
         //? undo redo
@@ -57,7 +57,7 @@ struct Editor
         {
             case EditorMode::TerrainVertexPaint: TerrainVertexPaint(res.terrain); break;
             case EditorMode::TerrainVertexMove:  TerrainVertexMove(res.terrain); break;
-            case EditorMode::PrefabPlacement:    PrefabPlacement(res.terrain); break;
+            case EditorMode::PrefabPlacement:    PrefabPlacement(res, ecs); break;
             default: break;
         }
     }
@@ -73,20 +73,15 @@ struct Editor
         if (!wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>())
             return;
 
+        //TODO: command
+        //TODO: falloff
+
         auto& terrain = resTerrain.terrain;
         if (auto const intersection = terrain.RayIntersection(camera.mouseRay))
         {
             auto& vertex = terrain.GetVertexByIntersection(*intersection);
             vertex.col = { 1, 0, 0, 1 };
         }
-    }
-
-    void PrefabPlacement(res::Resources_Terrain& resTerrain)
-    {
-    }
-
-    void TerrainVertexGrab(res::Resources_Terrain& resTerrain, ecs::ECS& ecs)
-    {
     }
 
     void PrefabPlacement(res::Resources& res, ecs::ECS& ecs)

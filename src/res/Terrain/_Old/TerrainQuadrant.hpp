@@ -1,5 +1,6 @@
 //https://github.com/awwdev
 
+/*
 #pragma once
 
 #include "com/box/Array.hpp"
@@ -99,3 +100,5 @@ struct Quadrant
 };
 
 }//ns
+
+*/

@@ -5,7 +5,7 @@
 #include "com/utils/Utils.hpp"
 #include "com/Matrix.hpp"
 
-namespace rpg::res2 {
+namespace rpg::res {
 
 template<typename VERTEX_T, auto QUAD_COUNT_T>
 struct TerrainMeshIndexed
