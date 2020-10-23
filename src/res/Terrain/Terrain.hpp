@@ -33,7 +33,8 @@ struct Terrain
         uint32_t closestVertexIndex;
     };
 
-    com::Optional<RayTerrain_Intersection> RayIntersection(com::Ray const& ray) const
+    com::Optional<RayTerrain_Intersection> 
+    RayIntersection(com::Ray const& ray) const
     {
         FOR_C_ARRAY(quadrants, i) {
             auto const& quadrant = quadrants[i];

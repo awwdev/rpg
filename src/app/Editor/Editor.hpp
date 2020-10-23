@@ -21,26 +21,9 @@ struct Editor
     EditorCommands commands;
     EditorMode     editorMode = EditorMode::TerrainVertexPaint;
 
-    //ray test
-    com::Ray ray {
-        .origin { 0, -4, 0 },
-        .direction { 0,  5, 0 }, 
-    };
-    ecs::MainComponent* rayMainComponent;
-
 
     void Update(const double dt, ecs::ECS& ecs, res::Resources& res, gpu::RenderData& renderData)
     {
-        //ray test
-        static bool rayInit = false;
-        if (!rayInit)
-        {
-            rayInit = true;
-            auto const id = ecs.AddEntity(res::PrefabEnum::Cube);
-            rayMainComponent = &ecs.arrays.mainComponents.Get(id);
-            rayMainComponent->scale = { 0.02, 3, 0.02 };
-        }
-
         InputCamera(dt, renderData);
         Serialization(ecs, res);
         UndoRedo(ecs, res);
@@ -56,8 +39,8 @@ struct Editor
 
     void InputCamera(const double dt, gpu::RenderData& renderData)
     {
-        if (app::glo::inputMode == app::glo::FlyMode) 
-            camera.Update(dt);
+        camera.Update(dt);
+        
         if (wnd::glo::resizeState == wnd::glo::ResizeState::End) 
             camera.UpdatePerspective();
         camera.UpdateRenderData(renderData);
@@ -95,28 +78,11 @@ struct Editor
 
     void TerrainVertexPaint(res::Resources_Terrain& resTerrain)
     {
-        constexpr float spd = 0.01;
-        //ray test
-        if(wnd::HasEvent<wnd::EventType::U, wnd::EventState::PressedOrHeld>())
-            ray.origin.y -= spd;
-        if(wnd::HasEvent<wnd::EventType::J, wnd::EventState::PressedOrHeld>())
-            ray.origin.y += spd;
-        if(wnd::HasEvent<wnd::EventType::T, wnd::EventState::PressedOrHeld>())
-            ray.origin.z -= spd;
-        if(wnd::HasEvent<wnd::EventType::G, wnd::EventState::PressedOrHeld>())
-            ray.origin.z += spd;
-        if(wnd::HasEvent<wnd::EventType::F, wnd::EventState::PressedOrHeld>())
-            ray.origin.x -= spd;
-        if(wnd::HasEvent<wnd::EventType::H, wnd::EventState::PressedOrHeld>())
-            ray.origin.x += spd;
-
-        rayMainComponent->translation = ray.origin;
-
         auto& terrain = resTerrain.terrain;
-        if (auto const intersection = terrain.RayIntersection(ray))
+        if (auto const intersection = terrain.RayIntersection(camera.ray))
         {
             //dbg::LogInfo(intersection->quadrantIdx);
-            dbg::LogInfo(intersection->closestVertexIndex);
+            //dbg::LogInfo(intersection->closestVertexIndex);
             //com::PrintMatrix(intersection->point);
         }
     }

@@ -10,6 +10,8 @@
 namespace rpg::gpu
 {
 
+//TODO: one camera with mode
+
 template<class CAMERA>
 com::Vec3f ScreenRay(const CAMERA& camera)
 {
@@ -65,43 +67,46 @@ struct EgoCamera
     {
         using namespace com;
 
-        com::Vec3f movNorm {};
-        if(wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) { movNorm.x -= 1; }
-        if(wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>()) { movNorm.x += 1; }
-        if(wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) { movNorm.z += 1; }
-        if(wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>()) { movNorm.z -= 1; }
-        NormalizeThis(movNorm);
+        if (app::glo::inputMode == app::glo::InputMode::FlyMode)
+        {
+            com::Vec3f movNorm {};
+            if(wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) { movNorm.x -= 1; }
+            if(wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>()) { movNorm.x += 1; }
+            if(wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) { movNorm.z += 1; }
+            if(wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>()) { movNorm.z -= 1; }
+            NormalizeThis(movNorm);
 
-        rotation.y += wnd::glo::mouse_dx * mouseSpeed; //!need of dt ?
-        rotation.x += wnd::glo::mouse_dy * mouseSpeed;
+            rotation.y += wnd::glo::mouse_dx * mouseSpeed; //!need of dt ?
+            rotation.x += wnd::glo::mouse_dy * mouseSpeed;
 
-        if (rotation.x >=  360) rotation.x -= 360;
-        if (rotation.y >=  360) rotation.y -= 360;
-        if (rotation.x <= -360) rotation.x += 360;
-        if (rotation.y <= -360) rotation.y += 360;
+            if (rotation.x >=  360) rotation.x -= 360;
+            if (rotation.y >=  360) rotation.y -= 360;
+            if (rotation.x <= -360) rotation.x += 360;
+            if (rotation.y <= -360) rotation.y += 360;
 
-        const auto qX = QuatAngleAxis(+rotation.x, com::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f{0, 1, 0});
-        const auto qRot = com::QuatMultQuat(qY, qX);
+            const auto qX = QuatAngleAxis(+rotation.x, com::Vec3f{1, 0, 0});
+            const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f{0, 1, 0});
+            const auto qRot = com::QuatMultQuat(qY, qX);
 
-        const auto movDir  = com::QuatMultVec(qRot, movNorm);
-        const auto moveAcc = wnd::HasEvent<wnd::EventType::Shift, wnd::EventState::PressedOrHeld>() ? acc : 1.f;
-        position = position + (movDir * moveSpeed * moveAcc * (float)dt);
+            const auto movDir  = com::QuatMultVec(qRot, movNorm);
+            const auto moveAcc = wnd::HasEvent<wnd::EventType::Shift, wnd::EventState::PressedOrHeld>() ? acc : 1.f;
+            position = position + (movDir * moveSpeed * moveAcc * (float)dt);
 
-        if (wnd::HasEvent<wnd::EventType::Mouse_Scroll>()) {
-            fov -= wnd::glo::mouse_scroll_delta * scrollSpd;
-            UpdatePerspective();
+            if (wnd::HasEvent<wnd::EventType::Mouse_Scroll>()) {
+                fov -= wnd::glo::mouse_scroll_delta * scrollSpd;
+                UpdatePerspective();
+            }
+
+            view = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                position.x, position.y, position.z, 1,
+            };
+
+            const auto mRot = QuatToMat(qRot);
+            view = mRot * view;
         }
-
-        view = {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            position.x, position.y, position.z, 1,
-        };
-
-        const auto mRot = QuatToMat(qRot);
-        view = mRot * view;
 
         //? ray
         ray.origin = position * -1;

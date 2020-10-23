@@ -196,12 +196,12 @@ struct RayAABB_Intersection
 {
     f32 fmin;
     f32 fmax;
-    Ray ray;
 
     explicit operator bool() const { return fmax > Max(fmin, 0); }
 
-    auto EntryPoint() const { ray.origin + (ray.direction * fmin); }
-    auto ExitPoint()  const { ray.origin + (ray.direction * fmax); }
+    auto EntryPoint(Ray const& ray) const { ray.origin + ray.direction * fmin; }
+    auto ExitPoint (Ray const& ray) const { ray.origin + ray.direction * fmax; }
+    auto MidPoint  (Ray const& ray) const { ray.origin + ray.direction * (fmin+fmax)/2; }
 };
 
 inline 
@@ -209,7 +209,7 @@ RayAABB_Intersection
 RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
 {
     //https://tavianator.com/2015/ray_box_nan.html
-    auto const length_inv = 1 / ray.direction;
+    auto const length_inv = 1 / ray.direction; //infinity on zero division
     
     f32 fmin = (aabb.min[0][0] - ray.origin[0][0]) * length_inv[0][0];
     f32 fmax = (aabb.max[0][0] - ray.origin[0][0]) * length_inv[0][0];
@@ -224,15 +224,32 @@ RayAABB_Intersection(com::Ray const& ray, AABB const& aabb)
         fmax_total = Min(fmax_total, Max(Max(fmin, fmax), fmin_total));
     }
 
-    return { .fmin = fmin_total, .fmax = fmax_total, .ray = ray };
+    return { .fmin = fmin_total, .fmax = fmax_total };
 }
 
 struct RayTriangle_Intersection
 {
-    bool hasIntersection; 
-    com::Vec3f point;
-    f32 v, u;
-    explicit operator bool() const { return hasIntersection; }
+    f32 t = 0;
+    f32 v = -1;
+    f32 u = -1;
+
+    explicit operator bool() const 
+    {
+        constexpr auto EPSILON = 0.0000001f;
+        return t > EPSILON;
+    }
+
+    auto GetW() const { return 1.f - u - v; }
+    auto Point(Ray const& ray) const { return ray.origin + ray.direction * t; }
+
+    enum VertexIndex : uint32_t { v0, v1, v2 };
+    auto GetClosestTriangleCorner() const 
+    {
+        auto const w = GetW();
+        if (v > u && v > w) return VertexIndex::v2;
+        if (u > v && u > w) return VertexIndex::v1;
+        return VertexIndex::v0;            
+    }
 };
 
 inline
@@ -259,12 +276,17 @@ RayTriangle_Intersection(com::Ray const& ray, com::Vec3f const& v0, com::Vec3f c
 
     const auto q = Cross(s, edge1);
     const auto v = f * Dot(ray.direction, q);
-    if (v < 0.0 || u + v > 1.0) return {};
+    if (v < 0.0 || u + v > 1.0) return { .u = u };
         
     const auto t = f * Dot(edge2, q);
-    if (t <= EPSILON) return {};
+    if (t <= EPSILON) return { .v = v, .u = u };
 
-    return { .hasIntersection = true, .point = ray.origin + ray.direction * t, .v = v, .u = u };
+    return 
+    { 
+        .t = t, 
+        .v = v, 
+        .u = u, 
+    };
 };
 
 }//ns

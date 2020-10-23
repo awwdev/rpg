@@ -24,7 +24,7 @@ struct TerrainMeshIndexed
     uint32_t  indicesOffset;
     com::AABB aabb;
 
-    auto GetRelativeVertexIndex(auto const idx) const { return absoluteIndices[idx] - indicesOffset; }
+    auto GetRelativeVertex(auto const idx) const { return absoluteIndices[idx] - indicesOffset; }
 
     void Create(
         float const size_z, float const size_x, 
