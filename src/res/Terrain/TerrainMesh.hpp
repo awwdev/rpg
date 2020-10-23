@@ -19,10 +19,11 @@ struct TerrainMeshIndexed
     using Vertex = VERTEX_T;
 
     //? data
-    Vertex    vertices [VERTEX_COUNT_TOTAL];
-    uint32_t  absoluteIndices [INDEX_COUNT];
-    uint32_t  indicesOffset;
-    com::AABB aabb;
+    Vertex     vertices [VERTEX_COUNT_TOTAL];
+    uint32_t   absoluteIndices [INDEX_COUNT];
+    uint32_t   indicesOffset;
+    com::Vec3f triangleNormals [TRIANGLE_COUNT];
+    com::AABB  aabb;
 
     auto GetRelativeVertex(auto const idx) const { return absoluteIndices[idx] - indicesOffset; }
 
@@ -67,8 +68,25 @@ struct TerrainMeshIndexed
 
     void Recalculate()
     {
+        //AABB
         aabb = com::CalculateAABB(vertices, VERTEX_COUNT_TOTAL);
-        //normals
+
+        //triangle normals
+        for(idx_t i = 0; i < INDEX_COUNT; i+=3)
+        {   
+            auto& v0 = vertices[GetRelativeVertex(i+0)].pos;
+            auto& v1 = vertices[GetRelativeVertex(i+1)].pos;
+            auto& v2 = vertices[GetRelativeVertex(i+2)].pos;
+
+            auto const v0v1 = v1 - v0;
+            auto const v0v2 = v2 - v0;
+
+            auto const cross = com::Cross(v0v1, v0v2);
+            auto const normal = com::Normalize(cross);
+
+            auto const triangleIdx = i / 3;
+            triangleNormals[triangleIdx] = normal;
+        }
     }
 
 };
