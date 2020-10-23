@@ -51,7 +51,7 @@ struct Quadrant
             {
                 return { 
                     triangleIntersection.Point(ray), 
-                    mesh.absoluteIndices[i + triangleIntersection.GetClosestTriangleCorner()]
+                    mesh.absoluteIndices[i + triangleIntersection.GetClosestTriangleCorner()] - mesh.indicesOffset
                 };
             }            
         }

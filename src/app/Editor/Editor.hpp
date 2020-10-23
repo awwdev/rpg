@@ -70,12 +70,14 @@ struct Editor
 
     void TerrainVertexPaint(res::Resources_Terrain& resTerrain)
     {
+        if (!wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>())
+            return;
+
         auto& terrain = resTerrain.terrain;
         if (auto const intersection = terrain.RayIntersection(camera.mouseRay))
         {
-            //dbg::LogInfo(intersection->quadrantIdx);
-            dbg::LogInfo(intersection->closestVertexIndex);
-            //com::PrintMatrix(intersection->point);
+            auto& vertex = terrain.GetVertexByIntersection(*intersection);
+            vertex.col = { 1, 0, 0, 1 };
         }
     }
 

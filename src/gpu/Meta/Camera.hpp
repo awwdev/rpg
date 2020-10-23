@@ -27,8 +27,8 @@ struct Camera
     f32 scrollSpeed = 0.05f;
     f32 moveSpeed = 10;
     f32 moveSpeedMultiplier = 10; //when shift is pressed
-    com::Vec3f targetPosition;
-    f32 targetDistance;
+    com::Vec3f targetPosition {};
+    f32 targetDistance {};
 
     //? rays
     com::Ray cameraRay {}; //center of window

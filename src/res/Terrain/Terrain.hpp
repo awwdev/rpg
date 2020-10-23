@@ -30,7 +30,7 @@ struct Terrain
     {
         idx_t quadrantIdx;
         com::Vec3f point;
-        uint32_t closestVertexIndex;
+        uint32_t quadrantClosestVertexIndex; //not an absolute vertex index (of all terrain vertices)
     };
 
     com::Optional<RayTerrain_Intersection> 
@@ -42,6 +42,14 @@ struct Terrain
                 return { i, intersection->point, intersection->closestVertexIndex };
         }
         return {};
+    }
+
+    auto& GetVertexByIntersection(RayTerrain_Intersection const& intersection) 
+    {
+        auto const& quadrantIdx = intersection.quadrantIdx;
+        auto const& vertexIdx = intersection.quadrantClosestVertexIndex;
+        auto& vertex = quadrants[quadrantIdx].mesh.vertices[vertexIdx];
+        return vertex;
     }
 
 };
