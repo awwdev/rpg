@@ -8,6 +8,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <windowsx.h>
+#include "com/utils/UndefWindows.hpp"
 
 //! important: when asking for specific button state use BIG(!) letters
 
@@ -70,6 +71,7 @@ inline void WmSize(WPARAM, LPARAM lParam)
     glo::resizeState = glo::ResizeState::Begin;
     glo::window_w = LOWORD(lParam);
     glo::window_h = HIWORD(lParam);
+    glo::window_ratio = static_cast<f32>(glo::window_w) / static_cast<f32>(glo::window_h);
 }
 
 inline void WmMove(WPARAM, LPARAM lParam)

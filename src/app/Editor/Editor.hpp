@@ -3,6 +3,7 @@
 #pragma once
 #include "app/InputMode.hpp"
 #include "gpu/Meta/Cameras.hpp"
+#include "gpu/Meta/Camera.hpp"
 #include "ecs/ECS.hpp"
 #include "res/Resources.hpp"
 #include "gpu/RenderData/RenderData.hpp"

@@ -48,6 +48,7 @@ namespace glo
 
     inline s32 window_x, window_y;
     inline u32 window_w, window_h;
+    inline f32 window_ratio;
     inline s32 mouse_scroll_delta;
     inline s32 mouse_dx, mouse_dy; //delta
     inline u32 mouse_wx, mouse_wy; //window

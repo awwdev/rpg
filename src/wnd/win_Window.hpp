@@ -3,6 +3,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include "com/utils/UndefWindows.hpp"
 
 namespace rpg::wnd {
     
