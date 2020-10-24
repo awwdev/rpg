@@ -26,17 +26,33 @@ struct Editor
     EditorMode     editorMode = EditorMode::TerrainVertexPaint;
     EditorBrush    brush;
 
+    void CreateGizmos(ecs::ECS& ecs)
+    {
+        brush.CreateEntity(ecs);
+    }
+
     void Update(const double dt, ecs::ECS& ecs, res::Resources& res, gpu::RenderData& renderData)
     {
-        //? camera
+        UpdateCamera(dt, renderData);
+        UpdateSerialization(ecs, res);
+        UpdateCommands(ecs, res);
+        UpdateEditing(dt, ecs, res);
+    }
+
+    //? camera
+    void UpdateCamera(const double dt, gpu::RenderData& renderData)
+    {
         if (app::glo::inputMode == app::glo::InputMode::FlyMode)
             camera.Update(dt);
         if (wnd::glo::resizeState == wnd::glo::ResizeState::End) 
             camera.UpdateProjection();
         camera.UpdateRays();
         camera.UpdateRenderData(renderData);
+    }
 
-        //? serialization
+    //? serialization
+    void UpdateSerialization(ecs::ECS& ecs, res::Resources& res)
+    {
         if (wnd::HasEvent<wnd::EventType::F5, wnd::EventState::Pressed>()) {
             ecs::SaveECS(ecs);
             res::SaveTerrain(res.terrain);     
@@ -45,8 +61,11 @@ struct Editor
             ecs::LoadECS(ecs);
             res::LoadTerrain(res.terrain); 
         }
+    }
 
-        //? undo redo
+    //? commands
+    void UpdateCommands(ecs::ECS& ecs, res::Resources& res)
+    {   
         if (wnd::HasEvent<wnd::EventType::Ctrl, wnd::EventState::PressedOrHeld>())
         {
             if (wnd::HasEvent<wnd::EventType::Z, wnd::EventState::Pressed>())
@@ -54,59 +73,57 @@ struct Editor
             if (wnd::HasEvent<wnd::EventType::Y, wnd::EventState::Pressed>())
                 commands.Redo(ecs, res);
         }
+    }
 
-        //? editor
+    //? editing
+    void UpdateEditing(const double dt, ecs::ECS& ecs, res::Resources& res)
+    {
         brush.SetVisible(ecs, app::glo::inputMode == app::glo::InputMode::EditMode);
-        if (app::glo::inputMode == app::glo::InputMode::EditMode)
+        if (app::glo::inputMode != app::glo::InputMode::EditMode) 
+            return;
+
+        brush.UpdateScroll(ecs, dt);
+        auto const terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay);
+        if (!terrainIntersection.HasValue()) 
+            return;
+
+        auto& vertices = res.terrain.terrain.quadrants[terrainIntersection->quadrantIdx].mesh.vertices;
+        brush.SetPosition(ecs, terrainIntersection->point);
+        brush.UpdateVerticesInsideBrush(vertices);
+
+        if (!wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>()) 
+            return; 
+
+        switch(editorMode)
         {
-            brush.UpdateScroll(ecs, dt);
-            //terrain intersection
-            if (auto const terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay))
+            //? vertex paint
+            case EditorMode::TerrainVertexPaint:
             {
-                auto& vertices = res.terrain.terrain.quadrants[terrainIntersection->quadrantIdx].mesh.vertices;
-                brush.SetPosition(ecs, terrainIntersection->point);
-                brush.UpdateVerticesInsideBrush(vertices);
-
-                if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>())
+                FOR_ARRAY(brush.verticesInsideBrush, i)
                 {
-                    switch(editorMode)
-                    {
-                        case EditorMode::TerrainVertexPaint: TerrainVertexPaint (); break;
-                        case EditorMode::TerrainVertexMove:  TerrainVertexMove  (); break;
-                        case EditorMode::PrefabPlacement:    PrefabPlacement    (); break;
-                        default: break;
-                    }//switch
-                }//mouse click
-            }//intersection
-        }//editor
+                    auto const& vertexWeight = brush.verticesInsideBrush[i].weight;
+                    auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
+                    vertex.col = { 1, 0, 0, 1 };
+                }
+            }
+            break;
 
-    }
+            //? vertex move
+            case EditorMode::TerrainVertexMove: 
+            {
 
-    //? editor mode
+            }
+            break;
 
-    void TerrainVertexMove()
-    {
-    }
+            //? prefab placement
+            case EditorMode::PrefabPlacement: 
+            {
 
-    void TerrainVertexPaint()
-    {
-        FOR_ARRAY(brush.verticesInsideBrush, i)
-        {
-            auto const& vertexWeight = brush.verticesInsideBrush[i].weight;
-            auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
-            vertex.col = { 1, 0, 0, 1 };
+            }
+            break;
+
+            default: break;
         }
-    }
-
-    void PrefabPlacement()
-    {
-    }
-
-    //? other
-
-    void CreateGizmos(ecs::ECS& ecs)
-    {
-        brush.CreateEntity(ecs);
     }
 
 };
