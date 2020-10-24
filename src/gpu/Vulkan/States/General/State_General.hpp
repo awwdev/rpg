@@ -52,7 +52,7 @@ struct State_General
         //debug
         simpleShader        .Create();
         wirePipeline        .Create(generalRenderPass, simpleShader, generalVertices, generalUniforms);
-        linesPipeline       .Create(generalRenderPass, simpleShader, generalVertices, generalUniforms);
+        linesPipeline       .Create(generalRenderPass, generalShader, generalVertices, generalUniforms);
         //terrain
         terrainShader       .Create();
         terrainPipeline     .Create(generalRenderPass, terrainShader, generalVertices, generalUniforms);

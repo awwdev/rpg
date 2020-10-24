@@ -7,8 +7,7 @@
 #include "gpu/Vulkan/States/General/General_RenderPass.hpp"
 #include "gpu/Vulkan/States/General/General_Vertices.hpp"
 #include "gpu/Vulkan/States/General/General_Uniforms.hpp"
-
-#include "gpu/Vulkan/States/General/Debug/Simple_Shader.hpp"
+#include "gpu/Vulkan/States/General/General_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -19,7 +18,7 @@ struct Lines_Pipeline
 
     void Create(
     General_RenderPass& renderPass, 
-    Simple_Shader& shader, 
+    General_Shader& shader, 
     General_Vertices& vertices,
     General_Uniforms& uniforms)
     {

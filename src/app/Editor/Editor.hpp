@@ -59,44 +59,51 @@ struct Editor
         }
 
         //? editor
-        switch(editorMode)
+        auto& gizmoMainComponent = ecs.arrays.mainComponents.Get(gizmoID);
+        gizmoMainComponent.meshEnum = app::glo::inputMode == app::glo::EditMode ? res::MeshEnum::Circle : res::MeshEnum::None;
+
+        if (app::glo::inputMode == app::glo::InputMode::EditMode)
         {
-            case EditorMode::TerrainVertexPaint: TerrainVertexPaint(res.terrain); break;
-            case EditorMode::TerrainVertexMove:  TerrainVertexMove(res.terrain); break;
-            case EditorMode::PrefabPlacement:    PrefabPlacement(res, ecs); break;
-            default: break;
-        }
+            //terrain intersection
+            if (auto const terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay))
+            {
+                com::PrintMatrix(terrainIntersection->point);
+                gizmoMainComponent.translation = terrainIntersection->point;
+                auto& vertex = res.terrain.terrain.GetVertexByIntersection(*terrainIntersection);
+                switch(editorMode)
+                {
+                    case EditorMode::TerrainVertexPaint: TerrainVertexPaint (); break;
+                    case EditorMode::TerrainVertexMove:  TerrainVertexMove  (); break;
+                    case EditorMode::PrefabPlacement:    PrefabPlacement    (); break;
+                    default: break;
+                }//switch
+            }//intersection
+        }//editor
+
     }
 
     //? editor mode
 
-    void TerrainVertexMove(res::Resources_Terrain& resTerrain)
+    void TerrainVertexMove()
     {
     }
 
-    void TerrainVertexPaint(res::Resources_Terrain& resTerrain)
+    void TerrainVertexPaint()
     {
-        if (!wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>())
-            return;
-
-        //TODO: command
-        //TODO: falloff
-
-        auto& terrain = resTerrain.terrain;
-        if (auto const intersection = terrain.RayIntersection(camera.mouseRay))
-        {
-            auto& vertex = terrain.GetVertexByIntersection(*intersection);
-            vertex.col = { 1, 0, 0, 1 };
-        }
     }
 
-    void PrefabPlacement(res::Resources& res, ecs::ECS& ecs)
+    void PrefabPlacement()
     {
     }
 
 };
 
 }//ns
+
+
+
+
+
 
 
 

@@ -14,6 +14,7 @@
 @ Circle
 ? MainComponent
     + Mesh = Mesh_Circle
+    + Flat = 1
 
 @ Sword
 ? MainComponent

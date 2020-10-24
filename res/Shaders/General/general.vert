@@ -13,7 +13,8 @@ layout(location = 2) out vec3  outNormal;
 layout(location = 3) out vec3  outViewDir;
 layout(location = 4) out flat int outMetallic;
 layout(location = 5) out flat int outGlow;
-layout(location = 6) out vec4  outShadowPos [CASCADE_COUNT];
+layout(location = 6) out flat int outFlat;
+layout(location = 7) out vec4  outShadowPos [CASCADE_COUNT];
 
 layout(binding = 0) uniform Meta { 
     mat4  view;
@@ -28,9 +29,11 @@ struct MeshInstance
     mat4 settings; //metallic, glow
 };
 
-layout(std430, binding = 1) readonly buffer MeshInstances { 
+layout(std430, binding = 1) readonly buffer MeshInstances 
+{ 
     MeshInstance arr [];
-} meshInstances;
+} 
+meshInstances;
 
 layout(binding = 2) uniform Sun { 
     mat4 projView       [CASCADE_COUNT];
@@ -57,8 +60,9 @@ void main()
     norMat[3][2] = 0;
     vec3 normal = normalize((norMat * vec4(inNor, 1)).xyz);
 
-    outNormal = normal;
+    outNormal   = normal;
     outMetallic = int(instance.settings[0][0]);
-    outViewDir = normalize(meta.viewDir.xyz);
-    outGlow = int(instance.settings[0][1]);
+    outViewDir  = normalize(meta.viewDir.xyz);
+    outGlow     = int(instance.settings[0][1]);
+    outFlat     = int(instance.settings[0][2]);
 }

@@ -1,23 +1,17 @@
+- input mode (enum class) refactor
+- fall off
+- face normal and color in shader
+- commands
+- shader material data rework
 
-- undo / redo (without command manager but just serialization but with compression)
+
+
 - scene reload
-- RLE on binary dumps
-
-
-
-- terrain refactor
-- terrain gizmo
-
-- mesh collision general
 - widget list refactor (only update the visible region)
-
 - simple function ptr based system for gui callback
 (since updating the scene tree every frame is wasteful)
-
-
 - shadow cascade fade
 - cast shadow flag 
-
 - better grass
 - load both material and mesh paths externally
 - FOR_ENUM_MAP macro for loop

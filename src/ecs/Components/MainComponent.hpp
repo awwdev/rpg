@@ -26,6 +26,7 @@ struct MainComponent
     res::MeshEnum  meshEnum { res::MeshEnum::None };
     float metallic { 0.f };
     float glow { 0.f };
+    float flat { 0.f };
 
     //parsing
     MainComponent() = default;
@@ -79,6 +80,12 @@ struct MainComponent
                 case ComponentDataEnum::Glow:      
                 {
                     glow = std::atof(val_cstr);
+                }
+                break;
+
+                case ComponentDataEnum::Flat:      
+                {
+                    flat = std::atof(val_cstr);
                 }
                 break;
 

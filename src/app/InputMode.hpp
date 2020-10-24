@@ -7,8 +7,9 @@ namespace rpg::app {
     
 namespace glo  
 {
-    enum InputMode { PlayMode, EditMode, UI_Mode, FlyMode } inputMode = EditMode;
-    InputMode prev = EditMode;
+    enum InputMode { PlayMode, EditMode, UI_Mode, FlyMode };
+    InputMode inputMode = EditMode;
+    InputMode inputModePrev = inputMode;
 }
 
 inline void ResetUpdateInputMode()
@@ -19,15 +20,15 @@ inline void ResetUpdateInputMode()
 
     if (wnd::HasEvent<wnd::EventType::F1, wnd::EventState::Pressed>()){
         if (glo::inputMode == glo::PlayMode)
-            glo::prev = glo::inputMode = glo::EditMode;
+            glo::inputModePrev = glo::inputMode = glo::EditMode;
         else    
-            glo::prev = glo::inputMode = glo::PlayMode;
+            glo::inputModePrev = glo::inputMode = glo::PlayMode;
     }
 
     if (wnd::HasEvent<wnd::EventType::Mouse_ButtonRight, wnd::EventState::PressedOrHeld>()) 
         glo::inputMode = glo::FlyMode;
     if (wnd::HasEvent<wnd::EventType::Mouse_ButtonRight, wnd::EventState::Released>()) 
-        glo::inputMode = glo::prev;
+        glo::inputMode = glo::inputModePrev;
 }
 
 }//ns
