@@ -9,6 +9,7 @@
 
 #include "res/Resources.hpp"
 #include "res/Terrain/TerrainSerialization.hpp"
+#include "res/Prefab/PrefabEnum.hpp"
 
 #include "ecs/ECS.hpp"
 #include "ecs/ECS_Serialization.hpp"
@@ -25,8 +26,9 @@ struct Editor
     //? meta
     gpu::Camera    camera;
     EditorCommands commands;
-    EditorMode     editorMode = EditorMode::TerrainVertexPaint;
+    EditorMode     editorMode = EditorMode::TerrainVertexMove;
     EditorBrush    brush;
+    res::PrefabEnum prefabEnum;
 
     void CreateGizmos(ecs::ECS& ecs)
     {
@@ -80,6 +82,9 @@ struct Editor
     //? editing
     void UpdateEditing(const double dt, ecs::ECS& ecs, res::Resources& res)
     {
+        if (wnd::HasEvent<wnd::EventType::F3, wnd::EventState::Pressed>())
+            editorMode = com::ScrollEnum(editorMode);
+
         brush.SetVisible(ecs, app::glo::inputMode == app::glo::InputMode::EditMode);
         if (app::glo::inputMode != app::glo::InputMode::EditMode) 
             return;
@@ -93,21 +98,20 @@ struct Editor
         brush.SetPosition(ecs, terrainIntersection->point);
         brush.UpdateVerticesInsideBrush(vertices);
 
-        if (!wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>()) 
-            return; 
-
         switch(editorMode)
         {
             //? vertex paint
             case EditorMode::TerrainVertexPaint:
             {
-                FOR_ARRAY(brush.verticesInsideBrush, i)
+                if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>()) 
                 {
-                    auto const& vertexWeight = brush.verticesInsideBrush[i].weight;
-                    auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
-                    dbg::LogInfo(vertexWeight);
-                    auto const colorBlended = com::InterpolateColors(vertex.col, brush.color, vertexWeight);
-                    vertex.col = colorBlended;
+                    FOR_ARRAY(brush.verticesInsideBrush, i)
+                    {
+                        auto const& vertexWeight = brush.verticesInsideBrush[i].weight;
+                        auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
+                        auto const colorBlended = com::InterpolateColors(vertex.col, brush.color, vertexWeight);
+                        vertex.col = colorBlended;
+                    }
                 }
             }
             break;
@@ -115,14 +119,26 @@ struct Editor
             //? vertex move
             case EditorMode::TerrainVertexMove: 
             {
+                if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) 
+                    brush.vertexMoveYRef = wnd::glo::mouse_screen_y;
 
+                if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>()) 
+                {
+                    //TODO: this needs to only allow vertical movement
+                    FOR_ARRAY(brush.verticesInsideBrush, i)
+                    {
+                        auto const& vertexWeight = brush.verticesInsideBrush[i].weight;
+                        auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
+                        vertex.pos.y -= wnd::glo::mouse_dy * brush.vertexMoveSpeed;
+                    }
+                }
             }
             break;
 
             //? prefab placement
             case EditorMode::PrefabPlacement: 
             {
-
+                //TODO: get prefab from ui
             }
             break;
 

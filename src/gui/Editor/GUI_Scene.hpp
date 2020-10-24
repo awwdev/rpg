@@ -23,8 +23,12 @@ struct GUI_Scene
     };
     ecs::ID selectedID = ecs::ECS_NULL;
 
+    void Update(gpu::RenderData& renderData)
+    {
 
-    void Update(gpu::RenderData& renderData, ecs::ECS& ecs)
+    }
+
+    void Render(gpu::RenderData& renderData, ecs::ECS& ecs)
     {
         //TODO: subscription model instead of hard update per frame
 

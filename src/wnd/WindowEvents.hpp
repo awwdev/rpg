@@ -60,7 +60,8 @@ namespace glo
 }
 
 //abstraction over global access
-template<auto type, auto state = EventState::Set> bool HasEvent()
+template<auto type, auto state = EventState::Set> 
+bool HasEvent()
 {
          if constexpr (state == EventState::None)            return glo::events[(idx_t)type] == EventState::None;
     else if constexpr (state == EventState::Pressed)         return glo::events[(idx_t)type] == EventState::Pressed;
@@ -75,6 +76,16 @@ void AddEvent()
 {
     glo::events[(idx_t)TYPE] = STATE;
     glo::frameEvents.AppendElement(TYPE);
+}
+
+inline auto MouseLeftButtonPressed()
+{
+    return HasEvent<EventType::Mouse_ButtonLeft, EventState::Pressed>();
+}
+
+inline auto MouseRightButtonPressed()
+{
+    return HasEvent<EventType::Mouse_ButtonRight, EventState::Pressed>();
 }
 
 }//NS

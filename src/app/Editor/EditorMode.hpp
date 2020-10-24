@@ -6,7 +6,7 @@
 
 namespace rpg::app {
 
-enum class EditorMode
+enum class EditorMode : s32
 { 
     None,
     TerrainVertexMove,

@@ -8,6 +8,7 @@
 
 #include "res/Resources.hpp"
 #include "app/Editor/EditorMode.hpp"
+#include "app/Editor/Editor.hpp"
 
 namespace rpg::gui {
 
@@ -54,26 +55,25 @@ struct GUI_Level
         }
     }
 
-    void Update(gpu::RenderData& renderData, res::Resources& res, app::EditorMode editorMode)
+    void Update(gpu::RenderData& renderData, res::Resources& res, app::Editor& editor)
     {
-        table.table[0][1] = app::EDIT_MODE_ENUM_TO_STR.Get(editorMode);
+        table.table[0][1] = app::EDIT_MODE_ENUM_TO_STR.Get(editor.editorMode);
+        renderData.general.enableTerrainWire = checkbox.isChecked;
+        editor.brush.color.r = rSlider.value;
+        editor.brush.color.g = gSlider.value;
+        editor.brush.color.b = bSlider.value;
+        editor.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
+    }
 
+    void Render(gpu::RenderData& renderData)
+    {
         wnd.Update(renderData);
-
         table.Update(renderData, wnd);
         prefabList.Update(renderData, wnd);
         checkbox.Update(renderData, wnd);
-
-        //vertex colors
         rSlider.Update(renderData, wnd);
         gSlider.Update(renderData, wnd);
         bSlider.Update(renderData, wnd);
-
-        //res.terrain.terrain.settings.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
-        renderData.general.enableTerrainWire = checkbox.isChecked;
-        //res.terrain.terrain.settings.vertexColor.r = rSlider.value;
-        //res.terrain.terrain.settings.vertexColor.g = gSlider.value;
-        //res.terrain.terrain.settings.vertexColor.b = bSlider.value;
     }
 };
 

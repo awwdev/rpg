@@ -19,6 +19,9 @@ struct EditorBrush
     float scaleSpeed = 0.1f;
     com::Vec4f color = { 1, 0, 0, 1 };
 
+    float vertexMoveYRef;
+    float vertexMoveSpeed = 0.5f;
+
     //falloff
     struct VertexWeight 
     { 
