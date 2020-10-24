@@ -17,6 +17,7 @@ struct EditorBrush
     com::Vec3f position;
     float scale = 1.f;
     float scaleSpeed = 0.1f;
+    com::Vec4f color = { 1, 0, 0, 1 };
 
     //falloff
     struct VertexWeight 
@@ -64,7 +65,7 @@ struct EditorBrush
             auto const dist = com::Distance(vertPos, position);
             if (dist < scale)
             {
-                const auto weight = scale / dist; //try other easing 
+                const auto weight = 1 - dist / scale; //try other easing 
                 verticesInsideBrush.AppendElement(&vertices[i], weight);
             }
         }

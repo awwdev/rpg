@@ -2,6 +2,7 @@
 
 #pragma once
 #include "app/InputMode.hpp"
+#include "com/utils/Utils.hpp"
 
 #include "gpu/Meta/Camera.hpp"
 #include "gpu/RenderData/RenderData.hpp"
@@ -15,6 +16,7 @@
 #include "app/Editor/EditorCommands.hpp"
 #include "app/Editor/EditorMode.hpp"
 #include "app/Editor/EditorBrush.hpp"
+
 
 namespace rpg::app {
 
@@ -103,7 +105,9 @@ struct Editor
                 {
                     auto const& vertexWeight = brush.verticesInsideBrush[i].weight;
                     auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
-                    vertex.col = { 1, 0, 0, 1 };
+                    dbg::LogInfo(vertexWeight);
+                    auto const colorBlended = com::InterpolateColors(vertex.col, brush.color, vertexWeight);
+                    vertex.col = colorBlended;
                 }
             }
             break;

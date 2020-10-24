@@ -73,14 +73,6 @@ constexpr T Cos(const T val)
     return (T{1} - val*val) / (T{1} + val*val);
 }
 
-//? easing
-
-template<class T>
-constexpr T Ease(const T val, const T p = 2)
-{
-    return (T)std::pow(val, p);
-}
-
 //? strlen
 
 inline auto StrLen(chars_t str)
@@ -292,6 +284,33 @@ RayTriangle_Intersection(com::Ray const& ray, com::Vec3f const& v0, com::Vec3f c
         .u = u, 
     };
 };
+
+//? interpolation / easing
+
+constexpr 
+auto Lerp(auto const val1, auto const val2, auto const t)
+{
+    return val2 * t + val1 * (1 - t);
+}
+
+constexpr 
+auto Ease(const auto val, const auto p = 2)
+{
+    return (decltype(val)) std::pow(val, p);
+}
+
+//? colors
+
+auto InterpolateColors(com::Vec4f const& col1, com::Vec4f const& col2, const float t)
+{
+    return com::Vec4f 
+    {
+        Lerp(col1.r, col2.r, t),
+        Lerp(col1.g, col2.g, t),
+        Lerp(col1.b, col2.b, t),
+        Lerp(col1.a, col2.a, t),
+    };
+}
 
 }//ns
 
