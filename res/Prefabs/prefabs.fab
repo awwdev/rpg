@@ -11,6 +11,10 @@
 ? MainComponent
     + Mesh = Mesh_Cube
 
+@ Circle
+? MainComponent
+    + Mesh = Mesh_Circle
+
 @ Sword
 ? MainComponent
     + Children = Sword_Grib, Sword_Blade

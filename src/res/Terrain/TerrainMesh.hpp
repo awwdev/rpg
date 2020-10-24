@@ -25,7 +25,7 @@ struct TerrainMeshIndexed
     com::Vec3f triangleNormals [TRIANGLE_COUNT];
     com::AABB  aabb;
 
-    auto GetRelativeVertex(auto const idx) const { return absoluteIndices[idx] - indicesOffset; }
+    auto GetRelativeVertexIndex(auto const i) const { return absoluteIndices[i] - indicesOffset; }
 
     void Create(
         float const size_z, float const size_x, 
@@ -74,9 +74,9 @@ struct TerrainMeshIndexed
         //triangle normals
         for(idx_t i = 0; i < INDEX_COUNT; i+=3)
         {   
-            auto& v0 = vertices[GetRelativeVertex(i+0)].pos;
-            auto& v1 = vertices[GetRelativeVertex(i+1)].pos;
-            auto& v2 = vertices[GetRelativeVertex(i+2)].pos;
+            auto& v0 = vertices[GetRelativeVertexIndex(i+0)].pos;
+            auto& v1 = vertices[GetRelativeVertexIndex(i+1)].pos;
+            auto& v2 = vertices[GetRelativeVertexIndex(i+2)].pos;
 
             auto const v0v1 = v1 - v0;
             auto const v0v2 = v2 - v0;
@@ -87,6 +87,10 @@ struct TerrainMeshIndexed
             auto const triangleIdx = i / 3;
             triangleNormals[triangleIdx] = normal;
         }
+
+        //TODO: visualization face normals, UBO in fragment shader per primitive
+        //TODO: single face colorization
+        //TODO: falloff
     }
 
 };

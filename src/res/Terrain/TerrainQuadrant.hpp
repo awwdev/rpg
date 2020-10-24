@@ -43,9 +43,9 @@ struct Quadrant
         for(uint32_t i = 0; i < mesh.INDEX_COUNT; i += 3) 
         {
             //using indices to get triangles
-            auto const& v0 = mesh.vertices[mesh.GetRelativeVertex(i+0)].pos;
-            auto const& v1 = mesh.vertices[mesh.GetRelativeVertex(i+1)].pos;
-            auto const& v2 = mesh.vertices[mesh.GetRelativeVertex(i+2)].pos;
+            auto const& v0 = mesh.vertices[mesh.GetRelativeVertexIndex(i+0)].pos;
+            auto const& v1 = mesh.vertices[mesh.GetRelativeVertexIndex(i+1)].pos;
+            auto const& v2 = mesh.vertices[mesh.GetRelativeVertexIndex(i+2)].pos;
 
             if (auto const triangleIntersection = RayTriangle_Intersection(ray, v0, v1, v2))
             {

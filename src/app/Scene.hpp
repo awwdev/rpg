@@ -24,13 +24,12 @@ namespace rpg::app {
     
 struct GameScene
 {
-    //TODO: not every Scene will have those members
-    ecs::ECS          ecs;
-    gpu::RenderData   renderData;
-    gpu::Sun          sun;
+    ecs::ECS ecs;
+    gpu::RenderData renderData;
+    gpu::Sun sun;
 
-    app::Player playerController;
-    app::Editor editorController;
+    app::Player player;
+    app::Editor editor;
 
     gui::GUI_Level  guiLevel;
     gui::GUI_Shadow guiShadow;
@@ -41,8 +40,9 @@ struct GameScene
     {
         guiLevel.Init(resources.prefabs);
         sun.Create(ecs);
-        playerController.Create(ecs);
+        player.Create(ecs);
         ecs.prefabsArrays = resources.prefabs.prefabsArrays;    
+        editor.CreateGizmos(ecs);
     }
 
     void Update(const double dt, res::Resources& resources)
@@ -53,16 +53,16 @@ struct GameScene
         //? ui
         app::ResetUpdateInputMode();
         if (app::glo::inputMode != app::glo::InputMode::PlayMode) {
-            guiLevel.Update(renderData, resources, editorController.editorMode);
+            guiLevel.Update(renderData, resources, editor.editorMode);
             guiStats.Update(renderData);
             guiScene.Update(renderData, ecs);
         }   
 
         //? meta
         if (app::glo::inputMode == app::glo::InputMode::PlayMode) 
-            playerController.Update(dt, ecs, renderData);
+            player.Update(dt, ecs, renderData);
         else 
-            editorController.Update(dt, ecs, resources, renderData);
+            editor.Update(dt, ecs, resources, renderData);
 
         sun.Update(ecs, dt, renderData);
 

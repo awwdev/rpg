@@ -22,6 +22,12 @@ struct Editor
     gpu::Camera    camera;
     EditorCommands commands;
     EditorMode     editorMode = EditorMode::TerrainVertexPaint;
+    ecs::ID        gizmoID;
+
+    void CreateGizmos(ecs::ECS& ecs)
+    {
+        gizmoID = ecs.AddEntity(res::PrefabEnum::Circle);
+    }
 
     void Update(const double dt, ecs::ECS& ecs, res::Resources& res, gpu::RenderData& renderData)
     {

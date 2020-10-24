@@ -8,18 +8,18 @@
 #include "gpu/Vulkan/States/General/General_Vertices.hpp"
 #include "gpu/Vulkan/States/General/General_Uniforms.hpp"
 
-#include "gpu/Vulkan/States/General/Terrain/Terrain_Wire_Shader.hpp"
+#include "gpu/Vulkan/States/General/Debug/Simple_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 
-struct Terrain_Wire_Pipeline
+struct Wire_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
     void Create(
     General_RenderPass& renderPass, 
-    Terrain_Wire_Shader& shader, 
+    Simple_Shader& shader, 
     General_Vertices& vertices,
     General_Uniforms& uniforms)
     {
@@ -69,7 +69,7 @@ struct Terrain_Wire_Pipeline
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
     }
-    ~Terrain_Wire_Pipeline()
+    ~Wire_Pipeline()
     {
         Destroy();
     }
