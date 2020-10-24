@@ -234,7 +234,7 @@ struct Terrain
 
         if (const auto intersection = CheckIntersection(camera))
         {
-            if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
+            if (wnd::MouseLeftButtonPressed()){
                 settings.yGrabRef = (f32)wnd::glo::mouse_wy;
                 settings.intersection = intersection;
                 CollectVertsInBrushCircle();

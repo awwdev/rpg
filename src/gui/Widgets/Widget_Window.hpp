@@ -51,7 +51,7 @@ struct Widget_Window
             mode = Widget_Window::Mode::None;
         }
         
-        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()) {        
+        if (wnd::MouseLeftButtonPressed()) {        
             if      (isMouseOnBar)      mode = Widget_Window::Mode::Move; 
             else if (isMouseOnResizer)  mode = Widget_Window::Mode::Resize;
             if      (isMouseOnCloseBtn) isClosed = !isClosed;

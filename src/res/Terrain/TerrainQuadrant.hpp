@@ -9,6 +9,12 @@
 
 namespace rpg::res {
 
+struct RayQuadrant_Intersection
+{
+    com::Vec3f point;
+    uint32_t closestVertexIndex;
+};
+
 template<auto QUAD_COUNT, auto QUAD_SIZE>
 struct Quadrant
 {   
@@ -26,12 +32,6 @@ struct Quadrant
         idx_t const i = quadrantIdx * (QUAD_COUNT+1)*(QUAD_COUNT+1); //indices count
         mesh.Create(QUAD_SIZE, QUAD_SIZE, z, x, i, color);
     }
-
-    struct RayQuadrant_Intersection
-    {
-        com::Vec3f point;
-        uint32_t closestVertexIndex;
-    };
 
     com::Optional<RayQuadrant_Intersection> 
     RayIntersection(com::Ray const& ray) const

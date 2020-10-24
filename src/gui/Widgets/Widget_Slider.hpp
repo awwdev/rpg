@@ -40,7 +40,7 @@ struct Widget_Slider
         };
 
         const bool isMouseOnKnob = com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, knob);
-        if (isMouseOnKnob && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
+        if (isMouseOnKnob && wnd::MouseLeftButtonPressed()){
             isDragging = true;
             dragInitX = (f32)wnd::glo::mouse_window_x;
         }

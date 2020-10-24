@@ -4,7 +4,7 @@
 #include "ecs/ECS.hpp"
 #include "wnd/WindowEvents.hpp"
 #include "res/Terrain/TerrainMesh.hpp"
-#include "app/InputMode.hpp" //! should not be inside brush
+#include "res/Prefab/PrefabEnum.hpp"
 
 namespace rpg::app {
 
@@ -17,10 +17,14 @@ struct EditorBrush
     com::Vec3f position;
     float scale = 1.f;
     float scaleSpeed = 0.1f;
-    com::Vec4f color = { 1, 0, 0, 1 };
 
-    float vertexMoveYRef;
-    float vertexMoveSpeed = 0.5f;
+    //? vertex color
+    com::Vec4f color;
+    //? vertex move
+    bool  vertexGrabbed = false;
+    float vertexMoveSpeed = 0.01f;
+    //? prefab placement
+    res::PrefabEnum prefabEnum;
 
     //falloff
     struct VertexWeight 
@@ -30,7 +34,8 @@ struct EditorBrush
     };
     com::Array<VertexWeight, 100> verticesInsideBrush;
 
-    void UpdateScroll(ecs::ECS& ecs, float const dt)
+
+    void UpdateScale(ecs::ECS& ecs, float const dt)
     {
         if (wnd::HasEvent<wnd::EventType::Mouse_Scroll>())
         {

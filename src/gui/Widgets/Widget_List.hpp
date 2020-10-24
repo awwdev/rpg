@@ -89,7 +89,7 @@ struct Widget_List
             if (itemRect.y > back.y)
             {
                 const bool isMouseOnItem = isMouseOnList && com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, itemRect);
-                if (isMouseOnItem && wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>())
+                if (isMouseOnItem && wnd::MouseLeftButtonPressed())
                     activeIdx = (IDX_T) itemIdx;
 
                 if (activeIdx == (IDX_T) itemIdx) {

@@ -62,7 +62,7 @@ struct GUI_Level
         editor.brush.color.r = rSlider.value;
         editor.brush.color.g = gSlider.value;
         editor.brush.color.b = bSlider.value;
-        editor.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
+        editor.brush.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
     }
 
     void Render(gpu::RenderData& renderData)

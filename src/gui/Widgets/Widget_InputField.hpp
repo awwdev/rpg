@@ -26,7 +26,7 @@ struct Widget_InputField
         };
 
         const bool isMouseOnInput = com::IsPointInsideRect(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y, back);
-        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Pressed>()){
+        if (wnd::MouseLeftButtonPressed()){
             isActive = isMouseOnInput;
         }
 

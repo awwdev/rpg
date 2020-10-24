@@ -7,6 +7,13 @@
 
 namespace rpg::res {
 
+struct RayTerrain_Intersection
+{
+    idx_t quadrantIdx;
+    com::Vec3f point;
+    uint32_t quadrantClosestVertexIndex; //not an absolute vertex index (of all terrain vertices)
+};
+
 template<auto QUADRANT_COUNT_T, auto QUAD_COUNT, auto QUAD_SIZE>
 struct Terrain
 {
@@ -26,13 +33,6 @@ struct Terrain
             //{ z / (float)QUADRANT_COUNT, x / (float)QUADRANT_COUNT, 1, 1} );
         }
     }
-
-    struct RayTerrain_Intersection
-    {
-        idx_t quadrantIdx;
-        com::Vec3f point;
-        uint32_t quadrantClosestVertexIndex; //not an absolute vertex index (of all terrain vertices)
-    };
 
     com::Optional<RayTerrain_Intersection> 
     RayIntersection(com::Ray const& ray) const

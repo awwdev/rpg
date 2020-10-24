@@ -78,14 +78,10 @@ void AddEvent()
     glo::frameEvents.AppendElement(TYPE);
 }
 
-inline auto MouseLeftButtonPressed()
-{
-    return HasEvent<EventType::Mouse_ButtonLeft, EventState::Pressed>();
-}
+inline auto MouseLeftButtonPressed()   { return HasEvent<EventType::Mouse_ButtonLeft, EventState::Pressed>(); }
+inline auto MouseLeftButtonReleased()  { return HasEvent<EventType::Mouse_ButtonLeft, EventState::Released>(); }
+inline auto MouseRightButtonPressed()  { return HasEvent<EventType::Mouse_ButtonRight, EventState::Pressed>(); }
+inline auto MouseRightButtonReleased() { return HasEvent<EventType::Mouse_ButtonRight, EventState::Released>(); }
 
-inline auto MouseRightButtonPressed()
-{
-    return HasEvent<EventType::Mouse_ButtonRight, EventState::Pressed>();
-}
 
 }//NS

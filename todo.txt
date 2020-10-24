@@ -1,3 +1,6 @@
+- stiching (+color stiching)
+- 
+
 - input mode (enum class) refactor
 - fall off
 - face normal and color in shader
