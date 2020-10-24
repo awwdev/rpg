@@ -4,10 +4,13 @@
 #include "com/Types.hpp"
 #include "com/utils/Utils.hpp"
 #include "com/Matrix.hpp"
+#include "gpu/RenderData/RenderData_General.hpp"
 
 namespace rpg::res {
 
-template<typename VERTEX_T, auto QUAD_COUNT_T>
+using TerrainVertex = gpu::RenderData_General::Vertex;
+
+template<auto QUAD_COUNT_T>
 struct TerrainMeshIndexed
 {
     //? meta
@@ -16,10 +19,9 @@ struct TerrainMeshIndexed
     static constexpr idx_t VERTEX_COUNT_TOTAL = VERTEX_COUNT_ROW * VERTEX_COUNT_ROW;
     static constexpr idx_t INDEX_COUNT = QUAD_COUNT * QUAD_COUNT * 6;
     static constexpr idx_t TRIANGLE_COUNT = QUAD_COUNT * QUAD_COUNT * 2;
-    using Vertex = VERTEX_T;
 
     //? data
-    Vertex     vertices [VERTEX_COUNT_TOTAL];
+    TerrainVertex vertices [VERTEX_COUNT_TOTAL];
     uint32_t   absoluteIndices [INDEX_COUNT];
     uint32_t   indicesOffset;
     com::Vec3f triangleNormals [TRIANGLE_COUNT];
@@ -87,10 +89,6 @@ struct TerrainMeshIndexed
             auto const triangleIdx = i / 3;
             triangleNormals[triangleIdx] = normal;
         }
-
-        //TODO: visualization face normals, UBO in fragment shader per primitive
-        //TODO: single face colorization
-        //TODO: falloff
     }
 
 };

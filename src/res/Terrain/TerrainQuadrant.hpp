@@ -14,10 +14,9 @@ struct Quadrant
 {   
     //? meta
     static constexpr float QUADRANT_SIZE = QUAD_SIZE * QUAD_COUNT;
-    using Vertex = gpu::RenderData_General::Vertex;
 
     //? data
-    TerrainMeshIndexed<Vertex, QUAD_COUNT> mesh;
+    TerrainMeshIndexed<QUAD_COUNT> mesh;
 
     void Create(float const quadrantIdx_z, float const quadrantIdx_x, idx_t const quadrantIdx, 
         com::Vec4f const& color = { 0.1f, 0.7f, 0.1f, 1 })

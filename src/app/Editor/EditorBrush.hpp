@@ -3,6 +3,7 @@
 #pragma once
 #include "ecs/ECS.hpp"
 #include "wnd/WindowEvents.hpp"
+#include "res/Terrain/TerrainMesh.hpp"
 #include "app/InputMode.hpp" //! should not be inside brush
 
 namespace rpg::app {
@@ -20,9 +21,10 @@ struct EditorBrush
     //falloff
     struct VertexWeight 
     { 
-        idx_t vertexIndex; 
+        res::TerrainVertex* vertexPtr;
         float weight;
     };
+    com::Array<VertexWeight, 100> verticesInsideBrush;
 
     void UpdateScroll(ecs::ECS& ecs, float const dt)
     {
@@ -52,9 +54,20 @@ struct EditorBrush
         gizmoMainComponent.translation = position;
     }
 
-    void CalculateVertiesInsideBrush() 
+    template<auto N>
+    void UpdateVerticesInsideBrush(res::TerrainVertex (&vertices)[N]) 
     {
-
+        verticesInsideBrush.Clear();
+        FOR_C_ARRAY(vertices, i)
+        {
+            auto const& vertPos = vertices[i].pos;
+            auto const dist = com::Distance(vertPos, position);
+            if (dist < scale)
+            {
+                const auto weight = scale / dist; //try other easing 
+                verticesInsideBrush.AppendElement(&vertices[i], weight);
+            }
+        }
     }
 
 };

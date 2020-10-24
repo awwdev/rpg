@@ -63,15 +63,20 @@ struct Editor
             //terrain intersection
             if (auto const terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay))
             {
+                auto& vertices = res.terrain.terrain.quadrants[terrainIntersection->quadrantIdx].mesh.vertices;
                 brush.SetPosition(ecs, terrainIntersection->point);
-                brush.CalculateVertiesInsideBrush();
-                switch(editorMode)
+                brush.UpdateVerticesInsideBrush(vertices);
+
+                if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>())
                 {
-                    case EditorMode::TerrainVertexPaint: TerrainVertexPaint (); break;
-                    case EditorMode::TerrainVertexMove:  TerrainVertexMove  (); break;
-                    case EditorMode::PrefabPlacement:    PrefabPlacement    (); break;
-                    default: break;
-                }//switch
+                    switch(editorMode)
+                    {
+                        case EditorMode::TerrainVertexPaint: TerrainVertexPaint (); break;
+                        case EditorMode::TerrainVertexMove:  TerrainVertexMove  (); break;
+                        case EditorMode::PrefabPlacement:    PrefabPlacement    (); break;
+                        default: break;
+                    }//switch
+                }//mouse click
             }//intersection
         }//editor
 
@@ -85,7 +90,12 @@ struct Editor
 
     void TerrainVertexPaint()
     {
-
+        FOR_ARRAY(brush.verticesInsideBrush, i)
+        {
+            auto const& vertexWeight = brush.verticesInsideBrush[i].weight;
+            auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
+            vertex.col = { 1, 0, 0, 1 };
+        }
     }
 
     void PrefabPlacement()
