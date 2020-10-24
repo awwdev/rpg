@@ -145,8 +145,8 @@ inline auto ScrollEnum(as_scrollable_enum auto pEnum)
 
 struct AABB
 {
-    com::Vec3f min = { f32max, f32max, f32max };
-    com::Vec3f max = { f32min, f32min, f32min };
+    com::Vec3f min = {};
+    com::Vec3f max = {};
 };
 
 template<typename VERTEX>
@@ -175,6 +175,10 @@ AABB CalculateAABB(VERTEX const* const vertices, idx_t const count)
         if (box.max.z < pos.z)
             box.max.z = pos.z;
     }
+
+    if (box.min.y == box.max.y)
+        box.max.y += 0.1;
+
     return box;
 }
 

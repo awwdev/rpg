@@ -22,7 +22,8 @@ struct Terrain
         FOR_C_ARRAY(quadrants, i) {
             auto const z = i / QUADRANT_COUNT;
             auto const x = i % QUADRANT_COUNT;
-            quadrants[i].Create(z, x, i, { z / (float)QUADRANT_COUNT, x / (float)QUADRANT_COUNT, 1, 1} );
+            quadrants[i].Create(z, x, i);
+            //{ z / (float)QUADRANT_COUNT, x / (float)QUADRANT_COUNT, 1, 1} );
         }
     }
 

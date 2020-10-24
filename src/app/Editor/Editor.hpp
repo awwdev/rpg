@@ -14,20 +14,17 @@
 
 #include "app/Editor/EditorCommands.hpp"
 #include "app/Editor/EditorMode.hpp"
+#include "app/Editor/EditorBrush.hpp"
 
 namespace rpg::app {
 
 struct Editor
 {
+    //? meta
     gpu::Camera    camera;
     EditorCommands commands;
     EditorMode     editorMode = EditorMode::TerrainVertexPaint;
-    ecs::ID        gizmoID;
-
-    void CreateGizmos(ecs::ECS& ecs)
-    {
-        gizmoID = ecs.AddEntity(res::PrefabEnum::Circle);
-    }
+    EditorBrush    brush;
 
     void Update(const double dt, ecs::ECS& ecs, res::Resources& res, gpu::RenderData& renderData)
     {
@@ -59,17 +56,15 @@ struct Editor
         }
 
         //? editor
-        auto& gizmoMainComponent = ecs.arrays.mainComponents.Get(gizmoID);
-        gizmoMainComponent.meshEnum = app::glo::inputMode == app::glo::EditMode ? res::MeshEnum::Circle : res::MeshEnum::None;
-
+        brush.SetVisible(ecs, app::glo::inputMode == app::glo::InputMode::EditMode);
         if (app::glo::inputMode == app::glo::InputMode::EditMode)
         {
+            brush.UpdateScroll(ecs, dt);
             //terrain intersection
             if (auto const terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay))
             {
-                com::PrintMatrix(terrainIntersection->point);
-                gizmoMainComponent.translation = terrainIntersection->point;
-                auto& vertex = res.terrain.terrain.GetVertexByIntersection(*terrainIntersection);
+                brush.SetPosition(ecs, terrainIntersection->point);
+                brush.CalculateVertiesInsideBrush();
                 switch(editorMode)
                 {
                     case EditorMode::TerrainVertexPaint: TerrainVertexPaint (); break;
@@ -90,10 +85,18 @@ struct Editor
 
     void TerrainVertexPaint()
     {
+
     }
 
     void PrefabPlacement()
     {
+    }
+
+    //? other
+
+    void CreateGizmos(ecs::ECS& ecs)
+    {
+        brush.CreateEntity(ecs);
     }
 
 };

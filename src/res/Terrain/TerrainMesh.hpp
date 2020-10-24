@@ -36,7 +36,7 @@ struct TerrainMeshIndexed
         FOR_C_ARRAY(vertices, i) 
         {
             const auto x = i % VERTEX_COUNT_ROW;
-            const auto y = (f32)(rand() % 10) / 20.f; //testing aabb
+            const auto y = 0;//(f32)(rand() % 10) / 20.f; //testing aabb
             const auto z = i / VERTEX_COUNT_ROW;
             vertices[i] = 
             {

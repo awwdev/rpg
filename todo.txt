@@ -3,6 +3,7 @@
 - face normal and color in shader
 - commands
 - shader material data rework
+- matrix rework with concepts
 
 
 

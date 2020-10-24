@@ -15,9 +15,12 @@ namespace rpg::com {
 constexpr float PI  = 3.14159265359f;
 constexpr float PIH = 1/180.f;
 
-template<class T, auto Y, auto X>
+template<class T, auto Y_T, auto X_T>
 struct Mat
 {
+    static constexpr auto Y = Y_T;
+    static constexpr auto X = X_T;
+
     union
     {
         T data [Y][X];
@@ -66,6 +69,17 @@ inline Mat4f Identity4()
         0, 0, 1, 0,
         0, 0, 0, 1,
     };
+}
+
+template<typename T, typename S>
+inline T InitializeWith(S&& value)
+{
+    T mat;
+    for(auto y = 0; y < T::Y; ++y) {
+    for(auto x = 0; x < T::X; ++x) {
+        mat[y][x] = value;
+    }}
+    return mat;
 }
 
 //? VECTOR
