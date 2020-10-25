@@ -1,5 +1,6 @@
 - stiching (+color stiching)
-- 
+- shadow fix
+- global input mapping!
 
 - input mode (enum class) refactor
 - fall off

@@ -5,6 +5,7 @@
 #include "gpu/Vulkan/Objects/BufferExt.hpp"
 #include "gpu/Vulkan/Objects/Descriptors.hpp"
 #include "gpu/RenderData/RenderData.hpp"
+#include "res/Resources_Terrain.hpp"
 #include "res/Resources.hpp"
 
 namespace rpg::gpu::vuk {
@@ -12,12 +13,13 @@ namespace rpg::gpu::vuk {
 struct General_Uniforms
 {
     enum Bindings : uint32_t {
-        BindingMeta,
-        BindingModelInstances,
-        BindingSun,
-        BindingShadowMap,
-        BindingFoliage,
-        BindingFX, 
+        BindingMeta             = 0,
+        BindingModelInstances   = 1,
+        BindingSun              = 2,
+        BindingShadowMap        = 3,
+        BindingFoliage          = 4,
+        BindingFX               = 5, 
+        BindingTerrainFaces     = 6,
         ENUM_END
     };
 
@@ -29,6 +31,9 @@ struct General_Uniforms
     UniformBuffer<RD::Meta, 1> uboMeta;
     StorageBuffer<RD::MeshInstance, RD::MESH_INSTANCES_MAX> sboInstances;
     VkSampler shadowMapSampler;
+
+    using TerrainMesh = decltype(res::Resources_Terrain::TERRAIN_T::QUADRANT_T::mesh);
+    StorageBuffer<com::Vec3f, TerrainMesh::TRIANGLE_COUNT * res::Resources_Terrain::QUADRANT_COUNT_TOTAL> sboTerrainFaces;
 
     Image     foliageImages;
     VkSampler foliageSampler;
@@ -224,26 +229,54 @@ struct General_Uniforms
             }
         };
 
+        //? terrain faces
+        sboTerrainFaces.Create();
+        infos[BindingTerrainFaces] = {
+            .type = UniformInfo::Buffer,
+            .binding {
+                .binding            = BindingTerrainFaces,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+                .pImmutableSamplers = nullptr,
+            },
+            .bufferInfo = {
+                .buffer = sboTerrainFaces.activeBuffer->buffer,
+                .offset = 0,
+                .range  = VK_WHOLE_SIZE,
+            }
+        };
+
         //? DESCRIPTORS
         descriptors.Create(infos);
     }
 
-    void Update(RenderData_General& rdGeneral)
+    void Update(RenderData_General& rdGeneral, res::Resources_Terrain const& resTerrain)
     {
+        //meta
         uboMeta.Reset();
         uboMeta.Append(rdGeneral.meta);
-
+        //instances
         sboInstances.Reset();
         FOR_C_ARRAY(rdGeneral.meshInstances, i){
             if (auto const& instanceData = rdGeneral.meshInstances[i]; 
                 instanceData.Empty() == false && i != (idx_t) res::MeshEnum::None)
                 sboInstances.Append(instanceData);
         }
+        //terrain faces
+        sboTerrainFaces.Reset();
+        auto const& quadrants = resTerrain.terrain.quadrants;
+        FOR_C_ARRAY(quadrants, i)
+        {
+            auto const& mesh = quadrants[i].mesh;
+            sboTerrainFaces.Append(mesh.triangleNormals);
+        }
     }
 
     void Destroy()
     {
         uboMeta.Destroy();
+        sboTerrainFaces.Destroy();
         sboInstances.Destroy();
         descriptors.Destroy();
         vkDestroySampler(g_contextPtr->device, shadowMapSampler, nullptr);

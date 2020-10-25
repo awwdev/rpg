@@ -18,17 +18,17 @@ template<auto QUADRANT_COUNT_T, auto QUAD_COUNT, auto QUAD_SIZE>
 struct Terrain
 {
     //? meta
-    static constexpr auto QUADRANT_COUNT = QUADRANT_COUNT_T;
+    static constexpr auto QUADRANT_COUNT_ROW = QUADRANT_COUNT_T;
     using QUADRANT_T = Quadrant<QUAD_COUNT, QUAD_SIZE>;
 
     //? data
-    QUADRANT_T quadrants [QUADRANT_COUNT * QUADRANT_COUNT];
+    QUADRANT_T quadrants [QUADRANT_COUNT_ROW * QUADRANT_COUNT_ROW];
 
     void Create()
     {
         FOR_C_ARRAY(quadrants, i) {
-            auto const z = i / QUADRANT_COUNT;
-            auto const x = i % QUADRANT_COUNT;
+            auto const z = i / QUADRANT_COUNT_ROW;
+            auto const x = i % QUADRANT_COUNT_ROW;
             quadrants[i].Create(z, x, i);
             //{ z / (float)QUADRANT_COUNT, x / (float)QUADRANT_COUNT, 1, 1} );
         }
@@ -51,6 +51,11 @@ struct Terrain
         auto const& vertexIdx = intersection.quadrantClosestVertexIndex;
         auto& vertex = quadrants[quadrantIdx].mesh.vertices[vertexIdx];
         return vertex;
+    }
+
+    void StichTerrain()
+    {
+        //TODO:
     }
 
 };

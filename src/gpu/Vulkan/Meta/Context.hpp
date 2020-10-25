@@ -237,6 +237,7 @@ struct Context
         deviceFeatures.wideLines          = VK_TRUE;
         deviceFeatures.alphaToOne         = VK_FALSE;
         deviceFeatures.samplerAnisotropy  = VK_TRUE;
+        deviceFeatures.geometryShader     = VK_TRUE;
 
         const VkDeviceCreateInfo deviceInfo {
             .sType                      = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,

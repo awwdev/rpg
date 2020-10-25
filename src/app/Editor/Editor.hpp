@@ -78,6 +78,9 @@ struct Editor
     {
         brush.SetVisible(ecs, app::glo::inputMode == app::glo::InputMode::EditMode);
 
+        if (wnd::HasEvent<wnd::EventType::F3, wnd::EventState::Pressed>())
+            res.terrain.terrain.StichTerrain();
+
         //reset
         if (wnd::MouseLeftButtonReleased())
         {
@@ -88,7 +91,7 @@ struct Editor
             return;
 
         //scroll editor editing mode
-        if (wnd::HasEvent<wnd::EventType::F3, wnd::EventState::Pressed>())
+        if (wnd::HasEvent<wnd::EventType::F2, wnd::EventState::Pressed>())
             editorMode = com::ScrollEnum(editorMode);
 
         auto const terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay);
@@ -149,6 +152,9 @@ struct Editor
                 vertex.pos.y += wnd::glo::mouse_dy * (vertexWeight/2 + 0.5) * brush.vertexMoveSpeed;
                 //easing
             }
+            //recalculate mesh
+            auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
+            quadrant.mesh.Recalculate();
         }
     }
 

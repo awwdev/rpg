@@ -83,7 +83,7 @@ struct State_General
 
     void Update(gpu::RenderData& renderData, const res::Resources& resources)
     {
-        generalUniforms.Update(renderData.general);
+        generalUniforms.Update(renderData.general, resources.terrain);
         generalVertices.Update(renderData.general, resources.terrain);
     }
 

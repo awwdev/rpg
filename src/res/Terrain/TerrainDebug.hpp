@@ -9,8 +9,8 @@ namespace rpg::res {
  
 inline void PrintTerrain(Terrain const& terrain)
 {
-    for(auto z = 0; z < terrain.QUADRANT_COUNT; ++z) {
-    for(auto x = 0; x < terrain.QUADRANT_COUNT; ++x) {
+    for(auto z = 0; z < terrain.QUADRANT_COUNT_ROW; ++z) {
+    for(auto x = 0; x < terrain.QUADRANT_COUNT_ROW; ++x) {
         dbg::LogColor(dbg::ConsoleColors::BrightCyan, "quadrant ", z, '|', x);
             Print2DArray(terrain.quadrants[z][x].vertices);
             Print1DArray(terrain.quadrants[z][x].indices);
