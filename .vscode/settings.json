@@ -75,6 +75,9 @@
 	"scm.diffDecorationsGutterVisibility": "hover",
 	"git.decorations.enabled": false,
 	"scm.diffDecorations": "none",
+	"scm.diffDecorationsGutterWidth": 1,
+	
+
 
 	//? COLOR CODING	
 	"editor.tokenColorCustomizations": {
@@ -234,7 +237,7 @@
 					"variable.other.global",
 					
 					"variable.other.enummember",
-
+					
 					"variable.other.property",
 					"variable.other.property.static",
 
@@ -368,13 +371,25 @@
 					"comment.line",	
 					"comment.block",
 					"comment.block.documentation",	
+					
+					
 				],
 				"settings": {
 					"foreground": "#777",
 					"fontStyle": ""
 				}
 			},
-			
+
+			//? entity
+			{
+				"scope": [
+					"entity.name", "entity.name.type",
+				],
+				"settings": {
+					"foreground": "#ecb06c",
+				}
+			},
+
 			//? PUNCTUATION
 			{
 				"scope": [
@@ -391,11 +406,21 @@
 		]
 	},
 
-
-
 	//?HIGHLIGHT
 	"highlight.regexes":
-	 {
+	{
+
+		/*
+		"(.{0,3}::)": {
+			"regexFlags": "g", 
+			"decorations": [
+				{ 
+					"color": "#ddd",
+				},
+			]
+		},
+		*/
+
 		"(//\\?.*)": {
 			"regexFlags": "g", 
 			"decorations": [
@@ -405,6 +430,7 @@
 				},
 			]
 		},
+
 		"(//TODO.*)": {
 			"regexFlags": "g", 
 			"decorations": [
@@ -413,6 +439,7 @@
 				},
 			]
 		},
+
 		"(//!.*)": {
 			"regexFlags": "g", 
 			"decorations": [
@@ -422,6 +449,7 @@
 				},
 			]
 		},
+
 		//? MINI LANGUAGE
 		"(#.*)": {
 			"regexFlags": "g", 

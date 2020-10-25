@@ -6,16 +6,26 @@
 #include "com/box/Array.hpp"
 #include "res/Resources_Terrain.hpp"
 #include "ecs/ECS.hpp"
+#include "app/Editor/EditorBaseCommand.hpp"
 
 namespace rpg::app {
 
-struct Cmd_TerrainVertexGrab
+struct EditorCmd_TerrainVertexMove : EditorBaseCommand
 {
-    float yGrabDist;
+
+
+
+
+
+
+
+
+
+    //float yGrabDist;
     //com::Array<res::VertexBrushInfo, 100> editingVertIndices;
 
-    void Execute(res::Resources_Terrain& resTerrain) const
-    {
+    //void Execute(res::Resources_Terrain& resTerrain) const
+    //{
         /*
         auto& terrain = resTerrain.terrain;
         auto& quadrant = terrain.GetQuadrant(terrain.settings.quadrantIdx);
@@ -29,10 +39,10 @@ struct Cmd_TerrainVertexGrab
         }
         terrain.settings.dirtyQuadrants.AppendElement(terrain.settings.quadrantIdx);
         */
-    }
+    //}
 
-    void ExecuteReverse(res::Resources_Terrain& resTerrain)
-    {
+    //void ExecuteReverse(res::Resources_Terrain& resTerrain)
+    //{
         /*
         auto& terrain = resTerrain.terrain;
         auto& quadrant = terrain.GetQuadrant(terrain.settings.quadrantIdx);
@@ -46,7 +56,7 @@ struct Cmd_TerrainVertexGrab
         }
         terrain.settings.dirtyQuadrants.AppendElement(terrain.settings.quadrantIdx);
         */
-    }
+    //}
 
 };
 
