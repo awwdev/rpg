@@ -55,7 +55,7 @@ struct GUI_Stats
         }
     }
 
-    void Render(gpu::RenderData& renderData)
+    void Update(gpu::RenderData& renderData)
     {
         wnd.Update(renderData);
 

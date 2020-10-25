@@ -5,6 +5,7 @@
 #include "gui/Widgets/Widget_Table.hpp"
 #include "gui/Widgets/Widget_Checkbox.hpp"
 #include "gui/Widgets/Widget_Slider.hpp"
+#include "gui/Widgets/Widget_Color.hpp"
 
 #include "res/Resources.hpp"
 #include "app/Editor/EditorMode.hpp"
@@ -34,10 +35,7 @@ struct GUI_Level
         .isChecked = true,
     };
 
-    //TODO: color picker
-    Widget_Slider<float> rSlider { .label = "R", .min = 0, .max = 1 };
-    Widget_Slider<float> gSlider { .label = "G", .min = 0, .max = 1 };
-    Widget_Slider<float> bSlider { .label = "B", .min = 0, .max = 1 };
+    Widget_Color colors;
 
     void Init(res::Resources_Prefabs const& resPrefabs)
     {
@@ -57,23 +55,20 @@ struct GUI_Level
 
     void Update(gpu::RenderData& renderData, res::Resources& res, app::Editor& editor)
     {
-        table.table[0][1] = app::EDIT_MODE_ENUM_TO_STR.Get(editor.editorMode);
-        renderData.general.enableTerrainWire = checkbox.isChecked;
-        editor.brush.color.r = rSlider.value;
-        editor.brush.color.g = gSlider.value;
-        editor.brush.color.b = bSlider.value;
-        editor.brush.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
-    }
-
-    void Render(gpu::RenderData& renderData)
-    {
+        //render
         wnd.Update(renderData);
         table.Update(renderData, wnd);
         prefabList.Update(renderData, wnd);
         checkbox.Update(renderData, wnd);
-        rSlider.Update(renderData, wnd);
-        gSlider.Update(renderData, wnd);
-        bSlider.Update(renderData, wnd);
+        colors.Update(renderData, wnd);
+        //update "outside world" (update the model part of the mvc)
+        table.table[0][1] = app::EDIT_MODE_ENUM_TO_STR.Get(editor.editorMode);
+        renderData.general.enableTerrainWire = checkbox.isChecked;
+        editor.brush.color.r = colors.rSlider.value;
+        editor.brush.color.g = colors.gSlider.value;
+        editor.brush.color.b = colors.bSlider.value;
+        editor.brush.color.a = colors.aSlider.value;
+        editor.brush.prefabEnum = (res::PrefabEnum) prefabList.activeIdx;
     }
 };
 

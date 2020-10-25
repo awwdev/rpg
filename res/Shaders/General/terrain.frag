@@ -5,7 +5,7 @@
 
 layout (location = 0) in vec4  inCol;
 layout (location = 1) in vec2  inTex;
-layout (location = 2) in float inShadowDot;
+layout (location = 2) in flat vec3 inSunDir;
 layout (location = 3) in vec4  inShadowCoord [CASCADE_COUNT];
 
 layout (location = 0) out vec4 outCol;
@@ -42,10 +42,14 @@ void main()
     shadow = clamp(1 - shadow, 0, 1);
 
     #define AMBIENT 0.1f
+    vec3 triangleNormal = terrainTriangleNormals.normals[gl_PrimitiveID];
+    float shadowDot = dot(triangleNormal, inSunDir);
+    shadowDot = shadowDot * 15; //"fade speed"
+    shadowDot = clamp(shadowDot, 0, 1);
+    float shadowAmbient = clamp(AMBIENT + shadow * (1-shadowDot), 0, 1);
+
     vec4 triangleColor = terrainTriangleColors.colors[gl_PrimitiveID];
-    float shadowAmbient = clamp(AMBIENT + shadow, 0, 1); //inShadowDot
     vec3 colorFaceVertexBlend = inCol.rgb * (1 - triangleColor.a) + triangleColor.rgb * (triangleColor.a);
-    outCol = vec4(colorFaceVertexBlend.rgb * shadowAmbient, 1);
 
-
+    outCol = vec4(colorFaceVertexBlend * shadowAmbient, 1);
 }

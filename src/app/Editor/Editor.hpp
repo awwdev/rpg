@@ -101,13 +101,14 @@ struct Editor
         switch(editorMode)
         {
             case EditorMode::TerrainVertexPaint: TerrainVertexPaint (dt, ecs, res, *terrainIntersection); break;
+            case EditorMode::TerrainFacePaint:   TerrainFacePaint   (dt, ecs, res, *terrainIntersection); break;
             case EditorMode::TerrainVertexMove:  TerrainVertexMove  (dt, ecs, res, *terrainIntersection); break;
             case EditorMode::PrefabPlacement:    PrefabPlacement    (dt, ecs, res, *terrainIntersection); break;
             default: break;
         }
     }
 
-    void TerrainVertexPaint(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayTerrain_Intersection const& terrainIntersection)
+    void TerrainVertexPaint(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayQuadrant_Intersection const& terrainIntersection)
     {
         brush.SetPosition(ecs, terrainIntersection.point);
         brush.UpdateScale(ecs, dt);
@@ -126,7 +127,22 @@ struct Editor
         }
     }
 
-    void TerrainVertexMove(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayTerrain_Intersection const& terrainIntersection)
+    void TerrainFacePaint(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayQuadrant_Intersection const& terrainIntersection)
+    {
+        brush.SetPosition(ecs, terrainIntersection.point);
+        brush.UpdateScale(ecs, dt);
+        auto& vertices = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx].mesh.vertices;
+        brush.UpdateVerticesInsideBrush(vertices);
+
+        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>()) 
+        {
+            auto const& triangleIdx = terrainIntersection.quadrantTriangleIdx;
+            auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
+            quadrant.mesh.triangleColors[triangleIdx] = brush.color;
+        }
+    }
+
+    void TerrainVertexMove(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayQuadrant_Intersection const& terrainIntersection)
     {
         brush.SetVisible(ecs, true);
         if (wnd::MouseLeftButtonPressed()) 
@@ -158,7 +174,7 @@ struct Editor
         }
     }
 
-    void PrefabPlacement(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayTerrain_Intersection const& terrainIntersection)
+    void PrefabPlacement(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayQuadrant_Intersection const& terrainIntersection)
     {
         brush.SetPosition(ecs, terrainIntersection.point);
         brush.UpdateScale(ecs, dt);

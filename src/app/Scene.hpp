@@ -53,10 +53,9 @@ struct GameScene
         //? ui
         app::ResetUpdateInputMode();
         if (app::glo::inputMode != app::glo::InputMode::PlayMode) {
-            guiLevel.Render(renderData);
             guiLevel.Update(renderData, resources, editor);
-            guiStats.Render(renderData);
-            guiScene.Render(renderData, ecs);
+            guiStats.Update(renderData);
+            guiScene.Update(renderData, ecs);
         }   
 
         //? meta

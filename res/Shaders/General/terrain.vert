@@ -9,7 +9,7 @@ layout (location = 3) in vec2 inTex;
 
 layout (location = 0) out vec4  outCol;
 layout (location = 1) out vec2  outTex;
-layout (location = 2) out float outShadowDot;
+layout (location = 2) out flat vec3 outSunDir;
 layout (location = 3) out vec4  outShadowPos [CASCADE_COUNT];
 
 layout (binding = 0) uniform Meta { 
@@ -36,7 +36,5 @@ void main()
         //also change array size of output and input in frag
     }
 
-    outShadowDot = dot(inNor, sun.sunDir);
-    outShadowDot = outShadowDot * 3; //"fade speed"
-    outShadowDot = clamp(outShadowDot, 0, 1);
+    outSunDir = sun.sunDir;
 }

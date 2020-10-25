@@ -15,14 +15,14 @@ struct EditorBrush
 
     //input
     com::Vec3f position;
-    float scale = 1.f;
+    float scale = 3.f;
     float scaleSpeed = 0.1f;
 
     //? vertex color
     com::Vec4f color;
     //? vertex move
     bool  vertexGrabbed = false;
-    float vertexMoveSpeed = 0.01f;
+    float vertexMoveSpeed = 0.1f;
     //? prefab placement
     res::PrefabEnum prefabEnum;
 
@@ -35,6 +35,13 @@ struct EditorBrush
     com::Array<VertexWeight, 100> verticesInsideBrush;
 
 
+    void CreateEntity(ecs::ECS& ecs)
+    {
+        brushID = ecs.AddEntity(res::PrefabEnum::Circle);
+        auto& gizmoMainComponent = ecs.arrays.mainComponents.Get(brushID);
+        gizmoMainComponent.scale = com::InitializeWith<com::Vec3f>(scale); //initial scale
+    }
+
     void UpdateScale(ecs::ECS& ecs, float const dt)
     {
         if (wnd::HasEvent<wnd::EventType::Mouse_Scroll>())
@@ -43,11 +50,6 @@ struct EditorBrush
             scale -= wnd::glo::mouse_scroll_delta * scaleSpeed * dt;
             gizmoMainComponent.scale = com::InitializeWith<com::Vec3f>(scale);
         }
-    }
-
-    void CreateEntity(ecs::ECS& ecs)
-    {
-        brushID = ecs.AddEntity(res::PrefabEnum::Circle);
     }
 
     void SetVisible(ecs::ECS& ecs, bool const set)

@@ -28,7 +28,7 @@ struct GUI_Scene
 
     }
 
-    void Render(gpu::RenderData& renderData, ecs::ECS& ecs)
+    void Update(gpu::RenderData& renderData, ecs::ECS& ecs)
     {
         //TODO: subscription model instead of hard update per frame
 

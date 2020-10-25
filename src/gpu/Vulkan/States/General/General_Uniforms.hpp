@@ -13,13 +13,14 @@ namespace rpg::gpu::vuk {
 struct General_Uniforms
 {
     enum Bindings : uint32_t {
-        BindingMeta             = 0,
-        BindingModelInstances   = 1,
-        BindingSun              = 2,
-        BindingShadowMap        = 3,
-        BindingFoliage          = 4,
-        BindingFX               = 5, 
-        BindingTerrainFaces     = 6,
+        BindingMeta                     = 0,
+        BindingModelInstances           = 1,
+        BindingSun                      = 2,
+        BindingShadowMap                = 3,
+        BindingFoliage                  = 4,
+        BindingFX                       = 5, 
+        BindingTerrainTriangleNormals   = 6,
+        BindingTerrainTriangleColors    = 7,
         ENUM_END
     };
 
@@ -33,7 +34,8 @@ struct General_Uniforms
     VkSampler shadowMapSampler;
 
     using TerrainMesh = decltype(res::Resources_Terrain::TERRAIN_T::QUADRANT_T::mesh);
-    StorageBuffer<com::Vec3f, TerrainMesh::TRIANGLE_COUNT * res::Resources_Terrain::QUADRANT_COUNT_TOTAL> sboTerrainFaces;
+    StorageBuffer<com::Vec3f, TerrainMesh::TRIANGLE_COUNT * res::Resources_Terrain::QUADRANT_COUNT_TOTAL> sboTerrainTriangleNormals;
+    StorageBuffer<com::Vec4f, TerrainMesh::TRIANGLE_COUNT * res::Resources_Terrain::QUADRANT_COUNT_TOTAL> sboTerrainTriangleColors;
 
     Image     foliageImages;
     VkSampler foliageSampler;
@@ -230,18 +232,35 @@ struct General_Uniforms
         };
 
         //? terrain faces
-        sboTerrainFaces.Create();
-        infos[BindingTerrainFaces] = {
+        sboTerrainTriangleNormals.Create();
+        infos[BindingTerrainTriangleNormals] = {
             .type = UniformInfo::Buffer,
             .binding {
-                .binding            = BindingTerrainFaces,
+                .binding            = BindingTerrainTriangleNormals,
                 .descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
                 .descriptorCount    = 1,
                 .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
                 .pImmutableSamplers = nullptr,
             },
             .bufferInfo = {
-                .buffer = sboTerrainFaces.activeBuffer->buffer,
+                .buffer = sboTerrainTriangleNormals.activeBuffer->buffer,
+                .offset = 0,
+                .range  = VK_WHOLE_SIZE,
+            }
+        };
+
+        sboTerrainTriangleColors.Create();
+        infos[BindingTerrainTriangleColors] = {
+            .type = UniformInfo::Buffer,
+            .binding {
+                .binding            = BindingTerrainTriangleColors,
+                .descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                .descriptorCount    = 1,
+                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+                .pImmutableSamplers = nullptr,
+            },
+            .bufferInfo = {
+                .buffer = sboTerrainTriangleColors.activeBuffer->buffer,
                 .offset = 0,
                 .range  = VK_WHOLE_SIZE,
             }
@@ -253,30 +272,42 @@ struct General_Uniforms
 
     void Update(RenderData_General& rdGeneral, res::Resources_Terrain const& resTerrain)
     {
-        //meta
+        //?meta
         uboMeta.Reset();
         uboMeta.Append(rdGeneral.meta);
-        //instances
+
+        //?instances
         sboInstances.Reset();
         FOR_C_ARRAY(rdGeneral.meshInstances, i){
             if (auto const& instanceData = rdGeneral.meshInstances[i]; 
                 instanceData.Empty() == false && i != (idx_t) res::MeshEnum::None)
                 sboInstances.Append(instanceData);
         }
-        //terrain faces
-        sboTerrainFaces.Reset();
+
+        //?terrain faces
+        //TODO: only dirty ones
         auto const& quadrants = resTerrain.terrain.quadrants;
+
+        sboTerrainTriangleNormals.Reset();
         FOR_C_ARRAY(quadrants, i)
         {
             auto const& mesh = quadrants[i].mesh;
-            sboTerrainFaces.Append(mesh.triangleNormals);
+            sboTerrainTriangleNormals.Append(mesh.triangleNormals);
+        }
+
+        sboTerrainTriangleColors.Reset();
+        FOR_C_ARRAY(quadrants, i)
+        {
+            auto const& mesh = quadrants[i].mesh;
+            sboTerrainTriangleColors.Append(mesh.triangleColors);
         }
     }
 
     void Destroy()
     {
         uboMeta.Destroy();
-        sboTerrainFaces.Destroy();
+        sboTerrainTriangleNormals.Destroy();
+        sboTerrainTriangleColors.Destroy();
         sboInstances.Destroy();
         descriptors.Destroy();
         vkDestroySampler(g_contextPtr->device, shadowMapSampler, nullptr);

@@ -25,9 +25,11 @@ struct TerrainMeshIndexed
     uint32_t   absoluteIndices [INDEX_COUNT];
     uint32_t   indicesOffset;
     com::Vec3f triangleNormals [TRIANGLE_COUNT];
+    com::Vec4f triangleColors  [TRIANGLE_COUNT] {};
     com::AABB  aabb;
 
     auto GetRelativeVertexIndex(auto const i) const { return absoluteIndices[i] - indicesOffset; }
+    //TODO: get indicesIndex from a vertexIdx
 
     void Create(
         float const size_z, float const size_x, 
@@ -83,7 +85,7 @@ struct TerrainMeshIndexed
             auto const v0v1 = v1 - v0;
             auto const v0v2 = v2 - v0;
 
-            auto const cross = com::Cross(v0v1, v0v2);
+            auto const cross  = com::Cross(v0v1, v0v2);
             auto const normal = com::Normalize(cross);
 
             auto const triangleIdx = i / 3;

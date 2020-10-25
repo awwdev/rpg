@@ -7,13 +7,6 @@
 
 namespace rpg::res {
 
-struct RayTerrain_Intersection
-{
-    idx_t quadrantIdx;
-    com::Vec3f point;
-    uint32_t quadrantClosestVertexIndex; //not an absolute vertex index (of all terrain vertices)
-};
-
 template<auto QUADRANT_COUNT_T, auto QUAD_COUNT, auto QUAD_SIZE>
 struct Terrain
 {
@@ -34,21 +27,21 @@ struct Terrain
         }
     }
 
-    com::Optional<RayTerrain_Intersection> 
+    com::Optional<RayQuadrant_Intersection> 
     RayIntersection(com::Ray const& ray) const
     {
         FOR_C_ARRAY(quadrants, i) {
             auto const& quadrant = quadrants[i];
             if (auto const intersection = quadrant.RayIntersection(ray))
-                return { i, intersection->point, intersection->closestVertexIndex };
+                return intersection;
         }
         return {};
     }
 
-    auto& GetVertexByIntersection(RayTerrain_Intersection const& intersection) 
+    auto& GetVertexByIntersection(RayQuadrant_Intersection const& intersection) 
     {
         auto const& quadrantIdx = intersection.quadrantIdx;
-        auto const& vertexIdx = intersection.quadrantClosestVertexIndex;
+        auto const& vertexIdx = intersection.quadrantclosestVertexIdx;
         auto& vertex = quadrants[quadrantIdx].mesh.vertices[vertexIdx];
         return vertex;
     }

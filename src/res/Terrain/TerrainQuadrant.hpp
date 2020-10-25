@@ -12,7 +12,10 @@ namespace rpg::res {
 struct RayQuadrant_Intersection
 {
     com::Vec3f point;
-    uint32_t closestVertexIndex;
+    uint32_t quadrantIdx;
+    //relative data
+    uint32_t quadrantclosestVertexIdx;
+    uint32_t quadrantTriangleIdx;
 };
 
 template<auto QUAD_COUNT, auto QUAD_SIZE>
@@ -23,10 +26,12 @@ struct Quadrant
 
     //? data
     TerrainMeshIndexed<QUAD_COUNT> mesh;
+    uint32_t quadrantIdx; //set by create (watch serialization)
 
-    void Create(float const quadrantIdx_z, float const quadrantIdx_x, idx_t const quadrantIdx, 
+    void Create(float const quadrantIdx_z, float const quadrantIdx_x, idx_t const pQuadrantIdx, 
         com::Vec4f const& color = { 0.1f, 0.7f, 0.1f, 1 })
     {
+        quadrantIdx = pQuadrantIdx;
         float const z = quadrantIdx_z * QUADRANT_SIZE;
         float const x = quadrantIdx_x * QUADRANT_SIZE;
         idx_t const i = quadrantIdx * (QUAD_COUNT+1)*(QUAD_COUNT+1); //indices count
@@ -50,7 +55,9 @@ struct Quadrant
             {
                 return { 
                     triangleIntersection.Point(ray), 
-                    mesh.absoluteIndices[i + triangleIntersection.GetClosestTriangleCorner()] - mesh.indicesOffset
+                    quadrantIdx, 
+                    mesh.absoluteIndices[i + triangleIntersection.GetClosestTriangleCorner()] - mesh.indicesOffset,
+                    i / 3,
                 };
             }            
         }

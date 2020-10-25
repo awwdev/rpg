@@ -57,8 +57,12 @@ struct State_Shadow
                                      uniforms.descriptors.descSets.count, uniforms.descriptors.descSets.data, 0, nullptr);
             vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
             vkCmdSetDepthBias       (cmdBuffer, -10, 0, -10);
+            //terrain
             vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &general.generalVertices.vboTerrain.activeBuffer->buffer, general.generalVertices.offsets);
-            vkCmdDraw               (cmdBuffer, general.generalVertices.vboTerrain.count, 1, 0, 0);
+            vkCmdBindIndexBuffer    (cmdBuffer, general.generalVertices.iboTerrain.activeBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
+            vkCmdDrawIndexed        (cmdBuffer, general.generalVertices.iboTerrain.count, 1, 0, 0 , 0);
+            //TODO other stuff
+            //TODO this is similar to general workflow so a synopsis would be great
             vkCmdEndRenderPass      (cmdBuffer);
         }
     };
