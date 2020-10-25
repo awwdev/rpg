@@ -11,10 +11,17 @@ layout (location = 3) in vec4  inShadowCoord [CASCADE_COUNT];
 layout (location = 0) out vec4 outCol;
 
 layout (binding = 3) uniform sampler2DArrayShadow shadowMap;
-layout (std430, binding = 6) readonly buffer TerrainFaces { 
+
+//? terrain faces
+layout (std430, binding = 6) readonly buffer TerrainTriangleNormals { 
     vec3 normals [];
 } 
-terrainFaces;
+terrainTriangleNormals;
+
+layout (std430, binding = 7) readonly buffer TerrainTriangleColors { 
+    vec4 colors [];
+} 
+terrainTriangleColors;
 
 void main() 
 {
@@ -35,9 +42,10 @@ void main()
     shadow = clamp(1 - shadow, 0, 1);
 
     #define AMBIENT 0.1f
-    vec3 faceNormal = terrainFaces.normals[gl_PrimitiveID];
+    vec4 triangleColor = terrainTriangleColors.colors[gl_PrimitiveID];
     float shadowAmbient = clamp(AMBIENT + shadow, 0, 1); //inShadowDot
-    outCol = vec4(faceNormal, 1); //vec4(inCol.rgb * shadowAmbient, 1);
+    vec3 colorFaceVertexBlend = inCol.rgb * (1 - triangleColor.a) + triangleColor.rgb * (triangleColor.a);
+    outCol = vec4(colorFaceVertexBlend.rgb * shadowAmbient, 1);
 
 
 }
