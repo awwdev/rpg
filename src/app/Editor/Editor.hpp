@@ -85,6 +85,7 @@ struct Editor
         if (wnd::MouseLeftButtonReleased())
         {
             brush.vertexGrabbed = false;
+            brush.frequencyCounter = 0;
         }
 
         if (app::glo::inputMode != app::glo::InputMode::EditMode) 
@@ -116,13 +117,10 @@ struct Editor
         brush.UpdateVerticesInsideBrush(vertices);
 
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>() &&
-            wnd::HasEvent<wnd::EventType::Mouse_Move>()) 
+            wnd::HasEvent<wnd::EventType::Mouse_Move>() && brush.Frequency(dt)) 
         {
-            if (brush.Frequency(dt))
-            {
-                EditorCmd_TerrainVertexPaint cmd (brush.verticesInsideBrush, brush.color);
-                commands.ExecuteAndAStoreCommand(cmd, res, ecs);
-            }
+            EditorCmd_TerrainVertexPaint cmd { brush.verticesInsideBrush, brush.color };
+            commands.ExecuteAndAStoreCommand(cmd, res, ecs);
         }
     }
 
@@ -134,16 +132,13 @@ struct Editor
         brush.UpdateVerticesInsideBrush(vertices);
 
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>() &&
-            wnd::HasEvent<wnd::EventType::Mouse_Move>()) 
+            wnd::HasEvent<wnd::EventType::Mouse_Move>() && brush.Frequency(dt)) 
         {
-            if (brush.Frequency(dt))
-            {
-                auto const& triangleIdx = terrainIntersection.quadrantTriangleIdx;
-                auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
-                auto& triangleColor = quadrant.mesh.triangleColors[triangleIdx];
-                EditorCmd_TerrainFacePaint cmd (triangleColor, brush.color);
-                commands.ExecuteAndAStoreCommand(cmd, res, ecs);
-            }
+            auto const& triangleIdx = terrainIntersection.quadrantTriangleIdx;
+            auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
+            auto& triangleColor = quadrant.mesh.triangleColors[triangleIdx];
+            EditorCmd_TerrainFacePaint cmd { triangleColor, brush.color };
+            commands.ExecuteAndAStoreCommand(cmd, res, ecs);
         }
     }
 
@@ -183,13 +178,12 @@ struct Editor
     {
         brush.SetPosition(ecs, terrainIntersection.point);
         brush.UpdateScale(ecs, dt);
-        if (wnd::MouseLeftButtonPressed()) 
+
+        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>() && 
+            brush.Frequency(dt)) 
         {
-            auto const& prefabEnum = brush.prefabEnum;
-            auto const& placementPoint = terrainIntersection.point;
-            auto const id = ecs.AddEntity(prefabEnum);
-            auto& mainComponent = ecs.arrays.mainComponents.Get(id);
-            mainComponent.translation = placementPoint;
+            EditorCmd_PrefabPlacement cmd { brush.prefabEnum, terrainIntersection.point };
+            commands.ExecuteAndAStoreCommand(cmd, res, ecs);
         }
     }
 
