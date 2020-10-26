@@ -120,23 +120,8 @@ struct Editor
         {
             if (brush.Frequency(dt))
             {
-                EditorCmd_TerrainVertexPaint cmd 
-                {
-                    .brushVertices = brush.verticesInsideBrush,
-                    .brushColor = brush.color
-                };
+                EditorCmd_TerrainVertexPaint cmd (brush.verticesInsideBrush, brush.color);
                 commands.ExecuteAndAStoreCommand(cmd, res, ecs);
-
-                //EditorCommand cmd 
-                //{
-                //    .editorCommandEnum = EditorCommandEnum::EditorCmd_TerrainVertexPaint,
-                //    .cmd_terrainVertexPaint = 
-                //    {
-                //        .brushVertices = brush.verticesInsideBrush,
-                //        .brushColor = brush.color
-                //    }
-                //};
-                //commands.ExecuteCommand(cmd, res, ecs);
             }
         }
     }
@@ -148,11 +133,17 @@ struct Editor
         auto& vertices = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx].mesh.vertices;
         brush.UpdateVerticesInsideBrush(vertices);
 
-        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>()) 
+        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>() &&
+            wnd::HasEvent<wnd::EventType::Mouse_Move>()) 
         {
-            auto const& triangleIdx = terrainIntersection.quadrantTriangleIdx;
-            auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
-            quadrant.mesh.triangleColors[triangleIdx] = brush.color;
+            if (brush.Frequency(dt))
+            {
+                auto const& triangleIdx = terrainIntersection.quadrantTriangleIdx;
+                auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
+                auto& triangleColor = quadrant.mesh.triangleColors[triangleIdx];
+                EditorCmd_TerrainFacePaint cmd (triangleColor, brush.color);
+                commands.ExecuteAndAStoreCommand(cmd, res, ecs);
+            }
         }
     }
 

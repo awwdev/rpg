@@ -11,7 +11,12 @@ struct EditorCmd_TerrainVertexPaint
 {
     EditorBrush::BrushVertices brushVertices;
     com::Vec4f brushColor;
-    com::SimpleArray<res::TerrainVertex, 100> verticesPrevious;
+    com::SimpleArray<res::TerrainVertex, 100> verticesReversed; 
+
+    EditorCmd_TerrainVertexPaint(EditorBrush::BrushVertices const& pBrushVertices, com::Vec4f pBrushColor)
+        : brushVertices { pBrushVertices }
+        , brushColor    { pBrushColor }
+    {}
 
     void Execute(res::Resources&, ecs::ECS&)
     {
@@ -19,7 +24,7 @@ struct EditorCmd_TerrainVertexPaint
         {
             auto const& vertexWeight = brushVertices[i].weight;
             auto& vertex = *brushVertices[i].vertexPtr;
-            verticesPrevious.Append(vertex);
+            verticesReversed.Append(vertex);
             auto const colorBlended = com::InterpolateColors(vertex.col, brushColor, vertexWeight);
             vertex.col = colorBlended;
         }
@@ -31,7 +36,7 @@ struct EditorCmd_TerrainVertexPaint
         {
             auto const& vertexWeight = brushVertices[i].weight;
             auto& vertex = *brushVertices[i].vertexPtr;
-            auto const& prevVertex = verticesPrevious[i];
+            auto const& prevVertex = verticesReversed[i];
             vertex.col = prevVertex.col;
         }
     }
