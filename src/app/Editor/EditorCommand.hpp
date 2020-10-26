@@ -19,14 +19,15 @@ enum class EditorCommandEnum
 struct EditorCommand
 {
     EditorCommandEnum editorCommandEnum;
-    union 
+    union
     {
         EditorCmd_PrefabPlacement    cmd_prefabPlacement;
         EditorCmd_TerrainFacePaint   cmd_terrainFacePaint;
         EditorCmd_TerrainVertexMove  cmd_terrainVertexMove;
         EditorCmd_TerrainVertexPaint cmd_terrainVertexPaint;
     };
-    
+
+    EditorCommand() {} 
 
     void Execute(res::Resources& res, ecs::ECS& ecs)
     {
@@ -50,5 +51,38 @@ struct EditorCommand
         }
     }
 };
+
+template<class T>
+static EditorCommand CreateEditorCommand(T const& cmd)
+{
+    //initializes the union and the enum
+    EditorCommand editorCmd;
+
+    if constexpr (std::is_same_v<T, EditorCmd_PrefabPlacement>)
+    {
+        editorCmd.editorCommandEnum = EditorCommandEnum::EditorCmd_PrefabPlacement;
+        editorCmd.cmd_prefabPlacement = cmd;
+    }
+
+    if constexpr (std::is_same_v<T, EditorCmd_TerrainFacePaint>)
+    {
+        editorCmd.editorCommandEnum = EditorCommandEnum::EditorCmd_TerrainFacePaint;
+        editorCmd.cmd_terrainFacePaint = cmd;
+    }
+
+    if constexpr (std::is_same_v<T, EditorCmd_TerrainVertexMove>)
+    {
+        editorCmd.editorCommandEnum = EditorCommandEnum::EditorCmd_TerrainVertexMove;
+        editorCmd.cmd_terrainVertexMove = cmd;
+    }
+
+    if constexpr (std::is_same_v<T, EditorCmd_TerrainVertexPaint>)
+    {
+        editorCmd.editorCommandEnum = EditorCommandEnum::EditorCmd_TerrainVertexPaint;
+        editorCmd.cmd_terrainVertexPaint = cmd;
+    }
+
+    return editorCmd;
+}
 
 }//ns

@@ -29,7 +29,7 @@ struct EditorBrush
 
     //?frequency
     float frequencyCounter = 0;
-    float frequencyCounterMax = 0.05;
+    float frequencyCounterMax = 0.03;
     bool Frequency(float const dt) 
     {
         frequencyCounter += dt;

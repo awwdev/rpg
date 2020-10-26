@@ -9,9 +9,9 @@ namespace rpg::app {
 
 struct EditorCmd_TerrainVertexPaint
 {
-    com::SimpleArray<res::TerrainVertex, 100> verticesPrevious;
     EditorBrush::BrushVertices brushVertices;
     com::Vec4f brushColor;
+    com::SimpleArray<res::TerrainVertex, 100> verticesPrevious;
 
     void Execute(res::Resources&, ecs::ECS&)
     {

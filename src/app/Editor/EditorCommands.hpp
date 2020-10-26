@@ -9,12 +9,13 @@ namespace rpg::app {
 
 struct EditorCommands
 {
-    com::RingBuffer<EditorCommand, 20> cmdHistory;
+    com::RingBuffer<EditorCommand, 50> cmdHistory;
 
-    void ExecuteCommand(EditorCommand const& pCmd, res::Resources& res, ecs::ECS& ecs)
+    template<class T>
+    void ExecuteAndAStoreCommand(T& cmd, res::Resources& res, ecs::ECS& ecs)
     {
-        auto& cmd = cmdHistory.Append(pCmd);
         cmd.Execute(res, ecs);
+        cmdHistory.Append(CreateEditorCommand(cmd));
     }
 
     void Undo(res::Resources& res, ecs::ECS& ecs)

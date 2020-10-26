@@ -10,7 +10,7 @@ namespace rpg::com {
 template<typename T, auto N>
 struct RingBuffer
 {
-    T data [N] {}; //init needed for union
+    T data [N];
 
     s32 currentIdx = -1;
     s32 count  = 0;
@@ -19,14 +19,13 @@ struct RingBuffer
     auto& operator[](auto const i)       { return data[i % N]; }
     auto& operator[](auto const i) const { return data[i % N]; }
 
-    T& Append(T const& element)
+    void Append(T const& element)
     {
         currentIdx++;
         count++;
         maxIdx = currentIdx;
         com::Clamp(count, 0, N);
         operator[](currentIdx) = element;
-        return operator[](currentIdx);
     }
 
     T* StepBackwards()

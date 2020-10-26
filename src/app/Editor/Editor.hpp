@@ -120,16 +120,23 @@ struct Editor
         {
             if (brush.Frequency(dt))
             {
-                EditorCommand cmd 
+                EditorCmd_TerrainVertexPaint cmd 
                 {
-                    .editorCommandEnum = EditorCommandEnum::EditorCmd_TerrainVertexPaint,
-                    .cmd_terrainVertexPaint = 
-                    {
-                        .brushVertices = brush.verticesInsideBrush,
-                        .brushColor = brush.color
-                    }
+                    .brushVertices = brush.verticesInsideBrush,
+                    .brushColor = brush.color
                 };
-                commands.ExecuteCommand(cmd, res, ecs);
+                commands.ExecuteAndAStoreCommand(cmd, res, ecs);
+
+                //EditorCommand cmd 
+                //{
+                //    .editorCommandEnum = EditorCommandEnum::EditorCmd_TerrainVertexPaint,
+                //    .cmd_terrainVertexPaint = 
+                //    {
+                //        .brushVertices = brush.verticesInsideBrush,
+                //        .brushColor = brush.color
+                //    }
+                //};
+                //commands.ExecuteCommand(cmd, res, ecs);
             }
         }
     }
