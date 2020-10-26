@@ -9,6 +9,7 @@ namespace rpg::app {
 
 struct EditorCmd_TerrainVertexPaint
 {
+    //TODO: probably a way to just store vertex pointers and initial and end state )also not whole vertex needed)
     EditorBrush::BrushVertices brushVertices;
     com::Vec4f brushColor;
     com::SimpleArray<res::TerrainVertex, 100> verticesReversed; 

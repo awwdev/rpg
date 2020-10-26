@@ -1,4 +1,6 @@
-- commands
+
+- test against all quadrant and choose closest
+
 - stiching (+color stiching)
 - global input mapping!
 - shadow and general pipeline synopsis (instance draw)

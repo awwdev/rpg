@@ -22,7 +22,6 @@ struct EditorBrush
     //?vertex color
     com::Vec4f color;
     //?vertex move
-    bool  vertexGrabbed = false;
     float vertexMoveSpeed = 0.1f;
     //?prefab placement
     res::PrefabEnum prefabEnum;
