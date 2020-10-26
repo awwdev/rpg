@@ -1,7 +1,8 @@
 
-- test against all quadrant and choose closest
-
 - stiching (+color stiching)
+
+- test against all quadrant and choose closest
+- command refactor
 - global input mapping!
 - shadow and general pipeline synopsis (instance draw)
 - refactor all shaders
@@ -11,6 +12,7 @@
 - matrix rework with concepts
 - utils sparation into multiple headers
 
+- dirty quadrants (only upload and stich)
 - scene reload
 - widget list refactor (only update the visible region)
 - simple function ptr based system for gui callback

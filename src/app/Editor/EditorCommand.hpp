@@ -35,7 +35,7 @@ struct EditorCommand
         {
             case EditorCommandEnum::EditorCmd_PrefabPlacement:     cmd_prefabPlacement.Execute(res, ecs); break;
             case EditorCommandEnum::EditorCmd_TerrainFacePaint:    cmd_terrainFacePaint.Execute(res, ecs); break;
-            case EditorCommandEnum::EditorCmd_TerrainVertexMove:   cmd_terrainVertexMove.Execute(res, ecs); break;
+            case EditorCommandEnum::EditorCmd_TerrainVertexMove:   cmd_terrainVertexMove.Execute<true>(res); break;
             case EditorCommandEnum::EditorCmd_TerrainVertexPaint:  cmd_terrainVertexPaint.Execute(res, ecs); break;
         }
     }
@@ -46,7 +46,7 @@ struct EditorCommand
         {
             case EditorCommandEnum::EditorCmd_PrefabPlacement:     cmd_prefabPlacement.ExecuteReverse(res, ecs); break;
             case EditorCommandEnum::EditorCmd_TerrainFacePaint:    cmd_terrainFacePaint.ExecuteReverse(res, ecs); break;
-            case EditorCommandEnum::EditorCmd_TerrainVertexMove:   cmd_terrainVertexMove.ExecuteReverse(res, ecs); break;
+            case EditorCommandEnum::EditorCmd_TerrainVertexMove:   cmd_terrainVertexMove.Execute<false>(res); break;
             case EditorCommandEnum::EditorCmd_TerrainVertexPaint:  cmd_terrainVertexPaint.ExecuteReverse(res, ecs); break;
         }
     }

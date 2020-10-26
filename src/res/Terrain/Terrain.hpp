@@ -4,6 +4,7 @@
 #include "res/Terrain/TerrainQuadrant.hpp"
 #include "com/box/optional.hpp"
 #include "com/utils/Utils.hpp"
+#include "com/box/SimpleArray.hpp"
 
 namespace rpg::res {
 
@@ -46,9 +47,10 @@ struct Terrain
         return vertex;
     }
 
-    void StichTerrain()
+    template<auto N>
+    void Stich(idx_t const quadrantIdx, com::SimpleArray<idx_t, N> const& verticesToCheck)
     {
-        //TODO:
+
     }
 
 };

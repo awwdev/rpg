@@ -1,7 +1,6 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ecs/ECS.hpp"
 #include "res/Resources.hpp"
 #include "res/Resources_Terrain.hpp"
 #include "wnd/WindowEvents.hpp"
@@ -10,32 +9,27 @@ namespace rpg::app {
 
 struct EditorCmd_TerrainVertexMove
 {
-    EditorBrush::BrushVertices brushVertices;
-    com::SimpleArray<com::Vec3f, 100> posInitial; 
-    com::SimpleArray<com::Vec3f, 100> posEnd; 
+    idx_t affected_quadrantIdx;
+    com::SimpleArray<idx_t, 100> affected_vertexIds; 
+    com::SimpleArray<com::Vec3f, 100> end_positions;
+    com::SimpleArray<com::Vec3f, 100> beg_positions;
 
-    decltype(res::Resources_Terrain::TERRAIN_T::QUADRANT_T::mesh)* meshPtr;
-
-    void Execute(res::Resources&, ecs::ECS&)
+    template<bool END>
+    void Execute(res::Resources& res)
     {
-        FOR_SIMPLE_ARRAY(brushVertices, i)
+        auto& terrain = res.terrain.terrain;
+        auto& quadrant = terrain.quadrants[affected_quadrantIdx];
+        FOR_SIMPLE_ARRAY(affected_vertexIds, i)
         {
-            auto& vertex = *brushVertices[i].vertexPtr;
-            vertex.pos = posEnd[i];
-        }
-        meshPtr->Recalculate();
-    }
-    
-    void ExecuteReverse(res::Resources&, ecs::ECS&)
-    {
-        FOR_SIMPLE_ARRAY(brushVertices, i)
-        {
-            auto& vertex = *brushVertices[i].vertexPtr;
-            vertex.pos = posInitial[i];
-        }
-        meshPtr->Recalculate();
-    }
+            auto const& vertexId = affected_vertexIds[i];
+            auto& vertex = quadrant.mesh.vertices[vertexId];
 
+            if constexpr(!END) vertex.pos = beg_positions[i];
+            if constexpr( END) vertex.pos = end_positions[i];    
+        }
+        quadrant.mesh.Recalculate();
+        terrain.Stich(affected_quadrantIdx, affected_vertexIds);
+    }
 };
 
 } //ns

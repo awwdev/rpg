@@ -78,9 +78,6 @@ struct Editor
     {
         brush.SetVisible(ecs, app::glo::inputMode == app::glo::InputMode::EditMode);
 
-        if (wnd::HasEvent<wnd::EventType::F3, wnd::EventState::Pressed>())
-            res.terrain.terrain.StichTerrain();
-
         //reset
         if (wnd::MouseLeftButtonReleased())
         {
@@ -144,37 +141,40 @@ struct Editor
 
     void TerrainVertexMove(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayQuadrant_Intersection const& terrainIntersection)
     {
-        static EditorCmd_TerrainVertexMove cmd {}; //hacky but super convenient
+        static EditorCmd_TerrainVertexMove cmd {};
 
         if (wnd::MouseLeftButtonPressed())
         {
             brush.SetVisible(ecs, false);
-            //store state of affected vertices
-            cmd.brushVertices = brush.verticesInsideBrush;
-            cmd.posInitial.Clear();
-            FOR_SIMPLE_ARRAY(brush.verticesInsideBrush, i)
-            {
-                auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
-                cmd.posInitial.Append(vertex.pos);
-            }
+            //? store begin
+            //TODO
+            //cmd.brushVertices = brush.verticesInsideBrush;
+            //cmd.posInitial.Clear();
+            //FOR_SIMPLE_ARRAY(brush.verticesInsideBrush, i)
+            //{
+            //    auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
+            //    cmd.posInitial.Append(vertex.pos);
+            //}
         }
 
         if (wnd::MouseLeftButtonReleased())
         {
             brush.SetVisible(ecs, true);
 
-            //store state of affected vertices
-            cmd.posEnd.Clear();
-            FOR_SIMPLE_ARRAY(brush.verticesInsideBrush, i)
-            {
-                auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
-                cmd.posEnd.Append(vertex.pos);
-            }
-            auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
-            cmd.meshPtr = &quadrant.mesh;
-            commands.ExecuteAndAStoreCommand(cmd, res, ecs);
+            //? store end
+            //TODO
+            //cmd.posEnd.Clear();
+            //FOR_SIMPLE_ARRAY(brush.verticesInsideBrush, i)
+            //{
+            //    auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
+            //    cmd.posEnd.Append(vertex.pos);
+            //}
+            //auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
+            //cmd.meshPtr = &quadrant.mesh;
+            //commands.ExecuteAndAStoreCommand(cmd, res, ecs);
         }
 
+        //? live update
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>()) 
         {
             FOR_SIMPLE_ARRAY(brush.verticesInsideBrush, i)
