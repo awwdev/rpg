@@ -3,38 +3,31 @@
 #pragma once
 #include "com/box/Array.hpp"
 #include "com/box/RingBuffer.hpp"
-
-#include "app/Editor/Commands/EditorCmd_Base.hpp"
-#include "app/Editor/Commands/EditorCmd_PrefabPlacement.hpp"
-#include "app/Editor/Commands/EditorCmd_TerrainFacePaint.hpp"
-#include "app/Editor/Commands/EditorCmd_TerrainVertexMove.hpp"
-#include "app/Editor/Commands/EditorCmd_TerrainVertexPaint.hpp"
-
-#include "com/mem/Allocator.hpp"
+#include "app/Editor/EditorCommand.hpp"
 
 namespace rpg::app {
 
 struct EditorCommands
 {
-    com::RingBuffer<com::mem::BlockPtr<EditorCmd_Base>, 20> cmdHistory;
+    com::RingBuffer<EditorCommand, 20> cmdHistory;
 
-    void StoreCommand()
+    void ExecuteCommand(EditorCommand const& pCmd, res::Resources& res, ecs::ECS& ecs)
     {
-        //cmdHistory.Append(cmd);
+        auto& cmd = cmdHistory.Append(pCmd);
+        cmd.Execute(res, ecs);
     }
 
-    void Undo(ecs::ECS& ecs, res::Resources& res)
+    void Undo(res::Resources& res, ecs::ECS& ecs)
     {
-        //if (auto* cmd = cmdHistory.StepBackwards())
-        //    cmd->ExecuteReverse(ecs, res);
+        if (auto* cmd = cmdHistory.StepBackwards())
+            cmd->ExecuteReverse(res, ecs);
     }
 
-    void Redo(ecs::ECS& ecs, res::Resources& res)
+    void Redo(res::Resources& res, ecs::ECS& ecs)
     {
-        //if (auto* cmd = cmdHistory.StepForwards())
-        //    cmd->Execute(ecs, res);
+        if (auto* cmd = cmdHistory.StepForwards())
+            cmd->Execute(res, ecs);
     }
-
 };
 
 } //ns

@@ -5,6 +5,8 @@
 
 namespace rpg::com {
 
+//cannot store arrays, if wanted put them into struct
+
 template<typename T, auto N>
 struct RingBuffer
 {
@@ -17,14 +19,14 @@ struct RingBuffer
     auto& operator[](auto const i)       { return data[i % N]; }
     auto& operator[](auto const i) const { return data[i % N]; }
 
-    void Append(T const& element)
+    T& Append(T const& element)
     {
         currentIdx++;
         count++;
         maxIdx = currentIdx;
         com::Clamp(count, 0, N);
-        operator[](currentIdx) = element; 
-        //TODO: array
+        operator[](currentIdx) = element;
+        return operator[](currentIdx);
     }
 
     T* StepBackwards()

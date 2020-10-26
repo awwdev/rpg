@@ -1,18 +1,19 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "app/Editor/Commands/EditorCmd_Base.hpp"
+#include "ecs/ECS.hpp"
+#include "res/Resources.hpp"
 
 namespace rpg::app {
 
-struct EditorCmd_TerrainVertexMove : EditorCmd_Base
+struct EditorCmd_TerrainVertexMove
 {
-    void Execute(res::Resources&, ecs::ECS&) override
+    void Execute(res::Resources&, ecs::ECS&)
     {
 
     }
     
-    void ExecuteReverse(res::Resources&, ecs::ECS&) override
+    void ExecuteReverse(res::Resources&, ecs::ECS&)
     {
 
     }

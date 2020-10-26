@@ -573,7 +573,8 @@
 		"condition_variable": "cpp",
 		"mutex": "cpp",
 		"source_location": "cpp",
-		"climits": "cpp"
+		"climits": "cpp",
+		"variant": "cpp"
 	},
 
 }

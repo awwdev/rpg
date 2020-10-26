@@ -25,7 +25,7 @@ struct Editor
     //? meta
     gpu::Camera     camera;
     EditorCommands  commands;
-    EditorMode      editorMode = EditorMode::TerrainVertexMove;
+    EditorMode      editorMode = EditorMode::TerrainVertexPaint;
     EditorBrush     brush;
 
     void CreateGizmos(ecs::ECS& ecs)
@@ -68,9 +68,9 @@ struct Editor
         if (wnd::HasEvent<wnd::EventType::Ctrl, wnd::EventState::PressedOrHeld>())
         {
             if (wnd::HasEvent<wnd::EventType::Z, wnd::EventState::Pressed>())
-                commands.Undo(ecs, res);
+                commands.Undo(res, ecs);
             if (wnd::HasEvent<wnd::EventType::Y, wnd::EventState::Pressed>())
-                commands.Redo(ecs, res);
+                commands.Redo(res, ecs);
         }
     }
 
@@ -115,14 +115,21 @@ struct Editor
         auto& vertices = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx].mesh.vertices;
         brush.UpdateVerticesInsideBrush(vertices);
 
-        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>()) 
+        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>() &&
+            wnd::HasEvent<wnd::EventType::Mouse_Move>()) 
         {
-            FOR_ARRAY(brush.verticesInsideBrush, i)
+            if (brush.Frequency(dt))
             {
-                auto const& vertexWeight = brush.verticesInsideBrush[i].weight;
-                auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
-                auto const colorBlended = com::InterpolateColors(vertex.col, brush.color, vertexWeight);
-                vertex.col = colorBlended;
+                EditorCommand cmd 
+                {
+                    .editorCommandEnum = EditorCommandEnum::EditorCmd_TerrainVertexPaint,
+                    .cmd_terrainVertexPaint = 
+                    {
+                        .brushVertices = brush.verticesInsideBrush,
+                        .brushColor = brush.color
+                    }
+                };
+                commands.ExecuteCommand(cmd, res, ecs);
             }
         }
     }
@@ -161,7 +168,7 @@ struct Editor
         else
         {
             brush.SetVisible(ecs, false);
-            FOR_ARRAY(brush.verticesInsideBrush, i)
+            FOR_SIMPLE_ARRAY(brush.verticesInsideBrush, i)
             {
                 auto const& vertexWeight = brush.verticesInsideBrush[i].weight;
                 auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;

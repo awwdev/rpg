@@ -5,34 +5,50 @@
 #include "wnd/WindowEvents.hpp"
 #include "res/Terrain/TerrainMesh.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
+#include "com/box/SimpleArray.hpp"
 
 namespace rpg::app {
 
 struct EditorBrush
 {
-    //mesh
+    //?mesh
     ecs::ID brushID;
 
-    //input
+    //?input
     com::Vec3f position;
     float scale = 3.f;
-    float scaleSpeed = 0.1f;
+    float scaleSpeed = 0.5f;
 
-    //? vertex color
+    //?vertex color
     com::Vec4f color;
-    //? vertex move
+    //?vertex move
     bool  vertexGrabbed = false;
     float vertexMoveSpeed = 0.1f;
-    //? prefab placement
+    //?prefab placement
     res::PrefabEnum prefabEnum;
 
-    //falloff
+    //?frequency
+    float frequencyCounter = 0;
+    float frequencyCounterMax = 0.05;
+    bool Frequency(float const dt) 
+    {
+        frequencyCounter += dt;
+        if (frequencyCounter >= frequencyCounterMax)
+        {
+            frequencyCounter -= frequencyCounterMax;
+            return true;
+        }
+        return false;
+    }
+
+    //?falloff
     struct VertexWeight 
     { 
         res::TerrainVertex* vertexPtr;
         float weight;
     };
-    com::Array<VertexWeight, 100> verticesInsideBrush;
+    using BrushVertices = com::SimpleArray<VertexWeight, 100>;
+    BrushVertices verticesInsideBrush;
 
 
     void CreateEntity(ecs::ECS& ecs)
@@ -76,7 +92,7 @@ struct EditorBrush
             if (dist < scale)
             {
                 const auto weight = 1 - dist / scale; //try other easing 
-                verticesInsideBrush.AppendElement(&vertices[i], weight);
+                verticesInsideBrush.Append(&vertices[i], weight);
             }
         }
     }

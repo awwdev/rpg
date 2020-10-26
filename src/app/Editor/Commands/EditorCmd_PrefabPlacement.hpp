@@ -1,18 +1,19 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "app/Editor/Commands/EditorCmd_Base.hpp"
+#include "ecs/ECS.hpp"
+#include "res/Resources.hpp"
 
 namespace rpg::app {
 
-struct EditorCmd_PrefabPlacement : EditorCmd_Base
+struct EditorCmd_PrefabPlacement
 {
-    void Execute(res::Resources&, ecs::ECS&) override
+    void Execute(res::Resources&, ecs::ECS&)
     {
-
+        
     }
     
-    void ExecuteReverse(res::Resources&, ecs::ECS&) override
+    void ExecuteReverse(res::Resources&, ecs::ECS&)
     {
 
     }
