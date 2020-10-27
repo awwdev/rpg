@@ -4,6 +4,7 @@
 #include "ecs/ECS.hpp"
 #include "res/Resources.hpp"
 #include "app/Editor/EditorBrush.hpp"
+#include "app/Editor/EditorCommandDirection.hpp"
 
 namespace rpg::app {
 
@@ -19,6 +20,7 @@ struct EditorCmd_TerrainVertexPaint
         , brushColor    { pBrushColor }
     {}
 
+    /*
     void Execute(res::Resources&, ecs::ECS&)
     {
         FOR_SIMPLE_ARRAY(brushVertices, i)
@@ -30,7 +32,9 @@ struct EditorCmd_TerrainVertexPaint
             vertex.col = colorBlended;
         }
     }
+    */
     
+    /*
     void ExecuteReverse(res::Resources&, ecs::ECS&)
     {
         FOR_SIMPLE_ARRAY(brushVertices, i)
@@ -40,6 +44,12 @@ struct EditorCmd_TerrainVertexPaint
             auto const& prevVertex = verticesReversed[i];
             vertex.col = prevVertex.col;
         }
+    }
+    */
+
+    template<EditorCommandDirection DIR>
+    void Execute(res::Resources& res, ecs::ECS& ecs)
+    {
     }
 };
 

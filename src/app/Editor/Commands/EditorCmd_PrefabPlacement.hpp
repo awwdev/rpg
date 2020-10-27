@@ -4,6 +4,7 @@
 #include "ecs/ECS.hpp"
 #include "res/Resources.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
+#include "app/Editor/EditorCommandDirection.hpp"
 
 namespace rpg::app {
 
@@ -18,6 +19,7 @@ struct EditorCmd_PrefabPlacement
         , placementPoint { pPoint }
     {}
 
+    /*
     void Execute(res::Resources&, ecs::ECS& ecs)
     {   
         prefabID = ecs.AddEntity(prefabEnum);
@@ -28,6 +30,12 @@ struct EditorCmd_PrefabPlacement
     void ExecuteReverse(res::Resources&, ecs::ECS& ecs)
     {
         ecs.RemoveEntity(prefabID);
+    }
+    */
+
+    template<EditorCommandDirection DIR>
+    void Execute(res::Resources& res, ecs::ECS& ecs)
+    {
     }
 };
 

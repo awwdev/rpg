@@ -17,7 +17,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _I
 {
     dbg::Console console{};
     com::mem::GlobalAllocate();
-
+    
     {
         wnd::win_Window  window { hInstance, 800, 600 };
         auto ptrResources  = com::mem::ClaimBlock<res::Resources>();

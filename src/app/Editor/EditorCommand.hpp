@@ -1,6 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
+#include "app/Editor/EditorCommandDirection.hpp"
+
 #include "app/Editor/Commands/EditorCmd_PrefabPlacement.hpp"
 #include "app/Editor/Commands/EditorCmd_TerrainFacePaint.hpp"
 #include "app/Editor/Commands/EditorCmd_TerrainVertexMove.hpp"
@@ -29,27 +31,18 @@ struct EditorCommand
 
     EditorCommand() {} 
 
+    template<EditorCommandDirection DIR>
     void Execute(res::Resources& res, ecs::ECS& ecs)
     {
         switch(editorCommandEnum)
         {
-            case EditorCommandEnum::EditorCmd_PrefabPlacement:     cmd_prefabPlacement.Execute(res, ecs); break;
-            case EditorCommandEnum::EditorCmd_TerrainFacePaint:    cmd_terrainFacePaint.Execute(res, ecs); break;
-            case EditorCommandEnum::EditorCmd_TerrainVertexMove:   cmd_terrainVertexMove.Execute<true>(res); break;
-            case EditorCommandEnum::EditorCmd_TerrainVertexPaint:  cmd_terrainVertexPaint.Execute(res, ecs); break;
+            case EditorCommandEnum::EditorCmd_PrefabPlacement: cmd_prefabPlacement.Execute<DIR>(res, ecs); break;
+            case EditorCommandEnum::EditorCmd_TerrainFacePaint: cmd_terrainFacePaint.Execute<DIR>(res, ecs); break;
+            case EditorCommandEnum::EditorCmd_TerrainVertexMove: cmd_terrainVertexMove.Execute<DIR>(res, ecs); break;
+            case EditorCommandEnum::EditorCmd_TerrainVertexPaint: cmd_terrainVertexPaint.Execute<DIR>(res, ecs); break;
         }
     }
 
-    void ExecuteReverse(res::Resources& res, ecs::ECS& ecs)
-    {
-        switch(editorCommandEnum)
-        {
-            case EditorCommandEnum::EditorCmd_PrefabPlacement:     cmd_prefabPlacement.ExecuteReverse(res, ecs); break;
-            case EditorCommandEnum::EditorCmd_TerrainFacePaint:    cmd_terrainFacePaint.ExecuteReverse(res, ecs); break;
-            case EditorCommandEnum::EditorCmd_TerrainVertexMove:   cmd_terrainVertexMove.Execute<false>(res); break;
-            case EditorCommandEnum::EditorCmd_TerrainVertexPaint:  cmd_terrainVertexPaint.ExecuteReverse(res, ecs); break;
-        }
-    }
 };
 
 template<class T>

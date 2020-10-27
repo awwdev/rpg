@@ -4,6 +4,7 @@
 #include "res/Resources.hpp"
 #include "res/Resources_Terrain.hpp"
 #include "wnd/WindowEvents.hpp"
+#include "app/Editor/EditorCommandDirection.hpp"
 
 namespace rpg::app {
 
@@ -14,8 +15,8 @@ struct EditorCmd_TerrainVertexMove
     com::SimpleArray<com::Vec3f, 100> end_positions;
     com::SimpleArray<com::Vec3f, 100> beg_positions;
 
-    template<bool END>
-    void Execute(res::Resources& res)
+    template<EditorCommandDirection DIR>
+    void Execute(res::Resources& res, ecs::ECS& ecs)
     {
         auto& terrain = res.terrain.terrain;
         auto& quadrant = terrain.quadrants[affected_quadrantIdx];
@@ -24,8 +25,8 @@ struct EditorCmd_TerrainVertexMove
             auto const& vertexId = affected_vertexIds[i];
             auto& vertex = quadrant.mesh.vertices[vertexId];
 
-            if constexpr(!END) vertex.pos = beg_positions[i];
-            if constexpr( END) vertex.pos = end_positions[i];    
+            if constexpr(DIR == EditorCommandDirection::Backwards) vertex.pos = beg_positions[i];
+            if constexpr(DIR == EditorCommandDirection::Forwards)  vertex.pos = end_positions[i];    
         }
         quadrant.mesh.Recalculate();
         terrain.Stich(affected_quadrantIdx, affected_vertexIds);

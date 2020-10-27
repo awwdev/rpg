@@ -117,7 +117,7 @@ struct Editor
             wnd::HasEvent<wnd::EventType::Mouse_Move>() && brush.Frequency(dt)) 
         {
             EditorCmd_TerrainVertexPaint cmd { brush.verticesInsideBrush, brush.color };
-            commands.ExecuteAndAStoreCommand(cmd, res, ecs);
+            commands.ExecuteAndStoreCommand(cmd, res, ecs);
         }
     }
 
@@ -135,7 +135,7 @@ struct Editor
             auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
             auto& triangleColor = quadrant.mesh.triangleColors[triangleIdx];
             EditorCmd_TerrainFacePaint cmd { triangleColor, brush.color };
-            commands.ExecuteAndAStoreCommand(cmd, res, ecs);
+            //commands.ExecuteAndAStoreCommand(cmd, res, ecs);
         }
     }
 
@@ -204,7 +204,7 @@ struct Editor
             brush.Frequency(dt)) 
         {
             EditorCmd_PrefabPlacement cmd { brush.prefabEnum, terrainIntersection.point };
-            commands.ExecuteAndAStoreCommand(cmd, res, ecs);
+            //commands.ExecuteAndAStoreCommand(cmd, res, ecs);
         }
     }
 

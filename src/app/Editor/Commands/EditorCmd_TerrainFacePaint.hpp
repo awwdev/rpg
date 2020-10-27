@@ -4,6 +4,7 @@
 #include "ecs/ECS.hpp"
 #include "res/Resources.hpp"
 #include "app/Editor/EditorBrush.hpp"
+#include "app/Editor/EditorCommandDirection.hpp"
 
 namespace rpg::app {
 
@@ -18,6 +19,7 @@ struct EditorCmd_TerrainFacePaint
         , brushColor    { pBrushColor }
     {}
 
+    /*
     void Execute(res::Resources&, ecs::ECS&)
     {
         triangleColorReversed = *triangleColor;
@@ -27,6 +29,12 @@ struct EditorCmd_TerrainFacePaint
     void ExecuteReverse(res::Resources&, ecs::ECS&)
     {
         *triangleColor = triangleColorReversed;
+    }
+    */
+
+    template<EditorCommandDirection DIR>
+    void Execute(res::Resources& res, ecs::ECS& ecs)
+    {
     }
 };
 

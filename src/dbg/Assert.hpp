@@ -20,5 +20,4 @@ constexpr void Assert(bool const expr, const auto& msg)
 } 
 
 
-
-}//NS
+}//ns
