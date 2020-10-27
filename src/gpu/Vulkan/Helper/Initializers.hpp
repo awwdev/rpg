@@ -5,7 +5,7 @@
 
 namespace rpg::gpu::vuk {
 
-template<class T>
+template<typename T>
 inline auto Viewport(
 const T width, const T height)
 {
@@ -19,7 +19,7 @@ const T width, const T height)
     };
 }
 
-template<class T>
+template<typename T>
 inline auto Scissor(
 const T width, const T height)
 {

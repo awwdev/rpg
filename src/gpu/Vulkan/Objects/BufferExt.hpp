@@ -123,16 +123,16 @@ struct BufferExt
 
 };
 
-template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
+template<typename ELEMENT_TYPE, idx_t MAX_COUNT_T>
 using UniformBuffer = BufferExt<BufferExtType::UniformBuffer, ELEMENT_TYPE, MAX_COUNT_T>;
 
-template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
+template<typename ELEMENT_TYPE, idx_t MAX_COUNT_T>
 using StorageBuffer = BufferExt<BufferExtType::StorageBuffer, ELEMENT_TYPE, MAX_COUNT_T>;
 
-template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
+template<typename ELEMENT_TYPE, idx_t MAX_COUNT_T>
 using VertexBuffer  = BufferExt<BufferExtType::VertexBuffer, ELEMENT_TYPE, MAX_COUNT_T>;
 
-template<class ELEMENT_TYPE, idx_t MAX_COUNT_T>
+template<typename ELEMENT_TYPE, idx_t MAX_COUNT_T>
 using IndexBuffer  = BufferExt<BufferExtType::IndexBuffer, ELEMENT_TYPE, MAX_COUNT_T>;
 
 }//ns

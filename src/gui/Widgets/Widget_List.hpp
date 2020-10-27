@@ -8,7 +8,7 @@
 namespace rpg::gui {
 
 //allows nesting
-template<class IDX_T = idx_t> //TODO: remove template
+template<typename IDX_T = idx_t> //TODO: remove template
 struct Widget_List
 {
     using ListString = com::String<50>;

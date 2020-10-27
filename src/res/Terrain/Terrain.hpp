@@ -41,7 +41,7 @@ struct Terrain
 
     auto& GetVertexByIntersection(RayQuadrant_Intersection const& intersection) 
     {
-        auto const& quadrantIdx = intersection.quadrantIdx;
+        auto const& quadrantIdx = intersection.quadrantId;
         auto const& vertexIdx = intersection.quadrantclosestVertexIdx;
         auto& vertex = quadrants[quadrantIdx].mesh.vertices[vertexIdx];
         return vertex;
@@ -51,6 +51,13 @@ struct Terrain
     void Stich(idx_t const quadrantIdx, com::SimpleArray<idx_t, N> const& verticesToCheck)
     {
 
+    }
+
+    auto& GetVertex(idx_t const quadrantIdx, idx_t const vertexIdx)
+    {
+        auto& quadrant = quadrants[quadrantIdx];
+        auto& meshVertices = quadrant.mesh.vertices;
+        return meshVertices[vertexIdx];
     }
 
 };

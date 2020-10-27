@@ -10,26 +10,25 @@ namespace rpg::app {
 
 struct EditorCmd_TerrainVertexMove
 {
-    idx_t affected_quadrantIdx;
+    idx_t affected_quadrantId;
     com::SimpleArray<idx_t, 100> affected_vertexIds; 
-    com::SimpleArray<com::Vec3f, 100> end_positions;
-    com::SimpleArray<com::Vec3f, 100> beg_positions;
+    com::SimpleArray<com::Vec3f, 100> dst_positions;
+    com::SimpleArray<com::Vec3f, 100> ini_positions;
 
     template<EditorCommandDirection DIR>
     void Execute(res::Resources& res, ecs::ECS& ecs)
     {
-        auto& terrain = res.terrain.terrain;
-        auto& quadrant = terrain.quadrants[affected_quadrantIdx];
         FOR_SIMPLE_ARRAY(affected_vertexIds, i)
         {
             auto const& vertexId = affected_vertexIds[i];
-            auto& vertex = quadrant.mesh.vertices[vertexId];
-
-            if constexpr(DIR == EditorCommandDirection::Backwards) vertex.pos = beg_positions[i];
-            if constexpr(DIR == EditorCommandDirection::Forwards)  vertex.pos = end_positions[i];    
+            auto& vertex = res.terrain.terrain.GetVertex(affected_quadrantId, vertexId);
+            if constexpr(DIR == EditorCommandDirection::Backwards) vertex.pos = ini_positions[i];
+            if constexpr(DIR == EditorCommandDirection::Forwards)  vertex.pos = dst_positions[i];    
         }
+        auto& terrain = res.terrain.terrain;
+        auto& quadrant = terrain.quadrants[affected_quadrantId];
         quadrant.mesh.Recalculate();
-        terrain.Stich(affected_quadrantIdx, affected_vertexIds);
+        terrain.Stich(affected_quadrantId, affected_vertexIds);
     }
 };
 

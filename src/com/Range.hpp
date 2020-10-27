@@ -5,7 +5,7 @@
 
 namespace rpg::com {
 
-template<class T1, class T2 = T1>
+template<typename T1, class T2 = T1>
 struct Pair
 {
     union 

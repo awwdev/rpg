@@ -11,8 +11,8 @@ namespace rpg::res {
 
 struct RayQuadrant_Intersection
 {
-    com::Vec3f point;
-    uint32_t quadrantIdx;
+    com::Vec3f position;
+    uint32_t quadrantId;
     //relative data
     uint32_t quadrantclosestVertexIdx;
     uint32_t quadrantTriangleIdx;

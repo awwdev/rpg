@@ -231,7 +231,7 @@ public:
 
 //? CTAD
 
-template<class T, class... Ts>
+template<typename T, class... Ts>
 Array(T, Ts...) -> Array<T, sizeof...(Ts) + 1>;
 
 }//ns

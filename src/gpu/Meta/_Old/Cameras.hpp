@@ -12,7 +12,7 @@ namespace rpg::gpu
 
 //TODO: one camera with mode
 
-template<class CAMERA>
+template<typename CAMERA>
 com::Vec3f ScreenRay(const CAMERA& camera)
 {
     using namespace com;

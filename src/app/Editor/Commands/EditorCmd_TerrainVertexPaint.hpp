@@ -10,15 +10,13 @@ namespace rpg::app {
 
 struct EditorCmd_TerrainVertexPaint
 {
-    //TODO: probably a way to just store vertex pointers and initial and end state )also not whole vertex needed)
-    EditorBrush::BrushVertices brushVertices;
-    com::Vec4f brushColor;
-    com::SimpleArray<res::TerrainVertex, 100> verticesReversed; 
+    
 
-    EditorCmd_TerrainVertexPaint(EditorBrush::BrushVertices const& pBrushVertices, com::Vec4f pBrushColor)
-        : brushVertices { pBrushVertices }
-        , brushColor    { pBrushColor }
-    {}
+    template<EditorCommandDirection DIR>
+    void Execute(res::Resources& res, ecs::ECS& ecs)
+    {
+        
+    }
 
     /*
     void Execute(res::Resources&, ecs::ECS&)
@@ -47,10 +45,18 @@ struct EditorCmd_TerrainVertexPaint
     }
     */
 
-    template<EditorCommandDirection DIR>
-    void Execute(res::Resources& res, ecs::ECS& ecs)
-    {
-    }
+   /*
+   //TODO: probably a way to just store vertex pointers and initial and end state )also not whole vertex needed)
+    EditorBrush::BrushVertices brushVertices;
+    com::Vec4f brushColor;
+    com::SimpleArray<res::TerrainVertex, 100> verticesReversed; 
+
+    EditorCmd_TerrainVertexPaint(EditorBrush::BrushVertices const& pBrushVertices, com::Vec4f pBrushColor)
+        : brushVertices { pBrushVertices }
+        , brushColor    { pBrushColor }
+    {}
+    */
+
 };
 
 } //ns

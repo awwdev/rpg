@@ -5,7 +5,7 @@
 
 namespace rpg::gui {
 
-template<class T>
+template<typename T>
 struct Widget_Slider
 {
     com::Rectf rect;

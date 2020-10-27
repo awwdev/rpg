@@ -12,11 +12,12 @@ struct EditorCommands
 {
     com::RingBuffer<EditorCommand, 50> cmdHistory;
     
-    template<class T>
-    void ExecuteAndStoreCommand(T& cmd, res::Resources& res, ecs::ECS& ecs)
+    template<typename T>
+    void ExecuteAndStoreCommand(T const& cmd, res::Resources& res, ecs::ECS& ecs)
     {
-        cmd.template Execute<EditorCommandDirection::Forwards>(res, ecs);
-        cmdHistory.Append(CreateEditorCommand(cmd));
+        auto editorCmd = CreateEditorCommand(cmd);
+        editorCmd.template Execute<EditorCommandDirection::Forwards>(res, ecs);
+        cmdHistory.Append(editorCmd);
     }
 
     void Undo(res::Resources& res, ecs::ECS& ecs)

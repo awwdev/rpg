@@ -21,7 +21,7 @@ for(idx_t bucketIdx = 0; bucketIdx < map.BUCKET_COUNT; ++bucketIdx){ \
 #define FOR_STRING_MAP_END }}
 
 
-template<class VAL, auto STRING_CAPACITY>
+template<typename VAL, auto STRING_CAPACITY>
 struct StringMap
 {
     using KEY_T = com::String<STRING_CAPACITY>;
@@ -104,7 +104,7 @@ struct StringMap
 
 };
 
-template<class VAL, auto STRING_CAPACITY>
+template<typename VAL, auto STRING_CAPACITY>
 void PrintStringMap(const StringMap<VAL, STRING_CAPACITY>& map)
 {
     constexpr auto W = 20;
@@ -126,7 +126,7 @@ void PrintStringMap(const StringMap<VAL, STRING_CAPACITY>& map)
     FOR_STRING_MAP_END
 }
 
-template<class VAL, auto STRING_CAPACITY, auto ENUM_END_T>
+template<typename VAL, auto STRING_CAPACITY, auto ENUM_END_T>
 auto StringMapFromEnumMap(const com::EnumMap<ENUM_END_T, com::String<STRING_CAPACITY>>& enumMap)
 {
     StringMap<VAL, STRING_CAPACITY> strMap;

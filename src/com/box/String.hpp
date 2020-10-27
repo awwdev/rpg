@@ -87,7 +87,7 @@ public:
         cstr[length] = '\0';       
     }
 
-    template<class T, typename = std::enable_if_t<!std::is_same_v<std::decay_t<T>, DATA_T>>>
+    template<typename T, typename = std::enable_if_t<!std::is_same_v<std::decay_t<T>, DATA_T>>>
     void AppendArithemtic(T&& t)
     {
         //charsconv is not implemented in gcc STL

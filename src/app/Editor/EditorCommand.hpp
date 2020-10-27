@@ -36,17 +36,16 @@ struct EditorCommand
     {
         switch(editorCommandEnum)
         {
-            case EditorCommandEnum::EditorCmd_PrefabPlacement: cmd_prefabPlacement.Execute<DIR>(res, ecs); break;
-            case EditorCommandEnum::EditorCmd_TerrainFacePaint: cmd_terrainFacePaint.Execute<DIR>(res, ecs); break;
-            case EditorCommandEnum::EditorCmd_TerrainVertexMove: cmd_terrainVertexMove.Execute<DIR>(res, ecs); break;
-            case EditorCommandEnum::EditorCmd_TerrainVertexPaint: cmd_terrainVertexPaint.Execute<DIR>(res, ecs); break;
+            case EditorCommandEnum::EditorCmd_PrefabPlacement:      cmd_prefabPlacement.Execute<DIR>(res, ecs); break;
+            case EditorCommandEnum::EditorCmd_TerrainFacePaint:     cmd_terrainFacePaint.Execute<DIR>(res, ecs); break;
+            case EditorCommandEnum::EditorCmd_TerrainVertexMove:    cmd_terrainVertexMove.Execute<DIR>(res, ecs); break;
+            case EditorCommandEnum::EditorCmd_TerrainVertexPaint:   cmd_terrainVertexPaint.Execute<DIR>(res, ecs); break;
         }
     }
-
 };
 
-template<class T>
-static EditorCommand CreateEditorCommand(T const& cmd)
+template<typename T>
+EditorCommand CreateEditorCommand(T const& cmd)
 {
     //initializes the union and the enum
     EditorCommand editorCmd;

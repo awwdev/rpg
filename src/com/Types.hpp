@@ -32,7 +32,7 @@ using chars_t = char const* const;
 
 //? concepts
 
-template<class T>
+template<typename T>
 concept as_arithmetic = std::is_arithmetic_v<T>;
 
 template<typename T, typename... Ts>

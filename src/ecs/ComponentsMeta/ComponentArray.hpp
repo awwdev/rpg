@@ -12,7 +12,7 @@
 
 namespace rpg::ecs {
     
-template<class COMPONENT_T, auto MAX_COMPONENT_COUNT = MAX_ENTITY_COUNT>
+template<typename COMPONENT_T, auto MAX_COMPONENT_COUNT = MAX_ENTITY_COUNT>
 struct ComponentArray
 {
     //? data

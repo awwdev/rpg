@@ -41,7 +41,7 @@ struct EnumMap
 
     //? ACCESS
 
-    #define KEY_T template<class KEY>
+    #define KEY_T template<typename KEY>
 
     KEY_T VAL&       Get    (const KEY key)       { return data[(idx_t)key]; }
     KEY_T const VAL& Get    (const KEY key) const { return data[(idx_t)key]; }

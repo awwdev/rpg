@@ -22,7 +22,6 @@ namespace rpg::app {
 
 struct Editor
 {
-    //? meta
     gpu::Camera     camera;
     EditorCommands  commands;
     EditorMode      editorMode = EditorMode::TerrainVertexMove;
@@ -30,7 +29,7 @@ struct Editor
 
     void CreateGizmos(ecs::ECS& ecs)
     {
-        brush.CreateEntity(ecs);
+        brush.CreateGizmo(ecs);
     }
 
     void Update(const double dt, ecs::ECS& ecs, res::Resources& res, gpu::RenderData& renderData)
@@ -107,26 +106,29 @@ struct Editor
 
     void TerrainVertexPaint(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayQuadrant_Intersection const& terrainIntersection)
     {
+        /*
         //TODO: store stroke (down, up) instead of single paints per frequency
-        brush.SetPosition(ecs, terrainIntersection.point);
-        brush.UpdateScale(ecs, dt);
+        brush.UpdatePosition(ecs, terrainIntersection.position);
+        brush.UpdateSize(ecs, dt);
         auto& vertices = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx].mesh.vertices;
-        brush.UpdateVerticesInsideBrush(vertices);
+        brush.UpdateVertexIdsInsideBrush(vertices);
 
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>() &&
             wnd::HasEvent<wnd::EventType::Mouse_Move>() && brush.Frequency(dt)) 
         {
-            EditorCmd_TerrainVertexPaint cmd { brush.verticesInsideBrush, brush.color };
-            commands.ExecuteAndStoreCommand(cmd, res, ecs);
+            //EditorCmd_TerrainVertexPaint cmd { brush.verticesInsideBrush, brush.color };
+            //commands.ExecuteAndStoreCommand(cmd, res, ecs);
         }
+        */
     }
 
     void TerrainFacePaint(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayQuadrant_Intersection const& terrainIntersection)
     {
-        brush.SetPosition(ecs, terrainIntersection.point);
-        brush.UpdateScale(ecs, dt);
+        /*
+        brush.UpdatePosition(ecs, terrainIntersection.position);
+        brush.UpdateSize(ecs, dt);
         auto& vertices = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx].mesh.vertices;
-        brush.UpdateVerticesInsideBrush(vertices);
+        brush.UpdateVertexIdsInsideBrush(vertices);
 
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>() &&
             wnd::HasEvent<wnd::EventType::Mouse_Move>() && brush.Frequency(dt)) 
@@ -134,78 +136,80 @@ struct Editor
             auto const& triangleIdx = terrainIntersection.quadrantTriangleIdx;
             auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
             auto& triangleColor = quadrant.mesh.triangleColors[triangleIdx];
-            EditorCmd_TerrainFacePaint cmd { triangleColor, brush.color };
+            //EditorCmd_TerrainFacePaint cmd { triangleColor, brush.color };
             //commands.ExecuteAndAStoreCommand(cmd, res, ecs);
         }
+        */
     }
 
     void TerrainVertexMove(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayQuadrant_Intersection const& terrainIntersection)
     {
         static EditorCmd_TerrainVertexMove cmd {};
+        auto& terrain = res.terrain.terrain;
 
+        //? intial state
         if (wnd::MouseLeftButtonPressed())
         {
             brush.SetVisible(ecs, false);
-            //? store begin
-            //TODO
-            //cmd.brushVertices = brush.verticesInsideBrush;
-            //cmd.posInitial.Clear();
-            //FOR_SIMPLE_ARRAY(brush.verticesInsideBrush, i)
-            //{
-            //    auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
-            //    cmd.posInitial.Append(vertex.pos);
-            //}
-        }
 
-        if (wnd::MouseLeftButtonReleased())
-        {
-            brush.SetVisible(ecs, true);
-
-            //? store end
-            //TODO
-            //cmd.posEnd.Clear();
-            //FOR_SIMPLE_ARRAY(brush.verticesInsideBrush, i)
-            //{
-            //    auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
-            //    cmd.posEnd.Append(vertex.pos);
-            //}
-            //auto& quadrant = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx];
-            //cmd.meshPtr = &quadrant.mesh;
-            //commands.ExecuteAndAStoreCommand(cmd, res, ecs);
-        }
-
-        //? live update
-        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>()) 
-        {
-            FOR_SIMPLE_ARRAY(brush.verticesInsideBrush, i)
+            cmd = {}; //!reset
+            cmd.affected_quadrantId = terrainIntersection.quadrantId;
+            cmd.affected_vertexIds = brush.verticesInsideBrush.vertexIds;
+            FOR_SIMPLE_ARRAY(brush.verticesInsideBrush.vertexIds, i)
             {
-                auto const& vertexWeight = brush.verticesInsideBrush[i].weight;
-                auto& vertex = *brush.verticesInsideBrush[i].vertexPtr;
-                vertex.pos.y += wnd::glo::mouse_dy * (vertexWeight/2 + 0.5) * brush.vertexMoveSpeed;
-                //easing
+                auto const& vertexId = brush.verticesInsideBrush.vertexIds[i];
+                auto& vertex = terrain.GetVertex(terrainIntersection.quadrantId, vertexId);
+                cmd.ini_positions.Append(vertex.pos);
             }
         }
-        else
+
+        //? live update (no cmd)
+        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>()) 
         {
-            brush.UpdateScale(ecs, dt);
-            brush.SetPosition(ecs, terrainIntersection.point);
-            auto& vertices = res.terrain.terrain.quadrants[terrainIntersection.quadrantIdx].mesh.vertices;
-            brush.UpdateVerticesInsideBrush(vertices);
+            brush.SetVisible(ecs, false);
+            FOR_SIMPLE_ARRAY(brush.verticesInsideBrush.vertexIds, i)
+            {
+                auto const& vertexWeight = brush.verticesInsideBrush.vertexWeights[i];
+                auto const& vertexId = brush.verticesInsideBrush.vertexIds[i];
+                auto& vertex = terrain.GetVertex(terrainIntersection.quadrantId, vertexId);
+                vertex.pos.y += wnd::glo::mouse_dy * (vertexWeight/2 + 0.5) * brush.vertexMoveSpeed;
+            }
         }
-        
+
+        //? destination state
+        if (wnd::MouseLeftButtonReleased())
+        {
+            FOR_SIMPLE_ARRAY(brush.verticesInsideBrush.vertexIds, i)
+            {
+                auto const& vertexId = brush.verticesInsideBrush.vertexIds[i];
+                auto& vertex = terrain.GetVertex(terrainIntersection.quadrantId, vertexId);
+                cmd.dst_positions.Append(vertex.pos);
+            }
+            commands.ExecuteAndStoreCommand(cmd, res, ecs);
+        }
+
+        //? brush update (needs to be after destination state storage!)
+        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>() == false)
+        {
+            brush.UpdateGizmo(dt, ecs, terrainIntersection.position);
+            brush.UpdateVerticesInsideBrush(res.terrain, terrainIntersection);
+        } 
+
     }
 
     void PrefabPlacement(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayQuadrant_Intersection const& terrainIntersection)
     {
-        brush.SetPosition(ecs, terrainIntersection.point);
-        brush.UpdateScale(ecs, dt);
+        /*
+        brush.UpdatePosition(ecs, terrainIntersection.position);
+        brush.UpdateSize(ecs, dt);
 
         if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>() && 
             brush.Frequency(dt)) 
         {
-            EditorCmd_PrefabPlacement cmd { brush.prefabEnum, terrainIntersection.point };
+            //EditorCmd_PrefabPlacement cmd { brush.prefabEnum, terrainIntersection.point };
             //commands.ExecuteAndAStoreCommand(cmd, res, ecs);
         }
+        */
     }
 
 };

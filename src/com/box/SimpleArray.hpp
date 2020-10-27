@@ -12,7 +12,7 @@ namespace rpg::com {
 
 #define FOR_SIMPLE_ARRAY(arr, i) for(idx_t i = 0; i < arr.count; ++i)
 
-template<class T, auto N>
+template<typename T, auto N>
 struct SimpleArray
 {
     //? data

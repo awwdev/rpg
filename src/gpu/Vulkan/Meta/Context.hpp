@@ -28,7 +28,7 @@ inline void VkCheck(const VkResult result)
 
 #define FOR_VK_ARRAY(arr, i) for(u32 i = 0; i < arr.count; ++i)
 
-template<class T, uint32_t N>
+template<typename T, uint32_t N>
 struct VkArray
 {
     VkArray(const uint32_t pCount = 0) 

@@ -12,10 +12,11 @@
 
 namespace rpg::com {
 
+
 constexpr float PI  = 3.14159265359f;
 constexpr float PIH = 1/180.f;
 
-template<class T, auto Y_T, auto X_T>
+template<typename T, auto Y_T, auto X_T>
 struct Mat
 {
     static constexpr auto Y = Y_T;
@@ -109,7 +110,7 @@ inline float FastSqrt(float number)
     return number * (y * (1.5f - (x2 * y * y)));
 }
 
-template<class T, auto X>
+template<typename T, auto X>
 float Magnitude(const Vec<T, X>& vec)
 {
     T sum = 0;
@@ -117,7 +118,7 @@ float Magnitude(const Vec<T, X>& vec)
     return FastSqrt(sum);
 }
 
-template<class T, auto X>
+template<typename T, auto X>
 auto Normalize(const Vec<T, X>& vec)
 {
     Vec<T, X> out {};
@@ -130,7 +131,7 @@ auto Normalize(const Vec<T, X>& vec)
     return out;
 }
 
-template<class T, auto X>
+template<typename T, auto X>
 void NormalizeThis(Vec<T, X>& vec)
 {
     const auto mag = Magnitude(vec);
@@ -140,7 +141,7 @@ void NormalizeThis(Vec<T, X>& vec)
     for (u8 x = 0; x < X; ++x) { vec[0][x] /= mag; }
 }
 
-template<class T, auto X>
+template<typename T, auto X>
 float Dot(const Vec<T, X>& v1, const Vec<T, X>& v2)
 {
     float out = 0;
@@ -148,7 +149,7 @@ float Dot(const Vec<T, X>& v1, const Vec<T, X>& v2)
     return out;
 }
 
-template<class T>
+template<typename T>
 auto Cross(const Vec<T, 3>& v1, const Vec<T, 3>& v2)
 {
     return Vec<T, 3> {
@@ -159,7 +160,7 @@ auto Cross(const Vec<T, 3>& v1, const Vec<T, 3>& v2)
 }
 
 //will reset w to 1 !!!
-template<class T>
+template<typename T>
 auto Cross(const Vec<T, 4>& v1, const Vec<T, 4>& v2)
 {
     return Vec<T, 4> {
@@ -170,7 +171,7 @@ auto Cross(const Vec<T, 4>& v1, const Vec<T, 4>& v2)
     };
 }
 
-template<class T>
+template<typename T>
 auto Distance(const Vec<T, 3>& v2, const Vec<T, 3>& v1)
 {
     return Magnitude(v2 - v1);
@@ -178,7 +179,7 @@ auto Distance(const Vec<T, 3>& v2, const Vec<T, 3>& v1)
 
 //? MAT MULT
 
-template<class T, auto Y1, auto X1, auto X2>
+template<typename T, auto Y1, auto X1, auto X2>
 auto operator*(
     const Mat<T, X1, X2>& m1, 
     const Mat<T, Y1, X1>& m2)
@@ -194,7 +195,7 @@ auto operator*(
     return out;
 }
 
-template<class T1, class T2, auto Y, auto X>
+template<typename T1, class T2, auto Y, auto X>
 auto operator*(const Mat<T1, Y, X>& mat, const T2 scalar)
 {
     Mat<T1, Y, X> out { mat };
@@ -205,7 +206,7 @@ auto operator*(const Mat<T1, Y, X>& mat, const T2 scalar)
     return out;
 }
 
-template<class T1, class T2, auto Y, auto X>
+template<typename T1, class T2, auto Y, auto X>
 auto operator/(const Mat<T1, Y, X>& mat, const T2 scalar)
 {
     Mat<T1, Y, X> out { mat };
@@ -216,7 +217,7 @@ auto operator/(const Mat<T1, Y, X>& mat, const T2 scalar)
     return out;
 }
 
-template<class T1, auto Y, auto X>
+template<typename T1, auto Y, auto X>
 auto operator/(as_arithmetic auto const scalar, const Mat<T1, Y, X>& mat)
 {
     Mat<T1, Y, X> out { mat };
@@ -227,7 +228,7 @@ auto operator/(as_arithmetic auto const scalar, const Mat<T1, Y, X>& mat)
     return out;
 }
 
-template<class T, auto Y, auto X>
+template<typename T, auto Y, auto X>
 auto operator+(const Mat<T, Y, X>& m1, const Mat<T, Y, X>& m2) 
 {
     Mat<T, Y, X> out;
@@ -238,7 +239,7 @@ auto operator+(const Mat<T, Y, X>& m1, const Mat<T, Y, X>& m2)
     return out;
 }
 
-template<class T, auto Y, auto X>
+template<typename T, auto Y, auto X>
 auto operator-(const Mat<T, Y, X>& m1, const Mat<T, Y, X>& m2) 
 {
     Mat<T, Y, X> out;
@@ -249,7 +250,7 @@ auto operator-(const Mat<T, Y, X>& m1, const Mat<T, Y, X>& m2)
     return out;
 }
 
-template<class T, auto Y, auto X, class SCALAR>
+template<typename T, auto Y, auto X, class SCALAR>
 auto operator-(const Mat<T, Y, X>& m1, const SCALAR scalar) 
 {
     Mat<T, Y, X> out;
@@ -262,7 +263,7 @@ auto operator-(const Mat<T, Y, X>& m1, const SCALAR scalar)
 
 //? MAT INVERSE
 
-template<class T, auto Y, auto X>
+template<typename T, auto Y, auto X>
 inline auto Inverse(const Mat<T, Y, X>& m)
 {
     //from https://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
@@ -436,7 +437,7 @@ inline Mat4f LookAt(const Vec3f& eye, const Vec3f& at)
 
 //? PRINT
 
-template<class T, auto Y, auto X>
+template<typename T, auto Y, auto X>
 void PrintMatrix(const Mat<T, Y, X>& mat, const u8 precision = 4, const u8 width = 8)
 {
     const std::ios_base::fmtflags coutFlags (std::cout.flags());

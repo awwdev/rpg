@@ -61,13 +61,13 @@ bool ClampReturnBool(T& val, const MIN min, const MAX max)
 
 //? trigonometry
 
-template<class T>
+template<typename T>
 constexpr T Sin(const T val)
 {
     return T{2}*val / (T{1} + val*val);
 }
 
-template<class T>
+template<typename T>
 constexpr T Cos(const T val)
 {
     return (T{1} - val*val) / (T{1} + val*val);

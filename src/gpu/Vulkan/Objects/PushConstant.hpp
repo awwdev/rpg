@@ -5,7 +5,7 @@
 
 namespace rpg::gpu::vuk {
 
-template<class T>
+template<typename T>
 struct PushConstant
 {
     T data;

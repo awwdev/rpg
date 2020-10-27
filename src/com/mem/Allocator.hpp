@@ -98,7 +98,7 @@ inline void GlobalDeallocate()
     VirtualFree(priv::blockArrayPtrs[0], 0, MEM_RELEASE);
 }
 
-template<class T>
+template<typename T>
 struct BlockPtr
 {
     using DATA_T = T;
@@ -156,7 +156,7 @@ struct BlockPtr
 };
 
 //does not allow arrays, use a struct (convention: struct Arr)
-template<class T, class... CtorArgs, typename = std::enable_if_t<!std::is_array_v<T>>> 
+template<typename T, class... CtorArgs, typename = std::enable_if_t<!std::is_array_v<T>>> 
 auto ClaimBlock(CtorArgs&&... args)
 {
     struct FittingBlockSize { idx_t arrayIdx; idx_t blockId; }; //blockId == bitIdx
@@ -197,7 +197,7 @@ auto ClaimBlock(CtorArgs&&... args)
     return BlockPtr<T> { obj, freeBlockId };
 }
 
-template<class T, class... CtorArgs, typename = std::enable_if_t<!std::is_array_v<T>>> 
+template<typename T, class... CtorArgs, typename = std::enable_if_t<!std::is_array_v<T>>> 
 void ClaimBlock(BlockPtr<T>& refPtr, CtorArgs&&... args)
 {
     auto ptr = ClaimBlock<T>(std::forward<CtorArgs>(args)...);
