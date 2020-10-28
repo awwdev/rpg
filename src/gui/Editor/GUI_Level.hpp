@@ -62,7 +62,7 @@ struct GUI_Level
         checkbox.Update(renderData, wnd);
         colors.Update(renderData, wnd);
         //update "outside world" (update the model part of the mvc)
-        table.table[0][1] = app::EDIT_MODE_ENUM_TO_STR.Get(editor.editorMode);
+        table.table[0][1] = app::EDIT_MODE_ENUM_TO_STR.Get(editor.editorMode.editorEnum);
         renderData.general.enableTerrainWire = checkbox.isChecked;
         editor.brush.color.r = colors.rSlider.value;
         editor.brush.color.g = colors.gSlider.value;

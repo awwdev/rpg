@@ -39,25 +39,88 @@ struct Terrain
         return {};
     }
 
-    auto& GetVertexByIntersection(RayQuadrant_Intersection const& intersection) 
-    {
-        auto const& quadrantIdx = intersection.quadrantId;
-        auto const& vertexIdx = intersection.quadrantclosestVertexIdx;
-        auto& vertex = quadrants[quadrantIdx].mesh.vertices[vertexIdx];
-        return vertex;
-    }
-
-    template<auto N>
-    void Stich(idx_t const quadrantIdx, com::SimpleArray<idx_t, N> const& verticesToCheck)
-    {
-
-    }
-
     auto& GetVertex(idx_t const quadrantIdx, idx_t const vertexIdx)
     {
         auto& quadrant = quadrants[quadrantIdx];
         auto& meshVertices = quadrant.mesh.vertices;
         return meshVertices[vertexIdx];
+    }
+
+    void Stich(idx_t const quadrantIdx)
+    {
+        auto const x = quadrantIdx % QUADRANT_COUNT_ROW;
+        auto const z = quadrantIdx / QUADRANT_COUNT_ROW;
+
+        enum
+        { 
+            North  = 0b0001, 
+            East   = 0b0010, 
+            West   = 0b0100, 
+            South  = 0b1000, 
+        };
+        int neighbours = 0;
+
+        if (x < QUADRANT_COUNT_ROW - 1) neighbours |= East;
+        if (z < QUADRANT_COUNT_ROW - 1) neighbours |= South;
+        if (x > 0) neighbours |= West;
+        if (z > 0) neighbours |= North;
+
+        if (neighbours & North) 
+        {
+            idx_t const otherQuadrantIdx = quadrantIdx - QUADRANT_COUNT_ROW;
+            dbg::LogInfo("North");
+            dbg::LogInfo(otherQuadrantIdx);
+        }
+
+        if (neighbours & East)  
+        {
+            idx_t const otherQuadrantIdx = quadrantIdx + 1;
+            dbg::LogInfo("East");
+            dbg::LogInfo(otherQuadrantIdx);
+        }
+
+        if (neighbours & West) 
+        {
+            idx_t const otherQuadrantIdx = quadrantIdx - 1;
+            dbg::LogInfo("West");
+            dbg::LogInfo(otherQuadrantIdx);
+        } 
+
+        if (neighbours & South) 
+        {
+            idx_t const otherQuadrantIdx = quadrantIdx + QUADRANT_COUNT_ROW;
+            dbg::LogInfo("South");
+            dbg::LogInfo(otherQuadrantIdx);
+        }
+
+        if (neighbours == (North | East)) 
+        {
+            idx_t const otherQuadrantIdx = quadrantIdx - QUADRANT_COUNT_ROW + 1;
+            dbg::LogInfo("North | East");
+            dbg::LogInfo(otherQuadrantIdx);
+        }
+
+        if (neighbours == (North | West))
+        {
+            idx_t const otherQuadrantIdx = quadrantIdx - QUADRANT_COUNT_ROW - 1;
+            dbg::LogInfo("North | West");
+            dbg::LogInfo(otherQuadrantIdx);
+        } 
+
+        if (neighbours == (South | East)) 
+        {
+            idx_t const otherQuadrantIdx = quadrantIdx + QUADRANT_COUNT_ROW + 1;
+            dbg::LogInfo("South | East");
+            dbg::LogInfo(otherQuadrantIdx);
+        }
+        
+        if (neighbours == (South | West)) 
+        {
+            idx_t const otherQuadrantIdx = quadrantIdx + QUADRANT_COUNT_ROW - 1;
+            dbg::LogInfo("South | West");
+            dbg::LogInfo(otherQuadrantIdx);
+        }
+
     }
 
 };

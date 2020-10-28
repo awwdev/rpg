@@ -24,8 +24,8 @@ struct Editor
 {
     gpu::Camera     camera;
     EditorCommands  commands;
-    EditorMode      editorMode = EditorMode::TerrainVertexMove;
     EditorBrush     brush;
+    EditorMode      editorMode;
 
     void CreateGizmos(ecs::ECS& ecs)
     {
@@ -42,12 +42,18 @@ struct Editor
 
     void UpdateCamera(const double dt, gpu::RenderData& renderData)
     {
-        if (app::glo::inputMode == app::glo::InputMode::FlyMode)
-            camera.Update(dt);
         if (wnd::glo::resizeState == wnd::glo::ResizeState::End) 
             camera.UpdateProjection();
-        camera.UpdateRays();
-        camera.UpdateRenderData(renderData);
+
+        if (editorMode.active == false)
+        {
+            camera.UpdateRays(); //will update terrain intersection
+            if (app::glo::inputMode == app::glo::InputMode::FlyMode)
+            {
+                camera.UpdateView(dt);
+                camera.UpdateRenderData(renderData);
+            }
+        }
     }
 
     void UpdateSerialization(ecs::ECS& ecs, res::Resources& res)
@@ -75,31 +81,25 @@ struct Editor
 
     void UpdateEditing(const double dt, ecs::ECS& ecs, res::Resources& res)
     {
-        brush.SetVisible(ecs, app::glo::inputMode == app::glo::InputMode::EditMode);
-
-        //reset
-        if (wnd::MouseLeftButtonReleased())
-        {
-            brush.frequencyCounter = 0;
-        }
-
+        //! brush visibility needs to be overwritten
+        brush.SetVisible(ecs, app::glo::inputMode == app::glo::InputMode::EditMode); 
         if (app::glo::inputMode != app::glo::InputMode::EditMode) 
             return;
 
         //scroll editor editing mode
         if (wnd::HasEvent<wnd::EventType::F2, wnd::EventState::Pressed>())
-            editorMode = com::ScrollEnum(editorMode);
+            editorMode.editorEnum = com::ScrollEnum(editorMode.editorEnum);
 
         auto const terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay);
         if (!terrainIntersection.HasValue()) 
             return;
 
-        switch(editorMode)
+        switch(editorMode.editorEnum)
         {
-            case EditorMode::TerrainVertexPaint: TerrainVertexPaint (dt, ecs, res, *terrainIntersection); break;
-            case EditorMode::TerrainFacePaint:   TerrainFacePaint   (dt, ecs, res, *terrainIntersection); break;
-            case EditorMode::TerrainVertexMove:  TerrainVertexMove  (dt, ecs, res, *terrainIntersection); break;
-            case EditorMode::PrefabPlacement:    PrefabPlacement    (dt, ecs, res, *terrainIntersection); break;
+            case EditorEnum::TerrainVertexPaint: TerrainVertexPaint (dt, ecs, res, *terrainIntersection); break;
+            case EditorEnum::TerrainFacePaint:   TerrainFacePaint   (dt, ecs, res, *terrainIntersection); break;
+            case EditorEnum::TerrainVertexMove:  TerrainVertexMove  (dt, ecs, res, *terrainIntersection); break;
+            case EditorEnum::PrefabPlacement:    PrefabPlacement    (dt, ecs, res, *terrainIntersection); break;
             default: break;
         }
     }
@@ -151,6 +151,7 @@ struct Editor
         if (wnd::MouseLeftButtonPressed())
         {
             brush.SetVisible(ecs, false);
+            editorMode.active = true;
 
             cmd = {}; //!reset
             cmd.affected_quadrantId = terrainIntersection.quadrantId;
@@ -179,13 +180,14 @@ struct Editor
         //? destination state
         if (wnd::MouseLeftButtonReleased())
         {
+            editorMode.active = false;
             FOR_SIMPLE_ARRAY(brush.verticesInsideBrush.vertexIds, i)
             {
                 auto const& vertexId = brush.verticesInsideBrush.vertexIds[i];
                 auto& vertex = terrain.GetVertex(terrainIntersection.quadrantId, vertexId);
                 cmd.dst_positions.Append(vertex.pos);
             }
-            commands.ExecuteAndStoreCommand(cmd, res, ecs);
+            commands.ExecuteAndStoreCommand(cmd, res, ecs); //this will also call the mesh update
         }
 
         //? brush update (needs to be after destination state storage!)

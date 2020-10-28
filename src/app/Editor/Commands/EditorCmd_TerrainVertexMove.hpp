@@ -25,10 +25,11 @@ struct EditorCmd_TerrainVertexMove
             if constexpr(DIR == EditorCommandDirection::Backwards) vertex.pos = ini_positions[i];
             if constexpr(DIR == EditorCommandDirection::Forwards)  vertex.pos = dst_positions[i];    
         }
+        // mesh update
         auto& terrain = res.terrain.terrain;
         auto& quadrant = terrain.quadrants[affected_quadrantId];
         quadrant.mesh.Recalculate();
-        terrain.Stich(affected_quadrantId, affected_vertexIds);
+        terrain.Stich(affected_quadrantId);
     }
 };
 

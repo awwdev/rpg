@@ -6,7 +6,7 @@
 
 namespace rpg::app {
 
-enum class EditorMode : s32
+enum class EditorEnum : s32
 { 
     None,
     TerrainVertexMove,
@@ -15,13 +15,20 @@ enum class EditorMode : s32
     PrefabPlacement,
     ENUM_END
 };
-com::EnumMap<EditorMode::ENUM_END, com::String<50>> EDIT_MODE_ENUM_TO_STR 
+
+struct EditorMode
 {
-    { EditorMode::None,                 "None" },
-    { EditorMode::TerrainVertexMove,    "TerrainVertexMove" },
-    { EditorMode::TerrainVertexPaint,   "TerrainVertexPaint" },
-    { EditorMode::TerrainFacePaint,     "TerrainFacePaint" },
-    { EditorMode::PrefabPlacement,      "PrefabPlacement" },
+    EditorEnum editorEnum = EditorEnum::TerrainVertexMove;
+    bool active = false;
+};
+
+com::EnumMap<EditorEnum::ENUM_END, com::String<50>> EDIT_MODE_ENUM_TO_STR 
+{
+    { EditorEnum::None,                 "None" },
+    { EditorEnum::TerrainVertexMove,    "TerrainVertexMove" },
+    { EditorEnum::TerrainVertexPaint,   "TerrainVertexPaint" },
+    { EditorEnum::TerrainFacePaint,     "TerrainFacePaint" },
+    { EditorEnum::PrefabPlacement,      "PrefabPlacement" },
 };
 
 }//ns

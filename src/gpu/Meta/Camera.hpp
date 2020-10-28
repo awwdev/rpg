@@ -38,11 +38,11 @@ struct Camera
 
     Camera()
     {
-        Update(0);
+        UpdateView(0);
         UpdateProjection();
     }
 
-    void Update(double const dt)
+    void UpdateView(double const dt)
     {
         //rotation (in degrees)
         rotation.y += wnd::glo::mouse_dx * mouseSpeed;
