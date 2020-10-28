@@ -194,6 +194,11 @@
             ]
         },
     },
+    "files.associations": {
+        "algorithm": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp"
+    },
 
 
 }

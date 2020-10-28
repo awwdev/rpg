@@ -37,8 +37,8 @@ private:
     
     //? data
 
-    const bool hasValue;
-    const union 
+    bool hasValue;
+    union 
     {
         struct {} empty;
         T value;

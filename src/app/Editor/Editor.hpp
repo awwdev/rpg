@@ -91,10 +91,14 @@ struct Editor
         if (wnd::HasEvent<wnd::EventType::F2, wnd::EventState::Pressed>())
             editorMode.editorEnum = com::ScrollEnum(editorMode.editorEnum);
 
-        auto const terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay);
-        if (!terrainIntersection.HasValue()) 
-            return;//! BAD SINCE WE UPDATE TERRAIN WHILE WE MOVE CAN CAUSE NOT INTERSECTION + RETURN    
-
+        static auto terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay);
+        if (editorMode.active == false)
+        {
+            terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay);
+            if (!terrainIntersection.HasValue()) 
+                return;
+        }
+            
         switch(editorMode.editorEnum)
         {
             case EditorEnum::TerrainVertexPaint: TerrainVertexPaint (dt, ecs, res, *terrainIntersection); break;

@@ -228,6 +228,15 @@ auto operator/(as_arithmetic auto const scalar, const Mat<T1, Y, X>& mat)
     return out;
 }
 
+template<typename T1, auto Y, auto X>
+auto operator/=(Mat<T1, Y, X>& mat, as_arithmetic auto const scalar)
+{
+    for (u8 y = 0; y < Y; ++y) {
+    for (u8 x = 0; x < X; ++x) {
+        mat[y][x] /=  scalar;
+    }}
+}
+
 template<typename T, auto Y, auto X>
 auto operator+(const Mat<T, Y, X>& m1, const Mat<T, Y, X>& m2) 
 {
@@ -237,6 +246,15 @@ auto operator+(const Mat<T, Y, X>& m1, const Mat<T, Y, X>& m2)
         out[y][x] = m1[y][x] + m2[y][x];
     }}
     return out;
+}
+
+template<typename T, auto Y, auto X>
+void operator+=(Mat<T, Y, X>& m1, const Mat<T, Y, X>& m2) 
+{
+    for (u8 y = 0; y < Y; ++y) {
+    for (u8 x = 0; x < X; ++x) {
+        m1[y][x] += m2[y][x];
+    }}
 }
 
 template<typename T, auto Y, auto X>
