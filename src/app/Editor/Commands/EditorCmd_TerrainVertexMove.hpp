@@ -3,6 +3,7 @@
 #pragma once
 #include "res/Resources.hpp"
 #include "res/Resources_Terrain.hpp"
+#include "res/Terrain/TerrainStiching.hpp"
 #include "wnd/WindowEvents.hpp"
 #include "app/Editor/EditorCommandDirection.hpp"
 
@@ -25,11 +26,7 @@ struct EditorCmd_TerrainVertexMove
             if constexpr(DIR == EditorCommandDirection::Backwards) vertex.pos = ini_positions[i];
             if constexpr(DIR == EditorCommandDirection::Forwards)  vertex.pos = dst_positions[i];    
         }
-        // mesh update
-        auto& terrain = res.terrain.terrain;
-        auto& quadrant = terrain.quadrants[affected_quadrantId];
-        quadrant.mesh.Recalculate();
-        terrain.Stich(affected_quadrantId);
+        res::StichTerrain(res.terrain.terrain, affected_quadrantId);
     }
 };
 

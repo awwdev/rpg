@@ -81,8 +81,9 @@ struct Editor
 
     void UpdateEditing(const double dt, ecs::ECS& ecs, res::Resources& res)
     {
-        //! brush visibility needs to be overwritten
+        //brush visibility needs to be overwritten
         brush.SetVisible(ecs, app::glo::inputMode == app::glo::InputMode::EditMode); 
+
         if (app::glo::inputMode != app::glo::InputMode::EditMode) 
             return;
 
@@ -92,7 +93,7 @@ struct Editor
 
         auto const terrainIntersection = res.terrain.terrain.RayIntersection(camera.mouseRay);
         if (!terrainIntersection.HasValue()) 
-            return;
+            return;//! BAD SINCE WE UPDATE TERRAIN WHILE WE MOVE CAN CAUSE NOT INTERSECTION + RETURN    
 
         switch(editorMode.editorEnum)
         {

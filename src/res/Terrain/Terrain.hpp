@@ -8,14 +8,19 @@
 
 namespace rpg::res {
 
+enum 
+{ 
+    TerrainNorth = 0b0001, 
+    TerrainEast  = 0b0010, 
+    TerrainWest  = 0b0100, 
+    TerrainSouth = 0b1000,
+};
+
 template<auto QUADRANT_COUNT_T, auto QUAD_COUNT, auto QUAD_SIZE>
 struct Terrain
 {
-    //? meta
     static constexpr auto QUADRANT_COUNT_ROW = QUADRANT_COUNT_T;
     using QUADRANT_T = Quadrant<QUAD_COUNT, QUAD_SIZE>;
-
-    //? data
     QUADRANT_T quadrants [QUADRANT_COUNT_ROW * QUADRANT_COUNT_ROW];
 
     void Create()
@@ -24,7 +29,6 @@ struct Terrain
             auto const z = i / QUADRANT_COUNT_ROW;
             auto const x = i % QUADRANT_COUNT_ROW;
             quadrants[i].Create(z, x, i);
-            //{ z / (float)QUADRANT_COUNT, x / (float)QUADRANT_COUNT, 1, 1} );
         }
     }
 
@@ -46,81 +50,33 @@ struct Terrain
         return meshVertices[vertexIdx];
     }
 
-    void Stich(idx_t const quadrantIdx)
+    auto GetQuadrantNeighbourBitset(idx_t const quadrantId) const 
     {
-        auto const x = quadrantIdx % QUADRANT_COUNT_ROW;
-        auto const z = quadrantIdx / QUADRANT_COUNT_ROW;
+        int neighbourBitset = 0;
+        auto const x = quadrantId % QUADRANT_COUNT_ROW;
+        auto const z = quadrantId / QUADRANT_COUNT_ROW;
+        if (x < QUADRANT_COUNT_ROW - 1) neighbourBitset |= TerrainEast;
+        if (z < QUADRANT_COUNT_ROW - 1) neighbourBitset |= TerrainSouth; 
+        if (x > 0) neighbourBitset |= TerrainWest;
+        if (z > 0) neighbourBitset |= TerrainNorth;
+        return neighbourBitset;
+    }
 
-        enum
-        { 
-            North  = 0b0001, 
-            East   = 0b0010, 
-            West   = 0b0100, 
-            South  = 0b1000, 
-        };
-        int neighbours = 0;
-
-        if (x < QUADRANT_COUNT_ROW - 1) neighbours |= East;
-        if (z < QUADRANT_COUNT_ROW - 1) neighbours |= South;
-        if (x > 0) neighbours |= West;
-        if (z > 0) neighbours |= North;
-
-        if (neighbours & North) 
+    auto& GetQuadrantNeighbour(idx_t const quadrantId, int dir)
+    {
+        switch(dir)
         {
-            idx_t const otherQuadrantIdx = quadrantIdx - QUADRANT_COUNT_ROW;
-            dbg::LogInfo("North");
-            dbg::LogInfo(otherQuadrantIdx);
+            case TerrainNorth: return quadrants[quadrantId - QUADRANT_COUNT_ROW];
+            case TerrainSouth: return quadrants[quadrantId + QUADRANT_COUNT_ROW];
+            case TerrainWest:  return quadrants[quadrantId - 1];
+            case TerrainEast:  return quadrants[quadrantId + 1];
+            case (TerrainNorth | TerrainEast): return quadrants[quadrantId - QUADRANT_COUNT_ROW + 1];
+            case (TerrainNorth | TerrainWest): return quadrants[quadrantId - QUADRANT_COUNT_ROW - 1];
+            case (TerrainSouth | TerrainEast): return quadrants[quadrantId + QUADRANT_COUNT_ROW + 1];
+            case (TerrainSouth | TerrainWest): return quadrants[quadrantId + QUADRANT_COUNT_ROW - 1];
+
+            default: dbg::Assert(false, "cannot return neighbout"); return quadrants[0];
         }
-
-        if (neighbours & East)  
-        {
-            idx_t const otherQuadrantIdx = quadrantIdx + 1;
-            dbg::LogInfo("East");
-            dbg::LogInfo(otherQuadrantIdx);
-        }
-
-        if (neighbours & West) 
-        {
-            idx_t const otherQuadrantIdx = quadrantIdx - 1;
-            dbg::LogInfo("West");
-            dbg::LogInfo(otherQuadrantIdx);
-        } 
-
-        if (neighbours & South) 
-        {
-            idx_t const otherQuadrantIdx = quadrantIdx + QUADRANT_COUNT_ROW;
-            dbg::LogInfo("South");
-            dbg::LogInfo(otherQuadrantIdx);
-        }
-
-        if (neighbours == (North | East)) 
-        {
-            idx_t const otherQuadrantIdx = quadrantIdx - QUADRANT_COUNT_ROW + 1;
-            dbg::LogInfo("North | East");
-            dbg::LogInfo(otherQuadrantIdx);
-        }
-
-        if (neighbours == (North | West))
-        {
-            idx_t const otherQuadrantIdx = quadrantIdx - QUADRANT_COUNT_ROW - 1;
-            dbg::LogInfo("North | West");
-            dbg::LogInfo(otherQuadrantIdx);
-        } 
-
-        if (neighbours == (South | East)) 
-        {
-            idx_t const otherQuadrantIdx = quadrantIdx + QUADRANT_COUNT_ROW + 1;
-            dbg::LogInfo("South | East");
-            dbg::LogInfo(otherQuadrantIdx);
-        }
-        
-        if (neighbours == (South | West)) 
-        {
-            idx_t const otherQuadrantIdx = quadrantIdx + QUADRANT_COUNT_ROW - 1;
-            dbg::LogInfo("South | West");
-            dbg::LogInfo(otherQuadrantIdx);
-        }
-
     }
 
 };
