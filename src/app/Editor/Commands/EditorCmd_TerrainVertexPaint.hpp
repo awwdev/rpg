@@ -1,61 +1,31 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ecs/ECS.hpp"
 #include "res/Resources.hpp"
-#include "app/Editor/EditorBrush.hpp"
+#include "res/Terrain/TerrainStiching.hpp"
 #include "app/Editor/EditorCommandDirection.hpp"
 
 namespace rpg::app {
 
 struct EditorCmd_TerrainVertexPaint
 {
-    
+    idx_t affected_quadrantId;
+    com::SimpleArray<idx_t, 100> affected_vertexIds; 
+    com::SimpleArray<com::Vec4f, 100> dst_colors;
+    com::SimpleArray<com::Vec4f, 100> ini_colors;
 
     template<EditorCommandDirection DIR>
     void Execute(res::Resources& res, ecs::ECS& ecs)
     {
-        
-    }
-
-    /*
-    void Execute(res::Resources&, ecs::ECS&)
-    {
-        FOR_SIMPLE_ARRAY(brushVertices, i)
+        FOR_SIMPLE_ARRAY(affected_vertexIds, i)
         {
-            auto const& vertexWeight = brushVertices[i].weight;
-            auto& vertex = *brushVertices[i].vertexPtr;
-            verticesReversed.Append(vertex);
-            auto const colorBlended = com::InterpolateColors(vertex.col, brushColor, vertexWeight);
-            vertex.col = colorBlended;
+            auto const& vertexId = affected_vertexIds[i];
+            auto& vertex = res.terrain.terrain.GetVertex(affected_quadrantId, vertexId);
+            if constexpr(DIR == EditorCommandDirection::Backwards) vertex.col = ini_colors[i];
+            if constexpr(DIR == EditorCommandDirection::Forwards)  vertex.col = dst_colors[i];    
         }
+        res::StichTerrain(res.terrain.terrain, affected_quadrantId);
     }
-    */
-    
-    /*
-    void ExecuteReverse(res::Resources&, ecs::ECS&)
-    {
-        FOR_SIMPLE_ARRAY(brushVertices, i)
-        {
-            auto const& vertexWeight = brushVertices[i].weight;
-            auto& vertex = *brushVertices[i].vertexPtr;
-            auto const& prevVertex = verticesReversed[i];
-            vertex.col = prevVertex.col;
-        }
-    }
-    */
-
-   /*
-   //TODO: probably a way to just store vertex pointers and initial and end state )also not whole vertex needed)
-    EditorBrush::BrushVertices brushVertices;
-    com::Vec4f brushColor;
-    com::SimpleArray<res::TerrainVertex, 100> verticesReversed; 
-
-    EditorCmd_TerrainVertexPaint(EditorBrush::BrushVertices const& pBrushVertices, com::Vec4f pBrushColor)
-        : brushVertices { pBrushVertices }
-        , brushColor    { pBrushColor }
-    {}
-    */
 
 };
 

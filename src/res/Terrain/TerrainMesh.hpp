@@ -10,7 +10,7 @@ namespace rpg::res {
 
 using TerrainVertex = gpu::RenderData_General::Vertex;
 
-template<auto QUAD_COUNT_T>
+template<idx_t QUAD_COUNT_T>
 struct TerrainMeshIndexed
 {
     //? meta
@@ -23,7 +23,7 @@ struct TerrainMeshIndexed
     //? data
     TerrainVertex vertices [VERTEX_COUNT_TOTAL];
     uint32_t   absoluteIndices [INDEX_COUNT];
-    uint32_t   indicesOffset;
+    idx_t      indicesOffset;
     com::Vec3f triangleNormals [TRIANGLE_COUNT];
     com::Vec4f triangleColors  [TRIANGLE_COUNT] {};
     com::AABB  aabb;

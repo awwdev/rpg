@@ -12,13 +12,12 @@ namespace rpg::res {
 struct RayQuadrant_Intersection
 {
     com::Vec3f position;
-    uint32_t quadrantId;
-    //relative data
-    uint32_t quadrantclosestVertexIdx;
-    uint32_t quadrantTriangleIdx;
+    idx_t quadrantId;
+    idx_t quadrantclosestVertexId;
+    idx_t quadrantTriangleId;
 };
 
-template<auto QUAD_COUNT, auto QUAD_SIZE>
+template<idx_t QUAD_COUNT, idx_t QUAD_SIZE>
 struct Quadrant
 {   
     //? meta
@@ -26,15 +25,15 @@ struct Quadrant
 
     //? data
     TerrainMeshIndexed<QUAD_COUNT> mesh;
-    uint32_t quadrantIdx; //set by create (watch serialization)
+    idx_t quadrantId; //set by create (watch serialization)
 
     void Create(float const quadrantIdx_z, float const quadrantIdx_x, idx_t const pQuadrantIdx, 
         com::Vec4f const& color = { 0.1f, 0.7f, 0.1f, 1 })
     {
-        quadrantIdx = pQuadrantIdx;
+        quadrantId = pQuadrantIdx;
         float const z = quadrantIdx_z * QUADRANT_SIZE;
         float const x = quadrantIdx_x * QUADRANT_SIZE;
-        idx_t const i = quadrantIdx * (QUAD_COUNT+1)*(QUAD_COUNT+1); //indices count
+        idx_t const i = quadrantId * (QUAD_COUNT+1)*(QUAD_COUNT+1); //indices count
         mesh.Create(QUAD_SIZE, QUAD_SIZE, z, x, i, color);
     }
 
@@ -44,7 +43,7 @@ struct Quadrant
         auto const aabbIntersection = RayAABB_Intersection(ray, mesh.aabb);
         if (!aabbIntersection) return {};
 
-        for(uint32_t i = 0; i < mesh.INDEX_COUNT; i += 3) 
+        for(idx_t i = 0; i < mesh.INDEX_COUNT; i += 3) 
         {
             //using indices to get triangles
             auto const& v0 = mesh.vertices[mesh.GetRelativeVertexIndex(i+0)].pos;
@@ -54,10 +53,10 @@ struct Quadrant
             if (auto const triangleIntersection = RayTriangle_Intersection(ray, v0, v1, v2))
             {
                 return { 
-                    triangleIntersection.Point(ray), 
-                    quadrantIdx, 
-                    mesh.absoluteIndices[i + triangleIntersection.GetClosestTriangleCorner()] - mesh.indicesOffset,
-                    i / 3,
+                    .position = triangleIntersection.Point(ray), 
+                    .quadrantId = quadrantId, 
+                    .quadrantclosestVertexId = (idx_t) mesh.absoluteIndices[i + triangleIntersection.GetClosestTriangleCorner()] - mesh.indicesOffset,
+                    .quadrantTriangleId = i / 3,
                 };
             }            
         }

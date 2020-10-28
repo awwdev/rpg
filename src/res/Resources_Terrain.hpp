@@ -7,10 +7,10 @@ namespace rpg::res {
 
 struct Resources_Terrain
 {
-    static constexpr auto QUADRANT_COUNT_ROW = 2;
-    static constexpr auto QUADRANT_COUNT_TOTAL = QUADRANT_COUNT_ROW * QUADRANT_COUNT_ROW;
-    static constexpr auto QUAD_COUNT = 10;
-    static constexpr auto QUAD_SIZE  = 3;
+    static constexpr idx_t QUADRANT_COUNT_ROW = 2;
+    static constexpr idx_t QUADRANT_COUNT_TOTAL = QUADRANT_COUNT_ROW * QUADRANT_COUNT_ROW;
+    static constexpr idx_t QUAD_COUNT = 10;
+    static constexpr idx_t QUAD_SIZE  = 3;
 
     using TERRAIN_T = res::Terrain<QUADRANT_COUNT_ROW, QUAD_COUNT, QUAD_SIZE>;
     TERRAIN_T terrain;

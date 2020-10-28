@@ -235,7 +235,7 @@ struct RayTriangle_Intersection
     auto GetW() const { return 1.f - u - v; }
     auto Point(Ray const& ray) const { return ray.origin + ray.direction * t; }
 
-    enum VertexIndex : uint32_t { v0, v1, v2 };
+    enum VertexIndex : idx_t { v0, v1, v2 };
     auto GetClosestTriangleCorner() const 
     {
         auto const w = GetW();

@@ -2,9 +2,7 @@
 
 #pragma once
 #include "res/Resources.hpp"
-#include "res/Resources_Terrain.hpp"
 #include "res/Terrain/TerrainStiching.hpp"
-#include "wnd/WindowEvents.hpp"
 #include "app/Editor/EditorCommandDirection.hpp"
 
 namespace rpg::app {

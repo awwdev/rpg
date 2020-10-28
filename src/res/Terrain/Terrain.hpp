@@ -16,7 +16,7 @@ enum
     QuadrantSouth = 0b1000,
 };
 
-template<auto QUADRANT_COUNT_T, auto QUAD_COUNT, auto QUAD_SIZE>
+template<idx_t QUADRANT_COUNT_T, idx_t QUAD_COUNT, idx_t QUAD_SIZE>
 struct Terrain
 {
     static constexpr auto QUADRANT_COUNT_ROW = QUADRANT_COUNT_T;
@@ -43,11 +43,14 @@ struct Terrain
         return {};
     }
 
-    auto& GetVertex(idx_t const quadrantIdx, idx_t const vertexIdx)
+    auto& GetVertex(idx_t const quadrantId, idx_t const vertexId)
     {
-        auto& quadrant = quadrants[quadrantIdx];
-        auto& meshVertices = quadrant.mesh.vertices;
-        return meshVertices[vertexIdx];
+        return quadrants[quadrantId].mesh.vertices[vertexId];
+    }
+
+    auto& GetTriangleColor(idx_t const quadrantId, idx_t const triangleId)
+    {
+        return quadrants[quadrantId].mesh.triangleColors[triangleId];
     }
 
     auto GetQuadrantNeighbourBitset(idx_t const quadrantId) const 

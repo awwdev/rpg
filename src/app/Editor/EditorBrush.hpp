@@ -39,18 +39,20 @@ struct EditorBrush
         return false;
     }
 
-    struct VerticesInsideBrush
+    struct InsideBrush
     {
         com::SimpleArray<idx_t, 100> vertexIds; 
+        com::SimpleArray<idx_t, 100> triangleIds; 
         com::SimpleArray<float, 100> vertexWeights; //aligned 
 
         void Clear()
         {
             vertexIds.Clear();
+            triangleIds.Clear();
             vertexWeights.Clear();
         }
     } 
-    verticesInsideBrush;
+    insideBrush;
 
     //? methods
 
@@ -77,9 +79,9 @@ struct EditorBrush
         gizmoMainComponent.translation = position;
     }
 
-    void UpdateVerticesInsideBrush(res::Resources_Terrain& resTerrain, res::RayQuadrant_Intersection const& intersection)
+    void UpdateInsideBrush(res::Resources_Terrain& resTerrain, res::RayQuadrant_Intersection const& intersection)
     {
-        verticesInsideBrush.Clear();
+        insideBrush.Clear();
 
         //update vertex data inside brush
         auto& terrain  = resTerrain.terrain;
@@ -93,8 +95,8 @@ struct EditorBrush
             if (dist < scale)
             {
                 const auto weight = 1 - dist / scale; //try other easing 
-                verticesInsideBrush.vertexIds.Append(vertexId);
-                verticesInsideBrush.vertexWeights.Append(weight);
+                insideBrush.vertexIds.Append(vertexId);
+                insideBrush.vertexWeights.Append(weight);
             }
         }
     }
