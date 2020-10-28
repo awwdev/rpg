@@ -7,8 +7,7 @@ namespace rpg::res {
 
 inline void StichTerrain(auto& terrain, idx_t const quadrantId)
 {
-    auto& mesh = terrain.quadrants[quadrantId].mesh;
-    auto& vertices = mesh.vertices;
+    auto& thisMesh = terrain.quadrants[quadrantId].mesh;
     auto const neighbours = terrain.GetQuadrantNeighbourBitset(quadrantId);
 
     auto const stichFn = [&](TerrainVertex& v1, TerrainVertex& v2)
@@ -20,78 +19,102 @@ inline void StichTerrain(auto& terrain, idx_t const quadrantId)
     };
 
     //? stich per neighbour
+    auto constexpr VERTEX_COUNT_SIDE  = thisMesh.VERTEX_COUNT_ROW;
+    auto constexpr VERTEX_COUNT_TOTAL = thisMesh.VERTEX_COUNT_TOTAL;
 
-    if (neighbours & TerrainNorth) 
+    //? sides
+
+    if (neighbours & QuadrantNorth) 
     {
-        auto& neighbourQuadrant = terrain.GetQuadrantNeighbour(quadrantId, TerrainNorth);
-        auto& neighbourVertices = neighbourQuadrant.mesh.vertices;
-        for(idx_t i = 0; i < mesh.VERTEX_COUNT_ROW; ++i)
+        auto& nighMesh = terrain.GetQuadrantNeighbour(quadrantId, QuadrantNorth).mesh;
+        for(idx_t i = 0; i < VERTEX_COUNT_SIDE; ++i)
         {
-            auto& vertex = vertices[i];
-            auto& neighbourVertex = neighbourVertices[mesh.VERTEX_COUNT_TOTAL - mesh.VERTEX_COUNT_ROW + i];
-            stichFn(vertex, neighbourVertex);
+            auto& thisVertex = thisMesh.vertices[i];
+            auto& nighVertex = nighMesh.vertices[VERTEX_COUNT_TOTAL - VERTEX_COUNT_SIDE + i];
+            stichFn(thisVertex, nighVertex);
         }
-        neighbourQuadrant.mesh.Recalculate();
+        nighMesh.Recalculate();
     }
 
-    if (neighbours & TerrainSouth) 
+    if (neighbours & QuadrantSouth) 
     {
-        auto& neighbourQuadrant = terrain.GetQuadrantNeighbour(quadrantId, TerrainSouth);
-        auto& neighbourVertices = neighbourQuadrant.mesh.vertices;
-        for(idx_t i = 0; i < mesh.VERTEX_COUNT_ROW; ++i)
+        auto& nighMesh = terrain.GetQuadrantNeighbour(quadrantId, QuadrantSouth).mesh;
+        for(idx_t i = 0; i < VERTEX_COUNT_SIDE; ++i)
         {
-            auto& vertex = vertices[mesh.VERTEX_COUNT_TOTAL - mesh.VERTEX_COUNT_ROW + i];
-            auto& neighbourVertex = neighbourVertices[i];
-            stichFn(vertex, neighbourVertex);
+            auto& thisVertex = thisMesh.vertices[VERTEX_COUNT_TOTAL - VERTEX_COUNT_SIDE + i];
+            auto& nighVertex = nighMesh.vertices[i];
+            stichFn(thisVertex, nighVertex);
         }
-        neighbourQuadrant.mesh.Recalculate();
+        nighMesh.Recalculate();
     }
 
-    /*
-    if (neighbours & East)  
-    {
-        auto& neighbourVertices = GetQuadrantNeighbour(quadrantId, East).mesh.vertices;
-
-        dbg::LogInfo("East");
-    }
-
-    if (neighbours & West) 
-    {
-        auto& neighbourVertices = GetQuadrantNeighbour(quadrantId, West).mesh.vertices;
-
-        dbg::LogInfo("West");
-    } 
-
-    if (neighbours == (North | East)) 
-    {
-        auto& neighbourVertices = GetQuadrantNeighbour(quadrantId, North | East).mesh.vertices;
-
-        dbg::LogInfo("North | East");
-    }
-
-    if (neighbours == (North | West))
-    {
-        auto& neighbourVertices = GetQuadrantNeighbour(quadrantId, North | West).mesh.vertices;
-
-        dbg::LogInfo("North | West");
-    } 
-
-    if (neighbours == (South | East)) 
-    {
-        auto& neighbourVertices = GetQuadrantNeighbour(quadrantId, South | East).mesh.vertices;
-
-        dbg::LogInfo("South | East");
-    }
     
-    if (neighbours == (South | West)) 
+    if (neighbours & QuadrantEast)  
     {
-        auto& neighbourVertices = GetQuadrantNeighbour(quadrantId, South | West).mesh.vertices;
-
-        dbg::LogInfo("South | West");
+        auto& nighMesh = terrain.GetQuadrantNeighbour(quadrantId, QuadrantEast).mesh;
+        for(idx_t i = 0; i < VERTEX_COUNT_SIDE; ++i)
+        {
+            auto& thisVertex = thisMesh.vertices[i * VERTEX_COUNT_SIDE + VERTEX_COUNT_SIDE - 1];
+            auto& nighVertex = nighMesh.vertices[i * VERTEX_COUNT_SIDE];
+            stichFn(thisVertex, nighVertex);
+        }
+        nighMesh.Recalculate();
     }
-    */
 
-    mesh.Recalculate();
+    if (neighbours & QuadrantWest) 
+    {
+        auto& nighMesh = terrain.GetQuadrantNeighbour(quadrantId, QuadrantWest).mesh;
+        for(idx_t i = 0; i < VERTEX_COUNT_SIDE; ++i)
+        {
+            auto& thisVertex = thisMesh.vertices[i * VERTEX_COUNT_SIDE];  
+            auto& nighVertex = nighMesh.vertices[i * VERTEX_COUNT_SIDE + VERTEX_COUNT_SIDE - 1];
+            stichFn(thisVertex, nighVertex);
+        }
+        nighMesh.Recalculate();
+    } 
+
+    //? corners
+
+    //TODO: get vertices of a quadrant corner
+    //TODO: get vertices of a quadrant sides
+
+    if (neighbours == (QuadrantNorth | QuadrantEast)) 
+    {
+        auto& nighMesh = terrain.GetQuadrantNeighbour(quadrantId, QuadrantNorth | QuadrantEast).mesh;
+        auto& thisVertex = thisMesh.vertices[VERTEX_COUNT_SIDE - 1];  
+        auto& nighVertex = nighMesh.vertices[VERTEX_COUNT_TOTAL - VERTEX_COUNT_SIDE];
+        stichFn(thisVertex, nighVertex);
+        nighMesh.Recalculate();
+    }
+
+    if (neighbours == (QuadrantSouth | QuadrantWest)) 
+    {
+        auto& nighMesh = terrain.GetQuadrantNeighbour(quadrantId, QuadrantSouth | QuadrantWest).mesh;
+        auto& thisVertex = thisMesh.vertices[VERTEX_COUNT_TOTAL - VERTEX_COUNT_SIDE];  
+        auto& nighVertex = nighMesh.vertices[VERTEX_COUNT_SIDE - 1];
+        stichFn(thisVertex, nighVertex);
+        nighMesh.Recalculate();
+    }
+
+    if (neighbours == (QuadrantNorth | QuadrantWest)) 
+    {
+        auto& nighMesh = terrain.GetQuadrantNeighbour(quadrantId, QuadrantNorth | QuadrantWest).mesh;
+        auto& thisVertex = thisMesh.vertices[0];  
+        auto& nighVertex = nighMesh.vertices[VERTEX_COUNT_TOTAL - 1];
+        stichFn(thisVertex, nighVertex);
+        nighMesh.Recalculate();
+    }
+
+    if (neighbours == (QuadrantSouth | QuadrantEast)) 
+    {
+        auto& nighMesh = terrain.GetQuadrantNeighbour(quadrantId, QuadrantSouth | QuadrantEast).mesh;
+        auto& thisVertex = thisMesh.vertices[VERTEX_COUNT_TOTAL - 1];  
+        auto& nighVertex = nighMesh.vertices[0];
+        stichFn(thisVertex, nighVertex);
+        nighMesh.Recalculate();
+    }
+
+    thisMesh.Recalculate();
 }
 
 }//ns

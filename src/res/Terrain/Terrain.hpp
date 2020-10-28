@@ -10,10 +10,10 @@ namespace rpg::res {
 
 enum 
 { 
-    TerrainNorth = 0b0001, 
-    TerrainEast  = 0b0010, 
-    TerrainWest  = 0b0100, 
-    TerrainSouth = 0b1000,
+    QuadrantNorth = 0b0001, 
+    QuadrantEast  = 0b0010, 
+    QuadrantWest  = 0b0100, 
+    QuadrantSouth = 0b1000,
 };
 
 template<auto QUADRANT_COUNT_T, auto QUAD_COUNT, auto QUAD_SIZE>
@@ -55,10 +55,10 @@ struct Terrain
         int neighbourBitset = 0;
         auto const x = quadrantId % QUADRANT_COUNT_ROW;
         auto const z = quadrantId / QUADRANT_COUNT_ROW;
-        if (x < QUADRANT_COUNT_ROW - 1) neighbourBitset |= TerrainEast;
-        if (z < QUADRANT_COUNT_ROW - 1) neighbourBitset |= TerrainSouth; 
-        if (x > 0) neighbourBitset |= TerrainWest;
-        if (z > 0) neighbourBitset |= TerrainNorth;
+        if (x < QUADRANT_COUNT_ROW - 1) neighbourBitset |= QuadrantEast;
+        if (z < QUADRANT_COUNT_ROW - 1) neighbourBitset |= QuadrantSouth; 
+        if (x > 0) neighbourBitset |= QuadrantWest;
+        if (z > 0) neighbourBitset |= QuadrantNorth;
         return neighbourBitset;
     }
 
@@ -66,14 +66,14 @@ struct Terrain
     {
         switch(dir)
         {
-            case TerrainNorth: return quadrants[quadrantId - QUADRANT_COUNT_ROW];
-            case TerrainSouth: return quadrants[quadrantId + QUADRANT_COUNT_ROW];
-            case TerrainWest:  return quadrants[quadrantId - 1];
-            case TerrainEast:  return quadrants[quadrantId + 1];
-            case (TerrainNorth | TerrainEast): return quadrants[quadrantId - QUADRANT_COUNT_ROW + 1];
-            case (TerrainNorth | TerrainWest): return quadrants[quadrantId - QUADRANT_COUNT_ROW - 1];
-            case (TerrainSouth | TerrainEast): return quadrants[quadrantId + QUADRANT_COUNT_ROW + 1];
-            case (TerrainSouth | TerrainWest): return quadrants[quadrantId + QUADRANT_COUNT_ROW - 1];
+            case QuadrantNorth: return quadrants[quadrantId - QUADRANT_COUNT_ROW];
+            case QuadrantSouth: return quadrants[quadrantId + QUADRANT_COUNT_ROW];
+            case QuadrantWest:  return quadrants[quadrantId - 1];
+            case QuadrantEast:  return quadrants[quadrantId + 1];
+            case (QuadrantNorth | QuadrantEast): return quadrants[quadrantId - QUADRANT_COUNT_ROW + 1];
+            case (QuadrantNorth | QuadrantWest): return quadrants[quadrantId - QUADRANT_COUNT_ROW - 1];
+            case (QuadrantSouth | QuadrantEast): return quadrants[quadrantId + QUADRANT_COUNT_ROW + 1];
+            case (QuadrantSouth | QuadrantWest): return quadrants[quadrantId + QUADRANT_COUNT_ROW - 1];
 
             default: dbg::Assert(false, "cannot return neighbout"); return quadrants[0];
         }

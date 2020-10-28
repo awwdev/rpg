@@ -1,5 +1,5 @@
 
-- stiching (+color stiching)
+- recalculate props height on terrain when terrain recalculated??
 
 - test against all quadrant and choose closest
 - command refactor
