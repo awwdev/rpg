@@ -11,32 +11,24 @@ namespace rpg::app {
 struct EditorCmd_PrefabPlacement
 {
     res::PrefabEnum prefabEnum;
-    com::Vec3f placementPoint;
+    com::Vec3f position;
     ecs::ID prefabID;
-
-    EditorCmd_PrefabPlacement(res::PrefabEnum const pPrefabEnum, com::Vec3f const& pPoint)
-        : prefabEnum { pPrefabEnum }
-        , placementPoint { pPoint }
-    {}
-
-    /*
-    void Execute(res::Resources&, ecs::ECS& ecs)
-    {   
-        prefabID = ecs.AddEntity(prefabEnum);
-        auto& mainComponent = ecs.arrays.mainComponents.Get(prefabID);
-        mainComponent.translation = placementPoint;
-    }
-    
-    void ExecuteReverse(res::Resources&, ecs::ECS& ecs)
-    {
-        ecs.RemoveEntity(prefabID);
-    }
-    */
 
     template<EditorCommandDirection DIR>
     void Execute(res::Resources& res, ecs::ECS& ecs)
     {
+        if constexpr(DIR == EditorCommandDirection::Backwards)
+        {
+            ecs.RemoveEntity(prefabID);
+        }
+        if constexpr(DIR == EditorCommandDirection::Forwards)
+        {
+            prefabID = ecs.AddEntity(prefabEnum);
+            auto& mainComponent = ecs.arrays.mainComponents.Get(prefabID);
+            mainComponent.translation = position;
+        }
     }
+
 };
 
 } //ns

@@ -94,7 +94,7 @@ struct Editor
             case EditorEnum::TerrainVertexPaint: TerrainVertexPaint (dt, ecs, res); break;
             case EditorEnum::TerrainFacePaint:   TerrainFacePaint   (dt, ecs, res); break;
             case EditorEnum::TerrainVertexMove:  TerrainVertexMove  (dt, ecs, res); break;
-            //case EditorEnum::PrefabPlacement:    PrefabPlacement    (dt, ecs, res, camera.mouseRay); break;
+            case EditorEnum::PrefabPlacement:    PrefabPlacement    (dt, ecs, res); break;
             default: break;
         }
     }
@@ -225,19 +225,24 @@ struct Editor
 
     }
 
-    void PrefabPlacement(float const dt, ecs::ECS& ecs, res::Resources& res, res::RayQuadrant_Intersection const& terrainIntersection)
+    void PrefabPlacement(float const dt, ecs::ECS& ecs, res::Resources& res)
     {
-        /*
-        brush.UpdatePosition(ecs, terrainIntersection.position);
-        brush.UpdateSize(ecs, dt);
+        auto& terrain = res.terrain.terrain;
+        const auto terrainIntersection = terrain.RayIntersection(camera.mouseRay);
+        if (terrainIntersection.HasValue() == false)
+            return;
 
-        if (wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::PressedOrHeld>() && 
-            brush.Frequency(dt)) 
+        brush.UpdateGizmo(dt, ecs, terrainIntersection->position);
+        brush.UpdateInsideBrush(res.terrain, *terrainIntersection);
+
+        if (wnd::MouseLeftButtonPressed() || (
+            wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Held>() && 
+            wnd::HasEvent<wnd::EventType::Mouse_Move>() && brush.Frequency(dt)
+            ))
         {
-            //EditorCmd_PrefabPlacement cmd { brush.prefabEnum, terrainIntersection.point };
-            //commands.ExecuteAndAStoreCommand(cmd, res, ecs);
+            EditorCmd_PrefabPlacement cmd { .prefabEnum = brush.prefabEnum, .position = terrainIntersection->position };
+            commands.ExecuteAndStoreCommand(cmd, res, ecs);
         }
-        */
     }
 
 };
