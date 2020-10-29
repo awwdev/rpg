@@ -39,5 +39,5 @@ void main()
     }
 
     outSunDir = sun.sunDir;
-    outViewDistance = distance(inPos.xyz, meta.viewPos.xyz) / 100.f;
+    outViewDistance = distance(inPos.xyz, meta.viewPos.xyz);
 }

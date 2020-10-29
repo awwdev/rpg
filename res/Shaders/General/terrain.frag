@@ -40,10 +40,10 @@ void main()
     //shadow = clamp(1 - shadow, 0, 1);
 
     //! push constant for shadow cascade?
-    int cascadeIdx = 0;
+    int cascadeIdx = 3;//int(round((1 - clamp(inViewDistance / 100.f, 0, 1)) * 3));
     vec2 size = textureSize(shadowMap, 0).xy;
     const vec2 off = vec2(0);
-    const vec4 coord = vec4(inShadowCoord[cascadeIdx].xy + off, 0, inShadowCoord[cascadeIdx].z);
+    const vec4 coord = vec4(inShadowCoord[cascadeIdx].xy + off, cascadeIdx, inShadowCoord[cascadeIdx].z);
     const float shadow = 1 - texture(shadowMap, coord).r;
 
     //triangle face shadow
@@ -61,5 +61,6 @@ void main()
     const vec3 colorSum = inCol.rgb * (1 - triangleColor.a) + triangleColor.rgb * (triangleColor.a);
 
     //out
-    outCol = vec4(inViewDistance, inViewDistance, inViewDistance, 1);//vec4(colorSum * shadowSum, 1);
+    outCol = vec4(colorSum * shadowSum, 1);
+    //outCol = vec4(inViewDistance, inViewDistance, inViewDistance, 1);
 }

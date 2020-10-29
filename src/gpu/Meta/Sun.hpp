@@ -2,87 +2,87 @@
 
 #pragma once
 
-#include "com/utils/Utils.hpp"
-#include "ecs/ECS.hpp"
+#include "com/Matrix.hpp"
 #include "gpu/RenderData/RenderData.hpp"
+#include "gpu/RenderData/RenderData_Shadow.hpp"
 
 namespace rpg::gpu {
 
-struct Sun
+struct Sun 
 {
-    com::Vec3f pos { 0, -1, 0 }; //xz controlled by sin
-    float t = 0;
-    ecs::ID gizmoID = 0;
-    float speed = 0.001f;
+    using RD = RenderData_Shadow;
 
-    void Create(ecs::ECS&)
+    com::Mat4f view;
+    com::Mat4f projections [RD::CASCADE_COUNT];
+
+    com::Vec3f position { 0, -1, 0 };;
+    com::Vec3f rotation { 45, 0, 0 };
+
+    void Create()
     {
-        //gizmoID = ecs.AddEntity();
-        //ecs.arrays.AddComponent<ecs::ComponentType::Transform> (gizmoID, use::Identity4());
-        //ecs.arrays.AddComponent<ecs::ComponentType::RenderData>(gizmoID, res::MeshType::PrimitiveCube);
+        //TODO: gizmo
+
+        //scale / zoom
+        constexpr float SCALES [RenderData_Shadow::CASCADE_COUNT]
+        {
+            0.005f,
+            0.050f,
+            0.100f,
+            0.200f,
+        };
+
+        constexpr float D = 0.00001f; //far
+        constexpr float Z = 0.01f;    //near
+
+        for(uint32_t i = 0; i < RD::CASCADE_COUNT; ++i)
+        {
+            const auto& S = SCALES[i];
+            projections [i] = {
+                S, 0, 0, 0,
+                0, S, 0, 0,
+                0, 0, D, 0,
+                0, 0, Z, 1,
+            };
+        }
     }
 
-    void Update(ecs::ECS&, const double dt, RenderData& renderData)
+    void Update( com::Vec3f const& cameraPos)
     {
-        
-        using namespace com;
-        t += (float)dt * speed;
-        constexpr auto A = 2;
-        pos.x = sinf(t) * A;
-        pos.z = cosf(t) * A;
+        //TODO: follow camera frustrum
+        const auto& p = position * -1;
+        view = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            p.x, p.y, p.z, 1,
+        };
 
-        //auto& cubeTrans = ecs.arrays.transforms.Get(gizmoID);
-        //cubeTrans.transform = {
-        //    1, 0, 0, 0,
-        //    0, 1, 0, 0,
-        //    0, 0, 1, 0,
-        //    pos.x, pos.y, pos.z, 1,
-        //};
+        const auto qX = QuatAngleAxis(+rotation.x, com::Vec3f{1, 0, 0});
+        const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f{0, 1, 0});
+        const auto qRot = com::QuatMultQuat(qY, qX);
+        const auto mRot = QuatToMat(qRot);
 
-        constexpr com::Mat4f biasMat {
+        view = mRot * view;
+
+        //TODO: not exactly the camera pos, but somewhere at the beginning of the frustrum
+    }
+
+    void UpdateRenderData(RenderData& renderData) const
+    {
+        constexpr com::Mat4f BIAS_MAT {
             0.5, 0.0, 0.0, 0.0,
             0.0, 0.5, 0.0, 0.0,
             0.0, 0.0, 1.0, 0.0,
             0.5, 0.5, 0.0, 1.0 
         };
 
-        renderData.shadow.uboShadowMap.sunDir = Normalize(pos);
-        for(uint32_t i = 0; i < RenderData_Shadow::CASCADE_COUNT; ++i){
-            renderData.shadow.uboShadowMap.projView[i]       = GetOrthographic(i) * GetView();
-            renderData.shadow.uboShadowMap.projViewBiased[i] = biasMat * GetOrthographic(i) * GetView();
+        renderData.shadow.uboShadowMap.sunDir = Normalize(position);
+        for(uint32_t i = 0; i < RD::CASCADE_COUNT; ++i){
+            renderData.shadow.uboShadowMap.projView[i] = projections[i] * view;
+            renderData.shadow.uboShadowMap.projViewBiased[i] = BIAS_MAT * projections[i] * view;
         }
-        
     }
 
-    com::Mat4f GetView() const
-    {
-        return com::LookAt(pos, {0, 0, 0});
-    }
-
-    com::Mat4f GetOrthographic(const u32 cascadeIdx) const 
-    {
-        //TODO: solve how the values correlate
-        //TODO: cascades
-        float S {};
-        switch(cascadeIdx)
-        {
-            case 0: S = 0.005f; break;
-            case 1: S = 0.050f; break;
-            case 2: S = 0.100f; break;
-            case 3: S = 0.200f; break;
-        }
-        //const float W = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vuk::g_contextPtr->surfaceCapabilities.currentExtent.width;
-        //const float H = 0.001f + ((f32)cascadeIdx * 0.1f);//1 / 1024.f;//1 / vuk::g_contextPtr->surfaceCapabilities.currentExtent.height;
-        const float D = 0.00001f; 
-        const float Z = 0.01f;
-
-        return {
-            S, 0, 0, 0,
-            0, S, 0, 0,
-            0, 0, D, 0,
-            0, 0, Z, 1,
-        };
-    }
 };
 
 }//ns

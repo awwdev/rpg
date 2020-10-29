@@ -38,7 +38,7 @@ struct GameScene
     GameScene(res::Resources& resources)
     {
         guiLevel.Init(resources.prefabs);
-        sun.Create(ecs);
+        sun.Create();
         player.Create(ecs);
         ecs.prefabsArrays = resources.prefabs.prefabsArrays;    
         editor.CreateGizmos(ecs);
@@ -63,7 +63,8 @@ struct GameScene
         else 
             editor.Update(dt, ecs, resources, renderData);
 
-        sun.Update(ecs, dt, renderData);
+        sun.Update(editor.camera.position); //TODO: active camera ptr instead of editor camera
+        sun.UpdateRenderData(renderData);
 
         //? ecs
         ecs.Update(dt, renderData);
