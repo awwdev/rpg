@@ -18,7 +18,7 @@ struct Camera
     f32 near = 0.01f;
 
     //? transform
-    com::Vec3f position { 0, 4,-4 };
+    com::Vec3f position { 0,-4, 4 };
     com::Vec3f rotation {45, 0, 0 };
 
     //? input
@@ -62,10 +62,10 @@ struct Camera
 
         //move input
         com::Vec3f moveInput {};
-        if(wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) { moveInput.x -= 1; }
-        if(wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>()) { moveInput.x += 1; }
-        if(wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) { moveInput.z += 1; }
-        if(wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>()) { moveInput.z -= 1; }
+        if(wnd::HasEvent<wnd::EventType::D, wnd::EventState::PressedOrHeld>()) { moveInput.x += 1; }
+        if(wnd::HasEvent<wnd::EventType::A, wnd::EventState::PressedOrHeld>()) { moveInput.x -= 1; }
+        if(wnd::HasEvent<wnd::EventType::W, wnd::EventState::PressedOrHeld>()) { moveInput.z -= 1; }
+        if(wnd::HasEvent<wnd::EventType::S, wnd::EventState::PressedOrHeld>()) { moveInput.z += 1; }
         NormalizeThis(moveInput);
 
         //position update based on rotation
@@ -79,7 +79,7 @@ struct Camera
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
-            position.x, position.y, position.z, 1,
+            -position.x, -position.y, -position.z, 1,
         };
         view = mRot * view;
 
@@ -92,9 +92,9 @@ struct Camera
 
     void UpdateRays() 
     {
-        mouseRay.origin = position * -1;
+        mouseRay.origin = position;
         mouseRay.direction = ScreenRay(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y) * 1;
-        cameraRay.origin = position * -1;
+        cameraRay.origin = position;
         cameraRay.direction = ScreenRay(wnd::glo::window_w/2, wnd::glo::window_h/2) * 1;
     }
 
@@ -131,6 +131,7 @@ struct Camera
         renderData.general.meta.view = view;
         renderData.general.meta.proj = projection;
         renderData.general.meta.viewDir = cameraRay.direction;
+        renderData.general.meta.viewPos = position;
     }
 
     com::Vec3f ScreenRay(f32 const x, f32 const y) const

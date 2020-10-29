@@ -26,6 +26,7 @@ struct RenderData_General
         alignas(64) com::Mat4f view;
         alignas(64) com::Mat4f proj;
         alignas(16) com::Vec3f viewDir;
+        alignas(16) com::Vec3f viewPos;
         alignas(16) float time;
         //TODO: global world offset
     };

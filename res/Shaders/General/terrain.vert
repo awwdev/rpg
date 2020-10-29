@@ -10,12 +10,14 @@ layout (location = 3) in vec2 inTex;
 layout (location = 0) out vec4  outCol;
 layout (location = 1) out vec2  outTex;
 layout (location = 2) out flat vec3 outSunDir;
-layout (location = 3) out vec4  outShadowPos [CASCADE_COUNT];
+layout (location = 3) out float outViewDistance;
+layout (location = 4) out vec4  outShadowPos [CASCADE_COUNT];
 
 layout (binding = 0) uniform Meta { 
     mat4  view;
     mat4  proj;
     vec4  viewDir; // set w to 1
+    vec4  viewPos;
     float time;
 } meta;
 
@@ -37,4 +39,5 @@ void main()
     }
 
     outSunDir = sun.sunDir;
+    outViewDistance = distance(inPos.xyz, meta.viewPos.xyz) / 100.f;
 }

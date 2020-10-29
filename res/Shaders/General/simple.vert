@@ -9,6 +9,7 @@ layout(binding = 0) uniform Meta {
     mat4  view;
     mat4  proj;
     vec4  viewDir; //set w to 1
+    vec4  viewPos; //set w to 1
     float time;
 } meta;
 

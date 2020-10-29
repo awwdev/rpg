@@ -15,7 +15,7 @@ inline void SaveTerrain(res::Resources_Terrain const& resTerrain)
     FOR_C_ARRAY(terrain.quadrants, i)
     {
         //file
-        com::String<40> path { "out/tmp/terrain_quadrant_mesh_" };
+        com::String<40> path { "tmp/terrain_quadrant_mesh_" };
         path.AppendArithemtic(i);
         auto file = std::ofstream(path.Data(), std::ios::binary);
         dbg::Assert(file.is_open(), "cannot open file");
@@ -31,7 +31,7 @@ inline void LoadTerrain(res::Resources_Terrain& resTerrain)
     FOR_C_ARRAY(terrain.quadrants, i)
     {
         //file
-        com::String<40> path { "out/tmp/terrain_quadrant_mesh_" };
+        com::String<40> path { "tmp/terrain_quadrant_mesh_" };
         path.AppendArithemtic(i);
         auto file = std::ifstream(path.Data(), std::ios::binary);
         dbg::Assert(file.is_open(), "cannot open file");

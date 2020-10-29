@@ -1,30 +1,29 @@
 - shadow cascade fade
-- commands
-
-
-
-
+- cast shadow flag 
 - recalculate props height on terrain when terrain recalculated??
+- scene tree highlight and edit (remove, and move) select
+
+- shadow and general pipeline synopsis (instance draw) one big state with sub states
+
 - test against all quadrant and choose closest
-
-- global input mapping!
-- shadow and general pipeline synopsis (instance draw)
-- refactor all shaders
-
-- input mode (enum class) refactor
-- shader material data rework
-- matrix rework with concepts
-- utils sparation into multiple headers
-
 - dirty quadrants (only upload and stich)
+- better grass
+
+
+- global input mapping
+- input mode (enum class) refactor
+
+- refactor all shaders
+- shader material data rework
+
+- matrix rework with concepts
+
 - scene reload
+- utils separation into multiple headers
 - widget list refactor (only update the visible region)
 - simple function ptr based system for gui callback
 (since updating the scene tree every frame is wasteful)
-- cast shadow flag 
-- better grass
 - load both material and mesh paths externally
 - FOR_ENUM_MAP macro for loop
 - appropriate color picker widget
-
 - don't xcopy whole shader folder (glsl sources) but only spv

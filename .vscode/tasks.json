@@ -4,11 +4,11 @@
         {
             "type": "shell",
             "label": "win_build_dbg_gcc",
-            "command": "${workspaceFolder}/out/win_build_dbg_gcc.bat",
+            "command": "${workspaceFolder}/.vscode/win_build_dbg_gcc.bat",
             "args": [
-                "${workspaceFolder}/out/Debug",                    //build dir
+                "${workspaceFolder}/out/",                        //build dir
                 "${workspaceFolder}/src",                         //include headers
-                "${workspaceFolder}/out/Debug/rpg_debug.exe",      //build name
+                "${workspaceFolder}/out/rpg_debug.exe",           //build name
                 "${workspaceFolder}/src/main.cpp",                //cpp
                 "${workspaceFolder}/ext/lib",                     //libs
             ],
@@ -19,11 +19,11 @@
         {
             "type": "shell",
             "label": "win_build_dbg_msvc",
-            "command": "${workspaceFolder}/out/win_build_dbg_msvc.bat",
+            "command": "${workspaceFolder}/.vscode/win_build_dbg_msvc.bat",
             "args": [
-                "${workspaceFolder}/out/Debug",                    //build dir
+                "${workspaceFolder}/out/",                        //build dir
                 "${workspaceFolder}/src",                         //include headers
-                "${workspaceFolder}/out/Debug/rpg_debug.exe",      //build name
+                "${workspaceFolder}/out/rpg_debug.exe",           //build name
                 "${workspaceFolder}/src/main.cpp",                //cpp
                 "${workspaceFolder}/ext/lib",                     //libs
             ],
@@ -34,11 +34,11 @@
         {
             "type": "shell",
             "label": "win_build_opt_gcc",
-            "command": "${workspaceFolder}/out/win_build_opt_gcc.bat",
+            "command": "${workspaceFolder}/.vscode/win_build_opt_gcc.bat",
             "args": [
-                "${workspaceFolder}/out/Optimized",                //build dir
+                "${workspaceFolder}/out/",                        //build dir
                 "${workspaceFolder}/src",                         //include headers
-                "${workspaceFolder}/out/Optimized/rpg_optimized.exe",//build name
+                "${workspaceFolder}/out/rpg_optimized.exe",       //build name
                 "${workspaceFolder}/src/main.cpp",                //cpp
                 "${workspaceFolder}/ext/lib",                     //libs
             ],
