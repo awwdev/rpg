@@ -39,8 +39,9 @@ void main()
     //shadow /= directions;
     //shadow = clamp(1 - shadow, 0, 1);
 
-    //! push constant for shadow cascade?
-    int cascadeIdx = 3;//int(round((1 - clamp(inViewDistance / 100.f, 0, 1)) * 3));
+    const float distNorm = clamp(inViewDistance / 100.f, 0, 1);
+    const float distScaled = (1 - distNorm) * 3;
+    const int cascadeIdx = 0;//int(round(distScaled));
     vec2 size = textureSize(shadowMap, 0).xy;
     const vec2 off = vec2(0);
     const vec4 coord = vec4(inShadowCoord[cascadeIdx].xy + off, cascadeIdx, inShadowCoord[cascadeIdx].z);
@@ -48,19 +49,22 @@ void main()
 
     //triangle face shadow
     const vec3 triangleNormal = terrainTriangleNormals.normals[gl_PrimitiveID];
-    float shadowDot = dot(triangleNormal, inSunDir);
-    shadowDot = shadowDot * 15; //"fade speed"
-    shadowDot = clamp(shadowDot, 0, 1);
+    float shadowDot = -0.5 + dot(triangleNormal, inSunDir);
+    shadowDot = 1 - clamp(shadowDot, 0, 1);
+    //TODO: fix this
+    //shadowDot = shadowDot * 15; //"fade speed"
+    //shadowDot = clamp(shadowDot, 0, 1);
 
     //shadow sum
     const float AMBIENT = 0.1f;
-    const float shadowSum = clamp(AMBIENT + shadow * (1-shadowDot), 0, 1);
+    const float shadowSum = clamp(AMBIENT + shadow * shadowDot, 0, 1);
 
     //color
     const vec4 triangleColor = terrainTriangleColors.colors[gl_PrimitiveID];
     const vec3 colorSum = inCol.rgb * (1 - triangleColor.a) + triangleColor.rgb * (triangleColor.a);
 
     //out
-    outCol = vec4(colorSum * shadowSum, 1);
+    outCol = vec4(shadowDot, shadowDot, shadowDot, 1);
+    //outCol = vec4(colorSum * shadowSum, 1);
     //outCol = vec4(inViewDistance, inViewDistance, inViewDistance, 1);
 }

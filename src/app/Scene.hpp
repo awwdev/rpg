@@ -63,7 +63,7 @@ struct GameScene
         else 
             editor.Update(dt, ecs, resources, renderData);
 
-        sun.Update(editor.camera.position); //TODO: active camera ptr instead of editor camera
+        sun.Update(editor.camera); //TODO: active camera ptr instead of editor camera
         sun.UpdateRenderData(renderData);
 
         //? ecs

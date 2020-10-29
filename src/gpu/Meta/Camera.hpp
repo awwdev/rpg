@@ -19,7 +19,8 @@ struct Camera
 
     //? transform
     com::Vec3f position { 0,-4, 4 };
-    com::Vec3f rotation {45, 0, 0 };
+    com::Vec3f rotation {45, 0, 0 }; //euler in degree
+    com::Vec3f direction {};
 
     //? input
     enum class PersonMode { FirstPerson, ThirdPerson } personMode;
@@ -59,6 +60,8 @@ struct Camera
         const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f{0, 1, 0});
         const auto qRot = com::QuatMultQuat(qY, qX);
         const auto mRot = QuatToMat(qRot);
+        const auto dir = mRot * com::Vec4f{ 0, 0, 1, 1 };
+        direction = { dir.x, dir.y, dir.z };
 
         //move input
         com::Vec3f moveInput {};
@@ -95,7 +98,7 @@ struct Camera
         mouseRay.origin = position;
         mouseRay.direction = ScreenRay(wnd::glo::mouse_window_x, wnd::glo::mouse_window_y) * 1;
         cameraRay.origin = position;
-        cameraRay.direction = ScreenRay(wnd::glo::window_w/2, wnd::glo::window_h/2) * 1;
+        cameraRay.direction = direction;
     }
 
     void UpdateProjection()
@@ -130,7 +133,7 @@ struct Camera
     {
         renderData.general.meta.view = view;
         renderData.general.meta.proj = projection;
-        renderData.general.meta.viewDir = cameraRay.direction;
+        renderData.general.meta.viewDir = direction;
         renderData.general.meta.viewPos = position;
     }
 

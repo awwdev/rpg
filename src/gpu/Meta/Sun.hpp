@@ -5,6 +5,7 @@
 #include "com/Matrix.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "gpu/RenderData/RenderData_Shadow.hpp"
+#include "gpu/Meta/Camera.hpp"
 
 namespace rpg::gpu {
 
@@ -15,8 +16,9 @@ struct Sun
     com::Mat4f view;
     com::Mat4f projections [RD::CASCADE_COUNT];
 
-    com::Vec3f position { 0, -1, 0 };;
+    com::Vec3f position { 0, 0, 0 };;
     com::Vec3f rotation { 45, 0, 0 };
+    com::Vec3f direction {};
 
     void Create()
     {
@@ -28,7 +30,7 @@ struct Sun
             0.005f,
             0.050f,
             0.100f,
-            0.200f,
+            0.300f,
         };
 
         constexpr float D = 0.00001f; //far
@@ -46,10 +48,9 @@ struct Sun
         }
     }
 
-    void Update( com::Vec3f const& cameraPos)
+    void Update(Camera const& camera)
     {
-        //TODO: follow camera frustrum
-        const auto& p = position * -1;
+        const auto p = (position + camera.position + com::Vec3f { camera.direction.x, 0, camera.direction.z } * 20);
         view = {
             1, 0, 0, 0,
             0, 1, 0, 0,
@@ -61,10 +62,10 @@ struct Sun
         const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f{0, 1, 0});
         const auto qRot = com::QuatMultQuat(qY, qX);
         const auto mRot = QuatToMat(qRot);
+        const auto dir = mRot * com::Vec4f { 0, 0, 1, 1 };
+        direction = { dir.x, dir.y, dir.z };
 
         view = mRot * view;
-
-        //TODO: not exactly the camera pos, but somewhere at the beginning of the frustrum
     }
 
     void UpdateRenderData(RenderData& renderData) const
@@ -76,7 +77,7 @@ struct Sun
             0.5, 0.5, 0.0, 1.0 
         };
 
-        renderData.shadow.uboShadowMap.sunDir = Normalize(position);
+        renderData.shadow.uboShadowMap.sunDir = direction;
         for(uint32_t i = 0; i < RD::CASCADE_COUNT; ++i){
             renderData.shadow.uboShadowMap.projView[i] = projections[i] * view;
             renderData.shadow.uboShadowMap.projViewBiased[i] = BIAS_MAT * projections[i] * view;

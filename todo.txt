@@ -1,15 +1,21 @@
-- shadow cascade fade
+- camera direction (quaternion)
+- sun pos addition on camera pos + cam dir
+- cascade fade
+
+- what to draw on specific cascades
 - cast shadow flag 
-- recalculate props height on terrain when terrain recalculated??
-- scene tree highlight and edit (remove, and move) select
+
+- scene tree, selection, highlight
 
 - shadow and general pipeline synopsis (instance draw) one big state with sub states
+- recalculate props height on terrain when terrain recalculated??
 
 - test against all quadrant and choose closest
 - dirty quadrants (only upload and stich)
+
+-----------------------------------------
+
 - better grass
-
-
 - global input mapping
 - input mode (enum class) refactor
 
