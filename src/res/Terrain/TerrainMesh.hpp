@@ -85,7 +85,7 @@ struct TerrainMeshIndexed
             auto const v0v1 = v1 - v0;
             auto const v0v2 = v2 - v0;
 
-            auto const cross  = com::Cross(v0v1, v0v2);
+            auto const cross  = com::Cross(v0v2, v0v1); //not commutative
             auto const normal = com::Normalize(cross);
 
             auto const triangleIdx = i / 3;

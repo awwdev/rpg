@@ -49,11 +49,8 @@ void main()
 
     //triangle face shadow
     const vec3 triangleNormal = terrainTriangleNormals.normals[gl_PrimitiveID];
-    float shadowDot = -0.5 + dot(triangleNormal, inSunDir);
-    shadowDot = 1 - clamp(shadowDot, 0, 1);
-    //TODO: fix this
-    //shadowDot = shadowDot * 15; //"fade speed"
-    //shadowDot = clamp(shadowDot, 0, 1);
+    const vec3 sunDir = normalize(vec3(inSunDir.x, 0, inSunDir.z));
+    const float shadowDot = 1 - min(1, max(0, dot(triangleNormal, sunDir)) * 15);
 
     //shadow sum
     const float AMBIENT = 0.1f;
@@ -64,7 +61,6 @@ void main()
     const vec3 colorSum = inCol.rgb * (1 - triangleColor.a) + triangleColor.rgb * (triangleColor.a);
 
     //out
-    outCol = vec4(shadowDot, shadowDot, shadowDot, 1);
-    //outCol = vec4(colorSum * shadowSum, 1);
+    outCol = vec4(colorSum * shadowSum, 1);
     //outCol = vec4(inViewDistance, inViewDistance, inViewDistance, 1);
 }

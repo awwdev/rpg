@@ -42,6 +42,10 @@ struct GameScene
         player.Create(ecs);
         ecs.prefabsArrays = resources.prefabs.prefabsArrays;    
         editor.CreateGizmos(ecs);
+
+        auto testID = ecs.AddEntity(res::PrefabEnum::Cube);
+        auto& mainComponent = ecs.arrays.mainComponents.Get(testID);
+        mainComponent.translation.z = -5;
     }
 
     void Update(const double dt, res::Resources& resources)
@@ -68,6 +72,7 @@ struct GameScene
 
         //? ecs
         ecs.Update(dt, renderData);
+
     }
 
 };

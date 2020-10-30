@@ -208,6 +208,7 @@ struct Editor
                 auto& vertex = terrain.GetVertex(terrainIntersection->quadrantId, vertexId);
                 vertex.pos.y += wnd::glo::mouse_dy * (vertexWeight/2 + 0.5) * brush.vertexMoveSpeed;
             }
+            terrain.quadrants[terrainIntersection->quadrantId].mesh.Recalculate();
         }
 
         //? destination state

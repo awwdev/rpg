@@ -58,12 +58,12 @@ struct Sun
             p.x, p.y, p.z, 1,
         };
 
-        const auto qX = QuatAngleAxis(+rotation.x, com::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f{0, 1, 0});
+        const auto qX = QuatAngleAxis(+rotation.x, com::Vec3f { 1, 0, 0 });
+        const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f { 0, 1, 0 });
         const auto qRot = com::QuatMultQuat(qY, qX);
         const auto mRot = QuatToMat(qRot);
-        const auto dir = mRot * com::Vec4f { 0, 0, 1, 1 };
-        direction = { dir.x, dir.y, dir.z };
+        const auto dir = mRot * com::Vec4f{ 0, 0, 1, 1 };
+        direction = { dir.x, dir.y, -dir.z };
 
         view = mRot * view;
     }

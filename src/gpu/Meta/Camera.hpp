@@ -18,8 +18,8 @@ struct Camera
     f32 near = 0.01f;
 
     //? transform
-    com::Vec3f position { 0,-4, 4 };
-    com::Vec3f rotation {45, 0, 0 }; //euler in degree
+    com::Vec3f position { 0, 0, 0 };
+    com::Vec3f rotation { 0, 0, 0 }; //euler in degree
     com::Vec3f direction {};
 
     //? input
@@ -56,12 +56,13 @@ struct Camera
         if (rotation.y <= -360) rotation.y += 360;
 
         //rotation matrix and quaternions
-        const auto qX = QuatAngleAxis(+rotation.x, com::Vec3f{1, 0, 0});
-        const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f{0, 1, 0});
+        const auto qX = QuatAngleAxis(+rotation.x, com::Vec3f { 1, 0, 0 });
+        const auto qY = QuatAngleAxis(-rotation.y, com::Vec3f { 0, 1, 0 });
         const auto qRot = com::QuatMultQuat(qY, qX);
         const auto mRot = QuatToMat(qRot);
-        const auto dir = mRot * com::Vec4f{ 0, 0, 1, 1 };
-        direction = { dir.x, dir.y, dir.z };
+        const auto dir = mRot * com::Vec4f{ 0, 0, 1, 1 }; //TODO: try again with -1 for z
+        direction = { dir.x, dir.y, -dir.z };
+        
 
         //move input
         com::Vec3f moveInput {};
@@ -85,7 +86,6 @@ struct Camera
             -position.x, -position.y, -position.z, 1,
         };
         view = mRot * view;
-
         //scrolling
         if (wnd::HasEvent<wnd::EventType::Mouse_Scroll>()) {
             fov -= wnd::glo::mouse_scroll_delta * scrollSpeed;
