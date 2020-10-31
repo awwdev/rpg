@@ -27,6 +27,7 @@ terrainTriangleColors;
 void main() 
 {
     //radial
+    //vec2 size = textureSize(shadowMap, 0).xy;
     //float directions = 8;
     //float PI2 = 6.28318530718;
     //float shadow = 0;
@@ -39,13 +40,48 @@ void main()
     //shadow /= directions;
     //shadow = clamp(1 - shadow, 0, 1);
 
-    const float distNorm = clamp(inViewDistance / 100.f, 0, 1);
-    const float distScaled = (1 - distNorm) * 3;
-    const int cascadeIdx = 0;//int(round(distScaled));
-    vec2 size = textureSize(shadowMap, 0).xy;
-    const vec2 off = vec2(0);
-    const vec4 coord = vec4(inShadowCoord[cascadeIdx].xy + off, cascadeIdx, inShadowCoord[cascadeIdx].z);
-    const float shadow = 1 - texture(shadowMap, coord).r;
+    //shadow map
+
+    //const float distNorm   = clamp(inViewDistance / 100.f, 0, 1);
+    //const float distScaled = distNorm * 3;
+    //const int   cascadeIdx = int(round(distScaled));
+
+    //{ 
+    //    const int   cascadeIdx = 0;
+    //    const vec4  cascadeCoord = vec4(inShadowCoord[cascadeIdx].xy + 0, cascadeIdx, inShadowCoord[cascadeIdx].z);
+    //    const float viewDist = clamp(inViewDistance / 5.f, 0, 1);
+    //    const float cascadeDist = 1 - viewDist * 10 + 9;
+    //    allCascadeShadows += texture(shadowMap, cascadeCoord).r * cascadeDist;    
+    //}
+    //{ 
+    //    const int   cascadeIdx = 1;
+    //    const vec4  cascadeCoord = vec4(inShadowCoord[cascadeIdx].xy + 0, cascadeIdx, inShadowCoord[cascadeIdx].z);
+    //    const float viewDist = clamp((inViewDistance) / 10.f, 0, 1);
+    //    const float cascadeDist = clamp(1 - abs(viewDist-0.5)* 4 + 1, 0, 1);
+    //    allCascadeShadows += texture(shadowMap, cascadeCoord).r * cascadeDist;    
+    //}
+
+    const float shadowDistMax = 50.f;
+    const float shadowDist = clamp(inViewDistance / shadowDistMax, 0, 1); //could be inside vert shader
+
+    float allCascadeShadows = 0;
+    for(int cascadeIdx = 0; cascadeIdx < CASCADE_COUNT; ++cascadeIdx)
+    {
+        const float f = 8; //cross fade factor (when segment linearly fades)
+        const float s = CASCADE_COUNT; //segments
+        const float i = cascadeIdx; //segment index
+        const float x = shadowDist; //distance normalized [0,1][min,max]
+        float y = 1 - abs(f*x - i * f/s - (f/8.f - 0.5)) + f/8.f - 0.5f;
+        y = clamp(y, 0, 1);
+       
+        const vec4 cascadeCoord = vec4(inShadowCoord[cascadeIdx].xy + 0, cascadeIdx, inShadowCoord[cascadeIdx].z);
+        allCascadeShadows += texture(shadowMap, cascadeCoord).r * y;    
+    }
+    allCascadeShadows = 1 - clamp(allCascadeShadows, 0, 1);
+    
+
+    
+    
 
     //triangle face shadow
     const vec3 triangleNormal = terrainTriangleNormals.normals[gl_PrimitiveID];
@@ -54,7 +90,8 @@ void main()
 
     //shadow sum
     const float AMBIENT = 0.1f;
-    const float shadowSum = clamp(AMBIENT + shadow * shadowDot, 0, 1);
+    //const float shadowSum = clamp(AMBIENT + cascadeShadow * shadowDot, 0, 1);
+    const float shadowSum = clamp(allCascadeShadows * shadowDot, 0, 1);
 
     //color
     const vec4 triangleColor = terrainTriangleColors.colors[gl_PrimitiveID];
@@ -62,5 +99,14 @@ void main()
 
     //out
     outCol = vec4(colorSum * shadowSum, 1);
-    //outCol = vec4(inViewDistance, inViewDistance, inViewDistance, 1);
 }
+
+
+//float allCascadeShadows = 0;
+//for(int i = 0; i < CASCADE_COUNT; ++i)
+//{
+//     const vec4  cascadeCoord  = vec4(inShadowCoord[i].xy + 0, i, inShadowCoord[i].z);
+//     const float cascadeShadow = texture(shadowMap, cascadeCoord).r;
+//     allCascadeShadows += cascadeShadow;
+//}    
+//allCascadeShadows = 1 - min(1, allCascadeShadows);

@@ -27,14 +27,14 @@ struct Sun
         //scale / zoom
         constexpr float SCALES [RenderData_Shadow::CASCADE_COUNT]
         {
-            0.005f,
-            0.050f,
-            0.100f,
-            0.300f,
+            0.1000f, //close
+            0.0500f,
+            0.0250f,
+            0.0125f, //far
         };
 
-        constexpr float D = 0.00001f; //far
-        constexpr float Z = 0.01f;    //near
+        constexpr float D = 0.000001f; //far
+        constexpr float Z = 0.01f;     //near
 
         for(uint32_t i = 0; i < RD::CASCADE_COUNT; ++i)
         {
@@ -50,12 +50,13 @@ struct Sun
 
     void Update(Camera const& camera)
     {
-        const auto p = (position + camera.position + com::Vec3f { camera.direction.x, 0, camera.direction.z } * 20);
+        //const auto p = com::Vec3f { 45, 0, 45 }; //(position + camera.position + com::Vec3f { camera.direction.x, 0, camera.direction.z } * 20);
+        const auto p = camera.position; //(position + camera.position + com::Vec3f { camera.direction.x, 0, camera.direction.z } * 20);
         view = {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
-            p.x, p.y, p.z, 1,
+            -p.x, -p.y, -p.z, 1,
         };
 
         const auto qX = QuatAngleAxis(+rotation.x, com::Vec3f { 1, 0, 0 });
