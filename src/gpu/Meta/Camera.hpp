@@ -62,6 +62,7 @@ struct Camera
         const auto mRot = QuatToMat(qRot);
         const auto dir = mRot * com::Vec4f{ 0, 0, 1, 1 }; //TODO: try again with -1 for z
         direction = { dir.x, dir.y, -dir.z };
+        com::PrintMatrix(position);
         
 
         //move input

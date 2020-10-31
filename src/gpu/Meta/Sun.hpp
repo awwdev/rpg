@@ -27,14 +27,14 @@ struct Sun
         //scale / zoom
         constexpr float SCALES [RenderData_Shadow::CASCADE_COUNT]
         {
-            0.1000f, //close
-            0.0500f,
-            0.0250f,
-            0.0125f, //far
+            0.050, // 75
+            0.012, //150
+            0.008, //225
+            0.003, //300
         };
 
-        constexpr float D = 0.000001f; //far
-        constexpr float Z = 0.01f;     //near
+        constexpr float D = 1/1'000'000.f; //far
+        constexpr float Z = 0.01f; //near
 
         for(uint32_t i = 0; i < RD::CASCADE_COUNT; ++i)
         {
