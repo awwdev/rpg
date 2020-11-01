@@ -32,30 +32,81 @@ VertexArray& allVertices, IndexArray& allIndices, VertexRanges& vertexRanges)
     char line [LINE_LEN_MAX];
     const auto vertexRangeIndex = allVertices.Count(); //begin
 
-    //parsing functions
+    //?parsing functions
     auto const parseIndex = [&](auto const data)
     {
         auto const index = static_cast<uint32_t>(data);
         allIndices.AppendElement(index);
-        dbg::LogInfo(index);
+    };
+
+    MeshVertex vertex {};
+    auto const parseVertex = [&](auto const data, idx_t const commaCount)
+    {
+        enum struct CommaEnum : idx_t
+        {
+            Index,
+            Pos_X, Pos_Y, Pos_Z, 
+            Nor_X, Nor_Y, Nor_Z,
+            Col_R, Col_G, Col_B, Col_A,
+            //Tex_U, Tex_V,
+            VERTEX_FINISHED,
+        };
+ 
+        switch((CommaEnum)(commaCount % (idx_t) CommaEnum::VERTEX_FINISHED))
+        {
+            //vert idx
+            case CommaEnum::Index: break;
+            //vert pos
+            case CommaEnum::Pos_X: vertex.pos.x = data; break;
+            case CommaEnum::Pos_Y: vertex.pos.y = data; break;
+            case CommaEnum::Pos_Z: vertex.pos.z = data; break;
+            //vert nor
+            case CommaEnum::Nor_X: vertex.nor.x = data; break;
+            case CommaEnum::Nor_Y: vertex.nor.y = data; break;
+            case CommaEnum::Nor_Z: vertex.nor.z = data; break;
+            //vert col
+            case CommaEnum::Col_R: vertex.col.r = data; break;
+            case CommaEnum::Col_G: vertex.col.g = data; break;
+            case CommaEnum::Col_B: vertex.col.b = data; break;
+            case CommaEnum::Col_A: vertex.col.a = data; 
+            //vert tex
+            //case CommaEnum::Tex_U: vertex.tex.x = data; break;
+            //case CommaEnum::Tex_V: vertex.tex.y = data; break;
+                allVertices.AppendElement(vertex); 
+                com::PrintMatrix(vertex.pos);
+                com::PrintMatrix(vertex.nor);
+                com::PrintMatrix(vertex.col);
+            break;
+            case CommaEnum::VERTEX_FINISHED: dbg::Assert(false, "enum missing"); break;
+        } 
+
+    };
+
+    auto const parseFaceNormal = [&](auto const data)
+    {
+    };
+
+    auto const parseFaceColor = [&](auto const data)
+    {
     };
 
     //lines
     while(file.getline(line, LINE_LEN_MAX))
     {
+        idx_t begin = 0;
+        idx_t commaCount = 0;
+
         //current data mode
         switch (line[0])
         {
-            case 'I': dataEnum = DataEnum::IndexData;       continue;
-            case 'V': dataEnum = DataEnum::VertexData;      continue;
-            case 'F': dataEnum = DataEnum::FaceNormalData;  continue;
-            case 'C': dataEnum = DataEnum::FaceColorData;   continue;
+            case 'I': dataEnum = DataEnum::IndexData;       commaCount = 0; continue;
+            case 'V': dataEnum = DataEnum::VertexData;      commaCount = 0; continue;
+            case 'F': dataEnum = DataEnum::FaceNormalData;  commaCount = 0; continue;
+            case 'C': dataEnum = DataEnum::FaceColorData;   commaCount = 0; continue;
             default: break;
         }
 
         //line parsing
-        idx_t begin = 0;
-        idx_t commaCount = 0;
         for(idx_t i = 0; line[i] != '\n' && line[i] != '\0'; ++i)
         {
             if (line[i] != ',')
@@ -66,9 +117,9 @@ VertexArray& allVertices, IndexArray& allIndices, VertexRanges& vertexRanges)
             switch(dataEnum)
             {
                 case DataEnum::IndexData:       parseIndex(value); break;
-                case DataEnum::VertexData:      break;
-                case DataEnum::FaceNormalData:  break;
-                case DataEnum::FaceColorData:   break;
+                case DataEnum::VertexData:      parseVertex(value, commaCount); break;
+                case DataEnum::FaceNormalData:  parseFaceNormal(value); break;
+                case DataEnum::FaceColorData:   parseFaceColor(value); break;
                 case DataEnum::None:            break; //! have to be error later
                 default: dbg::Assert(false, "parsing mode missing"); break;
             };
@@ -81,6 +132,8 @@ VertexArray& allVertices, IndexArray& allIndices, VertexRanges& vertexRanges)
     }
 
 }//ns
+
+//TODO: rendering before doing any other data
 
 /*
 MeshVertex vertex {};

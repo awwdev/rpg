@@ -23,5 +23,6 @@ using MeshIndex  = uint32_t;
 using VertexArray  = com::Array<MeshVertex, MESHES_VERTICES_TOTAL>;
 using IndexArray   = com::Array<MeshIndex, MESHES_INDICES_TOTAL>;
 using VertexRanges = MeshVertexRange [MESHES_TOTAL];
+//using FaceNormals  = com::Array<com::Vec3f, MESHES_INDICES_TOTAL>;
 
 }//ns
