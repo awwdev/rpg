@@ -21,7 +21,7 @@ struct General_Vertices
     VertexBuffer<GeneralVertex, RD::TERRA_VERTICES_MAX_ALL> vboTerrain;
     IndexBuffer<uint32_t, RD::TERRA_INDICES_MAX_ALL> iboTerrain;
 
-    VertexBuffer<GeneralVertex, res::MESHES_VERTS_TOTAL> vboMeshes;
+    VertexBuffer<GeneralVertex, res::MESHES_VERTICES_TOTAL> vboMeshes;
     res::MeshVertexRange vboMeshesVertexRanges [(idx_t) res::MESHES_TOTAL];
 
     VkDeviceSize offsets [1] = {};
@@ -94,8 +94,8 @@ struct General_Vertices
         if (resMeshes.allVertices.Empty() == false) {
             vboMeshes.Append(resMeshes.allVertices);
             vboMeshes.Bake(cmdPool);
-            FOR_C_ARRAY(resMeshes.meshVertexRanges, i)
-                vboMeshesVertexRanges[i] = resMeshes.meshVertexRanges[i];
+            FOR_C_ARRAY(resMeshes.vertexRanges, i)
+                vboMeshesVertexRanges[i] = resMeshes.vertexRanges[i];
         }
     }
 

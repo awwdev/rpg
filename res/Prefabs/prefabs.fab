@@ -22,15 +22,15 @@
     
 @ Sword_Grib
 ? MainComponent
-    + Mesh = Mesh_Sword2_Grib
+    #+ Mesh = Mesh_Sword2_Grib
     + Metallic = 0
 
 @ Sword_Blade
 ? MainComponent
-    + Mesh = Mesh_Sword2_Blade
+    #+ Mesh = Mesh_Sword2_Blade
     + Metallic = 1
 
 @ Grass
 ? MainComponent
-    + Mesh = Mesh_Grass
+    + Mesh = Mesh_Grass2
     + Scale = 1, 1, 1

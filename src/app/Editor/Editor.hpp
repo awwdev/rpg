@@ -87,7 +87,7 @@ struct Editor
 
         //scroll editor editing mode
         if (wnd::HasEvent<wnd::EventType::F2, wnd::EventState::Pressed>())
-            editorMode.editorEnum = com::ScrollEnum(editorMode.editorEnum);
+            com::AdvanceEnum(editorMode.editorEnum);
 
         switch(editorMode.editorEnum)
         {

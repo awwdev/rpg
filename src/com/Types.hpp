@@ -45,7 +45,7 @@ template<typename T>
 concept as_enum_integral = std::is_enum_v<T> || std::is_integral_v<T>;
 
 template<typename T>
-concept as_scrollable_enum = requires {
+concept as_advancable_enum = requires {
     std::is_enum_v<T>;
     T::ENUM_END;
 };

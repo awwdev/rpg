@@ -81,13 +81,3 @@ void main()
     //out
     outCol = vec4(colorSum * shadowSum, 1);
 }
-
-
-//float allCascadeShadows = 0;
-//for(int i = 0; i < CASCADE_COUNT; ++i)
-//{
-//     const vec4  cascadeCoord  = vec4(inShadowCoord[i].xy + 0, i, inShadowCoord[i].z);
-//     const float cascadeShadow = texture(shadowMap, cascadeCoord).r;
-//     allCascadeShadows += cascadeShadow;
-//}    
-//allCascadeShadows = 1 - min(1, allCascadeShadows);

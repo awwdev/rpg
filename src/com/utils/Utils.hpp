@@ -123,11 +123,13 @@ void PrintArray(T const (&arr)[N])
 
 //? scroll / zap through enum
 
-inline auto ScrollEnum(as_scrollable_enum auto const pEnum)
+inline bool AdvanceEnum(as_advancable_enum auto& pEnum)
 {
-    using T = decltype(pEnum);
+    using T = std::decay_t<decltype(pEnum)>;
     using U = std::underlying_type_t<T>;
-    return static_cast<T>((static_cast<U>(pEnum) + 1) % static_cast<U>(T::ENUM_END));
+    auto const tmp = static_cast<U>(pEnum);
+    pEnum = static_cast<T>((tmp + 1) % static_cast<U>(T::ENUM_END));
+    return static_cast<U>(pEnum) < tmp;
 }
 
 //? axis-aligned bounding box
