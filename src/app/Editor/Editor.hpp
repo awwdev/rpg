@@ -241,7 +241,11 @@ struct Editor
             wnd::HasEvent<wnd::EventType::Mouse_Move>() && brush.Frequency(dt)
             ))
         {
-            EditorCmd_PrefabPlacement cmd { .prefabEnum = brush.prefabEnum, .position = terrainIntersection->position };
+            const EditorCmd_PrefabPlacement cmd { 
+                .prefabEnum = brush.prefabEnum, 
+                .position   = terrainIntersection->position, 
+                .baseColor  = terrainIntersection->interpolatedVertexColor
+            };
             commands.ExecuteAndStoreCommand(cmd, res, ecs);
         }
     }

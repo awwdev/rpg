@@ -22,7 +22,10 @@ struct General_Vertices
     IndexBuffer<uint32_t, RD::TERRA_INDICES_MAX_ALL> iboTerrain;
 
     VertexBuffer<GeneralVertex, res::MESHES_VERTICES_TOTAL> vboMeshes;
-    res::MeshVertexRange vboMeshesVertexRanges [(idx_t) res::MESHES_TOTAL];
+    IndexBuffer<uint32_t, res::MESHES_INDICES_TOTAL> iboMeshes;
+
+    res::VertexRanges vboMeshesVertexRanges;
+    res::IndexRanges  iboMeshesIndexRanges;
 
     VkDeviceSize offsets [1] = {};
     static constexpr VkVertexInputBindingDescription bindings []
@@ -80,7 +83,6 @@ struct General_Vertices
         //? terrain
         vboTerrain.Create();
         iboTerrain.Create();
-
         auto const& quadrants = resTerrain.terrain.quadrants;
         FOR_C_ARRAY(quadrants, i)
         {
@@ -91,12 +93,16 @@ struct General_Vertices
 
         //? meshes
         vboMeshes.Create();
-        if (resMeshes.allVertices.Empty() == false) {
-            vboMeshes.Append(resMeshes.allVertices);
-            vboMeshes.Bake(cmdPool);
-            FOR_C_ARRAY(resMeshes.vertexRanges, i)
-                vboMeshesVertexRanges[i] = resMeshes.vertexRanges[i];
-        }
+        iboMeshes.Create();
+        //! shall not be empty
+        vboMeshes.Append(resMeshes.allVertices);
+        vboMeshes.Bake(cmdPool);
+        iboMeshes.Append(resMeshes.allIndices);
+        iboMeshes.Bake(cmdPool);
+        FOR_C_ARRAY(resMeshes.vertexRanges, i)
+            vboMeshesVertexRanges[i] = resMeshes.vertexRanges[i];
+        FOR_C_ARRAY(resMeshes.indexRanges, i)
+            iboMeshesIndexRanges[i] = resMeshes.indexRanges[i];
     }
 
     void Destroy()
@@ -104,8 +110,11 @@ struct General_Vertices
         vboTerrain.Destroy();
         iboTerrain.Destroy();
         vboMeshes.Destroy();
+        iboMeshes.Destroy();
         FOR_C_ARRAY(vboMeshesVertexRanges, i)
             vboMeshesVertexRanges[i] = {};
+        FOR_C_ARRAY(iboMeshesIndexRanges, i)
+            iboMeshesIndexRanges[i] = {};
     }
     ~General_Vertices()
     {

@@ -13,6 +13,7 @@ struct EditorCmd_PrefabPlacement
     res::PrefabEnum prefabEnum;
     com::Vec3f position;
     ecs::ID prefabID;
+    com::Vec4f baseColor; //should not really be here
 
     template<EditorCommandDirection DIR>
     void Execute(res::Resources& res, ecs::ECS& ecs)
@@ -26,6 +27,7 @@ struct EditorCmd_PrefabPlacement
             prefabID = ecs.AddEntity(prefabEnum);
             auto& mainComponent = ecs.arrays.mainComponents.Get(prefabID);
             mainComponent.translation = position;
+            mainComponent.baseColor = baseColor;
         }
     }
 

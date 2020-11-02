@@ -27,6 +27,7 @@ struct MainComponent
     float metallic { 0.f };
     float glow { 0.f };
     float flat { 0.f };
+    com::Vec4f baseColor { 1, 0, 0, 1 }; //!bad, dumping place
 
     //parsing
     MainComponent() = default;

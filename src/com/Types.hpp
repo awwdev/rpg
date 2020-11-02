@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <type_traits>
 #include <concepts>
+#include "utils/UndefWindows.hpp"
 
 namespace rpg {
     

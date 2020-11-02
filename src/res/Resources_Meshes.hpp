@@ -14,6 +14,7 @@ struct Resources_Meshes
     VertexArray  allVertices;
     IndexArray   allIndices;
     VertexRanges vertexRanges;
+    IndexRanges  indexRanges;
 
     void Load()
     {
@@ -22,7 +23,7 @@ struct Resources_Meshes
             const auto meshIdx = static_cast<idx_t>(meshEnum);
             dbg::Assert(MESH_PATHS.Contains(meshIdx), "mesh missing");
             auto const path = MESH_PATHS.Get(meshIdx).Data();
-            LoadMesh(path,  meshIdx,  allVertices, allIndices, vertexRanges);
+            LoadMesh(path,  meshIdx,  allVertices, allIndices, vertexRanges, indexRanges);
         }
     }
 };

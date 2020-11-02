@@ -15,3 +15,5 @@
 #undef FAR
 #undef NEAR
 #undef CONST
+#undef min
+#undef max

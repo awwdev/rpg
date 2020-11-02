@@ -27,7 +27,14 @@ layout(binding = 0) uniform Meta {
 struct MeshInstance 
 {
     mat4 transform;
-    mat4 settings; //metallic, glow
+    //
+    float metallic;
+    float glow;
+    float flatShading;
+    float placeholder;
+    vec4 baseColor;
+    vec4 placeholder2;
+    vec4 placeholder3;
 };
 
 layout(std430, binding = 1) readonly buffer MeshInstances 
@@ -46,7 +53,7 @@ void main()
     MeshInstance instance = meshInstances.arr[gl_InstanceIndex];
 
     gl_Position = meta.proj * meta.view * instance.transform * vec4(inPos, 1);
-    outCol = inCol;
+    outCol = instance.baseColor;
     outTex = inTex;
 
     for(int i = 0; i < CASCADE_COUNT; ++i){
@@ -55,15 +62,14 @@ void main()
     }
 
     //metallic
-    mat4 norMat = instance.transform;
-    norMat[3][0] = 0;
-    norMat[3][1] = 0;
-    norMat[3][2] = 0;
-    vec3 normal = normalize((norMat * vec4(inNor, 1)).xyz);
-
-    outNormal   = normal;
-    outMetallic = int(instance.settings[0][0]);
-    outViewDir  = normalize(meta.viewDir.xyz);
-    outGlow     = int(instance.settings[0][1]);
-    outFlat     = int(instance.settings[0][2]);
+    //mat4 norMat = instance.transform;
+    //norMat[3][0] = 0;
+    //norMat[3][1] = 0;
+    //norMat[3][2] = 0;
+    //vec3 normal = normalize((norMat * vec4(inNor, 1)).xyz);
+    //outNormal   = normal;
+    //outMetallic = int(instance.settings[0][0]);
+    //outViewDir  = normalize(meta.viewDir.xyz);
+    //outGlow     = int(instance.settings[0][1]);
+    //outFlat     = int(instance.settings[0][2]);
 }

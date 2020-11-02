@@ -9,11 +9,11 @@
 
 @ Cube
 ? MainComponent
-    + Mesh = Mesh_Cube
+    #+ Mesh = Mesh_Cube
 
 @ Circle
 ? MainComponent
-    + Mesh = Mesh_Circle
+    #+ Mesh = Mesh_Circle
     + Flat = 1
 
 @ Sword

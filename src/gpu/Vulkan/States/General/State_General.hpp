@@ -113,6 +113,7 @@ struct State_General
         //?meshes 
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.pipeline);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &generalVertices.vboMeshes.activeBuffer->buffer, generalVertices.offsets);
+        vkCmdBindIndexBuffer    (cmdBuffer, generalVertices.iboMeshes.activeBuffer->buffer, 0, VkIndexType::VK_INDEX_TYPE_UINT32);
 
         uint32_t instanceIdx = 0;
         for(idx_t meshIdx = (idx_t) res::MeshEnum::None + 1; meshIdx < (idx_t) res::MeshEnum::ENUM_END; ++meshIdx)
@@ -121,31 +122,11 @@ struct State_General
             if (meshInstances.Empty()) 
                 continue;
 
-            dbg::Assert(res::MESH_MATERIAL_GROUPS.Contains(meshIdx), "mesh material mapping missing");
-            auto const meshMaterial = res::MESH_MATERIAL_GROUPS.Get(meshIdx);
-
-            switch(meshMaterial) //prev material compare, to avoid bind same pipeline?
-            {
-                case res::MeshMaterialEnum::Foliage: 
-                    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, foliagePipeline.pipeline);
-                break;
-
-                case res::MeshMaterialEnum::Line: 
-                     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, linesPipeline.pipeline);
-                break;
-
-                case res::MeshMaterialEnum::Metal: 
-                case res::MeshMaterialEnum::Default: 
-                    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.pipeline);
-                break;
-
-                default: dbg::Assert(false, "mesh material pipeline missing");
-            }
-
             auto const& vertexRange = generalVertices.vboMeshesVertexRanges[meshIdx];
-            vkCmdDraw(cmdBuffer, vertexRange.count, meshInstances.Count(), vertexRange.index, instanceIdx);
-            instanceIdx += meshInstances.Count();
+            auto const& indexRange  = generalVertices.iboMeshesIndexRanges [meshIdx];
+            vkCmdDrawIndexed(cmdBuffer, indexRange.count, meshInstances.Count(), indexRange.index, vertexRange.index, instanceIdx);
 
+            instanceIdx += meshInstances.Count();
             rdGeneral.dbgVertCountInstanced += vertexRange.count * meshInstances.Count();
         }
 
@@ -155,3 +136,23 @@ struct State_General
 };
 
 }//NS
+
+
+
+/*
+dbg::Assert(res::MESH_MATERIAL_GROUPS.Contains(meshIdx), "mesh material mapping missing");
+auto const meshMaterial = res::MESH_MATERIAL_GROUPS.Get(meshIdx);
+switch(meshMaterial) //prev material compare, to avoid bind same pipeline?
+{
+    //case res::MeshMaterialEnum::Foliage: 
+    //    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, foliagePipeline.pipeline);
+    //break;
+    //case res::MeshMaterialEnum::Line: 
+    //     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, linesPipeline.pipeline);
+    //break;
+    //case res::MeshMaterialEnum::Metal: 
+    //case res::MeshMaterialEnum::Default: 
+    //break;
+    //default: dbg::Assert(false, "mesh material pipeline missing");
+}
+*/

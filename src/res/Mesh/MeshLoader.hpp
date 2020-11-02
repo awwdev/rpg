@@ -10,10 +10,11 @@
 namespace rpg::res {
 
 inline auto LoadMesh(chars_t path, idx_t const meshIdx,
-VertexArray& allVertices, IndexArray& allIndices, VertexRanges& vertexRanges)
+VertexArray& allVertices, IndexArray& allIndices, 
+VertexRanges& vertexRanges, IndexRanges& indexRanges)
 {
     //file
-    std::ifstream file(path, std::ios::binary);
+    ::std::ifstream file(path, ::std::ios::binary);
     dbg::Assert(file.is_open(), "cannot open file");
 
     //mode
@@ -22,8 +23,8 @@ VertexArray& allVertices, IndexArray& allIndices, VertexRanges& vertexRanges)
         None,
         IndexData,
         VertexData,
-        FaceNormalData,
-        FaceColorData,
+        //FaceNormalData,
+        //FaceColorData,
     }
     dataEnum {};
 
@@ -33,10 +34,12 @@ VertexArray& allVertices, IndexArray& allIndices, VertexRanges& vertexRanges)
     const auto vertexRangeIndex = allVertices.Count(); //begin
 
     //?parsing functions
+    uint32_t indexCount = 0;
     auto const parseIndex = [&](auto const data)
     {
         auto const index = static_cast<uint32_t>(data);
         allIndices.AppendElement(index);
+        ++indexCount;
     };
 
     MeshVertex vertex {};
@@ -72,22 +75,18 @@ VertexArray& allVertices, IndexArray& allIndices, VertexRanges& vertexRanges)
             //vert tex
             //case CommaEnum::Tex_U: vertex.tex.x = data; break;
             //case CommaEnum::Tex_V: vertex.tex.y = data; break;
-                allVertices.AppendElement(vertex); 
-                com::PrintMatrix(vertex.pos);
-                com::PrintMatrix(vertex.nor);
-                com::PrintMatrix(vertex.col);
+                {
+                    allVertices.AppendElement(vertex); 
+                    const auto vertexRangeCount = allVertices.Count() - vertexRangeIndex;
+                    vertexRanges[meshIdx] = { (uint32_t) vertexRangeIndex, (uint32_t) vertexRangeCount };
+                }
+                //com::PrintMatrix(vertex.pos);
+                //com::PrintMatrix(vertex.nor);
+                //com::PrintMatrix(vertex.col);
             break;
             case CommaEnum::VERTEX_FINISHED: dbg::Assert(false, "enum missing"); break;
         } 
 
-    };
-
-    auto const parseFaceNormal = [&](auto const data)
-    {
-    };
-
-    auto const parseFaceColor = [&](auto const data)
-    {
     };
 
     //lines
@@ -99,10 +98,17 @@ VertexArray& allVertices, IndexArray& allIndices, VertexRanges& vertexRanges)
         //current data mode
         switch (line[0])
         {
-            case 'I': dataEnum = DataEnum::IndexData;       commaCount = 0; continue;
-            case 'V': dataEnum = DataEnum::VertexData;      commaCount = 0; continue;
-            case 'F': dataEnum = DataEnum::FaceNormalData;  commaCount = 0; continue;
-            case 'C': dataEnum = DataEnum::FaceColorData;   commaCount = 0; continue;
+            case 'I': dataEnum = DataEnum::IndexData;
+            indexCount = 0;       
+            indexRanges[meshIdx].index = allIndices.Count();
+            commaCount = 0; 
+            continue;
+
+            case 'V': dataEnum = DataEnum::VertexData;      
+            indexRanges[meshIdx].count = indexCount;
+            commaCount = 0; 
+            continue;
+
             default: break;
         }
 
@@ -113,13 +119,11 @@ VertexArray& allVertices, IndexArray& allIndices, VertexRanges& vertexRanges)
             continue;
 
             //data parsing
-            const f32 value = std::atof(&line[begin]);
+            const f32 value = ::std::atof(&line[begin]);
             switch(dataEnum)
             {
                 case DataEnum::IndexData:       parseIndex(value); break;
                 case DataEnum::VertexData:      parseVertex(value, commaCount); break;
-                case DataEnum::FaceNormalData:  parseFaceNormal(value); break;
-                case DataEnum::FaceColorData:   parseFaceColor(value); break;
                 case DataEnum::None:            break; //! have to be error later
                 default: dbg::Assert(false, "parsing mode missing"); break;
             };
@@ -128,57 +132,8 @@ VertexArray& allVertices, IndexArray& allIndices, VertexRanges& vertexRanges)
             begin = i + 1;
             commaCount++;   
         }
-
     }
 
-}//ns
-
-//TODO: rendering before doing any other data
-
-/*
-MeshVertex vertex {};
-
-idx_t begin = 0;
-idx_t commaCount = 0;
-
-for(idx_t i = 0; line[i] != '\n' && line[i] != '\0'; ++i)
-{
-    if (line[i] != ',')
-        continue;
-
-    const f32 value = (f32)std::atof(&line[begin]);
-
-    constexpr auto COMMAS_MAX = 13;
-    switch(commaCount % COMMAS_MAX)
-    {
-        //vert idx
-        case  0: break;
-        //vert pos
-        case  1: vertex.pos.x = value; break;
-        case  2: vertex.pos.y = value; break;
-        case  3: vertex.pos.z = value; break;
-        //vert col
-        case  4: vertex.col.r = value; break;
-        case  5: vertex.col.g = value; break;
-        case  6: vertex.col.b = value; break;
-        case  7: vertex.col.a = value; break;
-        //vert nor
-        case  8: vertex.nor.x = value; break;
-        case  9: vertex.nor.y = value; break;
-        case 10: vertex.nor.z = value; break;
-        //vert tex
-        case 11: vertex.tex.x = value; break;
-        case 12: vertex.tex.y = value; break;
-    } 
-    */
-    //begin = i + 1;
-    //commaCount++;    
-//}
-
-// allVertices.AppendElement(vertex);
-//}
-
-//const auto vertexRangeCount = allVertices.Count() - vertexRangeIndex;
-//vertexRanges[meshIdx] = { (uint32_t) vertexRangeIndex, (uint32_t) vertexRangeCount };
+}//fn
 
 }//ns

@@ -104,7 +104,7 @@ struct EditorBrush
     void SetVisible(ecs::ECS& ecs, bool const set)
     {
         auto& gizmoMainComponent = ecs.arrays.mainComponents.Get(brushID);
-        gizmoMainComponent.meshEnum = set ? res::MeshEnum::Circle : res::MeshEnum::None;
+        //gizmoMainComponent.meshEnum = set ? res::MeshEnum::Circle : res::MeshEnum::None;
     }
 
 };

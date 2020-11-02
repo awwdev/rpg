@@ -18,7 +18,7 @@ enum class EditorEnum : s32
 
 struct EditorMode
 {
-    EditorEnum editorEnum = EditorEnum::TerrainVertexMove;
+    EditorEnum editorEnum = EditorEnum::PrefabPlacement;
     bool active = false;
 };
 

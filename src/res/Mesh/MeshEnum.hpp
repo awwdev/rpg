@@ -12,8 +12,8 @@ enum class MeshEnum : u8
 {
     None, 
     //primitives
-    Cube,
-    Circle,
+    //Cube,
+    //Circle,
     //meshes
     Grass2,
     //Sword1_Grib,
@@ -27,8 +27,8 @@ enum class MeshEnum : u8
 const com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> MESH_ENUM_TO_STR
 {
     { MeshEnum::None,           "Mesh_None" },
-    { MeshEnum::Cube,           "Mesh_Cube" },
-    { MeshEnum::Circle,         "Mesh_Circle" },
+    //{ MeshEnum::Cube,           "Mesh_Cube" },
+    //{ MeshEnum::Circle,         "Mesh_Circle" },
     //meshes
     { MeshEnum::Grass2,         "Mesh_Grass2" },
     //{ MeshEnum::Sword1_Grib,    "Mesh_Sword1_Grib" },
@@ -44,8 +44,8 @@ const auto MESH_STR_TO_ENUM = com::StringMapFromEnumMap<MeshEnum, PREFAB_FILE_LI
 
 inline com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> MESH_PATHS
 {
-    { MeshEnum::Cube,           "res/Meshes/Cube.mesh"         },
-    { MeshEnum::Circle,         "res/Meshes/Circle.mesh"         },
+    //{ MeshEnum::Cube,           "res/Meshes/Cube.mesh"         },
+    //{ MeshEnum::Circle,         "res/Meshes/Circle.mesh"         },
     //meshes
     { MeshEnum::Grass2,         "res/Meshes/Grass2.mesh"         },
     //{ MeshEnum::Sword1_Grib,    "res/Meshes/Sword1_Grib.mesh"  },
@@ -57,8 +57,8 @@ inline com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> M
 
 inline com::EnumMap<MeshEnum::ENUM_END, MeshMaterialEnum> MESH_MATERIAL_GROUPS
 {
-    { MeshEnum::Cube,           MeshMaterialEnum::Default    },
-    { MeshEnum::Circle,         MeshMaterialEnum::Line       },
+    //{ MeshEnum::Cube,           MeshMaterialEnum::Default    },
+    //{ MeshEnum::Circle,         MeshMaterialEnum::Line       },
     { MeshEnum::Grass2,         MeshMaterialEnum::Foliage    },
     //{ MeshEnum::Sword1_Grib,    MeshMaterialEnum::Default },
     //{ MeshEnum::Sword1_Blade,   MeshMaterialEnum::Metal   },

@@ -26,6 +26,7 @@ ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
                 .metallic = mainComponent.metallic,
                 .glow     = mainComponent.glow,
                 .flat     = mainComponent.flat,
+                .baseColor= mainComponent.baseColor,
             },
         };
         renderData.general.meshInstances[meshEnumIdx].AppendElement(meshInstance);   

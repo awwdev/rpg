@@ -15,6 +15,7 @@ struct RayQuadrant_Intersection
     idx_t quadrantId;
     idx_t quadrantclosestVertexId;
     idx_t quadrantTriangleId;
+    com::Vec4f interpolatedVertexColor;
 };
 
 template<idx_t QUAD_COUNT, idx_t QUAD_SIZE>
@@ -46,17 +47,19 @@ struct Quadrant
         for(idx_t i = 0; i < mesh.INDEX_COUNT; i += 3) 
         {
             //using indices to get triangles
-            auto const& v0 = mesh.vertices[mesh.GetRelativeVertexIndex(i+0)].pos;
-            auto const& v1 = mesh.vertices[mesh.GetRelativeVertexIndex(i+1)].pos;
-            auto const& v2 = mesh.vertices[mesh.GetRelativeVertexIndex(i+2)].pos;
+            auto const& v0 = mesh.vertices[mesh.GetRelativeVertexIndex(i+0)];
+            auto const& v1 = mesh.vertices[mesh.GetRelativeVertexIndex(i+1)];
+            auto const& v2 = mesh.vertices[mesh.GetRelativeVertexIndex(i+2)];
 
-            if (auto const triangleIntersection = RayTriangle_Intersection(ray, v0, v1, v2))
+            if (auto const triangleIntersection = RayTriangle_Intersection(ray, v0.pos, v1.pos, v2.pos))
             {
+                com::Vec4f interpolatedVertexColor {};
                 return { 
                     .position = triangleIntersection.Point(ray), 
                     .quadrantId = quadrantId, 
                     .quadrantclosestVertexId = (idx_t) mesh.absoluteIndices[i + triangleIntersection.GetClosestTriangleCorner()] - mesh.indicesOffset,
                     .quadrantTriangleId = i / 3,
+                    .interpolatedVertexColor = triangleIntersection.GetInterpolatedVertexColor(v0.col, v1.col, v2.col)
                 };
             }            
         }

@@ -245,6 +245,15 @@ struct RayTriangle_Intersection
         if (u > v && u > w) return VertexIndex::v1;
         return VertexIndex::v0;            
     }
+
+    auto GetInterpolatedVertexColor(com::Vec4f const& c0, com::Vec4f const& c1, com::Vec4f const& c2) const
+    {
+        auto const w = GetW();
+        auto const weighted_c0 = c0 * w;
+        auto const weighted_c1 = c1 * u;
+        auto const weighted_c2 = c2 * v;
+        return weighted_c0 + weighted_c1 + weighted_c2;
+    }
 };
 
 inline

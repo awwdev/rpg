@@ -39,6 +39,8 @@ struct RenderData_General
             float metallic;
             float glow;
             float flat;
+            float placeholder;
+            com::Vec4f baseColor;
         } 
         renderSettings;
     };
