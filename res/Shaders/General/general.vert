@@ -7,14 +7,16 @@ layout (location = 1) in vec3 inNor;
 layout (location = 2) in vec4 inCol;
 layout (location = 3) in vec2 inTex;
 
-layout(location = 0) out vec4  outCol;
-layout(location = 1) out vec2  outTex;
-layout(location = 2) out vec3  outNormal;
-layout(location = 3) out vec3  outViewDir;
-layout(location = 4) out flat int outMetallic;
-layout(location = 5) out flat int outGlow;
-layout(location = 6) out flat int outFlat;
-layout(location = 7) out vec4  outShadowPos [CASCADE_COUNT];
+layout (location = 0) out vec4  outCol;
+layout (location = 1) out vec2  outTex;
+layout (location = 2) out flat vec3 outSunDir;
+layout (location = 3) out float outViewDistance;
+layout (location = 4) out vec4  outShadowPos [CASCADE_COUNT];
+//layout(location = 2) out vec3  outNormal;
+//layout(location = 3) out vec3  outViewDir;
+//layout(location = 4) out flat int outMetallic;
+//layout(location = 5) out flat int outGlow;
+//layout(location = 6) out flat int outFlat;
 
 layout(binding = 0) uniform Meta { 
     mat4  view;
@@ -52,7 +54,16 @@ void main()
 {
     MeshInstance instance = meshInstances.arr[gl_InstanceIndex];
 
-    gl_Position = meta.proj * meta.view * instance.transform * vec4(inPos, 1);
+    //grass movement fun
+    float y = max(0, -inPos.y);
+    vec4 vertPosMoved = vec4(
+        inPos.x * (1 + sin(inPos.z + meta.time * 2.0) * 0.12 * y), 
+        inPos.y * (1 + sin(          meta.time * 0.1) * 0.01 * y), 
+        inPos.z * (1 + cos(inPos.x + meta.time * 1.5) * 0.15 * y), 
+        1
+    );
+
+    gl_Position = meta.proj * meta.view * instance.transform * vertPosMoved;//vec4(inPos, 1);
     outCol = instance.baseColor;
     outTex = inTex;
 
@@ -60,6 +71,8 @@ void main()
         outShadowPos[i] = sun.projViewBiased[i] * instance.transform * vec4(inPos, 1);
         //also change array size of output and input in frag
     }
+
+    outViewDistance = distance(meta.viewPos.xyz, inPos.xyz);
 
     //metallic
     //mat4 norMat = instance.transform;

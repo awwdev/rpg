@@ -28,6 +28,13 @@ struct EditorCmd_PrefabPlacement
             auto& mainComponent = ecs.arrays.mainComponents.Get(prefabID);
             mainComponent.translation = position;
             mainComponent.baseColor = baseColor;
+
+            //randomness test
+            mainComponent.translation.x += (rand() % 10) / 10.f - 0.5f;
+            mainComponent.translation.z += (rand() % 10) / 10.f - 0.5f;
+            mainComponent.scale.x += (rand() % 10) / 10.f;
+            mainComponent.scale.z += (rand() % 10) / 10.f;
+            mainComponent.scale.y += (rand() % 10) / 10.f;
         }
     }
 
