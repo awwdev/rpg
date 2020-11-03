@@ -15,7 +15,7 @@ struct ComponentArrays
     ComponentArray<TransformComponent, MAX_COMPONENT_COUNT>  transform_components;
     ComponentArray<RenderComponent   , MAX_COMPONENT_COUNT>  render_components;
 
-    template<class... CtorArgs>
+    /*template<class... CtorArgs>
     void SetComponent(const ID entityID, const ComponentEnum componentType, CtorArgs&&... args)
     {
         signatures[entityID].Set(componentType, true);
@@ -27,6 +27,16 @@ struct ComponentArrays
             case ComponentEnum::RenderComponent: render_components.SetComponent(entityID, std::forward<CtorArgs>(args)...); break;
             default: dbg::Assert(false, "component missing");
         }
+    }*/
+
+    template<typename COMPONENT_T>
+    void SetComponent(const ID entityID, COMPONENT_T const& component)
+    {
+        //signatures[entityID].Set(componentType, true);
+
+        //? COMPONENT ADDING
+        if constexpr (std::is_same_v<COMPONENT_T, TransformComponent>) transform_components.SetComponent(entityID, component);
+        if constexpr (std::is_same_v<COMPONENT_T, RenderComponent>)    render_components.SetComponent(entityID, component);
     }
 
     template<auto SRC_MAX_COUNT> //used both by serialization and prefab loading

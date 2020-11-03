@@ -10,7 +10,7 @@
 @ Cube
 ? TransformComponent
 ? RenderComponent
-    #+ Mesh = Mesh_Cube
+    + Mesh = Mesh_Cube
 
 @ Circle
 ? TransformComponent
@@ -36,5 +36,4 @@
 @ Grass
 ? TransformComponent
 ? RenderComponent
-    #+ Mesh = Mesh_Grass2
-    #+ Scale = 1, 1, 1
+    + Mesh = Mesh_Grass

@@ -40,6 +40,7 @@ struct ComponentArray
 
     //? methods
 
+    /*
     template<class... CtorArgs>
     COMPONENT_T& SetComponent(const ID entityID, CtorArgs&&... args)
     {
@@ -50,8 +51,23 @@ struct ComponentArray
             return dense[componentLookup[entityID]];
         }
         //new
-        //!TODO
         dense.AppendElement(std::forward<CtorArgs>(args)...);
+        componentLookup[entityID] = dense.Count() - 1;
+        entityLookup[dense.Count() - 1] = entityID;
+        return dense.Last();
+    }
+    */
+
+    COMPONENT_T& SetComponent(const ID entityID, auto const& component)
+    {
+        //overwrite
+        if (componentLookup[entityID] != ECS_NULL) {
+            dbg::LogWarning("add component that alread exists");
+            dense[componentLookup[entityID]] = component;
+            return dense[componentLookup[entityID]];
+        }
+        //new
+        dense.AppendElement(component);
         componentLookup[entityID] = dense.Count() - 1;
         entityLookup[dense.Count() - 1] = entityID;
         return dense.Last();

@@ -101,9 +101,9 @@ private:
     {
         arrays.CopyComponents(entityID, (ID) prefabEnum, prefabsArrays);
         //instantiate potential child prefabs (note that the entity has child prefab IDs (copied) and not real IDs yet)
-        if (auto* mainComponent = arrays.transform_components.GetPtr(entityID)) {
-            auto const prefabChildren = mainComponent->children;
-            mainComponent->children.Clear();
+        if (auto* transform_component = arrays.transform_components.GetPtr(entityID)) {
+            auto const prefabChildren = transform_component->children;
+            transform_component->children.Clear();
             //clear prefab children and add real children 
             FOR_ARRAY(prefabChildren, i) { 
                 auto const prefabChildID = (res::PrefabEnum) prefabChildren[i];

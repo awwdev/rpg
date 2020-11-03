@@ -16,6 +16,7 @@ inline auto ParseTransformComponent(ComponentDataPairs const& pairs)
         {
             case ComponentDataEnum::Children:
             {
+                /*
                 const auto values = ValStrToValArray<3, 100>(val);     
                 dbg::Assert(!values.Empty(), "values are empty");
                 FOR_ARRAY(values, i){
@@ -23,16 +24,19 @@ inline auto ParseTransformComponent(ComponentDataPairs const& pairs)
                     dbg::Assert(prefabEnum, "child prefab enum wrong");
                     transformComponent.children.AppendElement((ID) *prefabEnum);
                 }
+                */
             }
             break;
 
             case ComponentDataEnum::Scale:
             {
+                /*
                 const auto values = ValStrToValArray<3, 10>(val);   
                 dbg::Assert(!values.Empty(), "values are empty");
                 FOR_ARRAY(values, i){
                     transformComponent.scale[0][i] = std::atof(values[i].Data());
                 }
+                */
             }
             break;
 

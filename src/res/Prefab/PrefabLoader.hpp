@@ -3,11 +3,14 @@
 #pragma once
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"
-#include "res/Prefab/ComponentParsing/ComponentData.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
 #include "res/Prefab/PrefabMeta.hpp"
 #include "com/mem/Allocator.hpp"
 #include "dbg/Assert.hpp"
+
+#include "res/Prefab/ComponentParsing/ComponentData.hpp"
+#include "res/Prefab/ComponentParsing/ParseRenderComponent.hpp"
+#include "res/Prefab/ComponentParsing/ParseTransformComponent.hpp"
 
 namespace rpg::res {
 
@@ -34,10 +37,26 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
 
         FOR_C_ARRAY(componentData, componentEnumIdx) {
             const auto& pairs = componentData[componentEnumIdx];
-            if (pairs.Empty())
-                continue;
-            //!TODO
-            //prefabComponentArrays.SetComponent((ecs::ID) currentPrefab, (ecs::ComponentEnum) componentEnumIdx, pairs);
+            auto const componentEnum = (ecs::ComponentEnum) componentEnumIdx;
+            switch((ecs::ComponentEnum)componentEnum)
+            {
+                case ecs::ComponentEnum::RenderComponent:
+                {
+                    auto const component = ParseRenderComponent(pairs);
+                    prefabComponentArrays.SetComponent((ecs::ID) currentPrefab, component);
+                }
+                break;
+
+                case ecs::ComponentEnum::TransformComponent:
+                {
+                    auto const component = ParseTransformComponent(pairs);
+                    prefabComponentArrays.SetComponent((ecs::ID) currentPrefab, component);
+                }
+                break;
+
+                default: dbg::Assert(false, "missing");
+            }
+           
         }
 
         FOR_C_ARRAY(componentData, i)
