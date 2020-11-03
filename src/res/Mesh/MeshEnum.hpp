@@ -10,15 +10,14 @@ namespace rpg::res {
 
 enum class MeshEnum : u8
 {
-    None,
     Cube,
     Grass,
     ENUM_END,
+    None, //after enum end!
 };
 
 const com::EnumMap<MeshEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> MESH_ENUM_TO_STR
 {
-    { MeshEnum::None,           "Mesh_None" },
     { MeshEnum::Grass,          "Mesh_Grass" },
     { MeshEnum::Cube,           "Mesh_Cube" },
 };

@@ -1,6 +1,18 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
+layout(location = 0) out vec4 outCol;
+
+void main() 
+{
+    outCol = vec4(1, 1, 1, 1);
+}
+
+
+/*
+#version 450
+#extension GL_ARB_separate_shader_objects : enable
+
 #define CASCADE_COUNT 4
 
 layout (location = 0) in vec4  inCol;
@@ -103,3 +115,4 @@ void main()
 
     outCol = vec4(inCol.rgb * shadowSum, 1);
 }
+*/

@@ -11,15 +11,15 @@ layout (location = 4) in vec4  inShadowCoord [CASCADE_COUNT];
 
 layout (location = 0) out vec4 outCol;
 
-layout (binding = 3) uniform sampler2DArrayShadow shadowMap;
+layout (binding = 6) uniform sampler2DArrayShadow shadowMap;
 
 //? terrain faces
-layout (std430, binding = 6) readonly buffer TerrainTriangleNormals { 
+layout (std430, binding = 7) readonly buffer TerrainTriangleNormals { 
     vec3 normals [];
 } 
 terrainTriangleNormals;
 
-layout (std430, binding = 7) readonly buffer TerrainTriangleColors { 
+layout (std430, binding = 8) readonly buffer TerrainTriangleColors { 
     vec4 colors [];
 } 
 terrainTriangleColors;

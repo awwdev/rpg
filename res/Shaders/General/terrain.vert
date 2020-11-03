@@ -21,7 +21,7 @@ layout (binding = 0) uniform Meta {
     float time;
 } meta;
 
-layout(binding = 2) uniform Sun { 
+layout(binding = 5) uniform Sun { 
     mat4 projView       [CASCADE_COUNT];
     mat4 projViewBiased [CASCADE_COUNT];
     vec3 sunDir;

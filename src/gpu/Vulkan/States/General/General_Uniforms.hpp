@@ -12,40 +12,44 @@ namespace rpg::gpu::vuk {
 
 struct General_Uniforms
 {
-    enum Bindings : uint32_t {
-        BindingMeta                     = 0,
-        BindingModelInstances           = 1,
-        BindingSun                      = 2,
-        BindingShadowMap                = 3,
-        BindingFoliage                  = 4,
-        BindingFX                       = 5, 
-        BindingTerrainTriangleNormals   = 6,
-        BindingTerrainTriangleColors    = 7,
-        ENUM_END
+    //TODO: more clean-up
+
+    enum Bindings : uint32_t
+    {
+        //meta
+        BindingMeta,
+        //instances
+        BindingInstanceDatas,
+        BINDING_INSTANCE_DATAS_END = BindingInstanceDatas + (idx_t) res::MeshMaterialEnum::ENUM_END - 1,
+        //shadows
+        BindingSun,
+        BindingShadowMap,
+        //terrain
+        BindingTerrainTriangleNormals,
+        BindingTerrainTriangleColors,
+        //end
+        ENUM_END,
     };
 
     UniformInfo infos [Bindings::ENUM_END];
     Descriptors descriptors;
 
     using RD = RenderData_General;
-
+    //meta
     UniformBuffer<RD::Meta, 1> uboMeta;
-    StorageBuffer<float, RD::MESH_INSTANCES_MAX> sboInstances; //!TODO: need multiple UBOs
+    //instances
+    UniformBuffer<RD::InstanceData, RD::MESH_INSTANCES_MAX> uboInstanceDatas [(idx_t) res::MeshMaterialEnum::ENUM_END];
+    //shadow
     VkSampler shadowMapSampler;
-
+    //terrain
     using TerrainMesh = decltype(res::Resources_Terrain::TERRAIN_T::QUADRANT_T::mesh);
     StorageBuffer<com::Vec3f, TerrainMesh::TRIANGLE_COUNT * res::Resources_Terrain::QUADRANT_COUNT_TOTAL> sboTerrainTriangleNormals;
     StorageBuffer<com::Vec4f, TerrainMesh::TRIANGLE_COUNT * res::Resources_Terrain::QUADRANT_COUNT_TOTAL> sboTerrainTriangleColors;
 
-    Image     foliageImages;
-    VkSampler foliageSampler;
-
-    Image     fxImages;;
-    VkSampler fxSampler;
 
     void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::Resources_Textures& resTextures)
     {
-        //? UBO META
+        //? meta
         uboMeta.Create();
         infos[BindingMeta] = {
             .type = UniformInfo::Buffer,
@@ -63,25 +67,29 @@ struct General_Uniforms
             }
         };
 
-        //? UBO MODELS
-        sboInstances.Create();
-        infos[BindingModelInstances] = {
-            .type = UniformInfo::Buffer,
-            .binding {
-                .binding            = BindingModelInstances,
-                .descriptorType     = sboInstances.DESCRIPTOR_TYPE,
-                .descriptorCount    = 1,
-                .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
-                .pImmutableSamplers = nullptr,
-            },
-            .bufferInfo = {
-                .buffer = sboInstances.activeBuffer->buffer,
-                .offset = 0,
-                .range  = VK_WHOLE_SIZE,
-            }
-        };
+        //? instances
+        FOR_C_ARRAY(uboInstanceDatas, i)
+        {
+            auto& ubo = uboInstanceDatas[i];
+            ubo.Create();
+            infos[BindingInstanceDatas + i] = {
+                .type = UniformInfo::Buffer,
+                .binding {
+                    .binding            = BindingInstanceDatas + (uint32_t)i,
+                    .descriptorType     = ubo.DESCRIPTOR_TYPE,
+                    .descriptorCount    = 1,
+                    .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
+                    .pImmutableSamplers = nullptr,
+                },
+                .bufferInfo = {
+                    .buffer = ubo.activeBuffer->buffer,
+                    .offset = 0,
+                    .range  = VK_WHOLE_SIZE,
+                }
+            };
+        }       
 
-        //? SUN
+        //? sun
         infos[BindingSun] = {
             .type = UniformInfo::Buffer,
             .binding {
@@ -98,7 +106,7 @@ struct General_Uniforms
             }
         };
 
-        //? SHADOW MAP
+        //? shadow map
         const VkSamplerCreateInfo shadowSamplerInfo 
         {
             .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
@@ -135,99 +143,6 @@ struct General_Uniforms
                 .sampler        = shadowMapSampler,
                 .imageView      = shadowMaps.view,
                 .imageLayout    = shadowMaps.currentLayout
-            }
-        };
-
-        //? FOLIAGE IMAGES
-        constexpr VkComponentMapping foliageComponentMapping = 
-        { 
-            .r = VK_COMPONENT_SWIZZLE_B,
-            .g = VK_COMPONENT_SWIZZLE_G,
-            .b = VK_COMPONENT_SWIZZLE_R,
-            .a = VK_COMPONENT_SWIZZLE_A
-        };
-
-        foliageImages.Create(
-            VK_FORMAT_R8_SRGB,
-            resTextures.foliage.WIDTH,
-            resTextures.foliage.HEIGHT,
-            VK_SAMPLE_COUNT_1_BIT, 
-            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-            VK_IMAGE_ASPECT_COLOR_BIT,
-            resTextures.foliage.count,
-            VK_IMAGE_VIEW_TYPE_2D_ARRAY,
-            foliageComponentMapping
-        );     
-        foliageImages.Store(
-            cmdPool, 
-            resTextures.foliage.data, 
-            resTextures.foliage.ALL_TEXTURES_BYTES,
-            resTextures.foliage.SINGLE_TEXTURE_BYTES
-        );
-        foliageImages.Bake(cmdPool);
-
-        const auto foliageSamplerInfo = SamplerCreateInfo(
-            VK_FILTER_LINEAR,
-            VK_SAMPLER_MIPMAP_MODE_NEAREST,
-            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
-        );
-        VkCheck(vkCreateSampler(g_contextPtr->device, &foliageSamplerInfo, nullptr, &foliageSampler));
-
-        infos[BindingFoliage] = {
-            .type = UniformInfo::Image,
-            .binding {
-                .binding            = BindingFoliage,
-                .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                .descriptorCount    = 1,
-                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
-                .pImmutableSamplers = nullptr,
-            },
-            .imageInfo {
-                .sampler        = foliageSampler,
-                .imageView      = foliageImages.view,
-                .imageLayout    = foliageImages.currentLayout
-            }
-        };
-
-        //? FX TEXTURES
-        fxImages.Create(
-            VK_FORMAT_R8G8B8A8_SRGB,
-            resTextures.fx.WIDTH,
-            resTextures.fx.HEIGHT,
-            VK_SAMPLE_COUNT_1_BIT, 
-            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-            VK_IMAGE_ASPECT_COLOR_BIT,
-            resTextures.fx.count,
-            VK_IMAGE_VIEW_TYPE_2D_ARRAY
-        );     
-        fxImages.Store(
-            cmdPool, 
-            resTextures.fx.data, 
-            resTextures.fx.ALL_TEXTURES_BYTES,
-            resTextures.fx.SINGLE_TEXTURE_BYTES
-        );
-        fxImages.Bake(cmdPool);
-
-        const auto fxSamplerInfo = SamplerCreateInfo(
-            VK_FILTER_NEAREST,
-            VK_SAMPLER_MIPMAP_MODE_NEAREST,
-            VK_SAMPLER_ADDRESS_MODE_REPEAT
-        );
-        VkCheck(vkCreateSampler(g_contextPtr->device, &fxSamplerInfo, nullptr, &fxSampler));
-
-        infos[BindingFX] = {
-            .type = UniformInfo::Image,
-            .binding {
-                .binding            = BindingFX,
-                .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                .descriptorCount    = 1,
-                .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
-                .pImmutableSamplers = nullptr,
-            },
-            .imageInfo {
-                .sampler        = fxSampler,
-                .imageView      = fxImages.view,
-                .imageLayout    = fxImages.currentLayout
             }
         };
 
@@ -277,13 +192,19 @@ struct General_Uniforms
         uboMeta.Append(rdGeneral.meta);
 
         //?instances
-        sboInstances.Reset();
-        //!TODO
-        //FOR_C_ARRAY(rdGeneral.meshInstances, i){
-        //    if (auto const& instanceData = rdGeneral.meshInstances[i]; 
-        //        instanceData.Empty() == false && i != (idx_t) res::MeshEnum::None)
-        //        sboInstances.Append(instanceData);
-        //}
+        auto const& mat_array = rdGeneral.instance_datas;
+        for(idx_t matIdx = 0; matIdx < (idx_t) res::MeshMaterialEnum::ENUM_END; ++matIdx)
+        {
+            auto& ubo = uboInstanceDatas[matIdx];
+            ubo.Reset();
+            auto const& mesh_array = mat_array[matIdx];
+            FOR_C_ARRAY(mesh_array, meshIdx)
+            {
+                auto const& inst_array = mesh_array[meshIdx];
+                if (inst_array.Empty() == false)
+                    ubo.Append(inst_array);   
+            }
+        }
 
         //?terrain faces
         //TODO: only dirty ones
@@ -309,13 +230,13 @@ struct General_Uniforms
         uboMeta.Destroy();
         sboTerrainTriangleNormals.Destroy();
         sboTerrainTriangleColors.Destroy();
-        sboInstances.Destroy();
+        FOR_C_ARRAY(uboInstanceDatas, i)
+        {
+            auto& ubo = uboInstanceDatas[i];
+            ubo.Destroy();
+        }
         descriptors.Destroy();
         vkDestroySampler(g_contextPtr->device, shadowMapSampler, nullptr);
-        vkDestroySampler(g_contextPtr->device, foliageSampler, nullptr);
-        vkDestroySampler(g_contextPtr->device, fxSampler, nullptr);
-        foliageImages.Destroy();
-        fxImages.Destroy();
         FOR_C_ARRAY(infos, i)
             infos[i] = {};
     }
@@ -327,3 +248,59 @@ struct General_Uniforms
 };
 
 }//ns
+
+
+
+/*
+//? FOLIAGE IMAGES
+constexpr VkComponentMapping foliageComponentMapping = 
+{ 
+    .r = VK_COMPONENT_SWIZZLE_B,
+    .g = VK_COMPONENT_SWIZZLE_G,
+    .b = VK_COMPONENT_SWIZZLE_R,
+    .a = VK_COMPONENT_SWIZZLE_A
+};
+
+foliageImages.Create(
+    VK_FORMAT_R8_SRGB,
+    resTextures.foliage.WIDTH,
+    resTextures.foliage.HEIGHT,
+    VK_SAMPLE_COUNT_1_BIT, 
+    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+    VK_IMAGE_ASPECT_COLOR_BIT,
+    resTextures.foliage.count,
+    VK_IMAGE_VIEW_TYPE_2D_ARRAY,
+    foliageComponentMapping
+);     
+foliageImages.Store(
+    cmdPool, 
+    resTextures.foliage.data, 
+    resTextures.foliage.ALL_TEXTURES_BYTES,
+    resTextures.foliage.SINGLE_TEXTURE_BYTES
+);
+foliageImages.Bake(cmdPool);
+
+const auto foliageSamplerInfo = SamplerCreateInfo(
+    VK_FILTER_LINEAR,
+    VK_SAMPLER_MIPMAP_MODE_NEAREST,
+    VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
+);
+VkCheck(vkCreateSampler(g_contextPtr->device, &foliageSamplerInfo, nullptr, &foliageSampler));
+
+infos[BindingFoliage] = {
+    .type = UniformInfo::Image,
+    .binding {
+        .binding            = BindingFoliage,
+        .descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+        .descriptorCount    = 1,
+        .stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT,
+        .pImmutableSamplers = nullptr,
+    },
+    .imageInfo {
+        .sampler        = foliageSampler,
+        .imageView      = foliageImages.view,
+        .imageLayout    = foliageImages.currentLayout
+    }
+};
+
+*/

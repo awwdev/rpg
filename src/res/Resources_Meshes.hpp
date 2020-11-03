@@ -18,7 +18,7 @@ struct Resources_Meshes
 
     void Load()
     {
-        for (MeshEnum meshEnum { (MeshEnum) 1 };;) //don't load MeshNone
+        for (MeshEnum meshEnum {};;)
         {
             const auto meshIdx = static_cast<idx_t>(meshEnum);
             dbg::Assert(MESH_PATHS.Contains(meshIdx), "mesh missing");

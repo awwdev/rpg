@@ -89,9 +89,13 @@ struct State_General
 
     void RecordTerrain(VkCommandBuffer cmdBuffer, RenderData_General& render_data_general)
     {
+        //TODO: bind specific for terrain
+        vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.layout, 0, 
+        generalUniforms.descriptors.descSets.count, generalUniforms.descriptors.descSets.data, 0, nullptr);
+        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipeline.pipeline);
+
         vkCmdBindIndexBuffer    (cmdBuffer, generalVertices.iboTerrain.activeBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &generalVertices.vboTerrain.activeBuffer->buffer, generalVertices.offsets);
-        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipeline.pipeline);
         vkCmdDrawIndexed        (cmdBuffer, generalVertices.iboTerrain.count, 1, 0, 0 , 0);
 
         if (render_data_general.enableTerrainWire)
@@ -106,18 +110,20 @@ struct State_General
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &generalVertices.vboMeshes.activeBuffer->buffer, generalVertices.offsets);
         vkCmdBindIndexBuffer    (cmdBuffer, generalVertices.iboMeshes.activeBuffer->buffer, 0, VkIndexType::VK_INDEX_TYPE_UINT32);
 
-        auto const& material_array = render_data_general.instance_datas;
+        auto const& material_array = render_data_general.instance_datas; //multiple arrays
         FOR_C_ARRAY(material_array, matIdx)
         {
             auto const& mesh_array = material_array[matIdx];
-            //select pipeline according to material
+            //TODO: bind UBO and pipeline according to material
+            //vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.layout, 0, 
+            //generalUniforms.descriptors.descSets.count, generalUniforms.descriptors.descSets.data, 0, nullptr);
             vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.pipeline);
 
-            for(idx_t meshIdx = 1; meshIdx < (idx_t) res::MeshEnum::ENUM_END; ++meshIdx)
+            FOR_C_ARRAY(mesh_array, meshIdx)
             {
                 auto const& inst_array  = mesh_array[meshIdx];
                 if (inst_array.Empty()) continue;
-                
+
                 auto const& vertexRange = generalVertices.vboMeshesVertexRanges[meshIdx];
                 auto const& indexRange  = generalVertices.iboMeshesIndexRanges [meshIdx];
                 vkCmdDrawIndexed(cmdBuffer, indexRange.count, inst_array.Count(), indexRange.index, vertexRange.index, 0); //instance idx? buffer offsets?
@@ -128,13 +134,9 @@ struct State_General
 
     void Record(VkCommandBuffer cmdBuffer, RenderData_General& render_data_general)
     {
-        vkCmdBeginRenderPass    (cmdBuffer, &generalRenderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
-        vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.layout, 0, 
-                                 generalUniforms.descriptors.descSets.count, generalUniforms.descriptors.descSets.data, 0, nullptr);
-
+        vkCmdBeginRenderPass(cmdBuffer, &generalRenderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
         RecordTerrain(cmdBuffer, render_data_general);
         RecordInstances(cmdBuffer, render_data_general);
-
         vkCmdEndRenderPass(cmdBuffer);
     };
     
