@@ -87,66 +87,57 @@ struct State_General
         generalVertices.Update(renderData.general, resources.terrain);
     }
 
-    void Record(VkCommandBuffer cmdBuffer, RenderData_General& rdGeneral)
+    void RecordTerrain(VkCommandBuffer cmdBuffer, RenderData_General& render_data_general)
     {
-        vkCmdBeginRenderPass    (cmdBuffer, &generalRenderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
-        vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.layout, 0, 
-                                 generalUniforms.descriptors.descSets.count, generalUniforms.descriptors.descSets.data, 0, nullptr);
-
-        //?terrain
         vkCmdBindIndexBuffer    (cmdBuffer, generalVertices.iboTerrain.activeBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &generalVertices.vboTerrain.activeBuffer->buffer, generalVertices.offsets);
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipeline.pipeline);
         vkCmdDrawIndexed        (cmdBuffer, generalVertices.iboTerrain.count, 1, 0, 0 , 0);
 
-        //?terrain wire
-        if (rdGeneral.enableTerrainWire)
+        if (render_data_general.enableTerrainWire)
         {
             vkCmdBindPipeline   (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, wirePipeline.pipeline);
             vkCmdDrawIndexed    (cmdBuffer, generalVertices.iboTerrain.count, 1, 0, 0 , 0);
         }
+    }
 
-        //?meshes 
-        vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.pipeline);
+    void RecordInstances(VkCommandBuffer cmdBuffer, RenderData_General& render_data_general)
+    {
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &generalVertices.vboMeshes.activeBuffer->buffer, generalVertices.offsets);
         vkCmdBindIndexBuffer    (cmdBuffer, generalVertices.iboMeshes.activeBuffer->buffer, 0, VkIndexType::VK_INDEX_TYPE_UINT32);
 
-        uint32_t instanceIdx = 0;
-        for(idx_t meshIdx = (idx_t) res::MeshEnum::None + 1; meshIdx < (idx_t) res::MeshEnum::ENUM_END; ++meshIdx)
+        auto const& material_array = render_data_general.instance_datas;
+        FOR_C_ARRAY(material_array, matIdx)
         {
-            auto const& meshInstances = rdGeneral.instanceDatas[0][0]; //!TODO
-            if (meshInstances.Empty()) 
-                continue;
+            auto const& mesh_array = material_array[matIdx];
+            //select pipeline according to material
+            vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.pipeline);
 
-            auto const& vertexRange = generalVertices.vboMeshesVertexRanges[meshIdx];
-            auto const& indexRange  = generalVertices.iboMeshesIndexRanges [meshIdx];
-            vkCmdDrawIndexed(cmdBuffer, indexRange.count, meshInstances.Count(), indexRange.index, vertexRange.index, instanceIdx);
-            instanceIdx += meshInstances.Count();
+            for(idx_t meshIdx = 1; meshIdx < (idx_t) res::MeshEnum::ENUM_END; ++meshIdx)
+            {
+                auto const& inst_array  = mesh_array[meshIdx];
+                if (inst_array.Empty()) continue;
+                
+                auto const& vertexRange = generalVertices.vboMeshesVertexRanges[meshIdx];
+                auto const& indexRange  = generalVertices.iboMeshesIndexRanges [meshIdx];
+                vkCmdDrawIndexed(cmdBuffer, indexRange.count, inst_array.Count(), indexRange.index, vertexRange.index, 0); //instance idx? buffer offsets?
+                dbg::LogInfo(inst_array.Count());
+            }
         }
+    }
+
+    void Record(VkCommandBuffer cmdBuffer, RenderData_General& render_data_general)
+    {
+        vkCmdBeginRenderPass    (cmdBuffer, &generalRenderPass.beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBindDescriptorSets (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.layout, 0, 
+                                 generalUniforms.descriptors.descSets.count, generalUniforms.descriptors.descSets.data, 0, nullptr);
+
+        RecordTerrain(cmdBuffer, render_data_general);
+        RecordInstances(cmdBuffer, render_data_general);
 
         vkCmdEndRenderPass(cmdBuffer);
     };
     
 };
 
-}//NS
-
-
-
-/*
-dbg::Assert(res::MESH_MATERIAL_GROUPS.Contains(meshIdx), "mesh material mapping missing");
-auto const meshMaterial = res::MESH_MATERIAL_GROUPS.Get(meshIdx);
-switch(meshMaterial) //prev material compare, to avoid bind same pipeline?
-{
-    //case res::MeshMaterialEnum::Foliage: 
-    //    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, foliagePipeline.pipeline);
-    //break;
-    //case res::MeshMaterialEnum::Line: 
-    //     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, linesPipeline.pipeline);
-    //break;
-    //case res::MeshMaterialEnum::Metal: 
-    //case res::MeshMaterialEnum::Default: 
-    //break;
-    //default: dbg::Assert(false, "mesh material pipeline missing");
-}
-*/
+}//ns

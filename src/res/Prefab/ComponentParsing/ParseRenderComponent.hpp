@@ -18,7 +18,7 @@ inline auto ParseRenderComponent(ComponentDataPairs const& pairs)
             {
                 auto const meshEnum = res::MESH_STR_TO_ENUM.GetOptional(val);
                 dbg::Assert(meshEnum, "no meshEnum");
-                component.meshEnum = *meshEnum;
+                component.mesh_enum = *meshEnum;
             }
             break;
 

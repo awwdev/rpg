@@ -28,7 +28,7 @@ struct MainComponent
 
     };
         
-    res::MeshEnum  meshEnum { res::MeshEnum::None };
+    res::MeshEnum  meshEnum { res::MeshEnum::Cube };
     float metallic { 0.f };
     float glow { 0.f };
     float flat { 0.f };

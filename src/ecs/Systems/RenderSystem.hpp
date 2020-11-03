@@ -11,23 +11,22 @@ namespace rpg::ecs {
     
 inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
 {
-    /*
-    FOR_ARRAY(arrays.mainComponents.dense, i) 
+    FOR_ARRAY(arrays.render_components.dense, i) 
     {
-        auto const& mainComponent = arrays.mainComponents.dense[i];
-        if (mainComponent.meshEnum == res::MeshEnum::None)
-            continue;
+        auto const& entityID = arrays.render_components.entityLookup[i];
+        auto const& render_component = arrays.render_components.dense[i];
+        auto const& transform_component = arrays.transform_components.Get(entityID);
+        
+        auto const meshEnum = (idx_t) render_component.mesh_enum;
+        auto const matEnum  = (idx_t) render_component.material_enum;
+        auto& instance_datas = renderData.general.instance_datas[matEnum][meshEnum];
 
-        //render data
-        auto const meshEnumIdx = (idx_t) mainComponent.meshEnum;
-        gpu::RenderData_General::InstanceData const instanceData {
+        gpu::RenderData_General::InstanceData const instData {
+            .transform = transform_component.transform,
+            .render_settings = render_component.render_settings,
         };
-
-
-        //renderData.general.meshInstances[meshEnumIdx].AppendElement(meshInstance);   
+        instance_datas.AppendElement();       
     }
-    */
-
 }
 
 }//ns

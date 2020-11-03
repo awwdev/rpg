@@ -36,12 +36,12 @@ struct RenderData_General
     struct InstanceData
     {
         alignas(64) com::Mat4f transform;
-        RenderSettings renderSettings;
+        RenderSettings render_settings;
     };
  
     //? data --------------------------------------------------------------------
     Meta meta;
-    com::Array<InstanceData, 100> instanceDatas [(idx_t)res::MeshMaterialEnum::ENUM_END][(idx_t)res::MeshEnum::ENUM_END];
+    com::Array<InstanceData, 100> instance_datas [(idx_t)res::MeshMaterialEnum::ENUM_END][(idx_t)res::MeshEnum::ENUM_END];
     bool enableTerrainWire = true;
 
     void Clear()
@@ -49,7 +49,7 @@ struct RenderData_General
         //meta is just partly overwritten not cleared
         for(auto i = 0; i < (idx_t)res::MeshMaterialEnum::ENUM_END; ++i) {
         for(auto j = 0; j < (idx_t)res::MeshEnum::ENUM_END; ++j) {
-            instanceDatas[i][j].Clear();
+            instance_datas[i][j].Clear();
         }}
     }
 };

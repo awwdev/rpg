@@ -26,6 +26,7 @@ struct EditorCmd_PrefabPlacement
         {
             prefabID = ecs.AddEntity(prefabEnum);
             auto& transform_component = ecs.arrays.transform_components.Get(prefabID);
+            auto& render_component = ecs.arrays.render_components.Get(prefabID);
             transform_component.translation = position;
             //transform_component.baseColor = baseColor; //TODO
 
