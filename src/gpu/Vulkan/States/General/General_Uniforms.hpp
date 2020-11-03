@@ -30,7 +30,7 @@ struct General_Uniforms
     using RD = RenderData_General;
 
     UniformBuffer<RD::Meta, 1> uboMeta;
-    StorageBuffer<RD::MeshInstance, RD::MESH_INSTANCES_MAX> sboInstances;
+    StorageBuffer<float, RD::MESH_INSTANCES_MAX> sboInstances; //!TODO: need multiple UBOs
     VkSampler shadowMapSampler;
 
     using TerrainMesh = decltype(res::Resources_Terrain::TERRAIN_T::QUADRANT_T::mesh);
@@ -278,11 +278,12 @@ struct General_Uniforms
 
         //?instances
         sboInstances.Reset();
-        FOR_C_ARRAY(rdGeneral.meshInstances, i){
-            if (auto const& instanceData = rdGeneral.meshInstances[i]; 
-                instanceData.Empty() == false && i != (idx_t) res::MeshEnum::None)
-                sboInstances.Append(instanceData);
-        }
+        //!TODO
+        //FOR_C_ARRAY(rdGeneral.meshInstances, i){
+        //    if (auto const& instanceData = rdGeneral.meshInstances[i]; 
+        //        instanceData.Empty() == false && i != (idx_t) res::MeshEnum::None)
+        //        sboInstances.Append(instanceData);
+        //}
 
         //?terrain faces
         //TODO: only dirty ones

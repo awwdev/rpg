@@ -58,9 +58,9 @@ struct EditorBrush
 
     void CreateGizmo(ecs::ECS& ecs)
     {
-        brushID = ecs.AddEntity(res::PrefabEnum::Circle);
-        auto& gizmoMainComponent = ecs.arrays.mainComponents.Get(brushID);
-        gizmoMainComponent.scale = com::InitializeWith<com::Vec3f>(scale); //initial scale
+        //brushID = ecs.AddEntity(res::PrefabEnum::Circle);
+        //auto& gizmoMainComponent = ecs.arrays.transform_components.Get(brushID);
+        //gizmoMainComponent.scale = com::InitializeWith<com::Vec3f>(scale); //initial scale
     }
 
     void UpdateGizmo(float const dt, ecs::ECS& ecs, com::Vec3f const& pPosition)
@@ -68,15 +68,15 @@ struct EditorBrush
         //size update
         if (wnd::HasEvent<wnd::EventType::Mouse_Scroll>())
         {
-            auto& gizmoMainComponent = ecs.arrays.mainComponents.Get(brushID);
-            scale -= wnd::glo::mouse_scroll_delta * scaleSpeed * dt;
-            gizmoMainComponent.scale = com::InitializeWith<com::Vec3f>(scale);
+            //auto& gizmoMainComponent = ecs.arrays.transform_components.Get(brushID);
+            //scale -= wnd::glo::mouse_scroll_delta * scaleSpeed * dt;
+            //gizmoMainComponent.scale = com::InitializeWith<com::Vec3f>(scale);
         }
 
         //position update
-        auto& gizmoMainComponent = ecs.arrays.mainComponents.Get(brushID);
-        position = pPosition;
-        gizmoMainComponent.translation = position;
+        //auto& gizmoMainComponent = ecs.arrays.transform_components.Get(brushID);
+        //position = pPosition;
+        //gizmoMainComponent.translation = position;
     }
 
     void UpdateInsideBrush(res::Resources_Terrain& resTerrain, res::RayQuadrant_Intersection const& intersection)
@@ -103,7 +103,7 @@ struct EditorBrush
 
     void SetVisible(ecs::ECS& ecs, bool const set)
     {
-        auto& gizmoMainComponent = ecs.arrays.mainComponents.Get(brushID);
+        //auto& gizmoMainComponent = ecs.arrays.transform_components.Get(brushID);
         //gizmoMainComponent.meshEnum = set ? res::MeshEnum::Circle : res::MeshEnum::None;
     }
 

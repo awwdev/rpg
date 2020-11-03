@@ -8,6 +8,7 @@ namespace rpg::ecs {
     
 inline void TransformSystem(ComponentArrays<>& arrays, const double)
 {
+    /*
     FOR_ARRAY(arrays.mainComponents.dense, i) 
     {
         auto& mainComponent = arrays.mainComponents.dense[i];
@@ -54,10 +55,7 @@ inline void TransformSystem(ComponentArrays<>& arrays, const double)
             childMainComponent.transform = childMainComponent.transform * combinedMat;
         }
     }
-
+    */
 }
 
 }//ns
-
-
-

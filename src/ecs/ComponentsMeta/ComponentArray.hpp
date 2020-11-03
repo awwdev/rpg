@@ -9,6 +9,8 @@
 
 #include "ecs/EntityID.hpp"
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"
+#include "ecs/Components/TransformComponent.hpp"
+#include "ecs/Components/RenderComponent.hpp"
 
 namespace rpg::ecs {
     
@@ -28,12 +30,9 @@ struct ComponentArray
     auto&       Get    (const ID entityID)       { return dense[componentLookup[entityID]]; }
     const auto& Get    (const ID entityID) const { return dense[componentLookup[entityID]]; }
 
-    ComponentEnum componentEnum;
-
     //? constructor
 
-    ComponentArray(ComponentEnum const pComponentEnum) 
-        : componentEnum { pComponentEnum }
+    ComponentArray() 
     {
         SetLookupsToNull();    
         //TODO: just using 0 as null entity is probably better than max value ? 
@@ -51,6 +50,7 @@ struct ComponentArray
             return dense[componentLookup[entityID]];
         }
         //new
+        //!TODO
         dense.AppendElement(std::forward<CtorArgs>(args)...);
         componentLookup[entityID] = dense.Count() - 1;
         entityLookup[dense.Count() - 1] = entityID;
@@ -86,24 +86,48 @@ struct ComponentArray
 
     //? serialization
 
+    constexpr auto GetPaths() const 
+    {
+        struct Paths 
+        { 
+            const char* const dense_path;
+            const char* const component_lookup_path;
+            const char* const entity_lookup_path;
+        };
+
+        if constexpr (std::is_same_v<COMPONENT_T, TransformComponent>) 
+        {
+            return Paths{
+                .dense_path             = "tmp/transform_component.dense",
+                .component_lookup_path  = "tmp/transform_component.component_lookup",
+                .entity_lookup_path     = "tmp/transform_component.entity_lookup",
+            };
+        }
+
+        if constexpr (std::is_same_v<COMPONENT_T, RenderComponent>) 
+        {
+            return Paths{
+                .dense_path             = "tmp/render_component.dense",
+                .component_lookup_path  = "tmp/render_component.component_lookup",
+                .entity_lookup_path     = "tmp/render_component.entity_lookup",
+            };
+        }
+    }
+
     void WriteBinaryFile() const
     {
-        dbg::Assert(COMPONENT_SERIALIZATION_PATHS.Contains(componentEnum), "component path missing");
-        auto const& paths = COMPONENT_SERIALIZATION_PATHS.Get(componentEnum);
-
-        dense.WriteBinaryFile(paths.dense.Data());
-        com::WriteBinaryFile_C_Array(paths.componentLookup.Data(), componentLookup, ArrayCount(componentLookup));
-        com::WriteBinaryFile_C_Array(paths.entityLookup.Data(), entityLookup, ArrayCount(entityLookup));
+        auto const [dense_path, component_lookup_path, entity_lookup_path] = GetPaths();
+        dense.WriteBinaryFile(dense_path);
+         com::WriteBinaryFile_C_Array(component_lookup_path, componentLookup, ArrayCount(componentLookup));
+         com::WriteBinaryFile_C_Array(entity_lookup_path, entityLookup, ArrayCount(entityLookup));
     }
 
     void ReadBinaryFile()
     {
-        dbg::Assert(COMPONENT_SERIALIZATION_PATHS.Contains(componentEnum), "component path missing");
-        auto const& paths = COMPONENT_SERIALIZATION_PATHS.Get(componentEnum);
-
-        dense.ReadBinaryFile(paths.dense.Data());
-        com::ReadBinaryFile_C_Array(paths.componentLookup.Data(), componentLookup);
-        com::ReadBinaryFile_C_Array(paths.entityLookup.Data(), entityLookup);
+        auto const [dense_path, component_lookup_path, entity_lookup_path] = GetPaths();
+        dense.ReadBinaryFile(dense_path);
+         com::ReadBinaryFile_C_Array(component_lookup_path, componentLookup);
+         com::ReadBinaryFile_C_Array(entity_lookup_path, entityLookup);
     }
 
 private:

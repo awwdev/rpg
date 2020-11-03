@@ -67,8 +67,8 @@ struct GUI_Stats
             table.table[(idx_t) RowEnum::shadowCascades][1] = renderData.shadow.CASCADE_COUNT;
             table.table[(idx_t) RowEnum::shadowMapSize][1]  = renderData.shadow.SHADOW_MAP_SIZE;
 
-            table.table[(idx_t) RowEnum::instancedVerts][1] = renderData.general.dbgVertCountInstancedPrev;
-            table.table[(idx_t) RowEnum::terrainVerts][1] = renderData.general.dbgVertCountTerrainPrev;
+            table.table[(idx_t) RowEnum::instancedVerts][1] = 0;//renderData.general.dbgVertCountInstancedPrev;
+            table.table[(idx_t) RowEnum::terrainVerts][1] = 0;//renderData.general.dbgVertCountTerrainPrev;
 
             table.table[(idx_t) RowEnum::guiVerts][1] = renderData.gui.dbgVertCount;
 

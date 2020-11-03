@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ecs/ComponentsMeta/ComponentData.hpp"
+#include "res/Prefab/ComponentParsing/ComponentData.hpp"
 #include "com/box/String.hpp"
 
 namespace rpg::ecs {
@@ -15,7 +15,7 @@ struct NameComponent
         : name { nameStr, nameLen }
     {}
 
-    NameComponent(ecs::ComponentDataPairs const& pairs)
+    NameComponent(res::ComponentDataPairs const& pairs)
     {
     }
 

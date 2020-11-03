@@ -1,6 +1,7 @@
-- camera direction (quaternion)
-- sun pos addition on camera pos + cam dir
-- cascade fade
+- grass base color, on placement cmd (raycast terrain), recalculate props, 
+
+
+
 
 - what to draw on specific cascades
 - cast shadow flag 

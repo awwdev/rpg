@@ -10,43 +10,16 @@ namespace rpg::ecs {
 
 enum class ComponentEnum : ecs::ID
 {
-    MainComponent, 
-    NameComponent,
+    TransformComponent, 
+    RenderComponent,
     ENUM_END
 };
 
 const com::EnumMap<ComponentEnum::ENUM_END, com::String<res::PREFAB_FILE_LINE_LEN_MAX>> COMPONENT_ENUM_TO_STR
 {
-    { ComponentEnum::MainComponent, "MainComponent" },
-    { ComponentEnum::NameComponent, "NameComponent" },
+    { ComponentEnum::TransformComponent, "TransformComponent" },
+    { ComponentEnum::RenderComponent, "RenderComponent" },
 };
 const auto COMPONENT_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentEnum, res::PREFAB_FILE_LINE_LEN_MAX>(COMPONENT_ENUM_TO_STR);
-
-
-
-struct ComponentFiles
-{
-    ComponentFiles() = default;
-    ComponentFiles(chars_t path)
-        : dense { path }
-        , componentLookup { path }
-        , entityLookup { path }
-    {
-        dense.AppendArray(".dense");
-        componentLookup.AppendArray(".componentLookup");
-        entityLookup.AppendArray(".entityLookup");
-    }
-
-    com::String<100> dense;
-    com::String<100> componentLookup;
-    com::String<100> entityLookup;
-};
-
-const com::EnumMap<ComponentEnum::ENUM_END, ComponentFiles> COMPONENT_SERIALIZATION_PATHS
-{
-    //TODO: replace with current working dir
-    { ComponentEnum::MainComponent, "tmp/MainComponent" },
-    { ComponentEnum::NameComponent, "tmp/NameComponent" },
-};
 
 }//NS

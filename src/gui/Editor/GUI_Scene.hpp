@@ -38,16 +38,17 @@ struct GUI_Scene
         {
             //entity name
             com::String<100> entityName {};
-            if (auto const* nameComponent = ecs.arrays.nameComponents.GetPtr(entityID)) 
-            {
-                entityName = nameComponent->name;
-            }
+            //!TODO
+            //if (auto const* nameComponent = ecs.arrays.nameComponents.GetPtr(entityID)) 
+            //{
+            //    entityName = nameComponent->name;
+            //}
             entityName.AppendArray(" #");
             entityName.AppendArithemtic(entityID);
             auto* currParentItem = entityList.AddItem(entityName.Data(), entityName.Length(), entityID, prevParentItem);
 
             //children
-            if (auto const* mainComponent = ecs.arrays.mainComponents.GetPtr(entityID)) 
+            if (auto const* mainComponent = ecs.arrays.transform_components.GetPtr(entityID)) 
             {
                 auto const& children = mainComponent->children;
                 FOR_ARRAY(children, i){
@@ -68,9 +69,9 @@ struct GUI_Scene
         //? UPDATE
         wnd.Update(renderData);
 
-        //ecs.arrays.mainComponents.Get(entityList.activeIdx).glow = 0;  
+        //ecs.arrays.transform_components.Get(entityList.activeIdx).glow = 0;  
         entityList.Update(renderData, wnd);
-        //ecs.arrays.mainComponents.Get(entityList.activeIdx).glow = 1;  
+        //ecs.arrays.transform_components.Get(entityList.activeIdx).glow = 1;  
             
     }
 };

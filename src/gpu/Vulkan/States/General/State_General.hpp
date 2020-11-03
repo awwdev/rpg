@@ -99,16 +99,12 @@ struct State_General
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipeline.pipeline);
         vkCmdDrawIndexed        (cmdBuffer, generalVertices.iboTerrain.count, 1, 0, 0 , 0);
 
-        rdGeneral.dbgVertCountTerrain += generalVertices.vboTerrain.count;
-
         //?terrain wire
         if (rdGeneral.enableTerrainWire)
         {
             vkCmdBindPipeline   (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, wirePipeline.pipeline);
             vkCmdDrawIndexed    (cmdBuffer, generalVertices.iboTerrain.count, 1, 0, 0 , 0);
         }
-
-        rdGeneral.dbgVertCountTerrain += generalVertices.vboTerrain.count;
 
         //?meshes 
         vkCmdBindPipeline       (cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.pipeline);
@@ -118,16 +114,14 @@ struct State_General
         uint32_t instanceIdx = 0;
         for(idx_t meshIdx = (idx_t) res::MeshEnum::None + 1; meshIdx < (idx_t) res::MeshEnum::ENUM_END; ++meshIdx)
         {
-            auto const& meshInstances = rdGeneral.meshInstances[meshIdx];
+            auto const& meshInstances = rdGeneral.instanceDatas[0][0]; //!TODO
             if (meshInstances.Empty()) 
                 continue;
 
             auto const& vertexRange = generalVertices.vboMeshesVertexRanges[meshIdx];
             auto const& indexRange  = generalVertices.iboMeshesIndexRanges [meshIdx];
             vkCmdDrawIndexed(cmdBuffer, indexRange.count, meshInstances.Count(), indexRange.index, vertexRange.index, instanceIdx);
-
             instanceIdx += meshInstances.Count();
-            rdGeneral.dbgVertCountInstanced += vertexRange.count * meshInstances.Count();
         }
 
         vkCmdEndRenderPass(cmdBuffer);

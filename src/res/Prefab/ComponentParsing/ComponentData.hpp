@@ -6,17 +6,13 @@
 #include "com/box/Array.hpp"
 #include "com/utils/Utils.hpp"
 
-namespace rpg::ecs {
+namespace rpg::res {
 
 enum class ComponentDataEnum
 {
     Children,
     Mesh,
     Scale, 
-    Metallic,
-    Glow,
-    Flat,
-    Name,
     ENUM_END
 };
 
@@ -25,21 +21,28 @@ const com::EnumMap<ComponentDataEnum::ENUM_END, com::String<res::PREFAB_FILE_LIN
     { ComponentDataEnum::Children,  "Children"      },
     { ComponentDataEnum::Mesh,      "Mesh"          },
     { ComponentDataEnum::Scale,     "Scale"         },
-    { ComponentDataEnum::Metallic,  "Metallic"      },
-    { ComponentDataEnum::Glow,      "Glow"          },
-    { ComponentDataEnum::Flat,      "Flat"          },
-    { ComponentDataEnum::Name,      "Name"          },
 };
 const auto COMPONENT_DATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentDataEnum, res::PREFAB_FILE_LINE_LEN_MAX>(COMPONENT_DATA_ENUM_TO_STR);
-
-
 
 
 struct ComponentDataPair
 {
     com::String<res::PREFAB_FILE_LINE_LEN_MAX> key;
     com::String<res::PREFAB_FILE_LINE_LEN_MAX> val;
+
+    auto get_data() const
+    {
+        auto const componentDataEnum = res::COMPONENT_DATA_STR_TO_ENUM.GetOptional(key.Data());
+        dbg::Assert(componentDataEnum, "no componentDataEnum");
+        struct { 
+            char const * const key_cstr;
+            char const * const val_cstr;
+            ComponentDataEnum componentDataEnum;
+        } rtn = { .key_cstr = key.Data(), .val_cstr = val.Data(), .componentDataEnum = *componentDataEnum };
+        return rtn;
+    }
 };
+
 
 constexpr auto COMPONENT_DATA_PAIR_MAX = 10;
 using ComponentDataPairs =  com::Array<ComponentDataPair, COMPONENT_DATA_PAIR_MAX>;

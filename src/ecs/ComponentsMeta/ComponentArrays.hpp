@@ -2,8 +2,7 @@
 
 #pragma once
 #include "ecs/ComponentsMeta/ComponentArray.hpp"
-#include "ecs/Components/MainComponent.hpp"
-#include "ecs/Components/NameComponent.hpp"
+
 
 namespace rpg::ecs {
 
@@ -13,9 +12,8 @@ struct ComponentArrays
     com::Bitset<ComponentEnum::ENUM_END> signatures[(idx_t) MAX_COMPONENT_COUNT];
 
     //? COMPONENT ARRAYS
-    ComponentArray<MainComponent, MAX_COMPONENT_COUNT>  mainComponents { ComponentEnum::MainComponent };
-    ComponentArray<NameComponent, MAX_COMPONENT_COUNT>  nameComponents { ComponentEnum::NameComponent };
-
+    ComponentArray<TransformComponent, MAX_COMPONENT_COUNT>  transform_components;
+    ComponentArray<RenderComponent   , MAX_COMPONENT_COUNT>  render_components;
 
     template<class... CtorArgs>
     void SetComponent(const ID entityID, const ComponentEnum componentType, CtorArgs&&... args)
@@ -25,8 +23,8 @@ struct ComponentArrays
         //? COMPONENT ADDING
         switch(componentType)
         {
-            case ComponentEnum::MainComponent: mainComponents.SetComponent(entityID, std::forward<CtorArgs>(args)...); break;
-            case ComponentEnum::NameComponent: nameComponents.SetComponent(entityID, std::forward<CtorArgs>(args)...); break;
+            case ComponentEnum::TransformComponent: transform_components.SetComponent(entityID, std::forward<CtorArgs>(args)...); break;
+            case ComponentEnum::RenderComponent: render_components.SetComponent(entityID, std::forward<CtorArgs>(args)...); break;
             default: dbg::Assert(false, "component missing");
         }
     }
@@ -42,20 +40,20 @@ struct ComponentArrays
         };
 
         //? COMPONENT ADDING
-        SetComponentOptional(mainComponents, srcComponentArrays.mainComponents);
-        SetComponentOptional(nameComponents, srcComponentArrays.nameComponents);
+        SetComponentOptional(transform_components, srcComponentArrays.transform_components);
+        SetComponentOptional(render_components, srcComponentArrays.render_components);
     }
 
     void ReadBinaryFile()
     {
-        mainComponents.ReadBinaryFile();
-        nameComponents.ReadBinaryFile();
+        transform_components.ReadBinaryFile();
+        render_components.ReadBinaryFile();
     }
 
     void WriteBinaryFile() const
     {
-        mainComponents.WriteBinaryFile();
-        nameComponents.WriteBinaryFile();
+        transform_components.WriteBinaryFile();
+        render_components.WriteBinaryFile();
     }
 
     void Clear()
@@ -64,8 +62,8 @@ struct ComponentArrays
             signatures[i].Clear();
 
         //? COMPONENT CLEAR
-        mainComponents.Clear();
-        nameComponents.Clear();
+        transform_components.Clear();
+        render_components.Clear();
     }
 
 };

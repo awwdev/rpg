@@ -8,29 +8,33 @@
 # whitespace is fine
 
 @ Cube
-? MainComponent
+? TransformComponent
+? RenderComponent
     #+ Mesh = Mesh_Cube
 
 @ Circle
-? MainComponent
+? TransformComponent
+? RenderComponent
     #+ Mesh = Mesh_Circle
-    + Flat = 1
 
 @ Sword
-? MainComponent
+? TransformComponent
     + Children = Sword_Grib, Sword_Blade
     
 @ Sword_Grib
-? MainComponent
+? TransformComponent
+? RenderComponent
     #+ Mesh = Mesh_Sword2_Grib
-    + Metallic = 0
+    #+ Metallic = 0
 
 @ Sword_Blade
-? MainComponent
+? TransformComponent
+? RenderComponent
     #+ Mesh = Mesh_Sword2_Blade
-    + Metallic = 1
+    #+ Metallic = 1
 
 @ Grass
-? MainComponent
-    + Mesh = Mesh_Grass2
-    + Scale = 1, 1, 1
+? TransformComponent
+? RenderComponent
+    #+ Mesh = Mesh_Grass2
+    #+ Scale = 1, 1, 1

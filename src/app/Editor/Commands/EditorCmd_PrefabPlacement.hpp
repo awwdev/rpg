@@ -25,16 +25,16 @@ struct EditorCmd_PrefabPlacement
         if constexpr(DIR == EditorCommandDirection::Forwards)
         {
             prefabID = ecs.AddEntity(prefabEnum);
-            auto& mainComponent = ecs.arrays.mainComponents.Get(prefabID);
-            mainComponent.translation = position;
-            mainComponent.baseColor = baseColor;
+            auto& transform_component = ecs.arrays.transform_components.Get(prefabID);
+            transform_component.translation = position;
+            //transform_component.baseColor = baseColor; //TODO
 
             //randomness test
-            mainComponent.translation.x += (rand() % 10) / 10.f - 0.5f;
-            mainComponent.translation.z += (rand() % 10) / 10.f - 0.5f;
-            mainComponent.scale.x += (rand() % 10) / 10.f;
-            mainComponent.scale.z += (rand() % 10) / 10.f;
-            mainComponent.scale.y += (rand() % 10) / 10.f;
+            transform_component.translation.x += (rand() % 10) / 10.f - 0.5f;
+            transform_component.translation.z += (rand() % 10) / 10.f - 0.5f;
+            transform_component.scale.x += (rand() % 10) / 10.f;
+            transform_component.scale.z += (rand() % 10) / 10.f;
+            transform_component.scale.y += (rand() % 10) / 10.f;
         }
     }
 

@@ -3,7 +3,7 @@
 #pragma once
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"
-#include "ecs/ComponentsMeta/ComponentData.hpp"
+#include "res/Prefab/ComponentParsing/ComponentData.hpp"
 #include "res/Prefab/PrefabEnum.hpp"
 #include "res/Prefab/PrefabMeta.hpp"
 #include "com/mem/Allocator.hpp"
@@ -18,7 +18,7 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
     dbg::Assert(file.is_open(), "cannot open file");
 
     //store all component data values per prefab
-    struct Arr { ecs::ComponentDataPairs data [(idx_t) ecs::ComponentEnum::ENUM_END]; };
+    struct Arr { res::ComponentDataPairs data [(idx_t) ecs::ComponentEnum::ENUM_END]; };
     auto  ptrComponentData = com::mem::ClaimBlock<Arr>();
     auto& componentData = ptrComponentData->data;
 
@@ -36,16 +36,18 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
             const auto& pairs = componentData[componentEnumIdx];
             if (pairs.Empty())
                 continue;
-            prefabComponentArrays.SetComponent((ecs::ID) currentPrefab, (ecs::ComponentEnum) componentEnumIdx, pairs);
+            //!TODO
+            //prefabComponentArrays.SetComponent((ecs::ID) currentPrefab, (ecs::ComponentEnum) componentEnumIdx, pairs);
         }
 
         FOR_C_ARRAY(componentData, i)
             componentData[i].Clear();
 
         //give prefabs the prefab enum name
-        auto const& prefabName = res::PREFAB_ENUM_TO_STR.Get(currentPrefab);
-        const ecs::NameComponent nameComponent { prefabName.Data(), prefabName.Length() };
-        prefabComponentArrays.nameComponents.SetComponent((ecs::ID) currentPrefab, nameComponent);
+        //!TODO
+        //auto const& prefabName = res::PREFAB_ENUM_TO_STR.Get(currentPrefab);
+        //const ecs::NameComponent nameComponent { prefabName.Data(), prefabName.Length() };
+        //prefabComponentArrays.nameComponents.SetComponent((ecs::ID) currentPrefab, nameComponent);
     };
 
     //line parsing
@@ -114,7 +116,7 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
         if (lineEnum == LineEnum::ComponentData)   
         {
             dbg::Assert(currentComponent != NO_CURRENT_COMPONENT, "no current component");
-            auto const pair = ecs::LineStrToComponentDataPair(line);
+            auto const pair = res::LineStrToComponentDataPair(line);
             componentData[(idx_t) currentComponent].AppendElement(pair);
             continue;
         } 

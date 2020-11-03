@@ -74,8 +74,8 @@ struct ECS
             entitiesParentless.Remove_PreserveOrder(*found);
 
         //TODO: check signature to get active components
-        arrays.mainComponents.Remove(entityID);
-        arrays.nameComponents.Remove(entityID);
+        arrays.transform_components.Remove(entityID);
+        arrays.render_components.Remove(entityID);
     }
 
 private:
@@ -92,8 +92,8 @@ private:
 
     void RegisterChild(ID const childID, ID const parentID)
     {
-        dbg::Assert(arrays.mainComponents.GetPtr(parentID), "trying to add child to non parent (no main component)");
-        auto& parentMainComponent = arrays.mainComponents.Get(parentID);
+        dbg::Assert(arrays.transform_components.GetPtr(parentID), "trying to add child to non parent (no main component)");
+        auto& parentMainComponent = arrays.transform_components.Get(parentID);
         parentMainComponent.children.AppendElement(childID);
     }
 
@@ -101,7 +101,7 @@ private:
     {
         arrays.CopyComponents(entityID, (ID) prefabEnum, prefabsArrays);
         //instantiate potential child prefabs (note that the entity has child prefab IDs (copied) and not real IDs yet)
-        if (auto* mainComponent = arrays.mainComponents.GetPtr(entityID)) {
+        if (auto* mainComponent = arrays.transform_components.GetPtr(entityID)) {
             auto const prefabChildren = mainComponent->children;
             mainComponent->children.Clear();
             //clear prefab children and add real children 

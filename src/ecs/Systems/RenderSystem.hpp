@@ -9,9 +9,9 @@
 
 namespace rpg::ecs {
     
-inline void RenderSystem(
-ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
+inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
 {
+    /*
     FOR_ARRAY(arrays.mainComponents.dense, i) 
     {
         auto const& mainComponent = arrays.mainComponents.dense[i];
@@ -20,17 +20,13 @@ ComponentArrays<>& arrays, const double, gpu::RenderData& renderData)
 
         //render data
         auto const meshEnumIdx = (idx_t) mainComponent.meshEnum;
-        gpu::RenderData_General::MeshInstance const meshInstance {
-            .transform = mainComponent.transform,
-            .renderSettings = { 
-                .metallic = mainComponent.metallic,
-                .glow     = mainComponent.glow,
-                .flat     = mainComponent.flat,
-                .baseColor= mainComponent.baseColor,
-            },
+        gpu::RenderData_General::InstanceData const instanceData {
         };
-        renderData.general.meshInstances[meshEnumIdx].AppendElement(meshInstance);   
+
+
+        //renderData.general.meshInstances[meshEnumIdx].AppendElement(meshInstance);   
     }
+    */
 
 }
 

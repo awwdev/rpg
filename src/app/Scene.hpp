@@ -44,7 +44,7 @@ struct GameScene
         editor.CreateGizmos(ecs);
 
         //auto testID = ecs.AddEntity(res::PrefabEnum::Cube);
-        //auto& mainComponent = ecs.arrays.mainComponents.Get(testID);
+        //auto& mainComponent = ecs.arrays.transform_components.Get(testID);
         //mainComponent.translation.z = -5;
     }
 

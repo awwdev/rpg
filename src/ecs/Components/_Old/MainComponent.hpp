@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "ecs/ComponentsMeta/ComponentData.hpp"
+#include "res/Prefab/ComponentParsing/ComponentData.hpp"
 #include "res/Mesh/MeshEnum.hpp"
 #include "res/Mesh/MeshMaterialEnum.hpp"
 #include "com/box/Array.hpp"
@@ -23,6 +23,11 @@ struct MainComponent
     com::Mat4f transform    { com::Identity4() };
 
     //render data
+    union 
+    {
+
+    };
+        
     res::MeshEnum  meshEnum { res::MeshEnum::None };
     float metallic { 0.f };
     float glow { 0.f };
@@ -31,8 +36,9 @@ struct MainComponent
 
     //parsing
     MainComponent() = default;
-    MainComponent(ecs::ComponentDataPairs const& pairs)
+    MainComponent(res::ComponentDataPairs const& pairs)
     {
+        /*
         FOR_ARRAY(pairs, i) {
             auto const& key_cstr = pairs[i].key.Data();
             auto const& val_cstr = pairs[i].val.Data();
@@ -94,6 +100,7 @@ struct MainComponent
             };
 
         }
+        */
     }
 
 };
