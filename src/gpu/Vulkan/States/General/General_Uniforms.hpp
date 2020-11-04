@@ -33,6 +33,7 @@ struct General_Uniforms
 
     UniformInfo infos [Bindings::ENUM_END];
     Descriptors descriptors;
+    //TODO: mutlile sets?
 
     using RD = RenderData_General;
     //meta

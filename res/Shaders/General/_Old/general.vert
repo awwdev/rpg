@@ -1,17 +1,56 @@
 #version 450
 
+//? vertex layout
+
 layout (location = 0) in vec3 inPos;
 layout (location = 1) in vec3 inNor;
 layout (location = 2) in vec4 inCol;
 layout (location = 3) in vec2 inTex;
 
-layout(binding = 0) uniform Meta { 
+//? meta
+
+layout(binding = 0) uniform Meta 
+{ 
     mat4  view;
     mat4  proj;
     vec4  viewDir; //set w to 1
     vec4  viewPos; //set w to 1
     float time;
-} meta;
+} 
+meta;
+
+//? instance data
+
+struct InstanceData_General
+{
+    mat4 transform;
+};
+
+struct InstanceData_Foliage
+{
+    mat4 transform;
+};
+
+struct InstanceData_Metallic
+{
+    mat4 transform;
+};
+
+struct InstanceData_Line
+{
+    mat4 transform;
+};
+
+//? instance ubo bindings
+
+//TODO: keep set=0 meta
+//TODO: rebind per material to set=1 binding=0
+//TODO: did we use multiple sets for swapchain images?
+
+layout(binding = 1) uniform General  { InstanceData_General  arr [100]; } general;
+layout(binding = 2) uniform Foliage  { InstanceData_Foliage  arr [100]; } foliage;
+layout(binding = 3) uniform Metallic { InstanceData_Metallic arr [100]; } metallic;
+layout(binding = 4) uniform Line     { InstanceData_Line     arr [100]; } line;
 
 void main() 
 {

@@ -9,18 +9,18 @@ namespace rpg::res {
 
 enum class MeshMaterialEnum : u8
 {
-    Default = 0,
-    Metal,
+    General,
     Foliage,
+    Metallic,
     Line, 
     ENUM_END
 };
 
 const com::EnumMap<MeshMaterialEnum::ENUM_END, com::String<PREFAB_FILE_LINE_LEN_MAX>> MESH_MATERIAL_ENUM_TO_STR
 {
-    { MeshMaterialEnum::Default,    "Default" },
-    { MeshMaterialEnum::Metal,      "Metal" },
+    { MeshMaterialEnum::General,    "General" },
     { MeshMaterialEnum::Foliage,    "Foliage" },
+    { MeshMaterialEnum::Metallic,   "Metallic" },
     { MeshMaterialEnum::Line,       "Line" },
 };
 const auto MESH_MATERIAL_STR_TO_ENUM = com::StringMapFromEnumMap<MeshMaterialEnum, PREFAB_FILE_LINE_LEN_MAX>(MESH_MATERIAL_ENUM_TO_STR);

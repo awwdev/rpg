@@ -6,11 +6,11 @@ namespace rpg::gpu {
 
 union RenderSettings
 {
-    struct FoliageSettings
+    struct CommonSettings
     {
     };
 
-    struct CommonSettings
+    struct FoliageSettings
     {
     };
 

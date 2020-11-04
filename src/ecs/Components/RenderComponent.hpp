@@ -10,7 +10,7 @@ namespace rpg::ecs {
 struct RenderComponent
 {
     res::MeshEnum mesh_enum { res::MeshEnum::Cube };
-    res::MeshMaterialEnum material_enum { res::MeshMaterialEnum::Default };
+    res::MeshMaterialEnum material_enum { res::MeshMaterialEnum::General };
     gpu::RenderSettings render_settings;
 };
 
