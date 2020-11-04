@@ -4,31 +4,31 @@
 #include "gpu/Vulkan/Meta/Context.hpp"
 #include "gpu/Vulkan/Helper/Initializers.hpp"
 
-#include "gpu/Vulkan/States/General/General_RenderPass.hpp"
-#include "gpu/Vulkan/States/General/General_Vertices.hpp"
-#include "gpu/Vulkan/States/General/General_Uniforms.hpp"
+#include "gpu/Vulkan/States/Main/Main_RenderPass.hpp"
+#include "gpu/Vulkan/States/Main/Main_Vertices.hpp"
+#include "gpu/Vulkan/States/Main/Main_Uniforms.hpp"
 
-#include "gpu/Vulkan/States/General/Debug/Simple_Shader.hpp"
+#include "gpu/Vulkan/States/Main/Terrain/TerrainWire_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 
-struct Wire_Pipeline
+struct TerrainWire_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
     void Create(
-    General_RenderPass& renderPass, 
-    Simple_Shader& shader, 
-    General_Vertices& vertices,
-    General_Uniforms& uniforms)
+    Main_RenderPass& renderPass, 
+    TerrainWire_Shader& shader, 
+    Main_Vertices& vertices,
+    Main_Uniforms& uniforms)
     {
         const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
         const auto inputAssembly    = InputAssemblyDefault();
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
-        const auto rasterization    = Rasterization(VK_CULL_MODE_BACK_BIT, VK_POLYGON_MODE_LINE); //!
+        const auto rasterization    = Rasterization(VK_CULL_MODE_BACK_BIT, VK_POLYGON_MODE_LINE, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_FALSE, 2.f);
         const auto multisampling    = Multisampling(renderPass.msaaSampleCount);
         const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
         const auto blendAttachment  = BlendAttachment(VK_FALSE);
@@ -69,7 +69,7 @@ struct Wire_Pipeline
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
     }
-    ~Wire_Pipeline()
+    ~TerrainWire_Pipeline()
     {
         Destroy();
     }

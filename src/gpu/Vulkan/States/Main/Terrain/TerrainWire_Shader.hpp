@@ -5,7 +5,7 @@
 
 namespace rpg::gpu::vuk {
 
-struct Terrain_Shader
+struct TerrainWire_Shader
 {
     VkShaderModule modules [2];
     VkPipelineShaderStageCreateInfo stageInfo [2];
@@ -13,12 +13,12 @@ struct Terrain_Shader
     void Create()
     {
         CreateShaderModule(
-            "res/Shaders/General/Terrain/spv/terrain.vert.spv", 
+            "res/Shaders/Main/Terrain/spv/terrainWire.vert.spv", 
             VK_SHADER_STAGE_VERTEX_BIT,
             modules[0], stageInfo[0]);
 
         CreateShaderModule(
-            "res/Shaders/General/Terrain/spv/terrain.frag.spv", 
+            "res/Shaders/Main/Terrain/spv/terrainWire.frag.spv", 
             VK_SHADER_STAGE_FRAGMENT_BIT,
             modules[1], stageInfo[1]);
     }
@@ -29,7 +29,7 @@ struct Terrain_Shader
             vkDestroyShaderModule(g_contextPtr->device, modules[i], nullptr);
         stageInfo[0] = stageInfo[1] = {};
     }
-    ~Terrain_Shader()
+    ~TerrainWire_Shader()
     {
         Destroy();
     }

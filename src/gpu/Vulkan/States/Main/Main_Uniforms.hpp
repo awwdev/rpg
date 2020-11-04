@@ -10,7 +10,7 @@
 
 namespace rpg::gpu::vuk {
 
-struct General_Uniforms
+struct Main_Uniforms
 {
     //TODO: more clean-up
 
@@ -33,13 +33,12 @@ struct General_Uniforms
 
     UniformInfo infos [Bindings::ENUM_END];
     Descriptors descriptors;
-    //TODO: mutlile sets?
 
-    using RD = RenderData_General;
+    using RD = RenderData_Main;
     //meta
     UniformBuffer<RD::Meta, 1> uboMeta;
     //instances
-    UniformBuffer<RD::InstanceData, RD::MESH_INSTANCES_MAX> uboInstanceDatas [(idx_t) res::MeshMaterialEnum::ENUM_END];
+    StorageBuffer<RD::InstanceData, RD::MESH_INSTANCES_MAX> sboInstanceDatas [(idx_t) res::MeshMaterialEnum::ENUM_END];
     //shadow
     VkSampler shadowMapSampler;
     //terrain
@@ -69,9 +68,9 @@ struct General_Uniforms
         };
 
         //? instances
-        FOR_C_ARRAY(uboInstanceDatas, i)
+        FOR_C_ARRAY(sboInstanceDatas, i)
         {
-            auto& ubo = uboInstanceDatas[i];
+            auto& ubo = sboInstanceDatas[i];
             ubo.Create();
             infos[BindingInstanceDatas + i] = {
                 .type = UniformInfo::Buffer,
@@ -186,7 +185,7 @@ struct General_Uniforms
         descriptors.Create(infos);
     }
 
-    void Update(RenderData_General& rdGeneral, res::Resources_Terrain const& resTerrain)
+    void Update(RenderData_Main& rdGeneral, res::Resources_Terrain const& resTerrain)
     {
         //?meta
         uboMeta.Reset();
@@ -196,14 +195,14 @@ struct General_Uniforms
         auto const& mat_array = rdGeneral.instance_datas;
         for(idx_t matIdx = 0; matIdx < (idx_t) res::MeshMaterialEnum::ENUM_END; ++matIdx)
         {
-            auto& ubo = uboInstanceDatas[matIdx];
-            ubo.Reset();
+            auto& sbo = sboInstanceDatas[matIdx];
+            sbo.Reset();
             auto const& mesh_array = mat_array[matIdx];
             FOR_C_ARRAY(mesh_array, meshIdx)
             {
                 auto const& inst_array = mesh_array[meshIdx];
                 if (inst_array.Empty() == false)
-                    ubo.Append(inst_array);   
+                    sbo.Append(inst_array);   
             }
         }
 
@@ -231,9 +230,9 @@ struct General_Uniforms
         uboMeta.Destroy();
         sboTerrainTriangleNormals.Destroy();
         sboTerrainTriangleColors.Destroy();
-        FOR_C_ARRAY(uboInstanceDatas, i)
+        FOR_C_ARRAY(sboInstanceDatas, i)
         {
-            auto& ubo = uboInstanceDatas[i];
+            auto& ubo = sboInstanceDatas[i];
             ubo.Destroy();
         }
         descriptors.Destroy();
@@ -241,7 +240,7 @@ struct General_Uniforms
         FOR_C_ARRAY(infos, i)
             infos[i] = {};
     }
-    ~General_Uniforms()
+    ~Main_Uniforms()
     {
         Destroy();
     }

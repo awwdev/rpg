@@ -453,20 +453,21 @@ inline Mat4f LookAt(const Vec3f& eye, const Vec3f& at)
     };
 }
 
-//? PRINT
-
-template<typename T, auto Y, auto X>
-void PrintMatrix(const Mat<T, Y, X>& mat, const u8 precision = 4, const u8 width = 8)
-{
-    const std::ios_base::fmtflags coutFlags (std::cout.flags());
-    std::cout << std::fixed << std::setprecision(precision) << std::right;
-    for(auto y = 0; y < Y; ++y) {
-    for(auto x = 0; x < X; ++x) {
-        std::cout << std::setw(width) << mat[y][x] << ' ';
-    }
-    std::cout << '\n';
-    }
-    std::cout.flags(coutFlags); //reset
-}
-
 }//ns
+
+namespace rpg::dbg
+{
+    template<typename T, auto Y, auto X>
+    void PrintMatrix(const com::Mat<T, Y, X>& mat, const u8 precision = 4, const u8 width = 8)
+    {
+        const std::ios_base::fmtflags coutFlags (std::cout.flags());
+        std::cout << std::fixed << std::setprecision(precision) << std::right;
+        for(auto y = 0; y < Y; ++y) {
+        for(auto x = 0; x < X; ++x) {
+            std::cout << std::setw(width) << mat[y][x] << ' ';
+        }
+        std::cout << '\n';
+        }
+        std::cout.flags(coutFlags); //reset
+    }
+}

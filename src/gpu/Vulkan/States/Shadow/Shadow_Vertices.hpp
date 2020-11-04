@@ -12,7 +12,7 @@ namespace rpg::gpu::vuk {
 
 struct Shadow_Vertices
 {
-    using VERTEX_TYPE = RenderData_General::Vertex;
+    using VERTEX_TYPE = RenderData_Main::Vertex;
     //using form general vbo
 
     VkDeviceSize offsets [1] = {};

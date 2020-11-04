@@ -4,7 +4,7 @@
 
 namespace rpg::gpu {
 
-union RenderSettings
+union MaterialSettings
 {
     struct CommonSettings
     {

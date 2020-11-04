@@ -5,7 +5,7 @@
 #include "ecs/ComponentsMeta/ComponentEnum.hpp"
 #include "ecs/ComponentsMeta/ComponentArrays.hpp"
 #include "gpu/RenderData/RenderData.hpp"
-#include "gpu/RenderData/RenderData_General.hpp"
+#include "gpu/RenderData/RenderData_Main.hpp"
 
 namespace rpg::ecs {
     
@@ -19,14 +19,14 @@ inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderDat
         
         auto const meshEnum = (idx_t) render_component.mesh_enum;
         auto const matEnum  = (idx_t) render_component.material_enum;
-        auto& instance_datas = renderData.general.instance_datas[matEnum][meshEnum];
+        auto& instance_datas = renderData.main.instance_datas[matEnum][meshEnum];
 
-        gpu::RenderData_General::InstanceData const instData {
+        gpu::RenderData_Main::InstanceData const instData {
             .transform = transform_component.transform,
-            .render_settings = render_component.render_settings,
+            .materialSettings = render_component.materialSettings,
         };
-        instance_datas.AppendElement();       
-    }
+        instance_datas.AppendElement(instData);       
+    }   
 }
 
 }//ns

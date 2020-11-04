@@ -4,11 +4,11 @@
 #include "com/Types.hpp"
 #include "com/utils/Utils.hpp"
 #include "com/Matrix.hpp"
-#include "gpu/RenderData/RenderData_General.hpp"
+#include "gpu/RenderData/RenderData_Main.hpp"
 
 namespace rpg::res {
 
-using TerrainVertex = gpu::RenderData_General::Vertex;
+using TerrainVertex = gpu::RenderData_Main::Vertex;
 
 template<idx_t QUAD_COUNT_T>
 struct TerrainMeshIndexed

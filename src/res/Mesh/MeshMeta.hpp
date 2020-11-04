@@ -3,7 +3,7 @@
 #pragma once
 #include "com/Types.hpp"
 #include "com/Matrix.hpp"
-#include "gpu/RenderData/RenderData_General.hpp"
+#include "gpu/RenderData/RenderData_Main.hpp"
 
 namespace rpg::res {
 
@@ -23,7 +23,7 @@ struct MeshIndexRange
     uint32_t count; 
 };
 
-using MeshVertex = gpu::RenderData_General::Vertex;
+using MeshVertex = gpu::RenderData_Main::Vertex;
 using MeshIndex  = uint32_t;
 
 using VertexArray  = com::Array<MeshVertex, MESHES_VERTICES_TOTAL>;

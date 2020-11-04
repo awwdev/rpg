@@ -236,10 +236,12 @@ struct Editor
         brush.UpdateGizmo(dt, ecs, terrainIntersection->position);
         brush.UpdateInsideBrush(res.terrain, *terrainIntersection);
 
-        if (wnd::MouseLeftButtonPressed() || (
-            wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Held>() && 
-            wnd::HasEvent<wnd::EventType::Mouse_Move>() && brush.Frequency(dt)
-            ))
+        //if (wnd::MouseLeftButtonPressed() || (
+        //    wnd::HasEvent<wnd::EventType::Mouse_ButtonLeft, wnd::EventState::Held>() && 
+        //    wnd::HasEvent<wnd::EventType::Mouse_Move>() && brush.Frequency(dt)
+        //    ))
+
+        if (wnd::MouseLeftButtonReleased())
         {
             const EditorCmd_PrefabPlacement cmd { 
                 .prefabEnum = brush.prefabEnum, 

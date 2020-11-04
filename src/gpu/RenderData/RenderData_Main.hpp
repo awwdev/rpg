@@ -4,11 +4,11 @@
 #include "com/box/Array.hpp"
 #include "com/Matrix.hpp"
 #include "res/Mesh/MeshEnum.hpp"
-#include "gpu/RenderData/RenderSettings.hpp"
+#include "gpu/RenderData/MaterialSettings.hpp"
 
 namespace rpg::gpu {
 
-struct RenderData_General
+struct RenderData_Main
 {
     //? meta --------------------------------------------------------------------
     static constexpr uint32_t TERRA_VERTICES_MAX_ALL = 1'000'000;
@@ -36,7 +36,7 @@ struct RenderData_General
     struct InstanceData
     {
         alignas(64) com::Mat4f transform;
-        RenderSettings render_settings;
+        MaterialSettings materialSettings;
     };
  
     //? data --------------------------------------------------------------------

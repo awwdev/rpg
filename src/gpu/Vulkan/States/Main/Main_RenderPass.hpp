@@ -7,7 +7,7 @@
 
 namespace rpg::gpu::vuk {
 
-struct General_RenderPass
+struct Main_RenderPass
 {
     //? DATA
     static constexpr auto DEPTH_FORMAT = VK_FORMAT_D32_SFLOAT;
@@ -211,7 +211,7 @@ struct General_RenderPass
     }
     
     //? RAII
-    ~General_RenderPass() 
+    ~Main_RenderPass() 
     { 
         Destroy(); 
     }

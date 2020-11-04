@@ -15,19 +15,6 @@ struct ComponentArrays
     ComponentArray<TransformComponent, MAX_COMPONENT_COUNT>  transform_components;
     ComponentArray<RenderComponent   , MAX_COMPONENT_COUNT>  render_components;
 
-    /*template<class... CtorArgs>
-    void SetComponent(const ID entityID, const ComponentEnum componentType, CtorArgs&&... args)
-    {
-        signatures[entityID].Set(componentType, true);
-
-        //? COMPONENT ADDING
-        switch(componentType)
-        {
-            case ComponentEnum::TransformComponent: transform_components.SetComponent(entityID, std::forward<CtorArgs>(args)...); break;
-            case ComponentEnum::RenderComponent: render_components.SetComponent(entityID, std::forward<CtorArgs>(args)...); break;
-            default: dbg::Assert(false, "component missing");
-        }
-    }*/
 
     template<typename COMPONENT_T>
     void SetComponent(const ID entityID, COMPONENT_T const& component)

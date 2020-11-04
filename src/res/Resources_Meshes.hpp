@@ -18,14 +18,11 @@ struct Resources_Meshes
 
     void Load()
     {
-        for (MeshEnum meshEnum {};;)
+        for (idx_t meshIdx = 0; meshIdx < (idx_t) res::MeshEnum::ENUM_END; ++meshIdx)
         {
-            const auto meshIdx = static_cast<idx_t>(meshEnum);
             dbg::Assert(MESH_PATHS.Contains(meshIdx), "mesh missing");
             auto const path = MESH_PATHS.Get(meshIdx).Data();
             LoadMesh(path,  meshIdx,  allVertices, allIndices, vertexRanges, indexRanges);
-            if (com::AdvanceEnum(meshEnum))
-                break;
         }
     }
 };

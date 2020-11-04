@@ -62,7 +62,7 @@ struct Camera
         const auto mRot = QuatToMat(qRot);
         const auto dir = mRot * com::Vec4f{ 0, 0, 1, 1 }; //TODO: try again with -1 for z
         direction = { dir.x, dir.y, -dir.z };
-        //com::PrintMatrix(position);
+        //dbg::PrintMatrix(position);
         
 
         //move input
@@ -132,10 +132,10 @@ struct Camera
 
     void UpdateRenderData(gpu::RenderData& renderData) const
     {
-        renderData.general.meta.view = view;
-        renderData.general.meta.proj = projection;
-        renderData.general.meta.viewDir = direction;
-        renderData.general.meta.viewPos = position;
+        renderData.main.meta.view = view;
+        renderData.main.meta.proj = projection;
+        renderData.main.meta.viewDir = direction;
+        renderData.main.meta.viewPos = position;
     }
 
     com::Vec3f ScreenRay(f32 const x, f32 const y) const

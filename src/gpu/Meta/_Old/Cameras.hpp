@@ -115,9 +115,9 @@ struct EgoCamera
 
     void UpdateRenderData(gpu::RenderData& renderData)
     {
-        renderData.general.meta.view = view;
-        renderData.general.meta.proj = perspective;
-        renderData.general.meta.viewDir = com::Normalize(rotation);
+        renderData.main.meta.view = view;
+        renderData.main.meta.proj = perspective;
+        renderData.main.meta.viewDir = com::Normalize(rotation);
     }
 
     void UpdatePerspective()

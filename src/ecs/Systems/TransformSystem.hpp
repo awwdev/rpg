@@ -8,21 +8,20 @@ namespace rpg::ecs {
     
 inline void TransformSystem(ComponentArrays<>& arrays, const double)
 {
-    /*
-    FOR_ARRAY(arrays.mainComponents.dense, i) 
+    FOR_ARRAY(arrays.transform_components.dense, i) 
     {
-        auto& mainComponent = arrays.mainComponents.dense[i];
-        mainComponent.transform = com::Identity4();
+        auto& transform_component = arrays.transform_components.dense[i];
+        transform_component.transform = com::Identity4();
         //this way it is possible to combine nested transforms (children)
     }
 
-    FOR_ARRAY(arrays.mainComponents.dense, i) 
+    FOR_ARRAY(arrays.transform_components.dense, i) 
     {
-        auto& mainComponent = arrays.mainComponents.dense[i];
+        auto& transform_component = arrays.transform_components.dense[i];
 
-        const auto& s = mainComponent.scale;
-        const auto& r = mainComponent.rotation;
-        const auto& t = mainComponent.translation;
+        const auto& s = transform_component.scale;
+        const auto& r = transform_component.rotation;
+        const auto& t = transform_component.translation;
 
         //scale
         const com::Mat4f scaleMat = {
@@ -47,15 +46,14 @@ inline void TransformSystem(ComponentArrays<>& arrays, const double)
         combinedMat[3][1] = t.y;
         combinedMat[3][2] = t.z;
 
-        mainComponent.transform = mainComponent.transform * combinedMat;
+        transform_component.transform = transform_component.transform * combinedMat;
 
-        FOR_ARRAY(mainComponent.children, i) {
-            auto const childID = mainComponent.children[i];
-            auto& childMainComponent = arrays.mainComponents.Get(childID);
-            childMainComponent.transform = childMainComponent.transform * combinedMat;
+        FOR_ARRAY(transform_component.children, i) {
+            auto const childID = transform_component.children[i];
+            auto& child_transform_component = arrays.transform_components.Get(childID);
+            child_transform_component.transform = child_transform_component.transform * combinedMat;
         }
     }
-    */
 }
 
 }//ns

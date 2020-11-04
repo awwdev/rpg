@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/States/Shadow/State_Shadow.hpp"
-#include "gpu/Vulkan/States/General/State_General.hpp"
-#include "gpu/Vulkan/States/Post/State_Post.hpp"
-#include "gpu/Vulkan/States/gui/State_GUI.hpp"
+#include "gpu/Vulkan/States/State_Shadow.hpp"
+#include "gpu/Vulkan/States/State_Main.hpp"
+#include "gpu/Vulkan/States/State_Post.hpp"
+#include "gpu/Vulkan/States/State_GUI.hpp"
 
 #include "res/Resources.hpp"
 #include "com/ThreadPool.hpp"
@@ -14,22 +14,22 @@ namespace rpg::gpu::vuk {
 struct States
 {
     State_Shadow  shadow;
-    State_General general;
+    State_Main    main;
     State_Post    post;
     State_GUI     gui;
 
     void Create(res::Resources& res, VkCommandPool cmdPool)
     {
         shadow  .Create(cmdPool);
-        general .Create(cmdPool, *shadow.uniforms.uboSun.activeBuffer, shadow.renderPass.shadowMaps, res);
-        post    .Create(cmdPool, general.generalRenderPass.finalImage);
+        main    .Create(cmdPool, *shadow.uniforms.uboSun.activeBuffer, shadow.renderPass.shadowMaps, res);
+        post    .Create(cmdPool, main.mainRenderPass.finalImage);
         gui     .Create(cmdPool, res);
     }
 
     void Update(gpu::RenderData& renderData, res::Resources& res)
     {
         shadow  .Update(renderData);
-        general .Update(renderData, res);
+        main    .Update(renderData, res);
         post    .Update(renderData);
         gui     .Update(renderData);
     }
@@ -41,8 +41,8 @@ struct States
 
         VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
             
-        shadow  .Record(cmdBuffer, general);
-        general .Record(cmdBuffer, renderData.general);
+        shadow  .Record(cmdBuffer, main);
+        main    .Record(cmdBuffer, renderData.main);
         post    .Record(cmdBuffer, cmdBufferIdx);
         gui     .Record(cmdBuffer, cmdBufferIdx);
             
@@ -56,7 +56,7 @@ struct States
     RenderData& renderData, com::ThreadPool<4>& threadPool)
     {
         constexpr auto SHADOW_STATE_IDX  = 0;
-        constexpr auto GENERAL_STATE_IDX = 1;
+        constexpr auto MAIN_STATE_IDX    = 1;
         constexpr auto POST_STATE_IDX    = 2;
         constexpr auto GUI_STATE_IDX     = 3;
 
@@ -68,14 +68,14 @@ struct States
         cmdBuffer = cmds.AppendElement(commands.threadCommands[SHADOW_STATE_IDX].cmdBuffers[cmdBufferIdx]);
         threadPool.AssignTask(0, [this, cmdBuffer, beginInfo, cmdBufferIdx]{
             VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
-            shadow.Record(cmdBuffer, general);
+            shadow.Record(cmdBuffer, main);
             VkCheck(vkEndCommandBuffer(cmdBuffer));
         });
         
-        cmdBuffer = cmds.AppendElement(commands.threadCommands[GENERAL_STATE_IDX].cmdBuffers[cmdBufferIdx]);
+        cmdBuffer = cmds.AppendElement(commands.threadCommands[MAIN_STATE_IDX].cmdBuffers[cmdBufferIdx]);
         threadPool.AssignTask(1, [this, cmdBuffer, beginInfo, cmdBufferIdx, &renderData]{
             VkCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
-            general.Record(cmdBuffer, renderData.general);
+            main.Record(cmdBuffer, renderData.main);
             VkCheck(vkEndCommandBuffer(cmdBuffer));
         });
             
@@ -103,7 +103,7 @@ struct States
         gui     .Destroy();
         post    .Destroy();
         shadow  .Destroy();
-        general .Destroy();
+        main    .Destroy();
     }
 };
 

@@ -13,9 +13,9 @@
 
 namespace rpg::gpu::vuk {
 
-struct General_Vertices
+struct Main_Vertices
 {
-    using RD = RenderData_General;
+    using RD = RenderData_Main;
     using GeneralVertex = RD::Vertex;
 
     VertexBuffer<GeneralVertex, RD::TERRA_VERTICES_MAX_ALL> vboTerrain;
@@ -65,7 +65,7 @@ struct General_Vertices
         }
     };
 
-    void Update(gpu::RenderData_General& renderData, const res::Resources_Terrain& resTerrain)
+    void Update(gpu::RenderData_Main& renderData, const res::Resources_Terrain& resTerrain)
     {
         vboTerrain.Reset();
         
@@ -116,7 +116,7 @@ struct General_Vertices
         FOR_C_ARRAY(iboMeshesIndexRanges, i)
             iboMeshesIndexRanges[i] = {};
     }
-    ~General_Vertices()
+    ~Main_Vertices()
     {
         Destroy();
     }

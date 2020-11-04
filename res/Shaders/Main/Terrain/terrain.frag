@@ -3,6 +3,7 @@
 
 #define CASCADE_COUNT 4
 
+//? in
 layout (location = 0) in vec4  inCol;
 layout (location = 1) in vec2  inTex;
 layout (location = 2) in flat vec3 inSunDir;
@@ -11,19 +12,21 @@ layout (location = 4) in vec4  inShadowCoord [CASCADE_COUNT];
 
 layout (location = 0) out vec4 outCol;
 
+//? bindings
 layout (binding = 6) uniform sampler2DArrayShadow shadowMap;
-
-//? terrain faces
-layout (std430, binding = 7) readonly buffer TerrainTriangleNormals { 
+layout (std430, binding = 7) readonly buffer TerrainTriangleNormals 
+{ 
     vec3 normals [];
 } 
 terrainTriangleNormals;
 
-layout (std430, binding = 8) readonly buffer TerrainTriangleColors { 
+layout (std430, binding = 8) readonly buffer TerrainTriangleColors 
+{ 
     vec4 colors [];
 } 
 terrainTriangleColors;
 
+//? main
 void main() 
 {
     const vec2 size = textureSize(shadowMap, 0).xy;

@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/RenderData/RenderData_General.hpp"
+#include "gpu/RenderData/RenderData_Main.hpp"
 #include "res/Mesh/MeshMeta.hpp"
 #include "com/box/Array.hpp"
 
@@ -71,18 +71,15 @@ VertexRanges& vertexRanges, IndexRanges& indexRanges)
             case CommaEnum::Col_R: vertex.col.r = data; break;
             case CommaEnum::Col_G: vertex.col.g = data; break;
             case CommaEnum::Col_B: vertex.col.b = data; break;
-            case CommaEnum::Col_A: vertex.col.a = data; 
+            case CommaEnum::Col_A: vertex.col.a = data; //break;
             //vert tex
             //case CommaEnum::Tex_U: vertex.tex.x = data; break;
-            //case CommaEnum::Tex_V: vertex.tex.y = data; break;
-                {
-                    allVertices.AppendElement(vertex); 
-                    const auto vertexRangeCount = allVertices.Count() - vertexRangeIndex;
-                    vertexRanges[meshIdx] = { (uint32_t) vertexRangeIndex, (uint32_t) vertexRangeCount };
-                }
-                //com::PrintMatrix(vertex.pos);
-                //com::PrintMatrix(vertex.nor);
-                //com::PrintMatrix(vertex.col);
+            //case CommaEnum::Tex_V: vertex.tex.y = data; 
+            {
+                allVertices.AppendElement(vertex); 
+                const auto vertexRangeCount = allVertices.Count() - vertexRangeIndex;
+                vertexRanges[meshIdx] = { (uint32_t) vertexRangeIndex, (uint32_t) vertexRangeCount };
+            }
             break;
             case CommaEnum::VERTEX_FINISHED: dbg::Assert(false, "enum missing"); break;
         } 

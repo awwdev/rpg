@@ -2,7 +2,7 @@
 
 #pragma once
 #include "res/Terrain/TerrainMesh.hpp"
-#include "gpu/RenderData/RenderData_General.hpp"
+#include "gpu/RenderData/RenderData_Main.hpp"
 #include "com/box/Optional.hpp"
 #include "com/box/Array.hpp"
 #include "com/utils/Utils.hpp"

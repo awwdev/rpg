@@ -7,7 +7,7 @@
 #include "gpu/Vulkan/States/Shadow/Shadow_Uniforms.hpp"
 #include "gpu/Vulkan/States/Shadow/Shadow_Vertices.hpp"
 
-#include "gpu/Vulkan/States/General/State_General.hpp"
+#include "gpu/Vulkan/States/State_Main.hpp"
 
 #include "gpu/RenderData/RenderData.hpp"
 
@@ -44,7 +44,7 @@ struct State_Shadow
         uniforms.Update(renderData.shadow.uboShadowMap);
     }
 
-    void Record(VkCommandBuffer cmdBuffer, State_General& general)
+    void Record(VkCommandBuffer cmdBuffer, State_Main& main)
     {
         for(uint32_t cascadeIdx = 0; cascadeIdx < RenderData_Shadow::CASCADE_COUNT; ++cascadeIdx)
         {
@@ -59,9 +59,9 @@ struct State_Shadow
             vkCmdSetDepthBias       (cmdBuffer, -1, 0, -7 + ((float)cascadeIdx*0.5f));
             //TODO: per cascade different offset actually
             //terrain
-            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &general.generalVertices.vboTerrain.activeBuffer->buffer, general.generalVertices.offsets);
-            vkCmdBindIndexBuffer    (cmdBuffer, general.generalVertices.iboTerrain.activeBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
-            vkCmdDrawIndexed        (cmdBuffer, general.generalVertices.iboTerrain.count, 1, 0, 0 , 0);
+            vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &main.mainVertices.vboTerrain.activeBuffer->buffer, main.mainVertices.offsets);
+            vkCmdBindIndexBuffer    (cmdBuffer, main.mainVertices.iboTerrain.activeBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
+            vkCmdDrawIndexed        (cmdBuffer, main.mainVertices.iboTerrain.count, 1, 0, 0 , 0);
             //TODO other stuff
             //TODO this is similar to general workflow so a synopsis would be great
             vkCmdEndRenderPass      (cmdBuffer);
