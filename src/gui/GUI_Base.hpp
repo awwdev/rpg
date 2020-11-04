@@ -86,11 +86,11 @@ const u32 texIdx = FULL_OPAQUE_NO_TEXTURE, const bool blur = false)
 
         gpu::RenderData_Post::Vertex verts [] {
             {v1, uv1, 1},
+            {v3, uv3, 1},
             {v2, uv2, 1},
-            {v3, uv3, 1},
             {v1, uv1, 1},
-            {v3, uv3, 1},
             {v4, uv4, 1},
+            {v3, uv3, 1},
         };
         renderData.post.vboBlur.AppendArray(verts);
     }

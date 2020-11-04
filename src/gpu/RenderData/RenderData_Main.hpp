@@ -13,7 +13,7 @@ struct RenderData_Main
     //? meta --------------------------------------------------------------------
     static constexpr uint32_t TERRA_VERTICES_MAX_ALL = 1'000'000;
     static constexpr uint32_t TERRA_INDICES_MAX_ALL  = 1'000'000;
-    static constexpr uint32_t MESH_INSTANCES_MAX = 100;
+    static constexpr uint32_t MESH_INSTANCES_MAX = 2'000;
 
     struct Vertex
     {
@@ -41,7 +41,7 @@ struct RenderData_Main
  
     //? data --------------------------------------------------------------------
     Meta meta;
-    com::Array<InstanceData, 100> instance_datas [(idx_t)res::MeshMaterialEnum::ENUM_END][(idx_t)res::MeshEnum::ENUM_END];
+    com::Array<InstanceData, MESH_INSTANCES_MAX> instance_datas [(idx_t)res::MeshMaterialEnum::ENUM_END][(idx_t)res::MeshEnum::ENUM_END];
     bool enableTerrainWire = true;
 
     void Clear()

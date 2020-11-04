@@ -29,14 +29,16 @@ struct EditorCmd_PrefabPlacement
             auto& render_component = ecs.arrays.render_components.Get(prefabID);
           
             transform_component.translation = position;
-            //render_component.baseColor = baseColor; //TODO
+
+            if (render_component.materialEnum == res::MeshMaterialEnum::Foliage)
+                 render_component.materialSettings.foliage.baseColor = baseColor;           
             
             //randomness test
-            //transform_component.translation.x += (rand() % 10) / 10.f - 0.5f;
-            //transform_component.translation.z += (rand() % 10) / 10.f - 0.5f;
-            //transform_component.scale.x += (rand() % 10) / 10.f;
-            //transform_component.scale.z += (rand() % 10) / 10.f;
-            //transform_component.scale.y += (rand() % 10) / 10.f;
+            transform_component.translation.x += (rand() % 10) / 10.f - 0.5f;
+            transform_component.translation.z += (rand() % 10) / 10.f - 0.5f;
+            transform_component.scale.x += (rand() % 10) / 10.f;
+            transform_component.scale.z += (rand() % 10) / 10.f;
+            transform_component.scale.y += (rand() % 10) / 10.f;
         }
     }
 

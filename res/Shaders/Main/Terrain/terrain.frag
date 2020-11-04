@@ -3,14 +3,14 @@
 
 #define CASCADE_COUNT 4
 
+layout (location = 0) out vec4 outCol;
+
 //? in
 layout (location = 0) in vec4  inCol;
 layout (location = 1) in vec2  inTex;
 layout (location = 2) in flat vec3 inSunDir;
 layout (location = 3) in float inViewDistance;
 layout (location = 4) in vec4  inShadowCoord [CASCADE_COUNT];
-
-layout (location = 0) out vec4 outCol;
 
 //? bindings
 layout (binding = 6) uniform sampler2DArrayShadow shadowMap;

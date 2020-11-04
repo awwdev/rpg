@@ -12,6 +12,7 @@ union MaterialSettings
 
     struct FoliageSettings
     {
+        com::Vec4f baseColor;
     };
 
     struct MetallicSettings

@@ -31,7 +31,8 @@ layout(binding = 5) uniform Sun
     mat4 projView       [CASCADE_COUNT];
     mat4 projViewBiased [CASCADE_COUNT];
     vec3 sunDir;
-} sun;
+} 
+sun;
 
 //? main
 void main() 
@@ -40,9 +41,9 @@ void main()
     outCol = inCol;
     outTex = inTex;
 
+    //shadow
     for(int i = 0; i < CASCADE_COUNT; ++i)
         outShadowPos[i] = sun.projViewBiased[i] * inPos;
-
     outSunDir = sun.sunDir;
     outViewDistance = distance(meta.viewPos.xyz, inPos.xyz);
 }

@@ -1,5 +1,5 @@
 - grass base color, on placement cmd (raycast terrain), recalculate props, 
-
+- shadow cascade last fade
 
 
 
