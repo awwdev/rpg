@@ -11,6 +11,7 @@
 ? TransformComponent
 ? RenderComponent
     + Mesh = Mesh_Cube
+    + Material = General
 
 @ Circle
 ? TransformComponent
@@ -37,3 +38,4 @@
 ? TransformComponent
 ? RenderComponent
     + Mesh = Mesh_Grass
+    + Material = Foliage

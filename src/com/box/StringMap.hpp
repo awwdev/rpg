@@ -85,6 +85,23 @@ struct StringMap
         return nullptr;
     }
 
+    const VAL& Get(chars_t key) const
+    {
+        const auto hash = SimpleHash(key);
+        auto& bucket = buckets[hash];
+        
+        if (bucket.count == 0)
+            dbg::Assert(false, "cannot get from string map");
+
+        FOR_C_ARRAY(bucket.content, i){
+            auto& pair = bucket.content[i];
+            if (pair.key == key) //str operator==
+                return pair.val;
+        }
+        dbg::Assert(false, "cannot get from string map");
+        return bucket.content[0].val; //dangling but there is an assert
+    }
+
     //? INTERNAL
 
     idx_t SimpleHash(chars_t str) const

@@ -8,24 +8,26 @@
 
 namespace rpg::res {
 
-enum class ComponentDataEnum
+enum class ComponentMemberEnum
 {
     Children,
     Mesh,
-    Scale, 
+    Material, 
+    Scale,
     ENUM_END
 };
 
-const com::EnumMap<ComponentDataEnum::ENUM_END, com::String<res::PREFAB_FILE_LINE_LEN_MAX>> COMPONENT_DATA_ENUM_TO_STR
+const com::EnumMap<ComponentMemberEnum::ENUM_END, com::String<res::PREFAB_FILE_LINE_LEN_MAX>> COMPONENT_DATA_ENUM_TO_STR
 {
-    { ComponentDataEnum::Children,  "Children"      },
-    { ComponentDataEnum::Mesh,      "Mesh"          },
-    { ComponentDataEnum::Scale,     "Scale"         },
+    { ComponentMemberEnum::Children,  "Children"      },
+    { ComponentMemberEnum::Mesh,      "Mesh"          },
+    { ComponentMemberEnum::Scale,     "Scale"         },
+    { ComponentMemberEnum::Material,  "Material"      },
 };
-const auto COMPONENT_DATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentDataEnum, res::PREFAB_FILE_LINE_LEN_MAX>(COMPONENT_DATA_ENUM_TO_STR);
+const auto COMPONENT_DATA_STR_TO_ENUM = com::StringMapFromEnumMap<ComponentMemberEnum, res::PREFAB_FILE_LINE_LEN_MAX>(COMPONENT_DATA_ENUM_TO_STR);
 
 
-struct ComponentDataPair
+struct ComponentMemberPair
 {
     com::String<res::PREFAB_FILE_LINE_LEN_MAX> key;
     com::String<res::PREFAB_FILE_LINE_LEN_MAX> val;
@@ -37,7 +39,7 @@ struct ComponentDataPair
         struct { 
             char const * const key_cstr;
             char const * const val_cstr;
-            ComponentDataEnum componentDataEnum;
+            ComponentMemberEnum componentDataEnum;
         } rtn = { .key_cstr = key.Data(), .val_cstr = val.Data(), .componentDataEnum = *componentDataEnum };
         return rtn;
     }
@@ -45,11 +47,11 @@ struct ComponentDataPair
 
 
 constexpr auto COMPONENT_DATA_PAIR_MAX = 10;
-using ComponentDataPairs =  com::Array<ComponentDataPair, COMPONENT_DATA_PAIR_MAX>;
+using ComponentMemberPairs =  com::Array<ComponentMemberPair, COMPONENT_DATA_PAIR_MAX>;
 
-inline auto LineStrToComponentDataPair(chars_t line) -> ComponentDataPair const 
+inline auto LineStrToComponentDataPair(chars_t line) -> ComponentMemberPair const 
 {
-    ComponentDataPair pair {};
+    ComponentMemberPair pair {};
 
     auto len = com::StrLen(line);
 

@@ -16,6 +16,8 @@
 //instances
 #include "gpu/Vulkan/States/Main/Instances/General/General_Pipeline.hpp"
 #include "gpu/Vulkan/States/Main/Instances/General/General_Shader.hpp"
+#include "gpu/Vulkan/States/Main/Instances/Foliage/Foliage_Pipeline.hpp"
+#include "gpu/Vulkan/States/Main/Instances/Foliage/Foliage_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -33,6 +35,8 @@ struct State_Main
     //instances (materials)
     General_Shader       generalShader;
     General_Pipeline     generalPipeline;
+    Foliage_Shader       foliageShader;
+    Foliage_Pipeline     foliagePipeline;
 
     void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::Resources& res)
     {
@@ -48,6 +52,8 @@ struct State_Main
         //instances (materials)
         generalShader.Create();
         generalPipeline.Create(mainRenderPass, generalShader, mainVertices, mainUniforms);
+        foliageShader.Create();
+        foliagePipeline.Create(mainRenderPass, foliageShader, mainVertices, mainUniforms);
     }
 
     void Destroy()
@@ -64,6 +70,8 @@ struct State_Main
         //instances  
         generalShader.Destroy();      
         generalPipeline.Destroy();  
+        foliageShader.Destroy();      
+        foliagePipeline.Destroy();  
     }
 
     void Update(gpu::RenderData& renderData, const res::Resources& resources)
@@ -102,16 +110,17 @@ struct State_Main
         vkCmdBindVertexBuffers  (cmdBuffer, 0, 1, &mainVertices.vboMeshes.activeBuffer->buffer, mainVertices.offsets);
         vkCmdBindIndexBuffer    (cmdBuffer, mainVertices.iboMeshes.activeBuffer->buffer, 0, VkIndexType::VK_INDEX_TYPE_UINT32);
 
-        auto const& material_array = renderDataMain.instance_datas; //multiple arrays
-        FOR_C_ARRAY(material_array, matIdx)
+        //materials->meshes->instances
+        auto const& materials = renderDataMain.instance_datas;
+        FOR_C_ARRAY(materials, matIdx)
         {
-            auto const& mesh_array = material_array[matIdx];
+            auto const& meshes = materials[matIdx];
 
             //bind pipeline 
             switch((res::MeshMaterialEnum)matIdx)
             {
                 case res::MeshMaterialEnum::Foliage:    
-                vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.pipeline);
+                vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, foliagePipeline.pipeline);
                 break;
 
                 case res::MeshMaterialEnum::Metallic:   
@@ -130,14 +139,14 @@ struct State_Main
             }
 
             uint32_t instanceIdx = 0;
-            FOR_C_ARRAY(mesh_array, meshIdx)
+            FOR_C_ARRAY(meshes, meshIdx)
             {
-                auto const& inst_array  = mesh_array[meshIdx];
-                if (inst_array.Empty()) continue;
+                auto const& instances  = meshes[meshIdx];
+                if (instances.Empty()) continue;
 
                 auto const& vertexRange = mainVertices.vboMeshesVertexRanges[meshIdx];
                 auto const& indexRange  = mainVertices.iboMeshesIndexRanges [meshIdx];
-                auto const  instanceCount = inst_array.Count();
+                auto const  instanceCount = instances.Count();
                 vkCmdDrawIndexed(cmdBuffer, indexRange.count, instanceCount, indexRange.index, vertexRange.index, instanceIdx);
                 instanceIdx += instanceCount;
             }

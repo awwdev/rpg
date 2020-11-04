@@ -8,7 +8,7 @@
 #include "com/mem/Allocator.hpp"
 #include "dbg/Assert.hpp"
 
-#include "res/Prefab/ComponentParsing/ComponentData.hpp"
+#include "res/Prefab/ComponentParsing/ComponentMember.hpp"
 #include "res/Prefab/ComponentParsing/ParseRenderComponent.hpp"
 #include "res/Prefab/ComponentParsing/ParseTransformComponent.hpp"
 
@@ -21,7 +21,7 @@ inline void LoadPrefabs(chars_t path,  ecs::ComponentArrays<N>& prefabComponentA
     dbg::Assert(file.is_open(), "cannot open file");
 
     //store all component data values per prefab
-    struct Arr { res::ComponentDataPairs data [(idx_t) ecs::ComponentEnum::ENUM_END]; };
+    struct Arr { res::ComponentMemberPairs data [(idx_t) ecs::ComponentEnum::ENUM_END]; };
     auto  ptrComponentData = com::mem::ClaimBlock<Arr>();
     auto& componentData = ptrComponentData->data;
 

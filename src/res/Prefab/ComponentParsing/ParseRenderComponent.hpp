@@ -2,11 +2,11 @@
 
 #pragma once
 #include "ecs/Components/RenderComponent.hpp"
-#include "res/Prefab/ComponentParsing/ComponentData.hpp"
+#include "res/Prefab/ComponentParsing/ComponentMember.hpp"
 
 namespace rpg::res {
 
-inline auto ParseRenderComponent(ComponentDataPairs const& pairs)
+inline auto ParseRenderComponent(ComponentMemberPairs const& pairs)
 {
     ecs::RenderComponent component {};
     FOR_ARRAY(pairs, i) 
@@ -14,11 +14,17 @@ inline auto ParseRenderComponent(ComponentDataPairs const& pairs)
         auto const [key, val, componentDataEnum] = pairs[i].get_data();
         switch(componentDataEnum)
         {
-            case ComponentDataEnum::Mesh:      
+            case ComponentMemberEnum::Mesh:      
             {
-                auto const meshEnum = res::MESH_STR_TO_ENUM.GetOptional(val);
-                dbg::Assert(meshEnum, "no meshEnum");
-                component.mesh_enum = *meshEnum;
+                auto const& meshEnum = res::MESH_STR_TO_ENUM.Get(val);
+                component.meshEnum = meshEnum;
+            }
+            break;
+
+            case ComponentMemberEnum::Material:      
+            {
+                auto const& matEnum = res::MESH_MATERIAL_STR_TO_ENUM.Get(val);
+                component.materialEnum = matEnum;
             }
             break;
 

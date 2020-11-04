@@ -2,11 +2,11 @@
 
 #pragma once
 #include "ecs/Components/TransformComponent.hpp"
-#include "res/Prefab/ComponentParsing/ComponentData.hpp"
+#include "res/Prefab/ComponentParsing/ComponentMember.hpp"
 
 namespace rpg::res {
 
-inline auto ParseTransformComponent(ComponentDataPairs const& pairs)
+inline auto ParseTransformComponent(ComponentMemberPairs const& pairs)
 {
     ecs::TransformComponent transformComponent {};
     FOR_ARRAY(pairs, i) 
@@ -14,7 +14,7 @@ inline auto ParseTransformComponent(ComponentDataPairs const& pairs)
         auto const [key, val, componentDataEnum] = pairs[i].get_data();
         switch(componentDataEnum)
         {
-            case ComponentDataEnum::Children:
+            case ComponentMemberEnum::Children:
             {
                 /*
                 const auto values = ValStrToValArray<3, 100>(val);     
@@ -28,7 +28,7 @@ inline auto ParseTransformComponent(ComponentDataPairs const& pairs)
             }
             break;
 
-            case ComponentDataEnum::Scale:
+            case ComponentMemberEnum::Scale:
             {
                 /*
                 const auto values = ValStrToValArray<3, 10>(val);   

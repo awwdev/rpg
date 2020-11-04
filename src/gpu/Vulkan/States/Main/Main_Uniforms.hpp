@@ -192,17 +192,17 @@ struct Main_Uniforms
         uboMeta.Append(rdGeneral.meta);
 
         //?instances
-        auto const& mat_array = rdGeneral.instance_datas;
+        auto const& materials = rdGeneral.instance_datas;
         for(idx_t matIdx = 0; matIdx < (idx_t) res::MeshMaterialEnum::ENUM_END; ++matIdx)
         {
             auto& sbo = sboInstanceDatas[matIdx];
             sbo.Reset();
-            auto const& mesh_array = mat_array[matIdx];
-            FOR_C_ARRAY(mesh_array, meshIdx)
+            auto const& meshes = materials[matIdx];
+            FOR_C_ARRAY(meshes, meshIdx)
             {
-                auto const& inst_array = mesh_array[meshIdx];
-                if (inst_array.Empty() == false)
-                    sbo.Append(inst_array);   
+                auto const& instances = meshes[meshIdx];
+                if (instances.Empty() == false)
+                    sbo.Append(instances);   
             }
         }
 
