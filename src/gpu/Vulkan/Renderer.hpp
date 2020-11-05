@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Meta/Context.hpp"
-#include "gpu/Vulkan/States/States.hpp"
-#include "gpu/Vulkan/Meta/Synchronization.hpp"
+#include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
+#include "gpu/Vulkan/Passes/Passes.hpp"
+#include "gpu/Vulkan/Abstraction/Meta/Synchronization.hpp"
 
 #include "res/Resources.hpp"
 #include "app/Scene.hpp"
@@ -18,7 +18,7 @@ struct Renderer
     Context         context;
     Commands        commands;
     Synchronization sync;
-    States          states;
+    Passes          passes;
     uint32_t        currentFrame = 0;
 
     //com::ThreadPool<4> threadPool;
@@ -27,14 +27,14 @@ struct Renderer
         : context {}
         , commands {}
         , sync {}
-        , states {}
+        , passes {}
     {
         //threadPool.Start();
 
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
-        states.Create(res, commands.mainCmdPool);
+        passes.Create(res, commands.mainCmdPool);
     }
 
     void RecreateScwapchain(res::Resources& res)
@@ -45,8 +45,8 @@ struct Renderer
 
         commands.Destroy();
         commands.Create();
-        states.Destroy();
-        states.Create(res, commands.mainCmdPool);
+        passes.Destroy();
+        passes.Create(res, commands.mainCmdPool);
     }
 
     void Render(const double dt, app::GameScene& scene, res::Resources& res)
@@ -84,8 +84,8 @@ struct Renderer
         VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
         //UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-        states.Update(scene.renderData, res);
-        auto cmds = states.Record(commands, imageIndex, scene.renderData, res);
+        passes.Update(scene.renderData, res);
+        auto cmds = passes.Record(commands, imageIndex, scene.renderData, res);
         //auto cmds = states.RecordMT(commands, imageIndex, scene.renderData, threadPool);
         //--------------------------------------------------
 
