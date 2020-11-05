@@ -3,6 +3,7 @@
 #pragma once
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
 #include "gpu/Vulkan/Passes/Passes.hpp"
+#include "gpu/Vulkan/Resources/Resources.hpp"
 #include "gpu/Vulkan/Abstraction/Meta/Synchronization.hpp"
 
 #include "res/Resources.hpp"
@@ -18,6 +19,7 @@ struct Renderer
     Context         context;
     Commands        commands;
     Synchronization sync;
+    Resources       resources;
     Passes          passes;
     uint32_t        currentFrame = 0;
 
@@ -27,6 +29,7 @@ struct Renderer
         : context {}
         , commands {}
         , sync {}
+        , resources {}
         , passes {}
     {
         //threadPool.Start();
@@ -34,6 +37,7 @@ struct Renderer
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
+        resources.Create();
         passes.Create(res, commands.mainCmdPool);
     }
 
@@ -45,6 +49,8 @@ struct Renderer
 
         commands.Destroy();
         commands.Create();
+        resources.Destroy();
+        resources.Create();
         passes.Destroy();
         passes.Create(res, commands.mainCmdPool);
     }
@@ -73,7 +79,9 @@ struct Renderer
         switch(acquireRes)
         {
             case VK_SUCCESS: break;
-            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(res); return; //when?!
+            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(res); 
+                dbg::LogInfo("VK_ERROR_OUT_OF_DATE_KHR"); 
+                return; //when?!
             default: return;
         }
 

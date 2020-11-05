@@ -3,6 +3,8 @@
 
 - one shader loader
 
+- fix vulkan upper struct call destroy on dtor which is wrong and should only happen for the actual objects
+
 
 
 - what to draw on specific cascades
