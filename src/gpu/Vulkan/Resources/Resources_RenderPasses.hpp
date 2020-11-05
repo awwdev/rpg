@@ -11,17 +11,25 @@ namespace rpg::gpu::vuk {
 
 struct Resources_RenderPasses
 {
+    RenderPass guiRenderPass;
+    RenderPass shadowRenderPass;
+    RenderPass postRenderPass;
+    RenderPass mainRenderPass;
+
     void Create()
     {
-        CreateRenderPass_GUI();
-        CreateRenderPass_Post();
-        CreateRenderPass_Main();
-        CreateRenderPass_Shadow();
+        CreateRenderPass_GUI(guiRenderPass);
+        CreateRenderPass_Post(postRenderPass);
+        CreateRenderPass_Main(mainRenderPass);
+        CreateRenderPass_Shadow(shadowRenderPass);
     }
     
     void Destroy()
     {
-
+        guiRenderPass.Destroy();
+        shadowRenderPass.Destroy();
+        postRenderPass.Destroy();
+        mainRenderPass.Destroy();
     }
 };
 

@@ -30,8 +30,9 @@ inline constexpr auto GetVulkanShaderStage(ShaderStage const stage)
 template<auto... STAGES_T>
 struct Shader
 {
-    static auto constexpr STAGE_COUNT = sizeof...(STAGES_T);
+    static auto constexpr STAGE_COUNT = static_cast<uint32_t>(sizeof...(STAGES_T));
     static auto constexpr STAGES = { STAGES_T... };
+    
     VkShaderModule modules [STAGE_COUNT];
     VkPipelineShaderStageCreateInfo infos [STAGE_COUNT];
 

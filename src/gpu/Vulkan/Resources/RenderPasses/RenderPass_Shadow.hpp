@@ -1,11 +1,11 @@
 //https://github.com/awwdev
 
 #pragma once
-//#include "gpu/Vulkan/Abstraction/Objects/RenderPass.hpp"
+#include "gpu/Vulkan/Abstraction/Objects/RenderPass.hpp"
 
 namespace rpg::gpu::vuk {
 
-inline void CreateRenderPass_Shadow()
+inline void CreateRenderPass_Shadow(RenderPass& rp)
 {
 
 }
