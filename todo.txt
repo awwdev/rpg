@@ -1,6 +1,8 @@
 - grass base color, on placement cmd (raycast terrain), recalculate props, 
 - shadow cascade last fade
 
+- one shader loader
+
 
 
 - what to draw on specific cascades

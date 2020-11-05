@@ -16,7 +16,8 @@
 @ Circle
 ? TransformComponent
 ? RenderComponent
-    #+ Mesh = Mesh_Circle
+    + Mesh = Mesh_Circle
+    + Material = Line
 
 @ Sword
 ? TransformComponent

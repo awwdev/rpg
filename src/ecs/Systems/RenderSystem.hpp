@@ -17,6 +17,9 @@ inline void RenderSystem(ComponentArrays<>& arrays, const double, gpu::RenderDat
         auto const& render_component = arrays.render_components.dense[i];
         auto const& transform_component = arrays.transform_components.Get(entityID);
         
+        if (render_component.meshEnum == res::MeshEnum::None)
+            continue;
+
         auto const meshEnum = (idx_t) render_component.meshEnum;
         auto const matEnum  = (idx_t) render_component.materialEnum;
         auto& instance_datas = renderData.main.instance_datas[matEnum][meshEnum];

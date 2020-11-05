@@ -33,7 +33,7 @@ struct GameScene
     gui::GUI_Level  guiLevel;
     gui::GUI_Shadow guiShadow;
     gui::GUI_Stats  guiStats;
-    gui::GUI_Scene  guiScene;
+    //gui::GUI_Scene  guiScene;
 
     GameScene(res::Resources& resources)
     {
@@ -58,7 +58,7 @@ struct GameScene
         if (app::glo::inputMode != app::glo::InputMode::PlayMode) {
             guiLevel.Update(renderData, resources, editor);
             guiStats.Update(renderData);
-            guiScene.Update(renderData, ecs);
+            //guiScene.Update(renderData, ecs);
         }   
 
         //? meta

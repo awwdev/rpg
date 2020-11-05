@@ -18,6 +18,8 @@
 #include "gpu/Vulkan/States/Main/Instances/General/General_Shader.hpp"
 #include "gpu/Vulkan/States/Main/Instances/Foliage/Foliage_Pipeline.hpp"
 #include "gpu/Vulkan/States/Main/Instances/Foliage/Foliage_Shader.hpp"
+#include "gpu/Vulkan/States/Main/Instances/Line/Line_Pipeline.hpp"
+#include "gpu/Vulkan/States/Main/Instances/Line/Line_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -37,6 +39,8 @@ struct State_Main
     General_Pipeline     generalPipeline;
     Foliage_Shader       foliageShader;
     Foliage_Pipeline     foliagePipeline;
+    Line_Shader          lineShader;
+    Line_Pipeline        linePipeline;
 
     void Create(VkCommandPool cmdPool, Buffer& uboSun, Image& shadowMaps, res::Resources& res)
     {
@@ -54,6 +58,8 @@ struct State_Main
         generalPipeline.Create(mainRenderPass, generalShader, mainVertices, mainUniforms);
         foliageShader.Create();
         foliagePipeline.Create(mainRenderPass, foliageShader, mainVertices, mainUniforms);
+        lineShader.Create();
+        linePipeline.Create(mainRenderPass, lineShader, mainVertices, mainUniforms);
     }
 
     void Destroy()
@@ -72,6 +78,8 @@ struct State_Main
         generalPipeline.Destroy();  
         foliageShader.Destroy();      
         foliagePipeline.Destroy();  
+        lineShader.Destroy();      
+        linePipeline.Destroy();  
     }
 
     void Update(gpu::RenderData& renderData, const res::Resources& resources)
@@ -132,7 +140,7 @@ struct State_Main
                 break;
 
                 case res::MeshMaterialEnum::Line:      
-                vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, generalPipeline.pipeline);
+                vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, linePipeline.pipeline);
                 break;
 
                 default: continue;
