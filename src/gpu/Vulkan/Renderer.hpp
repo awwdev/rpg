@@ -4,6 +4,8 @@
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
 #include "gpu/Vulkan/_Old/Passes.hpp"
 #include "gpu/Vulkan/Resources/Resources.hpp"
+#include "gpu/Vulkan/Recording/Recording.hpp"
+#include "gpu/Vulkan/Updating/Updating.hpp"
 #include "gpu/Vulkan/Abstraction/Meta/Synchronization.hpp"
 
 #include "res/Resources.hpp"
@@ -94,6 +96,10 @@ struct Renderer
         //UPDATE GPU RESOURCES AND RECORD COMMANDS----------
         passes.Update(scene.renderData, res);
         auto cmds = passes.Record(commands, imageIndex, scene.renderData, res);
+
+        Update(resources);
+        Record(commands, imageIndex, resources);
+        
         //auto cmds = states.RecordMT(commands, imageIndex, scene.renderData, threadPool);
         //--------------------------------------------------
 

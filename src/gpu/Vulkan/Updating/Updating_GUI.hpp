@@ -5,7 +5,7 @@
 
 namespace rpg::gpu::vuk {
 
-inline void Record_GUI(VkCommandBuffer cmdBuffer, uint32_t const cmdBufferIdx, Resources& resources)
+inline void Update_GUI(Resources& resources)
 {
     
 }
