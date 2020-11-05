@@ -4,36 +4,37 @@
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
 #include "gpu/Vulkan/Abstraction/Helper/Initializers.hpp"
 
-#include "gpu/Vulkan/Passes/Shadow/Shadow_RenderPass.hpp"
-#include "gpu/Vulkan/Passes/Shadow/Shadow_Shader.hpp"
-#include "gpu/Vulkan/Passes/Shadow/Shadow_Uniforms.hpp"
-#include "gpu/Vulkan/Passes/Shadow/Shadow_Vertices.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_Vertices.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_Uniforms.hpp"
+
+#include "gpu/Vulkan/_Old/Main/Instances/General/General_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 
-struct Shadow_Pipeline
+struct General_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
     void Create(
-    const Shadow_RenderPass& renderPass, 
-    const Shadow_Shader& shader, 
-    const Shadow_Vertices& vertices,
-    const Shadow_Uniforms& uniforms)
+    Main_RenderPass& renderPass, 
+    General_Shader& shader, 
+    Main_Vertices& vertices,
+    Main_Uniforms& uniforms)
     {
         const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
         const auto inputAssembly    = InputAssemblyDefault();
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
-        const auto rasterization    = Rasterization(VK_CULL_MODE_NONE, VK_POLYGON_MODE_FILL, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_TRUE);
-        const auto multisampling    = Multisampling();
+        const auto rasterization    = Rasterization(VK_CULL_MODE_NONE, VK_POLYGON_MODE_FILL); //VK_CULL_MODE_BACK_BIT
+        const auto multisampling    = Multisampling(renderPass.msaaSampleCount);
         const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
         const auto blendAttachment  = BlendAttachment(VK_FALSE);
         const auto blendState       = BlendState(blendAttachment);   
-
-        const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1, &uniforms.pushConst.rangeInfo, 1);
+        
+        const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1);
         VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &layout));
 
         const VkGraphicsPipelineCreateInfo pipelineInfo
@@ -68,7 +69,8 @@ struct Shadow_Pipeline
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
     }
-    ~Shadow_Pipeline()
+
+    ~General_Pipeline()
     {
         Destroy();
     }

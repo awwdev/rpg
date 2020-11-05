@@ -4,11 +4,11 @@
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
 #include "gpu/Vulkan/Abstraction/Helper/Initializers.hpp"
 
-#include "gpu/Vulkan/Passes/Main/Main_RenderPass.hpp"
-#include "gpu/Vulkan/Passes/Main/Main_Vertices.hpp"
-#include "gpu/Vulkan/Passes/Main/Main_Uniforms.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_Vertices.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_Uniforms.hpp"
 
-#include "gpu/Vulkan/Passes/Main/Instances/Foliage/Foliage_Shader.hpp"
+#include "gpu/Vulkan/_Old/Main/Instances/Foliage/Foliage_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 

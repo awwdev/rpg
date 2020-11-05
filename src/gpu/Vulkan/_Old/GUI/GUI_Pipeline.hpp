@@ -4,25 +4,21 @@
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
 #include "gpu/Vulkan/Abstraction/Helper/Initializers.hpp"
 
-#include "gpu/Vulkan/Passes/Post/Post_RenderPass.hpp"
-#include "gpu/Vulkan/Passes/Post/Post_Shader.hpp"
-#include "gpu/Vulkan/Passes/Post/Post_Uniforms.hpp"
-#include "gpu/Vulkan/Passes/Post/Post_Vertices.hpp"
+
+#include "gpu/Vulkan/_Old/gui/GUI_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/gui/GUI_Shader.hpp"
+#include "gpu/Vulkan/_Old/gui/GUI_Uniforms.hpp"
 
 namespace rpg::gpu::vuk {
 
-struct Post_Pipeline
+struct GUI_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
-    void Create(
-    Post_RenderPass& renderPass, 
-    Post_Shader& shader, 
-    Post_Uniforms& uniforms,
-    Post_Vertices& vertices)
+    void Create(GUI_RenderPass& renderPass, GUI_Shader& shader, GUI_Uniforms& uniforms)
     {
-        const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
+        const auto vertexInput      = VertexInputInfoEmpty();
         const auto inputAssembly    = InputAssemblyDefault();
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
@@ -69,7 +65,7 @@ struct Post_Pipeline
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
     }
 
-    ~Post_Pipeline()
+    ~GUI_Pipeline()
     {
         Destroy();
     }

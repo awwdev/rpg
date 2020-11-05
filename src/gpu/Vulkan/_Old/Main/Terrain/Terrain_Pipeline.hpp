@@ -4,29 +4,34 @@
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
 #include "gpu/Vulkan/Abstraction/Helper/Initializers.hpp"
 
+#include "gpu/Vulkan/_Old/Main/Main_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_Vertices.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_Uniforms.hpp"
 
-#include "gpu/Vulkan/Passes/gui/GUI_RenderPass.hpp"
-#include "gpu/Vulkan/Passes/gui/GUI_Shader.hpp"
-#include "gpu/Vulkan/Passes/gui/GUI_Uniforms.hpp"
+#include "gpu/Vulkan/_Old/Main/Terrain/Terrain_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 
-struct GUI_Pipeline
+struct Terrain_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
-    void Create(GUI_RenderPass& renderPass, GUI_Shader& shader, GUI_Uniforms& uniforms)
+    void Create(
+    Main_RenderPass& renderPass, 
+    Terrain_Shader& shader, 
+    Main_Vertices& vertices,
+    Main_Uniforms& uniforms)
     {
-        const auto vertexInput      = VertexInputInfoEmpty();
+        const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
         const auto inputAssembly    = InputAssemblyDefault();
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
-        const auto rasterization    = Rasterization();
-        const auto multisampling    = Multisampling();
-        const auto depthStencil     = DepthStencil();
-        const auto blendAttachment  = BlendAttachment(VK_TRUE);
+        const auto rasterization    = Rasterization(VK_CULL_MODE_BACK_BIT);
+        const auto multisampling    = Multisampling(renderPass.msaaSampleCount);
+        const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
+        const auto blendAttachment  = BlendAttachment(VK_FALSE);
         const auto blendState       = BlendState(blendAttachment);   
         
         const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1);
@@ -64,11 +69,11 @@ struct GUI_Pipeline
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
     }
-
-    ~GUI_Pipeline()
+    ~Terrain_Pipeline()
     {
         Destroy();
     }
+    
 };
 
 }//ns

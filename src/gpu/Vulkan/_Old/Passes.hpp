@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Passes/Pass_Shadow.hpp"
-#include "gpu/Vulkan/Passes/Pass_Main.hpp"
-#include "gpu/Vulkan/Passes/Pass_Post.hpp"
-#include "gpu/Vulkan/Passes/Pass_GUI.hpp"
+#include "gpu/Vulkan/_Old/Pass_Shadow.hpp"
+#include "gpu/Vulkan/_Old/Pass_Main.hpp"
+#include "gpu/Vulkan/_Old/Pass_Post.hpp"
+#include "gpu/Vulkan/_Old/Pass_GUI.hpp"
 
 #include "res/Resources.hpp"
 #include "com/ThreadPool.hpp"

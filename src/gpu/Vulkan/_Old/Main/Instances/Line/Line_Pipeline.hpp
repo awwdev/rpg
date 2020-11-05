@@ -4,34 +4,34 @@
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
 #include "gpu/Vulkan/Abstraction/Helper/Initializers.hpp"
 
-#include "gpu/Vulkan/Passes/Main/Main_RenderPass.hpp"
-#include "gpu/Vulkan/Passes/Main/Main_Vertices.hpp"
-#include "gpu/Vulkan/Passes/Main/Main_Uniforms.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_Vertices.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_Uniforms.hpp"
 
-#include "gpu/Vulkan/Passes/Main/Instances/General/General_Shader.hpp"
+#include "gpu/Vulkan/_Old/Main/Instances/Line/Line_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 
-struct General_Pipeline
+struct Line_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
     void Create(
     Main_RenderPass& renderPass, 
-    General_Shader& shader, 
+    Line_Shader& shader, 
     Main_Vertices& vertices,
     Main_Uniforms& uniforms)
     {
         const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
-        const auto inputAssembly    = InputAssemblyDefault();
+        const auto inputAssembly    = InputAssemblyDefault(VK_PRIMITIVE_TOPOLOGY_LINE_LIST); //VK_PRIMITIVE_TOPOLOGY_LINE_STRIP
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
-        const auto rasterization    = Rasterization(VK_CULL_MODE_NONE, VK_POLYGON_MODE_FILL); //VK_CULL_MODE_BACK_BIT
+        const auto rasterization    = Rasterization(VK_CULL_MODE_NONE, VK_POLYGON_MODE_LINE, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_FALSE, 4); 
         const auto multisampling    = Multisampling(renderPass.msaaSampleCount);
         const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
-        const auto blendAttachment  = BlendAttachment(VK_FALSE);
+        const auto blendAttachment  = BlendAttachment(VK_TRUE);
         const auto blendState       = BlendState(blendAttachment);   
         
         const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1);
@@ -70,7 +70,7 @@ struct General_Pipeline
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
     }
 
-    ~General_Pipeline()
+    ~Line_Pipeline()
     {
         Destroy();
     }

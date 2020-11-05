@@ -4,37 +4,36 @@
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
 #include "gpu/Vulkan/Abstraction/Helper/Initializers.hpp"
 
-#include "gpu/Vulkan/Passes/Main/Main_RenderPass.hpp"
-#include "gpu/Vulkan/Passes/Main/Main_Vertices.hpp"
-#include "gpu/Vulkan/Passes/Main/Main_Uniforms.hpp"
-
-#include "gpu/Vulkan/Passes/Main/Terrain/TerrainWire_Shader.hpp"
+#include "gpu/Vulkan/_Old/Shadow/Shadow_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Shadow/Shadow_Shader.hpp"
+#include "gpu/Vulkan/_Old/Shadow/Shadow_Uniforms.hpp"
+#include "gpu/Vulkan/_Old/Shadow/Shadow_Vertices.hpp"
 
 namespace rpg::gpu::vuk {
 
-struct TerrainWire_Pipeline
+struct Shadow_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
     void Create(
-    Main_RenderPass& renderPass, 
-    TerrainWire_Shader& shader, 
-    Main_Vertices& vertices,
-    Main_Uniforms& uniforms)
+    const Shadow_RenderPass& renderPass, 
+    const Shadow_Shader& shader, 
+    const Shadow_Vertices& vertices,
+    const Shadow_Uniforms& uniforms)
     {
         const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
         const auto inputAssembly    = InputAssemblyDefault();
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
-        const auto rasterization    = Rasterization(VK_CULL_MODE_BACK_BIT, VK_POLYGON_MODE_LINE, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_FALSE, 2.f);
-        const auto multisampling    = Multisampling(renderPass.msaaSampleCount);
+        const auto rasterization    = Rasterization(VK_CULL_MODE_NONE, VK_POLYGON_MODE_FILL, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_TRUE);
+        const auto multisampling    = Multisampling();
         const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
         const auto blendAttachment  = BlendAttachment(VK_FALSE);
         const auto blendState       = BlendState(blendAttachment);   
-        
-        const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1);
+
+        const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1, &uniforms.pushConst.rangeInfo, 1);
         VkCheck(vkCreatePipelineLayout(g_contextPtr->device, &layoutInfo, nullptr, &layout));
 
         const VkGraphicsPipelineCreateInfo pipelineInfo
@@ -69,11 +68,10 @@ struct TerrainWire_Pipeline
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
     }
-    ~TerrainWire_Pipeline()
+    ~Shadow_Pipeline()
     {
         Destroy();
     }
-    
 };
 
 }//ns

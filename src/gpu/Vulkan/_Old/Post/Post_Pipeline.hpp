@@ -4,34 +4,33 @@
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
 #include "gpu/Vulkan/Abstraction/Helper/Initializers.hpp"
 
-#include "gpu/Vulkan/Passes/Main/Main_RenderPass.hpp"
-#include "gpu/Vulkan/Passes/Main/Main_Vertices.hpp"
-#include "gpu/Vulkan/Passes/Main/Main_Uniforms.hpp"
-
-#include "gpu/Vulkan/Passes/Main/Terrain/Terrain_Shader.hpp"
+#include "gpu/Vulkan/_Old/Post/Post_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Post/Post_Shader.hpp"
+#include "gpu/Vulkan/_Old/Post/Post_Uniforms.hpp"
+#include "gpu/Vulkan/_Old/Post/Post_Vertices.hpp"
 
 namespace rpg::gpu::vuk {
 
-struct Terrain_Pipeline
+struct Post_Pipeline
 {
     VkPipeline pipeline;
     VkPipelineLayout layout;
 
     void Create(
-    Main_RenderPass& renderPass, 
-    Terrain_Shader& shader, 
-    Main_Vertices& vertices,
-    Main_Uniforms& uniforms)
+    Post_RenderPass& renderPass, 
+    Post_Shader& shader, 
+    Post_Uniforms& uniforms,
+    Post_Vertices& vertices)
     {
         const auto vertexInput      = VertexInputInfo(vertices.bindings, vertices.attributes);
         const auto inputAssembly    = InputAssemblyDefault();
         const auto viewport         = Viewport(renderPass.width, renderPass.height);
         const auto scissor          = Scissor(renderPass.width, renderPass.height);
         const auto viewportState    = ViewportState(viewport, scissor);
-        const auto rasterization    = Rasterization(VK_CULL_MODE_BACK_BIT);
-        const auto multisampling    = Multisampling(renderPass.msaaSampleCount);
-        const auto depthStencil     = DepthStencil(VK_TRUE, VK_TRUE);
-        const auto blendAttachment  = BlendAttachment(VK_FALSE);
+        const auto rasterization    = Rasterization();
+        const auto multisampling    = Multisampling();
+        const auto depthStencil     = DepthStencil();
+        const auto blendAttachment  = BlendAttachment(VK_TRUE);
         const auto blendState       = BlendState(blendAttachment);   
         
         const auto layoutInfo = PipelineLayoutInfo(&uniforms.descriptors.descSetLayout, 1);
@@ -69,11 +68,11 @@ struct Terrain_Pipeline
         vkDestroyPipeline(g_contextPtr->device, pipeline, nullptr);
         vkDestroyPipelineLayout(g_contextPtr->device, layout, nullptr);
     }
-    ~Terrain_Pipeline()
+
+    ~Post_Pipeline()
     {
         Destroy();
     }
-    
 };
 
 }//ns

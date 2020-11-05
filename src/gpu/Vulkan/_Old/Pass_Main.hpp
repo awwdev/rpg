@@ -5,21 +5,21 @@
 #include "res/Resources.hpp"
 
 //general
-#include "gpu/Vulkan/Passes/Main/Main_RenderPass.hpp"
-#include "gpu/Vulkan/Passes/Main/Main_Vertices.hpp"
-#include "gpu/Vulkan/Passes/Main/Main_Uniforms.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_RenderPass.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_Vertices.hpp"
+#include "gpu/Vulkan/_Old/Main/Main_Uniforms.hpp"
 //terrain
-#include "gpu/Vulkan/Passes/Main/Terrain/Terrain_Shader.hpp"
-#include "gpu/Vulkan/Passes/Main/Terrain/Terrain_Pipeline.hpp"
-#include "gpu/Vulkan/Passes/Main/Terrain/TerrainWire_Shader.hpp"
-#include "gpu/Vulkan/Passes/Main/Terrain/TerrainWire_Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Main/Terrain/Terrain_Shader.hpp"
+#include "gpu/Vulkan/_Old/Main/Terrain/Terrain_Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Main/Terrain/TerrainWire_Shader.hpp"
+#include "gpu/Vulkan/_Old/Main/Terrain/TerrainWire_Pipeline.hpp"
 //instances
-#include "gpu/Vulkan/Passes/Main/Instances/General/General_Pipeline.hpp"
-#include "gpu/Vulkan/Passes/Main/Instances/General/General_Shader.hpp"
-#include "gpu/Vulkan/Passes/Main/Instances/Foliage/Foliage_Pipeline.hpp"
-#include "gpu/Vulkan/Passes/Main/Instances/Foliage/Foliage_Shader.hpp"
-#include "gpu/Vulkan/Passes/Main/Instances/Line/Line_Pipeline.hpp"
-#include "gpu/Vulkan/Passes/Main/Instances/Line/Line_Shader.hpp"
+#include "gpu/Vulkan/_Old/Main/Instances/General/General_Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Main/Instances/General/General_Shader.hpp"
+#include "gpu/Vulkan/_Old/Main/Instances/Foliage/Foliage_Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Main/Instances/Foliage/Foliage_Shader.hpp"
+#include "gpu/Vulkan/_Old/Main/Instances/Line/Line_Pipeline.hpp"
+#include "gpu/Vulkan/_Old/Main/Instances/Line/Line_Shader.hpp"
 
 namespace rpg::gpu::vuk {
 
