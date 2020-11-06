@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Updating/Updating_GUI.hpp"
-#include "gpu/Vulkan/Updating/Updating_Instances.hpp"
-#include "gpu/Vulkan/Updating/Updating_Terrain.hpp"
-#include "gpu/Vulkan/Updating/Updating_Post.hpp"
+#include "gpu/Vulkan/States/Updating/Updating_GUI.hpp"
+#include "gpu/Vulkan/States/Updating/Updating_Instances.hpp"
+#include "gpu/Vulkan/States/Updating/Updating_Terrain.hpp"
+#include "gpu/Vulkan/States/Updating/Updating_Post.hpp"
 
 namespace rpg::gpu::vuk {
 

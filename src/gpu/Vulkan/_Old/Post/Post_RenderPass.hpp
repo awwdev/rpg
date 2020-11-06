@@ -20,7 +20,7 @@ struct Post_RenderPass
 
         //? ATTACHMENTS
         const VkAttachmentDescription colorDesc {
-            .flags          = 0 ,
+            .flags          = 0,
             .format         = COLOR_FORMAT, 
             .samples        = VK_SAMPLE_COUNT_1_BIT,
             .loadOp         = VK_ATTACHMENT_LOAD_OP_DONT_CARE,

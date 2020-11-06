@@ -4,7 +4,7 @@
 
 namespace rpg::gpu::vuk {
 
-struct Vertices_Terrain
+struct Vertices_Post
 {
     void Create()
     {
@@ -14,11 +14,6 @@ struct Vertices_Terrain
     void Destroy()
     {
 
-    }
-
-    void Update()
-    {
-        
     }
 };
 

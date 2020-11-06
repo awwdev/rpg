@@ -4,7 +4,7 @@
 
 namespace rpg::gpu::vuk {
 
-struct Uniforms_Post
+struct Vertices_GUI
 {
     void Create()
     {
@@ -14,11 +14,6 @@ struct Uniforms_Post
     void Destroy()
     {
 
-    }
-
-    void Update()
-    {
-        
     }
 };
 

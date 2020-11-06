@@ -4,7 +4,7 @@
 
 namespace rpg::gpu::vuk {
 
-struct Uniforms_Terrain
+struct Uniforms_GUI
 {
     void Create()
     {
@@ -14,11 +14,6 @@ struct Uniforms_Terrain
     void Destroy()
     {
 
-    }
-
-    void Update()
-    {
-        
     }
 };
 

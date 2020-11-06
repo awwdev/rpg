@@ -4,7 +4,7 @@
 
 namespace rpg::gpu::vuk {
 
-struct Vertices_GUI
+struct Uniforms_Shadow
 {
     void Create()
     {
@@ -14,11 +14,6 @@ struct Vertices_GUI
     void Destroy()
     {
 
-    }
-
-    void Update()
-    {
-        
     }
 };
 

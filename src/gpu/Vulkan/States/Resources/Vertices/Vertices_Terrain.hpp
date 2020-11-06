@@ -4,7 +4,7 @@
 
 namespace rpg::gpu::vuk {
 
-struct Vertices_Instances
+struct Vertices_Terrain
 {
     void Create()
     {
@@ -14,11 +14,6 @@ struct Vertices_Instances
     void Destroy()
     {
 
-    }
-
-    void Update()
-    {
-        
     }
 };
 

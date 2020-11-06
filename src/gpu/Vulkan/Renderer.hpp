@@ -2,17 +2,19 @@
 
 #pragma once
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
-#include "gpu/Vulkan/_Old/Passes.hpp"
-#include "gpu/Vulkan/Resources/Resources.hpp"
-#include "gpu/Vulkan/Recording/Recording.hpp"
-#include "gpu/Vulkan/Updating/Updating.hpp"
 #include "gpu/Vulkan/Abstraction/Meta/Synchronization.hpp"
+
+#include "gpu/Vulkan/States/States_Resources.hpp"
+#include "gpu/Vulkan/States/States_Updating.hpp"
+#include "gpu/Vulkan/States/States_Recording.hpp"
 
 #include "res/Resources.hpp"
 #include "app/Scene.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "wnd/WindowEvents.hpp"
 #include "com/ThreadPool.hpp"
+
+#include "gpu/Vulkan/_Old/Passes.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -97,8 +99,8 @@ struct Renderer
         passes.Update(scene.renderData, res);
         auto cmds = passes.Record(commands, imageIndex, scene.renderData, res);
 
-        Update(resources);
-        Record(commands, imageIndex, resources);
+        //Update(resources);
+        //Record(commands, imageIndex, resources);
         
         //auto cmds = states.RecordMT(commands, imageIndex, scene.renderData, threadPool);
         //--------------------------------------------------
