@@ -5,6 +5,7 @@
 #include "com/Types.hpp"
 #include "dbg/Logger.hpp"
 #include "dbg/Assert.hpp"
+#include "com/box/SimpleArray.hpp"
 
 #define VK_USE_PLATFORM_WIN32_KHR
 #include "../ext/include/vulkan.h"
@@ -25,24 +26,6 @@ inline void VkCheck(const VkResult result)
             dbg::LogWarning("VK RESULT", result); 
     }
 }
-
-#define FOR_VK_ARRAY(arr, i) for(u32 i = 0; i < arr.count; ++i)
-
-template<typename T, uint32_t N>
-struct VkArray
-{
-    VkArray(const uint32_t pCount = 0) 
-        : count { pCount } 
-    { ; }
-
-    uint32_t count;
-    T        data[N];
-
-    T&       operator[](const uint32_t i)       { return data[i]; }
-    const T& operator[](const uint32_t i) const { return data[i]; }
-};
-
-
 
 /*
 //use this to give a resource a name to view in renderdoc
@@ -99,8 +82,6 @@ struct Context
     VkSurfaceKHR surface;
     VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
-    float RATIO = 4 / 3.f; //todo: keep ratio (do not distort)
-
     const VkFormat format = VK_FORMAT_B8G8R8A8_SRGB;//VK_FORMAT_B8G8R8A8_UNORM;
     const VkColorSpaceKHR COLOR_SPACE = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
     const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
@@ -109,8 +90,8 @@ struct Context
     //const VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
     
     VkSwapchainKHR swapchain;
-    vuk::VkArray<VkImage, 4> swapImages { 0 }; //use this to retrieve "swapchain count"
-    vuk::VkArray<VkImageView, 4> swapImageViews { 0 };
+    com::SimpleArrayVk<VkImage, 4>     swapImages;
+    com::SimpleArrayVk<VkImageView, 4> swapImageViews;
 
 
     void Create(const WindowHandle& wndHandle)
@@ -189,11 +170,13 @@ struct Context
 
     void CreatePhysical()
     {
-        vuk::VkArray<VkPhysicalDevice, 4> physicals { 4 };
+        com::SimpleArrayVk<VkPhysicalDevice, 4> physicals;
+        VkCheck(vkEnumeratePhysicalDevices(instance, &physicals.count, nullptr));
         VkCheck(vkEnumeratePhysicalDevices(instance, &physicals.count, physicals.data));
         physical = physicals[0];
 
-        vuk::VkArray<VkQueueFamilyProperties, 10> famProps { 10 };
+        com::SimpleArrayVk<VkQueueFamilyProperties, 10> famProps;
+        vkGetPhysicalDeviceQueueFamilyProperties(physical, &famProps.count, nullptr);
         vkGetPhysicalDeviceQueueFamilyProperties(physical, &famProps.count, famProps.data);
 
         for (uint32_t i = 0; i < famProps.count; ++i) {
@@ -343,7 +326,9 @@ struct Context
 
     void DestroySwapchain()
     {
-        FOR_VK_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
+        FOR_SIMPLE_ARRAY(swapImageViews, i) 
+            vkDestroyImageView(device, swapImageViews[i], nullptr);
+        swapImageViews.ResetCount();
         vkDestroySwapchainKHR(device, swapchain, nullptr);
     }
 
@@ -354,7 +339,9 @@ struct Context
 
     void Destroy()
     {
-        FOR_VK_ARRAY(swapImageViews, i) vkDestroyImageView(device, swapImageViews[i], nullptr);
+        FOR_SIMPLE_ARRAY(swapImageViews, i) 
+            vkDestroyImageView(device, swapImageViews[i], nullptr);
+        swapImageViews.ResetCount();
         vkDestroySwapchainKHR(device, swapchain, nullptr);
         vkDestroySurfaceKHR(instance, surface, nullptr);
         vkDestroyDevice(device, nullptr);

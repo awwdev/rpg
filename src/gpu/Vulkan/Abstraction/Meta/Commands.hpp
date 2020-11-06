@@ -4,6 +4,7 @@
 
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
 #include "gpu/Vulkan/Abstraction/Helper/Initializers.hpp"
+#include "com/box/SimpleArray.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -17,7 +18,7 @@ struct Commands
     struct ThreadCommands
     {
         VkCommandPool cmdPool;
-        VkArray<VkCommandBuffer, SWAP_COUNT_MAX> cmdBuffers;
+        com::SimpleArray<VkCommandBuffer, SWAP_COUNT_MAX> cmdBuffers;
     };
     ThreadCommands threadCommands [THREAD_COUNT_MAX] {};
 
@@ -44,9 +45,9 @@ struct Commands
         FOR_C_ARRAY(threadCommands, i) {
             auto& cmdPool    = threadCommands[i].cmdPool;
             auto& cmdBuffers = threadCommands[i].cmdBuffers;
-            FOR_VK_ARRAY(cmdBuffers, i)
+            FOR_SIMPLE_ARRAY(cmdBuffers, i)
                 vkFreeCommandBuffers(g_contextPtr->device, cmdPool, 1, &cmdBuffers[i]);
-            cmdBuffers.count = 0;
+            cmdBuffers.ResetCount();
             vkDestroyCommandPool(g_contextPtr->device, cmdPool, nullptr);
         }
     }

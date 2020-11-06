@@ -2,13 +2,14 @@
 
 #pragma once
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
+#include "com/box/SimpleArray.hpp"
 
 namespace rpg::gpu::vuk {
 
 struct GUI_RenderPass
 {
-    VkArray<VkRenderPassBeginInfo, 4> beginInfos;
-    VkArray<VkFramebuffer, 4> framebuffers;
+    com::SimpleArrayVk<VkRenderPassBeginInfo, 4> beginInfos;
+    com::SimpleArrayVk<VkFramebuffer, 4> framebuffers;
     VkRenderPass renderPass;
     uint32_t width, height;
 
@@ -82,7 +83,7 @@ struct GUI_RenderPass
         VkCheck(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &renderPass));
 
         //? FRAMEBUFFER
-        FOR_VK_ARRAY(g_contextPtr->swapImages, i)
+        FOR_SIMPLE_ARRAY(g_contextPtr->swapImages, i)
         {
             const VkImageView views [] {
                 g_contextPtr->swapImageViews[i]
@@ -100,13 +101,13 @@ struct GUI_RenderPass
                 .layers          = 1
             };
             
+            framebuffers.Append();
             VkCheck(vkCreateFramebuffer(g_contextPtr->device, &framebufferInfo, nullptr, &framebuffers[i]));
-            framebuffers.count++;
         }
 
         //? BEGIN INFO
-        FOR_VK_ARRAY(g_contextPtr->swapImages, i) {
-            beginInfos[i] = {
+        FOR_SIMPLE_ARRAY(g_contextPtr->swapImages, i) {
+            beginInfos.Append(VkRenderPassBeginInfo{
                 .sType          = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
                 .pNext          = nullptr, 
                 .renderPass     = renderPass,
@@ -117,7 +118,7 @@ struct GUI_RenderPass
                 },
                 .clearValueCount= 0,
                 .pClearValues   = nullptr
-            };
+            });
         }
     }
 
@@ -125,10 +126,10 @@ struct GUI_RenderPass
     void Destroy()
     {
         vkDestroyRenderPass (g_contextPtr->device, renderPass, nullptr);
-        FOR_VK_ARRAY(framebuffers, i)
+        FOR_SIMPLE_ARRAY(framebuffers, i)
             vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
-        framebuffers.count = 0;
-        beginInfos.count = 0;
+        framebuffers.ResetCount();
+        beginInfos.ResetCount();
     }
 
     ~GUI_RenderPass()

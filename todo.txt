@@ -6,6 +6,11 @@
 - fix vulkan upper struct call destroy on dtor which is wrong and should only happen for the actual objects
 
 
+- simple frustrum culling, frustrum as AABB and objects with AABB and then intersection test
+aabb vs aabb https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_collision_detection
+
+
+
 
 - what to draw on specific cascades
 - cast shadow flag 

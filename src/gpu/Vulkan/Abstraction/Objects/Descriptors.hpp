@@ -2,6 +2,7 @@
 
 #pragma once
 #include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
+#include "com/box/SimpleArray.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -18,9 +19,9 @@ struct UniformInfo
 struct Descriptors
 {
     //capacity
-    VkDescriptorSetLayout        descSetLayout;
-    VkDescriptorPool             descPool;
-    VkArray<VkDescriptorSet, 10> descSets;
+    VkDescriptorSetLayout descSetLayout;
+    VkDescriptorPool descPool;
+    com::SimpleArrayVk<VkDescriptorSet, 10> descSets;
 
     template<auto UNIFORM_COUNT>
     void Create(UniformInfo (&uniformInfos) [UNIFORM_COUNT])

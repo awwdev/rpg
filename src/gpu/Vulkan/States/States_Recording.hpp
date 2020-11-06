@@ -14,24 +14,24 @@ namespace rpg::gpu::vuk {
 inline void Record(Commands& commands, const uint32_t cmdBufferIdx, Resources& resources)
 {
     VkCommandBuffer cmdBuffer = commands.threadCommands[0].cmdBuffers[cmdBufferIdx]; //single thread 
-    auto& rp_shadow = resources.renderPasses.shadowRenderPass;
-    auto& rp_main = resources.renderPasses.mainRenderPass;
-    auto& rp_post = resources.renderPasses.postRenderPass;
+    auto* rp_shadow_info = &resources.renderPasses.shadowRenderPass.beginInfos[cmdBufferIdx];
+    auto* rp_main_info   = &resources.renderPasses.mainRenderPass.beginInfos[cmdBufferIdx];
+    auto* rp_post_info   = &resources.renderPasses.postRenderPass.beginInfos[cmdBufferIdx];
     
     //? shadow pass
-    vkCmdBeginRenderPass        (cmdBuffer, &rp_shadow.beginInfos[cmdBufferIdx], VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass        (cmdBuffer, rp_shadow_info, VK_SUBPASS_CONTENTS_INLINE);
         Record_TerrainShadow    (cmdBuffer, cmdBufferIdx, resources);
         Record_InstancesShadow  (cmdBuffer, cmdBufferIdx, resources);
     vkCmdEndRenderPass          (cmdBuffer);
 
     //? main pass
-    vkCmdBeginRenderPass        (cmdBuffer, &rp_main.beginInfos[cmdBufferIdx], VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass        (cmdBuffer, rp_main_info, VK_SUBPASS_CONTENTS_INLINE);
         Record_Terrain          (cmdBuffer, cmdBufferIdx, resources);
         Record_Instances        (cmdBuffer, cmdBufferIdx, resources);
     vkCmdEndRenderPass          (cmdBuffer);
 
     //? post pass
-    vkCmdBeginRenderPass        (cmdBuffer, &rp_post.beginInfos[cmdBufferIdx], VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass        (cmdBuffer, rp_post_info, VK_SUBPASS_CONTENTS_INLINE);
         Record_Post             (cmdBuffer, cmdBufferIdx, resources);
         Record_GUI              (cmdBuffer, cmdBufferIdx, resources);
     vkCmdEndRenderPass          (cmdBuffer);
