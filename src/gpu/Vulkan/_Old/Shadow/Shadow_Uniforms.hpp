@@ -1,10 +1,10 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
-#include "gpu/Vulkan/Abstraction/Objects/BufferExt.hpp"
-#include "gpu/Vulkan/Abstraction/Objects/Descriptors.hpp"
-#include "gpu/Vulkan/Abstraction/Objects/PushConstant.hpp"
+#include "gpu/Vulkan/Context.hpp"
+#include "gpu/Vulkan/Wrappers/BufferExt.hpp"
+#include "gpu/Vulkan/Wrappers/Descriptors.hpp"
+#include "gpu/Vulkan/Wrappers/PushConstant.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 
 namespace rpg::gpu::vuk {

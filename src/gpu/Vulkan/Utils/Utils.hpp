@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
-#include "gpu/Vulkan/Abstraction/Helper/Initializers.hpp"
-#include "gpu/Vulkan/Abstraction/Helper/Utils.hpp"
+#include "gpu/Vulkan/Context.hpp"
+#include "gpu/Vulkan/Utils/Initializers.hpp"
+#include "gpu/Vulkan/Utils/Utils.hpp"
 
 #include "com/mem/Allocator.hpp"
 #include <fstream>

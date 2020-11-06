@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
+#include "gpu/Vulkan/Context.hpp"
 
 namespace rpg::gpu::vuk {
 

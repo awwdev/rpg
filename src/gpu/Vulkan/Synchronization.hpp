@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
+#include "gpu/Vulkan/Context.hpp"
 #include "com/box/SimpleArray.hpp"
 
 namespace rpg::gpu::vuk {

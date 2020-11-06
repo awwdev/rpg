@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
-#include "gpu/Vulkan/Abstraction/Helper/Initializers.hpp"
+#include "gpu/Vulkan/Context.hpp"
+#include "gpu/Vulkan/Utils/Initializers.hpp"
 #include "com/box/SimpleArray.hpp"
 
 namespace rpg::gpu::vuk {

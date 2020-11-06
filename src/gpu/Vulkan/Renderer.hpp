@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
-#include "gpu/Vulkan/Abstraction/Meta/Synchronization.hpp"
+#include "gpu/Vulkan/Context.hpp"
+#include "gpu/Vulkan/Synchronization.hpp"
 
 #include "gpu/Vulkan/States/States_Resources.hpp"
 #include "gpu/Vulkan/States/States_Updating.hpp"

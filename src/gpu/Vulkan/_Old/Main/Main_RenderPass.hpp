@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
-#include "gpu/Vulkan/Abstraction/Objects/Image.hpp"
+#include "gpu/Vulkan/Context.hpp"
+#include "gpu/Vulkan/Wrappers/Image.hpp"
 
 namespace rpg::gpu::vuk {
 

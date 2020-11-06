@@ -1,7 +1,7 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Abstraction/Objects/RenderPass.hpp"
+#include "gpu/Vulkan/Wrappers/RenderPass.hpp"
 
 namespace rpg::gpu::vuk {
 

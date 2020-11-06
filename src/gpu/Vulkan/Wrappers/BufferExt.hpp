@@ -1,8 +1,8 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Abstraction/Meta/Context.hpp"
-#include "gpu/Vulkan/Abstraction/Objects/Buffer.hpp"
+#include "gpu/Vulkan/Context.hpp"
+#include "gpu/Vulkan/Wrappers/Buffer.hpp"
 #include "com/box/Array.hpp"
 
 namespace rpg::gpu::vuk {

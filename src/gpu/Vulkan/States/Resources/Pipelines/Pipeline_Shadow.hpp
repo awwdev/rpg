@@ -1,9 +1,9 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Abstraction/Objects/Pipeline.hpp"
-#include "gpu/Vulkan/Abstraction/Objects/Shader.hpp"
-#include "gpu/Vulkan/Abstraction/Objects/RenderPass.hpp"
+#include "gpu/Vulkan/Wrappers/Pipeline.hpp"
+#include "gpu/Vulkan/Wrappers/Shader.hpp"
+#include "gpu/Vulkan/Wrappers/RenderPass.hpp"
 
 namespace rpg::gpu::vuk {
 
