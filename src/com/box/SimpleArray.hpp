@@ -4,33 +4,35 @@
 #include "com/Types.hpp"
 #include "dbg/Assert.hpp"
 
-//better usable for unions and serialization
-//TODO: use for vulkan too
-//distinguish between byte and plain array
-
 namespace rpg::com {
 
-#define FOR_SIMPLE_ARRAY(arr, i) for(idx_t i = 0; i < arr.count; ++i)
+constexpr bool USE_SIMPLE_ARRAY_ASSERTS = true;
+
+#define FOR_SIMPLE_ARRAY(arr, i) \
+for(decltype(arr.count) i = 0; i < arr.count; ++i)
 
 template<typename T, auto N>
 struct SimpleArray
 {
-    //? data
-    
+    //meta
+    using ELEMENT_T = T;
+    using INDEX_T = decltype(N);
     static constexpr auto COUNT_MAX = N;
+    static constexpr auto BYTES_MAX = N * sizeof(T);
+
+    //data
     T data [N];
-    idx_t count = 0;
+    INDEX_T count = 0;
 
     //? access
-
-    auto& operator[](auto const idx)       
+    auto& operator[](INDEX_T const idx)       
     { 
-        dbg::Assert(idx >= 0 && idx < count, "simple array access out of bounds"); 
+        SimpleArrayAssert(idx >= 0 && idx < count, "simple array access out of bounds"); 
         return data[idx]; 
     }
-    auto& operator[](auto const idx) const 
+    auto& operator[](INDEX_T const idx) const 
     { 
-        dbg::Assert(idx >= 0 && idx < count, "simple array access out of bounds"); 
+        SimpleArrayAssert(idx >= 0 && idx < count, "simple array access out of bounds"); 
         return data[idx]; 
     }
 
@@ -38,15 +40,27 @@ struct SimpleArray
 
     void Append(constructible_with auto const&... args)
     {
-        dbg::Assert(count <= N, "simple array exhausted");
+        SimpleArrayAssert(count <= N, "simple array exhausted");
         data[count] = { args... };
         ++count;
     }
 
-    void Clear()
+    void ResetCount()
     {
         count = 0;
     }
+
+private:
+
+    void SimpleArrayAssert(bool const expr, chars_t msg) const 
+    {
+        if constexpr (!USE_SIMPLE_ARRAY_ASSERTS) return;
+        dbg::Assert(expr, msg);
+    }
+
 };
+
+template<typename T, uint32_t N>
+using SimpleArrayVk = SimpleArray<T, N>;
 
 }//ns

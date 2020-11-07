@@ -1,15 +1,20 @@
 //https://github.com/awwdev
 
 #pragma once
-#include "gpu/Vulkan/Meta/Context.hpp"
-#include "gpu/Vulkan/States/States.hpp"
-#include "gpu/Vulkan/Meta/Synchronization.hpp"
+#include "gpu/Vulkan/Context.hpp"
+#include "gpu/Vulkan/Synchronization.hpp"
+
+#include "gpu/Vulkan/States/States_Resources.hpp"
+#include "gpu/Vulkan/States/States_Updating.hpp"
+#include "gpu/Vulkan/States/States_Recording.hpp"
 
 #include "res/Resources.hpp"
 #include "app/Scene.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "wnd/WindowEvents.hpp"
 #include "com/ThreadPool.hpp"
+
+#include "gpu/Vulkan/_Old/Passes.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -18,7 +23,8 @@ struct Renderer
     Context         context;
     Commands        commands;
     Synchronization sync;
-    States          states;
+    Resources       resources;
+    Passes          passes;
     uint32_t        currentFrame = 0;
 
     //com::ThreadPool<4> threadPool;
@@ -27,14 +33,16 @@ struct Renderer
         : context {}
         , commands {}
         , sync {}
-        , states {}
+        , resources {}
+        , passes {}
     {
         //threadPool.Start();
 
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
-        states.Create(res, commands.mainCmdPool);
+        resources.Create();
+        passes.Create(res, commands.mainCmdPool);
     }
 
     void RecreateScwapchain(res::Resources& res)
@@ -45,8 +53,10 @@ struct Renderer
 
         commands.Destroy();
         commands.Create();
-        states.Destroy();
-        states.Create(res, commands.mainCmdPool);
+        resources.Destroy();
+        resources.Create();
+        passes.Destroy();
+        passes.Create(res, commands.mainCmdPool);
     }
 
     void Render(const double dt, app::GameScene& scene, res::Resources& res)
@@ -73,7 +83,9 @@ struct Renderer
         switch(acquireRes)
         {
             case VK_SUCCESS: break;
-            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(res); return; //when?!
+            case VK_ERROR_OUT_OF_DATE_KHR: RecreateScwapchain(res); 
+                dbg::LogInfo("VK_ERROR_OUT_OF_DATE_KHR"); 
+                return; //when?!
             default: return;
         }
 
@@ -84,8 +96,12 @@ struct Renderer
         VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
         //UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-        states.Update(scene.renderData, res);
-        auto cmds = states.Record(commands, imageIndex, scene.renderData, res);
+        //passes.Update(scene.renderData, res);
+        //auto cmds = passes.Record(commands, imageIndex, scene.renderData, res);
+
+        Update(resources);
+        auto cmds = Record(commands, imageIndex, resources);
+        
         //auto cmds = states.RecordMT(commands, imageIndex, scene.renderData, threadPool);
         //--------------------------------------------------
 

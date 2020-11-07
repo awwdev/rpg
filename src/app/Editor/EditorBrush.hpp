@@ -47,9 +47,9 @@ struct EditorBrush
 
         void Clear()
         {
-            vertexIds.Clear();
-            triangleIds.Clear();
-            vertexWeights.Clear();
+            vertexIds.ResetCount();
+            triangleIds.ResetCount();
+            vertexWeights.ResetCount();
         }
     } 
     insideBrush;

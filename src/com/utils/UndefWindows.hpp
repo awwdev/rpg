@@ -3,7 +3,6 @@
 //undefine windows stuff (minwindef.h)
 
 #undef NULL
-#undef FALSE
 #undef TRUE
 #undef FALSE
 #undef IN

@@ -68,6 +68,7 @@ inline void UpdateEvents(HWND hWnd)
 
 inline void WmSize(WPARAM, LPARAM lParam)
 {
+    dbg::LogInfo("WmSize");
     glo::resizeState = glo::ResizeState::Begin;
     glo::window_w = LOWORD(lParam);
     glo::window_h = HIWORD(lParam);
