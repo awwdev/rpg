@@ -20,6 +20,7 @@ for more images head to ads/progress/
 - maths library (matrix, algorithms)
 - logger, profiling, other utils
 - editor (undo/redo commands) and basic scene tree
+- terrain system (quadrants, mesh generation, stiching, raycasting)
 
 ![](ads/sketches/arch.png)![](ads/sketches/ecs.png)
 
