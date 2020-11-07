@@ -29,13 +29,7 @@ for more images head to ads/progress/
 - Need of C++20 (heavy use of "designated initializers" for Vulkan)
 
 ## Code Style
-More c-style based programming with less usage of common OOP features
-(like inheritance, encapsulation with access modifiers) 
+Hard to describe, but bascially c-style, procedural and data-oriented.
 
-## Vulkan
-- Context  (Instance, PhysicalDevice, LogicalDevice, Swapchain)
-- Objects  (Buffer, Image, Descriptors)
-- States   ("dedicated structs" per state)
-- Renderer (Presentation, synoptic)
 
 Files in ext/ directory are licensed separately, please view these files for more information.
