@@ -21,6 +21,10 @@ for more images head to ads/progress/
 - logger, profiling, other utils
 - editor (undo/redo commands) and basic scene tree
 
+some very basic sketches:
+![](ads/sketches/arch.png)
+![](ads/progress/ecs.png)
+
 ## How to run?
 - I am using VS Code with some C++ extensions
 - Batch files are included to fire up the compiler (mingw GCC)
