@@ -6,6 +6,7 @@ It is not intended to be a "plug in and play" library nor is it an universal 3D 
 
 ![](ads/progress/2020_10_06_bloomVoronoi.gif)
 ![](ads/progress/2020_11_07_synopsis.gif)
+
 for more images head to ads/progress/
 
 ## Contents
