@@ -16,7 +16,7 @@ for more images head to ads/progress/
 - serialization of terrain and ecs data (save/load)
 - immediate-style UI and text rendering
 - containers (little use of STL facilities)
-- block memory allocation (with some CTFE)
+- block memory allocation (with some CTFE, print to html)
 - maths library (matrix, algorithms)
 - logger, profiling, other utils
 - editor (undo/redo commands) and basic scene tree
