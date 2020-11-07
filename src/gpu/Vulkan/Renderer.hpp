@@ -96,11 +96,11 @@ struct Renderer
         VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
         //UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-        passes.Update(scene.renderData, res);
-        auto cmds = passes.Record(commands, imageIndex, scene.renderData, res);
+        //passes.Update(scene.renderData, res);
+        //auto cmds = passes.Record(commands, imageIndex, scene.renderData, res);
 
-        //Update(resources);
-        //Record(commands, imageIndex, resources);
+        Update(resources);
+        auto cmds = Record(commands, imageIndex, resources);
         
         //auto cmds = states.RecordMT(commands, imageIndex, scene.renderData, threadPool);
         //--------------------------------------------------

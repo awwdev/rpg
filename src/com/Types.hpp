@@ -56,12 +56,12 @@ concept constructible_with = std::is_trivially_constructible_v<T, Ts...> || std:
 
 //? array
 
-template<typename T, auto N>
-constexpr auto ArrayCount(const T (&arr)[N])
+template<typename T, unsigned N>
+constexpr auto array_extent(const T (&arr)[N])
 {
     return static_cast<idx_t>(N);
 }
 
-#define FOR_C_ARRAY(arr, i) for(idx_t i = 0; i < ArrayCount(arr); ++i)
+#define FOR_C_ARRAY(arr, i) for(auto i = 0; i < array_extent(arr); ++i)
 
 }//ns

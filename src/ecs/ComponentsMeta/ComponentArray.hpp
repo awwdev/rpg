@@ -116,8 +116,8 @@ struct ComponentArray
     {
         auto const [dense_path, component_lookup_path, entity_lookup_path] = GetPaths();
         dense.WriteBinaryFile(dense_path);
-         com::WriteBinaryFile_C_Array(component_lookup_path, componentLookup, ArrayCount(componentLookup));
-         com::WriteBinaryFile_C_Array(entity_lookup_path, entityLookup, ArrayCount(entityLookup));
+         com::WriteBinaryFile_C_Array(component_lookup_path, componentLookup, array_extent(componentLookup));
+         com::WriteBinaryFile_C_Array(entity_lookup_path, entityLookup, array_extent(entityLookup));
     }
 
     void ReadBinaryFile()

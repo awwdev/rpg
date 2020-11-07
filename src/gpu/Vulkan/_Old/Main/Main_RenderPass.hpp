@@ -144,6 +144,7 @@ struct Main_RenderPass
             .pPreserveAttachments    = nullptr
         };
 
+        /* vk tutorial
         const VkSubpassDependency dependencies []
         {
             {
@@ -165,17 +166,42 @@ struct Main_RenderPass
                 .dependencyFlags    = VK_DEPENDENCY_BY_REGION_BIT,
             }
         };
+        */
+
+        //sascha willems
+        //https://github.com/SaschaWillems/Vulkan/blob/c13a715ead325b8470e9511a588b001644e02568/base/vulkanexamplebase.cpp
+        const VkSubpassDependency dependencies []
+        {
+            {
+                .srcSubpass         = VK_SUBPASS_EXTERNAL,
+                .dstSubpass         = 0,
+                .srcStageMask       = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                .dstStageMask       = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                .srcAccessMask      = VK_ACCESS_MEMORY_READ_BIT,
+                .dstAccessMask      = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                .dependencyFlags    = VK_DEPENDENCY_BY_REGION_BIT,
+            },
+            {
+                .srcSubpass         = 0,
+                .dstSubpass         = VK_SUBPASS_EXTERNAL,
+                .srcStageMask       = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                .dstStageMask       = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                .srcAccessMask      = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                .dstAccessMask      = VK_ACCESS_MEMORY_READ_BIT,
+                .dependencyFlags    = VK_DEPENDENCY_BY_REGION_BIT,
+            }
+        };
 
         //? RENDERPASS
         const VkRenderPassCreateInfo renderPassInfo {
             .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
             .pNext           = nullptr,
             .flags           = 0,
-            .attachmentCount = ArrayCount(descs),
+            .attachmentCount = array_extent(descs),
             .pAttachments    = descs,
             .subpassCount    = 1,
             .pSubpasses      = &subpassDesc,
-            .dependencyCount = ArrayCount(dependencies),
+            .dependencyCount = array_extent(dependencies),
             .pDependencies   = dependencies
         };
         VkCheck(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &renderPass));
@@ -186,7 +212,7 @@ struct Main_RenderPass
             .pNext           = nullptr,
             .flags           = 0,
             .renderPass      = renderPass,
-            .attachmentCount = ArrayCount(views),
+            .attachmentCount = array_extent(views),
             .pAttachments    = views,
             .width           = width,
             .height          = height,
@@ -205,7 +231,7 @@ struct Main_RenderPass
                 .offset     = {},
                 .extent     = { width, height }
             },
-            .clearValueCount= (uint32_t) ArrayCount(clears),
+            .clearValueCount= (uint32_t) array_extent(clears),
             .pClearValues   = clears
         };
     }

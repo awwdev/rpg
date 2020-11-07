@@ -41,7 +41,7 @@ struct Shadow_Pipeline
             .sType                      = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
             .pNext                      = nullptr,
             .flags                      = 0,
-            .stageCount                 = (uint32_t) ArrayCount(shader.stageInfo),
+            .stageCount                 = (uint32_t) array_extent(shader.stageInfo),
             .pStages                    = shader.stageInfo,
             .pVertexInputState          = &vertexInput,
             .pInputAssemblyState        = &inputAssembly,

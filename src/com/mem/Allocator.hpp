@@ -35,7 +35,7 @@ constexpr BlockArray BLOCK_ARRAYS [] {
 };
 //?-------------------------------------
 
-constexpr auto BLOCK_ARRAY_COUNT = ArrayCount(BLOCK_ARRAYS);
+constexpr auto BLOCK_ARRAY_COUNT = array_extent(BLOCK_ARRAYS);
 constexpr auto BLOCK_COUNT_TOTAL = []() constexpr {
     std::size_t count = 0;
     FOR_C_ARRAY(BLOCK_ARRAYS, i)

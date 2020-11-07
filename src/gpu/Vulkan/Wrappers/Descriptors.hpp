@@ -31,7 +31,7 @@ struct Descriptors
         for(uint32_t i = 0; i < UNIFORM_COUNT; ++i) {
             bindings[i] = uniformInfos[i].binding;
         }
-        const auto descSetLayoutInfo = DescSetLayoutInfo(ArrayCount(bindings), bindings);
+        const auto descSetLayoutInfo = DescSetLayoutInfo(array_extent(bindings), bindings);
         VkCheck(vkCreateDescriptorSetLayout(g_contextPtr->device, &descSetLayoutInfo, nullptr, &descSetLayout));
 
         //? POOL
@@ -43,7 +43,7 @@ struct Descriptors
             };
         }
         const uint32_t MAX_SETS = 1; //arbitrary, max swapchain images
-        const auto descPoolInfo = DescPoolInfo(MAX_SETS, ArrayCount(poolSizes), poolSizes); 
+        const auto descPoolInfo = DescPoolInfo(MAX_SETS, array_extent(poolSizes), poolSizes); 
         VkCheck(vkCreateDescriptorPool(g_contextPtr->device, &descPoolInfo, nullptr, &descPool));
 
         //? ALLOCATION
@@ -68,7 +68,7 @@ struct Descriptors
                 .pTexelBufferView   = nullptr
             };
         }
-        vkUpdateDescriptorSets(g_contextPtr->device, ArrayCount(writes), writes, 0, nullptr);   
+        vkUpdateDescriptorSets(g_contextPtr->device, array_extent(writes), writes, 0, nullptr);   
     }
 
     void Destroy()

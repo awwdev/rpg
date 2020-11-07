@@ -22,16 +22,16 @@ struct Resources
     {
         shaders.Create();
         renderPasses.Create();
-        vertices.Create();
-        uniforms.Create();
-        pipelines.Create(shaders, renderPasses, uniforms, vertices);
+        //vertices.Create();
+        //uniforms.Create();
+        //pipelines.Create(shaders, renderPasses, uniforms, vertices);
     }
     
     void Destroy()
     {
-        pipelines.Destroy();
-        uniforms.Destroy();
-        vertices.Destroy();
+        //pipelines.Destroy();
+        //uniforms.Destroy();
+        //vertices.Destroy();
         renderPasses.Destroy();
         shaders.Destroy();
     }

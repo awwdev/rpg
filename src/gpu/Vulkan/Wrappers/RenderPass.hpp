@@ -9,35 +9,47 @@ namespace rpg::gpu::vuk {
 
 struct RenderPass
 {
-    com::SimpleArrayVk<VkRenderPassBeginInfo, 4> beginInfos;
     VkRenderPass renderPass;
+    
+    com::SimpleArrayVk<VkRenderPassBeginInfo, 4> beginInfos;
     com::SimpleArrayVk<VkFramebuffer, 4> framebuffers;
+    com::SimpleArrayVk<VkClearValue, 4> clears;
     com::SimpleArrayVk<Image, 4> images;
+    com::SimpleArrayVk<VkImageView, 4> views; //useful for img array
+
+    VkFormat colorFormat, depthFormat;
     uint32_t width, height;
-    VkClearValue clears [1] { { .depthStencil { 0, 0 } } };
+    VkSampleCountFlagBits msaaSampleCount = VK_SAMPLE_COUNT_1_BIT;
 
     void Destroy() 
     {
-        DestroyItself();
-        DestroyOther();
+        DestroyOwnResources();
+        DestroyOtherResources();
     }
-    ~RenderPass() { DestroyItself(); }
+    ~RenderPass() { DestroyOwnResources(); }
 
 private:
 
-    void DestroyOther()
+    void DestroyOtherResources()
     {
         FOR_SIMPLE_ARRAY(images, i)
             images[i].Destroy();
         images.ResetCount();
     }
 
-    void DestroyItself()
+    void DestroyOwnResources()
     {
         vkDestroyRenderPass (g_contextPtr->device, renderPass, nullptr);
         FOR_SIMPLE_ARRAY(framebuffers, i)
             vkDestroyFramebuffer(g_contextPtr->device, framebuffers[i], nullptr);
         framebuffers.ResetCount();
+        FOR_SIMPLE_ARRAY(views, i)
+            vkDestroyImageView(g_contextPtr->device, views[i], nullptr);
+        views.ResetCount();
+        FOR_SIMPLE_ARRAY(beginInfos, i)
+            beginInfos[i] = {};
+        beginInfos.ResetCount();
+
     }
 
 };

@@ -149,9 +149,9 @@ struct Context
             .pNext                  = &debugCreateInfo, //so instance creation messages are handled
             .flags                  = 0,
             .pApplicationInfo       = &appInfo,
-            .enabledLayerCount      = ArrayCount(layers), 
+            .enabledLayerCount      = array_extent(layers), 
             .ppEnabledLayerNames    = layers,
-            .enabledExtensionCount  = ArrayCount(extensions),
+            .enabledExtensionCount  = array_extent(extensions),
             .ppEnabledExtensionNames = extensions
         };
 
@@ -230,7 +230,7 @@ struct Context
             .pQueueCreateInfos          = &queueInfo,
             .enabledLayerCount          = 0,
             .ppEnabledLayerNames        = nullptr,
-            .enabledExtensionCount      = ArrayCount(physicalExtensions),
+            .enabledExtensionCount      = array_extent(physicalExtensions),
             .ppEnabledExtensionNames    = physicalExtensions,
             .pEnabledFeatures           = &deviceFeatures
         };

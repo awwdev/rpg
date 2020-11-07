@@ -5,7 +5,7 @@
 
 namespace rpg::gpu::vuk {
 
-inline void Record_InstancesShadow(VkCommandBuffer cmdBuffer, uint32_t const cmdBufferIdx, Resources& resources)
+inline void Record_InstancesShadow(VkCommandBuffer cmdBuffer, uint32_t const cmdBufferIdx, Resources& resources, uint32_t const cascadeIdx)
 {
     
 }

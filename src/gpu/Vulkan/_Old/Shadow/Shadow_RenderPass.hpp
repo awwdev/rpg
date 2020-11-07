@@ -98,11 +98,11 @@ struct Shadow_RenderPass
             .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
             .pNext           = nullptr,
             .flags           = 0,
-            .attachmentCount = ArrayCount(descs),
+            .attachmentCount = array_extent(descs),
             .pAttachments    = descs,
             .subpassCount    = 1,
             .pSubpasses      = &subpassDesc,
-            .dependencyCount = ArrayCount(dependencies),
+            .dependencyCount = array_extent(dependencies),
             .pDependencies   = dependencies
         };
         VkCheck(vkCreateRenderPass(g_contextPtr->device, &renderPassInfo, nullptr, &renderPass));
