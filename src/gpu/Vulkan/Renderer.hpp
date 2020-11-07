@@ -3,18 +3,11 @@
 #pragma once
 #include "gpu/Vulkan/Context.hpp"
 #include "gpu/Vulkan/Synchronization.hpp"
-
-#include "gpu/Vulkan/States/States_Resources.hpp"
-#include "gpu/Vulkan/States/States_Updating.hpp"
-#include "gpu/Vulkan/States/States_Recording.hpp"
-
-#include "res/Resources.hpp"
 #include "app/Scene.hpp"
 #include "gpu/RenderData/RenderData.hpp"
 #include "wnd/WindowEvents.hpp"
 #include "com/ThreadPool.hpp"
-
-#include "gpu/Vulkan/_Old/Passes.hpp"
+#include "gpu/Vulkan/Passes/Passes.hpp"
 
 namespace rpg::gpu::vuk {
 
@@ -23,25 +16,20 @@ struct Renderer
     Context         context;
     Commands        commands;
     Synchronization sync;
-    Resources       resources;
     Passes          passes;
     uint32_t        currentFrame = 0;
-
     //com::ThreadPool<4> threadPool;
     
     Renderer(const vuk::WindowHandle& wndHandle, res::Resources& res)
         : context {}
         , commands {}
         , sync {}
-        , resources {}
         , passes {}
     {
         //threadPool.Start();
-
         context.Create(wndHandle); //there is a global ptr to vk context
         sync.Create();
         commands.Create();
-        resources.Create();
         passes.Create(res, commands.mainCmdPool);
     }
 
@@ -53,8 +41,6 @@ struct Renderer
 
         commands.Destroy();
         commands.Create();
-        resources.Destroy();
-        resources.Create();
         passes.Destroy();
         passes.Create(res, commands.mainCmdPool);
     }
@@ -96,12 +82,8 @@ struct Renderer
         VkCheck(vkResetFences(context.device, 1, &sync.fences[currentFrame]));
 
         //UPDATE GPU RESOURCES AND RECORD COMMANDS----------
-        //passes.Update(scene.renderData, res);
-        //auto cmds = passes.Record(commands, imageIndex, scene.renderData, res);
-
-        Update(resources);
-        auto cmds = Record(commands, imageIndex, resources);
-        
+        passes.Update(scene.renderData, res);
+        auto cmds = passes.Record(commands, imageIndex, scene.renderData, res);
         //auto cmds = states.RecordMT(commands, imageIndex, scene.renderData, threadPool);
         //--------------------------------------------------
 
