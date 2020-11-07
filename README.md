@@ -24,7 +24,7 @@ for more images head to ads/progress/
 
 some very basic sketches:
 ![](ads/sketches/arch.png)
-![](ads/progress/ecs.png)
+![](ads/sketches/ecs.png)
 
 ## How to run?
 - I am using VS Code with some C++ extensions
