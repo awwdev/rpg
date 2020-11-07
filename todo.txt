@@ -1,38 +1,11 @@
-- grass base color, on placement cmd (raycast terrain), recalculate props, 
-- shadow cascade last fade
-
-- one shader loader
-
-
-
-- what to draw on specific cascades
-- cast shadow flag 
-
-- scene tree, selection, highlight
-
-- shadow and general pipeline synopsis (instance draw) one big state with sub states
-- recalculate props height on terrain when terrain recalculated??
-
-- test against all quadrant and choose closest
-- dirty quadrants (only upload and stich)
-
------------------------------------------
-
-- better grass
+- shader injection instead of hardcoding
+- only draw terrain on far cascades
+- object highlighting
+- shadow and general pipeline synopsis
+- only upload terrain quadrants that actually have changed (dirty)
+- recalculate y position of props when terrain changes
+- basic frustrum culling (AABB)
 - global input mapping
-- input mode (enum class) refactor
+- scene restart
 
-- refactor all shaders
-- shader material data rework
-
-- matrix rework with concepts
-
-- scene reload
-- utils separation into multiple headers
-- widget list refactor (only update the visible region)
-- simple function ptr based system for gui callback
-(since updating the scene tree every frame is wasteful)
-- load both material and mesh paths externally
-- FOR_ENUM_MAP macro for loop
-- appropriate color picker widget
-- don't xcopy whole shader folder (glsl sources) but only spv
+- ... too much :)
