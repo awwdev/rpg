@@ -3,6 +3,7 @@
 C++ 3D framework / engine from scratch (little use of third party tools).
 **Intended to show my experience with C++ programming and software engineering.**
 It is not intended to be a "plug in and play" library nor is it an universal 3D engine.
+~10.000 LOC in src
 
 ![](ads/progress/2020_10_06_bloomVoronoi.gif)![](ads/progress/2020_11_07_synopsis.gif)
 
